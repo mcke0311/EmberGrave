@@ -1,0 +1,1532 @@
+{
+  "seed": 123,
+  "step": 0.05,
+  "baseline": "tmp/boss_animation/before/js",
+  "results": [
+    {
+      "boss": "korvath",
+      "class": "vanguard",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 163.6,
+      "bossRemaining": 0,
+      "playerHp": 207,
+      "maxHp": 246,
+      "damage": 59,
+      "hits": 2,
+      "healingLeft": 6,
+      "manaLeft": 2,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 81.6
+        },
+        {
+          "phase": 1,
+          "seconds": 81.9
+        }
+      ],
+      "attacks": [
+        "cleave",
+        "fissure"
+      ],
+      "loadout": {
+        "main": "vanguard_0_0",
+        "secondarySummon": null,
+        "level": 8,
+        "equipment": {
+          "main": "sword_t2",
+          "chest": "chest_t2",
+          "head": "helm_t2",
+          "gloves": "gloves_t2",
+          "boots": "boots_t2",
+          "belt": "belt_t2"
+        },
+        "skills": {
+          "vanguard_0_0": 7
+        }
+      }
+    },
+    {
+      "boss": "korvath",
+      "class": "emberwitch",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 63.5,
+      "bossRemaining": -1,
+      "playerHp": 204,
+      "maxHp": 210,
+      "damage": 21,
+      "hits": 1,
+      "healingLeft": 6,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 30.4
+        },
+        {
+          "phase": 1,
+          "seconds": 33.2
+        }
+      ],
+      "attacks": [
+        "cleave",
+        "fissure"
+      ],
+      "loadout": {
+        "main": "emberwitch_0_0",
+        "secondarySummon": null,
+        "level": 8,
+        "equipment": {
+          "main": "wand_t2",
+          "chest": "chest_t2",
+          "head": "helm_t2",
+          "gloves": "gloves_t2",
+          "boots": "boots_t2",
+          "belt": "belt_t2"
+        },
+        "skills": {
+          "emberwitch_0_0": 7
+        }
+      }
+    },
+    {
+      "boss": "korvath",
+      "class": "gravebinder",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 169.4,
+      "bossRemaining": 0,
+      "playerHp": 167,
+      "maxHp": 232,
+      "damage": 87,
+      "hits": 5,
+      "healingLeft": 6,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 74
+        },
+        {
+          "phase": 1,
+          "seconds": 95.4
+        }
+      ],
+      "attacks": [
+        "cleave",
+        "fissure"
+      ],
+      "loadout": {
+        "main": "venom_spit",
+        "summon": "raise_dead",
+        "secondarySummon": null,
+        "level": 8,
+        "equipment": {
+          "main": "wand_t2",
+          "chest": "chest_t2",
+          "head": "helm_t2",
+          "gloves": "gloves_t2",
+          "boots": "boots_t2",
+          "belt": "belt_t2"
+        },
+        "skills": {
+          "venom_spit": 1,
+          "mark_of_frailty": 1,
+          "raise_dead": 5
+        }
+      }
+    },
+    {
+      "boss": "korvath",
+      "class": "wildkeeper",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 105.3,
+      "bossRemaining": 0,
+      "playerHp": 179,
+      "maxHp": 244,
+      "damage": 214,
+      "hits": 8,
+      "healingLeft": 5,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 53.1
+        },
+        {
+          "phase": 1,
+          "seconds": 52.2
+        }
+      ],
+      "attacks": [
+        "cleave",
+        "fissure"
+      ],
+      "loadout": {
+        "main": "wildkeeper_1_0",
+        "summon": "call_wolf",
+        "secondarySummon": null,
+        "level": 8,
+        "equipment": {
+          "main": "staff2h_t2",
+          "chest": "chest_t2",
+          "head": "helm_t2",
+          "gloves": "gloves_t2",
+          "boots": "boots_t2",
+          "belt": "belt_t2"
+        },
+        "skills": {
+          "wildkeeper_1_0": 4,
+          "call_wolf": 3
+        }
+      }
+    },
+    {
+      "boss": "korvath",
+      "class": "veilranger",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 120.9,
+      "bossRemaining": -1,
+      "playerHp": 224,
+      "maxHp": 224,
+      "damage": 29,
+      "hits": 1,
+      "healingLeft": 6,
+      "manaLeft": 5,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 62.7
+        },
+        {
+          "phase": 1,
+          "seconds": 58.2
+        }
+      ],
+      "attacks": [
+        "cleave",
+        "fissure"
+      ],
+      "loadout": {
+        "main": "veilranger_0_0",
+        "secondarySummon": null,
+        "level": 8,
+        "equipment": {
+          "main": "bow2h_t2",
+          "chest": "chest_t2",
+          "head": "helm_t2",
+          "gloves": "gloves_t2",
+          "boots": "boots_t2",
+          "belt": "belt_t2"
+        },
+        "skills": {
+          "veilranger_0_0": 7
+        }
+      }
+    },
+    {
+      "boss": "mire_mother",
+      "class": "vanguard",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 124.4,
+      "bossRemaining": 0,
+      "playerHp": 269,
+      "maxHp": 330,
+      "damage": 80,
+      "hits": 3,
+      "healingLeft": 6,
+      "manaLeft": 4,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 59.2
+        },
+        {
+          "phase": 1,
+          "seconds": 35.7
+        },
+        {
+          "phase": 2,
+          "seconds": 29.4
+        }
+      ],
+      "attacks": [
+        "bile",
+        "grasp"
+      ],
+      "loadout": {
+        "main": "vanguard_0_0",
+        "secondarySummon": null,
+        "level": 14,
+        "equipment": {
+          "main": "sword_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "vanguard_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "mire_mother",
+      "class": "emberwitch",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 116.9,
+      "bossRemaining": 0,
+      "playerHp": 289,
+      "maxHp": 294,
+      "damage": 5,
+      "hits": 1,
+      "healingLeft": 6,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 53.6
+        },
+        {
+          "phase": 1,
+          "seconds": 34.3
+        },
+        {
+          "phase": 2,
+          "seconds": 28.9
+        }
+      ],
+      "attacks": [
+        "bile",
+        "grasp"
+      ],
+      "loadout": {
+        "main": "emberwitch_0_0",
+        "secondarySummon": null,
+        "level": 14,
+        "equipment": {
+          "main": "wand_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "emberwitch_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "mire_mother",
+      "class": "gravebinder",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 62.9,
+      "bossRemaining": 0,
+      "playerHp": 316,
+      "maxHp": 316,
+      "damage": 0,
+      "hits": 0,
+      "healingLeft": 6,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 30.9
+        },
+        {
+          "phase": 1,
+          "seconds": 17.9
+        },
+        {
+          "phase": 2,
+          "seconds": 14.1
+        }
+      ],
+      "attacks": [
+        "bile",
+        "grasp"
+      ],
+      "loadout": {
+        "main": "venom_spit",
+        "summon": "raise_dead",
+        "secondarySummon": "raise_plaguemage",
+        "level": 14,
+        "equipment": {
+          "main": "wand_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "venom_spit": 1,
+          "mark_of_frailty": 1,
+          "raise_dead": 10,
+          "raise_plaguemage": 1
+        }
+      }
+    },
+    {
+      "boss": "mire_mother",
+      "class": "wildkeeper",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 85.8,
+      "bossRemaining": 0,
+      "playerHp": 184,
+      "maxHp": 328,
+      "damage": 506,
+      "hits": 38,
+      "healingLeft": 4,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 45.8
+        },
+        {
+          "phase": 1,
+          "seconds": 22.4
+        },
+        {
+          "phase": 2,
+          "seconds": 17.6
+        }
+      ],
+      "attacks": [
+        "bile",
+        "grasp"
+      ],
+      "loadout": {
+        "main": "wildkeeper_1_0",
+        "summon": "call_wolf",
+        "secondarySummon": null,
+        "level": 14,
+        "equipment": {
+          "main": "staff2h_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "wildkeeper_1_0": 7,
+          "call_wolf": 6
+        }
+      }
+    },
+    {
+      "boss": "mire_mother",
+      "class": "veilranger",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 103.8,
+      "bossRemaining": 0,
+      "playerHp": 308,
+      "maxHp": 308,
+      "damage": 0,
+      "hits": 0,
+      "healingLeft": 6,
+      "manaLeft": 5,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 48.4
+        },
+        {
+          "phase": 1,
+          "seconds": 32.6
+        },
+        {
+          "phase": 2,
+          "seconds": 22.7
+        }
+      ],
+      "attacks": [
+        "bile",
+        "grasp"
+      ],
+      "loadout": {
+        "main": "veilranger_0_0",
+        "secondarySummon": null,
+        "level": 14,
+        "equipment": {
+          "main": "bow2h_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "veilranger_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "azram",
+      "class": "vanguard",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 175.2,
+      "bossRemaining": 0,
+      "playerHp": 372,
+      "maxHp": 372,
+      "damage": 396,
+      "hits": 20,
+      "healingLeft": 4,
+      "manaLeft": 4,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 56.3
+        },
+        {
+          "phase": 1,
+          "seconds": 55.4
+        },
+        {
+          "phase": 2,
+          "seconds": 63.4
+        }
+      ],
+      "attacks": [
+        "chains",
+        "cleave",
+        "portals",
+        "gold"
+      ],
+      "loadout": {
+        "main": "vanguard_0_0",
+        "secondarySummon": null,
+        "level": 17,
+        "equipment": {
+          "main": "sword_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "vanguard_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "azram",
+      "class": "emberwitch",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 88.7,
+      "bossRemaining": -1,
+      "playerHp": 336,
+      "maxHp": 336,
+      "damage": 193,
+      "hits": 4,
+      "healingLeft": 5,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 24.1
+        },
+        {
+          "phase": 1,
+          "seconds": 32.1
+        },
+        {
+          "phase": 2,
+          "seconds": 32.4
+        }
+      ],
+      "attacks": [
+        "chains",
+        "cleave",
+        "portals",
+        "gold"
+      ],
+      "loadout": {
+        "main": "emberwitch_0_0",
+        "secondarySummon": null,
+        "level": 17,
+        "equipment": {
+          "main": "wand_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "emberwitch_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "azram",
+      "class": "gravebinder",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 66.7,
+      "bossRemaining": 0,
+      "playerHp": 358,
+      "maxHp": 358,
+      "damage": 0,
+      "hits": 0,
+      "healingLeft": 6,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 27.1
+        },
+        {
+          "phase": 1,
+          "seconds": 18.9
+        },
+        {
+          "phase": 2,
+          "seconds": 20.7
+        }
+      ],
+      "attacks": [
+        "chains",
+        "cleave",
+        "portals",
+        "gold"
+      ],
+      "loadout": {
+        "main": "venom_spit",
+        "summon": "raise_dead",
+        "secondarySummon": "raise_plaguemage",
+        "level": 17,
+        "equipment": {
+          "main": "wand_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "venom_spit": 1,
+          "mark_of_frailty": 1,
+          "raise_dead": 10,
+          "raise_plaguemage": 4
+        }
+      }
+    },
+    {
+      "boss": "azram",
+      "class": "wildkeeper",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 83.2,
+      "bossRemaining": 0,
+      "playerHp": 243,
+      "maxHp": 370,
+      "damage": 640,
+      "hits": 19,
+      "healingLeft": 3,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 25.7
+        },
+        {
+          "phase": 1,
+          "seconds": 29.7
+        },
+        {
+          "phase": 2,
+          "seconds": 27.8
+        }
+      ],
+      "attacks": [
+        "chains",
+        "cleave",
+        "portals",
+        "gold"
+      ],
+      "loadout": {
+        "main": "wildkeeper_1_0",
+        "summon": "call_wolf",
+        "secondarySummon": null,
+        "level": 17,
+        "equipment": {
+          "main": "staff2h_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "wildkeeper_1_0": 8,
+          "call_wolf": 8
+        }
+      }
+    },
+    {
+      "boss": "azram",
+      "class": "veilranger",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 126.3,
+      "bossRemaining": -1,
+      "playerHp": 311,
+      "maxHp": 350,
+      "damage": 69,
+      "hits": 3,
+      "healingLeft": 6,
+      "manaLeft": 5,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 43
+        },
+        {
+          "phase": 1,
+          "seconds": 42.3
+        },
+        {
+          "phase": 2,
+          "seconds": 40.9
+        }
+      ],
+      "attacks": [
+        "chains",
+        "cleave",
+        "portals",
+        "gold"
+      ],
+      "loadout": {
+        "main": "veilranger_0_0",
+        "secondarySummon": null,
+        "level": 17,
+        "equipment": {
+          "main": "bow2h_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "veilranger_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "empty_archangel",
+      "class": "vanguard",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 198.8,
+      "bossRemaining": 0,
+      "playerHp": 228,
+      "maxHp": 386,
+      "damage": 813,
+      "hits": 13,
+      "healingLeft": 3,
+      "manaLeft": 4,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 101.7
+        },
+        {
+          "phase": 1,
+          "seconds": 97
+        }
+      ],
+      "attacks": [
+        "wings",
+        "descent",
+        "cross"
+      ],
+      "loadout": {
+        "main": "vanguard_0_0",
+        "secondarySummon": null,
+        "level": 18,
+        "equipment": {
+          "main": "sword_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "vanguard_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "empty_archangel",
+      "class": "emberwitch",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 146.3,
+      "bossRemaining": 0,
+      "playerHp": 299,
+      "maxHp": 350,
+      "damage": 423,
+      "hits": 7,
+      "healingLeft": 4,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 74.3
+        },
+        {
+          "phase": 1,
+          "seconds": 72
+        }
+      ],
+      "attacks": [
+        "wings",
+        "descent",
+        "cross"
+      ],
+      "loadout": {
+        "main": "emberwitch_0_0",
+        "secondarySummon": null,
+        "level": 18,
+        "equipment": {
+          "main": "wand_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "emberwitch_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "empty_archangel",
+      "class": "gravebinder",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 78.2,
+      "bossRemaining": 0,
+      "playerHp": 263,
+      "maxHp": 372,
+      "damage": 349,
+      "hits": 6,
+      "healingLeft": 5,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 41.5
+        },
+        {
+          "phase": 1,
+          "seconds": 36.7
+        }
+      ],
+      "attacks": [
+        "wings",
+        "descent",
+        "cross"
+      ],
+      "loadout": {
+        "main": "venom_spit",
+        "summon": "raise_dead",
+        "secondarySummon": "raise_plaguemage",
+        "level": 18,
+        "equipment": {
+          "main": "wand_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "venom_spit": 1,
+          "mark_of_frailty": 1,
+          "raise_dead": 10,
+          "raise_plaguemage": 5
+        }
+      }
+    },
+    {
+      "boss": "empty_archangel",
+      "class": "wildkeeper",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 86.6,
+      "bossRemaining": 0,
+      "playerHp": 295,
+      "maxHp": 384,
+      "damage": 1243,
+      "hits": 25,
+      "healingLeft": 1,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 43.2
+        },
+        {
+          "phase": 1,
+          "seconds": 43.4
+        }
+      ],
+      "attacks": [
+        "wings",
+        "descent",
+        "cross"
+      ],
+      "loadout": {
+        "main": "wildkeeper_1_0",
+        "summon": "call_wolf",
+        "secondarySummon": null,
+        "level": 18,
+        "equipment": {
+          "main": "staff2h_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "wildkeeper_1_0": 9,
+          "call_wolf": 8
+        }
+      }
+    },
+    {
+      "boss": "empty_archangel",
+      "class": "veilranger",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 121.8,
+      "bossRemaining": -1,
+      "playerHp": 217,
+      "maxHp": 364,
+      "damage": 577,
+      "hits": 9,
+      "healingLeft": 4,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 59.1
+        },
+        {
+          "phase": 1,
+          "seconds": 62.7
+        }
+      ],
+      "attacks": [
+        "wings",
+        "descent",
+        "cross"
+      ],
+      "loadout": {
+        "main": "veilranger_0_0",
+        "secondarySummon": null,
+        "level": 18,
+        "equipment": {
+          "main": "bow2h_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "veilranger_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "malthoron",
+      "class": "vanguard",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 160.3,
+      "bossRemaining": 0,
+      "playerHp": 420,
+      "maxHp": 420,
+      "damage": 539,
+      "hits": 16,
+      "healingLeft": 4,
+      "manaLeft": 4,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 59.3
+        },
+        {
+          "phase": 1,
+          "seconds": 55.2
+        },
+        {
+          "phase": 2,
+          "seconds": 45.8
+        }
+      ],
+      "attacks": [
+        "cleave",
+        "chains",
+        "souls",
+        "beam"
+      ],
+      "loadout": {
+        "main": "vanguard_0_0",
+        "secondarySummon": null,
+        "level": 20,
+        "equipment": {
+          "main": "sword_t4",
+          "chest": "chest_t4",
+          "head": "helm_t4",
+          "gloves": "gloves_t4",
+          "boots": "boots_t4",
+          "belt": "belt_t4"
+        },
+        "skills": {
+          "vanguard_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "malthoron",
+      "class": "emberwitch",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 188,
+      "bossRemaining": 0,
+      "playerHp": 384,
+      "maxHp": 384,
+      "damage": 570,
+      "hits": 25,
+      "healingLeft": 4,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 64.1
+        },
+        {
+          "phase": 1,
+          "seconds": 62.3
+        },
+        {
+          "phase": 2,
+          "seconds": 61.6
+        }
+      ],
+      "attacks": [
+        "cleave",
+        "chains",
+        "souls",
+        "beam"
+      ],
+      "loadout": {
+        "main": "emberwitch_0_0",
+        "secondarySummon": null,
+        "level": 20,
+        "equipment": {
+          "main": "wand_t4",
+          "chest": "chest_t4",
+          "head": "helm_t4",
+          "gloves": "gloves_t4",
+          "boots": "boots_t4",
+          "belt": "belt_t4"
+        },
+        "skills": {
+          "emberwitch_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "malthoron",
+      "class": "gravebinder",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 123.4,
+      "bossRemaining": 0,
+      "playerHp": 406,
+      "maxHp": 406,
+      "damage": 1018,
+      "hits": 34,
+      "healingLeft": 2,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 33.4
+        },
+        {
+          "phase": 1,
+          "seconds": 48.2
+        },
+        {
+          "phase": 2,
+          "seconds": 41.8
+        }
+      ],
+      "attacks": [
+        "cleave",
+        "chains",
+        "souls",
+        "beam"
+      ],
+      "loadout": {
+        "main": "venom_spit",
+        "summon": "raise_dead",
+        "secondarySummon": "raise_plaguemage",
+        "level": 20,
+        "equipment": {
+          "main": "wand_t4",
+          "chest": "chest_t4",
+          "head": "helm_t4",
+          "gloves": "gloves_t4",
+          "boots": "boots_t4",
+          "belt": "belt_t4"
+        },
+        "skills": {
+          "venom_spit": 1,
+          "mark_of_frailty": 1,
+          "raise_dead": 10,
+          "raise_plaguemage": 7
+        }
+      }
+    },
+    {
+      "boss": "malthoron",
+      "class": "wildkeeper",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 104.5,
+      "bossRemaining": 0,
+      "playerHp": 418,
+      "maxHp": 418,
+      "damage": 1159,
+      "hits": 29,
+      "healingLeft": 2,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 33.4
+        },
+        {
+          "phase": 1,
+          "seconds": 38.8
+        },
+        {
+          "phase": 2,
+          "seconds": 32.3
+        }
+      ],
+      "attacks": [
+        "cleave",
+        "chains",
+        "souls",
+        "beam"
+      ],
+      "loadout": {
+        "main": "wildkeeper_1_0",
+        "summon": "call_wolf",
+        "secondarySummon": null,
+        "level": 20,
+        "equipment": {
+          "main": "staff2h_t4",
+          "chest": "chest_t4",
+          "head": "helm_t4",
+          "gloves": "gloves_t4",
+          "boots": "boots_t4",
+          "belt": "belt_t4"
+        },
+        "skills": {
+          "wildkeeper_1_0": 10,
+          "call_wolf": 9
+        }
+      }
+    },
+    {
+      "boss": "malthoron",
+      "class": "veilranger",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 117.2,
+      "bossRemaining": -1,
+      "playerHp": 398,
+      "maxHp": 398,
+      "damage": 328,
+      "hits": 13,
+      "healingLeft": 5,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 40.7
+        },
+        {
+          "phase": 1,
+          "seconds": 42.7
+        },
+        {
+          "phase": 2,
+          "seconds": 33.8
+        }
+      ],
+      "attacks": [
+        "cleave",
+        "chains",
+        "souls",
+        "beam"
+      ],
+      "loadout": {
+        "main": "veilranger_0_0",
+        "secondarySummon": null,
+        "level": 20,
+        "equipment": {
+          "main": "bow2h_t4",
+          "chest": "chest_t4",
+          "head": "helm_t4",
+          "gloves": "gloves_t4",
+          "boots": "boots_t4",
+          "belt": "belt_t4"
+        },
+        "skills": {
+          "veilranger_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "vethriss",
+      "class": "vanguard",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 200.8,
+      "bossRemaining": 0,
+      "playerHp": 490,
+      "maxHp": 490,
+      "damage": 546,
+      "hits": 18,
+      "healingLeft": 5,
+      "manaLeft": 4,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 57.2
+        },
+        {
+          "phase": 1,
+          "seconds": 74.3
+        },
+        {
+          "phase": 2,
+          "seconds": 69.2
+        }
+      ],
+      "attacks": [
+        "light",
+        "cleave",
+        "lunge",
+        "decoys",
+        "echoes",
+        "fissure",
+        "bile",
+        "chains",
+        "beam"
+      ],
+      "loadout": {
+        "main": "vanguard_0_0",
+        "secondarySummon": null,
+        "level": 25,
+        "equipment": {
+          "main": "sword_t4",
+          "chest": "chest_t4",
+          "head": "helm_t4",
+          "gloves": "gloves_t4",
+          "boots": "boots_t4",
+          "belt": "belt_t4"
+        },
+        "skills": {
+          "vanguard_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "vethriss",
+      "class": "emberwitch",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 255,
+      "bossRemaining": 0,
+      "playerHp": 454,
+      "maxHp": 454,
+      "damage": 611,
+      "hits": 19,
+      "healingLeft": 4,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 74
+        },
+        {
+          "phase": 1,
+          "seconds": 92.8
+        },
+        {
+          "phase": 2,
+          "seconds": 88.3
+        }
+      ],
+      "attacks": [
+        "light",
+        "cleave",
+        "lunge",
+        "decoys",
+        "echoes",
+        "fissure",
+        "bile",
+        "chains",
+        "beam"
+      ],
+      "loadout": {
+        "main": "emberwitch_0_0",
+        "secondarySummon": null,
+        "level": 25,
+        "equipment": {
+          "main": "wand_t4",
+          "chest": "chest_t4",
+          "head": "helm_t4",
+          "gloves": "gloves_t4",
+          "boots": "boots_t4",
+          "belt": "belt_t4"
+        },
+        "skills": {
+          "emberwitch_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "vethriss",
+      "class": "gravebinder",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 247.1,
+      "bossRemaining": 0,
+      "playerHp": 476,
+      "maxHp": 476,
+      "damage": 826,
+      "hits": 28,
+      "healingLeft": 3,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 36.2
+        },
+        {
+          "phase": 1,
+          "seconds": 52.7
+        },
+        {
+          "phase": 2,
+          "seconds": 158.2
+        }
+      ],
+      "attacks": [
+        "light",
+        "cleave",
+        "lunge",
+        "decoys",
+        "echoes",
+        "fissure",
+        "bile",
+        "chains",
+        "beam"
+      ],
+      "loadout": {
+        "main": "venom_spit",
+        "summon": "raise_dead",
+        "secondarySummon": "raise_plaguemage",
+        "level": 25,
+        "equipment": {
+          "main": "wand_t4",
+          "chest": "chest_t4",
+          "head": "helm_t4",
+          "gloves": "gloves_t4",
+          "boots": "boots_t4",
+          "belt": "belt_t4"
+        },
+        "skills": {
+          "venom_spit": 1,
+          "mark_of_frailty": 1,
+          "raise_dead": 10,
+          "raise_plaguemage": 10
+        }
+      }
+    },
+    {
+      "boss": "vethriss",
+      "class": "wildkeeper",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 139.1,
+      "bossRemaining": 0,
+      "playerHp": 488,
+      "maxHp": 488,
+      "damage": 1102,
+      "hits": 37,
+      "healingLeft": 2,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 45.5
+        },
+        {
+          "phase": 1,
+          "seconds": 45.5
+        },
+        {
+          "phase": 2,
+          "seconds": 48.1
+        }
+      ],
+      "attacks": [
+        "light",
+        "cleave",
+        "lunge",
+        "decoys",
+        "echoes",
+        "fissure",
+        "bile",
+        "chains",
+        "beam"
+      ],
+      "loadout": {
+        "main": "wildkeeper_1_0",
+        "summon": "call_wolf",
+        "secondarySummon": null,
+        "level": 25,
+        "equipment": {
+          "main": "staff2h_t4",
+          "chest": "chest_t4",
+          "head": "helm_t4",
+          "gloves": "gloves_t4",
+          "boots": "boots_t4",
+          "belt": "belt_t4"
+        },
+        "skills": {
+          "wildkeeper_1_0": 10,
+          "call_wolf": 10
+        }
+      }
+    },
+    {
+      "boss": "vethriss",
+      "class": "veilranger",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 180.7,
+      "bossRemaining": 0,
+      "playerHp": 468,
+      "maxHp": 468,
+      "damage": 368,
+      "hits": 13,
+      "healingLeft": 5,
+      "manaLeft": 6,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 51.2
+        },
+        {
+          "phase": 1,
+          "seconds": 66.9
+        },
+        {
+          "phase": 2,
+          "seconds": 62.6
+        }
+      ],
+      "attacks": [
+        "light",
+        "cleave",
+        "lunge",
+        "decoys",
+        "echoes",
+        "fissure",
+        "bile",
+        "chains",
+        "beam"
+      ],
+      "loadout": {
+        "main": "veilranger_0_0",
+        "secondarySummon": null,
+        "level": 25,
+        "equipment": {
+          "main": "bow2h_t4",
+          "chest": "chest_t4",
+          "head": "helm_t4",
+          "gloves": "gloves_t4",
+          "boots": "boots_t4",
+          "belt": "belt_t4"
+        },
+        "skills": {
+          "veilranger_0_0": 10
+        }
+      }
+    }
+  ]
+}

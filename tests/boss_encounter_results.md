@@ -1,5 +1,9 @@
 # Boss encounter validation
 
+The subsequent combat refinement, matched-driver balance comparison, and new
+sequence checks are recorded in [boss refinement results](boss_refinement_results.md).
+The measurements below describe the earlier authored-encounter baseline.
+
 Verified September 7, 2026. Browser: Chrome 152.0.7977.76 on Windows.
 
 ## Combat and progression

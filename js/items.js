@@ -214,7 +214,12 @@ const Items = (() => {
       rarity = "rare";
     }
     if (rarity === "unique") {
-      const cands = DATA.UNIQUES.filter(u => u.ilvl <= ilvl + 2);
+      const eligible = DATA.UNIQUES.filter(u => u.ilvl <= ilvl + 2 && slotOk(DATA.BASES[u.base]));
+      let cands = eligible.filter(u => u.ilvl >= lowBand);
+      if (!cands.length && eligible.length) {
+        const highest = Math.max(...eligible.map(u => u.ilvl));
+        cands = eligible.filter(u => u.ilvl === highest);
+      }
       if (cands.length) return makeUnique(U.pick(cands));
       rarity = "rare";
     }
@@ -254,10 +259,36 @@ const Items = (() => {
   }
 
   /* --------------------------------------------------------- drops */
+  function uniqueMultiplier(mf) {
+    mf = Number.isFinite(mf) ? Math.max(0,mf) : 0;
+    return 1 + (150 * mf / (150 + mf)) / 100;
+  }
+  function eligibleSocketables(mlvl) {
+    const glyphLevels = { g_venom:12, g_aegis:16, g_doom:20, g_wraith:24, g_void:28, g_titan:36 };
+    return [
+      (DATA.UNIQUE_CHARMS || []).filter(d => d.ilvl <= mlvl + 2).map(d => () => makeUniqueCharm(d)),
+      (DATA.UNIQUE_JEWELS || []).filter(d => d.ilvl <= mlvl + 2).map(d => () => makeUniqueJewel(d)),
+      Object.values(DATA.GLYPHS).filter(d => d.unique && (d.dropLevel || glyphLevels[d.id]) <= mlvl + 2).map(d => () => makeGlyph(d.id)),
+    ].filter(group => group.length);
+  }
+  function rollGlyph(ilvl, mf = 0, uniqueChance = 0.05) {
+    const levels = { g_venom:12, g_aegis:16, g_doom:20, g_wraith:24, g_void:28, g_titan:36 };
+    const uniques = Object.values(DATA.GLYPHS).filter(g => g.unique && (g.dropLevel || levels[g.id]) <= ilvl + 2);
+    const regular = Object.values(DATA.GLYPHS).filter(g => !g.unique);
+    const pool = uniques.length && Math.random() < uniqueChance * uniqueMultiplier(mf) ? uniques : regular;
+    return makeGlyph(U.pick(pool).id);
+  }
+  function reforgeGlyph(glyph) {
+    const unique = !!DATA.GLYPHS[glyph.glyph]?.unique;
+    return makeGlyph(U.pick(Object.keys(DATA.GLYPHS).filter(id => id !== glyph.glyph && !!DATA.GLYPHS[id].unique === unique)));
+  }
   function rollRarity(source, mf) {
-    const weights = (DATA.RARITY_WEIGHTS[source] || DATA.RARITY_WEIGHTS.normal).map(([k, w]) => {
+    mf = Number.isFinite(mf) ? Math.max(0,mf) : 0;
+    const base = DATA.RARITY_WEIGHTS[source] || DATA.RARITY_WEIGHTS.normal;
+    const unique = base.find(([k]) => k === "unique")?.[1] || 0;
+    if (Math.random() < unique / 100 * uniqueMultiplier(mf)) return "unique";
+    const weights = base.filter(([k]) => k !== "unique").map(([k, w]) => {
       if (k === "rare") w *= 1 + (mf || 0) / 100;
-      if (k === "unique") w *= 1 + (mf || 0) / 100;
       if (k === "enhanced") w *= 1 + (mf || 0) / 250;
       return [k, w];
     });
@@ -297,14 +328,10 @@ const Items = (() => {
     /* jewels: rolled socketables, rarest of the socketables */
     const jewelCh = { elite: 0.05, boss: 0.22, chest: 0.06 }[source] || 0.006;
     if (Math.random() < jewelCh) out.push({ item: makeJewel(Math.max(1, mlvl + U.ri(-1, 2))) });
-    /* Unique socketables follow the same 30% reduction as set/unique gear. */
-    const uSockCh = { elite: 0.021, boss: 0.091, chest: 0.0245 }[source] || 0.0021;
+    const uSockCh = (DATA.UNIQUE_SOCKET_CHANCE[source] ?? DATA.UNIQUE_SOCKET_CHANCE.normal) * uniqueMultiplier(mf);
     if (Math.random() < uSockCh) {
-      const roll = U.ri(0, 2);
-      const uglyphs = Object.keys(DATA.GLYPHS).filter(k => DATA.GLYPHS[k].unique);
-      if (roll === 0 && DATA.UNIQUE_CHARMS && DATA.UNIQUE_CHARMS.length) out.push({ item: makeUniqueCharm(U.pick(DATA.UNIQUE_CHARMS)) });
-      else if (roll === 1 && DATA.UNIQUE_JEWELS && DATA.UNIQUE_JEWELS.length) out.push({ item: makeUniqueJewel(U.pick(DATA.UNIQUE_JEWELS)) });
-      else if (uglyphs.length) out.push({ item: makeGlyph(U.pick(uglyphs)) });
+      const groups = eligibleSocketables(mlvl);
+      if (groups.length) out.push({ item: U.pick(U.pick(groups))() });
     }
     if (Math.random() < cfg.goldCh) {
       out.push({ gold: Math.max(1, Math.floor((U.ri(4, 14) + mlvl * U.ri(2, 5)) * cfg.goldMul * (1 + (goldFind || 0) / 100))) });
@@ -348,6 +375,7 @@ const Items = (() => {
     if (it.block) lines.push({ t: `Block Chance: ${it.block}%`, c: "head" });
     if (it.twoHand) lines.push({ t: "Two-Handed", c: "base" });
     if (!it.identified) { lines.push({ t: "Unidentified", c: "reqbad" }); return lines; }
+    if (typeof UniquePowers !== "undefined") lines.push(...UniquePowers.lines(it));
     for (const a of (it.affixes || [])) {
       // weapon dmg% / armor% are folded into the Damage/Armor headers above — but only when the
       // item HAS that base stat (charms & jewels show these lines normally)
@@ -366,6 +394,7 @@ const Items = (() => {
         if (typeof gid === "object" && gid.jewel) {            // a seated jewel
           const jt = (gid.affixes || []).map(a => DATA.STAT_TEXT[a.stat] ? DATA.STAT_TEXT[a.stat](a.val) : "").filter(Boolean).join(", ");
           lines.push({ t: `◆ ${gid.name || "Jewel"}: ${jt}`, c: "glyph" });
+          if (typeof UniquePowers !== "undefined") lines.push(...UniquePowers.lines(gid));
           continue;
         }
         const g = DATA.GLYPHS[gid];
@@ -373,6 +402,7 @@ const Items = (() => {
         const eff = wpnSide ? g.wpn : g.arm;
         const effTxt = Object.entries(eff).map(([k, v]) => DATA.STAT_TEXT[k] ? DATA.STAT_TEXT[k](v) : "").join(", ");
         lines.push({ t: `◆ ${g.name}: ${effTxt}`, c: "glyph" });
+        if (typeof UniquePowers !== "undefined") lines.push(...UniquePowers.lines(gid, wpnSide ? "wpn" : "arm"));
       }
     }
     /* set membership + bonuses (active lines lit when enough pieces are worn) */
@@ -514,7 +544,8 @@ const Items = (() => {
     const i = item.sockets.indexOf(null);
     if (i < 0) return false;
     if (gem.kind === "jewel") {                 // jewels store their rolled affixes in the socket cell
-      item.sockets[i] = { jewel: true, affixes: gem.affixes, name: gem.name, jcol: gem.jcol };
+      item.sockets[i] = { jewel: true, affixes: gem.affixes.map(a => ({...a})), name: gem.name, jcol: gem.jcol,
+        ...(gem.uniqueId ? { uniqueId: gem.uniqueId, rarity: "unique" } : {}) };
       return { combo: null };
     }
     item.sockets[i] = gem.glyph;
@@ -529,6 +560,7 @@ const Items = (() => {
   return {
     RARITY_COLOR, RARITY_ORDER,
     fromBase, makeConsumable, makeUnique, makeSetItem, makeGlyph, makeCharm, makeJewel, makeUniqueCharm, makeUniqueJewel, rollGear, rollDrops, rollRarity,
+    uniqueMultiplier, rollGlyph, reforgeGlyph, eligibleSocketables,
     rollAffixesOnto, socketGlyph,
     value, sellValue, statLines,
     makeGrid, fits, itemAt, place, remove, autoPlace, canAutoPlace, tidy,

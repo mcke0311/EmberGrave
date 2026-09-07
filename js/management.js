@@ -2,7 +2,7 @@
 "use strict";
 const ForgeRecipes = (() => {
   const recipes = [
-    {id:"glyph", name:"Reforge a glyph", needs:"3 identical glyphs", outcome:"A random different glyph. The offering is consumed."},
+    {id:"glyph", name:"Reforge a glyph", needs:"3 identical glyphs", outcome:"A random different glyph of the same rarity. The offering is consumed."},
     {id:"temper", name:"Temper equipment", needs:"1 common weapon or armor + 1 glyph", outcome:"The equipment gains random enhanced powers. The glyph is consumed."},
     {id:"reweave", name:"Reweave a rare", needs:"1 identified rare item + 3 glyphs", outcome:"The rare item's powers are rolled again. All three glyphs are consumed."},
     {id:"potion", name:"Distill draughts", needs:"3 matching lesser or greater Life / Aether draughts", outcome:"One stronger draught. Unused quantities are returned."},

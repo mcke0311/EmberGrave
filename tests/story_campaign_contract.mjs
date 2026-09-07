@@ -120,9 +120,13 @@ boss.hp=boss.maxHp*.34;boss.update(.01,s.player,s.map);
 ok(boss.spriteOpts.kind==='wraith'&&boss.def.copyBosses,'final phase is not a shadow copying bosses');
 boss.aggro=true;
 boss.encounter.memoryIndex=0;
-for(const id of ['korvath','mire_mother','azram','malthoron']){
+s.player.hp=s.player.stats.maxHp=1e6; // Inspect both real sequence steps without ending the story fixture.
+for(const pair of [['korvath','mire_mother'],['azram','malthoron']]){
   boss.encounter.start('memory',s.player);
-  ok(boss.encounter.attack.remembered===id&&boss.encounter.attack.id===({korvath:'fissure',mire_mother:'bile',azram:'chains',malthoron:'beam'})[id],'missing copied signature: '+id);
+  for(const [i,id] of pair.entries()){
+    ok(boss.encounter.attack.remembered===id&&boss.encounter.attack.id===({korvath:'fissure',mire_mother:'bile',azram:'chains',malthoron:'beam'})[id],'missing copied signature: '+id);
+    if(i===0){boss.encounter.execute();boss.update(.25,s.player,s.map);}
+  }
 }
 for(const ending of ['destroy','seal','give']){
   s=fresh('throne');s.flags['dead_vethriss@0']=true;s.quests.q18={state:'reward'};

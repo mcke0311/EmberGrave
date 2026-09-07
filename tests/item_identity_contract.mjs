@@ -2,7 +2,9 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 
-for (const file of ['js/utils.js','js/data.js','js/items.js','js/sprite_manifest.js','js/sprite_assets.js','tests/item_catalog.js']) {
+globalThis.window = { matchMedia: () => ({ matches: true, addEventListener() {} }) };
+
+for (const file of ['js/utils.js','js/data.js','js/unique_powers.js','js/items.js','js/sprite_manifest.js','js/sprite_assets.js','tests/item_catalog.js']) {
   vm.runInThisContext(fs.readFileSync(new URL('../'+file, import.meta.url), 'utf8'), { filename:file });
 }
 const { D, I, S, rows } = vm.runInThisContext('({D:DATA,I:Items,S:SpriteAssets,rows:ItemCatalog})');

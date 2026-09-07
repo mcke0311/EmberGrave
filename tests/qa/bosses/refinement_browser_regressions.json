@@ -1,0 +1,18 @@
+{
+  "checks": [
+    {
+      "name": "monster_targeting_contract",
+      "result": "PASS: 242,561 checks. All 22 monster mappings and every enemy/elite definition; rendered silhouettes, animation/facing, raised terrain, jumping, overlap order, dead bodies, first-click targeting, overhead bars and resistance nameplates. Saves isolated in memory."
+    },
+    {
+      "name": "story_campaign",
+      "result": "PASS 25 browser checks — NPC dialogue, market, scholar rescue, cathedral objectives, Hells portal, boss forms and three ending choices. No runtime errors."
+    },
+    {
+      "name": "preview_controls",
+      "result": "PASS sequence selection, preview, and five quarter-second steps into the second warning."
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

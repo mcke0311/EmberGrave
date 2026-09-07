@@ -5,10 +5,10 @@
 const BossEncounters = (() => {
   const TAU = Math.PI * 2;
   const definitions = DATA.BOSS_ENCOUNTERS = {
-    korvath: { zone:"shattered_temple", cap:2, color:"#ffb65a", phases:["The Last Defender","Oathfire"], rotations:[["cleave","fissure"],["cleave","fissure","fissure"]] },
+    korvath: { zone:"shattered_temple", cap:2, color:"#ffb65a", phases:["The Last Defender","Oathfire"], rotations:[["cleave","fissure"],["cleave","fissure"]] },
     mire_mother: { zone:"ritual_site", cap:4, color:"#b9e76f", phases:["The Marsh's Embrace","The Shard Exposed","She Will Not Let Go"], rotations:[["bile","grasp"],["bile","grasp"],["bile","grasp","bile"]] },
-    azram: { zone:"khal_palace", cap:4, color:"#ffd979", phases:["The Gilded Throne","Portals to the Past","Molten Crown"], rotations:[["chains","cleave"],["chains","portals","chains"],["gold","portals","chains"]] },
-    empty_archangel: { zone:"cathedral1", cap:0, color:"#e6d6ff", phases:["The Borrowed Voice","Broken Wings"], rotations:[["wings","descent"],["cross","wings","descent"]] },
+    azram: { zone:"khal_palace", cap:4, color:"#ffd979", phases:["The Gilded Throne","Portals to the Past","Molten Crown"], rotations:[["chains","cleave"],["portals","chains","chains"],["portals","gold","chains"]] },
+    empty_archangel: { zone:"cathedral1", cap:0, color:"#e6d6ff", phases:["The Borrowed Voice","Broken Wings"], rotations:[["wings","descent"],["wings","descent"]] },
     malthoron: { zone:"cathedral2", cap:2, color:"#c6a5ff", phases:["The Hollow Plate","Souls Unbound","The King Unmade"], rotations:[["cleave","chains"],["souls","cleave"],["beam","souls"]] },
     vethriss: { zone:"throne", cap:3, color:"#95ffe0", phases:["Seraneth, Wounded","The Serpent's Lie","The Shadow Remembers"], rotations:[["light","cleave"],["lunge","decoys","lunge"],["memory"]] },
   };
@@ -44,6 +44,7 @@ const BossEncounters = (() => {
       this.home={x:mon.x,y:mon.y}; this.owned=[]; this.pools=[]; this.debris=[];
       this.active=false; this.phase=0; this.stage="idle"; this.timer=.8; this.attack=null; this.rotation=0; this.memoryIndex=0;
       this.portalPhases=new Set();
+      this.sequence=null;this.pursuit=0;this.beamCount=0;
       this.pose="idle"; this.label=""; this.elapsed=0; this.resetCount=0; this.setArt();
       if(mon.defId==="mire_mother")delete mon.def.deathBurst;
     }
@@ -55,10 +56,13 @@ const BossEncounters = (() => {
     targets(fn) {
       const p=this.world.player;
       if(!p.dead)fn(p);
-      for(const m of this.world.minions)if(!m.dead)fn(m);
+      for(const m of this.world.minions)if(this.active&&!m.dead)fn(m);
     }
     clearAttacks() {
-      this.attack=null; this.pools.length=0;
+      if(typeof BossVFX!=='undefined')BossVFX.cancel(this);
+      this.attack=null;this.sequence=null;this.pursuit=0;this.pools.length=0;
+      // Illusion channels belong to the canceled sequence, not an independent AI.
+      for(const m of this.owned)if(m.encounterKind==="decoy"){m.dead=true;m.hp=0;m.corpseT=0;}
       const owner=this.mon,owned=this.owned;
       this.world.projectiles=this.world.projectiles.filter(p=>p.bossOwner!==owner&&p.mon!==owner&&!owned.includes(p.mon));
       this.mon.action=null;this.mon.path=null;this.mon.moving=false;
@@ -77,6 +81,7 @@ const BossEncounters = (() => {
       m.stunT=0;m.slowT=0;m.slowPct=0;m.noHeal=false;m.healthBarUntil=0;
       this.active=false;this.phase=0;this.stage="idle";this.timer=.8;this.rotation=0;this.memoryIndex=0;this.pose="idle";this.label="";this.elapsed=0;this.resetCount++;
       this.portalPhases.clear();
+      this.beamCount=0;
       if(m.defId==="mire_mother")delete m.def.deathBurst;
       this.setArt();
     }
@@ -109,6 +114,7 @@ const BossEncounters = (() => {
       if(m.defId==="korvath"&&index===1)this.wave(["barb_guard","barb_guard"]);
       if(m.defId==="mire_mother")this.wave(["drowned_dead","drowned_dead"]);
       if(m.defId==="malthoron") {
+        m.def.armor=this.base.armor*(index===1?.7:.4);
         for(let i=0;i<5;i++)this.debris.push({x:m.x,y:m.y,part:i,angle:i*TAU/5,ttl:2,maxTtl:2,phase:index-1});
         if(index===1)this.wave(["hollow_knight","hollow_knight"]);
       }
@@ -145,41 +151,59 @@ const BossEncounters = (() => {
     }
     updateOwned(dt) {
       for(const m of this.owned) {
-        if(m.dead)continue;
-        if(m.encounterKind==="portal") {
-          m.portalTimer-=dt;
+        // Monster.die assigns its ordinary corpse lifetime after onOwnedDeath.
+        if(m.dead){if(m.encounterKind==="decoy")m.corpseT=0;continue;}
+        if(m.encounterKind==="portal"&&m.portalSpawns>0) {
+          m.portalTimer=Math.max(0,m.portalTimer-dt);
           if(m.portalTimer<=0&&m.portalSpawns>0) {
-            m.portalTimer=2.5;
             const ids=["frost_risen","drowned_dead","sand_raider"],id=ids[(this.rotation+m.portalSpawns)%ids.length];
-            if(this.spawn(id,m.x+1,m.y+1))m.portalSpawns--;
+            if(this.spawn(id,m.x+1,m.y+1)){m.portalSpawns--;m.portalTimer=2.5;}
           }
         }
         if(!insideArena(this.arena,m.x,m.y,.5)){const p=this.safePoint(m.x,m.y);if(p){m.x=p.x;m.y=p.y;}m.path=null;}
       }
     }
-    damage(shape,mult,elem) {
-      this.targets(t=>{if(t.groundImmune)return;if(contains(shape,t.x,t.y))t.takeDamage(U.rf(...this.mon.def.dmg)*2.2*(this.mon.def.dmgMult||1)*this.mon.witherMult()*mult*(t===this.world.player?1:.45),this.mon,elem);});
+    damage(shape,mult,elem,hit=null) {
+      this.targets(t=>{if(t.groundImmune||hit?.has(t))return;if(contains(shape,t.x,t.y)){hit?.add(t);t.takeDamage(U.rf(...this.mon.def.dmg)*2.2*(this.mon.def.dmgMult||1)*this.mon.witherMult()*mult*(t===this.world.player?1:.45),this.mon,elem);}});
     }
     start(id,player) {
-      const m=this.mon;let remembered=null;
+      const m=this.mon;
+      if(typeof BossVFX!=='undefined')BossVFX.cancel(this);
+      if(this.sequence)for(const owned of this.owned)if(owned.encounterKind==="decoy"){owned.dead=true;owned.hp=0;owned.corpseT=0;}
       if(id==="portals"&&this.portalPhases.has(this.phase))id=this.phase===2?"gold":"chains";
+      let steps=[{id}],recovery=null;
       if(id==="memory") {
-        remembered=["korvath","mire_mother","azram","malthoron"][this.memoryIndex++%4];
-        id={korvath:"fissure",mire_mother:"bile",azram:"chains",malthoron:"beam"}[remembered];
+        steps=this.memoryIndex++%2===0
+          ?[{id:"fissure",remembered:"korvath"},{id:"bile",remembered:"mire_mother"}]
+          :[{id:"chains",remembered:"azram"},{id:"beam",remembered:"malthoron"}];
+        recovery=2.25;
+      } else if(id==="fissure"&&m.defId==="korvath"&&this.phase>0) {
+        steps.push({id:"fissure",angle:Math.atan2(player.y-m.y,player.x-m.x)+Math.PI/2});recovery=2;
+      } else if(id==="descent"&&m.defId==="empty_archangel"&&this.phase>0) {
+        steps.push({id:"cross"});recovery=2;
+      } else if(id==="decoys") {
+        steps.push({id:"echoes"});recovery=2;
       }
-      const angle=Math.atan2(player.y-m.y,player.x-m.x),base={x:m.x,y:m.y,angle};
-      const a={id,remembered,shapes:[],windup:1,recovery:1.25,mult:1.05,elem:"phys",duration:.22,age:0,tick:0,color:this.config.color};
+      this.sequence={steps,index:0,recovery};this.pursuit=0;
+      this.startStep(player);
+    }
+    startStep(player) {
+      const m=this.mon,sequence=this.sequence,{id,remembered=null,angle:lockedAngle}=sequence.steps[sequence.index];
+      const angle=lockedAngle??Math.atan2(player.y-m.y,player.x-m.x),base={x:m.x,y:m.y,angle};
+      const a={id,remembered,stepIndex:sequence.index,stepCount:sequence.steps.length,shapes:[],windup:1,recovery:1.25,mult:1.05,elem:"phys",duration:.22,age:0,tick:0,color:this.config.color,hit:new Set()};
       const line=(ang,width=1.4,length=9)=>({...base,kind:"line",angle:ang,width,length});
       switch(id) {
         case "cleave":a.label="Committed Cleave";a.shapes=[{...base,kind:"cone",radius:4,arc:Math.PI*.7}];break;
-        case "fissure":a.label="Oathbreak Fissure";a.shapes=[line(angle)];a.mult=1.2;a.elem="fire";a.followup=m.defId==="korvath"&&this.phase>0;break;
+        case "fissure":a.label="Oathbreak Fissure";a.shapes=[line(angle)];a.mult=1.2;a.elem="fire";break;
         case "bile": {
           a.label="Bilefall";a.elem="poison";a.mult=.55;a.recovery=2.25;
           const p=this.safePoint(player.x,player.y);if(p)a.shapes.push({...p,kind:"circle",radius:1.6});
           if(m.defId==="mire_mother"&&this.phase===2){const q=this.safePoint(player.x+Math.cos(angle+Math.PI/2)*3.8,player.y+Math.sin(angle+Math.PI/2)*3.8);if(q)a.shapes.push({...q,kind:"circle",radius:1.6});}
           break;
         }
-        case "grasp":a.label="The Marsh Reaches";a.shapes=[{...base,kind:"ring",inner:2.7,radius:5}];a.elem="poison";a.mult=1.15;break;
+        case "grasp":
+          a.label="The Marsh Reaches";a.shapes=[{...base,kind:"ring",inner:2.7,radius:5}];a.elem="poison";a.mult=1.15;a.recovery=2.25;
+          this.pools=this.pools.filter(p=>U.dist(m.x,m.y,p.x,p.y)>2.7+p.radius);break;
         case "chains":a.label="Chains of Khal-Zahir";a.shapes=[line(angle,1.25,10),{...line(angle,1.25,10),x:m.x+Math.cos(angle+Math.PI/2)*3,y:m.y+Math.sin(angle+Math.PI/2)*3}];a.elem="light";break;
         case "portals":a.label="Portals to the Past";a.shapes=[{x:m.x-3,y:m.y+2,kind:"circle",radius:1},{x:m.x+3,y:m.y-2,kind:"circle",radius:1}];a.mult=0;a.recovery=2;break;
         case "gold":a.label="Molten Crown";a.shapes=[{...base,kind:"cone",radius:6,arc:Math.PI*.65}];a.elem="fire";a.mult=1.2;break;
@@ -193,14 +217,37 @@ const BossEncounters = (() => {
           a.label="Empty Benediction";const p=this.safePoint(player.x,player.y,this.mon.radius);if(p)a.shapes=[{...p,kind:"circle",radius:2.3}];a.elem="light";a.mult=1.2;a.recovery=1.6;break;
         }
         case "cross":a.label="Fractured Sanctum";a.shapes=[{x:m.x-6,y:m.y,kind:"line",angle:0,width:1.5,length:12},{x:m.x,y:m.y-6,kind:"line",angle:Math.PI/2,width:1.5,length:12}];a.elem="light";break;
-        case "beam":a.label="The Hollow Choir";a.shapes=[line(angle-.45,1.35,10)];a.startAngle=angle-.45;a.duration=3;a.windup=1.2;a.mult=.32;a.elem="shadow";break;
+        case "beam":
+          a.label="The Hollow Choir";a.sweepDirection=this.beamCount++%2===0?1:-1;a.startAngle=angle-.45*a.sweepDirection;
+          a.shapes=[line(a.startAngle,1.35,10)];a.duration=3;a.windup=1.2;a.mult=.32;a.elem="shadow";a.recovery=2;break;
         case "light":a.label="Borrowed Light";a.shapes=[line(angle,1.1,9)];a.elem="light";a.mult=.55;break;
         case "lunge":a.label="Serpent's Fang";a.shapes=[line(angle,1.6,Math.min(8,Math.hypot(player.x-m.x,player.y-m.y)+1.5))];a.mult=1.1;a.duration=.45;break;
         case "decoys":a.label="Three Beautiful Lies";a.shapes=[];a.mult=0;a.recovery=1.5;break;
+        case "echoes":
+          a.label="Shatter the Lies";a.windup=1.25;a.mult=.25;a.elem="shadow";
+          for(const decoy of this.owned)if(!decoy.dead&&decoy.encounterKind==="decoy") {
+            decoy.echoLane={kind:"line",x:decoy.x,y:decoy.y,angle:Math.atan2(player.y-decoy.y,player.x-decoy.x),width:1,length:6};
+            decoy.spriteOpts.bossPose="windup";a.shapes.push(decoy.echoLane);
+          }
+          if(!a.shapes.length){this.recover(2,"Lies Shattered");return;}
+          break;
       }
+      if(sequence.recovery!==null)a.recovery=sequence.recovery;
       if(remembered)a.label=DATA.ENEMIES[remembered].name.split(",")[0]+" · "+a.label;
       this.attack=a;this.stage="windup";this.timer=a.windup;this.pose="windup";this.label=a.label;
-      m.path=null;m.moving=false;m.face(player.x,player.y);this.setArt();Sfx.play("shrine");
+      if(typeof BossVFX!=='undefined')BossVFX.begin(this);
+      m.path=null;m.moving=false;m.face(m.x+Math.cos(angle),m.y+Math.sin(angle));this.setArt();Sfx.play("shrine");
+    }
+    recover(seconds,label="Opening") {
+      this.sequence=null;this.stage="recovery";this.timer=seconds;this.recoveryDuration=seconds;
+      this.pose="recovery";this.label=label;this.setArt();
+    }
+    statusText() {
+      if(this.stage==="transition")return "Changing form";
+      if(this.stage==="recovery")return (this.mon.defId==="mire_mother"&&this.phase>0?(this.phase===1?this.config.phases[1]:"Shard exposed")+" · +25% damage":this.label)+" · "+this.timer.toFixed(1)+"s";
+      if(this.stage==="idle")return this.pose==="movement"?"Closing distance":"Stand ready";
+      const a=this.attack;
+      return a?a.label+(a.stepCount>1?" · "+(a.stepIndex+1)+"/"+a.stepCount:"")+(this.stage==="windup"?" · "+this.timer.toFixed(1)+"s":a.id==="portals"?" · Portals open":a.id==="decoys"?" · Illusions forming":" · Strike"):"";
     }
     execute() {
       const a=this.attack,m=this.mon;
@@ -214,12 +261,14 @@ const BossEncounters = (() => {
         this.clearOwned();
         for(let i=0;i<3;i++)this.spawn("boss_decoy",m.x+Math.cos(i*TAU/3)*3.5,m.y+Math.sin(i*TAU/3)*3.5,"decoy");
       } else if(a.projectiles) {
-        for(const s of a.shapes){Game.spawnProjectile({x:s.x,y:s.y,tx:s.x+Math.cos(s.angle)*s.length,ty:s.y+Math.sin(s.angle)*s.length,speed:5,ttl:s.length/5,kind:"soulbolt",elem:a.elem,fromPlayer:false,mon:m,bossOwner:m,bossLane:s,bossMult:a.mult});}
-      } else if(a.id!=="beam"&&a.id!=="lunge")for(const s of a.shapes)this.damage(s,a.mult,a.elem);
+        for(const s of a.shapes){Game.spawnProjectile({x:s.x,y:s.y,tx:s.x+Math.cos(s.angle)*s.length,ty:s.y+Math.sin(s.angle)*s.length,speed:5,ttl:s.length/5,kind:"soulbolt",elem:a.elem,fromPlayer:false,mon:m,bossOwner:m,bossLane:s,bossMult:a.mult,bossVisual:{id:a.id,remembered:a.remembered}});}
+      } else if(a.id!=="beam"&&a.id!=="lunge")for(const s of a.shapes){this.damage(s,a.mult,a.elem,a.hit);if(!this.active||this.attack!==a)return;}
       if(!this.active)return; // A lethal impact may synchronously reset the entire fight.
+      if(a.id==="echoes")this.clearOwned();
       if(a.id==="bile")for(const s of a.shapes){if(this.pools.length>=3)this.pools.shift();this.pools.push({...s,ttl:6,tick:.75});}
       if(a.id==="descent"&&a.shapes[0]){m.x=a.shapes[0].x;m.y=a.shapes[0].y;}
       if(a.id==="lunge"){a.start={x:m.x,y:m.y};a.hit=new Set();}
+      if(typeof BossVFX!=='undefined')BossVFX.impact(this);
       Sfx.play(a.id==="bile"?"blast":"slam");
     }
     update(dt,player,map) {
@@ -232,6 +281,7 @@ const BossEncounters = (() => {
         if(!m.spoke){m.spoke=true;Game.msg(m.name+": “"+m.def.aggroLines[0]+"”",this.config.color);}
       }
       this.elapsed+=dt;
+      if(typeof BossVFX!=='undefined')BossVFX.update(this,dt);
       const next=m.def.phases?.[this.phase];
       if(next&&m.hp<=m.maxHp*next.at){this.phaseChange(this.phase+1);return;}
       this.updateOwned(dt);
@@ -241,8 +291,9 @@ const BossEncounters = (() => {
       if(this.stage==="execute") {
         const a=this.attack;a.age+=dt;
         if(a.id==="beam") {
-          a.shapes[0].angle=a.startAngle+Math.min(1,a.age/a.duration)*.9;
+          a.shapes[0].angle=a.startAngle+Math.min(1,a.age/a.duration)*.9*a.sweepDirection;
           a.tick-=dt;if(a.tick<=0){a.tick=.45;this.damage(a.shapes[0],a.mult,a.elem);}
+          if(!this.active||this.attack!==a)return;
         }
         if(a.id==="lunge") {
           const s=a.shapes[0],k=Math.min(1,a.age/a.duration),x=a.start.x+Math.cos(s.angle)*s.length*k,y=a.start.y+Math.sin(s.angle)*s.length*k;
@@ -250,28 +301,42 @@ const BossEncounters = (() => {
           if(insideArena(this.arena,x,y,m.radius)&&footprint(map,x,y,m.radius)){m.x=x;m.y=y;}
           else swept.length=0;
           this.targets(t=>{if(!t.groundImmune&&!a.hit.has(t)&&contains(s,t.x,t.y)&&contains(swept,t.x,t.y)){a.hit.add(t);t.takeDamage(U.rf(...m.def.dmg)*2.2*(m.def.dmgMult||1)*a.mult*m.witherMult()*(t===player?1:.45),m);}});
+          if(!this.active||this.attack!==a)return;
         }
       }
       if(this.timer>0)return;
       if(this.stage==="windup"){this.execute();return;}
       if(this.stage==="execute") {
-        if(this.attack.followup){this.attack.followup=false;this.start("fissure",player);this.attack.followup=false;return;}
-        this.stage="recovery";this.timer=this.attack.recovery;this.pose="recovery";this.setArt();return;
+        if(this.sequence&&++this.sequence.index<this.sequence.steps.length){this.startStep(player);return;}
+        this.recover(this.attack.recovery);return;
       }
-      if(this.stage==="recovery"||this.stage==="transition"){this.attack=null;this.stage="idle";this.timer=.45;this.pose="idle";this.setArt();return;}
+      if(this.stage==="recovery"||this.stage==="transition"){this.attack=null;this.stage="idle";this.timer=.45;this.pose="idle";this.label="";this.setArt();return;}
       if(m.stunT>0||(m.frozen&&this.world.time<m.frozen)){this.timer=.1;return;}
-      const rotation=this.config.rotations[this.phase],id=rotation[this.rotation%rotation.length];
+      const rotation=this.config.rotations[this.phase];let id=rotation[this.rotation%rotation.length];
       // Melee attacks close the distance before committing; other patterns prevent endless kiting.
       if(id==="cleave"&&U.dist(m.x,m.y,player.x,player.y)>4.2) {
+        this.pursuit+=dt;
+        if(this.pursuit>=1.5)id=m.defId==="korvath"?"fissure":m.defId==="vethriss"?"light":m.defId==="malthoron"&&this.phase>0?"souls":"chains";
+        else {
         const beforeX=m.x,beforeY=m.y;
         m.chase(dt,player,map,(x,y)=>MapGen.walkable(map,x,y));
         if(!insideArena(this.arena,m.x,m.y,m.radius)){m.x=beforeX;m.y=beforeY;m.path=null;}
         this.pose="movement";this.setArt();return;
+        }
       }
       this.rotation++;this.start(id,player);
     }
     onOwnedDeath(mon) {
-      if(mon.encounterKind==="portal"&&this.active){this.clearAttacks();this.stage="recovery";this.timer=1.5;this.pose="recovery";this.label="Chains Broken";this.setArt();}
+      if(!this.active)return;
+      if(mon.encounterKind==="portal") {
+        const pairBroken=!this.owned.some(m=>!m.dead&&m.encounterKind==="portal");
+        this.clearAttacks();this.recover(pairBroken?2.5:1.5,pairBroken?"The Past Sealed":"Chains Broken");Sfx.play("shrine");
+      }
+      if(mon.encounterKind==="decoy"&&this.sequence) {
+        if(this.attack?.id==="echoes")this.attack.shapes=this.attack.shapes.filter(s=>s!==mon.echoLane);
+        if(!this.owned.some(m=>!m.dead&&m.encounterKind==="decoy")){this.clearAttacks();this.recover(2,"Lies Shattered");Sfx.play("shrine");}
+      }
+      if(typeof BossVFX!=='undefined')BossVFX.ownedDeath(this,mon);
     }
   }
 
@@ -305,11 +370,23 @@ const BossEncounters = (() => {
         ctx.save();ctx.translate(U.isoX(x,y)-cam.x,U.isoY(x,y)-cam.y-45-60*Math.sin(t*Math.PI));ctx.rotate(d.angle*t);
         SpriteAssets.drawFrame(ctx,SpriteAssets.getFrame("actor.boss.malthoron_plate",d.part),0,0,{scale:.24,alpha:Math.min(1,d.ttl*2)});ctx.restore();
       }
-      for(const p of e.pools){trace(ctx,p,cam);ctx.globalAlpha=.22;ctx.fill();ctx.globalAlpha=.85;ctx.stroke();}
+      for(const p of e.pools){trace(ctx,p,cam);ctx.globalAlpha=.3;ctx.fill();ctx.setLineDash([3,4]);ctx.globalAlpha=.85;ctx.stroke();ctx.setLineDash([]);}
+      for(const portal of e.owned)if(!portal.dead&&portal.encounterKind==="portal") {
+        const x=U.isoX(portal.x,portal.y)-cam.x,y=U.isoY(portal.x,portal.y)-cam.y+40;
+        const full=e.owned.filter(m=>!m.dead&&m.encounterKind!=="portal").length>=e.config.cap;
+        const label=portal.portalSpawns>0?(portal.portalTimer===0&&full?"Waiting":portal.portalTimer.toFixed(1)+"s")+" · "+portal.portalSpawns+" left":"Spent portal";
+        ctx.globalAlpha=1;ctx.fillStyle="rgba(8,7,5,.9)";ctx.fillRect(x-63,y-12,126,19);
+        ctx.fillStyle=e.config.color;ctx.font="12px sans-serif";ctx.textAlign="center";ctx.fillText(label,x,y+2);ctx.textAlign="left";
+      }
       const attack=e.attack;
       if(attack&&(e.stage==="windup"||e.stage==="execute"))for(const s of attack.shapes) {
-        trace(ctx,s,cam);ctx.globalAlpha=e.stage==="windup"?.14+.18*(1-e.timer/attack.windup):.52;ctx.fill();ctx.globalAlpha=.95;ctx.stroke();
-        if(attack.id==="beam"&&e.stage==="execute"){trace(ctx,{...s,angle:s.angle+.22},cam);ctx.setLineDash([6,5]);ctx.globalAlpha=.65;ctx.stroke();ctx.setLineDash([]);}
+        ctx.fillStyle=e.config.color;ctx.lineWidth=e.stage==="windup"?2.5:4;
+        trace(ctx,s,cam);ctx.globalAlpha=e.stage==="windup"?.14+.18*(1-e.timer/attack.windup):(typeof BossVFX!=='undefined'&&BossVFX.enabled?.18:.52);ctx.fill();ctx.globalAlpha=.95;ctx.stroke();
+        if(attack.id==="beam") {
+          const progress=e.stage==="windup"?0:attack.age/attack.duration;
+          trace(ctx,{...s,angle:attack.startAngle+Math.min(1,progress+.22/.9)*.9*attack.sweepDirection},cam);
+          ctx.setLineDash([6,5]);ctx.lineWidth=1.5;ctx.globalAlpha=.65;ctx.stroke();ctx.setLineDash([]);
+        }
       }
       ctx.restore();
     }

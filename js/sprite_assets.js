@@ -1030,7 +1030,7 @@ const SpriteAssets = (() => {
   function drawActor(ctx, opts, pose) {
     if(opts.bossArt){
       const m=bossTransform(pose,opts);ctx.save();ctx.transform(m.a,m.b,m.c,m.d,m.e,m.f);
-      const frame=bossFrame(opts);ctx.globalAlpha*=opts.bossDecoy?.38:1;
+      const frame=bossFrame(opts);ctx.globalAlpha*=(opts.bossDecoy?.38:1)*(pose.ex?.bossMotion?.alpha??1);
       if(opts.bossFlash)ctx.drawImage(bossFlashFrame(frame),-frame.anchorX,-frame.anchorY);
       else drawFrame(ctx,frame,0,0);
       ctx.restore();return true;
@@ -1062,10 +1062,11 @@ const SpriteAssets = (() => {
   }
   function bossTransform(pose,opts) {
     const scale=(opts.scale||1)*.42,flip=Math.cos(pose.ang||0)<-.15?-1:1;
-    // Authored key poses carry the strike and death silhouette. Only idle/walk bob.
+    // One affine transform drives the art, hit flash, compiled picking mask and UI.
     const moving=opts.bossPose==="movement",idle=opts.bossPose==="idle";
     const bob=motionPreference?.matches?0:moving?-Math.abs(Math.sin((pose.t||0)*8))*1.5:idle?Math.sin((pose.t||0)*1.8)*.5:0;
-    return {a:scale*flip,b:0,c:0,d:scale,e:0,f:bob};
+    const m=pose.ex?.bossMotion,rot=m?.rot||0,c=Math.cos(rot),s=Math.sin(rot),sx=m?.sx??1,sy=m?.sy??1;
+    return {a:c*scale*flip*sx,b:s*scale*flip*sx,c:-s*scale*sy,d:c*scale*sy,e:m?.x||0,f:bob+(m?.y||0)};
   }
 
   function fatal(err) {

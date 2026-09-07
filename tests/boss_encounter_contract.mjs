@@ -102,8 +102,12 @@ ok(p.xp===rewards.xp&&s.ground.length===rewards.ground&&JSON.stringify(s.flags)=
 ({s,p,m,e}=fresh('vethriss'));m.takeDamage(1e9,p);ok(Math.abs(m.hp/m.maxHp-.7)<1e-8&&!m.dead,'first form skipped');tick(s,.025);
 m.takeDamage(1e9,p);ok(Math.abs(m.hp/m.maxHp-.35)<1e-8&&!m.dead,'serpent skipped');tick(s,.025);
 ok(e.phase===2&&m.spriteOpts.bossPhase===2,'shadow art absent');
-for(const [id,signature] of [['korvath','fissure'],['mire_mother','bile'],['azram','chains'],['malthoron','beam']]){
- e.start('memory',p);ok(e.attack.remembered===id&&e.attack.id===signature,'wrong remembered signature');
+for(const pair of [[['korvath','fissure'],['mire_mother','bile']],[['azram','chains'],['malthoron','beam']]]){
+ e.start('memory',p);
+ for(const [i,[id,signature]] of pair.entries()){
+  ok(e.attack.remembered===id&&e.attack.id===signature,'wrong remembered signature');
+  if(i===0){e.execute();tick(s,e.attack.duration+.025);}
+ }
 }
 m.takeDamage(1e9,p);ok(m.dead&&s.flags['dead_vethriss@0']&&!e.active,'final victory missing');
 

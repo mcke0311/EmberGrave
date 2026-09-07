@@ -1,0 +1,472 @@
+{
+  "environment": {
+    "browser": "152.0.7977.76",
+    "platform": "win32"
+  },
+  "zone": "north_wild",
+  "key": "Shift",
+  "width": 3840,
+  "height": 2160,
+  "seconds": 6,
+  "warmupMs": 2000,
+  "terrainVersion": "current",
+  "sourceRef": null,
+  "results": [
+    {
+      "mode": "normal",
+      "scene": {
+        "boss": "malthoron",
+        "phase": 2,
+        "monsters": 3,
+        "army": 7,
+        "baseline": "Authored controller"
+      },
+      "frames": 341,
+      "cpuMs": {
+        "median": 10.1,
+        "p95": 12.5,
+        "max": 17.7
+      },
+      "frameIntervals": {
+        "median": 18,
+        "p95": 18.1,
+        "max": 18.6
+      },
+      "parts": {
+        "updateHover": {
+          "median": 0,
+          "p95": 0.1,
+          "max": 0.2
+        },
+        "enemyAI": {
+          "median": 0,
+          "p95": 0.1,
+          "max": 0.4
+        },
+        "update": {
+          "median": 0.3,
+          "p95": 0.7,
+          "max": 1.1
+        },
+        "beginFrame": {
+          "median": 0,
+          "p95": 0.1,
+          "max": 0.2
+        },
+        "drawBackdrop": {
+          "median": 0,
+          "p95": 0.1,
+          "max": 0.1
+        },
+        "drawFloor": {
+          "median": 0,
+          "p95": 0.1,
+          "max": 0.1
+        },
+        "clipBehind": {
+          "median": 0,
+          "p95": 0.1,
+          "max": 0.2
+        },
+        "drawProp": {
+          "median": 0.1,
+          "p95": 0.4,
+          "max": 0.5
+        },
+        "drawEntity": {
+          "median": 0.1,
+          "p95": 0.7,
+          "max": 1.1
+        },
+        "player3d": {
+          "median": 1.1,
+          "p95": 1.3,
+          "max": 1.9
+        },
+        "renderLighting": {
+          "median": 0.7,
+          "p95": 0.8,
+          "max": 1.6
+        },
+        "bossDraw": {
+          "median": 0,
+          "p95": 0.1,
+          "max": 0.1
+        },
+        "renderMinimap": {
+          "median": 0,
+          "p95": 0.1,
+          "max": 0.5
+        },
+        "HUD": {
+          "median": 0.2,
+          "p95": 0.3,
+          "max": 2.2
+        },
+        "render": {
+          "median": 9.7,
+          "p95": 11.9,
+          "max": 17.2
+        },
+        "repath": {
+          "median": 0,
+          "p95": 0,
+          "max": 0.1
+        }
+      },
+      "inputEvents": [
+        {
+          "name": "keydown",
+          "start": 25178.900000035763,
+          "duration": 40,
+          "interactionId": 3566,
+          "inputDelay": 0.30000001192092896,
+          "processing": 0.19999998807907104,
+          "presentation": 39.5
+        },
+        {
+          "name": "keyup",
+          "start": 25179.700000047684,
+          "duration": 40,
+          "interactionId": 3566,
+          "inputDelay": 0.19999998807907104,
+          "processing": 0,
+          "presentation": 39.80000001192093
+        },
+        {
+          "name": "keydown",
+          "start": 25484.400000035763,
+          "duration": 40,
+          "interactionId": 3573,
+          "inputDelay": 0.19999998807907104,
+          "processing": 0,
+          "presentation": 39.80000001192093
+        },
+        {
+          "name": "keyup",
+          "start": 25484.900000035763,
+          "duration": 40,
+          "interactionId": 3573,
+          "inputDelay": 0.09999996423721313,
+          "processing": 0,
+          "presentation": 39.90000003576279
+        },
+        {
+          "name": "keydown",
+          "start": 25798.100000023842,
+          "duration": 48,
+          "interactionId": 3580,
+          "inputDelay": 13.300000011920929,
+          "processing": 0.09999996423721313,
+          "presentation": 34.60000002384186
+        },
+        {
+          "name": "keyup",
+          "start": 25812.200000047684,
+          "duration": 48,
+          "interactionId": 3580,
+          "inputDelay": 11.299999952316284,
+          "processing": 0,
+          "presentation": 36.700000047683716
+        },
+        {
+          "name": "keydown",
+          "start": 26126.600000023842,
+          "duration": 40,
+          "interactionId": 3587,
+          "inputDelay": 2.5,
+          "processing": 0.10000002384185791,
+          "presentation": 37.39999997615814
+        },
+        {
+          "name": "keyup",
+          "start": 26129.600000023842,
+          "duration": 40,
+          "interactionId": 3587,
+          "inputDelay": 0,
+          "processing": 0.10000002384185791,
+          "presentation": 39.89999997615814
+        },
+        {
+          "name": "keydown",
+          "start": 26441.400000035763,
+          "duration": 48,
+          "interactionId": 3594,
+          "inputDelay": 7.399999976158142,
+          "processing": 0.10000002384185791,
+          "presentation": 40.5
+        },
+        {
+          "name": "keyup",
+          "start": 26449.30000001192,
+          "duration": 40,
+          "interactionId": 3594,
+          "inputDelay": 0.10000002384185791,
+          "processing": 0,
+          "presentation": 39.89999997615814
+        },
+        {
+          "name": "keydown",
+          "start": 26755.200000047684,
+          "duration": 40,
+          "interactionId": 3601,
+          "inputDelay": 0,
+          "processing": 0.09999996423721313,
+          "presentation": 39.90000003576279
+        },
+        {
+          "name": "keyup",
+          "start": 26755.600000023842,
+          "duration": 40,
+          "interactionId": 3601,
+          "inputDelay": 0.10000002384185791,
+          "processing": 0,
+          "presentation": 39.89999997615814
+        },
+        {
+          "name": "keydown",
+          "start": 27069.700000047684,
+          "duration": 48,
+          "interactionId": 3608,
+          "inputDelay": 5.299999952316284,
+          "processing": 0.10000002384185791,
+          "presentation": 42.60000002384186
+        },
+        {
+          "name": "keyup",
+          "start": 27075.5,
+          "duration": 40,
+          "interactionId": 3608,
+          "inputDelay": 0,
+          "processing": 0,
+          "presentation": 40
+        },
+        {
+          "name": "keydown",
+          "start": 27382.200000047684,
+          "duration": 40,
+          "interactionId": 3615,
+          "inputDelay": 5.299999952316284,
+          "processing": 0.10000002384185791,
+          "presentation": 34.60000002384186
+        },
+        {
+          "name": "keyup",
+          "start": 27388.200000047684,
+          "duration": 56,
+          "interactionId": 3615,
+          "inputDelay": 11.699999988079071,
+          "processing": 0,
+          "presentation": 44.30000001192093
+        },
+        {
+          "name": "keydown",
+          "start": 27713.700000047684,
+          "duration": 48,
+          "interactionId": 3622,
+          "inputDelay": 8.599999964237213,
+          "processing": 0,
+          "presentation": 39.40000003576279
+        },
+        {
+          "name": "keyup",
+          "start": 27722.80000001192,
+          "duration": 40,
+          "interactionId": 3622,
+          "inputDelay": 0.10000002384185791,
+          "processing": 0.09999996423721313,
+          "presentation": 39.80000001192093
+        },
+        {
+          "name": "keydown",
+          "start": 28027,
+          "duration": 40,
+          "interactionId": 3629,
+          "inputDelay": 0.10000002384185791,
+          "processing": 0.19999998807907104,
+          "presentation": 39.69999998807907
+        },
+        {
+          "name": "keyup",
+          "start": 28027.600000023842,
+          "duration": 40,
+          "interactionId": 3629,
+          "inputDelay": 0,
+          "processing": 0,
+          "presentation": 40
+        },
+        {
+          "name": "keydown",
+          "start": 28339.80000001192,
+          "duration": 48,
+          "interactionId": 3636,
+          "inputDelay": 7.5,
+          "processing": 0.19999998807907104,
+          "presentation": 40.30000001192093
+        },
+        {
+          "name": "keyup",
+          "start": 28347.80000001192,
+          "duration": 40,
+          "interactionId": 3636,
+          "inputDelay": 0.10000002384185791,
+          "processing": 0,
+          "presentation": 39.89999997615814
+        },
+        {
+          "name": "keydown",
+          "start": 28655.600000023842,
+          "duration": 40,
+          "interactionId": 3643,
+          "inputDelay": 4.699999988079071,
+          "processing": 0.30000001192092896,
+          "presentation": 35
+        },
+        {
+          "name": "keyup",
+          "start": 28661,
+          "duration": 48,
+          "interactionId": 3643,
+          "inputDelay": 12.400000035762787,
+          "processing": 0,
+          "presentation": 35.59999996423721
+        },
+        {
+          "name": "keydown",
+          "start": 28983.900000035763,
+          "duration": 48,
+          "interactionId": 3650,
+          "inputDelay": 6.899999976158142,
+          "processing": 0,
+          "presentation": 41.10000002384186
+        },
+        {
+          "name": "keyup",
+          "start": 28991.30000001192,
+          "duration": 40,
+          "interactionId": 3650,
+          "inputDelay": 0.10000002384185791,
+          "processing": 0,
+          "presentation": 39.89999997615814
+        },
+        {
+          "name": "keydown",
+          "start": 29295.400000035763,
+          "duration": 40,
+          "interactionId": 3657,
+          "inputDelay": 0.3999999761581421,
+          "processing": 0,
+          "presentation": 39.60000002384186
+        },
+        {
+          "name": "keyup",
+          "start": 29296.200000047684,
+          "duration": 40,
+          "interactionId": 3657,
+          "inputDelay": 0.09999996423721313,
+          "processing": 0,
+          "presentation": 39.90000003576279
+        },
+        {
+          "name": "keydown",
+          "start": 29611.900000035763,
+          "duration": 48,
+          "interactionId": 3664,
+          "inputDelay": 6.899999976158142,
+          "processing": 0,
+          "presentation": 41.10000002384186
+        },
+        {
+          "name": "keyup",
+          "start": 29619.200000047684,
+          "duration": 40,
+          "interactionId": 3664,
+          "inputDelay": 0.09999996423721313,
+          "processing": 0.10000002384185791,
+          "presentation": 39.80000001192093
+        },
+        {
+          "name": "keydown",
+          "start": 29928.5,
+          "duration": 40,
+          "interactionId": 3671,
+          "inputDelay": 0.10000002384185791,
+          "processing": 0,
+          "presentation": 39.89999997615814
+        },
+        {
+          "name": "keyup",
+          "start": 29928.900000035763,
+          "duration": 40,
+          "interactionId": 3671,
+          "inputDelay": 0.09999996423721313,
+          "processing": 0,
+          "presentation": 39.90000003576279
+        },
+        {
+          "name": "keydown",
+          "start": 30239.700000047684,
+          "duration": 48,
+          "interactionId": 3678,
+          "inputDelay": 8.099999964237213,
+          "processing": 0.10000002384185791,
+          "presentation": 39.80000001192093
+        },
+        {
+          "name": "keyup",
+          "start": 30248.5,
+          "duration": 40,
+          "interactionId": 3678,
+          "inputDelay": 0.10000002384185791,
+          "processing": 0,
+          "presentation": 39.89999997615814
+        },
+        {
+          "name": "keydown",
+          "start": 30553.600000023842,
+          "duration": 40,
+          "interactionId": 3685,
+          "inputDelay": 0.10000002384185791,
+          "processing": 0.09999996423721313,
+          "presentation": 39.80000001192093
+        },
+        {
+          "name": "keyup",
+          "start": 30554.100000023842,
+          "duration": 40,
+          "interactionId": 3685,
+          "inputDelay": 0,
+          "processing": 0,
+          "presentation": 40
+        },
+        {
+          "name": "keydown",
+          "start": 30867.30000001192,
+          "duration": 48,
+          "interactionId": 3692,
+          "inputDelay": 5.100000023841858,
+          "processing": 0,
+          "presentation": 42.89999997615814
+        },
+        {
+          "name": "keyup",
+          "start": 30872.80000001192,
+          "duration": 40,
+          "interactionId": 3692,
+          "inputDelay": 0.10000002384185791,
+          "processing": 0,
+          "presentation": 39.89999997615814
+        }
+      ],
+      "longAnimationFrames": [],
+      "slowFrames": [],
+      "endPosition": {
+        "x": 117.5,
+        "y": 108.5
+      }
+    }
+  ],
+  "messages": [
+    "THREE.WebGLProgram: Program Info Log: (210,81-129): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,37-61): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,82-106): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,37-61): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,82-106): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n\n\n\u0000"
+  ]
+}

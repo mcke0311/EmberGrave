@@ -1,0 +1,200 @@
+{
+  "browser": "152.0.7977.76",
+  "width": 1920,
+  "reducedMotion": false,
+  "sequences": [
+    {
+      "id": "malthoron",
+      "phase": 0,
+      "attack": "cleave",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 9924,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 12
+      }
+    },
+    {
+      "id": "malthoron",
+      "phase": 0,
+      "attack": "chains",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 9950,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 12
+      }
+    },
+    {
+      "id": "malthoron",
+      "phase": 1,
+      "attack": "souls",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "souls",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "souls",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "souls",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 9678,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 12
+      }
+    },
+    {
+      "id": "malthoron",
+      "phase": 1,
+      "attack": "cleave",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 9720,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 12
+      }
+    },
+    {
+      "id": "malthoron",
+      "phase": 2,
+      "attack": "beam",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "beam",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "beam",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "beam",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 7470,
+      "frames": 76,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 0,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "malthoron",
+      "phase": 2,
+      "attack": "souls",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "souls",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "souls",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "souls",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 10210,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 12
+      }
+    }
+  ],
+  "errors": [],
+  "missing": [],
+  "clips": [
+    "tmp/boss_animation/1920_motion_malthoron/malthoron.webm"
+  ],
+  "paintedPixelChecks": 56952,
+  "passed": true
+}

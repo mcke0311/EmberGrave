@@ -452,7 +452,12 @@ const UI = (() => {
   }
   function positionTip(el, x, y) {
     el.style.left = "0px"; el.style.top = "0px";
-    const w = el.offsetWidth, h = el.offsetHeight;
+    el.style.width = Math.min(310,innerWidth - 12) + "px"; el.style.maxWidth = "calc(100vw - 12px)";
+    if (el.getBoundingClientRect().height > innerHeight - 12) {
+      el.style.width = Math.min(520,innerWidth - 12) + "px";
+      el.style.maxWidth = "calc(100vw - 12px)";
+    }
+    const { width:w, height:h } = el.getBoundingClientRect();
     el.style.left = U.clamp(x - w / 2, 6, innerWidth - w - 6) + "px";
     el.style.top = U.clamp(y - h - 14, 6, innerHeight - h - 6) + "px";
   }
@@ -1400,7 +1405,7 @@ const UI = (() => {
   function tryTransmute() {
     const check=ForgeRecipes.evaluate(forgeSlots,forgeRecipe);if(!check.valid)return;
     const {glyphs,gear,pots,total,upgrade}=check;let result,leftovers=[];
-    if(forgeRecipe === "glyph")result=Items.makeGlyph(U.pick(Object.keys(DATA.GLYPHS).filter(id=>id!==glyphs[0].glyph)));
+    if(forgeRecipe === "glyph")result=Items.reforgeGlyph(glyphs[0]);
     else if(forgeRecipe === "temper" || forgeRecipe === "reweave") {result=gear[0];Items.rollAffixesOnto(result,forgeRecipe === "temper"?"enhanced":"rare");result.identified=true;}
     else {result=Items.makeConsumable(upgrade,1);let remaining=total-3;while(remaining>0){const n=Math.min(10,remaining);leftovers.push(Items.makeConsumable(pots[0].baseId,n));remaining-=n;}}
     const outputs=[result,...leftovers];forgeSlots=[null,null,null,null];outputs.slice(0,4).forEach((it,i)=>forgeSlots[i]=it);

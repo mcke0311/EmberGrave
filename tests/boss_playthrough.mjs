@@ -1,7 +1,11 @@
 import fs from 'node:fs';
 import vm from 'node:vm';
+import {execFileSync} from 'node:child_process';
 import {fixture} from './boss_fixture.mjs';
-const f=fixture(),{Game:G,DATA:D,BossEncounters:B,U,ctx}=f;
+const baseline=process.argv.find(a=>a.startsWith('--baseline='))?.slice(11);
+const sourceDirectory=process.argv.find(a=>a.startsWith('--source-directory='))?.slice(19);
+const output=process.argv.find(a=>a.startsWith('--output='))?.slice(9);
+const f=fixture({sourceDirectory,bossSource:baseline?execFileSync('git',['show',baseline+':js/boss_encounters.js'],{encoding:'utf8'}):undefined}),{Game:G,DATA:D,BossEncounters:B,U,ctx}=f;
 vm.runInContext(fs.readFileSync(new URL('./boss_loadouts.js',import.meta.url),'utf8'),ctx);
 const loadouts=vm.runInContext('BossLoadouts',ctx);
 const god=process.argv.includes('--durability');
@@ -30,7 +34,9 @@ for(const id of selected?[selected]:Object.keys(D.BOSS_ENCOUNTERS))for(const cla
      for(let k=0;k<32;k++){
       const angle=k*Math.PI/16,x=p.x+Math.cos(angle)*dist,y=p.y+Math.sin(angle)*dist;
       if(B.insideArena(e.arena,x,y,1)&&B.footprint(s.map,x,y,p.radius)&&!danger.some(sh=>B.contains(sh,x,y))&&!s.monsters.some(o=>!o.dead&&U.dist(x,y,o.x,o.y)<p.radius+o.radius+.15)){
-        const score=dist+(classId==='vanguard'?Math.max(0,U.dist(x,y,m.x,m.y)-2)*1.4:0);
+        // Keep usable attack range after a dodge; otherwise ranged heroes walk
+        // outward every cast, then repeatedly attack-path back through a pool.
+        const score=dist+Math.max(0,U.dist(x,y,m.x,m.y)-(classId==='vanguard'?2:6))*(classId==='vanguard'?1.4:.6);
         if(score<best){escape={x,y};best=score;}
       }
      }
@@ -71,6 +77,6 @@ for(const id of selected?[selected]:Object.keys(D.BOSS_ENCOUNTERS))for(const cla
  results.push(result);console.log(JSON.stringify(result));
 }
 fs.mkdirSync('tests/qa/bosses',{recursive:true});
-const name=god?'durability':'playthrough';
-fs.writeFileSync(`tests/qa/bosses/${name}${selected?'_'+selected:''}${chosenClass?'_'+chosenClass:''}.json`,JSON.stringify({seed:123,step:.05,results},null,2)+'\n');
+const name=baseline?'playthrough_baseline_refinement':god?'durability':'playthrough';
+fs.writeFileSync(output||`tests/qa/bosses/${name}${selected?'_'+selected:''}${chosenClass?'_'+chosenClass:''}.json`,JSON.stringify({seed:123,step:.05,baseline:baseline||sourceDirectory||null,results},null,2)+'\n');
 if(!god&&results.some(r=>!r.won))process.exitCode=1;

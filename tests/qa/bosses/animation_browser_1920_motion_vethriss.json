@@ -1,0 +1,230 @@
+{
+  "browser": "152.0.7977.76",
+  "width": 1920,
+  "reducedMotion": false,
+  "sequences": [
+    {
+      "id": "vethriss",
+      "phase": 0,
+      "attack": "light",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "light",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "light",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "light",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 7498,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 12
+      }
+    },
+    {
+      "id": "vethriss",
+      "phase": 0,
+      "attack": "cleave",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 7478,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 12
+      }
+    },
+    {
+      "id": "vethriss",
+      "phase": 1,
+      "attack": "lunge",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "lunge",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "lunge",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "lunge",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 9626,
+      "frames": 34,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 3,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "vethriss",
+      "phase": 1,
+      "attack": "decoys",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "decoys",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "decoys",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "echoes",
+          "stage": "windup"
+        },
+        {
+          "step": 1,
+          "attack": "echoes",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "echoes",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 14026,
+      "frames": 53,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 2,
+        "peakParticles": 19
+      }
+    },
+    {
+      "id": "vethriss",
+      "phase": 2,
+      "attack": "memory",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "fissure",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "fissure",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "bile",
+          "stage": "windup"
+        },
+        {
+          "step": 1,
+          "attack": "bile",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "bile",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 30070,
+      "frames": 49,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 12
+      }
+    },
+    {
+      "id": "vethriss",
+      "phase": 2,
+      "attack": "memory",
+      "variation": 1,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "beam",
+          "stage": "windup"
+        },
+        {
+          "step": 1,
+          "attack": "beam",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "beam",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 30058,
+      "frames": 94,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 12
+      }
+    }
+  ],
+  "errors": [],
+  "missing": [],
+  "clips": [
+    "tmp/boss_animation/1920_motion_vethriss/vethriss.webm"
+  ],
+  "paintedPixelChecks": 98756,
+  "passed": true
+}

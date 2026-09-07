@@ -7,7 +7,7 @@ const ctx=vm.createContext({console,Math:math,Date,performance,Uint8Array,Uint16
   localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v)},
   Sfx:new Proxy({vol:{}},{get:(t,k)=>t[k]||(()=>{})}),Player3D:{assets:{},projectileOrigin:()=>null},UI:new Proxy({},{get:()=>()=>{}}),
 });
-for(const f of ['utils','data','data_overrides','skill_perks','sprite_manifest','mapgen','navigation','items','entities'])vm.runInContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'),ctx,{filename:f});
+for(const f of ['utils','data','unique_powers','data_overrides','skill_perks','sprite_manifest','mapgen','navigation','items','entities'])vm.runInContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'),ctx,{filename:f});
 let source=fs.readFileSync(new URL('../js/game.js',import.meta.url),'utf8');
 source=source.replace('    init, newGame, loadGame,',`    __test:{freshState,setState:s=>{state=s;delayed=[];saveSlotKey='perk-test';},updateTraps,updateFx,updateTotem,flush:seconds=>{let n=0;while(delayed.length&&n++<100){delayed.sort((a,b)=>a.t-b.t);if(delayed[0].t>seconds)break;const job=delayed.shift();state.time=job.t;job.fn();}}},
     init, newGame, loadGame,`);

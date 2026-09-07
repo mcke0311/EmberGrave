@@ -154,6 +154,9 @@ class Entity {
   pose() {
     const o = this._pose || (this._pose = { state: "idle", t: 0, ang: 0, ex: {} });
     const ex = o.ex;
+    if(this.spriteOpts?.bossArt&&typeof BossVFX!=='undefined'){
+      ex.bossMotion=BossVFX.sampleActor(this,ex.bossMotion||(ex.bossMotion={}));
+    }else ex.bossMotion=undefined;
     o.ang = this.visAng;
     ex.airborne = !!(this.jumping || this.leaping || this.jumpZ > 0);
     const a = this.action;
@@ -256,7 +259,8 @@ class Player extends Entity {
     }
   }
   resolveSkill(id) {
-    return typeof SkillPerks!=="undefined" ? SkillPerks.resolve(this,id) : id==="basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[id];
+    const skill = typeof SkillPerks!=="undefined" ? SkillPerks.resolve(this,id) : id==="basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[id];
+    return typeof UniquePowers !== "undefined" ? UniquePowers.modifySkill(this,skill) : skill;
   }
   skillSound(phase,context={}) {
     const id=(typeof SkillAudio!=='undefined'?SkillAudio.current?.id:null)||this._castingSkillId||'basic';
@@ -374,6 +378,7 @@ class Player extends Entity {
     return sum;
   }
   computeStats() {
+    if (typeof UniquePowers !== "undefined") UniquePowers.sync(this);
     const g = this.gearStats();
     // Passive effective ranks must see the current loadout on the first recompute.
     this._computingGear=g;
@@ -402,7 +407,7 @@ class Player extends Entity {
     st.maxMana = Math.floor(this.cls.baseMana + attr.wil * 3 + (this.lvl - 1) * 2 + S("mana"));
     st.dmgPct = attr.str + S("dmgPct");
     st.ar = Math.floor((3 * (40 + attr.dex * 5 + (this.lvl - 1) * 8) + S("ar")) * (1 + S("arPct") / 100));
-    st.armor = Math.floor(S("armor") + attr.dex * 0.25);
+    st.armor = Math.floor((S("armor") + attr.dex * 0.25) * (1 + S("armorPct") / 100));
     st.block = this.equip.off && this.equip.off.block ? Math.min(60, S("block") + Math.floor(attr.dex * 0.1)) : 0;
     st.critChance = Math.min(75, 5 + attr.dex * 0.08 + S("critChance"));
     st.critDmg = 150 + S("critDmg");
@@ -516,7 +521,8 @@ class Player extends Entity {
     const col = { fire: "#ff9040", cold: "#9fd8ff", light: "#fff080", poison: "#90ff70", shadow: "#c080e0", earth: "#c0a060" }[elem] || "#ffffff";
     /* Brittle Bones: cold strikes hit frozen foes harder */
     if (elem === "cold" && mon.frozen && Game.state.time < mon.frozen) dmg *= 1 + (this.stats.coldVsFrozenPct || 0) / 100;
-    mon.takeDamage(dmg, this, null, elem);
+    if (typeof UniquePowers !== "undefined") dmg = UniquePowers.empower(this,"spell",dmg,mon);
+    const actual = mon.takeDamage(dmg, this, { uniqueEvent: "spell", crit: !!opts.crit, elem }, elem);
     this.skillSound('impact',{elem,target:mon,crit:!!opts.crit});
     if(typeof SkillAudio!=='undefined'&&elem==='cold'&&mon.frozen)SkillAudio.passive(this,'frozen',{target:mon,elem});
     if(typeof SkillVFX!=='undefined')SkillVFX.hit(this,mon,elem,!!opts.crit);
@@ -536,7 +542,7 @@ class Player extends Entity {
     } else if (elem === "shadow") {
       for (let i = 0; i < 4; i++) Game.addParticle(mon.x, mon.y, "#c080e0");
     }
-    if (opts.drain) this.hp = Math.min(this.stats.maxHp, this.hp + dmg * opts.drain);
+    if (opts.drain) this.healLife(actual * opts.drain);
     Game.addFloat(mon.x, mon.y, Math.floor(dmg), opts.crit ? "#ffb030" : col, opts.crit);
   }
   /* shared cast wind-up: returns cast duration and plays the cast pose */
@@ -590,7 +596,8 @@ class Player extends Entity {
     if (this.stats.primalProc > 0 && Math.random() * 100 < this.stats.primalProc) { primal = true; total *= 2; }
     if (d.crit) { Game.fx.hitPause = Math.max(Game.fx.hitPause, 0.055); }
     this.skillSound('impact',{target:mon,elem:fireMode||primal?'fire':'phys',crit:d.crit});
-    mon.takeDamage(total, this, d, fireMode ? "fire" : undefined);
+    if (typeof UniquePowers !== "undefined") total = UniquePowers.empower(this,"strike",total,mon);
+    const actual = mon.takeDamage(total, this, { ...d, uniqueEvent: "strike", elem: fireMode ? "fire" : "phys" }, fireMode ? "fire" : undefined);
     if(typeof SkillVFX!=='undefined'){
       SkillVFX.hit(this,mon,fireMode?'fire':'phys',d.crit);
       if(primal)SkillVFX.passive(this,'primal',{x:mon.x,y:mon.y});
@@ -599,10 +606,10 @@ class Player extends Entity {
     if (!fireMode && d.poison > 0) mon.poisonDot = { dps: d.poison / 3, t: 3 };
     /* life/mana steal are strike-only (weapon/melee/ranged), not applied to spell damage */
     if (this.stats.lifeSteal > 0) {
-      this.hp = Math.min(this.stats.maxHp, this.hp + total * this.stats.lifeSteal / 100);
+      this.healLife(actual * this.stats.lifeSteal / 100);
     }
     if (this.stats.manaSteal > 0) {
-      this.mana = Math.min(this.stats.maxMana, this.mana + total * this.stats.manaSteal / 100);
+      this.mana = Math.min(this.stats.maxMana, this.mana + actual * this.stats.manaSteal / 100);
     }
     /* on-hit affixes: knockback, cause-flee, prevent-heal */
     if (!mon.dead && !mon.isBoss) {
@@ -669,7 +676,10 @@ class Player extends Entity {
     /* Kindred Bond: the pack shares the hero's wounds */
     if (this.stats.pShare > 0) { const beasts = Game.state.minions.filter(m => !m.dead); if (beasts.length) { const share = dmg * Math.min(0.5, this.stats.pShare / 100); dmg -= share; const each = share / beasts.length; for (const mi of beasts) mi.takeDamage(each, source); if(typeof SkillAudio!=='undefined')Sfx.playSkill?.('kinship','impact',{owner:this,trigger:'minion',level:.5}); } }
     dmg = Math.max(1, dmg);
+    if (typeof UniquePowers !== "undefined") dmg = UniquePowers.absorb(this,dmg);
+    if (dmg <= 0) return;
     this.hp -= dmg;
+    if (typeof UniquePowers !== "undefined") UniquePowers.emit(this,"hurt",{ source, elem: elemKind || "phys", damage: dmg });
     if(typeof SkillVFX!=='undefined')SkillVFX.passive(this,'defense',{x:this.x,y:this.y});
     this.visualReaction('hurt',source);
     Game.playerHurtFloat(this.x, this.y, dmg, elemKind);   // colored number above the player, by element
@@ -684,12 +694,22 @@ class Player extends Entity {
   tryBlock(source) {
     const blocked=this.stats.block > 0 && Math.random() * 100 < this.stats.block;
     if(blocked)this.visualReaction('block',source);
+    if(blocked && typeof UniquePowers !== "undefined") UniquePowers.emit(this,"block",{ source:source?.mon || source, target:source?.mon || source });
     return blocked;
   }
 
   /* ---------------- skills ---------------- */
   canPay(sk, rk) { return this.mana >= sk.mana(rk); }
-  pay(sk, rk) { this.mana -= sk.mana(rk); }
+  pay(sk, rk) {
+    const amount = sk.mana(rk); this.mana -= amount;
+    if (typeof UniquePowers !== "undefined") UniquePowers.emit(this,"spend",{ amount, skill: sk });
+  }
+  healLife(amount) {
+    if (!(amount > 0) || this.dead) return;
+    const excess = Math.max(0,this.hp + amount - this.stats.maxHp);
+    this.hp = Math.min(this.stats.maxHp,this.hp + amount);
+    if (excess && typeof UniquePowers !== "undefined") UniquePowers.emit(this,"overheal",{ amount: excess });
+  }
 
   /* execute a skill *now* (caller has verified range etc.) */
   performSkill(skillId,target,point) {
@@ -703,7 +723,10 @@ class Player extends Entity {
     try {
       const result=this.withSkillSource(skillId,()=>{
         const sk=this.resolveSkill(skillId), result=this.performSkillAction(skillId,target,point);
-        if(result)this.applySkillPerkBuff(sk,this.effRank(skillId));
+        if(result) {
+          this.applySkillPerkBuff(sk,this.effRank(skillId));
+          if(skillId !== "basic" && typeof UniquePowers !== "undefined") UniquePowers.emit(this,"cast",{ skill: sk, target, elem: sk?.elem });
+        }
         return result;
       });
       if(result&&this.action!==previous&&!this.action?.visual?.releases.length)this.markActionRelease(0);
@@ -1247,7 +1270,7 @@ class Player extends Entity {
       case "heal": {
         this.pay(sk, rk);
         const amt = Math.floor(this.stats.maxHp * (sk.healPct(rk) / 100));
-        this.hp = Math.min(this.stats.maxHp, this.hp + amt);
+        this.healLife(amt);
         if (sk.buff) {
           const b = sk.buff(rk);
           this.buffs = this.buffs.filter(x => x.id !== b.id);
@@ -1334,7 +1357,7 @@ class Player extends Entity {
       case "shout": {   // Rallying Cry — heal + cleanse + run
         this.pay(sk, rk);
         const heal = Math.floor(this.stats.maxHp * sk.healPct(rk) / 100);
-        this.hp = Math.min(this.stats.maxHp, this.hp + heal); this.slowT = 0; this.slowPct = 0;
+        this.healLife(heal); this.slowT = 0; this.slowPct = 0;
         this.buffs = this.buffs.filter(b => b.id !== "rally_run");
         this.buffs.push({ id: "rally_run", label: "Rally", emoji: "📯", stats: { frw: sk.runPct(rk) }, until: Game.state.time + sk.rallyDur(rk) });
         this.computeStats();
@@ -1549,7 +1572,7 @@ class Player extends Entity {
           for (const mi of beasts) { const dd = U.dist2(this.x, this.y, mi.x, mi.y); if (dd < bd) { bd = dd; best = mi; } }
           if (!best) { Game.msg("No beast near enough.", "#9a9a9a"); return false; }
           const cx = best.x, cy = best.y, healAmt = this.stats.maxHp * sk.healPct(rk) / 100;
-          best.die(); this.hp = Math.min(this.stats.maxHp, this.hp + healAmt);
+          best.die(); this.healLife(healAmt);
           for (const mi of Game.state.minions) if (!mi.dead) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * 0.2);
           Game.state.fx.push({ type: "groundfield", fieldKind: "regrowth", x: cx, y: cy, radius: sk.fieldRadius ? sk.fieldRadius(rk) : 2.6, ttl: sk.fieldTtl ? sk.fieldTtl(rk) : 6, maxTtl: sk.fieldTtl ? sk.fieldTtl(rk) : 6, tickEvery: 0.5, heal: sk.fieldHeal ? sk.fieldHeal(rk) : 3, owner: this });
           Game.addNova(cx, cy, 1.6, "#90ff70"); Game.addFloat(this.x, this.y, "+" + Math.floor(healAmt), "#80ff90");
@@ -1595,7 +1618,7 @@ class Player extends Entity {
         if (!corpse) corpse = Game.corpseFromGrave(this, aim, searchRadius);
         if (!corpse) { Game.msg("No corpse or grave to devour.", "#9a9a9a"); return false; }
         this.pay(sk, rk); corpse.exploded = true; corpse.corpseT = 0;
-        const heal = this.stats.maxHp * sk.healPct(rk) / 100; this.hp = Math.min(this.stats.maxHp, this.hp + heal); this.slowT = 0; this.slowPct = 0; this.poisonDot = null;
+        const heal = this.stats.maxHp * sk.healPct(rk) / 100; this.healLife(heal); this.slowT = 0; this.slowPct = 0; this.poisonDot = null;
         for (const mi of Game.state.minions) if (!mi.dead && U.dist(this.x, this.y, mi.x, mi.y) < 4) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * (sk.devourMinionHeal?.(rk)??10)/100);
         this.mana=Math.min(this.stats.maxMana,this.mana+this.stats.maxMana*(sk.devourMana?.(rk)??0)/100);
         Sfx.play("potion"); Game.addNova(this.x, this.y, 1.5, "#90ff70"); Game.addFloat(this.x, this.y, "+" + Math.floor(heal), "#80ff90");
@@ -1619,7 +1642,7 @@ class Player extends Entity {
           if (this.dead) return; Sfx.play("curse"); Game.addNova(this.x, this.y, radius, "#c080e0");
           for (const mon of Game.state.monsters) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > radius + mon.radius) continue; let da = Math.abs(Math.atan2(mon.y - this.y, mon.x - this.x) - a0); if (da > Math.PI) da = Math.PI * 2 - da; if (da > arc / 2) continue;
             let dmg = this.spellRoll(sk, rk).dmg; const cursed = (mon.curseFrailty && Game.state.time < mon.curseFrailty.until) || (mon.curseWither && Game.state.time < mon.curseWither.until);
-            if (cursed) { dmg *= 1 + bonus / 100; this.hp = Math.min(this.stats.maxHp, this.hp + reapHeal); mon.curseFrailty = null; mon.curseWither = null; }
+            if (cursed) { dmg *= 1 + bonus / 100; this.healLife(reapHeal); mon.curseFrailty = null; mon.curseWither = null; }
             if (mon.doom) Game.detonateDoom(mon);
             this.spellHit(mon, dmg, "shadow", {}); }
         });
@@ -1779,7 +1802,7 @@ class Player extends Entity {
     else if (c.heal) this.healPool += c.heal;
     if (c.manaPct) this.manaPool += this.stats.maxMana * c.manaPct;
     else if (c.mana) this.manaPool += c.mana;
-    if (c.rejuv) { this.hp = Math.min(this.stats.maxHp, this.hp + this.stats.maxHp * c.rejuv); this.mana = Math.min(this.stats.maxMana, this.mana + this.stats.maxMana * c.rejuv); }
+    if (c.rejuv) { this.healLife(this.stats.maxHp * c.rejuv); this.mana = Math.min(this.stats.maxMana, this.mana + this.stats.maxMana * c.rejuv); }
     slot.count--;
     if (slot.count <= 0) this.belt[slotIdx] = null;
     Sfx.play("potion");
@@ -1805,7 +1828,8 @@ class Player extends Entity {
   update(dt) {
     const active=this.siphon||this.charging||this.leaping||this.spinning||this.dashing;
     const run=()=>typeof SkillVFX!=='undefined'?SkillVFX.scope(this,active?.sourceSkill,()=>this.updatePlayer(dt)):this.updatePlayer(dt);
-    return typeof SkillAudio!=='undefined'?SkillAudio.scope(active?.sourceSkill,{owner:this,emitter:active||this},run):run();
+    try { return typeof SkillAudio!=='undefined'?SkillAudio.scope(active?.sourceSkill,{owner:this,emitter:active||this},run):run(); }
+    finally { if (typeof UniquePowers !== "undefined") UniquePowers.tick(this); }
   }
   updatePlayer(dt) {
     this.updateAnim(dt);
@@ -1841,8 +1865,8 @@ class Player extends Entity {
     /* regen + potion pools */
     this.mana = Math.min(st.maxMana, this.mana + st.manaRegen * dt);
     if (st.pManaPerBeast > 0) { const beasts = Game.state.minions.filter(m => !m.dead && m.beast).length; if (beasts) this.mana = Math.min(st.maxMana, this.mana + beasts * st.pManaPerBeast * dt); }
-    this.hp = Math.min(st.maxHp, this.hp + (0.25 + (st.lifeRegen || 0)) * dt);
-    if (this.healPool > 0) { const t = Math.min(this.healPool, 28 * dt); this.hp = Math.min(st.maxHp, this.hp + t); this.healPool -= t; }
+    this.healLife((0.25 + (st.lifeRegen || 0)) * dt);
+    if (this.healPool > 0) { const t = Math.min(this.healPool, 28 * dt); this.healLife(t); this.healPool -= t; }
     if (this.manaPool > 0) { const t = Math.min(this.manaPool, 22 * dt); this.mana = Math.min(st.maxMana, this.mana + t); this.manaPool -= t; }
     this.tileHazardTick(dt, Game.state.map, true);   // ice/lava/bog under the player
 
@@ -2132,7 +2156,7 @@ class Minion extends Entity {
     this.lastHitT = Game.state.time;
     /* bristled hides & Marrow Pact bone-thorns bite melee attackers back */
     const thorns = (this.thornsFlat || 0) + ((!this.beast && this.owner.stats && this.owner.stats.minionThorns) || 0);
-    if (thorns > 0 && source && source.takeDamage && source !== this.owner && U.dist(this.x, this.y, source.x, source.y) < 1.8) { source.takeDamage(thorns, this.owner); if(!this.beast&&typeof SkillAudio!=='undefined')SkillAudio.passive(this.owner,'minion',{emitter:this,target:source}); }
+    if (thorns > 0 && source && source.takeDamage && source !== this.owner && U.dist(this.x, this.y, source.x, source.y) < 1.8) { source.takeDamage(thorns, this); if(!this.beast&&typeof SkillAudio!=='undefined')SkillAudio.passive(this.owner,'minion',{emitter:this,target:source}); }
     if (Math.random() < 0.3) this.startAction("hit", 0.16);
     if (this.hp <= 0) this.die();
   }
@@ -2146,7 +2170,7 @@ class Minion extends Entity {
     for (let i = 0; i < 7; i++) Game.addParticle(this.x, this.y, this.beast ? "#8a1414" : "#cfd8c0");
   }
   dmgRoll() {
-    let d = U.rf(this.dmg[0], this.dmg[1]) * (1 + this.dmgPctOwner / 100);
+    let d = U.rf(this.dmg[0], this.dmg[1]) * (1 + (this.owner.stats?.minionDmgPct ?? this.dmgPctOwner) / 100);
     if (Game.state.time < this.buffUntil) d *= 1 + this.buffDmg / 100;
     return d;
   }
@@ -2189,8 +2213,8 @@ class Minion extends Entity {
       /* bear / golem ground-slam */
       if (this.slamRadius && this.slamCd <= 0 && d < this.slamRadius + target.radius + 0.6) {
         this.slamCd = 4.5; this.startAction("attack", 0.6);
-        const sx = this.x, sy = this.y, sdmg = this.slamDmg ? U.rf(this.slamDmg[0], this.slamDmg[1]) * (1 + this.dmgPctOwner / 100) : this.dmgRoll() * 1.5;
-        Game.afterDelay(0.4, () => { if (this.dead) return; this.playSound('impact','slam',{elem:'earth'}); Game.addNova(sx, sy, this.slamRadius, "#c0a060"); Game.fx.shake = Math.max(Game.fx.shake, 3); for (const mon of Game.state.monsters) { if (mon.dead || U.dist(sx, sy, mon.x, mon.y) > this.slamRadius + mon.radius) continue; mon.takeDamage(sdmg, this.owner); Game.minionFloat(mon.x, mon.y, sdmg); mon.stunT = Math.max(mon.stunT, this.slamStun || 0.6); Game.knockMonster(mon, sx, sy, 1.0); } });
+        const sx = this.x, sy = this.y, sdmg = this.slamDmg ? U.rf(this.slamDmg[0], this.slamDmg[1]) * (1 + (this.owner.stats?.minionDmgPct ?? this.dmgPctOwner) / 100) : this.dmgRoll() * 1.5;
+        Game.afterDelay(0.4, () => { if (this.dead) return; this.playSound('impact','slam',{elem:'earth'}); Game.addNova(sx, sy, this.slamRadius, "#c0a060"); Game.fx.shake = Math.max(Game.fx.shake, 3); for (const mon of Game.state.monsters) { if (mon.dead || U.dist(sx, sy, mon.x, mon.y) > this.slamRadius + mon.radius) continue; mon.takeDamage(sdmg, this); Game.minionFloat(mon.x, mon.y, sdmg); mon.stunT = Math.max(mon.stunT, this.slamStun || 0.6); Game.knockMonster(mon, sx, sy, 1.0); } });
         this.moving = false; return;
       }
       const reach = this.isArcher ? this.range : this.range + target.radius + this.radius;
@@ -2208,12 +2232,12 @@ class Minion extends Entity {
             const pdot = this.totalPdot();
             if (this.isArcher) {
               this.playSound('release',this.projKind === 'venom' ? 'firebolt' : 'bow');
-              Game.spawnProjectile({ x: this.x, y: this.y, tx: tref.x, ty: tref.y, speed: 9, kind: this.projKind, minionDmg: this.dmgRoll(), minionPdot: pdot, sourceSkill:this.sourceSkill,visualOwner:this.owner });
+              Game.spawnProjectile({ x: this.x, y: this.y, tx: tref.x, ty: tref.y, speed: 9, kind: this.projKind, minionDmg: this.dmgRoll(), minionPdot: pdot, minionSource:this, sourceSkill:this.sourceSkill,visualOwner:this.owner });
             } else if (U.dist(this.x, this.y, tref.x, tref.y) <= reach + 0.4) {
               this.playSound('impact','hit',{target:tref,elem:pdot?'poison':'phys'});
-              const dmg = this.dmgRoll(); tref.takeDamage(dmg, this.owner); Game.minionFloat(tref.x, tref.y, dmg);
+              const dmg = this.dmgRoll(); tref.takeDamage(dmg, this); Game.minionFloat(tref.x, tref.y, dmg);
               if(typeof SkillVFX!=='undefined')SkillVFX.scope(this.owner,this.sourceSkill,()=>{SkillVFX.hit(this.owner,tref,'phys');SkillVFX.passive(this.owner,'minion',{x:tref.x,y:tref.y});});
-              if (pdot > 0) { tref.poisonDot = { dps: pdot / 3, t: 3 }; Game.addParticle(tref.x, tref.y, "#90ff70"); }
+              if (pdot > 0) { tref.poisonDot = { dps: pdot / 3, t: 3, owner:this }; Game.addParticle(tref.x, tref.y, "#90ff70"); }
               Game.bloodBurst(tref.x, tref.y, 4);
             }
           });
@@ -2371,15 +2395,17 @@ class Monster extends Entity {
     if (amount > 0) this.healthBarUntil = Game.state.time + 3;
   }
   takeDamage(amount, source, detail, elem) {
-    if (this.dead) return;
-    if (this.encounter && !this.encounter.canDamage()) return;
-    if (this.bossOwner && !this.bossOwner.encounter?.canDamage()) return;
+    if (this.dead) return 0;
+    if (this.encounter && !this.encounter.canDamage()) return 0;
+    if (this.bossOwner && !this.bossOwner.encounter?.canDamage()) return 0;
     const ward = Game.bossWard?.(this);
     if (ward) {
       if (!this.wardMessageAt || Game.state.time>=this.wardMessageAt) { Game.msg("The ritual shields this foe. "+ward+".","#d8b880"); this.wardMessageAt=Game.state.time+3; }
-      return;
+      return 0;
     }
     let dmg = amount;
+    const hpBefore = this.hp;
+    if (typeof UniquePowers !== "undefined") dmg *= 1 + UniquePowers.exposed(this) / 100;
     if(this.encounter && this.defId==="mire_mother" && this.encounter.phase>0 && this.encounter.stage==="recovery")dmg*=1.25;
     if (elem && elem !== "phys") {
       /* elemental hit: armor doesn't apply — use the element's resistance (resAll + per-element) */
@@ -2396,7 +2422,7 @@ class Monster extends Entity {
     /* Vanguard Sunder shred + Veil Ranger Killing Mark both amplify */
     if (this.sunder && Game.state.time < this.sunder.until) dmg *= 1 + 0.06 * this.sunder.stacks;
     if (this.killMark && Game.state.time < this.killMark.until) dmg *= 1 + (this.killMark.amp || 0) / 100;
-    dmg = Math.max(1, dmg);
+    dmg = Math.max(detail?.uniqueDot ? 0 : 1, dmg);
     const nextForm=this.defId==="vethriss" && this.def.phases?.[this.phaseIdx||0];
     if (nextForm) dmg=Math.min(dmg,Math.max(0,this.hp-this.maxHp*nextForm.at));
     this.loseHealth(dmg);
@@ -2405,16 +2431,20 @@ class Monster extends Entity {
     if (!this.action || this.action.state !== "attack") {
       if (Math.random() < 0.4) this.startAction("hit", 0.18);
     }
-    if (this.hp <= 0) this.die(source);
+    const actual = Math.max(0, Math.min(hpBefore, hpBefore - this.hp));
+    if (this.hp <= 0) this.die(source, { ...detail, damage: actual });
+    if (typeof UniquePowers !== "undefined" && source === Game.state.player) UniquePowers.hit(source,this,actual,detail,hpBefore);
+    return actual;
   }
 
-  die(source) {
+  die(source, uniqueContext) {
     if (this.dead) return;
     if(this.encounter&&!this.encounter.canDamage())return;
     if (Game.bossWard?.(this)) { this.hp=Math.max(1,this.hp); return; }
     const nextForm=this.defId==="vethriss" && this.def.phases?.[this.phaseIdx||0];
     if (nextForm) { this.hp=Math.max(this.hp,this.maxHp*nextForm.at); return; }
     this.dead = true;
+    if (typeof UniquePowers !== "undefined") UniquePowers.killed(this,source,uniqueContext);
     if(this.encounter)this.encounter.finish();
     if(this.bossOwner?.encounter)this.bossOwner.encounter.onOwnedDeath(this);
     this.startAction("death", 0.6);
@@ -2548,11 +2578,13 @@ class Monster extends Entity {
       }
       return;
     }
+    if (typeof UniquePowers !== "undefined") UniquePowers.tickDots(this,dt);
+    if (this.dead) return;
     if (this.poisonDot) {
       this.poisonDot.t -= dt;
       this.loseHealth(this.poisonDot.dps * dt * (1 + ((player.stats && player.stats.poisonDotPct) || 0) / 100) * (1 - this.elemRes(this.poisonDot.fire ? "fire" : "poison") / 100));
       if (Math.random() < dt * 6) Game.addParticle(this.x, this.y, this.poisonDot.fire ? "#ff9040" : "#90ff70");
-      if (this.hp <= 0) { this.die(player); return; }
+      if (this.hp <= 0) { this.die(this.poisonDot.owner || player); return; }
       if (this.poisonDot.t <= 0) this.poisonDot = null;
     }
     /* Scorch: Cinder's stacking burn that Pyre consumes and Heat Haze spreads */
@@ -3135,9 +3167,11 @@ class Projectile {
     this.mon = o.mon; this.mult = o.mult || 1;
     this.bossOwner=o.bossOwner||null;this.bossMult=o.bossMult??1;
     this.bossLane=o.bossLane||null;
+    this.bossVisual=o.bossVisual||null;
     this.spell = o.spell || null;       // {dmg, crit, elem, burn, chill, pdot, drain, pierce, chains, scorch, knockback, sprayRadius}
     this.minionDmg = o.minionDmg;       // bolts fired by raised skeletons
     this.minionPdot = o.minionPdot || 0;
+    this.minionSource = o.minionSource || (o.visualOwner ? { owner:o.visualOwner } : null);
     this.pierce = !!o.pierce;           // weapon-based piercing arrows
     this.lob = o.lob || null;               // {sx,sy,tx,ty,dur,pool,count,radius,dmg}  (thrown undead body)
     this.boomerang = o.boomerang || null;   // {maxRange, returning}  (Returning Axe)
@@ -3268,9 +3302,9 @@ class Projectile {
           if (m.dead) continue;
           if (U.dist(this.x, this.y, m.x, m.y) < m.radius + 0.25) {
             Sfx.playSkill?.(this.sourceSkill,'impact',{owner:this.visualOwner||player,emitter:this,target:m,elem:this.minionPdot?'poison':'phys'});
-            m.takeDamage(this.minionDmg, null); Game.minionFloat(m.x, m.y, this.minionDmg);
+            m.takeDamage(this.minionDmg, this.minionSource); Game.minionFloat(m.x, m.y, this.minionDmg);
             if(typeof SkillVFX!=='undefined')SkillVFX.hit(this.visualOwner||player,m,this.minionPdot?'poison':'phys');
-            if (this.minionPdot > 0) { m.poisonDot = { dps: this.minionPdot / 3, t: 3 }; Game.addParticle(m.x, m.y, "#90ff70"); }
+            if (this.minionPdot > 0) { m.poisonDot = { dps: this.minionPdot / 3, t: 3, owner:this.minionSource }; Game.addParticle(m.x, m.y, "#90ff70"); }
             Game.bloodBurst(m.x, m.y, 3);
             this.dead = true; return;
           }

@@ -749,6 +749,7 @@ const Game = (() => {
       k: it.kind, b: it.baseId, r: it.rarity, il: it.ilvl, n: it.name,
       af: it.affixes, u: it.uniqueId, id: it.identified, c: it.count,
       so: it.sockets, cb: it.combo, se: it.setItemId, cs: it.charmSize, jc: it.jcol, pc: it.procs, gx: it.gx, gy: it.gy,
+      uv: it.uniqueVersion,
     };
   }
   function reviveItem(s) {
@@ -770,6 +771,7 @@ const Game = (() => {
       if (s.pc) it.procs = s.pc;
     }
     it.gx = s.gx; it.gy = s.gy;
+    if (typeof UniquePowers !== "undefined") UniquePowers.migrate(it);
     return it;
   }
   function saveGame() {
@@ -1065,7 +1067,7 @@ const Game = (() => {
       msg(`Received: ${it.name}`, "#9fdf9f");
     }
     if (q.reward.glyph) {
-      const it = Items.makeGlyph(U.pick(Object.keys(DATA.GLYPHS)));
+      const it = Items.rollGlyph((DATA.ZONES[q.zone]?.lvl || p.lvl) + DATA.DIFFICULTIES[state.difficulty].lvlAdd, p.stats.mf);
       if (!Items.autoPlace(p.inv, it)) dropAtFeet(it);
       msg(`Received: ${it.name}`, "#7fd8c0");
     }
@@ -1266,7 +1268,7 @@ const Game = (() => {
     p.gainXp(Math.floor(mon.def.xp * (1 + Math.max(0, (p.lvl - mon.lvl)) * -0.08)));
     /* carrion feast: drink life from nearby deaths */
     if (p.stats.lifeOnDeath > 0 && U.dist(p.x, p.y, mon.x, mon.y) < 9) {
-      p.hp = Math.min(p.stats.maxHp, p.hp + p.stats.lifeOnDeath);
+      p.healLife(p.stats.lifeOnDeath);
       addParticle(p.x, p.y, "#90ff70");
     }
     /* +Aether after each kill */
@@ -1553,7 +1555,7 @@ const Game = (() => {
         break;
       }
       case "heal":
-        p.hp = Math.min(p.stats.maxHp, p.hp + p.stats.maxHp * (ev.frac || 0.5));
+        p.healLife(p.stats.maxHp * (ev.frac || 0.5));
         if (ev.mana) p.mana = p.stats.maxMana;
         msg("Restored.", "#80d0ff"); Sfx.play("potion");
         break;
@@ -1565,7 +1567,7 @@ const Game = (() => {
       case "xp": p.gainXp(Math.floor(DATA.xpForLevel(p.lvl) * (ev.xpFrac || 0.25))); break;
       case "glyph":
         for (let k = 0; k < (ev.count || 2); k++) {
-          const it = Items.makeGlyph(U.pick(Object.keys(DATA.GLYPHS)));
+          const it = Items.rollGlyph(lvl, p.stats.mf);
           const a = Math.random() * Math.PI * 2;
           state.ground.push({ x: prop.x + Math.cos(a), y: prop.y + Math.sin(a), item: it, toss: 0.3 });
         }
@@ -2420,12 +2422,12 @@ const Game = (() => {
       case "snare": for (const m of state.monsters) { if (m.dead || !inR(m)) continue; m.applySlow(0.8, 95); o.spellHit(m, fieldDmgRoll(f), "poison", {}); } break;
       case "spore": for (const m of state.monsters) { if (m.dead || !inR(m)) continue; m.poisonDot = { dps: Math.max((m.poisonDot && m.poisonDot.dps) || 0, f.lo || 3), t: 3 }; m.curseWither = { until: state.time + 1.5, pct: f.weakenPct || 12 }; } break;
       case "quake": if (Math.random() < 0.7) { const a = Math.random() * 6.283, r = Math.random() * f.radius, qx = f.x + Math.cos(a) * r, qy = f.y + Math.sin(a) * r; addNova(qx, qy, 1.2, "#c0a060"); fx.shake = Math.max(fx.shake, 2); for (const m of state.monsters) { if (m.dead) continue; if (U.dist(qx, qy, m.x, m.y) < 1.4 + m.radius) { o.spellHit(m, fieldDmgRoll(f), "earth", {}); m.applySlow(0.6, f.slowPct || 25); } } } break;
-      case "regrowth": { const pl = state.player; if (U.dist(pl.x, pl.y, f.x, f.y) < f.radius) pl.hp = Math.min(pl.stats.maxHp, pl.hp + pl.stats.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); for (const mi of state.minions) { if (!mi.dead && U.dist(mi.x, mi.y, f.x, f.y) < f.radius) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); } break; }
+      case "regrowth": { const pl = state.player; if (U.dist(pl.x, pl.y, f.x, f.y) < f.radius) pl.healLife(pl.stats.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); for (const mi of state.minions) { if (!mi.dead && U.dist(mi.x, mi.y, f.x, f.y) < f.radius) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); } break; }
     }
   }
   function applyBanner(f, p) {
     const inAura = U.dist(p.x, p.y, f.x, f.y) < f.radius;
-    if (inAura) { refreshBuff(p, "banner_aura", { dmgPct: f.allyDmg, ias: f.allyIas }, 0.6); if (f.heal) p.hp = Math.min(p.stats.maxHp, p.hp + p.stats.maxHp * f.heal / 100 * (f.tickEvery || 0.3)); }
+    if (inAura) { refreshBuff(p, "banner_aura", { dmgPct: f.allyDmg, ias: f.allyIas }, 0.6); if (f.heal) p.healLife(p.stats.maxHp * f.heal / 100 * (f.tickEvery || 0.3)); }
     for (const mi of state.minions) { if (!mi.dead && U.dist(mi.x, mi.y, f.x, f.y) < f.radius) { mi.buffUntil = Math.max(mi.buffUntil, state.time + 0.6); mi.buffDmg = Math.max(mi.buffDmg, f.allyDmg); if (f.heal) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * f.heal / 100 * (f.tickEvery || 0.3)); } }
     for (const m of state.monsters) { if (!m.dead && U.dist(m.x, m.y, f.x, f.y) < f.radius) m.bannerWeak = { until: state.time + 0.6, pct: f.enemyDmg }; }
   }
@@ -2878,10 +2880,13 @@ const Game = (() => {
       SkillVFX.appendDraws(draws,state,cam,W,H);
     }
 
+    if(typeof BossVFX!=='undefined'){BossVFX.drawGround(ctx,state,cam);BossVFX.appendDraws(draws,state,cam,W,H);}
     draws.sort((a, b) => a.d - b.d);
 
     for (const d of draws) {
       switch (d.kind) {
+        case "bossvfx":
+          ctx.save();LevelTerrain.clipBehind(ctx,m,cam,d.x,d.y);BossVFX.drawItem(ctx,d,cam);ctx.restore();break;
         case "skillvfx":
           ctx.save();LevelTerrain.clipBehind(ctx,m,cam,d.x,d.y);SkillVFX.drawItem(ctx,d,cam);ctx.restore();break;
         case "wall":
@@ -3030,6 +3035,7 @@ const Game = (() => {
         }
         case "proj": {
           const pr = d.pr;
+          if(typeof BossVFX!=='undefined'&&BossVFX.enabled&&pr.bossVisual){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,pr.x,pr.y);BossVFX.drawProjectile(ctx,pr,cam);ctx.restore();break;}
           if(typeof SkillVFX!=='undefined'&&SkillVFX.enabled&&SkillVFX.recipes[pr.sourceSkill]){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,pr.x,pr.y);SkillVFX.drawProjectile(ctx,pr,cam);ctx.restore();break;}
           const a = pr.kind==='arrow'?Math.atan2(U.isoY(pr.vx,pr.vy),U.isoX(pr.vx,pr.vy)):Math.atan2(pr.vy * 0.5, pr.vx);
           if (pr.kind === "firebolt") {
@@ -3358,6 +3364,10 @@ const Game = (() => {
       ctx.fillStyle = "#3a1010"; ctx.fillRect(bx, by, bw, 14);
       ctx.fillStyle = "#a02020"; ctx.fillRect(bx, by, bw * U.clamp(b.hp / b.maxHp, 0, 1), 14);
       ctx.strokeStyle = "#6a5530"; ctx.strokeRect(bx - 2, by - 2, bw + 4, 18);
+      if(b.encounter)for(const phase of b.def.phases||[]) {
+        const marker=bx+bw*phase.at;
+        ctx.fillStyle=b.hp/b.maxHp>phase.at?"#efcf92":"#6a5530";ctx.fillRect(marker-1,by,2,14);
+      }
       ctx.font = "13px 'Palatino Linotype', serif"; ctx.textAlign = "center";
       ctx.fillStyle = "#e8d8a8";
       const disguised=b.defId==="vethriss"&&b.encounter?.phase===0;
@@ -3367,7 +3377,14 @@ const Game = (() => {
       ctx.fillText(bt.name.toUpperCase(), bossCenter, by + 25);
       if(b.encounter){
         ctx.fillStyle=b.encounter.config.color;ctx.font="12px 'Palatino Linotype', serif";
-        ctx.fillText(b.encounter.config.phases[b.encounter.phase]+" · "+(b.encounter.stage==="recovery"?"Opening":b.encounter.label||"Stand ready"),bossCenter,by+43);
+        const e=b.encounter;
+        const status=e.statusText(),phase=e.config.phases[e.phase];
+        ctx.fillText(status.startsWith(phase)?status:phase+" · "+status,bossCenter,by+43,Math.min(W-40,bw+180));
+        if(e.stage==="windup"||e.stage==="recovery") {
+          const progress=e.stage==="windup"?1-e.timer/e.attack.windup:e.timer/e.recoveryDuration;
+          ctx.fillStyle="rgba(5,4,3,.85)";ctx.fillRect(bx,by+49,bw,4);
+          ctx.fillStyle=e.stage==="recovery"?"#b9dfae":e.config.color;ctx.fillRect(bx,by+49,bw*U.clamp(progress,0,1),4);
+        }
       }
       ctx.textAlign = "left";
     }
@@ -3830,6 +3847,10 @@ const Game = (() => {
 
   /* chance-to-cast proc: a self-contained elemental nova at (x,y) */
   function fireProc(proc, x, y, src) {
+    if (typeof UniquePowers !== "undefined") return UniquePowers.guarded(src || state.player, () => fireProcEffect(proc,x,y,src));
+    return fireProcEffect(proc,x,y,src);
+  }
+  function fireProcEffect(proc, x, y, src) {
     const col = { fire: "#ff7a30", cold: "#9fd8ff", light: "#fff080", poison: "#90ff70", shadow: "#c080e0" }[proc.elem] || "#ffffff";
     addNova(x, y, proc.radius, col);
     Sfx.play(proc.elem === "cold" ? "frost" : proc.elem === "light" ? "zap" : "blast");

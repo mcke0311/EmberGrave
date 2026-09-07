@@ -147,6 +147,14 @@ Chosen from a D2-style animated **campfire select screen** —
 recipes, elites, vendors, storage, quests, travel shrines, town portals, hardcore
 mode, and save/load.
 
+Weapon and spell builds can use **162 named Unique items**, each with a signature power. Brown
+random rewards occur in about one in five boss encounters before Magic Find;
+Runed Stones and glyph reforging follow the revised rarity rules too. Owned
+Uniques receive their revised stats and powers when loaded. See the
+[complete Unique catalogue](docs/UNIQUE_ITEMS.md), inspect `tests/unique_review.html`,
+or run `node tests/unique_validation.mjs --browser` for combat, drops, saves,
+regressions and visual checks.
+
 Players use live 3D animation with planted-foot IK, stride matched to actual
 movement, weight transfer, braking, and smooth transitions. All five classes
 and four Wildkeeper forms have distinct movement and combat motion. Weapon

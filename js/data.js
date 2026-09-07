@@ -1546,11 +1546,11 @@ DATA.ELITE_MODS = [
   { id:"vampiric", name:"Vampiric", apply:m => { m.regen = 0.04; }, tint:"#ff70b0" },
 ];
 
-/* Loot tier weighting per source. Set/unique base chances reduced by 30%;
-   the released weight goes to rare gear, keeping each source at 100. */
-DATA.RARITY_WEIGHTS = { normal:[["common",61],["enhanced",26],["rare",10.9],["set",0.7],["unique",1.4]],
-  elite:[["common",27],["enhanced",39],["rare",27],["set",2.8],["unique",4.2]],
-  boss:[["common",8],["enhanced",32],["rare",44.6],["set",5.6],["unique",9.8]] };
+/* Unique finds are occasional rewards. Released weight stays in rare gear. */
+DATA.RARITY_WEIGHTS = { normal:[["common",61],["enhanced",26],["rare",11.7],["set",0.7],["unique",0.6]],
+  elite:[["common",27],["enhanced",39],["rare",29.4],["set",2.8],["unique",1.8]],
+  boss:[["common",8],["enhanced",32],["rare",49.9],["set",5.6],["unique",4.5]] };
+DATA.UNIQUE_SOCKET_CHANCE = { normal:0.0009, elite:0.009, boss:0.04, chest:0.0105, barrel:0.0009 };
 
 /* =====================  SET ITEMS  =====================
    Wear several pieces of a set for stacking bonuses. */
@@ -3126,7 +3126,7 @@ DATA.EVENTS = (function () {
   AMB.forEach((a, i) => E.push({ id: "ev_amb" + i, name: a[0], kind: "ambush", visual: "grave", color: a[2], minLvl: 2, weight: 3, fam: a[1], count: 5, cache: true }));
   /* ---- cursed altars: risk/reward — spawns an elite pack, but guarantees a rare+ ---- */
   E.push({ id: "ev_curse1", name: "Bloodstained Altar", kind: "curse", visual: "shrine", color: "#ff4040", minLvl: 3, weight: 2, count: 4 });
-  E.push({ id: "ev_curse2", name: "Hollow Reliquary", kind: "curse", visual: "embershard", color: "#ff5040", minLvl: 14, weight: 2, count: 5, rarity: "unique" });
+  E.push({ id: "ev_curse2", name: "Hollow Reliquary", kind: "curse", visual: "embershard", color: "#ff5040", minLvl: 14, weight: 2, count: 5, rarity: "rare" });
   /* ---- fleeing treasure-beasts: catch & kill for a cache ---- */
   E.push({ id: "ev_gob1", name: "Gilded Scuttler", kind: "goblin", mon: "spider", color: "#ffd070", minLvl: 1, weight: 2, drops: 4 });
   E.push({ id: "ev_gob2", name: "Hoarder Fiend", kind: "goblin", mon: "brute", color: "#ffd070", minLvl: 12, weight: 2, drops: 5 });

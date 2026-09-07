@@ -1,0 +1,104 @@
+{
+  "baseline": "4258cf2",
+  "seconds": 6,
+  "warmupMs": 2000,
+  "method": "Three alternating pairs of production-loop samples, identical ordinary Gravebinder gear and capped adds; actual previous authored controller and HUD.",
+  "results": [
+    {
+      "boss": "korvath",
+      "width": 1920,
+      "baselineP95": 6.53,
+      "currentP95": 7.47,
+      "changePercent": 14.29,
+      "passed": false
+    },
+    {
+      "boss": "korvath",
+      "width": 3840,
+      "baselineP95": 22.5,
+      "currentP95": 21.97,
+      "changePercent": -2.37,
+      "passed": true
+    },
+    {
+      "boss": "mire_mother",
+      "width": 1920,
+      "baselineP95": 5.57,
+      "currentP95": 6,
+      "changePercent": 7.78,
+      "passed": true
+    },
+    {
+      "boss": "mire_mother",
+      "width": 3840,
+      "baselineP95": 11.5,
+      "currentP95": 12.27,
+      "changePercent": 6.67,
+      "passed": true
+    },
+    {
+      "boss": "azram",
+      "width": 1920,
+      "baselineP95": 6.47,
+      "currentP95": 7.3,
+      "changePercent": 12.89,
+      "passed": false
+    },
+    {
+      "boss": "azram",
+      "width": 3840,
+      "baselineP95": 13.7,
+      "currentP95": 16.73,
+      "changePercent": 22.14,
+      "passed": false
+    },
+    {
+      "boss": "empty_archangel",
+      "width": 1920,
+      "baselineP95": 5.83,
+      "currentP95": 6.03,
+      "changePercent": 3.43,
+      "passed": true
+    },
+    {
+      "boss": "empty_archangel",
+      "width": 3840,
+      "baselineP95": 12.67,
+      "currentP95": 14.87,
+      "changePercent": 17.37,
+      "passed": false
+    },
+    {
+      "boss": "malthoron",
+      "width": 1920,
+      "baselineP95": 6.83,
+      "currentP95": 7.07,
+      "changePercent": 3.41,
+      "passed": true
+    },
+    {
+      "boss": "malthoron",
+      "width": 3840,
+      "baselineP95": 13.4,
+      "currentP95": 14.8,
+      "changePercent": 10.45,
+      "passed": false
+    },
+    {
+      "boss": "vethriss",
+      "width": 1920,
+      "baselineP95": 7.1,
+      "currentP95": 7.37,
+      "changePercent": 3.76,
+      "passed": true
+    },
+    {
+      "boss": "vethriss",
+      "width": 3840,
+      "baselineP95": 19.8,
+      "currentP95": 18.53,
+      "changePercent": -6.4,
+      "passed": true
+    }
+  ]
+}

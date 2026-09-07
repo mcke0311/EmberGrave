@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Unique item review — Embergrave</title>
+<style>body{margin:0;background:#101418;color:#ecd7b3;font:14px system-ui}header{padding:16px}h1{margin:0 0 8px;font:24px Georgia}select,button{padding:8px;background:#202b33;color:#ecd7b3;border:1px solid #81623e}iframe{display:block;width:1280px;height:720px;border:0}#status{margin:10px 0}</style>
+<header><h1>Unique item powers</h1><label>Item <select id="item"></select></label> <button id="effect">Activate signature power</button><p id="status">Loading isolated review…</p></header><main id="host"></main>
+<script type="module">
+const status=document.getElementById('status');window.uniqueReviewStore=new Map();
+try{
+ const [html,source]=await Promise.all(['../index.html','../js/game.js'].map(url=>fetch(url).then(r=>r.text())));
+ const hooked=source.replace('    init, newGame, loadGame,','    __uniqueReview:{update,updateCamera,render},\n    init, newGame, loadGame,');
+ const injection=`<base href="${new URL('../index.html',location.href)}"><script>const store=parent.uniqueReviewStore;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k)}});window.requestAnimationFrame=()=>0;<\/script>`;
+ const frame=document.createElement('iframe');frame.title='Isolated Unique item preview';frame.srcdoc=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>'+hooked+'<\/script>');
+ document.getElementById('host').append(frame);await new Promise(r=>frame.onload=r);
+ const win=frame.contentWindow;for(let i=0;i<900&&!win.document.querySelector('#titleMenu button');i++){const fatal=win.document.getElementById('appFatal');if(fatal)throw Error(fatal.textContent);await new Promise(r=>setTimeout(r,30));}
+ const api=win.eval('({DATA,Game,UI,Items,UniquePowers,Monster,Minion,Sfx})'),{Game:G,UI,DATA:D,Items:I,UniquePowers:Q}=api;
+ api.Sfx.setVol('master',0);await G.newGame('Unique review','vanguard',false);await G.skipOpening();UI.closeAll();G.state.player.lvl=100;
+ const p=G.state.player;G.debugFlags.god=false;G.__uniqueReview.updateCamera(10);G.__uniqueReview.render();
+ function make(id){const u=D.UNIQUES.find(d=>d.id===id),c=D.UNIQUE_CHARMS.find(d=>d.id===id),j=D.UNIQUE_JEWELS.find(d=>d.id===id);const it=u?I.makeUnique(u):c?I.makeUniqueCharm(c):j?I.makeUniqueJewel(j):I.makeGlyph(id);it.identified=true;return it;}
+ function show(id){UI.hideTooltip();const it=make(id);UI.showItemTooltip(it,500,win.innerHeight-10);document.getElementById('item').value=id;return it;}
+ for(const e of Object.values(Q.catalog)){const o=document.createElement('option');o.value=e.id;o.textContent=e.name;document.getElementById('item').append(o);}
+ document.getElementById('item').onchange=e=>show(e.target.value);
+ async function effect(){
+  const id=document.getElementById('item').value,it=make(id);p.inv.items=[];p.equip={};p.buffs=[];p._unique=null;
+  if(it.kind==='charm')I.autoPlace(p.inv,it);else if(it.kind==='gear')p.equip[it.slot==='ring'?'ring1':it.slot]=it;else{const host=I.fromBase('handaxe');host.sockets=[null];I.socketGlyph(host,it);p.equip.main=host;}
+  p.computeStats();p.hp=p.stats.maxHp*.3;p.mana=p.stats.maxMana*.2;
+  const target=new api.Monster('cave_python',p.x+1,p.y);target.hp=target.maxHp=100000;target.type='undead';target.elite=true;target.slowT=3;target.poisonDot={dps:1,t:4};target.scorch={dps:1,until:G.state.time+10};target.curseFrailty={pct:0,until:G.state.time+10};G.state.monsters=[target,new api.Monster('cave_python',p.x+2,p.y+1)];
+  const power=Q.catalog[id].powers[0],event={target,source:target,damage:50,targetHpBefore:target.maxHp,crit:true,kind:'strike',elem:'fire',amount:power.every||1};
+  if(['undead','demon','beast'].includes(power.when))target.type=power.when;
+  if(power.when==='demonSource')target.type='demon';
+  if(power.when==='boss')target.isBoss=true;
+  if(power.when==='lowTarget')event.targetHpBefore=target.maxHp*.2;
+  if(power.when==='highLife')p.hp=p.stats.maxHp;
+  if(power.when==='highMana')p.mana=p.stats.maxMana;
+  if(power.when==='far')for(const m of G.state.monsters)m.x+=5;
+  if(power.when==='frozen')target.frozen=G.state.time+10;
+  if(power.when==='exposed')target.uniqueExposes=[{key:'preview',pct:1,until:G.state.time+10}];
+  p._unique.lastMoved=power.when==='moving'?G.state.time:G.state.time-2;G.state.minions=[];
+  if(['companion','companionKill'].includes(power.when)){const mi=new api.Minion('wolf',{hp:100,dmg:[3,5],speed:3,atkRate:1,range:1},p);G.state.minions.push(mi);if(power.when==='companionKill')event.source=mi;}
+  if(['fire','cold','light','poison','shadow','earth'].includes(power.when))event.elem=power.when;
+  if(power.when==='elemental')event.elem='cold';
+  event.skill=D.SKILLS[{summon:'call_wolf',curse:'gravebinder_2_1',form:'fangform',shout:'vanguard_1_0',mobility:'emberwitch_2_4',trap:'veilranger_1_0'}[power.when]||'emberwitch_2_2'];
+  for(let i=0;i<Math.max(2,power.every||1);i++){if(power.alternate)event.kind=i%2?'spell':'strike';if(power.alternateElement)event.elem=i%2?'cold':'fire';Q.emit(p,power.event,event);}
+  const prepared=await G.preparePlayerEquipment(p.equip);G.commitPlayerEquipment(prepared);
+  G.__uniqueReview.render();UI.refreshBuffs();UI.refreshHUD();show(id);
+  if(!p._unique.states.size)throw Error('Preview did not activate '+id);
+ }
+ document.getElementById('effect').onclick=()=>effect().catch(e=>status.textContent=e.message);
+ window.uniqueQA={api,frame,show,make,effect};show('u_widow');status.textContent='Ready — 162 items. Review saves are isolated in memory.';
+}catch(e){status.textContent='FAIL: '+e.stack;throw e;}
+</script></html>

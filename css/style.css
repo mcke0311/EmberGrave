@@ -220,6 +220,8 @@ h1,h2,h3 { font-weight:normal; letter-spacing:2px; }
 .tt-identity { display:flex; align-items:center; gap:11px; text-align:left; padding-bottom:10px; margin-bottom:8px; border-bottom:1px solid #8a75463d; }
 .tt-identity .item-icon { width:56px; height:56px; flex:none; object-fit:contain; border:1px solid #95836166; border-radius:3px; background:#0a1016; }
 .tt-labels { min-width:0; }.tt-type { color:#aab8c1; font:10px/1.5 system-ui; margin:4px 0; }
+#tooltip, #tooltipCmp { overflow-wrap:anywhere; transition:none !important; }
+#tooltip > .tt-unique, #tooltipCmp > .tt-unique { margin:8px 0; padding:7px 0; border-top:1px solid #d8924a35; border-bottom:1px solid #d8924a35; }
 .tt-common { color:#cfcfcf; } .tt-enhanced { color:#7a96ff; } .tt-rare { color:#e8d060; }
 .tt-unique { color:#d8924a; } .tt-base { color:#8a7a55; } .tt-mod { color:#7a96ff; }
 .tt-glyph { color:#7fd8c0; }

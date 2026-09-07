@@ -1,0 +1,20 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+const scope=vm.createContext({console,Math,Set,Map});
+for(const f of ['utils','data','unique_powers'])vm.runInContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'),scope);
+const {D,Q}=vm.runInContext('({D:DATA,Q:UniquePowers})',scope);
+let md='# Unique items\n\n162 named brown items, with 168 signature powers including both glyph modes. Generated from the authored runtime catalogue by `node tools/export_unique_catalog.mjs`.\n\n';
+md+='## Drop rules\n\nAt zero Magic Find, an eligible boss has a 20.15% chance to drop at least one Unique, elites 4.08%, chests 4.05%, normal enemies 0.22%, and barrels 0.13%. These are independent random rewards, with no pity counter. Seven explicit quest milestones still guarantee Unique equipment. Runed Stones and glyph quests roll 5% per glyph; glyph reforging preserves rarity.\n\n';
+md+='Magic Find multiplies Unique chances by `1 + (150 × MF / (150 + MF)) / 100`, approaching 2.5×. Gear is selected near the source level. Unique socketables cannot drop above source level + 2. Glyph drop levels: Venom 12, Aegis 16, Doom 20, Wraith 24, Void 28, Titan 36.\n\n';
+md+='## Power rules\n\nGear must be equipped and identified; charms must be in the pack; jewels and glyphs must be seated in equipped gear. Duplicate copies of a named power do not stack; ordinary stats still add. Each glyph mode can activate once. Unequipping removes temporary benefits and progress without refreshing cooldowns. Temporary combat effects reset on loading, like existing skill buffs.\n\n';
+md+='Weapon hits and spell hits count only successful damage, including skill projectiles and fields. Killing-hit effects use actual damage after defenses, capped at remaining Life. Damage-over-time kills use the level-based fallback shown. Companion kills count as owned kills but do not trigger weapon or spell hit powers. Generated Unique damage, including its damage over time, cannot trigger more Unique powers. Exposures use the strongest active value; barriers refresh without accumulating. Area and chain effects center on the triggering enemy, or the hero when there is no enemy. Hard crowd control does not affect bosses.\n\n';
+md+='Existing saved Uniques receive canonical stats and powers on load; identity, identification, inventory position and sockets survive. Older seated Unique jewels are recovered only when their original name, color and affixes match. Unrecognized saved data is preserved.\n\n';
+const groups=[['Equipment',D.UNIQUES],['Charms',D.UNIQUE_CHARMS],['Jewels',D.UNIQUE_JEWELS],['Glyphs',Object.values(D.GLYPHS).filter(g=>g.unique)]];
+for(const [title,defs]of groups){md+='## '+title+'\n\n';for(const d of defs){const e=Q.catalog[d.id];md+=`### ${d.name}\n\n\`${d.id}\` · ${title==='Glyphs'?'Drop level':'Item level'} ${e.level}\n\n`;
+ const stats=d.stats?Object.entries(d.stats):d.affixes?.map(a=>[a.stat,a.val]);
+ if(stats)md+='Supporting stats: '+stats.map(([k,v])=>D.STAT_TEXT[k]?.(v)||`${k}: ${v}`).join('; ')+'.\n\n';
+ else for(const [side,label]of [['wpn','Weapons'],['arm','Armor']])md+=label+': '+Object.entries(d[side]).map(([k,v])=>D.STAT_TEXT[k](v)).join('; ')+'.\n\n';
+ e.powers.forEach((p,i)=>md+=(e.powers.length===2?(i?'**In armor:** ':'**In weapons:** '):'')+Q.describe(e,p)+'\n\n');
+}}
+fs.writeFileSync(new URL('../docs/UNIQUE_ITEMS.md',import.meta.url),md);
+console.log('Exported 162 Unique item identities and 168 powers.');

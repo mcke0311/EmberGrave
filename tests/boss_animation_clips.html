@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Boss attack animation recordings</title>
+<style>body{margin:30px auto;max-width:1500px;padding:0 20px;background:#11171d;color:#e9ddc6;font:15px system-ui}h1,h2{font-family:Georgia}p{color:#bac5cc}a{color:#efcf92}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,580px),1fr));gap:24px}article{background:#192127;padding:16px;border:1px solid #514b3d}h2{margin:0 0 12px}video{width:100%;background:#08090a}small{display:block;margin-top:8px;color:#acb6be}</style>
+<h1>Boss attack animations</h1><p>Recorded in the crowded encounter review. Each clip covers the boss's phase-specific attacks and follow-up strikes. <a href="boss_encounters.html">Open the interactive boss review</a>.</p><div class="grid" id="clips"></div>
+<script>
+for(const [id,name] of Object.entries({korvath:'Korvath',mire_mother:'Mire Mother',azram:'Azram',empty_archangel:'Empty Archangel',malthoron:'Malthoron',vethriss:'Vethriss'})){
+ const article=document.createElement('article'),title=document.createElement('h2'),video=document.createElement('video'),note=document.createElement('small');
+ title.textContent=name;video.controls=true;video.muted=true;video.preload='metadata';note.textContent='1080p · body motion and attack effects · all phases';
+ // Blob URLs permit precise seeking even on the simple local server without ranges.
+ fetch('../tmp/boss_animation/1920_motion/'+id+'.webm').then(r=>{if(!r.ok)throw Error('Missing recording');return r.blob();}).then(blob=>video.src=URL.createObjectURL(blob)).catch(()=>note.textContent='Run the animation browser review with --clips to create this recording.');
+ article.append(title,video,note);document.getElementById('clips').append(article);
+}
+</script></html>

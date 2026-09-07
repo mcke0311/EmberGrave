@@ -3,6 +3,7 @@
 <h1>Act I–V · Boss encounters</h1>
 <p>Play with an isolated hero and save store. Major attacks mark their damage area before striking. Step outside the gold arena boundary to reset the fight.</p>
 <div id="controls"><select id="boss" aria-label="Boss"></select><select id="hero" aria-label="Hero class"></select><select id="phase" aria-label="Phase"></select><select id="pose" aria-label="Pose"><option value="live">Live combat</option><option>idle</option><option>movement</option><option>windup</option><option>impact</option><option>recovery</option><option>death</option></select><button id="start">Restart encounter</button><button id="pause">Pause</button><label><input id="god" type="checkbox">Invulnerable review</label><button id="check">Check all poses</button></div>
+<div><select id="sequence" aria-label="Attack sequence"></select><button id="preview">Preview sequence</button><button id="step">Advance 0.25 s</button><button id="frameStep">Advance 1 frame</button><label><input id="animations" type="checkbox" checked>Boss animations</label><label>Playback <select id="speed" aria-label="Playback speed"><option value="0.25">¼ speed</option><option value="0.5">½ speed</option><option value="1" selected>Normal</option></select></label></div>
 <pre id="status">Loading isolated review…</pre><div id="host"></div>
 <script type="module">
 window.bossStore=new Map();
@@ -22,7 +23,7 @@ try {
   document.getElementById('host').append(frame);await new Promise(r=>frame.onload=r);
   win=frame.contentWindow;const doc=win.document;
   for(let i=0;i<600&&!doc.querySelector('#titleMenu button');i++){if(doc.getElementById('appFatal'))throw Error(doc.getElementById('appFatal').textContent);await delay(30);}
-  api=win.eval('({DATA,Game,UI,Monster,SpriteAssets,BossEncounters,BossLoadouts,MapGen,Items,U})');game=api.Game;ui=api.UI;
+  api=win.eval('({DATA,Game,UI,Monster,SpriteAssets,BossEncounters,BossLoadouts,MapGen,Items,U,BossVFX})');game=api.Game;ui=api.UI;
   win.eval('Sfx').setVol('master',0);game.firstSightCutscene=()=>{};
   const test=game.__bossReview;
   for(const [id,d] of Object.entries(api.DATA.BOSS_ENCOUNTERS)){const o=document.createElement('option');o.value=id;o.textContent=api.DATA.ENEMIES[id].name;document.getElementById('boss').append(o);}
@@ -46,6 +47,11 @@ try {
     for(let i=1;i<=phase;i++){m.hp=m.maxHp*m.def.phases[i-1].at;m.encounter.phaseChange(i);}
     m.encounter.active=true;
     document.getElementById('boss').value=id;document.getElementById('hero').value=classId;phases(id);document.getElementById('phase').value=phase;
+    const sequences=document.getElementById('sequence');sequences.replaceChildren();
+    const names={cleave:'Committed Cleave',fissure:phase>0&&id==='korvath'?'Fissure → Crossed Fissure':'Oathbreak Fissure',bile:'Bilefall',grasp:'The Marsh Reaches',chains:'Chains of Khal-Zahir',portals:'Portals to the Past',gold:'Molten Crown',wings:'Broken-Wing Fan',descent:phase>0?'Descent → Cross':'Empty Benediction',souls:'Souls Unbound',beam:'The Hollow Choir',light:'Borrowed Light',lunge:"Serpent's Fang",decoys:'Illusions → Shadow Pulse'};
+    for(const attack of new Set(m.encounter.config.rotations[phase]))for(const variation of attack==='memory'?[0,1]:[0]){
+      const option=document.createElement('option');option.value=attack+':'+variation;option.textContent=attack==='memory'?(variation?'Chains → Beam':'Fissure → Bile'):names[attack];sequences.append(option);
+    }
     document.getElementById('pose').value='live';
     game.debugFlags.god=document.getElementById('god').checked;
     test.updateCamera(5);render();busy=false;paused=false;document.getElementById('pause').textContent='Pause';
@@ -99,9 +105,17 @@ try {
   document.getElementById('pause').onclick=()=>{paused=!paused;document.getElementById('pause').textContent=paused?'Resume':'Pause';};
   document.getElementById('god').onchange=()=>game.debugFlags.god=document.getElementById('god').checked;
   document.getElementById('check').onclick=run(check);
+  document.getElementById('preview').onclick=()=>{
+    if(busy)return;const m=game.state.monsters.find(m=>m.encounter&&!m.dead);if(!m)return;
+    const [id,variation]=document.getElementById('sequence').value.split(':');
+    paused=true;document.getElementById('pause').textContent='Resume';document.getElementById('pose').value='live';m.encounter.active=true;m.encounter.memoryIndex=+variation;m.encounter.start(id,game.state.player);render();
+  };
+  document.getElementById('step').onclick=()=>{if(!busy){paused=true;document.getElementById('pause').textContent='Resume';advance(.25);}};
+  document.getElementById('frameStep').onclick=()=>{if(!busy){paused=true;document.getElementById('pause').textContent='Resume';advance(1/60);}};
+  document.getElementById('animations').onchange=()=>{api.BossVFX.setEnabled(document.getElementById('animations').checked);render();};
   window.bossQA={api,setup,advance,render,check,showPose,get frame(){return frame;},setPaused:value=>paused=value};
   await setup('korvath','vanguard');
-  let last=performance.now();function live(t){const dt=Math.min(.05,(t-last)/1000);last=t;if(!busy&&!paused&&!ui.escOpen()&&!ui.cinematicActive()){try{test.update(dt);render();}catch(e){paused=true;setStatus('FAIL: '+e.stack);document.body.dataset.testStatus='failed';}}requestAnimationFrame(live);}requestAnimationFrame(live);
+  let last=performance.now();function live(t){const dt=Math.min(.05,(t-last)/1000)*+document.getElementById('speed').value;last=t;if(!busy&&!paused&&!ui.escOpen()&&!ui.cinematicActive()){try{test.update(dt);render();}catch(e){paused=true;setStatus('FAIL: '+e.stack);document.body.dataset.testStatus='failed';}}requestAnimationFrame(live);}requestAnimationFrame(live);
   if(new URLSearchParams(location.search).has('check'))await check();
 }catch(e){document.body.dataset.testStatus='failed';out.textContent='FAIL: '+e.stack;console.error(e);}
 </script></html>

@@ -1,0 +1,1086 @@
+{
+  "browser": "152.0.7977.76",
+  "width": 3840,
+  "reducedMotion": true,
+  "sequences": [
+    {
+      "id": "korvath",
+      "phase": 0,
+      "attack": "cleave",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 5002,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "korvath",
+      "phase": 0,
+      "attack": "fissure",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "fissure",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "fissure",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "fissure",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 5002,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "korvath",
+      "phase": 1,
+      "attack": "cleave",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 4806,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "korvath",
+      "phase": 1,
+      "attack": "fissure",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "fissure",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "fissure",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "fissure",
+          "stage": "windup"
+        },
+        {
+          "step": 1,
+          "attack": "fissure",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "fissure",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 6940,
+      "frames": 49,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "mire_mother",
+      "phase": 0,
+      "attack": "bile",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "bile",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "bile",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "bile",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 8788,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "mire_mother",
+      "phase": 0,
+      "attack": "grasp",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "grasp",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "grasp",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "grasp",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 8788,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "mire_mother",
+      "phase": 1,
+      "attack": "bile",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "bile",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "bile",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "bile",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 8858,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "mire_mother",
+      "phase": 1,
+      "attack": "grasp",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "grasp",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "grasp",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "grasp",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 8858,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "mire_mother",
+      "phase": 2,
+      "attack": "bile",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "bile",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "bile",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "bile",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 7904,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "mire_mother",
+      "phase": 2,
+      "attack": "grasp",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "grasp",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "grasp",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "grasp",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 7904,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "azram",
+      "phase": 0,
+      "attack": "chains",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 5850,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "azram",
+      "phase": 0,
+      "attack": "cleave",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 5850,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "azram",
+      "phase": 1,
+      "attack": "portals",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "portals",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "portals",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "portals",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 5260,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "azram",
+      "phase": 1,
+      "attack": "chains",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 7014,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "azram",
+      "phase": 2,
+      "attack": "portals",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "portals",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "portals",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "portals",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 4208,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "azram",
+      "phase": 2,
+      "attack": "gold",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "gold",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "gold",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "gold",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 5788,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "azram",
+      "phase": 2,
+      "attack": "chains",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 5788,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "empty_archangel",
+      "phase": 0,
+      "attack": "wings",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "wings",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "wings",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "wings",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 6482,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "empty_archangel",
+      "phase": 0,
+      "attack": "descent",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "descent",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "descent",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "descent",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 6482,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "empty_archangel",
+      "phase": 1,
+      "attack": "wings",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "wings",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "wings",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "wings",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 7378,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "empty_archangel",
+      "phase": 1,
+      "attack": "descent",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "descent",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "descent",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "cross",
+          "stage": "windup"
+        },
+        {
+          "step": 1,
+          "attack": "cross",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "cross",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 10268,
+      "frames": 49,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "malthoron",
+      "phase": 0,
+      "attack": "cleave",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 9940,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "malthoron",
+      "phase": 0,
+      "attack": "chains",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 9940,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "malthoron",
+      "phase": 1,
+      "attack": "souls",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "souls",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "souls",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "souls",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 9710,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "malthoron",
+      "phase": 1,
+      "attack": "cleave",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 9710,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "malthoron",
+      "phase": 2,
+      "attack": "beam",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "beam",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "beam",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "beam",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 7466,
+      "frames": 76,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 0,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "malthoron",
+      "phase": 2,
+      "attack": "souls",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "souls",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "souls",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "souls",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 10226,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "vethriss",
+      "phase": 0,
+      "attack": "light",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "light",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "light",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "light",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 7488,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "vethriss",
+      "phase": 0,
+      "attack": "cleave",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "cleave",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 7488,
+      "frames": 31,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "vethriss",
+      "phase": 1,
+      "attack": "lunge",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "lunge",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "lunge",
+          "stage": "execute"
+        },
+        {
+          "step": 0,
+          "attack": "lunge",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 9588,
+      "frames": 34,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 0,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "vethriss",
+      "phase": 1,
+      "attack": "decoys",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "decoys",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "decoys",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "echoes",
+          "stage": "windup"
+        },
+        {
+          "step": 1,
+          "attack": "echoes",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "echoes",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 14008,
+      "frames": 53,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 2,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "vethriss",
+      "phase": 2,
+      "attack": "memory",
+      "variation": 0,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "fissure",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "fissure",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "bile",
+          "stage": "windup"
+        },
+        {
+          "step": 1,
+          "attack": "bile",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "bile",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 30036,
+      "frames": 49,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    },
+    {
+      "id": "vethriss",
+      "phase": 2,
+      "attack": "memory",
+      "variation": 1,
+      "steps": [
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "windup"
+        },
+        {
+          "step": 0,
+          "attack": "chains",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "beam",
+          "stage": "windup"
+        },
+        {
+          "step": 1,
+          "attack": "beam",
+          "stage": "execute"
+        },
+        {
+          "step": 1,
+          "attack": "beam",
+          "stage": "recovery"
+        }
+      ],
+      "pixels": 30036,
+      "frames": 94,
+      "diagnostics": {
+        "events": 0,
+        "particles": 0,
+        "peakEvents": 1,
+        "peakParticles": 0
+      }
+    }
+  ],
+  "errors": [],
+  "missing": [],
+  "clips": [],
+  "controls": true,
+  "paintedPixelChecks": 298854,
+  "passed": true
+}
