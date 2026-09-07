@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="../"><title>Projected terrain pixel checks</title>
+<style>body{background:#182029;color:#eee;font:14px system-ui;margin:16px}canvas{max-width:960px;display:block;margin:10px 0}pre{white-space:pre-wrap}</style>
+<h1>Projected terrain pixel checks</h1><pre id="result">Loading…</pre><div id="views"></div>
+<script src="js/utils.js?v=6"></script><script src="js/data.js?v=21"></script><script src="js/data_overrides.js?v=2"></script><script src="js/sprite_manifest.js?v=11"></script><script src="js/sprite_assets.js?v=12"></script><script src="js/mapgen.js?v=9"></script><script src="js/level_terrain.js?v=12"></script>
+<script>
+(async()=>{const out=document.getElementById('result'),results=[];try{
+ await Promise.all([SpriteAssets.loadBundle('world'),SpriteAssets.loadBundle('zone:north_wild')]);
+ const m=MapGen.generate('north_wild',12345),width=960,height=640;
+ const make=()=>{const c=document.createElement('canvas');c.width=width;c.height=height;return c;};
+ const reference=make(),cached=make(),a=reference.getContext('2d'),b=cached.getContext('2d');
+ function render(ctx,cam,useCache){const w=ctx.canvas.width,h=ctx.canvas.height;ctx.clearRect(0,0,w,h);LevelTerrain.beginFrame(m);try{
+  LevelTerrain.drawSurface(ctx,m,cam,0,m.w-1,0,m.h-1,(x,y)=>x>-96&&x<w+96&&y>-224&&y<h+96,useCache);
+ }finally{LevelTerrain.endFrame();}}
+ for(const [x,y] of [[-480,2240],[-421,2347],[-780,2690],[-780.35,2690.65],[-483,2239]]){
+  const cam={x,y};render(a,cam,false);render(b,cam,true);
+  const p=a.getImageData(0,0,width,height).data,q=b.getImageData(0,0,width,height).data;let error=0,max=0,holes=0;
+  for(let i=0;i<p.length;i++){const d=Math.abs(p[i]-q[i]);error+=d;max=Math.max(max,d);}
+  // Interior opacity is independent of antialiasing at the map silhouette.
+  for(let y=2;y<height-2;y++)for(let x=2;x<width-2;x++){
+   const i=(x+y*width)*4+3;
+   if(p[i]===255&&p[i-4]===255&&p[i+4]===255&&p[i-width*4]===255&&p[i+width*4]===255&&q[i]<250)holes++;
+  }
+  // Fractional camera motion deliberately filters the finished world raster
+  // once. Compare with a fresh canonical raster using that same translation,
+  // so edge updates cannot silently introduce smearing or stale pixels.
+  const raster=make();raster.width+=4;raster.height+=4;
+  const origin={x:Math.floor(x)-2,y:Math.floor(y)-2};render(raster.getContext('2d'),origin,false);
+  const canonical=make(),g=canonical.getContext('2d');g.drawImage(raster,origin.x-x,origin.y-y);
+  const expected=g.getImageData(0,0,width,height).data;let rasterError=0,rasterMax=0;
+  for(let i=0;i<q.length;i++){const d=Math.abs(q[i]-expected[i]);rasterError+=d;rasterMax=Math.max(rasterMax,d);}
+  const mean=error/p.length,canonicalMean=rasterError/q.length;
+  results.push({cam,originalMeanChannelError:+mean.toFixed(4),originalMaxChannelError:max,canonicalMeanChannelError:+canonicalMean.toFixed(4),canonicalMaxChannelError:rasterMax,interiorHoles:holes});
+  if(holes||canonicalMean>.01||rasterMax>3)throw Error('Cached terrain changed coverage or its world raster: '+JSON.stringify(results.at(-1)));
+  raster.width=raster.height=canonical.width=canonical.height=0;
+ }
+ document.getElementById('views').append(cached);out.textContent='PASS — moving cache matches terrain coverage and appearance.\n'+JSON.stringify(results,null,2);document.body.dataset.testStatus='passed';
+}catch(e){out.textContent='FAIL '+e.stack+'\n'+JSON.stringify(results,null,2);document.body.dataset.testStatus='failed';}})();
+</script></html>

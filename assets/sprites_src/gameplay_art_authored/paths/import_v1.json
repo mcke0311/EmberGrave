@@ -1,0 +1,1353 @@
+{
+  "atlas": [
+    256,
+    128
+  ],
+  "cell": [
+    64,
+    32
+  ],
+  "materials": {
+    "cobblestone": {
+      "alphaSha256": "f6255071e190c891cdabdec8b1aa0f014a751500003d29f7d989e7d8cc15d4f8",
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/paths/cobblestone_iso_midpoint_alpha_v1.png",
+      "chromaSha256": "f074225f1bccc65384e9cb91f90ef969abe3a17a0236fee3e3822d116571ef40",
+      "chromaSource": "assets/sprites_src/gameplay_art_authored/paths/cobblestone_iso_midpoint_chroma_v1.png",
+      "frameAlphaBBoxes": [
+        [
+          22,
+          12,
+          43,
+          19
+        ],
+        [
+          22,
+          5,
+          53,
+          19
+        ],
+        [
+          21,
+          12,
+          53,
+          27
+        ],
+        [
+          21,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          13,
+          42,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          13,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          5,
+          43,
+          19
+        ],
+        [
+          10,
+          5,
+          53,
+          19
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          5,
+          42,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ]
+      ],
+      "sourcePanelBounds": [
+        [
+          0,
+          0,
+          314,
+          314
+        ],
+        [
+          314,
+          0,
+          627,
+          314
+        ],
+        [
+          627,
+          0,
+          940,
+          314
+        ],
+        [
+          940,
+          0,
+          1254,
+          314
+        ],
+        [
+          0,
+          314,
+          314,
+          627
+        ],
+        [
+          314,
+          314,
+          627,
+          627
+        ],
+        [
+          627,
+          314,
+          940,
+          627
+        ],
+        [
+          940,
+          314,
+          1254,
+          627
+        ],
+        [
+          0,
+          627,
+          314,
+          940
+        ],
+        [
+          314,
+          627,
+          627,
+          940
+        ],
+        [
+          627,
+          627,
+          940,
+          940
+        ],
+        [
+          940,
+          627,
+          1254,
+          940
+        ],
+        [
+          0,
+          940,
+          314,
+          1254
+        ],
+        [
+          314,
+          940,
+          627,
+          1254
+        ],
+        [
+          627,
+          940,
+          940,
+          1254
+        ],
+        [
+          940,
+          940,
+          1254,
+          1254
+        ]
+      ]
+    },
+    "cryptstone": {
+      "alphaSha256": "829d813f787a751148f7e77cee209d08f5d54090f495f153d3ee574cd89a181e",
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/paths/cryptstone_iso_midpoint_alpha_v1.png",
+      "chromaSha256": "d130e7ad03b68c622fbd412dd9b0768784ff5eeaea4bde1820dc411490d3a258",
+      "chromaSource": "assets/sprites_src/gameplay_art_authored/paths/cryptstone_iso_midpoint_chroma_v1.png",
+      "frameAlphaBBoxes": [
+        [
+          22,
+          12,
+          43,
+          19
+        ],
+        [
+          22,
+          5,
+          53,
+          19
+        ],
+        [
+          21,
+          12,
+          53,
+          27
+        ],
+        [
+          21,
+          5,
+          52,
+          27
+        ],
+        [
+          11,
+          13,
+          42,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          13,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          52,
+          27
+        ],
+        [
+          11,
+          5,
+          43,
+          19
+        ],
+        [
+          10,
+          5,
+          53,
+          19
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          52,
+          27
+        ],
+        [
+          11,
+          5,
+          42,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          52,
+          27
+        ]
+      ],
+      "sourcePanelBounds": [
+        [
+          0,
+          0,
+          314,
+          314
+        ],
+        [
+          314,
+          0,
+          627,
+          314
+        ],
+        [
+          627,
+          0,
+          940,
+          314
+        ],
+        [
+          940,
+          0,
+          1254,
+          314
+        ],
+        [
+          0,
+          314,
+          314,
+          627
+        ],
+        [
+          314,
+          314,
+          627,
+          627
+        ],
+        [
+          627,
+          314,
+          940,
+          627
+        ],
+        [
+          940,
+          314,
+          1254,
+          627
+        ],
+        [
+          0,
+          627,
+          314,
+          940
+        ],
+        [
+          314,
+          627,
+          627,
+          940
+        ],
+        [
+          627,
+          627,
+          940,
+          940
+        ],
+        [
+          940,
+          627,
+          1254,
+          940
+        ],
+        [
+          0,
+          940,
+          314,
+          1254
+        ],
+        [
+          314,
+          940,
+          627,
+          1254
+        ],
+        [
+          627,
+          940,
+          940,
+          1254
+        ],
+        [
+          940,
+          940,
+          1254,
+          1254
+        ]
+      ]
+    },
+    "earth": {
+      "alphaSha256": "5642ceb4d09e3cea5228326ef9bd870a6515c601d5249253b86af4a394d211bb",
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/paths/earth_iso_midpoint_alpha_v1.png",
+      "chromaSha256": "67cf39fdff36bdd140a1b4b0d1fc339f5cfa6ecfeb15ea817e39c652270548e1",
+      "chromaSource": "assets/sprites_src/gameplay_art_authored/paths/earth_iso_midpoint_chroma_v1.png",
+      "frameAlphaBBoxes": [
+        [
+          22,
+          12,
+          43,
+          19
+        ],
+        [
+          22,
+          5,
+          53,
+          19
+        ],
+        [
+          21,
+          12,
+          53,
+          27
+        ],
+        [
+          21,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          13,
+          42,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          13,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          5,
+          43,
+          19
+        ],
+        [
+          10,
+          5,
+          53,
+          19
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          5,
+          42,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ]
+      ],
+      "sourcePanelBounds": [
+        [
+          0,
+          0,
+          314,
+          314
+        ],
+        [
+          314,
+          0,
+          627,
+          314
+        ],
+        [
+          627,
+          0,
+          940,
+          314
+        ],
+        [
+          940,
+          0,
+          1254,
+          314
+        ],
+        [
+          0,
+          314,
+          314,
+          627
+        ],
+        [
+          314,
+          314,
+          627,
+          627
+        ],
+        [
+          627,
+          314,
+          940,
+          627
+        ],
+        [
+          940,
+          314,
+          1254,
+          627
+        ],
+        [
+          0,
+          627,
+          314,
+          940
+        ],
+        [
+          314,
+          627,
+          627,
+          940
+        ],
+        [
+          627,
+          627,
+          940,
+          940
+        ],
+        [
+          940,
+          627,
+          1254,
+          940
+        ],
+        [
+          0,
+          940,
+          314,
+          1254
+        ],
+        [
+          314,
+          940,
+          627,
+          1254
+        ],
+        [
+          627,
+          940,
+          940,
+          1254
+        ],
+        [
+          940,
+          940,
+          1254,
+          1254
+        ]
+      ]
+    },
+    "hellstone": {
+      "alphaSha256": "fb2e9ddd22caf8e87fb22f6d9edb5648a8fff640fb52756399b3ebca782eeec3",
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/paths/hellstone_iso_midpoint_alpha_v1.png",
+      "chromaSha256": "035ed15bf8adbec3ffd8cccf3422d6aff67db0b39fce4c2400f004c744fd14f9",
+      "chromaSource": "assets/sprites_src/gameplay_art_authored/paths/hellstone_iso_midpoint_chroma_v1.png",
+      "frameAlphaBBoxes": [
+        [
+          22,
+          12,
+          43,
+          19
+        ],
+        [
+          22,
+          5,
+          53,
+          19
+        ],
+        [
+          21,
+          12,
+          53,
+          27
+        ],
+        [
+          21,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          13,
+          42,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          13,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          5,
+          43,
+          19
+        ],
+        [
+          10,
+          5,
+          53,
+          19
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          5,
+          42,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ]
+      ],
+      "sourcePanelBounds": [
+        [
+          0,
+          0,
+          314,
+          314
+        ],
+        [
+          314,
+          0,
+          627,
+          314
+        ],
+        [
+          627,
+          0,
+          940,
+          314
+        ],
+        [
+          940,
+          0,
+          1254,
+          314
+        ],
+        [
+          0,
+          314,
+          314,
+          627
+        ],
+        [
+          314,
+          314,
+          627,
+          627
+        ],
+        [
+          627,
+          314,
+          940,
+          627
+        ],
+        [
+          940,
+          314,
+          1254,
+          627
+        ],
+        [
+          0,
+          627,
+          314,
+          940
+        ],
+        [
+          314,
+          627,
+          627,
+          940
+        ],
+        [
+          627,
+          627,
+          940,
+          940
+        ],
+        [
+          940,
+          627,
+          1254,
+          940
+        ],
+        [
+          0,
+          940,
+          314,
+          1254
+        ],
+        [
+          314,
+          940,
+          627,
+          1254
+        ],
+        [
+          627,
+          940,
+          940,
+          1254
+        ],
+        [
+          940,
+          940,
+          1254,
+          1254
+        ]
+      ]
+    },
+    "ice": {
+      "alphaSha256": "fc557cadb16fd1f1fe18d5f6113eb5b614a4f78a8b5dacc798aa892b6db80ee4",
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/paths/ice_iso_midpoint_alpha_v1.png",
+      "chromaSha256": "c4c2bb25caf2e2b2086e4ccdb95287fc1b2f4411282e35b7e370fcc61e65b2f7",
+      "chromaSource": "assets/sprites_src/gameplay_art_authored/paths/ice_iso_midpoint_chroma_v1.png",
+      "frameAlphaBBoxes": [
+        [
+          22,
+          12,
+          43,
+          19
+        ],
+        [
+          22,
+          5,
+          53,
+          19
+        ],
+        [
+          21,
+          12,
+          53,
+          27
+        ],
+        [
+          21,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          13,
+          42,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          13,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          5,
+          43,
+          19
+        ],
+        [
+          10,
+          5,
+          53,
+          19
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          5,
+          42,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ]
+      ],
+      "sourcePanelBounds": [
+        [
+          0,
+          0,
+          314,
+          314
+        ],
+        [
+          314,
+          0,
+          627,
+          314
+        ],
+        [
+          627,
+          0,
+          940,
+          314
+        ],
+        [
+          940,
+          0,
+          1254,
+          314
+        ],
+        [
+          0,
+          314,
+          314,
+          627
+        ],
+        [
+          314,
+          314,
+          627,
+          627
+        ],
+        [
+          627,
+          314,
+          940,
+          627
+        ],
+        [
+          940,
+          314,
+          1254,
+          627
+        ],
+        [
+          0,
+          627,
+          314,
+          940
+        ],
+        [
+          314,
+          627,
+          627,
+          940
+        ],
+        [
+          627,
+          627,
+          940,
+          940
+        ],
+        [
+          940,
+          627,
+          1254,
+          940
+        ],
+        [
+          0,
+          940,
+          314,
+          1254
+        ],
+        [
+          314,
+          940,
+          627,
+          1254
+        ],
+        [
+          627,
+          940,
+          940,
+          1254
+        ],
+        [
+          940,
+          940,
+          1254,
+          1254
+        ]
+      ]
+    },
+    "sandstone": {
+      "alphaSha256": "76cf2067363d8389c150e9e15e99ef0b1ce2c251c2238f6de1dcabca4b75405e",
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/paths/sandstone_iso_midpoint_alpha_v1.png",
+      "chromaSha256": "42a30eb764d7d86ed88cf097d7c4af00c62806e54b9ba6a76e0223a100f42885",
+      "chromaSource": "assets/sprites_src/gameplay_art_authored/paths/sandstone_iso_midpoint_chroma_v1.png",
+      "frameAlphaBBoxes": [
+        [
+          22,
+          12,
+          43,
+          19
+        ],
+        [
+          22,
+          5,
+          53,
+          19
+        ],
+        [
+          22,
+          12,
+          53,
+          27
+        ],
+        [
+          21,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          13,
+          42,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          13,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          5,
+          43,
+          19
+        ],
+        [
+          10,
+          5,
+          53,
+          19
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          11,
+          5,
+          42,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ],
+        [
+          10,
+          5,
+          53,
+          27
+        ]
+      ],
+      "sourcePanelBounds": [
+        [
+          0,
+          0,
+          314,
+          314
+        ],
+        [
+          314,
+          0,
+          627,
+          314
+        ],
+        [
+          627,
+          0,
+          940,
+          314
+        ],
+        [
+          940,
+          0,
+          1254,
+          314
+        ],
+        [
+          0,
+          314,
+          314,
+          627
+        ],
+        [
+          314,
+          314,
+          627,
+          627
+        ],
+        [
+          627,
+          314,
+          940,
+          627
+        ],
+        [
+          940,
+          314,
+          1254,
+          627
+        ],
+        [
+          0,
+          627,
+          314,
+          940
+        ],
+        [
+          314,
+          627,
+          627,
+          940
+        ],
+        [
+          627,
+          627,
+          940,
+          940
+        ],
+        [
+          940,
+          627,
+          1254,
+          940
+        ],
+        [
+          0,
+          940,
+          314,
+          1254
+        ],
+        [
+          314,
+          940,
+          627,
+          1254
+        ],
+        [
+          627,
+          940,
+          940,
+          1254
+        ],
+        [
+          940,
+          940,
+          1254,
+          1254
+        ]
+      ]
+    }
+  },
+  "operation": "fixed-nominal-panel-slice-and-shared-resize-v2",
+  "outputs": {
+    "bastion": {
+      "material": "hellstone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/bastion.png",
+      "sha256": "d2ce8c8df5af5ce169e84a5fe5283d03c1c0a99000c7da9da9bbcdf2803d1f54"
+    },
+    "cathedral": {
+      "material": "cobblestone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/cathedral.png",
+      "sha256": "0925ac45018e364e7cbe597cc3636cd7b753c3727e4e15871ea692cfff333ca3"
+    },
+    "chapel": {
+      "material": "cobblestone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/chapel.png",
+      "sha256": "0925ac45018e364e7cbe597cc3636cd7b753c3727e4e15871ea692cfff333ca3"
+    },
+    "crypt": {
+      "material": "cryptstone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/crypt.png",
+      "sha256": "d26f0a58120b961288abfdb657313d1e1b58c45db6d4bc62fb3eb91ef0edf4c1"
+    },
+    "desert": {
+      "material": "sandstone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/desert.png",
+      "sha256": "1eb90a97b1e9b873baee1d8fdf6becf3ad7e0562cbf3ceb42f3b236d5850405b"
+    },
+    "drowned": {
+      "material": "cryptstone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/drowned.png",
+      "sha256": "d26f0a58120b961288abfdb657313d1e1b58c45db6d4bc62fb3eb91ef0edf4c1"
+    },
+    "fields": {
+      "material": "earth",
+      "path": "assets/sprites_src/gameplay_art/world/paths/fields.png",
+      "sha256": "f11d3e666651ad0bb97a703e781c388a6ba9aecc441c771e209a6afa2b02194f"
+    },
+    "forest": {
+      "material": "earth",
+      "path": "assets/sprites_src/gameplay_art/world/paths/forest.png",
+      "sha256": "f11d3e666651ad0bb97a703e781c388a6ba9aecc441c771e209a6afa2b02194f"
+    },
+    "hellwild": {
+      "material": "hellstone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/hellwild.png",
+      "sha256": "d2ce8c8df5af5ce169e84a5fe5283d03c1c0a99000c7da9da9bbcdf2803d1f54"
+    },
+    "icecave": {
+      "material": "ice",
+      "path": "assets/sprites_src/gameplay_art/world/paths/icecave.png",
+      "sha256": "1535941298951618d2649ef0346bf0ab98375eeaeb5d6a1f9c087dfe9977fffa"
+    },
+    "marsh": {
+      "material": "earth",
+      "path": "assets/sprites_src/gameplay_art/world/paths/marsh.png",
+      "sha256": "f11d3e666651ad0bb97a703e781c388a6ba9aecc441c771e209a6afa2b02194f"
+    },
+    "mine": {
+      "material": "cryptstone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/mine.png",
+      "sha256": "d26f0a58120b961288abfdb657313d1e1b58c45db6d4bc62fb3eb91ef0edf4c1"
+    },
+    "monastery": {
+      "material": "cobblestone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/monastery.png",
+      "sha256": "0925ac45018e364e7cbe597cc3636cd7b753c3727e4e15871ea692cfff333ca3"
+    },
+    "palace": {
+      "material": "cobblestone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/palace.png",
+      "sha256": "0925ac45018e364e7cbe597cc3636cd7b753c3727e4e15871ea692cfff333ca3"
+    },
+    "snowwild": {
+      "material": "ice",
+      "path": "assets/sprites_src/gameplay_art/world/paths/snowwild.png",
+      "sha256": "1535941298951618d2649ef0346bf0ab98375eeaeb5d6a1f9c087dfe9977fffa"
+    },
+    "temple": {
+      "material": "sandstone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/temple.png",
+      "sha256": "1eb90a97b1e9b873baee1d8fdf6becf3ad7e0562cbf3ceb42f3b236d5850405b"
+    },
+    "throne": {
+      "material": "hellstone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/throne.png",
+      "sha256": "d2ce8c8df5af5ce169e84a5fe5283d03c1c0a99000c7da9da9bbcdf2803d1f54"
+    },
+    "tombs": {
+      "material": "sandstone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/tombs.png",
+      "sha256": "1eb90a97b1e9b873baee1d8fdf6becf3ad7e0562cbf3ceb42f3b236d5850405b"
+    },
+    "town": {
+      "material": "cobblestone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/town.png",
+      "sha256": "0925ac45018e364e7cbe597cc3636cd7b753c3727e4e15871ea692cfff333ca3"
+    },
+    "vigil": {
+      "material": "cobblestone",
+      "path": "assets/sprites_src/gameplay_art/world/paths/vigil.png",
+      "sha256": "0925ac45018e364e7cbe597cc3636cd7b753c3727e4e15871ea692cfff333ca3"
+    }
+  },
+  "review": "visual-contact-sheet-v1",
+  "socketSemantics": {
+    "E": [
+      48,
+      24
+    ],
+    "N": [
+      48,
+      8
+    ],
+    "S": [
+      16,
+      24
+    ],
+    "W": [
+      16,
+      8
+    ],
+    "windowRadius": 2
+  },
+  "sourceKind": "imagegen-authored-path-adjacency",
+  "sourceSize": [
+    1254,
+    1254
+  ],
+  "version": 1
+}

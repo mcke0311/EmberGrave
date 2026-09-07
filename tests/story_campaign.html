@@ -1,0 +1,72 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Story brief — campaign review</title>
+<style>body{background:#151719;color:#e9ddc6;font:14px system-ui;margin:16px}h1{font:26px Georgia}button{padding:9px 14px;margin:4px;background:#2c3032;color:#eadcba;border:1px solid #827555}iframe{width:1280px;height:720px;border:1px solid #827555}pre{white-space:pre-wrap}canvas{display:block}canvas[hidden]{display:none}</style>
+<h1>The Sunderstone Saga — story review</h1><p>Isolated test hero and saves. Story objectives, act transitions and the three final forms use the production game.</p>
+<pre id="result">Checking campaign…</pre><div id="controls"></div><canvas id="forms" width="1000" height="360" hidden></canvas><div id="host"></div>
+<script type="module">
+const output=document.getElementById('result'),store=new Map();window.storyTestStore=store;
+let checks=0;function ok(v,m){checks++;if(!v)throw Error(m)}
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+try{
+  const [html,source]=await Promise.all(['../index.html','../js/game.js'].map(p=>fetch(p,{cache:'no-store'}).then(r=>r.text())));
+  const hooked=source.replace('    init, newGame, loadGame,','    __storyTest:{render,questKillEvent},\n    init, newGame, loadGame,');
+  const injection=`<base href="${new URL('../index.html',location.href)}"><script>const store=parent.storyTestStore;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k)}});window.requestAnimationFrame=()=>0;window.storyErrors=[];window.addEventListener('error',e=>storyErrors.push(e.message));window.addEventListener('unhandledrejection',e=>storyErrors.push(String(e.reason)));<\/script>`;
+  const frame=document.createElement('iframe');frame.title='Isolated campaign review';
+  frame.srcdoc=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>'+hooked+'<\/script>').replace(/(src="js\/[^\"]+)(")/g,'$1&storyReview='+Date.now()+'$2');
+  document.getElementById('host').append(frame);await new Promise(r=>frame.onload=r);
+  const win=frame.contentWindow,doc=win.document;
+  for(let i=0;i<500&&!doc.querySelector('#titleMenu button');i++)await delay(40);
+  const game=win.eval('Game'),ui=win.eval('UI'),data=win.eval('DATA'),Monster=win.eval('Monster'),sprites=win.eval('SpriteAssets');
+  win.eval('Sfx').setVol('master',0);await game.newGame('Story Review','vanguard',false);await game.skipOpening();ui.closeAll();
+  game.debugFlags.god=true;
+  async function visit(zone){ui.closeAll();await game.enterMap(zone,'default');ok(!doc.getElementById('appFatal'),'fatal in '+zone);game.state.monsters=[];game.state.map.explored.fill(1);game.__storyTest.render();}
+  await visit('marshcamp');game.state.quests={q10:{state:'offered'}};game.acceptQuest('q10');
+  for(const art of ['resident_marshcamp_3','resident_marshcamp_5','resident_marshcamp_6']){
+    const npc=game.state.npcs.find(n=>n.spriteOpts.npcArt===art);ok(!!npc,'missing witness '+art);ui.openDialog(npc);
+    const topic=npc.def.talk[0],button=[...doc.querySelectorAll('.dlgopt')].find(b=>b.textContent===topic.q);ok(!!button,'missing investigation topic');button.click();
+    ok(doc.querySelector('.dlgtext').textContent===topic.a,'wrong testimony displayed');ui.closeAll();
+  }
+  ok(game.state.quests.q10.state==='reward','interviews did not complete in UI');
+  game.completeQuest('q10');ok(game.state.quests.q11.state==='offered','investigation did not lead to flooded crypts');
+  await visit('underground_market');game.state.quests.q13={state:'offered'};game.acceptQuest('q13');
+  for(let i=0;i<6;i++)game.__storyTest.questKillEvent({defId:'gilt_construct'});
+  for(const prop of game.state.map.props.filter(p=>p.storyId))game.interact(prop);
+  ok(game.state.quests.q13.state==='reward','market not completable');
+  await visit('sand_tombs');game.state.quests.q14={state:'offered'};game.acceptQuest('q14');game.interact(game.state.npcs.find(n=>n.storyId));
+  ok(game.state.quests.q14.state==='reward','scholar not rescued');
+  await visit('cathedral1');game.state.quests.q16={state:'offered'};game.acceptQuest('q16');
+  for(const npc of [...game.state.npcs].filter(n=>n.storyId))game.interact(npc);
+  game.__storyTest.questKillEvent({defId:'empty_archangel'});ok(game.state.quests.q16.state==='reward','cathedral souls not complete');
+  game.completeQuest('q16');
+  await visit('cathedral2');game.state.quests.q17={state:'offered'};game.acceptQuest('q17');
+  for(const prop of game.state.map.props.filter(p=>p.storyId&&p.storyId!=='hell_portal'))game.interact(prop);
+  for(let i=0;i<3;i++)game.__storyTest.questKillEvent({defId:'choir_priest'});
+  game.__storyTest.questKillEvent({defId:'malthoron'});ok(game.state.quests.q17.state==='reward','cathedral seals/sword not complete');
+  game.state.flags['dead_malthoron@0']=true;game.interact(game.state.map.props.find(p=>p.storyId==='hell_portal'));
+  for(let i=0;i<500&&game.state.map.id!=='hellgate';i++)await delay(20);
+  ok(game.state.map.id==='hellgate'&&game.state.quests.q18.state==='offered','Hells portal did not advance campaign');
+  await visit('throne');
+  const canvas=document.getElementById('forms'),ctx=canvas.getContext('2d');ctx.fillStyle='#151719';ctx.fillRect(0,0,1000,360);
+  game.state.player.x=game.state.map.bossArena.cx+2;game.state.player.y=game.state.map.bossArena.cy;
+  const b=new Monster('vethriss',game.state.map.bossArena.cx,game.state.map.bossArena.cy);
+  function drawForm(x,label){ctx.save();ctx.translate(x,300);sprites.drawActor(ctx,b.spriteOpts,{state:'idle',t:0,ang:0});ctx.restore();ctx.fillStyle='#e9ddc6';ctx.font='16px Georgia';ctx.textAlign='center';ctx.fillText(label,x,340);}
+  drawForm(160,'I · Seraneth, Wounded');b.hp=b.maxHp*.69;b.update(.01,game.state.player,game.state.map);drawForm(485,'II · Serpent and illusions');b.hp=b.maxHp*.34;b.update(.01,game.state.player,game.state.map);drawForm(805,'III · The towering shadow');
+  ui.openFinalChoice();ok(doc.querySelectorAll('.choicebtn').length===3,'final choice missing');doc.getElementById('cinematic').classList.add('hidden');ui.closeAll();
+  async function preview(which){
+    canvas.hidden=which!=='forms';
+    if(which==='forms')return;
+    const zone={marsh:'marshcamp',market:'underground_market',cathedral:'cathedral2'}[which];
+    // Reset only this isolated demonstration's progress for review controls.
+    game.state.flags.campaign={};await visit(zone);
+    const qid={marsh:'q10',market:'q13',cathedral:'q17'}[which];game.state.quests={ [qid]:{state:'offered'} };game.acceptQuest(qid);
+    if(which==='marsh')ui.openDialog(game.state.npcs.find(n=>n.spriteOpts.npcArt==='resident_marshcamp_3'));
+    else {const prop=game.state.map.props.find(p=>p.storyId);game.state.player.x=prop.x;game.state.player.y=prop.y+1;ui.togglePanel('quest');}
+    game.__storyTest.render();
+  }
+  for(const [key,label] of [['marsh','Marsh investigation'],['market','Underground market'],['cathedral','Cathedral objectives'],['forms','Final boss forms']]){
+    const b=document.createElement('button');b.textContent=label;b.onclick=()=>preview(key).catch(e=>output.textContent='FAIL: '+e.stack);document.getElementById('controls').append(b);
+  }
+  await preview('marsh');ok(!win.storyErrors.length,win.storyErrors.join('\n'));
+  output.textContent=`PASS ${checks} browser checks — NPC dialogue, market, scholar rescue, cathedral objectives, Hells portal, boss forms and three ending choices. No runtime errors.`;
+  document.body.dataset.testStatus='passed';
+}catch(e){document.body.dataset.testStatus='failed';output.textContent='FAIL: '+e.stack;console.error(e)}
+</script></html>

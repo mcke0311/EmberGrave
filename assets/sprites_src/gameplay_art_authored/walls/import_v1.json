@@ -1,0 +1,3391 @@
+{
+  "masterQA": "assets/sprites_src/gameplay_art/qa/wall_painted_sources_v1.png",
+  "operation": "painted-two-source-16-mask-composite-v1",
+  "review": "visual-contact-sheet-v1",
+  "sourceKind": "painted-two-source-wall-kits",
+  "themes": {
+    "bastion": {
+      "cellSource": "assets/world/walls/bastion-cell.webp",
+      "cellSourceSha256": "816b5555ddc947cc405b1731306224d7d0e5daafdf8d9f4285573485e84fe8de",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/bastion.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/bastion_wall_adjacency_v1.png",
+      "sha256": "507b5f45db3b6e2624a77153e2b72104589453de8d40795be1342b0e1ae33e1b",
+      "wallSource": "assets/world/walls/bastion.webp",
+      "wallSourceSha256": "1ffbce04bcbd36f6b9d41c04cc44483ec74602680f6404d314df29d984ae38a5"
+    },
+    "cathedral": {
+      "cellSource": "assets/world/walls/cathedral-cell.webp",
+      "cellSourceSha256": "46b7f91dda69699ac61113319f858460f70983f2aa94f7966cd4d53b209e82ec",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/cathedral.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/cathedral_wall_adjacency_v1.png",
+      "sha256": "d0d52953632d045dffd9ee62c24d5d0638a8066b8759e84af25f00300afeef73",
+      "wallSource": "assets/world/walls/cathedral.webp",
+      "wallSourceSha256": "208cd3a0ff761bbb2cb11a91236aafc33374e7c47acd3ae8d7eae4c19194b9cb"
+    },
+    "chapel": {
+      "cellSource": "assets/world/walls/chapel-cell.webp",
+      "cellSourceSha256": "6e97e7d0ff5ef19819688f43c7091da7df1673b89870a1b794c573540b9b9e25",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/chapel.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/chapel_wall_adjacency_v1.png",
+      "sha256": "be45887696d3810d5036621ddefa0c5e5040075913bb6639757270bf35e92b37",
+      "wallSource": "assets/world/walls/chapel.webp",
+      "wallSourceSha256": "c3dd1a57d811d181562567e8a47d46291744f5c28165a0b4d10dc949b1675fd0"
+    },
+    "crypt": {
+      "cellSource": "assets/world/walls/crypt-cell.webp",
+      "cellSourceSha256": "39fc6e04add2df08790fc536b0070fb518b4e7b4418bfe8762f8e97fdd64da1d",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/crypt.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/crypt_wall_adjacency_v1.png",
+      "sha256": "c1845f89367dc5faf9e2d2c4e9c9ebc75ef0943b1ec9b1852f7785089df115e2",
+      "wallSource": "assets/world/walls/crypt.webp",
+      "wallSourceSha256": "e344fe29279ab97e17fae7c41530d7301eddb5c9426551b0c82a46fbecb194e6"
+    },
+    "desert": {
+      "cellSource": "assets/world/walls/desert-cell.webp",
+      "cellSourceSha256": "267a0e4b4e843641a770b5b3d016a0f560f1c2a626aa793a5168878347e7a04c",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/desert.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/desert_wall_adjacency_v1.png",
+      "sha256": "8248b9f8ec1779d88d7c278217ceaebe80497542b2f462cfd5745422def278fd",
+      "wallSource": "assets/world/walls/desert.webp",
+      "wallSourceSha256": "ba93db2d004ce145d208d1c94dbb2e75b8488512b63e9c802e84d89b680179f1"
+    },
+    "drowned": {
+      "cellSource": "assets/world/walls/drowned-cell.webp",
+      "cellSourceSha256": "583ea908a9d98317e460cda4572fc7fe5aa7a4930d00b63cfeb0c5a5ce161d38",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/drowned.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/drowned_wall_adjacency_v1.png",
+      "sha256": "3a530b8001bec5cc9968d5292327d42f6fda0807ddd4a18a7c78742c5e7ccac9",
+      "wallSource": "assets/world/walls/drowned.webp",
+      "wallSourceSha256": "7fed0b350cb933c4b69849610f63fff5cece910f423494b5e8f1842608dd0412"
+    },
+    "hellwild": {
+      "cellSource": "assets/world/walls/hellwild-cell.webp",
+      "cellSourceSha256": "079c27760d5ac4a5df579db4ca262080f33b7b2124ae0d9d014368c323f8a322",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/hellwild.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/hellwild_wall_adjacency_v1.png",
+      "sha256": "b7127be403c15155c8f98d75f64098f850c02d08dd4ba035b043842158ec5ad8",
+      "wallSource": "assets/world/walls/hellwild.webp",
+      "wallSourceSha256": "a1ef73b44b5902f88db5f28abfef6e6cf00aef6ff1a3ebdd0000b80cf0a9b5f5"
+    },
+    "icecave": {
+      "cellSource": "assets/world/walls/icecave-cell.webp",
+      "cellSourceSha256": "4918f1bab7dcc853237c5c17e0e3f3e4a39c9ed477a517195a4f8c7767acaa0a",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/icecave.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/icecave_wall_adjacency_v1.png",
+      "sha256": "d5cfc1ff58ce502ee604ac60507cddeb95102e432ec65dad305ee766151389b8",
+      "wallSource": "assets/world/walls/icecave.webp",
+      "wallSourceSha256": "9885300ab7cadb597d472a8c1b6b132784309506dadc55dcc8b2666dea4b8c62"
+    },
+    "marsh": {
+      "cellSource": "assets/world/walls/marsh-cell.webp",
+      "cellSourceSha256": "10b07ec639e68afb4e0ed0f296aa91a9fc29f76052e4a810518db72478b30e79",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/marsh.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/marsh_wall_adjacency_v1.png",
+      "sha256": "e5bfb81b642ddec60cea9a30b6d5d9f58d0348742cfb8258d492d36a97bff686",
+      "wallSource": "assets/world/walls/marsh.webp",
+      "wallSourceSha256": "24e4932ab3d656419c8b05883e2db6d08e4990252913834ae05ac0b37f09d588"
+    },
+    "mine": {
+      "cellSource": "assets/world/walls/mine-cell.webp",
+      "cellSourceSha256": "20255a9c671da451b2c4937790f05f83216bf38846e8258416a4efec56f07109",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/mine.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/mine_wall_adjacency_v1.png",
+      "sha256": "1c10ee10ebb7674cb698864ef63b136c7a499580111f0ff56d8fabd48533edf5",
+      "wallSource": "assets/world/walls/mine.webp",
+      "wallSourceSha256": "368c7abb6a868fe665cf4bb50d8d34fcb191c467421337b08537f8889b1c77a4"
+    },
+    "monastery": {
+      "cellSource": "assets/world/walls/monastery-cell.webp",
+      "cellSourceSha256": "6dc933f2e817fbfbe4d2e6333704cc51eee70cf7c557913dc024e4750fe1bfab",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/monastery.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/monastery_wall_adjacency_v1.png",
+      "sha256": "51ae6ef7537f15248675373e2318f87da40b8db08e3982861db2697ecc176989",
+      "wallSource": "assets/world/walls/monastery.webp",
+      "wallSourceSha256": "9e6c761e9f79dbd944cec236af929643b7c3c292a385803d37c1c9e2bd21c9c3"
+    },
+    "palace": {
+      "cellSource": "assets/world/walls/palace-cell.webp",
+      "cellSourceSha256": "8fcc59af07904a81e1c59a9e4ba801407a299fbbdad0046c8009e36cf2624a95",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/palace.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/palace_wall_adjacency_v1.png",
+      "sha256": "5ddb1e7b6b14b3d2121e145d6ca1712d6a750aec88f4fe8e53f9cb6afa3d050f",
+      "wallSource": "assets/world/walls/palace.webp",
+      "wallSourceSha256": "e23e66e42de480cd7222a608f13381b50f0d04948c2cc4e4fed63016c8a2ff64"
+    },
+    "snowwild": {
+      "cellSource": "assets/world/walls/snowwild-cell.webp",
+      "cellSourceSha256": "970fef0bce90cb0950844a3af67883b287f606ffae5fbac04d093482150c3a87",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/snowwild.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/snowwild_wall_adjacency_v1.png",
+      "sha256": "0a90330ddfe2a0f3cf87e6cefea930e0f47d6873e1d5e1f7c84b8276c8281625",
+      "wallSource": "assets/world/walls/snowwild.webp",
+      "wallSourceSha256": "fe3c80294e6e9c6f61bf341c18940943464b1d7a315ed9f3c523bc6819ef4804"
+    },
+    "temple": {
+      "cellSource": "assets/world/walls/temple-cell.webp",
+      "cellSourceSha256": "f2da41640dd1de3387858d44271f4cde823bfa29c441e8c13a85af01a392b44e",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/temple.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/temple_wall_adjacency_v1.png",
+      "sha256": "2a66671903caffada4409e896c6faed7e9a0bcab9c6c05b858f29842719a5566",
+      "wallSource": "assets/world/walls/temple.webp",
+      "wallSourceSha256": "c7a251d51ae5431e4df006594e0fa34e77c2058740d9d4e80440f8dbb05ad6b1"
+    },
+    "throne": {
+      "cellSource": "assets/world/walls/throne-cell.webp",
+      "cellSourceSha256": "e19a6d32beb0f39986befc6f4b5d54cfbb6abc3f1c380026c63e5ce8c934c8d6",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/throne.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/throne_wall_adjacency_v1.png",
+      "sha256": "102dc48b01e4215c8f4276bf10a6393b4fe6d6554ab3e8193d1dd8f8f5b057b9",
+      "wallSource": "assets/world/walls/throne.webp",
+      "wallSourceSha256": "5d7f9f327c649f8e36848508fc04863445b49f6079364f2023769066ca7a8887"
+    },
+    "tombs": {
+      "cellSource": "assets/world/walls/tombs-cell.webp",
+      "cellSourceSha256": "dece90405ee2691e68d923df3e7d1a4348470818cefff7de8dcaededda59d363",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/tombs.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/tombs_wall_adjacency_v1.png",
+      "sha256": "387ad462480f38381cd412c7fceaa2e8920f44899ab058fc556ba50d18fe15fa",
+      "wallSource": "assets/world/walls/tombs.webp",
+      "wallSourceSha256": "bde1e67e1e986b7048c4bb2e3a1f929ac478ab0bc49aabeb297377a8b171f5d5"
+    },
+    "town": {
+      "cellSource": "assets/world/walls/town-cell.webp",
+      "cellSourceSha256": "e58c7583e827d5008257e6d358d41aa953d08a6355e7b1f18f3cc1ae2c624f38",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/town.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/town_wall_adjacency_v1.png",
+      "sha256": "1007bbf5deb77210ca49f9417fbfe9d9fe80e0e8fdda8ff742f9e1a5455d0252",
+      "wallSource": "assets/world/walls/town.webp",
+      "wallSourceSha256": "f716b0dc26bbb5c3ce1c351b8c101f4cbe3fe849236ef1e148d6286c77feb366"
+    },
+    "vigil": {
+      "cellSource": "assets/world/walls/vigil-cell.webp",
+      "cellSourceSha256": "9f8233c93717a1dfe56133c916728df3c80ae2fad8fb8f7387514ee1bf5fda2d",
+      "frames": [
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 0,
+          "label": "isolated",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 1,
+          "label": "N",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 2,
+          "label": "E",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 3,
+          "label": "NE",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            87,
+            128
+          ],
+          "index": 4,
+          "label": "S",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            101,
+            128
+          ],
+          "index": 5,
+          "label": "NS",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            41,
+            40,
+            106,
+            128
+          ],
+          "index": 6,
+          "label": "ES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            28,
+            40,
+            106,
+            128
+          ],
+          "index": 7,
+          "label": "NES",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 8,
+          "label": "W",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 9,
+          "label": "NW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 10,
+          "label": "EW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 11,
+          "label": "NEW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            87,
+            128
+          ],
+          "index": 12,
+          "label": "SW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            101,
+            128
+          ],
+          "index": 13,
+          "label": "NSW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 14,
+          "label": "ESW",
+          "top": 40
+        },
+        {
+          "alphaBBox": [
+            23,
+            40,
+            106,
+            128
+          ],
+          "index": 15,
+          "label": "NESW",
+          "top": 40
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/walls/vigil.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/walls/vigil_wall_adjacency_v1.png",
+      "sha256": "4969ab94720a9580a9b33b5fab623b7997d7c13c49676595f9f42b876bb1b08c",
+      "wallSource": "assets/world/walls/vigil.webp",
+      "wallSourceSha256": "b2a6efa82ed8ad842e7b5440a635d5264aff10fec588849015546305e1fdf2e4"
+    }
+  },
+  "version": 1,
+  "wallContract": {
+    "anchor": [
+      64,
+      112
+    ],
+    "cell": [
+      128,
+      128
+    ],
+    "footprint": [
+      64,
+      32
+    ],
+    "frames": 16,
+    "rise": 72
+  }
+}

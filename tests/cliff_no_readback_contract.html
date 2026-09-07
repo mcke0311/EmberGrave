@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><base href="../"><title>Cliff rendering without pixel readback</title>
+<style>body{margin:20px;background:#141820;color:#e2e8f0;font:14px system-ui}pre{white-space:pre-wrap}canvas{background:#241c32}</style></head>
+<body>
+  <h1>Cliff rendering without pixel readback</h1>
+  <pre id="result">PENDING</pre>
+  <canvas id="scene" width="800" height="1600"></canvas>
+  <script src="js/utils.js?v=4"></script>
+  <script src="js/data.js?v=20"></script>
+  <script src="js/sprite_manifest.js?v=11"></script>
+  <script src="js/sprite_assets.js?v=12"></script>
+  <script>
+    "use strict";
+    (async () => {
+      const out = document.getElementById("result");
+      const ctx = document.getElementById("scene").getContext("2d");
+      const originalRead = CanvasRenderingContext2D.prototype.getImageData;
+      let reads = 0, checks = 0;
+      const ok = (value, message) => { checks++; if (!value) throw new Error(message); };
+      // Disk-loaded sprite images can be drawn, but their pixels cannot be read.
+      // Apply that restriction even when this regression is served over HTTP.
+      CanvasRenderingContext2D.prototype.getImageData = function () {
+        reads++;
+        throw new DOMException("The canvas has been tainted by cross-origin data.", "SecurityError");
+      };
+      try {
+        await SpriteAssets.loadBundle("world");
+        let row = 0;
+        for (const [theme, id] of Object.entries(SpriteAssets.maps.cliffs)) {
+          ctx.fillStyle = "#e2e8f0";
+          ctx.fillText(theme, 8, row * 80 + 15);
+          for (let index = 0; index < 8; index++) {
+            const frame = SpriteAssets.getFrame(id, index), height = (index % 4 + 1) * 14;
+            for (const fractional of [0, .35]) {
+              SpriteAssets.drawCliff(ctx, frame, 140 + index * 85 + fractional, row * 80 + 4 + fractional, height);
+              const x=140+index*85+fractional,y=row*80+fractional;
+              SpriteAssets.drawCliffPolygon(ctx,frame,[{sx:x,sy:y},{sx:x+32,sy:y+8},{sx:x+32,sy:y+8+height/2},{sx:x,sy:y+height}],{x:0,y:0});
+              checks++;
+            }
+          }
+          row++;
+        }
+        ok(row === 20, "Expected all 20 cliff themes");
+        const id = SpriteAssets.maps.cliffs.snowwild, def = DATA.SPRITE_MANIFEST.entries[id];
+        const fits = def.cliffFits, frame = SpriteAssets.getFrame(id, 0);
+        const badFits = [null, [], fits.slice(1), [null, ...fits.slice(1)],
+          ...[{lo:-1}, {width:0}, {width:65}, {slope:NaN}, {top:Infinity},
+            {top:-129}, {depth:0}, {depth:129}].map(change => [{...fits[0], ...change}, ...fits.slice(1)])];
+        for (const bad of badFits) {
+          let error;
+          def.cliffFits = bad;
+          try { SpriteAssets.drawCliff(ctx, frame, 0, 0, 14); }
+          catch (err) { error = err; }
+          finally { def.cliffFits = fits; }
+          ok(error && error.name === "SpriteAssetError" && error.assetId === id && error.src === def.src,
+            "Malformed cliff metadata must report the exact asset and path");
+          def.cliffFits=bad;let polygonError;
+          try{SpriteAssets.drawCliffPolygon(ctx,frame,[],{x:0,y:0});}catch(err){polygonError=err;}finally{def.cliffFits=fits;}
+          ok(polygonError?.name==='SpriteAssetError','Sloped cliffs must also validate cached metadata');
+        }
+        ok(reads === 0, `Cliff rendering attempted ${reads} pixel reads`);
+        document.body.dataset.testStatus = "passed";
+        out.textContent = `PASS: ${checks} checks; all 160 cliff frames render as flat and sloped faces with pixel readback forbidden.`;
+      } catch (err) {
+        document.body.dataset.testStatus = "failed";
+        out.textContent = `FAIL: ${err.stack || err}`;
+      } finally {
+        CanvasRenderingContext2D.prototype.getImageData = originalRead;
+      }
+    })();
+  </script>
+</body>
+</html>

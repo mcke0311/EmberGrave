@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Monster health bars and targeting</title>
+<style>body{background:#17171d;color:#e1d1bc;font:14px system-ui;margin:20px}pre{white-space:pre-wrap}iframe{width:100%;height:740px;border:1px solid #78684c}button{padding:8px 14px;margin:0 8px 12px 0}</style>
+<h1>Monster health bars and targeting</h1>
+<p>Isolated game scene. Your saved heroes are never read or changed. Hover the monsters to inspect their overhead details.</p>
+<pre id="result">Running…</pre><div id="host"></div>
+<script type="module">
+const out=document.getElementById('result');window.monsterTestStore=new Map();
+let checks=0;const ok=(v,m)=>{checks++;if(!v)throw new Error(m);};
+try{
+  const [html,gameSource]=await Promise.all(['../index.html','../js/game.js'].map(p=>fetch(p,{cache:'no-store'}).then(r=>r.text())));
+  // Private hooks are inserted only into this isolated test copy, never the shipped game.
+  const hooked=gameSource.replace('    init, newGame, loadGame,',`    __monsterTest: {
+    render, geometry: mon => monsterGeometry(mon, camera()),
+    hoverAt(x,y) { mouse.x=x; mouse.y=y; updateHover(); return hoverMon; },
+    clearHover() { mouse.x=mouse.y=-10000; updateHover(); },
+    get hovered() { return hoverMon; }
+  },
+    init, newGame, loadGame,`);
+  ok(hooked!==gameSource,'private test hooks were not installed');
+  const injection=`<base href="${new URL('../index.html',location.href)}"><script>
+    const testStore=parent.monsterTestStore;
+    Object.defineProperty(window,'localStorage',{value:{get length(){return testStore.size},key:i=>[...testStore.keys()][i]??null,getItem:k=>testStore.get(k)??null,setItem:(k,v)=>testStore.set(String(k),String(v)),removeItem:k=>testStore.delete(k),clear:()=>testStore.clear()}});
+    window.requestAnimationFrame=()=>0;
+    window.__usingTestStore=true;
+  <\/script>`;
+  const iframe=document.createElement('iframe');iframe.title='Isolated monster game scene';
+  iframe.srcdoc=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>'+hooked+'<\/script>');
+  document.getElementById('host').append(iframe);await new Promise(r=>iframe.onload=r);
+  const win=iframe.contentWindow;
+  for(let i=0;i<300&&!win.document.querySelector('#titleMenu button');i++)await new Promise(r=>setTimeout(r,30));
+  ok(win.__usingTestStore,'save-store isolation failed');
+  const game=win.eval('Game'),sprites=win.eval('SpriteAssets'),data=win.eval('DATA'),Monster=win.eval('Monster'),u=win.eval('U');
+  await game.newGame('Monster QA','vanguard',false);
+  ok(!!game.state&&!win.document.getElementById('appFatal'),'game did not start');
+  const api=game.__monsterTest,state=game.state,view=win.document.getElementById('view'),ctx=view.getContext('2d');
+  state.npcs=[];state.minions=[];state.ground=[];state.monsters=[];state.fx=[];state.bossBar=null;
+  state.map.props=[];state.map.exits=[];state.map.elev.fill(0);game.options.screenShake=false;
+  win.eval('UI').closeAll();
+  const scratch=win.document.createElement('canvas');scratch.width=scratch.height=500;
+  const sc=scratch.getContext('2d',{willReadFrequently:true});
+  const sourceCanvas=win.document.createElement('canvas'),sourceCtx=sourceCanvas.getContext('2d',{willReadFrequently:true});
+  const cases=Object.keys(sprites.maps.monsters);
+  const poses=[{state:'idle',t:.8,ang:0},{state:'walk',t:.4,ang:Math.PI,ex:{walkPh:1.3}},
+    {state:'attack',t:.5,ang:.75},{state:'cast',t:.7,ang:3.6},{state:'hit',t:.4,ang:Math.PI}];
+  for(const kind of cases){
+    const opts={kind,scale:1.4},frame=sprites.getFrame(sprites.maps.monsters[kind],0);
+    ok(!!data.SPRITE_MANIFEST.entries[frame.id].hitShape,kind+': missing compiled silhouette');
+    for(const pose of poses){
+      const g=sprites.actorGeometry(opts,pose,250,370,1.1);
+      sc.clearRect(0,0,500,500);sc.save();sc.translate(250,370);sc.scale(1.1,1.1);sprites.drawActor(sc,opts,pose);sc.restore();
+      const pixels=sc.getImageData(0,0,500,500).data;
+      for(let y=0;y<500;y+=2)for(let x=0;x<500;x+=2)if(pixels[(y*500+x)*4+3]>100){
+        ok(x>=g.left-1&&x<=g.right+1&&y>=g.top-1&&y<=g.bottom+1,kind+'/'+pose.state+': art outside overhead bounds');
+        ok(sprites.hitTestGeometry(g,x+.5,y+.5,1),kind+'/'+pose.state+': painted pixel cannot be selected');
+      }
+      ok(!sprites.hitTestGeometry(g,g.left-12,g.top-12,3),kind+': distant transparent space selects monster');
+    }
+  }
+  // Every enemy definition, including elite scaling, must resolve valid geometry.
+  for(const id of Object.keys(data.BOSS_ENCOUNTERS))await sprites.loadBundle('boss:'+id);
+  for(const [id,def] of Object.entries(data.ENEMIES))for(const elite of [false,true]){
+    const mon=new Monster(id,state.player.x,state.player.y,{elite});const g=api.geometry(mon);
+    ok([g.left,g.top,g.right,g.bottom].every(Number.isFinite)&&g.right>g.left&&g.bottom>g.top,id+': invalid geometry');
+  }
+  const defFor=kind=>Object.keys(data.ENEMIES).find(id=>data.ENEMIES[id].sprite===kind);
+  const make=(kind,dx=0,dy=0)=>new Monster(defFor(kind),state.player.x+dx,state.player.y+dy);
+  function solidPoint(mon,allow=()=>true){
+    const g=api.geometry(mon),frame=g.frame;
+    sourceCanvas.width=frame.sw;sourceCanvas.height=frame.sh;sourceCtx.drawImage(frame.image,0,0);
+    const pixels=sourceCtx.getImageData(0,0,frame.sw,frame.sh).data;
+    for(let y=1;y<frame.sh-1;y++)for(let x=1;x<frame.sw-1;x++)if(pixels[(y*frame.sw+x)*4+3]>200){
+      const point={x:g.a*(x+.5)+g.c*(y+.5)+g.e,y:g.b*(x+.5)+g.d*(y+.5)+g.f};
+      if(allow(point,g))return point;
+    }
+    throw new Error(mon.name+': no suitable visible point');
+  }
+  for(const kind of ['brute','spider','hound','dragon','wraith','ooze','beacon']){
+    const mon=make(kind,2,-2);state.monsters=[mon];
+    for(const elev of [0,3])for(const jump of [0,45]){
+      state.map.elev[(mon.x|0)+(mon.y|0)*state.map.w]=elev;mon.jumpZ=jump;
+      const p=solidPoint(mon);ok(api.hoverAt(p.x,p.y)===mon,kind+': selection missed at elevation '+elev+' / jump '+jump);
+      const g=api.geometry(mon);ok(api.hoverAt(g.left-15,g.top-15)!==mon,kind+': empty space was targetable');
+    }
+    state.map.elev.fill(0);mon.jumpZ=0;
+  }
+  // Tall heads and wide limbs extend outside the former fixed hit rectangle.
+  for(const kind of ['brute','dragon','hound']){
+    const mon=make(kind,2,-2);state.monsters=[mon];
+    const g=api.geometry(mon),footY=g.f+g.b*g.frame.anchorX+g.d*g.frame.anchorY;
+    const anchorX=g.e+g.a*g.frame.anchorX+g.c*g.frame.anchorY;
+    const point=solidPoint(mon,p=>p.y<footY-52*mon.scale||Math.abs(p.x-anchorX)>20*mon.scale+6);
+    ok(api.hoverAt(point.x,point.y)===mon,kind+': old hitbox still clips visible art');
+  }
+  const back=make('brute',2,-2),front=make('brute',2.15,-1.85);
+  state.monsters=[front,back];
+  const overlap=solidPoint(front,p=>sprites.hitTestGeometry(api.geometry(back),p.x,p.y));
+  ok(api.hoverAt(overlap.x,overlap.y)===front,'overlap chose array order instead of frontmost monster');
+  front.dead=true;ok(api.hoverAt(overlap.x,overlap.y)===back,'dead monster intercepted targeting');front.dead=false;front.husk=true;
+  ok(api.hoverAt(overlap.x,overlap.y)===back,'invisible husk intercepted targeting');front.husk=false;
+  front.x=back.x;front.y=back.y;state.monsters=[back,front];const tied=solidPoint(front);
+  ok(api.hoverAt(tied.x,tied.y)===front,'equal depth did not match stable painter order');
+  state.monsters=[front];api.clearHover();game.options.leftClickMove=false;
+  const rect=view.getBoundingClientRect();
+  view.dispatchEvent(new win.MouseEvent('mousedown',{button:0,clientX:rect.left+tied.x*rect.width/view.width,clientY:rect.top+tied.y*rect.height/view.height,bubbles:true}));
+  ok(state.player.command?.target===front,'first click without mousemove used stale coordinates');
+  win.dispatchEvent(new win.MouseEvent('mouseup',{button:0}));state.player.command=null;
+  // Capture actual game bar draw calls; compare their bottom with independently
+  // raster-verified geometry, with and without hover resistance details.
+  const calls=[],originalFill=ctx.fillRect;
+  ctx.fillRect=function(x,y,w,h){calls.push({color:this.fillStyle,x,y,w,h});return originalFill.call(this,x,y,w,h);};
+  const colors=['#c23d35','#b575de','#e05c38','#a02020'];
+  for(const kind of ['brute','spider','hound','dragon','wraith','ooze','beacon']){
+    const mon=make(kind,2,-2);mon.hp=mon.maxHp*.6;mon.jumpZ=25;state.monsters=[mon];
+    state.map.elev[(mon.x|0)+(mon.y|0)*state.map.w]=2;
+    api.clearHover();calls.length=0;api.render();ok(!calls.some(c=>colors.includes(c.color)),kind+': undamaged enemy has an overhead bar');
+    mon.loseHealth(1);
+    for(const hovered of [false,true])for(const resists of [false,true]){
+      game.options.monResist=resists;api.clearHover();if(hovered){const p=solidPoint(mon);api.hoverAt(p.x,p.y);}
+      calls.length=0;api.render();const bars=calls.filter(c=>colors.includes(c.color));
+      ok(bars.length===1,kind+': expected one overhead health bar, got '+bars.length);
+      ok(bars[0].y+bars[0].h<=api.geometry(mon).top-7,kind+': health bar overlaps visible body');
+      if(hovered){const plate=calls.find(c=>c.color==='rgba(5, 4, 3, 0.8)'&&c.h>20);
+        ok(!!plate&&plate.y+plate.h<=api.geometry(mon).top-7,kind+': full hover plate overlaps body');}
+    }
+    state.time+=3.01;api.clearHover();calls.length=0;api.render();ok(!calls.some(c=>colors.includes(c.color)),kind+': injured enemy bar did not expire');
+    const hp=solidPoint(mon);api.hoverAt(hp.x,hp.y);calls.length=0;api.render();ok(calls.filter(c=>colors.includes(c.color)).length===1,kind+': hover did not reveal an expired bar');
+    mon.loseHealth(1);api.clearHover();calls.length=0;api.render();ok(calls.filter(c=>colors.includes(c.color)).length===1,kind+': new damage did not reveal the bar again');
+    mon.dead=true;api.clearHover();calls.length=0;api.render();ok(!calls.some(c=>colors.includes(c.color)),kind+': dead monster has a health bar');
+    state.map.elev.fill(0);
+  }
+  const boss=make('dragon',2,-2);boss.isBoss=true;state.monsters=[boss];state.bossBar=boss;api.clearHover();calls.length=0;api.render();
+  ok(calls.some(c=>c.color==='#a02020'&&c.h===14),'large encounter bar disappeared without recent damage');state.bossBar=null;
+  ctx.fillRect=originalFill;game.options.monResist=true;
+  const roster=['spider','hound','brute','dragon','wraith','ooze','beacon'];state.monsters=[];
+  roster.forEach((kind,i)=>{const offset=(i-3)*1.75,mon=make(kind,offset-2,-offset-2);mon.hp=mon.maxHp*(.4+i*.07);state.monsters.push(mon);});
+  api.clearHover();api.render();
+  win.addEventListener('resize',()=>api.render());
+  setTimeout(()=>api.render(),100);
+  // Redraw the frozen scene when the game input updates hover on click, too.
+  view.addEventListener('mousemove',e=>{const r=view.getBoundingClientRect();api.hoverAt((e.clientX-r.left)*view.width/r.width,(e.clientY-r.top)*view.height/r.height);api.render();});
+  out.textContent=`PASS: ${checks.toLocaleString()} checks. All ${cases.length} monster mappings and every enemy/elite definition; rendered silhouettes, animation/facing, raised terrain, jumping, overlap order, dead bodies, first-click targeting, overhead bars and resistance nameplates. Saves isolated in memory.`;
+  document.body.dataset.testStatus='passed';
+}catch(error){out.textContent='FAIL: '+error.stack;document.body.dataset.testStatus='failed';}
+</script></html>

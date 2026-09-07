@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "classId": "vanguard",
+  "slot": "main",
+  "family": "sword_1h",
+  "rigRevision": "grip-rig-v1",
+  "status": "pilot-incomplete-do-not-import",
+  "acceptedVisualReferences": [
+    {
+      "index": 0,
+      "pose": "idle",
+      "direction": "E",
+      "canonicalMainGrip": [69, 109],
+      "board": {
+        "path": "candidate_idle_E_board_raw_v2.png",
+        "sha256": "7c0c768b8c2ac54e8888e6db8996cf8bda8bfd1aa904cb23cd413bbd953683d8"
+      },
+      "combinedObjectAndGrip": {
+        "path": "candidate_idle_E_alpha_component_clean_v2.png",
+        "sha256": "91a2992d634ee5e5081e6d043ac7c3a4827382762d78e89711392e209ac5837e"
+      },
+      "qaComposite": {
+        "path": "qa_idle_E_composite_v2.png",
+        "sha256": "51411f9f1bd803f6bdd8cfdbc77bad09ba55dd581d2128c5cc986ff96b47a836"
+      },
+      "postReviewChromaCleanComposite": {
+        "path": "qa_idle_E_composite_clean_v2.png",
+        "sha256": "9785fb763525b71b657c7608f748a629d46a0e03969145bde2f4f18f6b97dcfd"
+      },
+      "review": "visual-socket-and-style-accepted-v1"
+    },
+    {
+      "index": 1,
+      "pose": "idle",
+      "direction": "SE",
+      "canonicalMainGrip": [68, 110],
+      "board": {
+        "path": "candidate_0_idle_1_SE_board_raw_v1.png",
+        "sha256": "128f960815053f928ce474966746d13b30d016d9b0e397e78191a9a5a6f78266"
+      },
+      "combinedObjectAndGrip": {
+        "path": "candidate_0_idle_1_SE_alpha_component_clean_v1.png",
+        "sha256": "76602b7805ddf33cb2738d1edf6c49868059fb08855fc42b61c7e9929847538a"
+      },
+      "qaComposite": {
+        "path": "qa_0_idle_1_SE_composite_v1.png",
+        "sha256": "d969bce097a5112c309942ac66311070caf58d76a178a9cbe172122c3932eb6c"
+      },
+      "review": "visual-socket-and-style-accepted-v1"
+    }
+  ],
+  "acceptedFrameCount": 2,
+  "requiredFrameCount": 72,
+  "canonicalImportEligible": false,
+  "canonicalImportBlockers": [
+    "70 required final-aligned frames are missing",
+    "each accepted pilot cell combines weapon, gripping hand, and forearm in one bitmap",
+    "canonical equipment requires separately authored held and family-specific grip planes",
+    "automatic plane splitting or pixel classification would manufacture art and is forbidden",
+    "all 72 isolated planes still require independent visual contact-sheet review"
+  ],
+  "rejectedExperiments": [
+    {
+      "scope": "idle row poster",
+      "path": "rejected_idle_row_raw_v1.png",
+      "reason": "poster/global layout drift"
+    },
+    {
+      "scope": "idle E isolated",
+      "path": "rejected_idle_E_isolated_raw_v1.png",
+      "reason": "centered/enlarged layout drift"
+    },
+    {
+      "scope": "idle E mannequin",
+      "path": "rejected_idle_E_mannequin_raw_v1.png",
+      "reason": "global scale drift; superseded"
+    },
+    {
+      "scope": "idle E/SE/S/SW four-cell board",
+      "path": "candidate_0_idle_group0_board_raw_v1.png",
+      "reason": "per-figure grip drift; E control missed canonical socket"
+    },
+    {
+      "scope": "idle S v1",
+      "path": "candidate_0_idle_2_S_board_raw_v1.png",
+      "reason": "non-global guide drift and central torso overlap"
+    },
+    {
+      "scope": "idle S v2",
+      "path": "rejected_0_idle_2_S_board_raw_v2_extra_fiducials.png",
+      "reason": "invented cyan registration marks"
+    },
+    {
+      "scope": "idle S v3",
+      "path": "candidate_0_idle_2_S_board_raw_v3.png",
+      "reason": "canonical socket miss after whole-board registration"
+    },
+    {
+      "scope": "idle S native v4",
+      "path": "candidate_0_idle_2_S_board_raw_v4.png",
+      "reason": "canonical socket miss and inconsistent oversized equipment"
+    },
+    {
+      "scope": "idle S native v5",
+      "path": "candidate_0_idle_2_S_board_raw_v5.png",
+      "reason": "canonical socket miss after whole-board registration"
+    }
+  ],
+  "nextStep": "Use the accepted cells only as visual style/contact references while an artist authors separate final-size held and grip cells for all 72 frames."
+}

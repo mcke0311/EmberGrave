@@ -1,0 +1,144 @@
+{
+  "status": "passed",
+  "text": "PASS — profiling complete",
+  "performance": {
+    "results": [
+      {
+        "zone": "weeping_marsh",
+        "where": "moving",
+        "position": {
+          "x": 81.5,
+          "y": 81.5
+        },
+        "endPosition": {
+          "x": 37.09692904910881,
+          "y": 81.37080499214672
+        },
+        "distanceWalked": 46.20782026896014,
+        "clearRoute": false,
+        "viewport": [
+          3840,
+          2160
+        ],
+        "simulate": true,
+        "frames": 600,
+        "monsters": 130,
+        "aggro": 9,
+        "cpuMs": {
+          "median": 6,
+          "p95": 9.1,
+          "max": 73.8
+        },
+        "frameIntervalMs": {
+          "median": 16.7,
+          "p95": 17,
+          "max": 274.2
+        },
+        "builds": 55,
+        "viewBuilds": 7,
+        "parts": {
+          "updateHover": {
+            "median": 0.4,
+            "p95": 0.5,
+            "max": 1.9,
+            "calls": 600,
+            "maxCall": 1.9
+          },
+          "heldUpdate": {
+            "median": 0,
+            "p95": 0,
+            "max": 0.1,
+            "calls": 600,
+            "maxCall": 0.1
+          },
+          "update": {
+            "median": 1.1,
+            "p95": 1.7,
+            "max": 5.5,
+            "calls": 600,
+            "maxCall": 5.5
+          },
+          "beginFrame": {
+            "median": 0.1,
+            "p95": 0.2,
+            "max": 1.4,
+            "calls": 600,
+            "maxCall": 1.4
+          },
+          "drawBackdrop": {
+            "median": 0,
+            "p95": 0.1,
+            "max": 0.2,
+            "calls": 600,
+            "maxCall": 0.2
+          },
+          "drawFloor": {
+            "median": 0,
+            "p95": 0.1,
+            "max": 68,
+            "calls": 600,
+            "maxCall": 68
+          },
+          "clipBehind": {
+            "median": 0.1,
+            "p95": 0.2,
+            "max": 0.5,
+            "calls": 150521,
+            "maxCall": 0.2
+          },
+          "drawProp": {
+            "median": 0.7,
+            "p95": 1.2,
+            "max": 2,
+            "calls": 119063,
+            "maxCall": 0.5
+          },
+          "drawEntity": {
+            "median": 1.3,
+            "p95": 2.1,
+            "max": 4.1,
+            "calls": 30258,
+            "maxCall": 2
+          },
+          "renderLighting": {
+            "median": 0.1,
+            "p95": 0.3,
+            "max": 0.6,
+            "calls": 600,
+            "maxCall": 0.6
+          },
+          "renderMinimap": {
+            "median": 0,
+            "p95": 0.2,
+            "max": 1,
+            "calls": 600,
+            "maxCall": 1
+          },
+          "HUD": {
+            "median": 0.3,
+            "p95": 0.4,
+            "max": 2.3,
+            "calls": 600,
+            "maxCall": 2.3
+          },
+          "render": {
+            "median": 4.8,
+            "p95": 7.4,
+            "max": 72.7,
+            "calls": 600,
+            "maxCall": 72.7
+          },
+          "repath": {
+            "median": 0,
+            "p95": 0.1,
+            "max": 0.3,
+            "calls": 96,
+            "maxCall": 0.3
+          }
+        }
+      }
+    ],
+    "slowPaths": [],
+    "titleHidden": true
+  }
+}

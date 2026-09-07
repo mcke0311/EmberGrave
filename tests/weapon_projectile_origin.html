@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Weapon projectile origins</title>
+<style>
+body{margin:20px;background:#191b20;color:#dfd5c5;font:14px system-ui}h1{font-size:22px}label{margin-right:18px}select,button{background:#30343d;color:inherit;padding:7px;border:1px solid #73716a}canvas{display:block;margin-top:16px;max-width:100%;height:auto}pre{white-space:pre-wrap}
+</style>
+<h1>Bow and crossbow firing points</h1>
+<p>Each arrow starts at the animated weapon socket. Green circles mark the release position. No game saves are loaded.</p>
+<label>Class <select id="class"><option value="veilranger">Veil Ranger</option><option value="vanguard">Vanguard</option><option value="emberwitch">Ember Witch</option><option value="gravebinder">Gravebinder</option><option value="wildkeeper">Wildkeeper</option></select></label>
+<label>Shot <select id="shot"><option value="ordinary">Ordinary</option><option value="charged">Charged release</option></select></label>
+<label>Frame <select id="frame"><option value="0">At release</option><option value="-0.02">Before release</option><option value="0.04">40 ms after release</option><option value="0.10">100 ms after release</option></select></label>
+<pre id="result">Running rendered socket checks…</pre><canvas id="board" width="1440" height="440" aria-label="Eight facing directions for both weapons"></canvas>
+<script src="../js/utils.js"></script><script src="../js/data.js"></script>
+<script type="module">
+import {createCharacterRenderer} from '../js/character3d.mjs?v=16';
+import {resolveCharacterVisual,CLASS_STYLES} from '../js/character_catalog3d.mjs';
+import {Vector3} from '../js/vendor/three/three.module.min.js';
+const out=document.getElementById('result'),canvas=document.getElementById('board'),ctx=canvas.getContext('2d');
+const stage=createCharacterRenderer(),scale=1.6,facings=['E','SE','S','SW','W','NW','N','NE'];
+let checks=0,maxError=0;
+const ok=(v,m)=>{checks++;if(!v)throw Error(m);};
+const gear=(id,family)=>resolveCharacterVisual(DATA,id,{main:{baseId:family+'2h_t7'},chest:{baseId:'chest_t7'}}).equipment;
+const pose=(ang,t,release)=>({state:'attack',ang,t,ex:{animation:{releases:[release]}}});
+try{
+  for(const id of Object.keys(CLASS_STYLES))for(const family of ['bow','crossbow'])for(let dir=0;dir<8;dir++)for(const release of [0,.45]){
+    const equipment=gear(id,family),p=pose(dir*Math.PI/4,release,release);
+    const origin=stage.projectileOrigin(p,equipment,{classId:id,scale});
+    stage.render(p,equipment,id);
+    const point=stage.model.weapon.localToWorld(new Vector3(...(family==='bow'?[0,0,.2]:[0,.055,.36]))).project(stage.camera);
+    const expected={x:((point.x+1)*192-stage.anchor.x)*200/384*scale,y:((1-point.y)*192-stage.anchor.y)*200/384*scale};
+    const error=Math.hypot(U.isoX(origin.x,origin.y)-expected.x,U.isoY(origin.x,origin.y)-origin.lift-expected.y);
+    maxError=Math.max(maxError,error);ok(error<1e-8,id+'/'+family+'/'+dir+': projection mismatch');
+    ok(!stage.model.weapon.userData.arrow.visible,id+'/'+family+': nocked projectile remains at release');
+  }
+  function draw(){
+    ctx.fillStyle='#191b20';ctx.fillRect(0,0,canvas.width,canvas.height);
+    const id=document.getElementById('class').value,charged=document.getElementById('shot').value==='charged',release=charged?0:.45,elapsed=+document.getElementById('frame').value;
+    for(const [row,family] of ['bow','crossbow'].entries())for(let dir=0;dir<8;dir++){
+      const equipment=gear(id,family),ang=dir*Math.PI/4,p=pose(ang,Math.max(0,release+elapsed/.6),release),firing=pose(ang,release,release);
+      const origin=stage.projectileOrigin(firing,equipment,{classId:id,scale});
+      if(charged&&elapsed<0){p.state='draw';p.t=1;}
+      const x=dir*180+90,y=row*220+170;
+      ctx.save();ctx.beginPath();ctx.rect(dir*180,row*220,180,220);ctx.clip();ctx.translate(x,y);
+      ctx.fillStyle='#101216';ctx.beginPath();ctx.ellipse(0,0,23,10,0,0,Math.PI*2);ctx.fill();
+      stage.draw(ctx,p,equipment,{classId:id,scale});
+      const sx=U.isoX(origin.x,origin.y),sy=U.isoY(origin.x,origin.y)-origin.lift;
+      ctx.strokeStyle='#70cba5';ctx.lineWidth=1;ctx.beginPath();ctx.arc(sx,sy,4,0,Math.PI*2);ctx.stroke();
+      if(elapsed>=0){
+        const [wx,wy]=U.screenVecToWorld(ang),tx=wx*8,ty=wy*8,d=Math.hypot(tx-origin.x,ty-origin.y),vx=(tx-origin.x)/d*12,vy=(ty-origin.y)/d*12;
+        const a=Math.atan2(U.isoY(vx,vy),U.isoX(vx,vy)),px=sx+U.isoX(vx,vy)*elapsed,py=sy+U.isoY(vx,vy)*elapsed;
+        ctx.strokeStyle='#cabd9a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(px-Math.cos(a)*8,py-Math.sin(a)*8);ctx.lineTo(px+Math.cos(a)*8,py+Math.sin(a)*8);ctx.stroke();
+      }
+      ctx.fillStyle='#dfd5c5';ctx.font='13px system-ui';ctx.textAlign='center';ctx.fillText(family+' · '+facings[dir],0,30);ctx.restore();
+    }
+  }
+  for(const select of document.querySelectorAll('select'))select.onchange=draw;
+  draw();out.textContent=`PASS: ${checks} rendered checks across five classes, both weapons, eight directions and ordinary/charged releases. Maximum socket projection error: ${maxError.toExponential(2)} pixels.`;
+  document.body.dataset.testStatus='passed';
+}catch(error){out.textContent='FAIL: '+error.stack;document.body.dataset.testStatus='failed';}
+</script></html>

@@ -1,0 +1,98 @@
+{
+  "alphaSha256": "3f9c1b736ef6127a6ae646bc59afcd2b56bb3a458de5576b4aba267d0291260f",
+  "alphaSource": "assets/sprites_src/gameplay_art_authored/traps/traps_alpha_v1.png",
+  "anchor": [
+    16,
+    18
+  ],
+  "cell": [
+    32,
+    24
+  ],
+  "chromaSha256": "033ddebdf6aa8dd394cd461740e9d09c79e7be1d9f90faa031398fd4744bb826",
+  "chromaSource": "assets/sprites_src/gameplay_art_authored/traps/traps_chroma_v1.png",
+  "operation": "whole-object-slice-and-uniform-scale",
+  "outputs": {
+    "barbed": {
+      "alphaBBox": [
+        2,
+        2,
+        30,
+        22
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/traps/barbed.png",
+      "position": [
+        2,
+        2
+      ],
+      "sha256": "be4d33a77f5b3dc73e1861630d7bbec3f4c9308b2a45fcaad91f6c58244e08e0",
+      "size": [
+        28,
+        20
+      ],
+      "sourceBBox": [
+        121,
+        345,
+        478,
+        601
+      ],
+      "sourcePanel": 0,
+      "uniformScale": 0.078125
+    },
+    "frost": {
+      "alphaBBox": [
+        3,
+        2,
+        29,
+        22
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/traps/frost.png",
+      "position": [
+        3,
+        2
+      ],
+      "sha256": "379d5e08bbfcd9d824a696d0e49fe73ca9476bdda1c31680f6c3c97a9a46b367",
+      "size": [
+        26,
+        20
+      ],
+      "sourceBBox": [
+        104,
+        323,
+        469,
+        607
+      ],
+      "sourcePanel": 1,
+      "uniformScale": 0.07042254
+    },
+    "powder": {
+      "alphaBBox": [
+        3,
+        2,
+        28,
+        22
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/traps/powder.png",
+      "position": [
+        3,
+        2
+      ],
+      "sha256": "6a0e5726e590aaf9a7ac88d8414885d76790270e16ddf6e7922d92c6568863e6",
+      "size": [
+        25,
+        20
+      ],
+      "sourceBBox": [
+        78,
+        325,
+        423,
+        600
+      ],
+      "sourcePanel": 2,
+      "uniformScale": 0.07272727
+    }
+  },
+  "review": "visual-contact-sheet-v1",
+  "sourceKind": "imagegen-authored-chroma-board",
+  "version": 1
+}

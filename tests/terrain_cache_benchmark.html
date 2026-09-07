@@ -1,0 +1,103 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Terrain cache performance regression</title>
+<style>body{background:#111820;color:#e3dbc9;font:14px/1.5 system-ui;margin:20px}pre{white-space:pre-wrap}table{border-collapse:collapse}td,th{padding:7px 12px;border:1px solid #41505c;text-align:right}iframe{display:block;border:0;transform-origin:top left}#host{overflow:hidden;height:760px}button{padding:8px;margin:12px 8px 12px 0}</style>
+<h1>Fallen North terrain cache benchmark</h1>
+<p>Deterministic seed 12345. Real game renderer and 3D Vanguard, isolated in-memory saves. Simulation is paused and monsters removed in this fixture only. Times measure synchronous render submission, not complete gameplay FPS or GPU completion. The frozen previous terrain renderer is used only for comparison.</p>
+<pre id="result">Loading…</pre><div id="table"></div><pre id="report"></pre>
+<button id="north" disabled>Review Fallen North</button><button id="mines" disabled>Review dungeon wall caps</button><div id="host"></div>
+<script type="module">
+const out=document.getElementById('result'),report=document.getElementById('report');
+window.terrainBenchStore=new Map();let checks=0;
+const ok=(v,m)=>{checks++;if(!v)throw Error(m);},raf=()=>new Promise(r=>requestAnimationFrame(r));
+const results={seed:12345,scope:'Synchronous full render submission; paused simulation; no monsters; real 3D player, props, terrain, lighting and HUD. Not gameplay FPS.',stationary:[],moving:[],pixels:[]};
+function publish(){report.textContent=JSON.stringify({...results,checks},null,2);}
+function summary(samples){const sorted=key=>samples.map(s=>s[key]).sort((a,b)=>a-b),pick=(a,p)=>+a[Math.min(a.length-1,Math.floor(a.length*p))].toFixed(2),times=sorted('renderMs');return {frames:samples.length,medianRenderMs:pick(times,.5),p95RenderMs:pick(times,.95),totalBuilds:samples.reduce((n,s)=>n+s.chunkBuilds,0),medianBuildMs:pick(sorted('buildMs'),.5),visibleChunks:samples.at(-1).visibleChunks,retainedChunks:samples.at(-1).retainedChunks};}
+try{
+ const [html,source,baseline]=await Promise.all(['../index.html','../js/game.js','fixtures/level_terrain_v5.js'].map(p=>fetch(p,{cache:'no-store'}).then(r=>r.text())));
+ const hooked=source.replaceAll('LevelTerrain.','window.__terrainDriver.').replace('    init, newGame, loadGame,',`    __terrainTest: {render, place(x,y) {state.player.x=x;state.player.y=y;camPos={x:U.isoX(x,y)-canvas.width/2,y:U.isoY(x,y)-canvas.height/2-20};shakeOx=shakeOy=0;}},
+    init, newGame, loadGame,`);
+ ok(hooked.includes('__terrainTest'),'missing private renderer hooks');
+ const injection=`<base href="${new URL('../index.html',location.href)}"><script>
+ const store=parent.terrainBenchStore;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});
+ window.requestAnimationFrame=()=>0;window.__terrainErrors=[];window.addEventListener('error',e=>window.__terrainErrors.push(e.message));
+ <\/script>`;
+ const iframe=document.createElement('iframe');iframe.title='Isolated terrain benchmark game';iframe.style.width='1920px';iframe.style.height='1080px';
+ iframe.srcdoc=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>window.__terrainDriver=LevelTerrain;'+hooked+'<\/script>');
+ document.getElementById('host').append(iframe);await new Promise(r=>iframe.onload=r);
+ const win=iframe.contentWindow,doc=win.document;
+ for(let i=0;i<300&&!doc.querySelector('#titleMenu button');i++)await new Promise(r=>setTimeout(r,30));
+ const game=win.eval('Game'),fixed=win.eval('LevelTerrain'),ui=win.eval('UI'),u=win.eval('U');win.eval('Sfx').setVol('master',0);
+ await game.newGame('Cache benchmark','vanguard',false);await game.skipOpening();ui.closeAll();
+ game.state.seed=12345;await game.enterMap('north_wild','from_camp');
+ const state=game.state,api=game.__terrainTest,view=doc.getElementById('view');
+ state.monsters=[];state.map.explored.fill(1);game.options.screenShake=false;const map=state.map;
+ const entry={...map.spawns.from_camp},center={x:map.w/2,y:map.h/2};
+ function legacy(){
+  let builds=0,buildMs=0;
+  const measured=baseline.replace('surface=build(m,cx,cy)','surface=measureBuild(()=>build(m,cx,cy))').replace('return {drawTile};','return {drawTile,size:()=>chunks.size,dispose(){for(const c of chunks.values())c.width=c.height=0;chunks.clear();materials.clear();}};');
+  ok(measured!==baseline&&measured.includes('measureBuild(()=>'),'baseline instrumentation missing');
+  const old=new win.Function('measureBuild',measured+';return LevelTerrain;')(fn=>{const t=performance.now();const value=fn();buildMs+=performance.now()-t;builds++;return value;});
+  return {beginFrame(){builds=buildMs=0;},drawTile:old.drawTile,endFrame(){},dispose:old.dispose,getDiagnostics:()=>({chunkBuilds:builds,buildMs,retainedChunks:old.size()})};
+ }
+ async function size(W,H){iframe.style.width=W+'px';iframe.style.height=H+'px';iframe.style.transform=`scale(${Math.min(1,(document.body.clientWidth-4)/W)})`;await raf();await raf();ok(view.width===W&&view.height===H,'viewport resize did not apply');}
+ async function sample(driver,p){await raf();api.place(p.x,p.y);const t=performance.now();api.render();const renderMs=performance.now()-t;ok(!doc.getElementById('appFatal')&&!win.__terrainErrors.length,'runtime error: '+win.__terrainErrors.join(';'));return {renderMs,...driver.getDiagnostics()};}
+ for(const [W,H] of [[1920,1080],[2560,1440],[3840,2160]]){
+  await size(W,H);
+  for(const [where,p] of [['entry',entry],['center',center]]){
+   const row={viewport:`${W}x${H}`,where};
+   for(const mode of ['before','after']){
+    out.textContent=`Measuring ${W}×${H} ${where}, ${mode} (${mode==='after'?300:8} stationary frames)…`;
+    const driver=mode==='before'?legacy():fixed;win.__terrainDriver=driver;
+    await sample(driver,p);const samples=[];
+    for(let i=0;i<(mode==='after'?300:8);i++){
+     const s=await sample(driver,p);samples.push(s);
+     if(mode==='after')ok(s.chunkBuilds===0,'stationary terrain rebuilt after warm-up');
+    }
+    row[mode]=summary(samples);if(mode==='before')driver.dispose();
+   }
+   results.stationary.push(row);publish();
+  }
+  const row={viewport:`${W}x${H}`,route:'24 positions, +0.75 x / +0.5 y tiles per frame, starting at map center'};
+  for(const mode of ['before','after']){
+   out.textContent=`Measuring ${W}×${H} moving, ${mode}…`;
+   const driver=mode==='before'?legacy():fixed;win.__terrainDriver=driver;
+   await sample(driver,center);const samples=[];
+   for(let i=1;i<=24;i++){
+    const p={x:center.x+i*.75,y:center.y+i*.5},s=await sample(driver,p);samples.push(s);
+    if(mode==='after'){ok(s.chunkBuilds<=s.visibleChunks,'moving frame rebuilt a visible chunk twice');ok((await sample(driver,p)).chunkBuilds===0,'newly visible terrain was not retained');}
+   }
+   row[mode]=summary(samples);if(mode==='before')driver.dispose();
+  }
+  results.moving.push(row);publish();
+ }
+ // Compare actual pixels from the production floor/cliff pass. Cache policy must
+ // not alter authored blending, fractional camera joins or terrain elevation.
+ const start=source.indexOf('    /* ---- floors ---- */'),end=source.indexOf('    /* ---- ground items:',start);
+ ok(start>=0&&end>start,'floor renderer extraction failed');
+ const floor=new win.Function('LevelTerrain','ctx','m','cam','tx0','tx1','ty0','ty1','inView','EH','MASSIF_THEMES','LevelTerrain.beginFrame(m);try{'+source.slice(start,end)+'}finally{LevelTerrain.endFrame();}');
+ const themes=new Set(JSON.parse(source.match(/const MASSIF_THEMES = new Set\((\[[^\n]+\])\)/)[1]));
+ for(const id of ['north_wild','mines']){
+  out.textContent='Comparing before/after pixels: '+id;await game.enterMap(id,'default');state.monsters=[];const m=state.map;
+  const old=legacy(),canvases=[];
+  for(const driver of [old,fixed]){
+   const c=doc.createElement('canvas');c.width=1600;c.height=1000;const ctx=c.getContext('2d',{willReadFrequently:true});
+   const cam={x:u.isoX(m.w/2,m.h/2)-800+.35,y:u.isoY(m.w/2,m.h/2)-500+.35};
+   floor(driver,ctx,m,cam,0,m.w-1,0,m.h-1,(x,y)=>x>-96&&x<1696&&y>-224&&y<1096,14,themes);
+   canvases.push(ctx.getImageData(0,0,1600,1000).data);c.width=c.height=0;
+  }
+  let different=0;for(let i=0;i<canvases[0].length;i+=4)if(canvases[0][i]!==canvases[1][i]||canvases[0][i+1]!==canvases[1][i+1]||canvases[0][i+2]!==canvases[1][i+2]||canvases[0][i+3]!==canvases[1][i+3])different++;
+  ok(different===0,id+' floor/cliff pixels changed');results.pixels.push({map:id,pixels:1600000,different});old.dispose();
+ }
+ // Real renderer wall caps participate in the same lifecycle; map swaps release
+ // old surfaces, then each dungeon/town/outdoor view becomes stable again.
+ win.__terrainDriver=fixed;await size(2560,1440);
+ for(const id of ['mines','frosthaven','north_wild']){
+  await game.enterMap(id,'default');state.monsters=[];state.map.explored.fill(1);
+  const p={x:state.map.w/2,y:state.map.h/2};await sample(fixed,p);ok((await sample(fixed,p)).chunkBuilds===0,id+' warm full renderer rebuilt terrain');
+ }
+ async function review(id){await size(1280,800);await game.enterMap(id,'default');state.monsters=[];state.map.explored.fill(1);ui.closeAll();const p=id==='north_wild'?center:state.map.spawns.default||state.player;await sample(fixed,p);}
+ for(const id of ['north','mines']){const b=document.getElementById(id);b.disabled=false;b.onclick=()=>review(id==='north'?'north_wild':'mines');}
+ await review('north_wild');results.userAgent=navigator.userAgent;results.status='PASS';publish();
+ document.getElementById('table').innerHTML='<table><tr><th>View</th><th>Location</th><th>Before render median</th><th>After render median</th><th>Visible chunks</th><th>After builds / 300 frames</th></tr>'+results.stationary.map(r=>`<tr><td>${r.viewport}</td><td>${r.where}</td><td>${r.before.medianRenderMs} ms</td><td>${r.after.medianRenderMs} ms</td><td>${r.after.visibleChunks}</td><td>${r.after.totalBuilds}</td></tr>`).join('')+'</table>';
+ out.textContent=`PASS: ${checks} checks; six 300-frame stationary views, matching moving routes, pixel equality, map swaps and full dungeon wall-cap rendering. Saves isolated in memory.`;document.body.dataset.testStatus='passed';
+}catch(e){results.status='FAIL';results.error=e.stack;publish();out.textContent='FAIL: '+e.stack;document.body.dataset.testStatus='failed';}
+</script></html>

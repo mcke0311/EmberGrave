@@ -1,0 +1,2019 @@
+/* =========================================================================
+   EMBERGRAVE — ui.js
+   DOM-based interface: orbs, belt, skill buttons, panels (inventory,
+   character, talents, quests, vendor, storage, dialog), tooltips,
+   title screen, escape menu, debug console.
+   ========================================================================= */
+"use strict";
+
+const UI = (() => {
+  const $ = id => document.getElementById(id);
+  let els = {};
+  let cursorItem = null;            // item held on the mouse cursor
+  let cursorFrom = null;            // grid it was lifted from
+  let openPanels = { left: null, right: null, center: null };
+  let vendorCtx = null;             // active vendor {npcId, items}
+  let curTree = 0;
+  let selectedSkill = null, skillsClass = null, hudBindingSignature = "", hudPlayer = null;
+  const CELL = 34;
+  let inventoryQuery = "", managementHero = null, questFilter = "all", forgeRecipe = "glyph";
+  const textNode = (tag, cls, text) => { const el = document.createElement(tag); el.className = cls; if (text !== undefined) el.textContent = text; return el; };
+  const itemName = it => (it.identified ? it.name : it.baseName) || it.name || "Item";
+  function actionButton(label, fn, cls = "manage-button") { const b = textNode("button", cls, label); b.type = "button"; b.addEventListener("click", fn); return b; }
+  function syncWorkspace() {
+    const host = document.getElementById("panelWorkspace"); if (!host) return;
+    host.classList.toggle("paired", openPanels.right === "inv" && (openPanels.left === "vendor" || openPanels.left === "storage" || openPanels.center === "forge"));
+    host.classList.toggle("forge-workspace", openPanels.center === "forge");
+  }
+  function resetManagementState() {
+    if (managementHero === Game.state.player) return;
+    managementHero = Game.state.player; inventoryQuery = ""; questFilter = "all"; questUiAct = questUiSel = null; forgeRecipe = "glyph";
+  }
+  function filterButtons(options, selected, choose) {
+    const row = textNode("div", "manage-tabs");
+    for (const [id,label] of options) { const b = actionButton(label,()=>choose(id)); b.classList.toggle("selected", id === selected); b.setAttribute("aria-pressed",String(id === selected)); row.appendChild(b); }
+    return row;
+  }
+
+  function init() {
+    // Capture covers dynamic controls and handlers that stop propagation. Keep
+    // click feedback here so individual actions cannot play the same click twice.
+    const feedback = e => {
+      const selector = e.type === "contextmenu" ? ".invitem,.qslot,.beltslot" :
+        e.type === "change" ? "select,input[type=range],input[type=color]" :
+        'button,[role=button],.invitem,.eqslot,.invgrid,.dlgopt,.wprow:not(.wphere),.choicebtn,#cinematic:not(.hidden),input:not([type=range]):not([type=color]):not([type=hidden])';
+      const control = e.target.closest?.(selector);
+      if (!control || !control.closest("#game") || control.closest(':disabled,[inert],[aria-disabled="true"]')) return;
+      if (e.type === "change") queueMicrotask(() => Sfx.play("click"));
+      else Sfx.play("click");
+    };
+    document.addEventListener("click", feedback, true);
+    document.addEventListener("contextmenu", feedback, true);
+    // A committed slider/select change also covers keyboard interaction.
+    document.addEventListener("change", feedback, true);
+    els = {
+      hud: $("hud"), orbHp: $("orbHp"), orbMp: $("orbMp"), hpText: $("hpText"), mpText: $("mpText"),
+      xpfill: $("xpfill"), beltBar: $("beltBar"), skillL: $("skillL"), skillR: $("skillR"),
+      quickbar: $("quickbar"), buffs: $("buffs"),
+      panelLeft: $("panelLeft"), panelRight: $("panelRight"), panelCenter: $("panelCenter"),
+      tooltip: $("tooltip"), tooltipCmp: $("tooltipCmp"), cursorItem: $("cursorItem"),
+      msglog: $("msglog"), centerMsg: $("centerMsg"), skillPick: $("skillPick"),
+      debug: $("debug"), escmenu: $("escmenu"), cinematic: $("cinematic"), title: $("title"), titleMenu: $("titleMenu"),
+      minimap: $("minimap"), zonelabel: $("zonelabel"),
+      deathScreen: $("deathScreen"), deathMessage: $("deathMessage"), deathStatus: $("deathStatus"), backToTown: $("backToTown"),
+    };
+    // Escape/backdrop clicks must not dismiss the only way out of death.
+    els.deathScreen.addEventListener("cancel", e => e.preventDefault());
+    els.backToTown.addEventListener("click", async () => {
+      if (els.backToTown.disabled) return;
+      els.backToTown.disabled = true;
+      els.deathStatus.textContent = "Returning to town…";
+      try {
+        if (await Game.returnToTown()) return;
+        els.deathStatus.textContent = "Town could not be loaded. Please try again.";
+      } catch (error) {
+        console.error("Could not return to town:", error);
+        els.deathStatus.textContent = "Town could not be loaded. Please try again.";
+      }
+      els.backToTown.disabled = false;
+      els.backToTown.focus();
+    });
+    for (const el of document.querySelectorAll(".hbtn"))
+      el.addEventListener("click", () => {  togglePanel(el.dataset.panel); });
+    els.skillL.addEventListener("click", e => { e.stopPropagation(); openSkillPick("L"); });
+    els.skillR.addEventListener("click", e => { e.stopPropagation(); openSkillPick("R"); });
+    els.skillL.addEventListener("contextmenu", e => e.preventDefault());
+    els.skillR.addEventListener("contextmenu", e => e.preventDefault());
+    for (const [el, side] of [[els.skillL, "L"], [els.skillR, "R"]]) {
+      const tip = () => { if (!Game.state) return; const r = el.getBoundingClientRect(); showSkillTooltip(Game.state.player["skill" + side], r.left + r.width / 2, r.top); };
+      el.addEventListener("mouseenter", tip); el.addEventListener("focus", tip);
+      el.addEventListener("mouseleave", hideTooltip); el.addEventListener("blur", hideTooltip);
+    }
+    document.addEventListener("click", e => { if (!els.skillPick.contains(e.target)) els.skillPick.classList.add("hidden"); });
+    document.addEventListener("keydown", e => {
+      /* Space/Enter activate a focused control; they must not also jump or
+         trigger world input underneath the interface. */
+      if ((e.key === " " || e.key === "Enter") && e.target.closest("button")) e.stopPropagation();
+    });
+    document.addEventListener("mousemove", e => {
+      if (cursorItem) {
+        els.cursorItem.style.left = (e.clientX - cursorItem.w * CELL / 2) + "px";
+        els.cursorItem.style.top = (e.clientY - cursorItem.h * CELL / 2) + "px";
+      }
+    });
+    buildBelt();
+  }
+
+  /* ================================================== orbs / hud */
+  function drawOrb(canvas, pct, color, dark) {
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width, h = canvas.height, cx = w / 2, cy = h / 2, r = w / 2 - 9;
+    const now = performance.now() * 0.001;
+    ctx.clearRect(0, 0, w, h);
+    ctx.save();
+    /* heavy, hammered socket */
+    ctx.shadowColor = "rgba(0,0,0,.9)"; ctx.shadowBlur = 10; ctx.shadowOffsetY = 5;
+    const metal = ctx.createRadialGradient(cx - 12, cy - 17, 5, cx, cy, r + 9);
+    metal.addColorStop(0, "#777266"); metal.addColorStop(.18, "#302f2b");
+    metal.addColorStop(.58, "#111212"); metal.addColorStop(.82, "#665233"); metal.addColorStop(1, "#090909");
+    ctx.fillStyle = metal; ctx.beginPath(); ctx.arc(cx, cy, r + 8, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+    ctx.strokeStyle = "#090909"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, cy, r + 6.5, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = "rgba(215,177,100,.55)"; ctx.lineWidth = 1.25; ctx.beginPath(); ctx.arc(cx, cy, r + 4.5, 0, Math.PI * 2); ctx.stroke();
+    /* four subtle rune-clasps make the silhouette feel built, not merely circled */
+    ctx.fillStyle = "#78603a";
+    for (let i = 0; i < 4; i++) {
+      const a = Math.PI / 4 + i * Math.PI / 2;
+      ctx.save(); ctx.translate(cx + Math.cos(a) * (r + 6), cy + Math.sin(a) * (r + 6)); ctx.rotate(a);
+      ctx.fillRect(-4, -2, 8, 4); ctx.restore();
+    }
+    /* glass and empty interior */
+    const empty = ctx.createRadialGradient(cx - 13, cy - 17, 3, cx, cy, r);
+    empty.addColorStop(0, dark); empty.addColorStop(.7, dark); empty.addColorStop(1, "#020202");
+    ctx.fillStyle = empty; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+    /* liquid */
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip();
+    const level = cy + r - pct * r * 2;
+    const g = ctx.createLinearGradient(0, level, 0, h / 2 + r);
+    g.addColorStop(0, color[0]); g.addColorStop(1, color[1]);
+    ctx.fillStyle = g; ctx.beginPath();
+    ctx.moveTo(cx - r - 2, level);
+    for (let x = cx - r; x <= cx + r + 3; x += 4) ctx.lineTo(x, level + Math.sin(now * 2.2 + x * .09) * 1.15);
+    ctx.lineTo(cx + r + 2, cy + r + 2); ctx.lineTo(cx - r - 2, cy + r + 2); ctx.closePath(); ctx.fill();
+    /* liquid glow, meniscus, and a few slow bubbles */
+    const glow = ctx.createRadialGradient(cx - 12, level + 10, 1, cx, level + 13, r * .95);
+    glow.addColorStop(0, "rgba(255,255,255,.18)"); glow.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = glow; ctx.fillRect(0, level, w, h - level);
+    ctx.strokeStyle = "rgba(255,236,205,.38)"; ctx.lineWidth = 1.4; ctx.beginPath();
+    ctx.moveTo(cx - r, level); ctx.quadraticCurveTo(cx, level + Math.sin(now * 2.2) * 1.3, cx + r, level); ctx.stroke();
+    ctx.fillStyle = "rgba(255,220,190,.2)";
+    for (let i = 0; i < 3; i++) {
+      const bx = cx - 18 + i * 17, span = Math.max(7, cy + r - level - 5);
+      const by = cy + r - 5 - ((now * (5 + i * 1.7) + i * 13) % span);
+      if (by > level + 4) { ctx.beginPath(); ctx.arc(bx, by, 1.2 + i * .35, 0, Math.PI * 2); ctx.fill(); }
+    }
+    ctx.restore();
+    /* inner rim and glass highlights */
+    ctx.strokeStyle = "rgba(0,0,0,.72)"; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, r + 1, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,.13)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx - 1, cy - 1, r - 1, Math.PI * 1.05, Math.PI * 1.72); ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,.12)"; ctx.beginPath(); ctx.ellipse(cx - r * .34,cy - r * .38,r * .27,r * .15,-.62,0,Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  function refreshHUD() {
+    const p = Game.state && Game.state.player;
+    if (!p) return;
+    drawOrb(els.orbHp, U.clamp(p.hp / p.stats.maxHp, 0, 1), ["#c03030", "#5a0c0c"], "#1a0606");
+    drawOrb(els.orbMp, U.clamp(p.mana / p.stats.maxMana, 0, 1), ["#3858c0", "#101c54"], "#060a1a");
+    els.hpText.textContent = `${Math.ceil(p.hp)} / ${p.stats.maxHp}`;
+    els.mpText.textContent = `${Math.ceil(p.mana)} / ${p.stats.maxMana}`;
+    const need = DATA.xpForLevel(p.lvl);
+    const xpPct = p.lvl >= DATA.MAX_LEVEL ? 100 : U.clamp(p.xp / need * 100, 0, 100);
+    els.xpfill.style.width = xpPct + "%";
+    $("xpbar").setAttribute("aria-valuenow", Math.round(xpPct));
+    $("xpbar").setAttribute("aria-valuemin", "0"); $("xpbar").setAttribute("aria-valuemax", "100");
+    $("xpbar").title = p.lvl >= DATA.MAX_LEVEL ? "Maximum level" : `${p.xp.toLocaleString()} / ${need.toLocaleString()} experience`;
+    $("hudClass").textContent = p.cls.name; $("hudLevel").textContent = "LEVEL " + p.lvl;
+    $("xpText").textContent = p.lvl >= DATA.MAX_LEVEL ? "MAX LEVEL" : Math.floor(xpPct) + "% TO NEXT LEVEL";
+    const pendingPerks=SkillPerks.pending(p);
+    $("talentNotice").hidden = p.skillPts <= 0 && !pendingPerks;
+    $("talentNotice").textContent = p.skillPts>0 ? `${p.skillPts}${pendingPerks?" ◆":""}` : `◆ ${pendingPerks}`;
+    $("talentNotice").title=`${p.skillPts} talent points · ${pendingPerks} perk choices available`;
+    els.hud.style.setProperty("--class-accent", SkillIcons.theme(p.classId).color);
+    $("orbHpWrap").classList.toggle("low-life", p.hp > 0 && p.hp / p.stats.maxHp < .25);
+    for (const button of document.querySelectorAll(".hbtn")) {
+      const active = Object.values(openPanels).includes(button.dataset.panel);
+      button.classList.toggle("active", active); button.setAttribute("aria-pressed", String(active));
+    }
+    refreshSkillButtons();
+    /* keep the character-sheet to-hit readout live while it's open */
+    if (openPanels.left === "char") {
+      const hs = document.getElementById("statHit"); if (hs) hs.textContent = hitChanceStr(p);
+      for (const [label,value] of [["Life",`${Math.ceil(p.hp)} / ${p.stats.maxHp}`],["Aether",`${Math.ceil(p.mana)} / ${p.stats.maxMana}`],["Experience",`${U.fmt(p.xp)} / ${U.fmt(DATA.xpForLevel(p.lvl))}`]]) {
+        const cell=els.panelLeft.querySelector(`[data-stat="${label}"] .v`); if(cell)cell.textContent=value;
+      }
+      for (const time of els.panelLeft.querySelectorAll('[data-effect-time]')) { const buff=p.buffs[+time.dataset.effectTime]; if(buff)time.textContent=buff.until===Infinity||buff.infinite?"∞":Math.max(0,Math.ceil(buff.until-Game.state.time))+"s"; }
+    }
+  }
+  function skillBtnIcon(el, skillId) {
+    el.innerHTML = "";
+    const sk = skillId === "basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[skillId];
+    el.appendChild(SkillIcons.create(sk, 54, Game.state.player.equip.main?.cat));
+    el.dataset.skill = skillId;
+    el.setAttribute("aria-label", `${el.id === "skillL" ? "Left" : "Right"} mouse: ${sk.name}. Click to assign.`);
+    const key = document.createElement("div"); key.className = "mkey";
+    key.textContent = el.id === "skillL" ? "LMB" : "RMB";
+    el.appendChild(key);
+    const cd = document.createElement("span"); cd.className = "skill-cooldown"; el.appendChild(cd);
+  }
+  function refreshSkillButtons() {
+    const p = Game.state.player;
+    if (hudPlayer !== p) { hudPlayer = p; hudBindingSignature = ""; }
+    if (!p.quickSlots) p.quickSlots = [null, null, null, null];
+    for (let i = 0; i < 4; i++) if (p.quickSlots[i] && p.quickSlots[i] !== "basic" && !p.skills[p.quickSlots[i]]) p.quickSlots[i] = null;
+    const signature = [p.classId, p.equip.main?.cat, p.skillL, p.skillR, ...p.quickSlots].join("|");
+    if (signature === hudBindingSignature) { refreshCooldowns(p); return; }
+    hudBindingSignature = signature;
+    skillBtnIcon(els.skillL, p.skillL);
+    skillBtnIcon(els.skillR, p.skillR);
+    /* quickbar: F1-F4 = player-assigned skills. Click an assigned slot to make it
+       your right-click skill; right-click a slot (or click an empty one) to assign. */
+    if (!p.quickSlots) p.quickSlots = [null, null, null, null];
+    els.quickbar.innerHTML = "";
+    for (let i = 0; i < 4; i++) {
+      const q = document.createElement("button"); q.type = "button"; q.className = "qslot";
+      let id = p.quickSlots[i];
+      if (id && id !== "basic" && !(p.skills[id] > 0)) { id = p.quickSlots[i] = null; }  // forgot via respec
+      if (id) {
+        const sk = id === "basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[id];
+        const c = SkillIcons.create(sk, 44, p.equip.main?.cat);
+        q.appendChild(c);
+        q.dataset.skill = id;
+        q.setAttribute("aria-label", `F${i + 1}: ${sk.name}. Select for right mouse; right-click to reassign.`);
+        q.title = `${sk.name} · F${i + 1}\nClick to select · Right-click to reassign`;
+        if (p.skillR === id || p.skillL === id) q.classList.add("qbound");
+        q.addEventListener("click", e => { e.stopPropagation(); p.skillR = id; refreshHUD(); renderIfOpen("skills");  });
+        q.addEventListener("mouseenter", e => { const r = q.getBoundingClientRect(); showSkillTooltip(id, r.left + r.width / 2, r.top); });
+        q.addEventListener("mouseleave", hideTooltip);
+        q.addEventListener("focus", () => { const r = q.getBoundingClientRect(); showSkillTooltip(id, r.left + r.width / 2, r.top); });
+        q.addEventListener("blur", hideTooltip);
+      } else {
+        q.setAttribute("aria-label", `Assign a skill to F${i + 1}`);
+        const plus = document.createElement("div"); plus.className = "qadd"; plus.textContent = "+";
+        q.appendChild(plus);
+        q.addEventListener("click", e => { e.stopPropagation(); openSkillPick("Q" + i); });
+      }
+      q.addEventListener("contextmenu", e => { e.preventDefault(); openSkillPick("Q" + i); });
+      const k = document.createElement("div"); k.className = "key"; k.textContent = "F" + (i + 1);
+      q.appendChild(k);
+      const cd = document.createElement("span"); cd.className = "skill-cooldown"; q.appendChild(cd);
+      els.quickbar.appendChild(q);
+    }
+    refreshCooldowns(p);
+  }
+  function refreshCooldowns(p) {
+    for (const el of [els.skillL, els.skillR, ...els.quickbar.children]) {
+      const remaining = Math.max(0, (p.skillCd[el.dataset.skill] || 0) - Game.state.time);
+      el.classList.toggle("cooling", remaining > 0);
+      const label = el.querySelector(".skill-cooldown");
+      if (label) label.textContent = remaining > 0 ? (remaining < 10 ? remaining.toFixed(1) : Math.ceil(remaining)) : "";
+    }
+  }
+  function learnedActives(p) {
+    const ids = ["basic"];
+    for (const id of Object.keys(DATA.SKILLS))
+      if ((p.skills[id] || 0) > 0 && DATA.SKILLS[id].type !== "passive") ids.push(id);
+    return ids;
+  }
+  /* F1–F4: activate the assigned skill (as right-click), or open the picker if empty */
+  function quickCast(i) {
+    const p = Game.state.player;
+    if (!p.quickSlots) p.quickSlots = [null, null, null, null];
+    const id = p.quickSlots[i];
+    if (id && (id === "basic" || p.skills[id] > 0)) { p.skillR = id; refreshHUD(); Sfx.play("click"); }
+    else openSkillPick("Q" + i);
+  }
+  /* auto-fill the first empty F-slot when a new active skill is learned */
+  function autoBindQuick(p, id) {
+    if (!p.quickSlots) p.quickSlots = [null, null, null, null];
+    if (p.quickSlots.includes(id)) return;
+    const slot = p.quickSlots.indexOf(null);
+    if (slot >= 0) p.quickSlots[slot] = id;
+  }
+
+  function buildBelt() {
+    els.beltBar.innerHTML = "";
+    for (let i = 0; i < 4; i++) {
+      const s = document.createElement("button"); s.type = "button"; s.className = "beltslot"; s.dataset.i = i;
+      const k = document.createElement("div"); k.className = "key"; k.textContent = i + 1;
+      s.appendChild(k);
+      s.addEventListener("click", () => { Game.state.player.quaff(i); refreshHUD(); });
+      s.addEventListener("contextmenu", e => {
+        e.preventDefault();
+        const p = Game.state.player, slot = p.belt[i];
+        if (!slot) return;
+        const it = Items.makeConsumable(slot.id, slot.count);
+        if (Items.autoPlace(p.inv, it)) { p.belt[i] = null; refreshBelt(); renderIfOpen("inv"); }
+        else Game.msg("No room in your pack.", "#c08080");
+      });
+      els.beltBar.appendChild(s);
+    }
+    refreshBelt();
+  }
+  function refreshBelt() {
+    const p = Game.state && Game.state.player;
+    if (!p) return;
+    const slots = els.beltBar.children;
+    for (let i = 0; i < 4; i++) {
+      const s = slots[i];
+      [...s.querySelectorAll("canvas,.cnt")].forEach(n => n.remove());
+      const slot = p.belt[i];
+      s.classList.toggle("empty", !slot);
+      s.title = slot ? `${DATA.CONSUMABLES[slot.id].name} ×${slot.count}\n${i + 1}: drink · Right-click: move to inventory` : `${i + 1}: empty draught slot`;
+      s.setAttribute("aria-label", s.title.split("\n")[0]);
+      if (slot) {
+        const fake = { icon: DATA.CONSUMABLES[slot.id].icon, w: 1, h: 1, name: slot.id };
+        const c = SpriteAssets.itemIcon(fake);
+        s.appendChild(c);
+        const cnt = document.createElement("div"); cnt.className = "cnt"; cnt.textContent = slot.count;
+        s.appendChild(cnt);
+      }
+    }
+  }
+  function buffEffectLines(b) {
+    const lines = [];
+    if (b.stats) for (const k in b.stats) {
+      const v = b.stats[k];
+      lines.push(DATA.STAT_TEXT[k] ? DATA.STAT_TEXT[k](v) : `+${v} ${k}`);
+    }
+    if (b.retal) lines.push(`Melee attackers take ${b.retal} cold + chill`);
+    return lines;
+  }
+  function refreshBuffs() {
+    const p = Game.state.player;
+    if (openPanels.left === "char") renderCharacter();
+    els.buffs.innerHTML = "";
+    for (const b of p.buffs) {
+      const d = document.createElement("div"); d.className = "buffico";
+      const remain = b.until === Infinity || b.infinite ? "∞" : Math.ceil(b.until - Game.state.time) + "s";
+      d.innerHTML = `${b.emoji || "✦"}<span class="bt">${remain}</span>`;
+      d.addEventListener("mouseenter", () => {
+        const r = d.getBoundingClientRect();
+        const lines = buffEffectLines(b);
+        const html = `<div class="tt-head">${b.label}${b.until === Infinity || b.infinite ? "  ·  permanent" : "  ·  " + remain}</div>`
+          + (lines.length ? lines.map(l => `<div class="tt-base">${l}</div>`).join("") : `<div class="tt-base">An ongoing effect.</div>`);
+        els.tooltip.innerHTML = html; els.tooltip.classList.remove("hidden");
+        positionTip(els.tooltip, r.left + r.width / 2, r.bottom + 8);
+      });
+      d.addEventListener("mouseleave", hideTooltip);
+      els.buffs.appendChild(d);
+    }
+    renderIfOpen("char");   // transforms/buffs reflect on the open character sheet
+  }
+
+  /* ================================================== messages */
+  function msg(text, color) {
+    const d = document.createElement("div");
+    d.textContent = text; d.style.color = color || "#c8b78d";
+    els.msglog.appendChild(d);
+    while (els.msglog.children.length > 6) els.msglog.firstChild.remove();
+    setTimeout(() => { d.style.transition = "opacity 1s"; d.style.opacity = "0"; setTimeout(() => d.remove(), 1000); }, 5000);
+  }
+  let centerT = null;
+  function centerMsg(big, sub) {
+    els.centerMsg.classList.remove("hidden");
+    els.centerMsg.innerHTML = `${big}<div class="sub">${sub || ""}</div>`;
+    clearTimeout(centerT);
+    centerT = setTimeout(() => els.centerMsg.classList.add("hidden"), 3200);
+  }
+  function showDeath(lost, homeName) {
+    closeAll(); closeEsc();
+    clearTimeout(centerT); els.centerMsg.classList.add("hidden");
+    els.deathMessage.textContent = (lost > 0 ? `${lost} gold lost. ` : "") + `Return to ${homeName} when you are ready.`;
+    els.deathStatus.textContent = "";
+    els.backToTown.disabled = false;
+    if (!els.deathScreen.open) els.deathScreen.showModal();
+    els.backToTown.focus();
+  }
+  function hideDeath() { if (els.deathScreen.open) els.deathScreen.close(); }
+
+  /* ================================================== tooltips */
+  function ttLine(l) { return `<div class="tt-${l.c || "mod"}">${l.t}</div>`; }
+  function itemTypeLabel(it) {
+    if (it.kind === "jewel") return "Jewel · Socketable";
+    if (it.kind === "glyph") return "Glyph · Socketable";
+    if (it.kind === "charm") return (DATA.CHARM_BASES[it.charmSize]?.name || "Charm") + " · Pack bonus";
+    if (it.kind === "consumable") return /scroll/i.test(it.baseId) || it.baseId === "tp" ? "Scroll · Consumable" : "Potion · Consumable";
+    const names = { sword:"Sword", axe:"Axe", mace:it.twoHand ? "Maul" : "Mace", dagger:"Dagger", spear:"Spear", bow:"Bow", crossbow:"Crossbow", wand:"Wand", staff:"Staff", shield:"Shield", helm:"Head armor", chest:"Body armor", gloves:"Gloves", boots:"Boots", belt:"Belt", ring:"Ring", amulet:"Amulet" };
+    return (names[DATA.BASES[it.baseId]?.cat || it.cat] || "Equipment") + (it.slot === "main" ? (it.twoHand ? " · Two-handed" : " · One-handed") : "");
+  }
+  function itemTooltipHTML(it, ctx) {
+    const col = `tt-${it.rarity}`;
+    let html = `<div class="tt-name ${col}">${it.identified ? it.name : it.baseName}</div>`;
+    html += `<div class="tt-type">${itemTypeLabel(it)}</div>`;
+    if (it.identified && it.rarity !== "common" && it.kind === "gear") html += `<div class="tt-base">${it.baseName}</div>`;
+    for (const l of Items.statLines(it)) html += ttLine(l);
+    if (it.kind === "consumable") {
+      const c = DATA.CONSUMABLES[it.baseId];
+      if (c.healPct) html += ttLine({ t: `Restores ${Math.round(c.healPct * 100)}% of maximum Life over time`, c: "mod" });
+      if (c.manaPct) html += ttLine({ t: `Restores ${Math.round(c.manaPct * 100)}% of maximum Aether over time`, c: "mod" });
+      if (c.heal) html += ttLine({ t: `Restores ${c.heal} Life over time`, c: "mod" });
+      if (c.mana) html += ttLine({ t: `Restores ${c.mana} Aether over time`, c: "mod" });
+      if (c.rejuv) html += ttLine({ t: `Instantly restores ${c.rejuv * 100}% Life and Aether`, c: "mod" });
+      if (it.count > 1) html += ttLine({ t: `Stack of ${it.count}`, c: "base" });
+    }
+    if (it.kind === "gear") {
+      const req = Items.effReqLvl(it);
+      if (req > 1) {
+        const ok = Game.state.player.lvl >= req;
+        html += ttLine({ t: `Requires Level ${req}`, c: ok ? "req" : "reqbad" });
+      }
+    }
+    if (it.kind === "charm") html += ttLine({ t: "Keep in your pack — its power stays with you.", c: "set" });
+    if (it.kind === "jewel") html += ttLine({ t: "Socket into any item with an open socket.", c: "set" });
+    if (it.kind === "jewel" || it.kind === "glyph") html += ttLine({ t: "Pick up, then click equipment with an empty socket.", c: "base" });
+    if (it.flavor && it.identified) html += ttLine({ t: `“${it.flavor}”`, c: "flavor" });
+    if (ctx === "vendor") html += ttLine({ t: `Buy: ${Items.value(it)} gold`, c: "gold" });
+    else if (vendorCtx) html += ttLine({ t: `Sell: ${Items.sellValue(it)} gold (right-click)`, c: "gold" });
+    if (!it.identified) html += ttLine({ t: "Right-click with a Scroll of Insight in pack", c: "base" });
+    else if (it.kind === "gear" && ctx !== "vendor" && !vendorCtx) html += ttLine({ t: ctx === "equip" ? "Right-click to unequip" : "Right-click to equip", c: "base" });
+    else if (it.kind === "consumable" && ctx !== "vendor" && !vendorCtx) html += ttLine({ t: "Right-click to use", c: "base" });
+    return html;
+  }
+  function addItemPreview(el, it) {
+    const heading = el.querySelector(".tt-name");
+    if (!heading) return;
+    const identity = textNode("div", "tt-identity"), labels = textNode("div", "tt-labels");
+    heading.before(identity); identity.append(SpriteAssets.itemIcon(it, 56), labels);
+    labels.appendChild(heading);
+    const type = el.querySelector(".tt-type"); if (type) labels.appendChild(type);
+    const base = el.querySelector(".tt-base");
+    if (base && it.identified && it.rarity !== "common" && it.kind === "gear") labels.appendChild(base);
+  }
+  function showItemTooltip(it, x, y, ctx) {
+    els.tooltip.innerHTML = itemTooltipHTML(it, ctx);
+    addItemPreview(els.tooltip, it);
+    els.tooltip.classList.remove("hidden");
+    positionTip(els.tooltip, x, y);
+    /* comparison with equipped */
+    els.tooltipCmp.classList.add("hidden");
+    if (it.kind === "gear" && ctx !== "equip") {
+      const p = Game.state.player;
+      const slots = Items.slotFor(it);
+      const eq = p.equip[slots[0]] || (slots[1] && p.equip[slots[1]]);
+      if (eq && eq !== it) {
+        els.tooltipCmp.innerHTML = `<div class="tt-head" style="margin-bottom:2px">EQUIPPED</div>` + itemTooltipHTML(eq, "equip");
+        addItemPreview(els.tooltipCmp, eq);
+        els.tooltipCmp.classList.remove("hidden");
+        const r = els.tooltip.getBoundingClientRect();
+        positionTip(els.tooltipCmp, r.left - 10 - els.tooltipCmp.offsetWidth + (r.left > innerWidth / 2 ? 0 : r.width + els.tooltipCmp.offsetWidth + 20), r.top);
+      }
+    }
+  }
+  function positionTip(el, x, y) {
+    el.style.left = "0px"; el.style.top = "0px";
+    const w = el.offsetWidth, h = el.offsetHeight;
+    el.style.left = U.clamp(x - w / 2, 6, innerWidth - w - 6) + "px";
+    el.style.top = U.clamp(y - h - 14, 6, innerHeight - h - 6) + "px";
+  }
+  function showSkillTooltip(id, x, y) {
+    const p = Game.state.player;
+    const sk = p.resolveSkill(id);
+    const rk = id === "basic" ? 1 : (p.skills[id] || 0);
+    const eff = id === "basic" ? 1 : p.effRank(id);
+    let html = `<div class="tt-name tt-rare">${sk.name}</div>`;
+    if (sk.tree !== undefined) {
+      const trees = (DATA.CLASSES[sk.cls] && DATA.CLASSES[sk.cls].trees) || DATA.TREE_NAMES;
+      html += `<div class="tt-base">${trees[sk.tree]} — Rank ${rk}/${sk.maxRank}${eff > rk ? ` <span style="color:#7fd87f">(+${eff - rk} from gear)</span>` : ""}</div>`;
+    }
+    html += `<div class="tt-mod">${sk.desc(Math.max(1, eff))}</div>`;
+    if(sk.selectedPerks?.length) html += `<div class="tt-perks">Perks: ${sk.selectedPerks.map(perk=>perk.title).join(" · ")}</div>`;
+    if (rk > 0 && rk < (sk.maxRank || 1) && id !== "basic")
+      html += `<div class="tt-base">Next: ${sk.desc(eff + 1)}</div>`;
+    if (sk.mana && id !== "basic") html += `<div class="tt-req">Aether cost: ${sk.mana(Math.max(1, eff))}</div>`;
+    if (sk.reqLvl > 1) html += `<div class="tt-${p.lvl >= sk.reqLvl ? "req" : "reqbad"}">Requires character level ${sk.reqLvl}</div>`;
+    if (sk.prereq && DATA.SKILLS[sk.prereq]) html += `<div class="tt-${(p.skills[sk.prereq] || 0) > 0 ? "req" : "reqbad"}">Requires ${DATA.SKILLS[sk.prereq].name}</div>`;
+    if (sk.synergy && Object.keys(sk.synergy).length) {
+      for (const [sid, per] of Object.entries(sk.synergy))
+        if (per > 0) html += `<div class="tt-base">Synergy: +${Math.round(per * 100)}% damage per rank of ${DATA.SKILLS[sid].name}</div>`;
+    }
+    if (sk.flavor) html += `<div class="tt-flavor">“${sk.flavor}”</div>`;
+    els.tooltip.innerHTML = html;
+    els.tooltip.classList.remove("hidden");
+    positionTip(els.tooltip, x, y);
+  }
+  function hideTooltip() { els.tooltip.classList.add("hidden"); els.tooltipCmp.classList.add("hidden"); }
+
+  /* ================================================== panels */
+  function panelEl(side) { return side === "left" ? els.panelLeft : side === "right" ? els.panelRight : els.panelCenter; }
+  function closePanel(side) {
+    if (side === "center" && openPanels.center === "forge") { returnForgeItems(); renderIfOpen("inv"); }
+    const el = panelEl(side);
+    el.classList.add("hidden"); el.innerHTML = "";
+    el.classList.remove("talent-panel");
+    openPanels[side] = null;
+    el.classList.remove("management-panel"); delete el.dataset.kind;
+    if (side === "left") vendorCtx = null;
+    syncWorkspace();
+    if (side === "left" && openPanels.right === "inv") renderInventory();
+    hideTooltip();
+  }
+  function closeAll() { closePanel("left"); closePanel("right"); closePanel("center"); els.skillPick.classList.add("hidden"); }
+  function anyOpen() { return openPanels.left || openPanels.right || openPanels.center; }
+
+  function togglePanel(name) {
+    const side = name === "inv" ? "right" : "left";
+    if (openPanels[side] === name) { closePanel(side); return; }
+    if (["skills","quest"].includes(name) && openPanels.right) closePanel("right");
+    if (name === "inv" && ["skills","quest"].includes(openPanels.left)) closePanel("left");
+    closePanel(side);
+    openPanels[side] = name;
+    renderPanel(name);
+  }
+  function renderIfOpen(name) {
+    if (openPanels.left === name || openPanels.right === name) renderPanel(name);
+  }
+  function renderPanel(name) {
+    switch (name) {
+      case "inv": return renderInventory();
+      case "char": return renderCharacter();
+      case "skills": return renderSkills();
+      case "quest": return renderQuests();
+      case "vendor": return renderVendor();
+      case "storage": return renderStorage();
+    }
+  }
+  function header(el, title, side) {
+    el.classList.remove("talent-panel");
+    const kind = openPanels[side]; el.dataset.kind = kind || "dialog";
+    el.classList.toggle("management-panel", ["inv","char","quest","vendor","forge","storage"].includes(kind));
+    el.innerHTML = "";
+    const head = textNode("div", "ptitle", title); el.appendChild(head);
+    const close = actionButton("×", () => closePanel(side), "pclose"); close.setAttribute("aria-label", "Close " + title.toLowerCase()); el.appendChild(close);
+    syncWorkspace();
+  }
+
+  /* ---------- grid rendering ---------- */
+  function renderGrid(container, grid, ctxName) {
+    const g = document.createElement("div");
+    g.className = "invgrid";
+    g.style.width = grid.w * CELL + "px"; g.style.height = grid.h * CELL + "px";
+    for (let y = 0; y < grid.h; y++) for (let x = 0; x < grid.w; x++) {
+      const c = document.createElement("div"); c.className = "invcell";
+      c.style.left = x * CELL + "px"; c.style.top = y * CELL + "px";
+      c.style.width = CELL - 1 + "px"; c.style.height = CELL - 1 + "px";
+      g.appendChild(c);
+    }
+    for (const it of grid.items) {
+      const d = document.createElement("div");
+      d.className = `invitem r-${it.rarity}`;
+      d.dataset.itemName = itemName(it).toLowerCase(); d.tabIndex = 0; d.setAttribute("aria-label", itemName(it));
+      d.addEventListener("focus", () => { const r = d.getBoundingClientRect(); showItemTooltip(it,r.right,r.top,ctxName); });
+      d.addEventListener("blur", hideTooltip);
+      d.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); Sfx.play("click"); gridItemRClick(grid,it,ctxName); } });
+      d.style.left = it.gx * CELL + "px"; d.style.top = it.gy * CELL + "px";
+      d.style.width = it.w * CELL + "px"; d.style.height = it.h * CELL + "px";
+      d.appendChild(SpriteAssets.itemIcon(it));
+      if (it.count > 1) { const s = document.createElement("div"); s.className = "stk"; s.textContent = it.count; d.appendChild(s); }
+      d.addEventListener("mouseenter", e => { const r = d.getBoundingClientRect(); showItemTooltip(it, r.left + r.width / 2, r.top, ctxName); });
+      d.addEventListener("mouseleave", hideTooltip);
+      d.addEventListener("click", e => { e.stopPropagation(); gridItemClick(grid, it, ctxName); });
+      d.addEventListener("contextmenu", e => { e.preventDefault(); e.stopPropagation(); gridItemRClick(grid, it, ctxName); });
+      g.appendChild(d);
+    }
+    g.addEventListener("click", e => {
+      if (!cursorItem) return;
+      const r = g.getBoundingClientRect();
+      const gx = U.clamp(Math.round((e.clientX - r.left - cursorItem.w * CELL / 2) / CELL), 0, grid.w - cursorItem.w);
+      const gy = U.clamp(Math.round((e.clientY - r.top - cursorItem.h * CELL / 2) / CELL), 0, grid.h - cursorItem.h);
+      if (Items.fits(grid, cursorItem, gx, gy)) {
+        Items.place(grid, cursorItem, gx, gy);
+        setCursorItem(null);
+        Sfx.play("pickup");
+        refreshGrids();
+      } else {
+        /* swap with single overlapping item */
+        const overlapped = grid.items.filter(o => gx < o.gx + o.w && o.gx < gx + cursorItem.w && gy < o.gy + o.h && o.gy < gy + cursorItem.h);
+        if (overlapped.length === 1) {
+          const o = overlapped[0];
+          Items.remove(grid, o);
+          if (Items.fits(grid, cursorItem, gx, gy)) {
+            Items.place(grid, cursorItem, gx, gy);
+            setCursorItem(o);
+          } else { Items.place(grid, o, o.gx, o.gy); }
+          refreshGrids();
+        }
+      }
+    });
+    container.appendChild(g);
+    return g;
+  }
+  function gridItemClick(grid, it, ctxName) {
+    if (cursorItem) {
+      /* glyph or jewel on cursor + socketed gear under it -> seat it */
+      if ((cursorItem.kind === "glyph" || cursorItem.kind === "jewel") && it.kind === "gear") {
+        if (!it.identified) { msg("Identify it before working socketables into it.", "#c08080"); return; }
+        if (!it.sockets) { msg("That item has no sockets.", "#c08080"); return; }
+        const glyphName = cursorItem.name;
+        const seated = Items.socketGlyph(it, cursorItem);
+        if (seated) {
+          setCursorItem(null);
+          Sfx.play("forge");
+          if (seated.combo) {
+            Sfx.play("dropUnique");
+            msg(`The glyphs align — ${it.name}!`, "#d8924a");
+            Game.centerMsg(seated.combo.name.toUpperCase(), "a named work, bound in glyphs");
+          } else msg(`Seated ${glyphName} in ${it.name}.`, "#7fd8c0");
+          Game.state.player.computeStats();
+          refreshGrids(); refreshHUD();
+        } else msg("No empty socket left.", "#c08080");
+        return;
+      }
+      /* merge stacks of the same consumable */
+      if (cursorItem.kind === "consumable" && it.kind === "consumable" && it.baseId === cursorItem.baseId && it.count < it.maxStack) {
+        const take = Math.min(it.maxStack - it.count, cursorItem.count);
+        it.count += take; cursorItem.count -= take;
+        if (cursorItem.count <= 0) setCursorItem(null);
+        Sfx.play("pickup");
+        refreshGrids(); return;
+      }
+      /* swap in place */
+      const gx = it.gx, gy = it.gy;
+      Items.remove(grid, it);
+      if (Items.fits(grid, cursorItem, gx, gy)) {
+        Items.place(grid, cursorItem, gx, gy);
+        setCursorItem(it);
+        Sfx.play("pickup");
+      } else {
+        Items.place(grid, it, gx, gy);
+        msg("It doesn't fit there.", "#c08080");
+      }
+      refreshGrids(); return;
+    }
+    Items.remove(grid, it);
+    setCursorItem(it, grid);
+    Sfx.play("pickup");
+    refreshGrids();
+  }
+  function gridItemRClick(grid, it, ctxName) {
+    const p = Game.state.player;
+    if (vendorCtx && grid === p.inv) {  /* sell */
+      p.gold += Items.sellValue(it);
+      Items.remove(grid, it);
+      Sfx.play("coin");
+      msg(`Sold ${it.identified ? it.name : it.baseName} for ${Items.sellValue(it)} gold.`, "#d8b860");
+      refreshGrids(); return;
+    }
+    if (it.kind === "consumable") {
+      const c = DATA.CONSUMABLES[it.baseId];
+      if (c.belt) {  /* send to belt */
+        for (let i = 0; i < 4; i++) {
+          const slot = p.belt[i];
+          if (slot && slot.id === it.baseId) { const take = Math.min(it.count, 5 - slot.count); if (take > 0) { slot.count += take; it.count -= take; } }
+        }
+        for (let i = 0; i < 4 && it.count > 0; i++) {
+          if (!p.belt[i]) { const take = Math.min(it.count, 5); p.belt[i] = { id: it.baseId, count: take }; it.count -= take; }
+        }
+        if (it.count <= 0) Items.remove(grid, it);
+        else msg("Belt is full.", "#c08080");
+        refreshBelt(); refreshGrids(); return;
+      }
+      if (c.respec) {
+        Game.doRespec(); Items.remove(grid, it); refreshGrids(); return;
+      }
+      if (it.baseId === "tp") {
+        if (Game.castPortal()) { it.count--; if (it.count <= 0) Items.remove(grid, it); refreshGrids(); }
+        return;
+      }
+      if (it.baseId === "idscroll") { msg("Right-click an unidentified item to use this.", "#9b8a60"); return; }
+    }
+    if (it.kind === "glyph") {
+      msg("Pick the glyph up on your cursor, then click a socketed item.", "#7fd8c0");
+      return;
+    }
+    if (it.kind === "gear") {
+      if (!it.identified) {
+        const scroll = p.inv.items.find(o => o.baseId === "idscroll");
+        if (scroll) {
+          scroll.count--; if (scroll.count <= 0) Items.remove(p.inv, scroll);
+          it.identified = true;
+          Sfx.play("shrine");
+          msg(`Identified: ${it.name}`, Items.RARITY_COLOR[it.rarity]);
+          refreshGrids();
+        } else msg("You need a Scroll of Insight.", "#c08080");
+        return;
+      }
+      equipItem(grid, it);
+    }
+  }
+  async function prepareEquipmentChange(nextEquip) {
+    try { return await Game.preparePlayerEquipment(nextEquip); }
+    catch (err) {
+      console.error(err);
+      Sfx.play("error");
+      msg("Equipment art unavailable: " + (err && err.message || err), "#c08080");
+      return null;
+    }
+  }
+
+  async function equipItem(grid, it) {
+    const p = Game.state.player;
+    if (!Items.canEquip(p, it)) { msg("You cannot equip that yet.", "#c08080"); Sfx.play("error"); return; }
+    const slots = Items.slotFor(it);
+    let slot = slots.find(s => !p.equip[s]) || slots[0];
+    const oldEquip = Object.assign({}, p.equip);
+    const prev = p.equip[slot];
+    /* two-handed handling: clear off hand */
+    let displacedOff = null;
+    const nextEquip = Object.assign({}, p.equip);
+    if (it.twoHand && p.equip.off) { displacedOff = p.equip.off; delete nextEquip.off; }
+    if (it.slot === "off" && p.equip.main && p.equip.main.twoHand) { displacedOff = p.equip.main; delete nextEquip.main; }
+    nextEquip[slot] = it;
+    const prepared = await prepareEquipmentChange(nextEquip);
+    if (!prepared) return;
+    if (p.equip[slot] !== prev || !grid.items || !grid.items.some(x => x === it)) {
+      Game.discardPlayerEquipment(prepared);
+      return;
+    }
+    const oldGX = it.gx, oldGY = it.gy;
+    Items.remove(grid, it);
+    if (it.twoHand && p.equip.off) delete p.equip.off;
+    if (it.slot === "off" && p.equip.main && p.equip.main.twoHand) delete p.equip.main;
+    p.equip[slot] = it;
+    /* A replacement can always reuse the incoming item's former cells; this
+       preflight keeps the visual commit and inventory transaction atomic. */
+    if (prev && !Items.autoPlace(p.inv, prev)) {
+      for (const key of Object.keys(p.equip)) delete p.equip[key];
+      Object.assign(p.equip, oldEquip);
+      Items.place(grid, it, oldGX, oldGY);
+      Game.discardPlayerEquipment(prepared);
+      msg("No room to swap.", "#c08080"); return;
+    }
+    if (displacedOff && !Items.autoPlace(p.inv, displacedOff)) {
+      Game.dropAtFeet(displacedOff); msg("Your pack was full — item dropped.", "#c08080");
+    }
+    Game.commitPlayerEquipment(prepared);
+    p.computeStats();
+    Sfx.play("chest");
+    refreshGrids(); refreshHUD();
+  }
+  function setCursorItem(it, fromGrid) {
+    cursorItem = it; cursorFrom = fromGrid || null;
+    const tidy = document.getElementById("inventoryTidy"); if (tidy) tidy.disabled = !!it;
+    const buy = els.panelLeft?.querySelector(".shop-buy"), selected = vendorCtx?.selected;
+    if (buy && selected) buy.disabled = !!it || Game.state.player.gold < Items.value(selected) || !Items.canAutoPlace(Game.state.player.inv, selected);
+    els.cursorItem.innerHTML = "";
+    if (it) {
+      els.cursorItem.appendChild(SpriteAssets.itemIcon(it));
+      els.cursorItem.classList.remove("hidden");
+    } else els.cursorItem.classList.add("hidden");
+  }
+  function refreshGrids() {
+    /* charms in the pack contribute passively — keep stats in sync on any pack change */
+    if (Game.state && Game.state.player) Game.state.player.computeStats();
+    renderIfOpen("inv"); renderIfOpen("storage"); renderIfOpen("vendor"); renderIfOpen("char");
+    renderIfOpen("skills");   // gear may carry "+to talents" — keep the tree in sync on equip/unequip
+  }
+
+  /* ---------- inventory panel ---------- */
+  const EQ_LAYOUT = {
+    head: [136, 8, 2, 2], amulet: [224, 28, 1, 1], chest: [136, 99, 2, 3],
+    main: [0, 42, 2, 3], off: [272, 42, 2, 3],
+    ring1: [89, 155, 1, 1], ring2: [224, 155, 1, 1],
+    gloves: [0, 187, 2, 2], belt: [136, 226, 2, 1], boots: [272, 187, 2, 2],
+  };
+  function renderInventory() {
+    resetManagementState();
+    const p = Game.state.player;
+    const el = els.panelRight;
+    el.classList.remove("hidden");
+    header(el, "Equipment & pack", "right");
+    el.appendChild(textNode("div", vendorCtx ? "manage-eyebrow selling-mode" : "manage-eyebrow", vendorCtx ? "Trading · Right-click pack items to sell" : p.cls.name + " · " + p.name));
+    const eq = document.createElement("div"); eq.id = "equipwrap";
+    for (const [slot, L] of Object.entries(EQ_LAYOUT)) {
+      const s = document.createElement("div"); s.className = "eqslot";
+      const slotLabel = {main:"Main hand",off:"Off hand",ring1:"Ring I",ring2:"Ring II"}[slot] || slot;
+      s.dataset.label = slotLabel; s.setAttribute("aria-label",slotLabel);
+      s.style.left = L[0] + "px"; s.style.top = L[1] + "px";
+      s.style.width = L[2] * CELL + "px"; s.style.height = L[3] * CELL + "px";
+      const it = p.equip[slot];
+      if (it) {
+        const d = document.createElement("div");
+        d.className = `invitem r-${it.rarity}`;
+        d.style.left = "0"; d.style.top = "0"; d.style.width = "100%"; d.style.height = "100%";
+        const icon = SpriteAssets.itemIcon(it);
+        icon.style.width = "100%"; icon.style.height = "100%"; icon.style.objectFit = "contain";
+        d.appendChild(icon);
+        d.addEventListener("mouseenter", () => { const r = s.getBoundingClientRect(); showItemTooltip(it, r.left + r.width / 2, r.top, "equip"); });
+        d.addEventListener("mouseleave", hideTooltip);
+        d.addEventListener("click", async e => {
+          e.stopPropagation();
+          if (cursorItem) {
+            if ((cursorItem.kind === "glyph" || cursorItem.kind === "jewel") && it.sockets) {
+              const glyphName = cursorItem.name;
+              const seated = Items.socketGlyph(it, cursorItem);
+              if (seated) {
+                setCursorItem(null);
+                Sfx.play("forge");
+                if (seated.combo) {
+                  Sfx.play("dropUnique");
+                  msg(`The glyphs align — ${it.name}!`, "#d8924a");
+                  Game.centerMsg(seated.combo.name.toUpperCase(), "a named work, bound in glyphs");
+                } else msg(`Seated ${glyphName} in ${it.name}.`, "#7fd8c0");
+                p.computeStats();
+                refreshGrids(); refreshHUD();
+              } else msg("No empty socket left.", "#c08080");
+            }
+            return;
+          }
+          const nextEquip = Object.assign({}, p.equip); delete nextEquip[slot];
+          const prepared = await prepareEquipmentChange(nextEquip);
+          if (!prepared) return;
+          if (p.equip[slot] !== it || cursorItem) {
+            Game.discardPlayerEquipment(prepared);
+            return;
+          }
+          delete p.equip[slot];
+          Game.commitPlayerEquipment(prepared);
+          p.computeStats();
+          setCursorItem(it);
+          refreshGrids(); refreshHUD();
+        });
+        d.addEventListener("contextmenu", async e => {
+          e.preventDefault(); e.stopPropagation();
+          const nextEquip = Object.assign({}, p.equip); delete nextEquip[slot];
+          const prepared = await prepareEquipmentChange(nextEquip);
+          if (!prepared) return;
+          if (p.equip[slot] !== it) {
+            Game.discardPlayerEquipment(prepared);
+            return;
+          }
+          delete p.equip[slot];
+          if (!Items.autoPlace(p.inv, it)) {
+            p.equip[slot] = it;
+            Game.discardPlayerEquipment(prepared);
+            msg("No room in your pack.", "#c08080");
+          }
+          else Game.commitPlayerEquipment(prepared);
+          p.computeStats();
+          refreshGrids(); refreshHUD();
+        });
+        s.appendChild(d);
+      } else {
+        const ph = document.createElement("div"); ph.className = "ph"; ph.textContent = slot.replace(/[0-9]/g, "");
+        s.appendChild(ph);
+        s.addEventListener("click", async () => {
+          if (!cursorItem || cursorItem.kind !== "gear") return;
+          const equipping = cursorItem;
+          const slots = Items.slotFor(equipping);
+          if (!slots.includes(slot)) return;
+          if (!Items.canEquip(p, equipping)) { msg("You cannot equip that yet.", "#c08080"); return; }
+          if (equipping.twoHand && p.equip.off) { msg("Unequip your off hand first.", "#c08080"); return; }
+          if (slot === "off" && p.equip.main && p.equip.main.twoHand) { msg("Your weapon needs both hands.", "#c08080"); return; }
+          const nextEquip = Object.assign({}, p.equip); nextEquip[slot] = equipping;
+          const prepared = await prepareEquipmentChange(nextEquip);
+          if (!prepared) return;
+          if (p.equip[slot] || cursorItem !== equipping) {
+            Game.discardPlayerEquipment(prepared);
+            return;
+          }
+          p.equip[slot] = equipping;
+          Game.commitPlayerEquipment(prepared);
+          setCursorItem(null);
+          p.computeStats();
+          Sfx.play("chest");
+          refreshGrids(); refreshHUD();
+        });
+      }
+      eq.appendChild(s);
+    }
+    el.appendChild(eq);
+    const goldRow = document.createElement("div"); goldRow.id = "goldrow";
+    goldRow.append(textNode("strong", "", U.fmt(p.gold) + " gold"), textNode("span", "", p.inv.items.reduce((n,i)=>n+i.w*i.h,0) + " / " + (p.inv.w*p.inv.h) + " cells"));
+    el.appendChild(goldRow);
+    const toolbar = textNode("div", "pack-toolbar");
+    const search = document.createElement("input"); search.type = "search"; search.placeholder = "Find an item…"; search.value = inventoryQuery; search.setAttribute("aria-label","Find items in your pack");
+    const highlight = () => { for (const item of el.querySelectorAll('.invgrid .invitem')) { const match = !inventoryQuery || item.dataset.itemName.includes(inventoryQuery.toLowerCase()); item.classList.toggle("search-dim", !match); item.classList.toggle("search-match", !!inventoryQuery && match); } };
+    search.addEventListener("input",()=>{inventoryQuery=search.value;highlight();});
+    const tidy = actionButton("Tidy pack",()=>{ if (cursorItem) return; if (!Items.tidy(p.inv)) msg("This arrangement cannot be tidied. Your items stayed in place.","#c08080"); else Sfx.play("pickup"); renderInventory(); }); tidy.id="inventoryTidy"; tidy.disabled=!!cursorItem;
+    toolbar.append(search,tidy); el.appendChild(toolbar);
+    renderGrid(el, p.inv, "inv"); highlight();
+    el.appendChild(textNode("div", "pack-help", vendorCtx ? "SELLING MODE · Right-click a pack item to sell it. Equipped items are not sold." : "Click to carry · Right-click / Enter to equip or use · Carry a jewel or glyph to a socket"));
+  }
+
+  /* live to-hit readout vs the most recently struck enemy (attack rating governs physical hits) */
+  function hitChanceStr(p) {
+    const mon = p.lastTarget;
+    if (!mon || !mon.def || mon.dead) return "—  (no recent target)";
+    const ch = p.hitChanceVs(mon);
+    if (ch == null) return "—";
+    return Math.round(ch * 100) + "%  vs " + (mon.name || (mon.def && mon.def.name) || "target");
+  }
+
+  /* ---------- character panel ---------- */
+  function renderCharacter() {
+    const p = Game.state.player;
+    const el = els.panelLeft;
+    el.classList.remove("hidden");
+    header(el, "Character", "left");
+    el.appendChild(textNode("div", "hero-identity", p.name));
+    el.appendChild(textNode("div", "manage-eyebrow", p.cls.name + " · Level " + p.lvl));
+    const st = p.stats;
+    const rows = [];
+    const add = (k, v, plus) => rows.push({ k, v, plus });
+    add("Level", p.lvl);
+    add("Experience", `${U.fmt(p.xp)} / ${U.fmt(DATA.xpForLevel(p.lvl))}`);
+    rows.push({section:"Attributes", note:p.attrPts + " points available"});
+    for (const a of ["str", "dex", "vit", "wil"]) {
+      const label = { str: "Strength", dex: "Dexterity", vit: "Vitality", wil: "Willpower" }[a];
+      add(label, st.attr[a], p.attrPts > 0 ? a : null);
+    }
+    const [wlo, whi] = p.weaponDamage();
+    rows.push({section:"Offense"});
+    add("Damage", `${Math.floor(wlo * (1 + st.dmgPct / 100))} – ${Math.floor(whi * (1 + st.dmgPct / 100))}`);
+    add("Attack Rating", st.ar);
+    add("Chance to Hit", `<span id="statHit">${hitChanceStr(p)}</span>`);
+    add("Critical Chance", st.critChance.toFixed(1) + "%");
+    add("Attacks / sec", st.attackRate.toFixed(2));
+    if (st.spellPct > 0) add("Spell Power", "+" + st.spellPct + "%");
+    if (st.fcr > 0) add("Cast Speed", "+" + st.fcr + "%");
+    rows.push({section:"Defense & vitality"});
+    add("Armor", st.armor);
+    add("Block", st.block + "%");
+    if (st.dodge > 0) add("Evasion", st.dodge + "%");
+    add("Life", `${Math.ceil(p.hp)} / ${st.maxHp}`);
+    add("Aether", `${Math.ceil(p.mana)} / ${st.maxMana}`);
+
+    add("Resist Fire / Cold", `${st.resFire}% / ${st.resCold}%`);
+    add("Resist Lightning / Poison", `${st.resLight}% / ${st.resPoison}%`);
+    rows.push({section:"Exploration"});
+    add("Move Speed", "+" + st.frw + "%");
+    add("Rare Loot Chance", "+" + st.mf + "%");
+    add("Gold Find", "+" + st.goldFind + "%");
+    for (const r of rows) {
+      if (r.section) { const section = textNode("h3", "manage-section", r.section); if (r.note) section.appendChild(textNode("small", "attribute-points", r.note)); el.appendChild(section); continue; }
+      const d = document.createElement("div"); d.className = "statrow";
+      d.dataset.stat = r.k;
+      d.innerHTML = `<span>${r.k}</span><span class="v">${r.v}</span>`;
+      if (r.plus) {
+        const b = document.createElement("button"); b.type="button"; b.className = "attrbtn"; b.textContent = "+"; b.setAttribute("aria-label","Increase " + r.k);
+        b.addEventListener("click", () => {
+          if (p.attrPts <= 0) return;
+          p.attr[r.plus]++; p.attrPts--;
+          p.computeStats(); 
+          renderCharacter(); refreshHUD();
+        });
+        d.querySelector(".v").appendChild(b);
+      }
+      el.appendChild(d);
+    }
+    /* active effects — transforms, stances, and other buffs (their bonuses are already in the stats above) */
+    if (p.buffs && p.buffs.length) {
+      const head = document.createElement("div"); head.className = "statrow";
+      head.style.cssText = "margin-top:10px;border-top:1px solid #2c2315;padding-top:8px";
+      head.innerHTML = `<span style="color:#cdbb88;letter-spacing:1px">ACTIVE EFFECTS</span><span></span>`;
+      el.appendChild(head);
+      for (const b of p.buffs) {
+        const eff = buffEffectLines(b).join(", ");
+        const remain = b.until === Infinity || b.infinite ? "∞" : Math.ceil(b.until - Game.state.time) + "s";
+        const d = document.createElement("div"); d.className = "statrow";
+        d.innerHTML = `<span>${b.emoji || "✦"} ${b.label} <span data-effect-time="${p.buffs.indexOf(b)}" style="color:#a5afb7;font-size:11px">${remain}</span></span>`
+          + `<span class="v" style="color:#9bb6d0;font-size:11px;max-width:230px;text-align:right">${eff || "—"}</span>`;
+        el.appendChild(d);
+      }
+    }
+  }
+
+  /* ---------- skill tree panel ---------- */
+  const perkPreview = new Map();
+  function skillAvailability(p, sk) {
+    const rank = p.skills[sk.id] || 0;
+    const prerequisite = !sk.prereq || (p.skills[sk.prereq] || 0) > 0;
+    return { rank, prerequisite, unlocked: p.lvl >= sk.reqLvl && prerequisite,
+      learnable: rank < sk.maxRank && p.skillPts > 0 && p.lvl >= sk.reqLvl && prerequisite };
+  }
+  function renderSkills() {
+    const p = Game.state.player, el = els.panelLeft;
+    if (skillsClass !== p.classId) { skillsClass = p.classId; curTree = 0; selectedSkill = null; }
+    el.classList.remove("hidden"); header(el, "TALENTS", "left"); el.classList.add("talent-panel");
+    el.style.setProperty("--tree-accent", SkillIcons.theme(p.classId, curTree).color);
+    el.querySelector(".ptitle").innerHTML = `<span class="talent-eyebrow">CLASS DISCIPLINES</span><span class="talent-class">${p.cls.name}</span>`;
+    const wallet = document.createElement("div"); wallet.className = "talent-wallet";
+    wallet.innerHTML = `<strong>${p.skillPts}</strong><span>talent point${p.skillPts === 1 ? "" : "s"}<small>Level ${p.lvl}</small></span>`; el.appendChild(wallet);
+    const tabs = document.createElement("div"); tabs.id = "treeTabs"; tabs.setAttribute("role", "tablist"); tabs.setAttribute("aria-label", "Class disciplines");
+    p.cls.trees.forEach((name, i) => {
+      const branch = Object.values(DATA.SKILLS).filter(s => s.cls === p.classId && s.tree === i);
+      const spent = branch.reduce((sum, sk) => sum + (p.skills[sk.id] || 0), 0);
+      const t = document.createElement("button"); t.type = "button"; t.className = "treetab" + (i === curTree ? " on" : "");
+      t.style.setProperty("--branch-accent", SkillIcons.theme(p.classId, i).color);
+      t.id = "discipline-" + i; t.setAttribute("role", "tab"); t.setAttribute("aria-selected", String(i === curTree));
+      t.setAttribute("aria-controls", "talentBody"); t.tabIndex = i === curTree ? 0 : -1;
+      t.innerHTML = `<span>${name}</span><small>${spent} invested</small>`;
+      t.addEventListener("click", () => { curTree = i; selectedSkill = null; hideTooltip(); renderSkills(); $("discipline-" + i).focus(); });
+      t.addEventListener("keydown", e => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+        e.preventDefault(); const next = e.key === "Home" ? 0 : e.key === "End" ? 2 : (i + (e.key === "ArrowRight" ? 1 : 2)) % 3;
+        curTree = next; selectedSkill = null; renderSkills(); $("discipline-" + next).focus();
+      }); tabs.appendChild(t);
+    }); el.appendChild(tabs);
+    const intro = document.createElement("p"); intro.className = "discipline-intro"; intro.textContent = SkillIcons.theme(p.classId, curTree).description; el.appendChild(intro);
+    const pending=SkillPerks.pending(p);
+    const perkSummary=document.createElement("button"); perkSummary.type="button"; perkSummary.className="perk-pending-summary"; perkSummary.disabled=!pending;
+    perkSummary.textContent=pending ? `◆ ${pending} perk choice${pending===1?"":"s"} available · Find next` : "Skill perks unlock at invested ranks 5 and 10";
+    perkSummary.addEventListener("click",()=>{
+      const ready=Object.values(DATA.SKILLS).filter(sk=>SkillPerks.pending(p,sk.id)>0);
+      const sk=ready[(ready.findIndex(sk=>sk.id===selectedSkill)+1)%ready.length];
+      if(!sk)return;selectedSkill=sk.id;curTree=sk.tree;renderSkills();
+      el.querySelector('.skill-perk-tier.available .perk-option[aria-pressed="true"]')?.focus();
+    });el.appendChild(perkSummary);
+    const body = document.createElement("div"); body.id = "talentBody"; body.setAttribute("role", "tabpanel"); body.setAttribute("aria-labelledby", "discipline-" + curTree);
+    const board = document.createElement("div"); board.className = "talent-board";
+    const nodes = Object.values(DATA.SKILLS).filter(s => s.tree === curTree && s.cls === p.classId);
+    if (!nodes.some(sk => sk.id === selectedSkill)) selectedSkill = nodes[0].id;
+    const maxRow = Math.max(...nodes.map(s => s.pos[1])), rows = maxRow + 1;
+    board.style.setProperty("--tree-rows", rows);
+    const levels = document.createElement("div"); levels.className = "talent-tiers";
+    for (let row = 0; row < rows; row++) {
+      const req = Math.min(...nodes.filter(sk => sk.pos[1] === row).map(sk => sk.reqLvl));
+      const label = document.createElement("div"); label.className = "talent-tier" + (p.lvl >= req ? " unlocked" : "");
+      label.innerHTML = `<span>LV</span><strong>${req}</strong>`; levels.appendChild(label);
+    } board.appendChild(levels);
+    const area = document.createElement("div"); area.id = "treeArea";
+    const wires = document.createElementNS("http://www.w3.org/2000/svg", "svg"); wires.classList.add("talent-wires");
+    wires.setAttribute("viewBox", `0 0 300 ${rows * 100}`); wires.setAttribute("preserveAspectRatio", "none"); wires.setAttribute("aria-hidden", "true");
+    for (const sk of nodes) {
+      const pre = DATA.SKILLS[sk.prereq]; if (!pre || pre.tree !== curTree) continue;
+      const x1 = pre.pos[0] * 100 + 50, y1 = pre.pos[1] * 100 + 50, x2 = sk.pos[0] * 100 + 50, y2 = sk.pos[1] * 100 + 50;
+      const wire = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      wire.setAttribute("d", `M${x1} ${y1}V${(y1 + y2) / 2}H${x2}V${y2}`);
+      wire.setAttribute("class", p.skills[pre.id] > 0 ? "lit" : ""); wires.appendChild(wire);
+    } area.appendChild(wires);
+    const details = document.createElement("section"); details.id = "skillDetail"; details.setAttribute("aria-label", "Selected skill");
+    for (const sk of nodes) {
+      const status = skillAvailability(p, sk), bonus = status.rank > 0 ? Math.max(0, p.effRank(sk.id) - status.rank) : 0;
+      const n = document.createElement("button"); n.type = "button"; n.dataset.skill = sk.id;
+      n.className = "talent-node" + (!status.unlocked && !status.rank ? " locked" : "") + (status.rank ? " learned" : "") + (status.learnable ? " available" : "") + (status.rank >= sk.maxRank ? " maxed" : "");
+      n.style.gridColumn = sk.pos[0] + 1; n.style.gridRow = sk.pos[1] + 1;
+      n.setAttribute("aria-pressed", String(selectedSkill === sk.id));
+      n.setAttribute("aria-label", `${sk.name}, ${SkillIcons.describe(sk).role}, rank ${status.rank} of ${sk.maxRank}${status.unlocked ? "" : ", locked"}`);
+      n.appendChild(SkillIcons.create(sk, 46));
+      const name = document.createElement("span"); name.className = "talent-node-name"; name.textContent = sk.name; n.appendChild(name);
+      const rank = document.createElement("span"); rank.className = "talent-node-rank";
+      rank.innerHTML = `<b>${status.rank}</b><span> / ${sk.maxRank}</span>${bonus ? `<em>+${bonus}</em>` : ""}`;
+      if (bonus) rank.title = `${status.rank} invested + ${bonus} from equipment`; n.appendChild(rank);
+      if (sk.type === "passive") { const tag = document.createElement("span"); tag.className = "passive-dot"; tag.textContent = "P"; tag.title = "Passive skill"; n.appendChild(tag); }
+      const pending=SkillPerks.pending(p,sk.id);
+      if(pending){const badge=document.createElement("span");badge.className="perk-ready-badge";badge.textContent="◆";badge.title=`${pending} perk choice${pending===1?"":"s"} available`;n.appendChild(badge);n.classList.add("perk-ready");n.setAttribute("aria-label",n.getAttribute("aria-label")+`, ${pending} perk choices available`);}
+      n.addEventListener("click", () => {
+        selectedSkill = sk.id;
+        for (const node of area.querySelectorAll(".talent-node")) node.setAttribute("aria-pressed", String(node.dataset.skill === selectedSkill));
+        renderSkillDetail(details, p, sk); hideTooltip();
+      }); area.appendChild(n);
+    }
+    board.appendChild(area);
+    const legend = document.createElement("div"); legend.className = "talent-legend";
+    legend.innerHTML = '<span><i class="known"></i>Learned</span><span><i class="ready"></i>Can upgrade</span><span><i></i>Locked</span><span>P · Passive</span>';
+    board.appendChild(legend); body.append(board, details); el.appendChild(body);
+    renderSkillDetail(details, p, DATA.SKILLS[selectedSkill]);
+    const help = document.createElement("div"); help.className = "talent-footer";
+    help.innerHTML = '<span>Select a skill to inspect it. Upgrading costs 1 point.</span><span><kbd>T</kbd> or <kbd>Esc</kbd> close</span>'; el.appendChild(help);
+    const announcement = document.createElement("div"); announcement.id = "skillAnnouncement"; announcement.className = "sr-only"; announcement.setAttribute("role", "status"); el.appendChild(announcement);
+  }
+  function renderSkillDetail(el, p, sk) {
+    sk=p.resolveSkill(sk.id);
+    const status = skillAvailability(p, sk), info = SkillIcons.describe(sk);
+    const eff = status.rank ? p.effRank(sk.id) : 1, bonus = status.rank ? Math.max(0, eff - status.rank) : 0;
+    el.innerHTML = ""; el.style.setProperty("--skill-accent", info.color);
+    const heading = document.createElement("div"); heading.className = "skill-detail-heading"; heading.appendChild(SkillIcons.create(sk, 64));
+    const title = document.createElement("div"); title.innerHTML = `<span class="skill-role">${info.role}</span><h2>${sk.name}</h2><span class="skill-rank">Rank ${status.rank} / ${sk.maxRank}${bonus ? ` <em>+${bonus} from gear</em>` : ""}</span>`;
+    heading.appendChild(title); el.appendChild(heading);
+    const stats = document.createElement("div"); stats.className = "skill-facts";
+    if (sk.mana) stats.innerHTML += `<span><b>${Number(sk.mana(eff)).toFixed(1).replace(/\.0$/, "")}</b> aether</span>`;
+    if (sk.cd) stats.innerHTML += `<span><b>${Number(sk.cd(eff)).toFixed(1).replace(/\.0$/, "")}s</b> cooldown</span>`;
+    stats.innerHTML += `<span><b>${sk.reqLvl}</b> level required</span>`; el.appendChild(stats);
+    const desc = document.createElement("div"); desc.className = "skill-description";
+    desc.innerHTML = `<h3>${status.rank ? "Current effect" : "First rank"}</h3><p>${sk.desc(eff)}</p>`;
+    if (status.rank > 0 && status.rank < sk.maxRank) desc.innerHTML += `<div class="skill-next"><h3>Next rank</h3><p>${sk.desc(eff + 1)}</p></div>`;
+    el.appendChild(desc);
+    const requirements = document.createElement("div"); requirements.className = "skill-requirements";
+    if (sk.prereq) {
+      const req = document.createElement("button"); req.type = "button"; req.className = status.prerequisite ? "met" : "unmet";
+      req.textContent = `${status.prerequisite ? "✓" : "◇"} Requires ${DATA.SKILLS[sk.prereq].name} · Rank 1`;
+      req.addEventListener("click", () => { selectedSkill = sk.prereq; curTree = DATA.SKILLS[sk.prereq].tree; renderSkills(); }); requirements.appendChild(req);
+    }
+    if (p.lvl < sk.reqLvl) { const req = document.createElement("p"); req.className = "unmet"; req.textContent = `Reach character level ${sk.reqLvl} to unlock.`; requirements.appendChild(req); }
+    el.appendChild(requirements);
+    const learn = document.createElement("button"); learn.type = "button"; learn.className = "skill-learn"; learn.dataset.learnSkill = sk.id;
+    learn.disabled = !status.learnable;
+    learn.textContent = status.rank >= sk.maxRank ? "Maximum rank reached" : !status.unlocked ? "Requirements not met" : p.skillPts <= 0 ? "No talent points available" : `${status.rank ? "Upgrade to rank " + (status.rank + 1) : "Learn skill"}  ·  1 point`;
+    learn.addEventListener("click", () => {
+      const fresh = skillAvailability(p, sk); if (!fresh.learnable) return;
+      p.skills[sk.id] = fresh.rank + 1; p.skillPts--; p.computeStats();
+      if (sk.type !== "passive" && fresh.rank === 0) { if (p.skillR === "basic") p.skillR = sk.id; autoBindQuick(p, sk.id); }
+      Sfx.play("skillup"); renderSkills(); refreshHUD();
+      $("skillAnnouncement").textContent = `${sk.name} upgraded to rank ${p.skills[sk.id]}. ${p.skillPts} talent points remain.`;
+      if(SkillPerks.pending(p,sk.id))$("skillAnnouncement").textContent+=" A perk choice is available.";
+      const button = els.panelLeft.querySelector(".skill-learn"); if (!button.disabled) button.focus();
+      else els.panelLeft.querySelector(`.talent-node[data-skill="${sk.id}"]`).focus();
+    }); el.appendChild(learn);
+    renderSkillPerks(el,p,sk);
+    if (status.rank && sk.type !== "passive") {
+      const binds = document.createElement("div"); binds.className = "skill-bindings"; binds.innerHTML = '<h3>Assign to combat</h3>';
+      const row = document.createElement("div"); row.className = "skill-binding-row";
+      ["LMB", "RMB", "F1", "F2", "F3", "F4"].forEach((key, i) => {
+        const active = i < 2 ? p[i === 0 ? "skillL" : "skillR"] === sk.id : p.quickSlots[i - 2] === sk.id;
+        const b = document.createElement("button"); b.type = "button"; b.textContent = key; b.className = active ? "bound" : "";
+        b.setAttribute("aria-label", `Assign ${sk.name} to ${key}`); b.setAttribute("aria-pressed", String(active));
+        b.addEventListener("click", () => { if (i < 2) p[i === 0 ? "skillL" : "skillR"] = sk.id; else p.quickSlots[i - 2] = sk.id;
+           refreshHUD(); renderSkillDetail(el, p, sk); el.querySelectorAll(".skill-binding-row button")[i].focus(); }); row.appendChild(b);
+      }); binds.appendChild(row); el.appendChild(binds);
+    } else if (sk.type === "passive") { const note = document.createElement("p"); note.className = "skill-passive-note"; note.textContent = "Always active once learned. No hotkey needed."; el.appendChild(note); }
+    if (sk.synergy) {
+      const synergy = document.createElement("div"); synergy.className = "skill-synergies";
+      for (const [id, per] of Object.entries(sk.synergy)) if (per > 0) { const line = document.createElement("p"); line.textContent = `+${Math.round(per * 100)}% damage per rank of ${DATA.SKILLS[id].name}`; synergy.appendChild(line); }
+      el.appendChild(synergy);
+    }
+    if (sk.flavor) { const flavor = document.createElement("p"); flavor.className = "skill-flavor"; flavor.textContent = sk.flavor; el.appendChild(flavor); }
+  }
+
+  function renderSkillPerks(el,p,sk) {
+    const section=document.createElement("section");section.className="skill-perks";section.setAttribute("aria-label",`${sk.name} perks`);
+    const heading=document.createElement("h3");heading.textContent="Skill perks";section.appendChild(heading);
+    const help=document.createElement("p");help.className="perk-help";help.textContent="Pick one free perk at each milestone. Both picks stack. Changing a pick requires a talent reset.";section.appendChild(help);
+    for(const tier of SkillPerks.tiers){
+      const options=SkillPerks.catalog[sk.id][tier], saved=p.skillPerks?.[sk.id]?.[tier];
+      const chosen=options.find(o=>o.id===saved), unlocked=(p.skills[sk.id]||0)>=tier;
+      const key=sk.id+":"+tier, previewId=perkPreview.get(key);
+      let preview=options.find(o=>o.id===previewId)||chosen||options[0];
+      const box=document.createElement("div");box.className="skill-perk-tier "+(chosen?"selected":unlocked?"available":"locked");box.dataset.perkTier=tier;
+      const title=document.createElement("h4");title.id=`perk-tier-${tier}`;title.textContent=`Rank ${tier} · ${chosen?"Chosen":unlocked?"Choose one":"Locked"}`;box.appendChild(title);
+      const list=document.createElement("div");list.className="perk-options";list.setAttribute("role","group");list.setAttribute("aria-labelledby",title.id);
+      const detail=document.createElement("p");detail.className="perk-description";detail.id=`perk-detail-${tier}`;
+      const choose=document.createElement("button");choose.type="button";choose.className="perk-choose";
+      function refreshPreview(){
+        for(const b of list.children)b.setAttribute("aria-pressed",String(b.dataset.perk===preview.id));
+        detail.textContent=preview.description;
+        choose.disabled=!unlocked||!!chosen;
+        choose.textContent=chosen?`Selected: ${chosen.title}`:unlocked?`Choose perk: ${preview.title}`:`Requires invested rank ${tier}`;
+        choose.setAttribute("aria-describedby",detail.id);
+      }
+      for(const opt of options){
+        const button=document.createElement("button");button.type="button";button.className="perk-option";button.dataset.perk=opt.id;
+        button.textContent=(chosen?.id===opt.id?"✓ ":"")+opt.title;
+        button.setAttribute("aria-label",`Inspect ${opt.title}${chosen?.id===opt.id?", selected":""}`);
+        button.setAttribute("aria-describedby",detail.id);
+        button.addEventListener("click",()=>{preview=opt;perkPreview.set(key,opt.id);refreshPreview();});list.appendChild(button);
+      }
+      choose.addEventListener("click",()=>{
+        if(!p.chooseSkillPerk(sk.id,tier,preview.id))return;
+        const scroll=el.scrollTop;Game.saveGame();Sfx.play("skillup");renderSkills();refreshHUD();
+        $("skillDetail").scrollTop=scroll;
+        $("skillDetail").querySelector(`[data-perk="${preview.id}"]`)?.focus({preventScroll:true});
+        $("skillAnnouncement").textContent=`${preview.title} selected for ${sk.name} at rank ${tier}.`;
+      });
+      box.append(list,detail,choose);refreshPreview();section.appendChild(box);
+    }
+    el.appendChild(section);
+  }
+
+
+  /* ---------- quest log ---------- */
+  let questUiAct = null, questUiSel = null;
+  function giverName(q) {
+    if (DATA.NPCS[q.giver]) return DATA.NPCS[q.giver].name;
+    return q.giver === "board" ? "the notice board" : "the one who set it";
+  }
+  function questState(q, st) {
+    if (!st) return { key: "locked", cls: "locked", glyph: "·", label: "Not yet undertaken" };
+    if (st.state === "done") return { key: "done", cls: "done", glyph: "✓", label: "Completed" };
+    if (st.state === "reward") return { key: "active", cls: "active", glyph: "◆", label: "Turn in — return to " + giverName(q) };
+    if (st.state === "active") {
+      let prog = "";
+      if (q.objectives) {
+        const goals=DATA.CAMPAIGN.objectives(q), done=goals.filter(o=>DATA.CAMPAIGN.count(Game.state,o)>=(o.count||1)).length;
+        prog=` (${done}/${goals.length} objectives)`;
+      } else if (q.type === "kills" || q.type === "rescue") prog = ` (${st.count || 0}/${q.target})`;
+      else if (q.type === "beacons") prog = st.trioSpawned ? ` (Oathsworn ${(st.trioKilled || []).length}/3)` : ` (beacons ${st.beacons || 0}/3)`;
+      else if (q.type === "ritual") prog = st.siteDestroyed ? (q.boss ? " (slay the Choirmaster)" : " (ritual destroyed)") : " (destroy the ritual site)";
+      return { key: "active", cls: "active", glyph: "◆", label: "Active" + prog };
+    }
+    if (st.state === "offered") return { key: "avail", cls: "avail", glyph: "•", label: "Available — seek " + giverName(q) };
+    return { key: "locked", cls: "locked", glyph: "·", label: "Not yet undertaken" };
+  }
+  function questObjective(q, st) {
+    if (st?.state === "done") return "Completed";
+    if (q.objectives) return DATA.CAMPAIGN.objectives(q).map(o=>{
+      const n=DATA.CAMPAIGN.count(Game.state,o), total=o.count||1;
+      return `${n>=total?"✓":"○"} ${o.label}${total>1?` (${n}/${total})`:""}`;
+    }).join("\n");
+    if (q.type === "kills") return `Defeat enemies: ${st?.count || 0} / ${q.target}`;
+    if (q.type === "rescue") return `Rescue survivors: ${st?.count || 0} / ${q.target}`;
+    if (q.type === "beacons") return st?.trioSpawned ? `Defeat the Oathsworn: ${(st.trioKilled || []).length} / 3` : `Light the beacons: ${st?.beacons || 0} / 3`;
+    if (q.type === "ritual") return st?.siteDestroyed ? (q.boss ? "Defeat the Choirmaster" : "Ritual destroyed") : "Destroy the ritual site";
+    if (q.type === "killBoss") return "Defeat " + (DATA.MONSTERS?.[q.target]?.name || DATA.ENEMIES?.[q.target]?.name || q.name);
+    return "Follow the quest brief in " + (DATA.ZONES[q.zone]?.name || "this region") + ".";
+  }
+  function renderQuests() {
+    resetManagementState();
+    const el = els.panelLeft;
+    el.classList.remove("hidden");
+    header(el, "Quest journal", "left");
+    const qs = Game.state.quests, acts = DATA.QUEST_ACTS;
+    const qById = {}; for (const q of DATA.QUESTS) qById[q.id] = q;
+
+    /* default the open act to whichever one you're actively pursuing */
+    if (questUiAct == null || !acts.some(a => a.rn === questUiAct)) {
+      let found = null, offered = null;
+      for (const a of acts) for (const qid of a.quests) {
+        const s = qs[qid]; if (!s) continue;
+        if ((s.state === "active" || s.state === "reward") && !found) found = a.rn;
+        if (s.state === "offered" && !offered) offered = a.rn;
+      }
+      questUiAct = found || offered || acts[0].rn;
+    }
+    const act = acts.find(a => a.rn === questUiAct) || acts[0];
+
+    /* act tabs — each shows done/total and a ◆ if it holds an active quest */
+    const tabs = document.createElement("div"); tabs.className = "qacts";
+    for (const a of acts) {
+      const total = a.quests.length;
+      const done = a.quests.filter(qid => qs[qid] && qs[qid].state === "done").length;
+      const hasActive = a.quests.some(qid => qs[qid] && (qs[qid].state === "active" || qs[qid].state === "reward"));
+      const t = document.createElement("button"); t.type="button"; t.setAttribute("aria-pressed",String(a.rn === questUiAct));
+      t.className = "qtab" + (a.rn === questUiAct ? " sel" : "");
+      t.innerHTML = `${a.optional ? "✦" : a.rn}<small>${hasActive ? "◆ " : ""}${done}/${total}</small>`;
+      t.title = a.name;
+      t.addEventListener("click", () => { questUiAct = a.rn; questUiSel = null; renderQuests(); });
+      tabs.appendChild(t);
+    }
+    el.appendChild(tabs);
+
+    const ah = document.createElement("div"); ah.className = "qacthead";
+    ah.textContent = (act.optional ? "" : "Act " + act.rn + " · ") + act.name;
+    el.appendChild(ah);
+
+    /* default selected quest: first active, else first seen, else first */
+    el.appendChild(filterButtons([["all","All"],["active","Active"],["avail","Available"],["done","Completed"]],questFilter,id=>{questFilter=id;renderQuests();}));
+    const list = act.quests.map(qid => qById[qid]).filter(Boolean).filter(q=>questFilter === "all" || questState(q,qs[q.id]).key === questFilter);
+    if (!questUiSel || !list.some(q=>q.id === questUiSel)) {
+      const pick = list.find(q => { const s = qs[q.id]; return s && (s.state === "active" || s.state === "reward"); })
+                || list.find(q => qs[q.id]) || list[0];
+      questUiSel = pick ? pick.id : null;
+    }
+
+    const questBody = textNode("div", "quest-body"); el.appendChild(questBody);
+    const ul = document.createElement("div"); ul.className = "qlist";
+    for (const q of list) {
+      const info = questState(q, qs[q.id]);
+      const locked = info.key === "locked";
+      const row = document.createElement("button"); row.type="button"; row.setAttribute("aria-pressed",String(q.id === questUiSel));
+      row.className = "qrow " + info.cls + (q.id === questUiSel ? " sel" : "");
+      row.innerHTML = `<span class="qg">${info.glyph}</span><span class="qn">${locked ? "Sealed Trial" : q.name}</span>`;
+      row.addEventListener("click", () => { questUiSel = q.id; renderQuests(); });
+      ul.appendChild(row);
+    }
+    if (!list.length) ul.appendChild(textNode("p","manage-empty","No quests in this category."));
+    questBody.appendChild(ul);
+
+    /* detail of the selected quest */
+    const sel = qById[questUiSel];
+    if (sel) {
+      const st = qs[sel.id], info = questState(sel, st), locked = info.key === "locked";
+      const col = info.cls === "done" ? "#caa44a" : info.cls === "active" ? "#7fd87f" : info.cls === "avail" ? "#9bb6d0" : "#6a6050";
+      const det = document.createElement("div"); det.className = "qdetail";
+      det.innerHTML = `<h3>${locked ? "Sealed Trial" : sel.name}</h3>` +
+        `<p>${locked ? "This trial has not yet begun. Press on, and its tale will reveal itself." : ((st && st.state === "done") ? sel.done : sel.brief)}</p>` +
+        `<div class="qst" style="color:${col}">${info.glyph} ${info.label}</div>`;
+      if (!locked) {
+        const objective = st?.state === "reward" ? "Return to " + giverName(sel) : questObjective(sel, st);
+        det.appendChild(textNode("h4","manage-section","Objective"));
+        const objectiveText=textNode("p","quest-objective",objective); objectiveText.style.whiteSpace="pre-line"; det.appendChild(objectiveText);
+        const giver = sel.giver === "board" ? "Notice board" : giverName(sel);
+        det.appendChild(textNode("p","quest-location","Given by: " + giver));
+        det.appendChild(textNode("p","quest-location","Quest area: " + (DATA.ZONES[sel.zone]?.name || act.name)));
+        const reward=sel.reward||{}, lines=[];
+        if(reward.gold)lines.push(reward.gold+" gold"); if(reward.xp)lines.push(reward.xp+" experience");
+        if(reward.skillPts)lines.push(reward.skillPts+" talent point"+(reward.skillPts>1?"s":""));
+        if(reward.attrPts)lines.push(reward.attrPts+" attribute points"); if(reward.item)lines.push(reward.item.rarity+" equipment"); if(reward.glyph)lines.push("a glyph");
+        if(lines.length){det.appendChild(textNode("h4","manage-section","Rewards"));det.appendChild(textNode("p","quest-rewards",lines.join(" · ")));}
+      }
+      questBody.appendChild(det);
+    }
+
+    const lg = document.createElement("div"); lg.className = "qlegend";
+    lg.innerHTML = `<span style="color:#7fd87f">◆ Active</span><span style="color:#9bb6d0">• Available</span><span style="color:#caa44a">✓ Complete</span><span style="color:#5f574a">· Locked</span>`;
+    el.appendChild(lg);
+  }
+
+  /* ---------- vendor ---------- */
+  function openVendor(npcId) {
+    closePanel("center"); closePanel("left");
+    vendorCtx = {npcId, items: Game.state.vendorStock[npcId] || [], filter:"all", selected:null};
+    openPanels.left = "vendor"; openPanels.right = "inv";
+    renderVendor(); renderInventory();
+  }
+  function shopCategory(it) { return it.kind !== "gear" ? "supplies" : it.slot === "main" ? "weapons" : ["ring","amulet"].includes(it.slot) ? "jewelry" : "armor"; }
+  function renderVendor() {
+    const v = vendorCtx; if (!v) return;
+    const p = Game.state.player, el = els.panelLeft;
+    el.classList.remove("hidden"); header(el, DATA.NPCS[v.npcId].name, "left");
+    el.appendChild(textNode("div","manage-eyebrow","Weapons, wares & provisions"));
+    const wallet = textNode("div","shop-wallet",U.fmt(p.gold) + " gold available"); el.appendChild(wallet);
+    el.appendChild(filterButtons([["all","All"],["weapons","Weapons"],["armor","Armor"],["jewelry","Jewelry"],["supplies","Supplies"]],v.filter,id=>{v.filter=id;v.selected=null;renderVendor();}));
+    const items = v.items.filter(it=>v.filter === "all" || shopCategory(it) === v.filter);
+    if (!items.includes(v.selected)) v.selected = items[0] || null;
+    const list = textNode("div","shop-list");
+    for (const it of items) {
+      const row = actionButton("",()=>{v.selected=it;renderVendor();},"shop-entry"); row.classList.toggle("selected",v.selected===it); row.setAttribute("aria-pressed",String(v.selected===it));
+      row.style.setProperty("--rarity",Items.RARITY_COLOR[it.rarity] || "#aaa");
+      row.appendChild(SpriteAssets.itemIcon(it));
+      const labels=textNode("span","shop-entry-label");labels.appendChild(textNode("strong","",itemName(it)));
+      labels.appendChild(textNode("small","",itemTypeLabel(it) + (it.kind === "gear" ? " · Level " + Items.effReqLvl(it) : "")));
+      row.append(labels,textNode("span",p.gold<Items.value(it)?"shop-price unaffordable":"shop-price",Items.value(it)+" g"));list.appendChild(row);
+    }
+    if(!items.length)list.appendChild(textNode("p","manage-empty","No items in this category."));el.appendChild(list);
+    const selected=v.selected;
+    if(selected){
+      const detail=textNode("div","shop-detail");detail.innerHTML=itemTooltipHTML(selected,"vendor");addItemPreview(detail,selected);el.appendChild(detail);
+      if(selected.kind === "gear"){
+        const slots=Items.slotFor(selected), equipped=slots.map(slot=>p.equip[slot]).filter(Boolean);
+        for(const item of [...new Set(equipped)]){const compare=textNode("details","shop-compare");compare.appendChild(textNode("summary","","Compare equipped: "+itemName(item)));const body=textNode("div","");body.innerHTML=itemTooltipHTML(item,"equip");addItemPreview(body,item);compare.appendChild(body);el.appendChild(compare);}
+        if(!Items.canEquip(p,selected))el.appendChild(textNode("p","manage-warning","You can buy this item, but cannot equip it yet."));
+      }
+      const price=Items.value(selected), room=Items.canAutoPlace(p.inv,selected);
+      const buy=actionButton(p.gold<price?"Not enough gold":!room?"Pack is full":"Buy for "+price+" gold",()=>{
+        if(vendorCtx!==v || !v.items.includes(selected) || p.gold<price || cursorItem)return;
+        const incoming=selected.kind === "consumable"?Items.makeConsumable(selected.baseId,selected.count):selected;
+        if(!Items.canAutoPlace(p.inv,incoming)){msg("No room in your pack.","#c08080");renderVendor();return;}
+        Items.autoPlace(p.inv,incoming);p.gold-=price;if(selected.kind!=="consumable")v.items.splice(v.items.indexOf(selected),1);
+        Sfx.play("buy");refreshGrids();refreshHUD();
+      },"manage-primary shop-buy"); buy.disabled=p.gold<price||!room||!!cursorItem; el.appendChild(buy);
+    }
+    el.appendChild(textNode("p","pack-help","Select an item to inspect it. Right-click an item in your pack to sell."));
+    if(v.npcId === "maesa"){
+      const un=p.inv.items.filter(i=>!i.identified);
+      const identify=actionButton("Identify all · 60 gold",()=>{const items=p.inv.items.filter(i=>!i.identified);if(!items.length||p.gold<60)return;p.gold-=60;items.forEach(i=>i.identified=true);Sfx.play("shrine");refreshGrids();refreshHUD();});
+      identify.disabled=!un.length||p.gold<60;el.appendChild(identify);
+    }
+  }
+
+  /* ---------- storage ---------- */
+  function openStorage() {
+    closePanel("center"); closePanel("left");
+    openPanels.left = "storage";
+    renderStorage();
+    openPanels.right = "inv";
+    renderInventory();
+  }
+  function renderStorage() {
+    const p = Game.state.player;
+    const el = els.panelLeft;
+    el.classList.remove("hidden");
+    header(el, "STRONGBOX", "left");
+    const hint = document.createElement("div");
+    hint.style.cssText = "font-size:11px;color:#8a7a55;text-align:center;margin-bottom:6px";
+    hint.textContent = "Stored items persist with this hero.";
+    el.appendChild(hint);
+    renderGrid(el, p.stash, "storage");
+  }
+
+  /* ---------- Forge Altar (crafting) ---------- */
+  let forgeSlots = [null, null, null, null];
+  function returnForgeItems() {
+    const p = Game.state.player;
+    for (let i = 0; i < 4; i++) {
+      const it = forgeSlots[i];
+      if (!it) continue;
+      if (!Items.autoPlace(p.inv, it)) Game.dropAtFeet(it);
+      forgeSlots[i] = null;
+    }
+  }
+  function openForge() {
+    closePanel("center"); closePanel("left");
+    openPanels.center = "forge"; openPanels.right = "inv";
+    renderForge(); renderInventory();
+  }
+  function renderForge() {
+    const el=els.panelCenter;el.classList.remove("hidden");header(el,"Forge Altar","center");
+    el.appendChild(textNode("div","manage-eyebrow","Old rites · New powers"));
+    const recipes=textNode("div","recipe-list");
+    for(const recipe of ForgeRecipes.recipes){const b=actionButton("",()=>{forgeRecipe=recipe.id;renderForge();},"recipe-choice");b.classList.toggle("selected",forgeRecipe===recipe.id);b.setAttribute("aria-pressed",String(forgeRecipe===recipe.id));b.append(textNode("strong","",recipe.name),textNode("small","",recipe.needs));recipes.appendChild(b);}el.appendChild(recipes);
+    const recipe=ForgeRecipes.recipes.find(r=>r.id===forgeRecipe),check=ForgeRecipes.evaluate(forgeSlots,forgeRecipe);
+    el.appendChild(textNode("h3","manage-section","Your offering"));
+    const row=textNode("div","");row.id="forgeRow";
+    for(let i=0;i<4;i++){
+      const it=forgeSlots[i],slot=actionButton("",()=>{
+        if(cursorItem&&!forgeSlots[i]){forgeSlots[i]=cursorItem;setCursorItem(null);}
+        else if(!cursorItem&&forgeSlots[i]){setCursorItem(forgeSlots[i]);forgeSlots[i]=null;}
+        const match=ForgeRecipes.recipes.find(r=>ForgeRecipes.evaluate(forgeSlots,r.id).valid);if(match)forgeRecipe=match.id;
+        Sfx.play("pickup");renderForge();
+      },"fslot");slot.setAttribute("aria-label",it?itemName(it):"Material slot "+(i+1));
+      if(it){slot.appendChild(SpriteAssets.itemIcon(it));if(it.count>1)slot.appendChild(textNode("span","stk",it.count));slot.addEventListener("mouseenter",()=>{const r=slot.getBoundingClientRect();showItemTooltip(it,r.right,r.top);});slot.addEventListener("mouseleave",hideTooltip);}
+      else slot.appendChild(textNode("span","slot-number",String(i+1)));row.appendChild(slot);
+    }el.appendChild(row);
+    const needs=textNode("ul","recipe-requirements");for(const [valid,label] of check.requirements)needs.appendChild(textNode("li",valid?"met":"missing",(valid?"✓ ":"○ ")+label));el.appendChild(needs);
+    el.appendChild(textNode("div","recipe-outcome",recipe.outcome));
+    const status=textNode("p",check.valid?"forge-status ready":"forge-status",check.valid?"Offering ready. Strike when you are ready.":"Place the required materials from your pack into the offering slots.");status.setAttribute("role","status");el.appendChild(status);
+    const strike=actionButton("Strike the anvil",tryTransmute,"manage-primary");strike.id="forgeCraft";strike.disabled=!check.valid;el.appendChild(strike);
+    el.appendChild(textNode("p","pack-help","Click a material to carry it. Closing the altar returns your offering to your pack; overflow is placed at your feet."));
+  }
+  function tryTransmute() {
+    const check=ForgeRecipes.evaluate(forgeSlots,forgeRecipe);if(!check.valid)return;
+    const {glyphs,gear,pots,total,upgrade}=check;let result,leftovers=[];
+    if(forgeRecipe === "glyph")result=Items.makeGlyph(U.pick(Object.keys(DATA.GLYPHS).filter(id=>id!==glyphs[0].glyph)));
+    else if(forgeRecipe === "temper" || forgeRecipe === "reweave") {result=gear[0];Items.rollAffixesOnto(result,forgeRecipe === "temper"?"enhanced":"rare");result.identified=true;}
+    else {result=Items.makeConsumable(upgrade,1);let remaining=total-3;while(remaining>0){const n=Math.min(10,remaining);leftovers.push(Items.makeConsumable(pots[0].baseId,n));remaining-=n;}}
+    const outputs=[result,...leftovers];forgeSlots=[null,null,null,null];outputs.slice(0,4).forEach((it,i)=>forgeSlots[i]=it);
+    for(const extra of outputs.slice(4))if(!Items.autoPlace(Game.state.player.inv,extra)){Game.dropAtFeet(extra);msg("Extra draughts were placed at your feet.","#d8b860");}
+    Sfx.play("forge");msg("Forged: "+itemName(result),Items.RARITY_COLOR[result.rarity]);
+    Game.addNova(Game.state.player.x,Game.state.player.y,1.2,"#ff9c50");renderForge();refreshGrids();refreshHUD();
+  }
+
+  /* ---------- NPC dialog: greet → topics / quest briefs → accept ---------- */
+  function dialogQuestSummary(el, q) {
+    const card = textNode("div", "dlgquest");
+    card.append(textNode("div", "dlgkicker", "Quest"), textNode("h3", "", q.name));
+    card.appendChild(textNode("p", "dlgobjective", questObjective(q, Game.state.quests[q.id])));
+    const r = q.reward || {}, rewards = [];
+    if (r.xp) rewards.push(r.xp + " experience"); if (r.gold) rewards.push(r.gold + " gold");
+    if (r.skillPts) rewards.push(r.skillPts + " talent point" + (r.skillPts > 1 ? "s" : ""));
+    if (r.attrPts) rewards.push(r.attrPts + " attribute points");
+    if (r.item) rewards.push(r.item.rarity + " equipment"); if (r.glyph) rewards.push("a glyph");
+    if (rewards.length) card.appendChild(textNode("p", "dlgrewards", "Rewards: " + rewards.join(" · ")));
+    el.appendChild(card);
+  }
+  function dialogOptions(el, opts) {
+    const choices = textNode("div", "dlgchoices"); choices.setAttribute("aria-label", "Conversation choices");
+    for (const o of opts) choices.appendChild(actionButton(o.label, o.fn, "dlgopt" + (o.primary ? " dlgprimary" : "")));
+    el.appendChild(choices);
+    choices.querySelector("button")?.focus({ preventScroll: true });
+  }
+  function openDialog(npc) { if (vendorCtx) closePanel("left"); renderDialog(npc, { type: "greet" }); }
+  function openOpeningDialog(npc) { renderDialog(npc, { type:"opening" }); }
+  function renderDialog(npc, view) {
+    const el = els.panelCenter;
+    if (openPanels.center === "forge") closePanel("center");
+    openPanels.center = "dialog";
+    el.classList.remove("hidden");
+    header(el, "CONVERSATION", "center");
+    const def = npc.def;
+    const name = document.createElement("div"); name.className = "dlgname"; name.textContent = def.name;
+    el.appendChild(name);
+    const text = document.createElement("div"); text.className = "dlgtext";
+    el.appendChild(text);
+    const opts = [];
+    const say = line => { text.textContent = line; if (def.voice && !view.topic?.silent) Sfx.voice(def.voice, line); };
+
+    if (view.type === "opening") {
+      text.textContent = "The light spared you. It did not spare them.";
+      const q = DATA.QUESTS.find(q=>q.id === "q7");
+      dialogQuestSummary(el,q);
+      opts.push({label:"I’ll find what walks the North",primary:true,fn:()=>closePanel("center")});
+      opts.push({label:"Ask about the light",fn:()=>renderDialog(npc,{type:"greet",quiet:true})});
+    } else if (view.type === "topic") {
+      say(view.topic.a);
+      Game.storyTopic(npc,view.topic);
+      opts.push({ label: "Ask about something else", fn: () => renderDialog(npc, { type: "greet", quiet: true }) });
+      opts.push({ label: "Farewell", fn: () => closePanel("center") });
+    } else if (view.type === "quest") {
+      const q = view.quest;
+      say(q.brief);
+      dialogQuestSummary(el, q);
+      opts.push({ label: "✦ Take the task", primary: true, fn: () => { Game.acceptQuest(q.id); closePanel("center"); } });
+      opts.push({ label: "Not now", fn: () => renderDialog(npc, { type: "greet", quiet: true }) });
+    } else {
+      const line = U.pick(def.greet);
+      if (view.quiet) text.textContent = line; else say(line);
+      /* quests this person has to give or reward */
+      for (const q of DATA.QUESTS) {
+        if (q.giver !== npc.id) continue;
+        const st = Game.state.quests[q.id];
+        if (st && st.state === "reward") {
+          opts.push({ label: `✦ ${q.name} — claim reward`, primary: true, fn: () => {
+            if (def.voice) Sfx.voice(def.voice, q.done);
+            Game.completeQuest(q.id);
+            closePanel("center");
+          } });
+        } else if (st && st.state === "offered") {
+          opts.push({ label: `✦ ${q.name}`, primary: true, fn: () => renderDialog(npc, { type: "quest", quest: q }) });
+        }
+      }
+      /* conversation topics */
+      for (const topic of def.talk || []) {
+        opts.push({ label: topic.q, fn: () => renderDialog(npc, { type: "topic", topic }) });
+      }
+      if (def.role === "vendor") opts.push({ label: "Trade", fn: () => { closePanel("center"); openVendor(npc.id); } });
+      opts.push({ label: "Farewell", fn: () => closePanel("center") });
+    }
+    dialogOptions(el, opts);
+  }
+
+  /* ---------- the notice board: quests pinned in parchment ---------- */
+  function openBoard() {
+    const el = els.panelCenter;
+    if (openPanels.center === "forge") closePanel("center");
+    openPanels.center = "dialog";
+    el.classList.remove("hidden");
+    header(el, "NOTICE BOARD", "center");
+    const text = document.createElement("div"); text.className = "dlgtext";
+    el.appendChild(text);
+    const opts = [];
+    let headline = "Weather-stained parchments flutter against the planks. Most are too faded to read.";
+    for (const q of DATA.QUESTS) {
+      if (q.giver !== "board") continue;
+      const st = Game.state.quests[q.id];
+      if (st && st.state === "reward") {
+        headline = "Something heavy has been nailed beneath your notice.";
+        opts.push({ label: `✦ ${q.name} — take what's owed`, fn: () => { Game.completeQuest(q.id); closePanel("center"); } });
+      } else if (st && st.state === "offered") {
+        headline = q.brief;
+        opts.push({ label: `✦ Pull down the notice (accept: ${q.name})`, fn: () => { Game.acceptQuest(q.id); closePanel("center"); } });
+      } else if (st && st.state === "active") {
+        headline = "Your accepted notice is gone from the board. The job isn't.";
+      }
+    }
+    text.textContent = headline;
+    opts.push({ label: "Step away", fn: () => closePanel("center") });
+    dialogOptions(el, opts);
+  }
+
+  /* ---------- shrine travel (waypoints, grouped by act) ---------- */
+  function openShrine(asCaravan) {
+    const el = els.panelCenter;
+    if (openPanels.center === "forge") closePanel("center");
+    if (vendorCtx) closePanel("left");
+    openPanels.center = "shrine";
+    el.classList.remove("hidden");
+    header(el, asCaravan ? "THE CARAVAN — CHOOSE YOUR DESTINATION" : "CHOOSE YOUR DESTINATION", "center");
+    const sub = document.createElement("div"); sub.className = "dlgtext"; sub.style.cssText = "color:#9aa6b4;font-size:12px;margin:-2px 0 8px;text-align:center";
+    sub.textContent = asCaravan ? "The caravan ferries you to any waypoint you have attuned." : "Travel instantly to any waypoint shrine you have attuned across the world.";
+    el.appendChild(sub);
+    const attuned = Game.state.shrines || [];
+    const here = Game.state.map.id;
+
+    const wrap = document.createElement("div"); wrap.id = "wpwrap";
+    const groups = DATA.ACTS.concat([DATA.OPTIONAL_ACT]);
+    let any = false;
+    for (const g of groups) {
+      const zones = (g.zones || []).filter(z => attuned.includes(z));
+      if (!zones.length) continue;
+      any = true;
+      const sect = document.createElement("div"); sect.className = "wpact";
+      const head = document.createElement("div"); head.className = "wpacthead";
+      head.innerHTML = `<span class="wprn">${g.rn}</span><span>${g.name}</span>`;
+      sect.appendChild(head);
+      for (const zid of zones) {
+        const z = DATA.ZONES[zid];
+        const d = document.createElement("div");
+        d.className = "wprow" + (zid === here ? " wphere" : "");
+        d.innerHTML = `<span class="wpgem"></span><span>${z.name}${zid === here ? "  — here" : ""}</span>`;
+        if (zid !== here) d.addEventListener("click", () => { Sfx.play("shrine"); closePanel("center"); Game.travelToShrine(zid); });
+        sect.appendChild(d);
+      }
+      wrap.appendChild(sect);
+    }
+    if (!any) {
+      const p = document.createElement("div"); p.className = "dlgtext";
+      p.textContent = "This is the only shrine you have attuned. Attune more across the world and they will answer each other here.";
+      wrap.appendChild(p);
+    }
+    el.appendChild(wrap);
+    const d = document.createElement("div"); d.className = "dlgopt"; d.style.marginTop = "8px"; d.textContent = "Step away";
+    d.addEventListener("click", () => closePanel("center"));
+    el.appendChild(d);
+  }
+
+  /* ---------- skill picker ---------- */
+  function openSkillPick(which) {
+    const p = Game.state.player;
+    const pick = els.skillPick;
+    if (!pick.classList.contains("hidden") && pick.dataset.which === which) { pick.classList.add("hidden"); return; }
+    pick.dataset.which = which;
+    pick.innerHTML = "";
+    hideTooltip();
+    const caption = document.createElement("div"); caption.className = "picker-heading";
+    caption.innerHTML = `<span>ASSIGN ${which === "L" ? "LEFT MOUSE" : which === "R" ? "RIGHT MOUSE" : "F" + (+which.slice(1) + 1)}</span><small>Select a learned skill</small>`; pick.appendChild(caption);
+    for (const id of learnedActives(p)) {
+      const sk = id === "basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[id];
+      const d = document.createElement("button"); d.type = "button"; d.className = "pickopt";
+      const ic = SkillIcons.create(sk, 40, p.equip.main?.cat);
+      d.appendChild(ic);
+      const name = document.createElement("span"); name.textContent = sk.name; d.appendChild(name);
+      d.setAttribute("aria-label", "Assign " + sk.name);
+      d.addEventListener("mouseenter", e => { const r = d.getBoundingClientRect(); showSkillTooltip(id, r.left + r.width / 2, r.top); });
+      d.addEventListener("mouseleave", hideTooltip);
+      d.addEventListener("click", () => {
+        if (which === "L") p.skillL = id;
+        else if (which === "R") p.skillR = id;
+        else if (which[0] === "Q") p.quickSlots[+which.slice(1)] = id;   // assign to F-slot
+        pick.classList.add("hidden");
+        
+        hideTooltip(); refreshHUD(); renderIfOpen("skills");
+        (which === "L" ? els.skillL : which === "R" ? els.skillR : els.quickbar.children[+which.slice(1)]).focus();
+      });
+      pick.appendChild(d);
+    }
+    /* a "clear" chip for emptying an F-slot */
+    if (which[0] === "Q") {
+      const clr = document.createElement("button"); clr.type = "button"; clr.className = "pickopt pickclear"; clr.textContent = "Clear slot";
+      clr.title = "Clear slot";
+      clr.addEventListener("click", () => { p.quickSlots[+which.slice(1)] = null; pick.classList.add("hidden"); hideTooltip();  refreshHUD(); renderIfOpen("skills"); });
+      pick.appendChild(clr);
+    }
+    pick.classList.remove("hidden");
+    let btn = which === "L" ? els.skillL : which === "R" ? els.skillR
+            : els.quickbar.children[+which.slice(1)] || els.quickbar;
+    const r = btn.getBoundingClientRect();
+    const pr = pick.getBoundingClientRect();
+    pick.style.left = U.clamp(r.left + r.width / 2 - pr.width / 2, 8, innerWidth - pr.width - 8) + "px";
+    pick.style.top = Math.max(8, r.top - pr.height - 14) + "px";
+    pick.onkeydown = e => { if (e.key === "Escape") { e.stopPropagation(); pick.classList.add("hidden"); hideTooltip(); btn.focus(); } };
+    pick.querySelector("button").focus();
+  }
+
+  /* ================================================== escape menu */
+  function openEsc() {
+    const el = els.escmenu;
+    el.classList.remove("hidden");
+    el.innerHTML = "";
+    const box = document.createElement("div"); box.className = "box gframe";
+    box.innerHTML = `<h2>EMBERGRAVE</h2>`;
+    const mk = (label, fn) => { const b = document.createElement("button"); b.className = "menubtn"; b.textContent = label; b.addEventListener("click", fn); box.appendChild(b); };
+    mk("Resume", () => closeEsc());
+    mk("Controls", () => renderControls(box));
+    mk("Settings", () => renderSettings(box));
+    mk("Loot Filter", () => renderLootFilter(box));
+    const st = Game.state;
+    if (st && (st.unlockedDiff || 0) > 0) {
+      mk(`Difficulty: ${DATA.DIFFICULTIES[st.difficulty].name}  ▸`, () => {
+        const next = (st.difficulty + 1) % ((st.unlockedDiff || 0) + 1);
+        closeEsc();
+        Game.setDifficulty(next);
+      });
+    }
+    mk("Save and Quit to Title", () => { closeEsc(); Game.saveAndQuit(); });
+    el.appendChild(box);
+  }
+  function renderSettings(box) {
+    box.innerHTML = `<h2>SETTINGS</h2>`;
+    const addSlider = (label, key) => {
+      const row = document.createElement("div"); row.className = "setrow";
+      row.innerHTML = `<span>${label}</span>`;
+      const inp = document.createElement("input");
+      inp.type = "range"; inp.min = 0; inp.max = 100; inp.value = Sfx.vol[key] * 100;
+      inp.addEventListener("input", () => { Sfx.setVol(key, inp.value / 100); Game.saveOptions(); });
+      row.appendChild(inp); box.appendChild(row);
+    };
+    addSlider("Master volume", "master");
+    addSlider("Effects volume", "sfx");
+    addSlider("Music volume", "music");
+    const addToggle = (label, key) => {
+      const row = document.createElement("div"); row.className = "setrow";
+      row.innerHTML = `<span>${label}</span>`;
+      const inp = document.createElement("input"); inp.type = "checkbox"; inp.checked = Game.options[key];
+      inp.addEventListener("change", () => { Game.options[key] = inp.checked; Game.saveOptions(); });
+      row.appendChild(inp); box.appendChild(row);
+    };
+    addToggle("Left-click: move only (never attack)", "leftClickMove");
+    addToggle("Floating damage numbers", "dmgNumbers");
+    addToggle("Show minion damage numbers", "minionDamage");
+    addToggle("Show monster resistances", "monResist");
+    addToggle("Screen shake", "screenShake");
+    /* minion life bars: always / when hurt / never */
+    {
+      const row = document.createElement("div"); row.className = "setrow";
+      row.innerHTML = `<span>Minion life bars</span>`;
+      const sel = document.createElement("select");
+      for (const [v, label] of [["always", "Always"], ["hit", "When hurt"], ["never", "Never"]]) {
+        const o = document.createElement("option");
+        o.value = v; o.textContent = label;
+        if (Game.options.minionBars === v) o.selected = true;
+        sel.appendChild(o);
+      }
+      sel.addEventListener("change", () => { Game.options.minionBars = sel.value; Game.saveOptions(); });
+      row.appendChild(sel); box.appendChild(row);
+    }
+    const b = document.createElement("button"); b.className = "menubtn"; b.textContent = "Back";
+    b.addEventListener("click", () => openEsc());
+    box.appendChild(b);
+  }
+
+  /* ===================================== loot filter panel */
+  const LF_PROPS = ["rarity", "reqLvl", "power", "phys", "armor", "value", "mods", "sockets", "craft", "type", "slot", "name", "hasMod", "skill", "quest", "unique", "legendary"];
+  const LF_OPS = [">=", "<=", ">", "<", "==", "!=", "contains"];
+  const LF_SOUNDS = [["", "(filtered default)"], ["dropUnique", "Fanfare"], ["dropRare", "Chime"], ["drop", "Thud"], ["pickup", "Blip"], ["forge", "Forge"], ["crit", "Crit"]];
+  function lfSelect(opts, val, onChange) {
+    const s = document.createElement("select");
+    for (const o of opts) { const op = document.createElement("option"); const [v, label] = Array.isArray(o) ? o : [o, o]; op.value = v; op.textContent = label; if (String(v) === String(val)) op.selected = true; s.appendChild(op); }
+    s.addEventListener("change", () => onChange(s.value)); return s;
+  }
+  function renderLootFilter(box) {
+    const LF = LootFilter, cfg = LF.config, re = () => renderLootFilter(box);
+    box.innerHTML = `<h2>LOOT FILTER</h2>`;
+    const row = (label) => { const d = document.createElement("div"); d.className = "setrow"; if (label != null) d.innerHTML = `<span>${label}</span>`; box.appendChild(d); return d; };
+
+    { const r = row("Enabled"); const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = cfg.enabled; cb.addEventListener("change", () => LF.setEnabled(cb.checked)); r.appendChild(cb); }
+    { const r = row("Preset"); r.appendChild(lfSelect(LF.presetList().map(p => [p.key, p.name]).concat([["custom", "Custom"]]), cfg.preset, v => { LF.setPreset(v); re(); })); }
+    { const r = row("Reveal hidden (hold)"); const btn = document.createElement("button"); btn.className = "menubtn"; btn.style.minWidth = "70px"; btn.textContent = cfg.revealKey.toUpperCase();
+      btn.addEventListener("click", () => { btn.textContent = "press a key…"; const h = e => { e.preventDefault(); LF.setRevealKey(e.key.toLowerCase()); window.removeEventListener("keydown", h, true); re(); }; window.addEventListener("keydown", h, true); }); r.appendChild(btn); }
+
+    { const r = row(cfg.preset === "custom" ? "Rules (top wins)" : "Rules (editing forks a Custom copy)"); const add = document.createElement("button"); add.className = "menubtn"; add.textContent = "+ Add"; add.addEventListener("click", () => { LF.addRule(); re(); }); r.appendChild(add); }
+    const list = document.createElement("div"); list.style.maxHeight = "42vh"; list.style.overflowY = "auto"; box.appendChild(list);
+    const rules = LF.rules();
+    if (!rules.length) { const e = document.createElement("div"); e.className = "setrow"; e.style.opacity = ".7"; e.textContent = "No rules — every item is shown."; list.appendChild(e); }
+    rules.forEach((rule, idx) => list.appendChild(lfRuleCard(rule, idx, rules.length, re)));
+
+    { const r = row(null);
+      const mkb = (t, fn) => { const b = document.createElement("button"); b.className = "menubtn"; b.textContent = t; b.addEventListener("click", fn); r.appendChild(b); };
+      mkb("Export", () => prompt("Copy your loot filter JSON:", LF.exportJSON()));
+      mkb("Import", () => { const t = prompt("Paste a loot filter JSON:"); if (t && LF.importJSON(t)) re(); else if (t) msg("Invalid filter JSON.", "#c08080"); });
+      mkb("Reset", () => { LF.reset(); re(); });
+    }
+    const back = document.createElement("button"); back.className = "menubtn"; back.textContent = "Back"; back.addEventListener("click", () => openEsc()); box.appendChild(back);
+  }
+  /* one editable rule card: enable · name · reorder/dup/delete · conditions · appearance · sound · preview */
+  function lfRuleCard(rule, idx, total, re) {
+    const LF = LootFilter, a = rule.action || (rule.action = {});
+    const card = document.createElement("div"); card.style.cssText = "border:1px solid #4a4438;border-radius:5px;margin:4px 0;padding:5px;background:rgba(0,0,0,.25)";
+    const bar = document.createElement("div"); bar.style.cssText = "display:flex;gap:4px;align-items:center";
+    const en = document.createElement("input"); en.type = "checkbox"; en.checked = rule.enabled; en.title = "Enable rule"; en.addEventListener("change", () => LF.editRule(rule.id, { enabled: en.checked }));
+    const nm = document.createElement("input"); nm.type = "text"; nm.value = rule.name || ""; nm.style.flex = "1"; nm.addEventListener("change", () => LF.editRule(rule.id, { name: nm.value }));
+    bar.appendChild(en); bar.appendChild(nm);
+    const ic = (t, fn) => { const b = document.createElement("button"); b.className = "menubtn"; b.style.cssText = "min-width:24px;padding:2px 6px"; b.textContent = t; b.addEventListener("click", fn); bar.appendChild(b); };
+    ic("▲", () => { LF.moveRule(rule.id, -1); re(); });
+    ic("▼", () => { LF.moveRule(rule.id, 1); re(); });
+    ic("⧉", () => { LF.duplicateRule(rule.id); re(); });
+    ic("✕", () => { LF.deleteRule(rule.id); re(); });
+    card.appendChild(bar);
+
+    const condWrap = document.createElement("div"); condWrap.style.margin = "4px 0";
+    const logicRow = document.createElement("div"); logicRow.style.cssText = "display:flex;gap:6px;align-items:center;font-size:12px";
+    logicRow.appendChild(document.createTextNode("Match"));
+    logicRow.appendChild(lfSelect([["AND", "ALL of"], ["OR", "ANY of"]], rule.logic || "AND", v => LF.editRule(rule.id, { logic: v })));
+    const addC = document.createElement("button"); addC.className = "menubtn"; addC.style.cssText = "padding:2px 6px"; addC.textContent = "+ cond"; addC.addEventListener("click", () => { rule.conditions.push({ prop: "rarity", op: ">=", value: 2 }); LF.editRule(rule.id, {}); re(); }); logicRow.appendChild(addC);
+    condWrap.appendChild(logicRow);
+    (rule.conditions || []).forEach((c, ci) => {
+      const cr = document.createElement("div"); cr.style.cssText = "display:flex;gap:3px;margin:2px 0";
+      cr.appendChild(lfSelect(LF_PROPS, c.prop, v => { c.prop = v; LF.editRule(rule.id, {}); }));
+      cr.appendChild(lfSelect(LF_OPS, c.op, v => { c.op = v; LF.editRule(rule.id, {}); }));
+      const val = document.createElement("input"); val.type = "text"; val.value = c.value != null ? c.value : ""; val.style.width = "70px"; val.title = "e.g. 2, player-10, frw, gravebinder, sword";
+      val.addEventListener("change", () => { const n = +val.value; c.value = (val.value !== "" && !isNaN(n) && !/player/i.test(val.value)) ? n : val.value; LF.editRule(rule.id, {}); });
+      cr.appendChild(val);
+      const del = document.createElement("button"); del.className = "menubtn"; del.style.cssText = "padding:2px 6px"; del.textContent = "−"; del.addEventListener("click", () => { rule.conditions.splice(ci, 1); LF.editRule(rule.id, {}); re(); }); cr.appendChild(del);
+      condWrap.appendChild(cr);
+    });
+    card.appendChild(condWrap);
+
+    const app = document.createElement("div"); app.style.cssText = "display:flex;flex-wrap:wrap;gap:8px;font-size:12px;align-items:center";
+    const hideCb = document.createElement("input"); hideCb.type = "checkbox"; hideCb.checked = !!a.hide; hideCb.addEventListener("change", () => { if (hideCb.checked) a.hide = true; else delete a.hide; LF.editRule(rule.id, {}); re(); });
+    const hl = document.createElement("label"); hl.appendChild(hideCb); hl.appendChild(document.createTextNode(" Hide")); app.appendChild(hl);
+    const colorCtl = (key, label, def) => {
+      const wrap = document.createElement("label"); wrap.style.cssText = "display:flex;gap:2px;align-items:center";
+      const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = a[key] !== undefined && a[key] !== null;
+      const ci = document.createElement("input"); ci.type = "color"; ci.value = (typeof a[key] === "string" ? a[key] : def); ci.style.cssText = "width:22px;height:18px;padding:0;border:0;background:none"; ci.disabled = !cb.checked;
+      cb.addEventListener("change", () => { ci.disabled = !cb.checked; if (cb.checked) a[key] = ci.value; else delete a[key]; LF.editRule(rule.id, {}); });
+      ci.addEventListener("input", () => { a[key] = ci.value; LF.editRule(rule.id, {}); });
+      wrap.appendChild(cb); wrap.appendChild(document.createTextNode(label)); wrap.appendChild(ci); return wrap;
+    };
+    app.appendChild(colorCtl("color", "Text", "#ffffff"));
+    app.appendChild(colorCtl("glow", "Glow", "#ffd070"));
+    app.appendChild(colorCtl("beam", "Beam", "#ffd070"));
+    app.appendChild(colorCtl("minimap", "Map", "#ffd070"));
+    const sl = document.createElement("label"); sl.style.cssText = "display:flex;gap:2px;align-items:center"; sl.appendChild(document.createTextNode("Size"));
+    const si = document.createElement("input"); si.type = "number"; si.min = "0.8"; si.max = "1.8"; si.step = "0.1"; si.value = a.size || 1; si.style.width = "48px";
+    si.addEventListener("change", () => { const v = +si.value; if (Math.abs(v - 1) < 0.01) delete a.size; else a.size = v; LF.editRule(rule.id, {}); });
+    sl.appendChild(si); app.appendChild(sl);
+    const snd = lfSelect(LF_SOUNDS, a.sound || "", v => { if (v) a.sound = v; else delete a.sound; LF.editRule(rule.id, {}); if (v) Sfx.play(v); });
+    const snl = document.createElement("label"); snl.style.cssText = "display:flex;gap:2px;align-items:center"; snl.appendChild(document.createTextNode("Sound")); snl.appendChild(snd); app.appendChild(snl);
+    card.appendChild(app);
+
+    const prev = document.createElement("div"); prev.style.cssText = "margin-top:5px;padding:4px;text-align:center;background:rgba(20,16,12,.6);border-radius:4px";
+    if (a.hide) { prev.textContent = "(item hidden)"; prev.style.opacity = ".5"; }
+    else {
+      const lab = document.createElement("span");
+      lab.textContent = "Sample Item" + (a.beam ? "  ▮" : "") + (a.minimap ? "  ◈" : "") + (a.sound ? "  ♪" : "");
+      lab.style.cssText = `color:${a.color || "#cfcfcf"};font-size:${Math.round(13 * (a.size || 1))}px;padding:2px 6px;background:rgba(5,4,3,.82);border-radius:3px;` + (a.glow ? `box-shadow:0 0 8px ${a.glow};border:1px solid ${a.glow}` : "");
+      prev.appendChild(lab);
+    }
+    card.appendChild(prev);
+    return card;
+  }
+  function renderControls(box) {
+    box.innerHTML = `<h2>CONTROLS</h2>`;
+    const rows = [
+      ["Left-click", "Move · attack · talk · pick up loot · interact"],
+      ["Right-click", "Use your secondary skill"],
+      ["Hold button", "Keep moving / attacking"],
+      ["Shift + click", "Attack in place without moving"],
+      ["1 – 4", "Drink belt potions"],
+      ["F1 – F4", "Quick-swap your right-click skill"],
+      ["Alt (hold) / L", "Show loot labels on the ground"],
+      ["I · C · T · Q", "Inventory · Character · Talents · Quests"],
+      ["M", "Map overlay"],
+      ["Esc", "This menu / close panels"],
+      ["Inventory", "Click an item to lift it, click a slot to place it; right-click to equip / use / sell"],
+    ];
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "text-align:left;max-height:340px;overflow-y:auto;margin:4px 0 12px";
+    for (const [k, v] of rows) {
+      const r = document.createElement("div");
+      r.style.cssText = "display:flex;gap:10px;font-size:13px;margin:6px 2px;line-height:1.4";
+      r.innerHTML = `<span style="flex:0 0 120px;color:#d8b860">${k}</span><span style="color:#a89878">${v}</span>`;
+      wrap.appendChild(r);
+    }
+    box.appendChild(wrap);
+    const b = document.createElement("button"); b.className = "menubtn"; b.textContent = "Back";
+    b.addEventListener("click", () => openEsc());
+    box.appendChild(b);
+  }
+  function closeEsc() { els.escmenu.classList.add("hidden"); }
+  function escOpen() { return !els.escmenu.classList.contains("hidden"); }
+
+  /* ================================================== title screen */
+  function clearTitleMusicGesture() {
+    document.removeEventListener('pointerdown', unlockTitleMusic);
+    document.removeEventListener('keydown', unlockTitleMusic);
+  }
+  function unlockTitleMusic() {
+    if (!els.title.classList.contains('hidden')) { Sfx.init(); Sfx.music('title'); }
+    clearTitleMusicGesture();
+  }
+  function showTitle() {
+    hideOpening();
+    hideDeath();
+    els.title.classList.remove("hidden");
+    titleMain();
+    Sfx.music('title');
+    /* Retry on the first gesture if the browser blocks startup autoplay. */
+    clearTitleMusicGesture();
+    document.addEventListener('pointerdown', unlockTitleMusic);
+    document.addEventListener('keydown', unlockTitleMusic);
+  }
+  function hideTitle() { hideDeath(); clearTitleMusicGesture(); Sfx.stopMusic(); TitleScreen.hide(); els.title.classList.add("hidden"); }
+  function titleMain() { TitleScreen.main(); }
+
+  /* ================================================== debug */
+  function toggleDebug() {
+    const el = els.debug;
+    if (!el.classList.contains("hidden")) { el.classList.add("hidden"); return; }
+    el.classList.remove("hidden");
+    el.innerHTML = `<div style="margin-bottom:6px;color:#7fdf7f">— DEBUG —</div>`;
+    const mk = (label, fn) => { const b = document.createElement("button"); b.textContent = label; b.addEventListener("click", fn); el.appendChild(b); };
+    mk("God mode: " + (Game.debugFlags.god ? "ON" : "OFF"), () => { Game.debugFlags.god = !Game.debugFlags.god; toggleDebug(); toggleDebug(); });
+    mk("+1 level", () => { const p = Game.state.player; p.gainXp(DATA.xpForLevel(p.lvl) - p.xp); });
+    mk("+5 levels", () => { const p = Game.state.player; for (let i = 0; i < 5; i++) p.gainXp(DATA.xpForLevel(p.lvl) - p.xp); });
+    mk("+1000 gold", () => { Game.state.player.gold += 1000; refreshGrids(); });
+    mk("Drop random rare", () => Game.debugDrop("rare"));
+    mk("Drop random set piece", () => Game.debugDrop("set"));
+    mk("Drop random unique", () => Game.debugDrop("unique"));
+    mk("Spawn elite pack", () => Game.debugSpawnElites());
+    mk("Reveal map", () => Game.state.map.explored.fill(1));
+    mk("Heal full", () => { const p = Game.state.player; p.hp = p.stats.maxHp; p.mana = p.stats.maxMana; });
+    mk("Go to boss", () => Game.debugGotoBoss());
+    mk("Unlock all waystones", () => { for (const z of Object.values(DATA.ZONES)) if (z.kind === "camp" && !Game.state.shrines.includes(z.id)) Game.state.shrines.push(z.id); Game.msg("All act camps attuned.", "#8fd8ff"); });
+  }
+
+  /* ================================================== opening cinematic */
+  let cinTimers = [];
+  function clearCin() { cinTimers.forEach(t => clearTimeout(t)); cinTimers = []; }
+
+  /* Nonmodal opening UI. Its clock follows gameplay, including the pause menu. */
+  let openingEls = null, captionTime = 0, arrivalTime = 0;
+  function showOpening(fade = false) {
+    hideOpening();
+    const root = textNode("section", "opening-ui" + (fade ? " opening-wake" : ""));
+    root.id="openingUI"; root.setAttribute("aria-label","The Last Warm Wall");
+    const objective = textNode("div","opening-objective");
+    objective.append(textNode("span","opening-kicker","THE LAST WARM WALL"));
+    const goal=textNode("p","opening-goal","Reach Frosthaven"),hint=textNode("p","opening-hint","");
+    goal.setAttribute("role","status");hint.setAttribute("aria-live","polite");objective.append(goal,hint);
+    const skip=actionButton("Skip opening",async()=>{
+      if(skip.disabled)return;
+      const hero=Game.state?.player;
+      skip.disabled=true;skip.textContent="Entering Frosthaven…";
+      try {
+        const done=await Game.skipOpening();
+        if(!done && Game.state?.player===hero)openingCaption("","Frosthaven could not be loaded. Try again.",8);
+      } catch(error) {
+        console.error(error);
+        if(Game.state?.player===hero)openingCaption("","Frosthaven could not be loaded. Try again.",8);
+      } finally { skip.disabled=false;skip.textContent="Skip opening"; }
+    },"opening-skip");
+    const caption=textNode("div","opening-caption");caption.setAttribute("role","status");caption.setAttribute("aria-atomic","true");
+    const speaker=textNode("span","opening-speaker",""),line=textNode("span","opening-line","");caption.append(speaker,line);
+    const arrival=textNode("div","opening-arrival");arrival.hidden=true;
+    arrival.append(textNode("span","opening-kicker","ACT I · THE FALLEN NORTH"),textNode("div","opening-town","FROSTHAVEN"),textNode("p","","The Last Warm Wall"));
+    root.append(objective,skip,caption,arrival);$("game").appendChild(root);
+    openingEls={root,goal,hint,skip,caption,speaker,line,arrival};
+  }
+  function hideOpening() {
+    openingEls?.root.remove(); openingEls=null;captionTime=arrivalTime=0;
+  }
+  function openingObjective(goal,hint,stage) {
+    if(!openingEls)return;
+    openingEls.root.classList.toggle("opening-boss",stage==="boss"||stage==="bossIntro");
+    if(openingEls.goal.textContent!==goal)openingEls.goal.textContent=goal;
+    if(openingEls.hint.textContent!==hint)openingEls.hint.textContent=hint;
+  }
+  function openingCaption(speaker,line,seconds=6) {
+    if(!openingEls)return;
+    openingEls.speaker.textContent=speaker;
+    openingEls.line.textContent=line;
+    openingEls.caption.classList.add("visible");captionTime=seconds;
+  }
+  function openingArrival() { if(openingEls){openingEls.arrival.hidden=false;arrivalTime=5;} }
+  function tickOpening(dt) {
+    if(!openingEls)return;
+    if(captionTime>0 && (captionTime-=dt)<=0)openingEls.caption.classList.remove("visible");
+    if(arrivalTime>0 && (arrivalTime-=dt)<=0)openingEls.arrival.hidden=true;
+  }
+
+  /* ================================================== in-game video cinematic */
+  let videoOn = false;
+  function cinematicActive() { return videoOn || !els.cinematic.classList.contains("hidden"); }
+  /* play a full-screen video, pausing the game; fade in, then fade back and call onDone */
+  function playVideo(src, onDone) {
+    const el = els.cinematic;
+    videoOn = true;
+    let finished = false;
+    /* duck the ambient music under the cinematic, restore after */
+    const prevMusic = Sfx.vol.music;
+    try { Sfx.setVol("music", 0); } catch (e) {}
+    el.classList.remove("hidden");
+    el.classList.add("videofade");                 // opacity 0
+    el.innerHTML = `<video class="cinevid" playsinline preload="auto"></video><div class="cinskip">click to skip</div>`;
+    const v = el.querySelector("video");
+    const skip = el.querySelector(".cinskip");
+    try { v.volume = U.clamp((Sfx.vol.master || 0.8), 0, 1); } catch (e) {}
+    const finish = () => {
+      if (finished) return; finished = true;
+      el.classList.remove("shown");                // fade out
+      setTimeout(() => {
+        el.classList.add("hidden"); el.classList.remove("videofade"); el.innerHTML = "";
+        try { v.pause(); v.removeAttribute("src"); v.load(); } catch (e) {}
+        try { Sfx.setVol("music", prevMusic); } catch (e) {}
+        videoOn = false;
+        if (onDone) onDone();
+      }, 560);
+    };
+    v.addEventListener("ended", finish);
+    v.addEventListener("error", finish);           // missing/broken file: never soft-lock
+    el.onclick = finish;                           // click anywhere to skip
+    v.src = src;
+    /* fade the overlay in on the next frame */
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("shown")));
+    setTimeout(() => skip && skip.classList.add("show"), 1400);
+    const tryPlay = () => { const pr = v.play(); if (pr && pr.catch) pr.catch(() => { v.muted = true; const p2 = v.play(); if (p2 && p2.catch) p2.catch(finish); }); };
+    tryPlay();
+    /* safety: if nothing loads within 9s, bail back to gameplay */
+    setTimeout(() => { if (!finished && v.readyState === 0) finish(); }, 9000);
+  }
+
+  /* ================================================== final choice + endings */
+  const ENDINGS = {
+    destroy: { name: "Destroy the Core",
+      sub: "The barrier between the Waking World and Hell is permanently unstable.",
+      lines: ["You drive the last shard against the others until the core cracks like river ice.",
+        "Light floods out — and does not stop. The wound between this world and the Hells will never fully close now.",
+        "But it cannot be gathered. It cannot be used. It cannot lie to anyone, ever again.",
+        "You walk home through a world that will always be a little too thin. It is free. That will have to be enough."] },
+    seal: { name: "Seal It Away",
+      sub: "The core is hidden — and patient.",
+      lines: ["You bind the core in wards older than the Render and carry it somewhere no map remembers.",
+        "It sleeps. Its guardians will not. In years or centuries, the core may corrupt those sworn to keep it.",
+        "You have bought time, and only time. Someday another hero will stand where you stand, holding the same terrible question.",
+        "You hope they choose better. You hope there is a they."] },
+    give: { name: "Give It to Seraneth",
+      sub: "The Warden returns — changed.",
+      lines: ["The true Seraneth steps from the broken light, frayed at every edge by the long road outside the world.",
+        "She takes the core in both hands. For a moment her eyes are not entirely her own.",
+        "Then she nods, and is gone, and the sky knits shut behind her.",
+        "She will guard it. You tell yourself that. You almost believe it."] },
+  };
+  function openFinalChoice() {
+    const el = els.cinematic;
+    el.classList.remove("hidden");
+    el.innerHTML = `<div class="cinwrap">
+      <div class="cintext"><span class="ln show em">Vethriss is dead. The gathered shards collapse into a single, humming core at your feet.</span>
+      <span class="ln show">It is the last piece of the Sunderstone left whole — and the choice of what becomes of it is yours alone.</span></div>
+      <div id="choiceList"></div></div>`;
+    const list = el.querySelector("#choiceList");
+    for (const key of ["give", "seal", "destroy"]) {
+      const e = ENDINGS[key];
+      const b = document.createElement("div"); b.className = "choicebtn";
+      b.innerHTML = `<b>${e.name}</b>${e.sub}`;
+      b.addEventListener("click", () => {  showEnding(key); });
+      list.appendChild(b);
+    }
+  }
+  function showEnding(key) {
+    const e = ENDINGS[key];
+    const el = els.cinematic;
+    el.innerHTML = `<div class="cinwrap"><div class="cintext"></div><div class="cintitle">THE EMBERGRAVE SAGA</div><div class="cinskip">click to return to the title</div></div>`;
+    const txt = el.querySelector(".cintext"), titleEl = el.querySelector(".cintitle"), skip = el.querySelector(".cinskip");
+    txt.innerHTML = `<span class="ln em">${e.name}</span>` + e.lines.map(l => `<span class="ln">${l}</span>`).join("") +
+      `<span class="ln em" style="margin-top:18px">The Waking World endures. For now.</span>`;
+    const lines = [...txt.querySelectorAll(".ln")];
+    clearCin();
+    lines.forEach((ln, i) => cinTimers.push(setTimeout(() => ln.classList.add("show"), 400 + i * 2400)));
+    cinTimers.push(setTimeout(() => titleEl.classList.add("show"), 600 + lines.length * 2400));
+    cinTimers.push(setTimeout(() => skip.classList.add("show"), 1200 + lines.length * 2400));
+    Game.recordEnding(key);
+    const back = () => { clearCin(); el.classList.add("hidden"); el.innerHTML = ""; Game.saveAndQuit(); };
+    el.onclick = back;
+    cinTimers.push(setTimeout(back, 2200 + lines.length * 2400 + 6000));
+  }
+
+  return {
+    openFinalChoice, playVideo, cinematicActive,
+    showOpening, hideOpening, openingObjective, openingCaption, openingArrival, tickOpening, openOpeningDialog,
+    init, refreshHUD, refreshBelt, refreshBuffs, refreshGrids, renderIfOpen,
+    msg, centerMsg, togglePanel, closePanel, closeAll, anyOpen, openPanels: () => openPanels,
+    openVendor, openStorage, openDialog, openBoard, openShrine, openSkillPick, openForge, quickCast,
+    showItemTooltip, showSkillTooltip, hideTooltip,
+    openEsc, closeEsc, escOpen,
+    showTitle, hideTitle, showDeath, hideDeath, toggleDebug,
+    get cursorItem() { return cursorItem; },
+    setCursorItem,
+  };
+})();

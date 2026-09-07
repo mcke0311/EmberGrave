@@ -1,0 +1,11 @@
+{
+  "provider": "Built-in image_gen",
+  "assets": [
+    {
+      "source": "sundered-citadel-source.png",
+      "runtime": "sundered-citadel.webp",
+      "prompt": "Use case: stylized-concept\nAsset type: Full-screen background art for the splash screen and 3D hero selection of Embergrave, an original dark-fantasy action RPG. Landscape 16:9, 2560x1440.\nPrimary request: An epic, richly detailed cinematic environment plate, no characters. A vast ruined gothic fortress built into jagged northern mountains, beneath a colossal shattered stone monolith suspended above its distant cathedral. A thin molten orange fracture runs through the broken monolith. Storm clouds, layers of icy mist, distant black spires and tattered banners, monumental scale. In the foreground, a weathered circular stone dais and ruined steps toward the middle-right, suitable for placing a live 3D character. Broken pillars frame the outermost edges. A few glowing embers drift in the atmosphere.\nComposition: Main fortress and broken monolith in right half and upper-middle of image. Dais at 63 percent across, near the bottom. Left 40 percent is atmospheric dark negative space with subtle mountains and mist, reserved for readable UI typography. Keep central midground calm so a 3D hero remains distinct. Wide grand establishing shot, restrained photorealistic painted game key art, tangible stone and iron textures.\nLighting: cold moonlight from upper right, warm ember light from lower left and the monolith crack. Deep charcoal, slate blue, aged bronze, small restrained orange highlights. Legible textured shadows, not crushed black. Ominous, majestic, ancient, cinematic.\nConstraints: Environment only. No people, no creatures, no statues of people, no weapons, no text, no letters, no logos, no interface, no borders, no watermark.",
+      "processing": "Lossy WebP conversion at quality 90; no painted alterations."
+    }
+  ]
+}

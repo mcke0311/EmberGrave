@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Cinematic title review</title>
+<style>body{background:#151b22;color:#ded5c4;font:14px system-ui;margin:16px}h1{font-size:20px}button,select{padding:8px;margin:0 8px 12px 0;background:#27323d;color:#eee2ce;border:1px solid #73674f}iframe{display:block;border:0;max-width:none;background:#05080b}#host{overflow:auto}pre{white-space:pre-wrap;font-size:12px}</style>
+<h1>Cinematic title review</h1><p>Isolated preview. Your real heroes and save files are never accessed.</p>
+<pre id="result">Running…</pre>
+<label>Viewport <select id="viewport"><option value="1280,720">Desktop 1280 × 720</option><option value="960,720">Small desktop 960 × 720</option><option value="640,800">Tablet 640 × 800</option><option value="390,844">Phone 390 × 844</option><option value="360,640">Small phone 360 × 640</option><option value="3840,2160">4K 3840 × 2160</option></select></label>
+<button id="splash">Splash</button><button id="creation">Create a hero</button><button id="saved">Saved heroes</button><button id="motion">Toggle reduced motion</button><div id="host"></div>
+<script type="module">
+const out=document.getElementById('result'),store=new Map();window.titleTestStore=store;
+const source=await fetch('../index.html',{cache:'no-store'}).then(r=>r.text()),iframe=document.createElement('iframe');iframe.title='Isolated title preview';
+const injection=`<base href="${new URL('../index.html',location.href)}"><script>
+ const saved=parent.titleTestStore;Object.defineProperty(window,'localStorage',{value:{get length(){return saved.size},key:i=>[...saved.keys()][i]??null,getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(String(k),String(v)),removeItem:k=>saved.delete(k),clear:()=>saved.clear()}});
+ window.titleErrors=[];window.addEventListener('error',e=>titleErrors.push(e.message));window.addEventListener('unhandledrejection',e=>titleErrors.push(String(e.reason)));
+ const actualMatchMedia=window.matchMedia.bind(window);window.titleReduceMotion=false;const reducedQuery=new EventTarget();Object.defineProperty(reducedQuery,'matches',{get:()=>window.titleReduceMotion});window.matchMedia=q=>q==='(prefers-reduced-motion: reduce)'?reducedQuery:actualMatchMedia(q);window.toggleTitleMotion=()=>{window.titleReduceMotion=!window.titleReduceMotion;reducedQuery.dispatchEvent(new Event('change'))};
+ window.titleBackgroundPaints=new Map();const clearCanvas=CanvasRenderingContext2D.prototype.clearRect;
+ CanvasRenderingContext2D.prototype.clearRect=function(...args){if(this.canvas.classList.contains('title-atmosphere')){const paints=titleBackgroundPaints.get(this.canvas)||[];paints.push(performance.now());titleBackgroundPaints.set(this.canvas,paints)}return clearCanvas.apply(this,args)};
+ const actualHidden=Object.getOwnPropertyDescriptor(Document.prototype,'hidden').get;window.titleTestHidden=false;
+ Object.defineProperty(document,'hidden',{get:()=>window.titleTestHidden||actualHidden.call(document)});
+ window.setTitleTestHidden=value=>{window.titleTestHidden=value;document.dispatchEvent(new Event('visibilitychange'))};
+ <\/script>`;
+iframe.srcdoc=source.replace('<head>','<head>'+injection);document.getElementById('host').append(iframe);
+function resize(value){const [w,h]=value.split(',').map(Number);iframe.style.width=w+'px';iframe.style.height=h+'px';}
+resize('1280,720');await new Promise(r=>iframe.onload=r);const win=iframe.contentWindow,doc=win.document;
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+async function until(test,label,timeout=9000){for(let i=0;i<timeout/30;i++){if(test())return;await delay(30);}throw new Error('Timed out: '+label);}
+let checks=0;const ok=(pass,label)=>{checks++;if(!pass)throw new Error(label);};
+const sizes=['1280,720','960,720','640,800','390,844','360,640'];
+const classes=['vanguard','emberwitch','gravebinder','wildkeeper','veilranger'];
+const screen=()=>doc.getElementById('title');
+const find=text=>[...doc.querySelectorAll('#titleMenu button')].find(b=>b.textContent===text);
+const rect=n=>n.getBoundingClientRect();
+function fits(node,label){const r=rect(node);ok(r.width>0&&r.left>=-.5&&r.right<=doc.documentElement.clientWidth+.5,label+' horizontal clipping');}
+function paintSignature(){const cv=doc.getElementById('campCanvas'),pixels=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;let sum=0,count=0;for(let i=0;i<pixels.length;i+=16){sum=(sum+pixels[i]*3+pixels[i+1]*5+pixels[i+2]*7)%1000000007;if(pixels[i+3]>180)count++;}ok(count>400,'3D hero has no visible rendered surface');return sum;}
+const backdrop=()=>doc.querySelector('.title-backdrop canvas.title-atmosphere');
+const backgroundPaints=cv=>(win.titleBackgroundPaints.get(cv)||[]).length;
+function backgroundSignature(){const cv=backdrop(),pixels=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;let sum=0;for(let i=0;i<pixels.length;i+=52)sum=(sum+pixels[i]*3+pixels[i+1]*5+pixels[i+2]*7+pixels[i+3]*11)%1000000007;return sum;}
+try{
+ await until(()=>find('NEW HERO'),'menu loaded');
+ const game=win.eval('Game');
+ ok(store.size===0,'fresh splash wrote a save');
+ await until(()=>backdrop()&&backgroundPaints(backdrop())>0,'background first paint');
+ const initialBackdrop=backdrop();ok(initialBackdrop.getAttribute('aria-hidden')==='true'&&win.getComputedStyle(initialBackdrop).pointerEvents==='none','background must be decorative and noninteractive');
+ const movingBackground=backgroundSignature();await delay(220);ok(backgroundSignature()!==movingBackground,'background does not animate');
+ const paintStart=backgroundPaints(initialBackdrop),clockStart=win.performance.now();await delay(1100);
+ ok(backgroundPaints(initialBackdrop)>paintStart,'background stopped painting');
+ ok(backgroundPaints(initialBackdrop)-paintStart<=Math.ceil((win.performance.now()-clockStart)*30/1000)+1,'background exceeded 30 FPS');
+ win.setTitleTestHidden(true);const pausedBackground=backgroundSignature(),pausedPaints=backgroundPaints(initialBackdrop);await delay(180);
+ ok(backgroundSignature()===pausedBackground&&backgroundPaints(initialBackdrop)===pausedPaints,'hidden tab keeps painting background');
+ win.setTitleTestHidden(false);await until(()=>backgroundPaints(initialBackdrop)>pausedPaints,'background resumes after tab returns');
+ win.toggleTitleMotion();await delay(80);const reducedBackground=backgroundSignature(),reducedPaints=backgroundPaints(initialBackdrop);await delay(160);
+ ok(backgroundSignature()===reducedBackground&&backgroundPaints(initialBackdrop)===reducedPaints,'reduced motion keeps painting background');
+ win.toggleTitleMotion();await until(()=>backgroundSignature()!==reducedBackground,'background resumes when reduced motion is disabled');
+ const font=win.getComputedStyle(doc.querySelector('#title h1'));ok(font.backgroundClip==='text'||font.webkitBackgroundClip==='text','logo gradient not clipped to text');
+ for(const size of [...sizes,'3840,2160']){resize(size);await delay(100);fits(doc.querySelector('.title-brand'),'splash '+size);fits(find('NEW HERO'),'splash action '+size);ok(screen().scrollWidth<=screen().clientWidth+1,'splash overflow '+size);const cv=backdrop(),host=rect(doc.querySelector('.title-backdrop')),surface=rect(cv);ok(cv.width<=1920&&cv.height<=1080,'background exceeds resolution cap '+size);ok(Math.abs(surface.width-host.width)<1&&Math.abs(surface.height-host.height)<1,'background no longer covers painting '+size);}
+ resize('1280,720');find('NEW HERO').click();await until(()=>doc.getElementById('campCanvas')?.dataset.renderedClass==='vanguard','first 3D render');
+ ok(backdrop()===initialBackdrop&&doc.querySelectorAll('canvas.title-atmosphere').length===1,'new-hero screen restarted or duplicated background');
+ const signatures=new Set();
+ for(const id of classes){doc.getElementById('choose-'+id).click();await until(()=>doc.getElementById('campCanvas').dataset.renderedClass===id,id+' rendered');ok(doc.querySelector('[role="tab"][aria-selected="true"]').dataset.class===id,'class tab state '+id);ok(doc.querySelectorAll('.discipline').length===3,'three skill disciplines '+id);signatures.add(paintSignature());}
+ ok(signatures.size===5,'classes must have distinct 3D appearances');
+ const tab=doc.getElementById('choose-veilranger');tab.dispatchEvent(new win.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));ok(doc.activeElement.id==='choose-vanguard','keyboard selection did not wrap');
+ doc.activeElement.dispatchEvent(new win.KeyboardEvent('keydown',{key:'End',bubbles:true}));ok(doc.activeElement.id==='choose-veilranger','End did not select last class');
+ doc.activeElement.dispatchEvent(new win.KeyboardEvent('keydown',{key:'Home',bubbles:true}));ok(doc.activeElement.id==='choose-vanguard','Home did not select first class');
+ doc.getElementById('nameInput').value='Eira';doc.getElementById('hcBox').checked=true;doc.getElementById('choose-emberwitch').click();ok(doc.getElementById('nameInput').value==='Eira'&&doc.getElementById('hcBox').checked,'class change reset hero choices');
+ win.toggleTitleMotion();await delay(150);const still=paintSignature();await delay(150);ok(paintSignature()===still,'reduced motion did not freeze idle animation');
+ find('Starting gear').click();await delay(120);ok(paintSignature()!==still,'starting gear did not change 3D loadout');const front=paintSignature();doc.querySelector('[aria-label="Rotate hero right"]').click();await delay(100);ok(paintSignature()!==front,'rotation did not update 3D model in reduced motion');
+ find('Class regalia').click();
+ for(const size of sizes){resize(size);await delay(130);for(const id of classes){doc.getElementById('choose-'+id).click();await delay(100);fits(doc.getElementById('campInfo'),id+' info '+size);fits(doc.getElementById('campCanvas'),id+' model '+size);fits(doc.querySelector('.class-roster'),id+' roster '+size);fits(doc.querySelector('.hero-form'),id+' form '+size);for(const choice of doc.querySelectorAll('.class-choice'))ok(choice.scrollWidth<=choice.clientWidth+1,'class name overflows '+choice.textContent+' at '+size);ok(rect(doc.getElementById('campInfo')).bottom<=rect(doc.querySelector('.class-roster')).top+1,id+' story overlaps roster '+size);ok(screen().scrollWidth<=screen().clientWidth+1,id+' horizontal overflow '+size);paintSignature();}}
+ resize('1280,720');doc.getElementById('choose-emberwitch').click();const oldCanvas=doc.getElementById('campCanvas');
+ doc.querySelector('.hero-form').requestSubmit();await until(()=>game.state?.player&&screen().classList.contains('hidden'),'new hero entered game');
+ ok(game.state.player.name==='Eira'&&game.state.player.classId==='emberwitch'&&game.state.player.hardcore,'hero form values not passed to game');
+ ok(game.state.player._playerVisual.kind==='player3d','new hero is not 3D');
+ const kit=win.eval('DATA').PLAYER_STARTER_LOADOUTS.emberwitch;ok(game.state.player.equip.main.baseId===kit.main&&game.state.player.equip.chest.baseId===kit.chest,'showcase regalia leaked into starter equipment');
+ ok(!doc.getElementById('hud').inert,'HUD remained inert in gameplay');
+ const signature=oldCanvas.toDataURL(),disposedPaints=backgroundPaints(initialBackdrop);await delay(120);ok(oldCanvas.toDataURL()===signature,'hidden preview continues rendering');
+ ok(!initialBackdrop.isConnected&&!backdrop()&&backgroundPaints(initialBackdrop)===disposedPaints,'gameplay did not dispose the background');
+ await until(()=>!!doc.getElementById('openingUI'),'playable opening ready',60000);await game.skipOpening();game.state.flags.seenIntro=true;game.saveAndQuit();
+ await until(()=>find('CHOOSE HERO'),'saved hero main menu');
+ ok(backdrop()!==initialBackdrop&&doc.querySelectorAll('canvas.title-atmosphere').length===1,'return to menu failed to recreate exactly one background');
+ await game.newGame('Rowan','wildkeeper',false);await game.skipOpening();game.state.flags.seenIntro=true;game.saveAndQuit();
+ find('CHOOSE HERO').click();await until(()=>doc.querySelector('.saved-hero'),'saved hero list');
+ const savedBackdrop=backdrop();ok(savedBackdrop&&doc.querySelectorAll('canvas.title-atmosphere').length===1,'saved-hero screen has no unique background');
+ win.toggleTitleMotion();await delay(100);const savedMotion=backgroundSignature();await delay(150);ok(backgroundSignature()!==savedMotion,'saved-hero background is static');win.toggleTitleMotion();
+ ok(doc.querySelectorAll('.saved-hero').length===2,'saved heroes missing');
+ [...doc.querySelectorAll('.saved-hero')].find(b=>b.textContent.includes('Eira')).click();ok(doc.querySelector('.saved-details').textContent.includes('Eira'),'selected save details missing');
+ await delay(150);ok(doc.getElementById('campCanvas').getAttribute('aria-label').includes('equipped gear'),'saved hero does not default to equipped gear');
+ ok(game.listSaves().find(s=>s.name==='Eira').equipment.main.baseId===kit.main,'saved appearance metadata lost equipped weapon');
+ const equipped=paintSignature();find('Class regalia').click();await delay(120);ok(paintSignature()!==equipped,'saved equipment and showcase regalia render the same');find('Equipped gear').click();
+ const savedCount=store.size;win.confirm=()=>false;doc.querySelector('[aria-label="Delete Rowan"]').click();ok(store.size===savedCount,'cancelled deletion removed a save');
+ win.confirm=()=>true;doc.querySelector('[aria-label="Delete Rowan"]').click();ok(store.size===savedCount-1&&doc.querySelectorAll('.saved-hero').length===1,'confirmed deletion did not remove only selected save');ok(doc.querySelector('.saved-details').textContent.includes('Eira'),'deletion lost remaining hero');
+ for(const size of sizes){resize(size);await delay(100);fits(doc.querySelector('.saved-roster'),'saved roster '+size);fits(doc.querySelector('.saved-footer'),'saved action '+size);ok(screen().scrollWidth<=screen().clientWidth+1,'saved screen overflow '+size);}
+ resize('1280,720');find('CONTINUE').click();await until(()=>game.state?.player?.name==='Eira'&&game.state.map&&screen().classList.contains('hidden'),'saved hero resumed');ok(game.state.player.hardcore,'resume changed hardcore');game.saveAndQuit();
+ const ui=win.eval('UI');
+ for(let i=0;i<3;i++){
+   const previous=backdrop();ui.hideTitle();const count=backgroundPaints(previous);await delay(70);
+   ok(!backdrop()&&!previous.isConnected&&backgroundPaints(previous)===count,'background leaked after hide cycle '+i);
+   ui.showTitle();await until(()=>backdrop()&&backgroundPaints(backdrop())>0,'background recreated '+i);
+   const current=backdrop();win.TitleScreen.newHero();win.TitleScreen.savedHeroes();win.TitleScreen.main();
+   ok(backdrop()===current&&doc.querySelectorAll('canvas.title-atmosphere').length===1,'menu navigation duplicated background '+i);
+ }
+ win.toggleTitleMotion();
+ ok(win.titleErrors.length===0,'runtime errors: '+win.titleErrors.join('; '));
+ ok(!doc.getElementById('appFatal'),'fatal error');out.textContent=`PASS — ${checks} checks. Five distinct live 3D classes; five viewport sizes plus 4K background; keyboard navigation; rotation; animated background, 30 FPS/resolution caps, tab visibility and reduced motion; name and hardcore; new-game and saved-hero flows; starter gear isolation; disposed previews and backgrounds. Real saves untouched.`;
+}catch(error){out.textContent=`FAIL after ${checks} checks: ${error.stack}`;}
+document.getElementById('viewport').onchange=e=>resize(e.target.value);
+document.getElementById('splash').onclick=()=>win.TitleScreen.main();
+document.getElementById('creation').onclick=()=>win.TitleScreen.newHero();
+document.getElementById('saved').onclick=()=>win.TitleScreen.savedHeroes();
+document.getElementById('motion').onclick=()=>win.toggleTitleMotion();
+</script></html>

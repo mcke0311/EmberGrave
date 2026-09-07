@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Embergrave — Towns</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101416;color:#e4d9bd;font:14px/1.6 system-ui}header{padding:24px 4vw 18px;border-bottom:1px solid #554b38;background:#181c1d}h1{font:32px Georgia;margin:0 0 7px}p{margin:5px 0;color:#a6ada8}.tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px}select,button{font:inherit;background:#28302f;color:#eddbb3;padding:9px 15px;border:1px solid #807053;border-radius:3px}button:disabled,select:disabled{opacity:.5}main{padding:16px 3vw}#overview{width:100%;display:block;border:1px solid #3b413b;background:#171b1b}#host iframe{width:100%;height:820px;border:1px solid #59513e;display:block}#overview[hidden]{display:none}#host[hidden]{display:block;position:absolute;left:-20000px;top:0;width:1200px}#result{color:#9cc4aa}#description{color:#d0b779;font:18px Georgia;margin:16px 0}#error{white-space:pre-wrap;color:#ff9b81}
+#residents{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}#residents[hidden]{display:none}.resident{background:#202728;border:1px solid #45514b;text-align:center;padding:12px}.resident canvas{display:block;margin:auto}.resident small{color:#93a89b}</style>
+<header><h1>The settlements of Embergrave</h1><p>Five homes at the edge of the wilds. Explore their streets, markets and travel shrines.</p>
+<div class="tools"><label>Town <select id="town" disabled></select></label><button id="view" disabled>Walk through town</button><button id="meet" disabled>Meet residents</button><button id="home" disabled>Return to arrival</button></div>
+<p id="result">Loading and checking town assets…</p><p>Review heroes use a temporary save store. Your characters are unchanged. <a href="level_blending.html" style="color:#e7c784">Review the other levels</a></p></header>
+<main><p id="description"></p><canvas id="overview" width="1340" height="850"></canvas><section id="residents" hidden aria-label="Town residents"></section><div id="host" hidden></div><pre id="error"></pre></main>
+<script type="module">
+window.townReviewStore=new Map();const out=document.getElementById('result'),select=document.getElementById('town'),canvas=document.getElementById('overview'),host=document.getElementById('host');
+let checks=0;const ok=(v,msg)=>{checks++;if(!v)throw Error(msg)};const wait=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+try{
+ const source=await fetch('../index.html',{cache:'no-store'}).then(r=>r.text());
+ const injection=`<base href="${new URL('../index.html',location.href)}"><script>const store=parent.townReviewStore;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});window.addEventListener('error',e=>parent.document.getElementById('error').textContent=e.message);<\/script>`;
+ const frame=document.createElement('iframe');frame.title='Playable town review';frame.srcdoc=source.replace('<head>','<head>'+injection);host.append(frame);await new Promise(r=>frame.onload=r);
+ const win=frame.contentWindow,doc=win.document;for(let i=0;i<300&&!doc.querySelector('#titleMenu button');i++)await new Promise(r=>setTimeout(r,30));
+ const game=win.eval('Game'),ui=win.eval('UI'),data=win.eval('DATA'),assets=win.eval('SpriteAssets'),u=win.eval('U');win.eval('Sfx').setVol('master',0);
+ await game.newGame('Town review','vanguard',false);await game.skipOpening();ui.closeAll();
+ const renderer=await fetch('../js/game.js',{cache:'no-store'}).then(r=>r.text());const a=renderer.indexOf('    /* ---- floors ---- */'),b=renderer.indexOf('    /* ---- ground items:',a);
+ const drawFloor=new win.Function('ctx','m','cam','tx0','tx1','ty0','ty1','inView','EH','MASSIF_THEMES',"LevelTerrain.beginFrame(m);try {"+renderer.slice(a,b)+"} finally {LevelTerrain.endFrame();}");
+ game.state.quests.q8={...game.state.quests.q8,state:'done'};game.state.quests.q8b={...game.state.quests.q8b,state:'offered'};
+ const seenResidents=new Set();
+ const ids=['town','frosthaven','marshcamp','khalcamp','hellgate'];
+ function overview(m){
+   const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);const scale=Math.min((canvas.width-90)/((m.w+m.h)*32),(canvas.height-130)/((m.w+m.h)*16));
+   ctx.save();ctx.translate((canvas.width-(m.w-m.h)*32*scale)/2,100);ctx.scale(scale,scale);drawFloor(ctx,m,{x:0,y:0},0,m.w-1,0,m.h-1,()=>true,14,new Set());
+   const draws=m.props.map(p=>({depth:p.x+p.y,p}));
+   for(let y=0;y<m.h;y++)for(let x=0;x<m.w;x++)if(m.walls[x+y*m.w])draws.push({depth:x+y,x,y});
+   for(const d of draws.sort((a,b)=>a.depth-b.depth)){
+     if(d.p){const p=d.p,id=assets.maps.props[m.id+'_'+p.type]||assets.maps.props[p.type];assets.drawFrame(ctx,assets.getFrame(id,0),u.isoX(p.x,p.y),u.isoY(p.x,p.y));}
+     else {const {x,y}=d;let mask=0;for(const [dx,dy,bit] of [[0,-1,1],[1,0,2],[0,1,4],[-1,0,8]])if(m.walls[x+dx+(y+dy)*m.w])mask|=bit;assets.drawFrame(ctx,assets.getFrame(assets.maps.walls[m.zone.theme],mask),u.isoX(x+.5,y+.5),u.isoY(x+.5,y+.5));}
+   }
+   ctx.font='19px system-ui';ctx.textAlign='center';
+   for(const p of m.props.filter(p=>p.interact)){const f=assets.getFrame(assets.maps.props[m.id+'_'+p.type]||assets.maps.props[p.type],0),x=u.isoX(p.x,p.y),y=u.isoY(p.x,p.y)-f.anchorY-9;ctx.strokeStyle='#101414';ctx.lineWidth=5;ctx.strokeText(p.label,x,y);ctx.fillStyle='#efdfb5';ctx.fillText(p.label,x,y);}
+   ctx.restore();
+ }
+ function residents(){
+   const gallery=document.getElementById('residents');gallery.replaceChildren();
+   for(const npc of game.state.npcs){
+     const card=document.createElement('article');card.className='resident';
+     const portrait=document.createElement('canvas');portrait.width=150;portrait.height=160;
+     const f=assets.getFrame(assets.maps.npcs[npc.spriteOpts.npcArt],0);assets.drawFrame(portrait.getContext('2d'),f,75,145);
+     const name=document.createElement('div');name.textContent=npc.name;
+     const detail=document.createElement('small');detail.textContent=data.NPCS[npc.id].role==='vendor'?'Town merchant':npc.def.wander?'Town resident':'Story character';
+     card.append(portrait,name,detail);gallery.append(card);
+   }
+ }
+ async function visit(id){ui.closeAll();await game.enterMap(id,'default');game.state.monsters=[];game.state.map.explored.fill(1);overview(game.state.map);residents();document.getElementById('description').textContent=data.ZONES[id].name+' · '+game.state.map.settlement.identity;await wait();ok(!doc.querySelector('#appFatal'),id+': renderer failed '+doc.querySelector('#appFatalDetail')?.textContent);}
+ for(const id of ids){
+   select.add(new Option(data.ZONES[id].name,id));await visit(id);const m=game.state.map;
+   for(const npc of game.state.npcs){
+     const art=npc.spriteOpts.npcArt,base=data.NPCS[npc.id],f=assets.getFrame(assets.maps.npcs[art],0);
+     ok(!seenResidents.has(art),id+' duplicate character art '+art);seenResidents.add(art);
+     ok(art.startsWith('resident_'+id+'_'),id+' occupation fallback on '+npc.name);
+     ok(f.image.complete&&f.image.naturalWidth>0,id+' resident image missing '+npc.name);
+     for(const key of Object.keys(base).filter(k=>k!=='name'))ok(npc.def[key]===base[key],id+' changed '+key+' for '+npc.id);
+     ok(win.eval('MapGen').walkable(m,npc.x,npc.y),id+' resident is inside scenery '+npc.name);
+   }
+   for(const key of ['hall','dwelling','workshop','market','tower','shrine','soil','street','firebowl','verge']){const f=assets.getFrame(assets.maps.props[id+'_'+key],0);ok(f.image.complete&&f.sw>0,id+'/'+key+' failed to decode');ok(f.image.src.includes('?v='+data.SPRITE_MANIFEST.entries[f.id].revision),id+'/'+key+' stale-art cache risk');}
+   ok(!m.props.some(p=>p.type==='lantern'),id+' still has hanging lanterns');
+   ok(m.settlement.routes.some(r=>r.points.some(p=>p.x%1!==0&&p.y%1!==0)),id+' routes are snapped to tiles');
+   for(const bowl of m.props.filter(p=>p.type==='firebowl'))ok(m.blocked[(bowl.x|0)+(bowl.y|0)*m.w],id+' fire bowl collision missing');
+   // The cached continuous surface must cover the navigation grid and keep its
+   // world registration when the camera moves (including gate-edge tiles).
+   const probe=document.createElement('canvas');probe.width=(m.w+m.h)*32+50;probe.height=(m.w+m.h)*16+50;
+   const pc=probe.getContext('2d',{willReadFrequently:true}),terrain=win.eval('TownTerrain');
+   terrain.draw(pc,m,{x:-m.h*32-25,y:-25});const first=pc.getImageData(0,0,probe.width,probe.height).data;
+   for(let y=1;y<m.h-1;y++)for(let x=1;x<m.w;x++)if(!m.blocked[x+y*m.w]){
+     const px=u.isoX(x+.5,y+.5)+m.h*32+25,py=u.isoY(x+.5,y+.5)+25;
+     ok(first[(px+py*probe.width)*4+3]>250,id+' gap in ground surface at '+x+','+y);
+   }
+   pc.clearRect(0,0,probe.width,probe.height);terrain.draw(pc,m,{x:-m.h*32-8,y:-16});const shifted=pc.getImageData(0,0,probe.width,probe.height).data;
+   for(let y=2;y<m.h-2;y+=3)for(let x=2;x<m.w-2;x+=3){
+     const px=u.isoX(x+.5,y+.5)+m.h*32+25,py=u.isoY(x+.5,y+.5)+25,i=(px+py*probe.width)*4,j=(px-17+(py-9)*probe.width)*4;
+     ok(first.slice(i,i+4).every((v,k)=>v===shifted[j+k]),id+' terrain moved relative to camera');
+   }
+   const ground=assets.getFrame(assets.maps.grounds[id],0);ok(ground.image.src.includes('?v='+data.SPRITE_MANIFEST.entries[ground.id].revision),id+' ground revision not loaded');
+   for(const p of m.props.filter(p=>p.interact)){game.interact(p);await wait();ok(ui.anyOpen(),id+'/'+p.interact+' did not open');ui.closeAll();}
+   // Exercise production click-to-approach routing and movement at every service.
+   for(const target of [...game.state.npcs,...m.props.filter(p=>p.interact)]){
+     const p=game.state.player;p.x=m.spawns.default.x;p.y=m.spawns.default.y;game.repath(p,target.x,target.y);ok(p.path!==null,id+' production route missing');
+     const reach=target.interactionRange||1.6;
+     for(let step=0;step<2500&&p.path?.length&&Math.hypot(p.x-target.x,p.y-target.y)>=reach;step++)p.moveAlong(1/60,p.stats.moveSpeed,m,[]);
+     ok(Math.hypot(p.x-target.x,p.y-target.y)<reach,id+' movement cannot reach '+(target.id||target.interact));p.path=null;p.command=null;
+   }
+ }
+ ok(seenResidents.size===46,'Missing resident or rescued miner');
+ await visit('town');select.value='town';out.textContent=`PASS · ${checks} checks across all five towns · 46 distinct residents, including Halvar.`;
+ document.getElementById('meet').disabled=false;select.disabled=false;document.getElementById('view').disabled=false;document.getElementById('home').disabled=false;
+ select.onchange=async()=>{select.disabled=true;await visit(select.value);select.disabled=false};
+ document.getElementById('view').onclick=()=>{document.getElementById('residents').hidden=true;const play=host.hidden;host.hidden=!play;canvas.hidden=play;document.getElementById('view').textContent=play?'Town overview':'Walk through town';win.dispatchEvent(new win.Event('resize'));};
+ document.getElementById('meet').onclick=()=>{document.getElementById('residents').hidden=false;host.hidden=true;canvas.hidden=true;document.getElementById('view').textContent='Walk through town';};
+ document.getElementById('home').onclick=()=>visit(select.value);
+}catch(e){out.textContent='FAIL · '+e.message;document.getElementById('error').textContent=e.stack;throw e}
+</script></html>

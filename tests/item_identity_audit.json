@@ -1,0 +1,4558 @@
+{
+  "checks": 2956,
+  "counts": {
+    "Base equipment": 300,
+    "Unique equipment": 139,
+    "Set equipment": 13,
+    "Supplies": 8,
+    "Glyphs": 12,
+    "Charms": 3,
+    "Unique charms": 9,
+    "Jewels": 6,
+    "Unique jewels": 8
+  },
+  "items": [
+    {
+      "group": "Base equipment",
+      "key": "shortsword",
+      "name": "Shortsword",
+      "base": "Shortsword",
+      "assetId": "ui.items.equipment",
+      "index": 0
+    },
+    {
+      "group": "Base equipment",
+      "key": "broadsword",
+      "name": "Broadsword",
+      "base": "Broadsword",
+      "assetId": "ui.items.equipment",
+      "index": 17
+    },
+    {
+      "group": "Base equipment",
+      "key": "handaxe",
+      "name": "Hand Axe",
+      "base": "Hand Axe",
+      "assetId": "ui.items.equipment",
+      "index": 1
+    },
+    {
+      "group": "Base equipment",
+      "key": "waraxe",
+      "name": "War Axe",
+      "base": "War Axe",
+      "assetId": "ui.items.equipment",
+      "index": 18
+    },
+    {
+      "group": "Base equipment",
+      "key": "cudgel",
+      "name": "Cudgel",
+      "base": "Cudgel",
+      "assetId": "ui.items.variants",
+      "index": 15
+    },
+    {
+      "group": "Base equipment",
+      "key": "flangedmace",
+      "name": "Flanged Mace",
+      "base": "Flanged Mace",
+      "assetId": "ui.items.variants",
+      "index": 14
+    },
+    {
+      "group": "Base equipment",
+      "key": "dirk",
+      "name": "Dirk",
+      "base": "Dirk",
+      "assetId": "ui.items.equipment",
+      "index": 3
+    },
+    {
+      "group": "Base equipment",
+      "key": "boarspear",
+      "name": "Boar Spear",
+      "base": "Boar Spear",
+      "assetId": "ui.items.equipment",
+      "index": 4
+    },
+    {
+      "group": "Base equipment",
+      "key": "huntbow",
+      "name": "Hunting Bow",
+      "base": "Hunting Bow",
+      "assetId": "ui.items.equipment",
+      "index": 5
+    },
+    {
+      "group": "Base equipment",
+      "key": "gnarlwand",
+      "name": "Gnarled Wand",
+      "base": "Gnarled Wand",
+      "assetId": "ui.items.equipment",
+      "index": 7
+    },
+    {
+      "group": "Base equipment",
+      "key": "ashstaff",
+      "name": "Ash Staff",
+      "base": "Ash Staff",
+      "assetId": "ui.items.equipment",
+      "index": 8
+    },
+    {
+      "group": "Base equipment",
+      "key": "buckler",
+      "name": "Wooden Buckler",
+      "base": "Wooden Buckler",
+      "assetId": "ui.items.variants",
+      "index": 13
+    },
+    {
+      "group": "Base equipment",
+      "key": "kiteshield",
+      "name": "Kite Shield",
+      "base": "Kite Shield",
+      "assetId": "ui.items.equipment",
+      "index": 26
+    },
+    {
+      "group": "Base equipment",
+      "key": "cap",
+      "name": "Leather Cap",
+      "base": "Leather Cap",
+      "assetId": "ui.items.variants",
+      "index": 7
+    },
+    {
+      "group": "Base equipment",
+      "key": "warhelm",
+      "name": "War Helm",
+      "base": "War Helm",
+      "assetId": "ui.items.equipment",
+      "index": 27
+    },
+    {
+      "group": "Base equipment",
+      "key": "quiltvest",
+      "name": "Quilted Vest",
+      "base": "Quilted Vest",
+      "assetId": "ui.items.variants",
+      "index": 8
+    },
+    {
+      "group": "Base equipment",
+      "key": "hauberk",
+      "name": "Mail Hauberk",
+      "base": "Mail Hauberk",
+      "assetId": "ui.items.variants",
+      "index": 9
+    },
+    {
+      "group": "Base equipment",
+      "key": "ljgloves",
+      "name": "Leather Gloves",
+      "base": "Leather Gloves",
+      "assetId": "ui.items.variants",
+      "index": 10
+    },
+    {
+      "group": "Base equipment",
+      "key": "warboots",
+      "name": "Hard Boots",
+      "base": "Hard Boots",
+      "assetId": "ui.items.variants",
+      "index": 11
+    },
+    {
+      "group": "Base equipment",
+      "key": "sash",
+      "name": "Worn Sash",
+      "base": "Worn Sash",
+      "assetId": "ui.items.variants",
+      "index": 12
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 15
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 16
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t0",
+      "name": "Rusted Sword",
+      "base": "Rusted Sword",
+      "assetId": "ui.items.equipment",
+      "index": 0
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t1",
+      "name": "Iron Sword",
+      "base": "Iron Sword",
+      "assetId": "ui.items.equipment",
+      "index": 17
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t2",
+      "name": "Honed Sword",
+      "base": "Honed Sword",
+      "assetId": "ui.items.equipment",
+      "index": 34
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t3",
+      "name": "Steel Sword",
+      "base": "Steel Sword",
+      "assetId": "ui.items.equipment",
+      "index": 51
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t4",
+      "name": "Soldier's Sword",
+      "base": "Soldier's Sword",
+      "assetId": "ui.items.equipment",
+      "index": 68
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t5",
+      "name": "Knightly Sword",
+      "base": "Knightly Sword",
+      "assetId": "ui.items.equipment",
+      "index": 85
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t6",
+      "name": "Tempered Sword",
+      "base": "Tempered Sword",
+      "assetId": "ui.items.equipment",
+      "index": 102
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t7",
+      "name": "Runed Sword",
+      "base": "Runed Sword",
+      "assetId": "ui.items.equipment",
+      "index": 119
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t8",
+      "name": "Mithral Sword",
+      "base": "Mithral Sword",
+      "assetId": "ui.items.equipment",
+      "index": 136
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t9",
+      "name": "Dragonbone Sword",
+      "base": "Dragonbone Sword",
+      "assetId": "ui.items.equipment",
+      "index": 153
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t10",
+      "name": "Obsidian Sword",
+      "base": "Obsidian Sword",
+      "assetId": "ui.items.equipment",
+      "index": 170
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t11",
+      "name": "Celestial Sword",
+      "base": "Celestial Sword",
+      "assetId": "ui.items.equipment",
+      "index": 187
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t12",
+      "name": "Sunforged Sword",
+      "base": "Sunforged Sword",
+      "assetId": "ui.items.equipment",
+      "index": 204
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword_t13",
+      "name": "Worldforged Sword",
+      "base": "Worldforged Sword",
+      "assetId": "ui.items.equipment",
+      "index": 221
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t0",
+      "name": "Rusted Greatsword",
+      "base": "Rusted Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#6f5742",
+        "wood": "#43331f"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t1",
+      "name": "Iron Greatsword",
+      "base": "Iron Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#7c7e84",
+        "wood": "#574026"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t2",
+      "name": "Honed Greatsword",
+      "base": "Honed Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#9aa0a8",
+        "wood": "#5e4a2e"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t3",
+      "name": "Steel Greatsword",
+      "base": "Steel Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t4",
+      "name": "Soldier's Greatsword",
+      "base": "Soldier's Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#b9a878",
+        "wood": "#5f4628"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t5",
+      "name": "Knightly Greatsword",
+      "base": "Knightly Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#cdd6e0",
+        "wood": "#6a502e"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t6",
+      "name": "Tempered Greatsword",
+      "base": "Tempered Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#8f98ac",
+        "wood": "#544230"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t7",
+      "name": "Runed Greatsword",
+      "base": "Runed Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#aeb8cc",
+        "wood": "#574734"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t8",
+      "name": "Mithral Greatsword",
+      "base": "Mithral Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t9",
+      "name": "Dragonbone Greatsword",
+      "base": "Dragonbone Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#e8dfc6",
+        "wood": "#7a5a3a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t10",
+      "name": "Obsidian Greatsword",
+      "base": "Obsidian Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#2c2832",
+        "wood": "#1b1822"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t11",
+      "name": "Celestial Greatsword",
+      "base": "Celestial Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#f3edd4",
+        "wood": "#c8b27a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t12",
+      "name": "Sunforged Greatsword",
+      "base": "Sunforged Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#f6c45e",
+        "wood": "#8a5a2a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "sword2h_t13",
+      "name": "Worldforged Greatsword",
+      "base": "Worldforged Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#d2f0e2",
+        "wood": "#566a4c"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t0",
+      "name": "Rusted Axe",
+      "base": "Rusted Axe",
+      "assetId": "ui.items.equipment",
+      "index": 1
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t1",
+      "name": "Iron Axe",
+      "base": "Iron Axe",
+      "assetId": "ui.items.equipment",
+      "index": 18
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t2",
+      "name": "Honed Axe",
+      "base": "Honed Axe",
+      "assetId": "ui.items.equipment",
+      "index": 35
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t3",
+      "name": "Steel Axe",
+      "base": "Steel Axe",
+      "assetId": "ui.items.equipment",
+      "index": 52
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t4",
+      "name": "Soldier's Axe",
+      "base": "Soldier's Axe",
+      "assetId": "ui.items.equipment",
+      "index": 69
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t5",
+      "name": "Knightly Axe",
+      "base": "Knightly Axe",
+      "assetId": "ui.items.equipment",
+      "index": 86
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t6",
+      "name": "Tempered Axe",
+      "base": "Tempered Axe",
+      "assetId": "ui.items.equipment",
+      "index": 103
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t7",
+      "name": "Runed Axe",
+      "base": "Runed Axe",
+      "assetId": "ui.items.equipment",
+      "index": 120
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t8",
+      "name": "Mithral Axe",
+      "base": "Mithral Axe",
+      "assetId": "ui.items.equipment",
+      "index": 137
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t9",
+      "name": "Dragonbone Axe",
+      "base": "Dragonbone Axe",
+      "assetId": "ui.items.equipment",
+      "index": 154
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t10",
+      "name": "Obsidian Axe",
+      "base": "Obsidian Axe",
+      "assetId": "ui.items.equipment",
+      "index": 171
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t11",
+      "name": "Celestial Axe",
+      "base": "Celestial Axe",
+      "assetId": "ui.items.equipment",
+      "index": 188
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t12",
+      "name": "Sunforged Axe",
+      "base": "Sunforged Axe",
+      "assetId": "ui.items.equipment",
+      "index": 205
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe_t13",
+      "name": "Worldforged Axe",
+      "base": "Worldforged Axe",
+      "assetId": "ui.items.equipment",
+      "index": 222
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t0",
+      "name": "Rusted Greataxe",
+      "base": "Rusted Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#6f5742",
+        "wood": "#43331f"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t1",
+      "name": "Iron Greataxe",
+      "base": "Iron Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#7c7e84",
+        "wood": "#574026"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t2",
+      "name": "Honed Greataxe",
+      "base": "Honed Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#9aa0a8",
+        "wood": "#5e4a2e"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t3",
+      "name": "Steel Greataxe",
+      "base": "Steel Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t4",
+      "name": "Soldier's Greataxe",
+      "base": "Soldier's Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#b9a878",
+        "wood": "#5f4628"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t5",
+      "name": "Knightly Greataxe",
+      "base": "Knightly Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#cdd6e0",
+        "wood": "#6a502e"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t6",
+      "name": "Tempered Greataxe",
+      "base": "Tempered Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#8f98ac",
+        "wood": "#544230"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t7",
+      "name": "Runed Greataxe",
+      "base": "Runed Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#aeb8cc",
+        "wood": "#574734"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t8",
+      "name": "Mithral Greataxe",
+      "base": "Mithral Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t9",
+      "name": "Dragonbone Greataxe",
+      "base": "Dragonbone Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#e8dfc6",
+        "wood": "#7a5a3a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t10",
+      "name": "Obsidian Greataxe",
+      "base": "Obsidian Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#2c2832",
+        "wood": "#1b1822"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t11",
+      "name": "Celestial Greataxe",
+      "base": "Celestial Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#f3edd4",
+        "wood": "#c8b27a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t12",
+      "name": "Sunforged Greataxe",
+      "base": "Sunforged Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#f6c45e",
+        "wood": "#8a5a2a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "axe2h_t13",
+      "name": "Worldforged Greataxe",
+      "base": "Worldforged Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#d2f0e2",
+        "wood": "#566a4c"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t0",
+      "name": "Rusted Mace",
+      "base": "Rusted Mace",
+      "assetId": "ui.items.equipment",
+      "index": 2
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t1",
+      "name": "Iron Mace",
+      "base": "Iron Mace",
+      "assetId": "ui.items.equipment",
+      "index": 19
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t2",
+      "name": "Honed Mace",
+      "base": "Honed Mace",
+      "assetId": "ui.items.equipment",
+      "index": 36
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t3",
+      "name": "Steel Mace",
+      "base": "Steel Mace",
+      "assetId": "ui.items.equipment",
+      "index": 53
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t4",
+      "name": "Soldier's Mace",
+      "base": "Soldier's Mace",
+      "assetId": "ui.items.equipment",
+      "index": 70
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t5",
+      "name": "Knightly Mace",
+      "base": "Knightly Mace",
+      "assetId": "ui.items.equipment",
+      "index": 87
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t6",
+      "name": "Tempered Mace",
+      "base": "Tempered Mace",
+      "assetId": "ui.items.equipment",
+      "index": 104
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t7",
+      "name": "Runed Mace",
+      "base": "Runed Mace",
+      "assetId": "ui.items.equipment",
+      "index": 121
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t8",
+      "name": "Mithral Mace",
+      "base": "Mithral Mace",
+      "assetId": "ui.items.equipment",
+      "index": 138
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t9",
+      "name": "Dragonbone Mace",
+      "base": "Dragonbone Mace",
+      "assetId": "ui.items.equipment",
+      "index": 155
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t10",
+      "name": "Obsidian Mace",
+      "base": "Obsidian Mace",
+      "assetId": "ui.items.equipment",
+      "index": 172
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t11",
+      "name": "Celestial Mace",
+      "base": "Celestial Mace",
+      "assetId": "ui.items.equipment",
+      "index": 189
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t12",
+      "name": "Sunforged Mace",
+      "base": "Sunforged Mace",
+      "assetId": "ui.items.equipment",
+      "index": 206
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace_t13",
+      "name": "Worldforged Mace",
+      "base": "Worldforged Mace",
+      "assetId": "ui.items.equipment",
+      "index": 223
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t0",
+      "name": "Rusted Maul",
+      "base": "Rusted Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#6f5742",
+        "wood": "#43331f"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t1",
+      "name": "Iron Maul",
+      "base": "Iron Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#7c7e84",
+        "wood": "#574026"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t2",
+      "name": "Honed Maul",
+      "base": "Honed Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#9aa0a8",
+        "wood": "#5e4a2e"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t3",
+      "name": "Steel Maul",
+      "base": "Steel Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t4",
+      "name": "Soldier's Maul",
+      "base": "Soldier's Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#b9a878",
+        "wood": "#5f4628"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t5",
+      "name": "Knightly Maul",
+      "base": "Knightly Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#cdd6e0",
+        "wood": "#6a502e"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t6",
+      "name": "Tempered Maul",
+      "base": "Tempered Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#8f98ac",
+        "wood": "#544230"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t7",
+      "name": "Runed Maul",
+      "base": "Runed Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#aeb8cc",
+        "wood": "#574734"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t8",
+      "name": "Mithral Maul",
+      "base": "Mithral Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t9",
+      "name": "Dragonbone Maul",
+      "base": "Dragonbone Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#e8dfc6",
+        "wood": "#7a5a3a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t10",
+      "name": "Obsidian Maul",
+      "base": "Obsidian Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#2c2832",
+        "wood": "#1b1822"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t11",
+      "name": "Celestial Maul",
+      "base": "Celestial Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#f3edd4",
+        "wood": "#c8b27a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t12",
+      "name": "Sunforged Maul",
+      "base": "Sunforged Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#f6c45e",
+        "wood": "#8a5a2a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "mace2h_t13",
+      "name": "Worldforged Maul",
+      "base": "Worldforged Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#d2f0e2",
+        "wood": "#566a4c"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t0",
+      "name": "Rusted Dagger",
+      "base": "Rusted Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 3
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t1",
+      "name": "Iron Dagger",
+      "base": "Iron Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 20
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t2",
+      "name": "Honed Dagger",
+      "base": "Honed Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 37
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t3",
+      "name": "Steel Dagger",
+      "base": "Steel Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 54
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t4",
+      "name": "Soldier's Dagger",
+      "base": "Soldier's Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 71
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t5",
+      "name": "Knightly Dagger",
+      "base": "Knightly Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 88
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t6",
+      "name": "Tempered Dagger",
+      "base": "Tempered Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 105
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t7",
+      "name": "Runed Dagger",
+      "base": "Runed Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 122
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t8",
+      "name": "Mithral Dagger",
+      "base": "Mithral Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 139
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t9",
+      "name": "Dragonbone Dagger",
+      "base": "Dragonbone Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 156
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t10",
+      "name": "Obsidian Dagger",
+      "base": "Obsidian Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 173
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t11",
+      "name": "Celestial Dagger",
+      "base": "Celestial Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 190
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t12",
+      "name": "Sunforged Dagger",
+      "base": "Sunforged Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 207
+    },
+    {
+      "group": "Base equipment",
+      "key": "dagger_t13",
+      "name": "Worldforged Dagger",
+      "base": "Worldforged Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 224
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t0",
+      "name": "Rusted Spear",
+      "base": "Rusted Spear",
+      "assetId": "ui.items.equipment",
+      "index": 4
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t1",
+      "name": "Iron Spear",
+      "base": "Iron Spear",
+      "assetId": "ui.items.equipment",
+      "index": 21
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t2",
+      "name": "Honed Spear",
+      "base": "Honed Spear",
+      "assetId": "ui.items.equipment",
+      "index": 38
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t3",
+      "name": "Steel Spear",
+      "base": "Steel Spear",
+      "assetId": "ui.items.equipment",
+      "index": 55
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t4",
+      "name": "Soldier's Spear",
+      "base": "Soldier's Spear",
+      "assetId": "ui.items.equipment",
+      "index": 72
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t5",
+      "name": "Knightly Spear",
+      "base": "Knightly Spear",
+      "assetId": "ui.items.equipment",
+      "index": 89
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t6",
+      "name": "Tempered Spear",
+      "base": "Tempered Spear",
+      "assetId": "ui.items.equipment",
+      "index": 106
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t7",
+      "name": "Runed Spear",
+      "base": "Runed Spear",
+      "assetId": "ui.items.equipment",
+      "index": 123
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t8",
+      "name": "Mithral Spear",
+      "base": "Mithral Spear",
+      "assetId": "ui.items.equipment",
+      "index": 140
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t9",
+      "name": "Dragonbone Spear",
+      "base": "Dragonbone Spear",
+      "assetId": "ui.items.equipment",
+      "index": 157
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t10",
+      "name": "Obsidian Spear",
+      "base": "Obsidian Spear",
+      "assetId": "ui.items.equipment",
+      "index": 174
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t11",
+      "name": "Celestial Spear",
+      "base": "Celestial Spear",
+      "assetId": "ui.items.equipment",
+      "index": 191
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t12",
+      "name": "Sunforged Spear",
+      "base": "Sunforged Spear",
+      "assetId": "ui.items.equipment",
+      "index": 208
+    },
+    {
+      "group": "Base equipment",
+      "key": "spear2h_t13",
+      "name": "Worldforged Spear",
+      "base": "Worldforged Spear",
+      "assetId": "ui.items.equipment",
+      "index": 225
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t0",
+      "name": "Rusted Bow",
+      "base": "Rusted Bow",
+      "assetId": "ui.items.equipment",
+      "index": 5
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t1",
+      "name": "Iron Bow",
+      "base": "Iron Bow",
+      "assetId": "ui.items.equipment",
+      "index": 22
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t2",
+      "name": "Honed Bow",
+      "base": "Honed Bow",
+      "assetId": "ui.items.equipment",
+      "index": 39
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t3",
+      "name": "Steel Bow",
+      "base": "Steel Bow",
+      "assetId": "ui.items.equipment",
+      "index": 56
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t4",
+      "name": "Soldier's Bow",
+      "base": "Soldier's Bow",
+      "assetId": "ui.items.equipment",
+      "index": 73
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t5",
+      "name": "Knightly Bow",
+      "base": "Knightly Bow",
+      "assetId": "ui.items.equipment",
+      "index": 90
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t6",
+      "name": "Tempered Bow",
+      "base": "Tempered Bow",
+      "assetId": "ui.items.equipment",
+      "index": 107
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t7",
+      "name": "Runed Bow",
+      "base": "Runed Bow",
+      "assetId": "ui.items.equipment",
+      "index": 124
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t8",
+      "name": "Mithral Bow",
+      "base": "Mithral Bow",
+      "assetId": "ui.items.equipment",
+      "index": 141
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t9",
+      "name": "Dragonbone Bow",
+      "base": "Dragonbone Bow",
+      "assetId": "ui.items.equipment",
+      "index": 158
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t10",
+      "name": "Obsidian Bow",
+      "base": "Obsidian Bow",
+      "assetId": "ui.items.equipment",
+      "index": 175
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t11",
+      "name": "Celestial Bow",
+      "base": "Celestial Bow",
+      "assetId": "ui.items.equipment",
+      "index": 192
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t12",
+      "name": "Sunforged Bow",
+      "base": "Sunforged Bow",
+      "assetId": "ui.items.equipment",
+      "index": 209
+    },
+    {
+      "group": "Base equipment",
+      "key": "bow2h_t13",
+      "name": "Worldforged Bow",
+      "base": "Worldforged Bow",
+      "assetId": "ui.items.equipment",
+      "index": 226
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t0",
+      "name": "Rusted Crossbow",
+      "base": "Rusted Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 6
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t1",
+      "name": "Iron Crossbow",
+      "base": "Iron Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 23
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t2",
+      "name": "Honed Crossbow",
+      "base": "Honed Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 40
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t3",
+      "name": "Steel Crossbow",
+      "base": "Steel Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 57
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t4",
+      "name": "Soldier's Crossbow",
+      "base": "Soldier's Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 74
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t5",
+      "name": "Knightly Crossbow",
+      "base": "Knightly Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 91
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t6",
+      "name": "Tempered Crossbow",
+      "base": "Tempered Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 108
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t7",
+      "name": "Runed Crossbow",
+      "base": "Runed Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 125
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t8",
+      "name": "Mithral Crossbow",
+      "base": "Mithral Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 142
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t9",
+      "name": "Dragonbone Crossbow",
+      "base": "Dragonbone Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 159
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t10",
+      "name": "Obsidian Crossbow",
+      "base": "Obsidian Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 176
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t11",
+      "name": "Celestial Crossbow",
+      "base": "Celestial Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 193
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t12",
+      "name": "Sunforged Crossbow",
+      "base": "Sunforged Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 210
+    },
+    {
+      "group": "Base equipment",
+      "key": "crossbow2h_t13",
+      "name": "Worldforged Crossbow",
+      "base": "Worldforged Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 227
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t0",
+      "name": "Rusted Wand",
+      "base": "Rusted Wand",
+      "assetId": "ui.items.equipment",
+      "index": 7
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t1",
+      "name": "Iron Wand",
+      "base": "Iron Wand",
+      "assetId": "ui.items.equipment",
+      "index": 24
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t2",
+      "name": "Honed Wand",
+      "base": "Honed Wand",
+      "assetId": "ui.items.equipment",
+      "index": 41
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t3",
+      "name": "Steel Wand",
+      "base": "Steel Wand",
+      "assetId": "ui.items.equipment",
+      "index": 58
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t4",
+      "name": "Soldier's Wand",
+      "base": "Soldier's Wand",
+      "assetId": "ui.items.equipment",
+      "index": 75
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t5",
+      "name": "Knightly Wand",
+      "base": "Knightly Wand",
+      "assetId": "ui.items.equipment",
+      "index": 92
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t6",
+      "name": "Tempered Wand",
+      "base": "Tempered Wand",
+      "assetId": "ui.items.equipment",
+      "index": 109
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t7",
+      "name": "Runed Wand",
+      "base": "Runed Wand",
+      "assetId": "ui.items.equipment",
+      "index": 126
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t8",
+      "name": "Mithral Wand",
+      "base": "Mithral Wand",
+      "assetId": "ui.items.equipment",
+      "index": 143
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t9",
+      "name": "Dragonbone Wand",
+      "base": "Dragonbone Wand",
+      "assetId": "ui.items.equipment",
+      "index": 160
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t10",
+      "name": "Obsidian Wand",
+      "base": "Obsidian Wand",
+      "assetId": "ui.items.equipment",
+      "index": 177
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t11",
+      "name": "Celestial Wand",
+      "base": "Celestial Wand",
+      "assetId": "ui.items.equipment",
+      "index": 194
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t12",
+      "name": "Sunforged Wand",
+      "base": "Sunforged Wand",
+      "assetId": "ui.items.equipment",
+      "index": 211
+    },
+    {
+      "group": "Base equipment",
+      "key": "wand_t13",
+      "name": "Worldforged Wand",
+      "base": "Worldforged Wand",
+      "assetId": "ui.items.equipment",
+      "index": 228
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t0",
+      "name": "Rusted Staff",
+      "base": "Rusted Staff",
+      "assetId": "ui.items.equipment",
+      "index": 8
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t1",
+      "name": "Iron Staff",
+      "base": "Iron Staff",
+      "assetId": "ui.items.equipment",
+      "index": 25
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t2",
+      "name": "Honed Staff",
+      "base": "Honed Staff",
+      "assetId": "ui.items.equipment",
+      "index": 42
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t3",
+      "name": "Steel Staff",
+      "base": "Steel Staff",
+      "assetId": "ui.items.equipment",
+      "index": 59
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t4",
+      "name": "Soldier's Staff",
+      "base": "Soldier's Staff",
+      "assetId": "ui.items.equipment",
+      "index": 76
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t5",
+      "name": "Knightly Staff",
+      "base": "Knightly Staff",
+      "assetId": "ui.items.equipment",
+      "index": 93
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t6",
+      "name": "Tempered Staff",
+      "base": "Tempered Staff",
+      "assetId": "ui.items.equipment",
+      "index": 110
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t7",
+      "name": "Runed Staff",
+      "base": "Runed Staff",
+      "assetId": "ui.items.equipment",
+      "index": 127
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t8",
+      "name": "Mithral Staff",
+      "base": "Mithral Staff",
+      "assetId": "ui.items.equipment",
+      "index": 144
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t9",
+      "name": "Dragonbone Staff",
+      "base": "Dragonbone Staff",
+      "assetId": "ui.items.equipment",
+      "index": 161
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t10",
+      "name": "Obsidian Staff",
+      "base": "Obsidian Staff",
+      "assetId": "ui.items.equipment",
+      "index": 178
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t11",
+      "name": "Celestial Staff",
+      "base": "Celestial Staff",
+      "assetId": "ui.items.equipment",
+      "index": 195
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t12",
+      "name": "Sunforged Staff",
+      "base": "Sunforged Staff",
+      "assetId": "ui.items.equipment",
+      "index": 212
+    },
+    {
+      "group": "Base equipment",
+      "key": "staff2h_t13",
+      "name": "Worldforged Staff",
+      "base": "Worldforged Staff",
+      "assetId": "ui.items.equipment",
+      "index": 229
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t0",
+      "name": "Tattered Helm",
+      "base": "Tattered Helm",
+      "assetId": "ui.items.variants",
+      "index": 20
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t1",
+      "name": "Leather Helm",
+      "base": "Leather Helm",
+      "assetId": "ui.items.variants",
+      "index": 20
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t2",
+      "name": "Studded Helm",
+      "base": "Studded Helm",
+      "assetId": "ui.items.variants",
+      "index": 20
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t3",
+      "name": "Iron Helm",
+      "base": "Iron Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t4",
+      "name": "Chain Helm",
+      "base": "Chain Helm",
+      "assetId": "ui.items.variants",
+      "index": 21,
+      "tint": {
+        "metal": "#b9a878",
+        "wood": "#5f4628"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t5",
+      "name": "Steel Helm",
+      "base": "Steel Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#cdd6e0",
+        "wood": "#6a502e"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t6",
+      "name": "Knightly Helm",
+      "base": "Knightly Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#8f98ac",
+        "wood": "#544230"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t7",
+      "name": "Runed Helm",
+      "base": "Runed Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#aeb8cc",
+        "wood": "#574734"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t8",
+      "name": "Mithral Helm",
+      "base": "Mithral Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t9",
+      "name": "Dragonbone Helm",
+      "base": "Dragonbone Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#e8dfc6",
+        "wood": "#7a5a3a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t10",
+      "name": "Obsidian Helm",
+      "base": "Obsidian Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#2c2832",
+        "wood": "#1b1822"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t11",
+      "name": "Celestial Helm",
+      "base": "Celestial Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#f3edd4",
+        "wood": "#c8b27a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t12",
+      "name": "Sunforged Helm",
+      "base": "Sunforged Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#f6c45e",
+        "wood": "#8a5a2a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "helm_t13",
+      "name": "Worldforged Helm",
+      "base": "Worldforged Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#d2f0e2",
+        "wood": "#566a4c"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t0",
+      "name": "Tattered Cuirass",
+      "base": "Tattered Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 19
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t1",
+      "name": "Leather Cuirass",
+      "base": "Leather Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 19
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t2",
+      "name": "Studded Cuirass",
+      "base": "Studded Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 19
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t3",
+      "name": "Iron Cuirass",
+      "base": "Iron Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t4",
+      "name": "Chain Cuirass",
+      "base": "Chain Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 9,
+      "tint": {
+        "metal": "#b9a878",
+        "wood": "#5f4628"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t5",
+      "name": "Steel Cuirass",
+      "base": "Steel Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#cdd6e0",
+        "wood": "#6a502e"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t6",
+      "name": "Knightly Cuirass",
+      "base": "Knightly Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#8f98ac",
+        "wood": "#544230"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t7",
+      "name": "Runed Cuirass",
+      "base": "Runed Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#aeb8cc",
+        "wood": "#574734"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t8",
+      "name": "Mithral Cuirass",
+      "base": "Mithral Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t9",
+      "name": "Dragonbone Cuirass",
+      "base": "Dragonbone Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#e8dfc6",
+        "wood": "#7a5a3a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t10",
+      "name": "Obsidian Cuirass",
+      "base": "Obsidian Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#2c2832",
+        "wood": "#1b1822"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t11",
+      "name": "Celestial Cuirass",
+      "base": "Celestial Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#f3edd4",
+        "wood": "#c8b27a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t12",
+      "name": "Sunforged Cuirass",
+      "base": "Sunforged Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#f6c45e",
+        "wood": "#8a5a2a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "chest_t13",
+      "name": "Worldforged Cuirass",
+      "base": "Worldforged Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#d2f0e2",
+        "wood": "#566a4c"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t0",
+      "name": "Tattered Gauntlets",
+      "base": "Tattered Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 10
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t1",
+      "name": "Leather Gauntlets",
+      "base": "Leather Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 10
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t2",
+      "name": "Studded Gauntlets",
+      "base": "Studded Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 10
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t3",
+      "name": "Iron Gauntlets",
+      "base": "Iron Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t4",
+      "name": "Chain Gauntlets",
+      "base": "Chain Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 22,
+      "tint": {
+        "metal": "#b9a878",
+        "wood": "#5f4628"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t5",
+      "name": "Steel Gauntlets",
+      "base": "Steel Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#cdd6e0",
+        "wood": "#6a502e"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t6",
+      "name": "Knightly Gauntlets",
+      "base": "Knightly Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#8f98ac",
+        "wood": "#544230"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t7",
+      "name": "Runed Gauntlets",
+      "base": "Runed Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#aeb8cc",
+        "wood": "#574734"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t8",
+      "name": "Mithral Gauntlets",
+      "base": "Mithral Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t9",
+      "name": "Dragonbone Gauntlets",
+      "base": "Dragonbone Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#e8dfc6",
+        "wood": "#7a5a3a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t10",
+      "name": "Obsidian Gauntlets",
+      "base": "Obsidian Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#2c2832",
+        "wood": "#1b1822"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t11",
+      "name": "Celestial Gauntlets",
+      "base": "Celestial Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#f3edd4",
+        "wood": "#c8b27a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t12",
+      "name": "Sunforged Gauntlets",
+      "base": "Sunforged Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#f6c45e",
+        "wood": "#8a5a2a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "gloves_t13",
+      "name": "Worldforged Gauntlets",
+      "base": "Worldforged Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#d2f0e2",
+        "wood": "#566a4c"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t0",
+      "name": "Tattered Greaves",
+      "base": "Tattered Greaves",
+      "assetId": "ui.items.variants",
+      "index": 11
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t1",
+      "name": "Leather Greaves",
+      "base": "Leather Greaves",
+      "assetId": "ui.items.variants",
+      "index": 11
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t2",
+      "name": "Studded Greaves",
+      "base": "Studded Greaves",
+      "assetId": "ui.items.variants",
+      "index": 11
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t3",
+      "name": "Iron Greaves",
+      "base": "Iron Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t4",
+      "name": "Chain Greaves",
+      "base": "Chain Greaves",
+      "assetId": "ui.items.variants",
+      "index": 23,
+      "tint": {
+        "metal": "#b9a878",
+        "wood": "#5f4628"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t5",
+      "name": "Steel Greaves",
+      "base": "Steel Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#cdd6e0",
+        "wood": "#6a502e"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t6",
+      "name": "Knightly Greaves",
+      "base": "Knightly Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#8f98ac",
+        "wood": "#544230"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t7",
+      "name": "Runed Greaves",
+      "base": "Runed Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#aeb8cc",
+        "wood": "#574734"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t8",
+      "name": "Mithral Greaves",
+      "base": "Mithral Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t9",
+      "name": "Dragonbone Greaves",
+      "base": "Dragonbone Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#e8dfc6",
+        "wood": "#7a5a3a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t10",
+      "name": "Obsidian Greaves",
+      "base": "Obsidian Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#2c2832",
+        "wood": "#1b1822"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t11",
+      "name": "Celestial Greaves",
+      "base": "Celestial Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#f3edd4",
+        "wood": "#c8b27a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t12",
+      "name": "Sunforged Greaves",
+      "base": "Sunforged Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#f6c45e",
+        "wood": "#8a5a2a"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "boots_t13",
+      "name": "Worldforged Greaves",
+      "base": "Worldforged Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#d2f0e2",
+        "wood": "#566a4c"
+      }
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t0",
+      "name": "Tattered Belt",
+      "base": "Tattered Belt",
+      "assetId": "ui.items.equipment",
+      "index": 14
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t1",
+      "name": "Leather Belt",
+      "base": "Leather Belt",
+      "assetId": "ui.items.equipment",
+      "index": 31
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t2",
+      "name": "Studded Belt",
+      "base": "Studded Belt",
+      "assetId": "ui.items.equipment",
+      "index": 48
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t3",
+      "name": "Iron Belt",
+      "base": "Iron Belt",
+      "assetId": "ui.items.equipment",
+      "index": 65
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t4",
+      "name": "Chain Belt",
+      "base": "Chain Belt",
+      "assetId": "ui.items.equipment",
+      "index": 82
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t5",
+      "name": "Steel Belt",
+      "base": "Steel Belt",
+      "assetId": "ui.items.equipment",
+      "index": 99
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t6",
+      "name": "Knightly Belt",
+      "base": "Knightly Belt",
+      "assetId": "ui.items.equipment",
+      "index": 116
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t7",
+      "name": "Runed Belt",
+      "base": "Runed Belt",
+      "assetId": "ui.items.equipment",
+      "index": 133
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t8",
+      "name": "Mithral Belt",
+      "base": "Mithral Belt",
+      "assetId": "ui.items.equipment",
+      "index": 150
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t9",
+      "name": "Dragonbone Belt",
+      "base": "Dragonbone Belt",
+      "assetId": "ui.items.equipment",
+      "index": 167
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t10",
+      "name": "Obsidian Belt",
+      "base": "Obsidian Belt",
+      "assetId": "ui.items.equipment",
+      "index": 184
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t11",
+      "name": "Celestial Belt",
+      "base": "Celestial Belt",
+      "assetId": "ui.items.equipment",
+      "index": 201
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t12",
+      "name": "Sunforged Belt",
+      "base": "Sunforged Belt",
+      "assetId": "ui.items.equipment",
+      "index": 218
+    },
+    {
+      "group": "Base equipment",
+      "key": "belt_t13",
+      "name": "Worldforged Belt",
+      "base": "Worldforged Belt",
+      "assetId": "ui.items.equipment",
+      "index": 235
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t0",
+      "name": "Tattered Shield",
+      "base": "Tattered Shield",
+      "assetId": "ui.items.equipment",
+      "index": 9
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t1",
+      "name": "Leather Shield",
+      "base": "Leather Shield",
+      "assetId": "ui.items.equipment",
+      "index": 26
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t2",
+      "name": "Studded Shield",
+      "base": "Studded Shield",
+      "assetId": "ui.items.equipment",
+      "index": 43
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t3",
+      "name": "Iron Shield",
+      "base": "Iron Shield",
+      "assetId": "ui.items.equipment",
+      "index": 60
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t4",
+      "name": "Chain Shield",
+      "base": "Chain Shield",
+      "assetId": "ui.items.equipment",
+      "index": 77
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t5",
+      "name": "Steel Shield",
+      "base": "Steel Shield",
+      "assetId": "ui.items.equipment",
+      "index": 94
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t6",
+      "name": "Knightly Shield",
+      "base": "Knightly Shield",
+      "assetId": "ui.items.equipment",
+      "index": 111
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t7",
+      "name": "Runed Shield",
+      "base": "Runed Shield",
+      "assetId": "ui.items.equipment",
+      "index": 128
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t8",
+      "name": "Mithral Shield",
+      "base": "Mithral Shield",
+      "assetId": "ui.items.equipment",
+      "index": 145
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t9",
+      "name": "Dragonbone Shield",
+      "base": "Dragonbone Shield",
+      "assetId": "ui.items.equipment",
+      "index": 162
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t10",
+      "name": "Obsidian Shield",
+      "base": "Obsidian Shield",
+      "assetId": "ui.items.equipment",
+      "index": 179
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t11",
+      "name": "Celestial Shield",
+      "base": "Celestial Shield",
+      "assetId": "ui.items.equipment",
+      "index": 196
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t12",
+      "name": "Sunforged Shield",
+      "base": "Sunforged Shield",
+      "assetId": "ui.items.equipment",
+      "index": 213
+    },
+    {
+      "group": "Base equipment",
+      "key": "shield_t13",
+      "name": "Worldforged Shield",
+      "base": "Worldforged Shield",
+      "assetId": "ui.items.equipment",
+      "index": 230
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring_t1",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 32
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring_t2",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 49
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring_t3",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 66
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring_t4",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 83
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring_t5",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 100
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring_t6",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 117
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring_t7",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 134
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring_t8",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 151
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring_t9",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 168
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring_t10",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 185
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring_t11",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 202
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring_t12",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 219
+    },
+    {
+      "group": "Base equipment",
+      "key": "ring_t13",
+      "name": "Ring",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 236
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet_t1",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 33
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet_t2",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 50
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet_t3",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 67
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet_t4",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 84
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet_t5",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 101
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet_t6",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 118
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet_t7",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 135
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet_t8",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 152
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet_t9",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 169
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet_t10",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 186
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet_t11",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 203
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet_t12",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 220
+    },
+    {
+      "group": "Base equipment",
+      "key": "amulet_t13",
+      "name": "Amulet",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 237
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gravebite",
+      "name": "Gravebite",
+      "base": "Hand Axe",
+      "assetId": "ui.items.equipment",
+      "index": 1
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_widow",
+      "name": "Widow's Lament",
+      "base": "Dirk",
+      "assetId": "ui.items.equipment",
+      "index": 3
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_cinder",
+      "name": "Cindershroud",
+      "base": "Quilted Vest",
+      "assetId": "ui.items.variants",
+      "index": 8
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_oath",
+      "name": "Oathkeeper's Wall",
+      "base": "Kite Shield",
+      "assetId": "ui.items.equipment",
+      "index": 26
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_crown",
+      "name": "Hollow Crown",
+      "base": "Leather Cap",
+      "assetId": "ui.items.variants",
+      "index": 7
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_marrow",
+      "name": "Marrow Band",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 15
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_stormknot",
+      "name": "Stormcaller's Knot",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 16
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_stride",
+      "name": "Stridewraith",
+      "base": "Hard Boots",
+      "assetId": "ui.items.variants",
+      "index": 11
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_kingsplit",
+      "name": "Kingsplitter",
+      "base": "War Axe",
+      "assetId": "ui.items.equipment",
+      "index": 18
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_0_0",
+      "name": "Dawnbreaker",
+      "base": "Iron Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#7c7e84",
+        "wood": "#574026"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_0_2",
+      "name": "Sunder",
+      "base": "Steel Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_0_4",
+      "name": "Kingsbane",
+      "base": "Soldier's Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#b9a878",
+        "wood": "#5f4628"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_0_6",
+      "name": "Worldcleaver",
+      "base": "Tempered Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#8f98ac",
+        "wood": "#544230"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_0_8",
+      "name": "Mornsplitter",
+      "base": "Mithral Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_0_10",
+      "name": "Heaven's Edge",
+      "base": "Obsidian Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#2c2832",
+        "wood": "#1b1822"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_0_12",
+      "name": "Aurora's Reckoning",
+      "base": "Sunforged Greatsword",
+      "assetId": "ui.items.variants",
+      "index": 16,
+      "tint": {
+        "metal": "#f6c45e",
+        "wood": "#8a5a2a"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_1_1",
+      "name": "Gorewake",
+      "base": "Honed Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#9aa0a8",
+        "wood": "#5e4a2e"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_1_3",
+      "name": "Reaver's End",
+      "base": "Steel Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_1_5",
+      "name": "Skullsplit",
+      "base": "Knightly Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#cdd6e0",
+        "wood": "#6a502e"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_1_7",
+      "name": "Ruin",
+      "base": "Runed Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#aeb8cc",
+        "wood": "#574734"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_1_9",
+      "name": "Marrowhunger",
+      "base": "Dragonbone Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#e8dfc6",
+        "wood": "#7a5a3a"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_1_11",
+      "name": "The Crimson Tithe",
+      "base": "Celestial Greataxe",
+      "assetId": "ui.items.variants",
+      "index": 17,
+      "tint": {
+        "metal": "#f3edd4",
+        "wood": "#c8b27a"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_2_0",
+      "name": "Whisperfang",
+      "base": "Iron Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 20
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_2_2",
+      "name": "Nightkiss",
+      "base": "Steel Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 54
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_2_4",
+      "name": "Quietus",
+      "base": "Soldier's Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 71
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_2_6",
+      "name": "Severance",
+      "base": "Tempered Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 105
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_2_8",
+      "name": "Venomwhisper",
+      "base": "Mithral Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 139
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_2_10",
+      "name": "The Silent Thorn",
+      "base": "Obsidian Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 173
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_2_12",
+      "name": "Last Breath",
+      "base": "Sunforged Dagger",
+      "assetId": "ui.items.equipment",
+      "index": 207
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_3_1",
+      "name": "Wintershot",
+      "base": "Honed Bow",
+      "assetId": "ui.items.equipment",
+      "index": 39
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_3_3",
+      "name": "Stormstring",
+      "base": "Steel Bow",
+      "assetId": "ui.items.equipment",
+      "index": 56
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_3_5",
+      "name": "Farsong",
+      "base": "Knightly Bow",
+      "assetId": "ui.items.equipment",
+      "index": 90
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_3_7",
+      "name": "Hawkeye",
+      "base": "Runed Bow",
+      "assetId": "ui.items.equipment",
+      "index": 124
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_3_9",
+      "name": "Frostpierce",
+      "base": "Dragonbone Bow",
+      "assetId": "ui.items.equipment",
+      "index": 158
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_3_11",
+      "name": "The Distant Tempest",
+      "base": "Celestial Bow",
+      "assetId": "ui.items.equipment",
+      "index": 192
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_4_0",
+      "name": "Tempest",
+      "base": "Iron Staff",
+      "assetId": "ui.items.equipment",
+      "index": 25
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_4_2",
+      "name": "Emberheart",
+      "base": "Steel Staff",
+      "assetId": "ui.items.equipment",
+      "index": 59
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_4_4",
+      "name": "Frostward Rod",
+      "base": "Soldier's Staff",
+      "assetId": "ui.items.equipment",
+      "index": 76
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_4_6",
+      "name": "Stormcrown",
+      "base": "Tempered Staff",
+      "assetId": "ui.items.equipment",
+      "index": 110
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_4_8",
+      "name": "Cinderveil",
+      "base": "Mithral Staff",
+      "assetId": "ui.items.equipment",
+      "index": 144
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_4_10",
+      "name": "The Glacial Maelstrom",
+      "base": "Obsidian Staff",
+      "assetId": "ui.items.equipment",
+      "index": 178
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_4_12",
+      "name": "Thunderspire",
+      "base": "Sunforged Staff",
+      "assetId": "ui.items.equipment",
+      "index": 212
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_5_1",
+      "name": "Hexfinger",
+      "base": "Honed Wand",
+      "assetId": "ui.items.equipment",
+      "index": 41
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_5_3",
+      "name": "Soulwhisper",
+      "base": "Steel Wand",
+      "assetId": "ui.items.equipment",
+      "index": 58
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_5_5",
+      "name": "Gravewand",
+      "base": "Knightly Wand",
+      "assetId": "ui.items.equipment",
+      "index": 92
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_5_7",
+      "name": "Rotcaller",
+      "base": "Runed Wand",
+      "assetId": "ui.items.equipment",
+      "index": 126
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_5_9",
+      "name": "Tombquill",
+      "base": "Dragonbone Wand",
+      "assetId": "ui.items.equipment",
+      "index": 160
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_5_11",
+      "name": "Wraithsplinter",
+      "base": "Celestial Wand",
+      "assetId": "ui.items.equipment",
+      "index": 194
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_6_0",
+      "name": "Aegis of Ash",
+      "base": "Leather Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 19
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_6_2",
+      "name": "Dragonscale",
+      "base": "Iron Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_6_4",
+      "name": "Bulwark",
+      "base": "Chain Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 9,
+      "tint": {
+        "metal": "#b9a878",
+        "wood": "#5f4628"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_6_6",
+      "name": "Cindermail",
+      "base": "Knightly Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#8f98ac",
+        "wood": "#544230"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_6_8",
+      "name": "Emberweave Carapace",
+      "base": "Mithral Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_6_10",
+      "name": "Scaleforge Vest",
+      "base": "Obsidian Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#2c2832",
+        "wood": "#1b1822"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_6_12",
+      "name": "Ashen Bastion",
+      "base": "Sunforged Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#f6c45e",
+        "wood": "#8a5a2a"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_7_1",
+      "name": "Crown of Cinders",
+      "base": "Studded Helm",
+      "assetId": "ui.items.variants",
+      "index": 20
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_7_3",
+      "name": "Skullhelm",
+      "base": "Iron Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_7_5",
+      "name": "Visage",
+      "base": "Steel Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#cdd6e0",
+        "wood": "#6a502e"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_7_7",
+      "name": "Doomcap",
+      "base": "Runed Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#aeb8cc",
+        "wood": "#574734"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_7_9",
+      "name": "Diadem of the Drowned King",
+      "base": "Dragonbone Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#e8dfc6",
+        "wood": "#7a5a3a"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_7_11",
+      "name": "Boneward Casque",
+      "base": "Celestial Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#f3edd4",
+        "wood": "#c8b27a"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_8_0",
+      "name": "Hauntpace",
+      "base": "Leather Greaves",
+      "assetId": "ui.items.variants",
+      "index": 11
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_8_2",
+      "name": "Windsole",
+      "base": "Iron Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_8_4",
+      "name": "Ghoststep",
+      "base": "Chain Greaves",
+      "assetId": "ui.items.variants",
+      "index": 23,
+      "tint": {
+        "metal": "#b9a878",
+        "wood": "#5f4628"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_8_6",
+      "name": "Swiftmarch",
+      "base": "Knightly Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#8f98ac",
+        "wood": "#544230"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_8_8",
+      "name": "Galeheel",
+      "base": "Mithral Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_8_10",
+      "name": "Pallor Treads",
+      "base": "Obsidian Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#2c2832",
+        "wood": "#1b1822"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_8_12",
+      "name": "Breath of the Hollow Road",
+      "base": "Sunforged Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#f6c45e",
+        "wood": "#8a5a2a"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_9_1",
+      "name": "Stormknot",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 50
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_9_3",
+      "name": "Heart of the Marsh",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 67
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_9_5",
+      "name": "Soulglass",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 101
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_9_7",
+      "name": "Eye of the Vigil",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 135
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_9_9",
+      "name": "Tempestbinder's Charm",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 169
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_9_11",
+      "name": "Mirelight Pendant",
+      "base": "Amulet",
+      "assetId": "ui.items.equipment",
+      "index": 203
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_10_0",
+      "name": "Sanguine Coil",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 32
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_10_2",
+      "name": "Bloodloop",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 66
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_10_4",
+      "name": "Ring of Ruin",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 83
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_10_6",
+      "name": "Coilfire",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 117
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_10_8",
+      "name": "Emberveins",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 151
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_10_10",
+      "name": "Wound of Cinders",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 185
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_10_12",
+      "name": "Serpent's Pyre",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 219
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_11_1",
+      "name": "Earthshaker",
+      "base": "Honed Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#9aa0a8",
+        "wood": "#5e4a2e"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_11_3",
+      "name": "Worldhammer",
+      "base": "Steel Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_11_5",
+      "name": "Tollbringer",
+      "base": "Knightly Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#cdd6e0",
+        "wood": "#6a502e"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_11_7",
+      "name": "Cataclysm",
+      "base": "Runed Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#aeb8cc",
+        "wood": "#574734"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_11_9",
+      "name": "Doomtoll",
+      "base": "Dragonbone Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#e8dfc6",
+        "wood": "#7a5a3a"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_11_11",
+      "name": "The Sunken Peal",
+      "base": "Celestial Maul",
+      "assetId": "ui.items.variants",
+      "index": 18,
+      "tint": {
+        "metal": "#f3edd4",
+        "wood": "#c8b27a"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_12_0",
+      "name": "Edge of Vows",
+      "base": "Iron Sword",
+      "assetId": "ui.items.equipment",
+      "index": 17
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_12_2",
+      "name": "Lightbrand",
+      "base": "Steel Sword",
+      "assetId": "ui.items.equipment",
+      "index": 51
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_12_4",
+      "name": "Kingsblade",
+      "base": "Soldier's Sword",
+      "assetId": "ui.items.equipment",
+      "index": 68
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_12_6",
+      "name": "Vowkeeper",
+      "base": "Tempered Sword",
+      "assetId": "ui.items.equipment",
+      "index": 102
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_12_8",
+      "name": "Dawnsworn",
+      "base": "Mithral Sword",
+      "assetId": "ui.items.equipment",
+      "index": 136
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_12_10",
+      "name": "The Gilded Promise",
+      "base": "Obsidian Sword",
+      "assetId": "ui.items.equipment",
+      "index": 170
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_12_12",
+      "name": "Throneward",
+      "base": "Sunforged Sword",
+      "assetId": "ui.items.equipment",
+      "index": 204
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_13_1",
+      "name": "Tusk",
+      "base": "Honed Axe",
+      "assetId": "ui.items.equipment",
+      "index": 35
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_13_3",
+      "name": "Cleaver's Joy",
+      "base": "Steel Axe",
+      "assetId": "ui.items.equipment",
+      "index": 52
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_13_5",
+      "name": "Bonereaver",
+      "base": "Knightly Axe",
+      "assetId": "ui.items.equipment",
+      "index": 86
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_13_7",
+      "name": "Wolfsplit",
+      "base": "Runed Axe",
+      "assetId": "ui.items.equipment",
+      "index": 120
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_13_9",
+      "name": "Huntsmaw",
+      "base": "Dragonbone Axe",
+      "assetId": "ui.items.equipment",
+      "index": 154
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_13_11",
+      "name": "Antlershear",
+      "base": "Celestial Axe",
+      "assetId": "ui.items.equipment",
+      "index": 188
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_14_0",
+      "name": "Vesper",
+      "base": "Iron Mace",
+      "assetId": "ui.items.equipment",
+      "index": 19
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_14_2",
+      "name": "Bellringer",
+      "base": "Steel Mace",
+      "assetId": "ui.items.equipment",
+      "index": 53
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_14_4",
+      "name": "Knell",
+      "base": "Soldier's Mace",
+      "assetId": "ui.items.equipment",
+      "index": 70
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_14_6",
+      "name": "Sanctus",
+      "base": "Tempered Mace",
+      "assetId": "ui.items.equipment",
+      "index": 104
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_14_8",
+      "name": "Matins",
+      "base": "Mithral Mace",
+      "assetId": "ui.items.equipment",
+      "index": 138
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_14_10",
+      "name": "Final Tithe",
+      "base": "Obsidian Mace",
+      "assetId": "ui.items.equipment",
+      "index": 172
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_14_12",
+      "name": "Choir of Ash",
+      "base": "Sunforged Mace",
+      "assetId": "ui.items.equipment",
+      "index": 206
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_15_1",
+      "name": "Skyfall Pike",
+      "base": "Honed Spear",
+      "assetId": "ui.items.equipment",
+      "index": 38
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_15_3",
+      "name": "Stormlance",
+      "base": "Steel Spear",
+      "assetId": "ui.items.equipment",
+      "index": 55
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_15_5",
+      "name": "Heaven's Reach",
+      "base": "Knightly Spear",
+      "assetId": "ui.items.equipment",
+      "index": 89
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_15_7",
+      "name": "Thunderpike",
+      "base": "Runed Spear",
+      "assetId": "ui.items.equipment",
+      "index": 123
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_15_9",
+      "name": "Tempest's Descent",
+      "base": "Dragonbone Spear",
+      "assetId": "ui.items.equipment",
+      "index": 157
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_15_11",
+      "name": "Cloudpiercer",
+      "base": "Celestial Spear",
+      "assetId": "ui.items.equipment",
+      "index": 191
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_16_0",
+      "name": "Heartseeker",
+      "base": "Iron Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 23
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_16_2",
+      "name": "Repeater",
+      "base": "Steel Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 57
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_16_4",
+      "name": "Boltwidow",
+      "base": "Soldier's Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 74
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_16_6",
+      "name": "Killshot",
+      "base": "Tempered Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 108
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_16_8",
+      "name": "Pulsebreaker",
+      "base": "Mithral Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 142
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_16_10",
+      "name": "The Quickening Quarrel",
+      "base": "Obsidian Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 176
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_16_12",
+      "name": "Last Heartbeat",
+      "base": "Sunforged Crossbow",
+      "assetId": "ui.items.equipment",
+      "index": 210
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_17_1",
+      "name": "Wardlight",
+      "base": "Studded Shield",
+      "assetId": "ui.items.equipment",
+      "index": 43
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_17_3",
+      "name": "Bastion",
+      "base": "Iron Shield",
+      "assetId": "ui.items.equipment",
+      "index": 60
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_17_5",
+      "name": "Sanctuary",
+      "base": "Steel Shield",
+      "assetId": "ui.items.equipment",
+      "index": 94
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_17_7",
+      "name": "Aegis Eternal",
+      "base": "Runed Shield",
+      "assetId": "ui.items.equipment",
+      "index": 128
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_17_9",
+      "name": "The Unbroken Vow",
+      "base": "Dragonbone Shield",
+      "assetId": "ui.items.equipment",
+      "index": 162
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_17_11",
+      "name": "Refuge of Ash",
+      "base": "Celestial Shield",
+      "assetId": "ui.items.equipment",
+      "index": 196
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_18_0",
+      "name": "Gravewrought Grips",
+      "base": "Leather Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 10
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_18_2",
+      "name": "Throttle",
+      "base": "Iron Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#b6bec8",
+        "wood": "#66502f"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_18_4",
+      "name": "Vise",
+      "base": "Chain Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 22,
+      "tint": {
+        "metal": "#b9a878",
+        "wood": "#5f4628"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_18_6",
+      "name": "Deadhand",
+      "base": "Knightly Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#8f98ac",
+        "wood": "#544230"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_18_8",
+      "name": "Sepulcher's Clutch",
+      "base": "Mithral Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_18_10",
+      "name": "Stranglemourn",
+      "base": "Obsidian Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#2c2832",
+        "wood": "#1b1822"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_18_12",
+      "name": "Palms of the Pit",
+      "base": "Sunforged Gauntlets",
+      "assetId": "ui.items.variants",
+      "index": 26,
+      "tint": {
+        "metal": "#f6c45e",
+        "wood": "#8a5a2a"
+      }
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_19_1",
+      "name": "Serpentcoil",
+      "base": "Studded Belt",
+      "assetId": "ui.items.equipment",
+      "index": 48
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_19_3",
+      "name": "Girdle of Spite",
+      "base": "Iron Belt",
+      "assetId": "ui.items.equipment",
+      "index": 65
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_19_5",
+      "name": "Venomwind",
+      "base": "Steel Belt",
+      "assetId": "ui.items.equipment",
+      "index": 99
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_19_7",
+      "name": "Coilbind",
+      "base": "Runed Belt",
+      "assetId": "ui.items.equipment",
+      "index": 133
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_19_9",
+      "name": "The Tightening Hiss",
+      "base": "Dragonbone Belt",
+      "assetId": "ui.items.equipment",
+      "index": 167
+    },
+    {
+      "group": "Unique equipment",
+      "key": "u_gen_19_11",
+      "name": "Fangknot",
+      "base": "Celestial Belt",
+      "assetId": "ui.items.equipment",
+      "index": 201
+    },
+    {
+      "group": "Set equipment",
+      "key": "s_aw_helm",
+      "name": "Watchman's Casque",
+      "base": "War Helm",
+      "assetId": "ui.items.equipment",
+      "index": 27
+    },
+    {
+      "group": "Set equipment",
+      "key": "s_aw_wall",
+      "name": "Watchman's Wall",
+      "base": "Kite Shield",
+      "assetId": "ui.items.equipment",
+      "index": 26
+    },
+    {
+      "group": "Set equipment",
+      "key": "s_aw_tread",
+      "name": "Watchman's Tread",
+      "base": "Hard Boots",
+      "assetId": "ui.items.variants",
+      "index": 11
+    },
+    {
+      "group": "Set equipment",
+      "key": "s_fw_hood",
+      "name": "First Witch's Hood",
+      "base": "Leather Cap",
+      "assetId": "ui.items.variants",
+      "index": 7
+    },
+    {
+      "group": "Set equipment",
+      "key": "s_fw_shroud",
+      "name": "First Witch's Shroud",
+      "base": "Quilted Vest",
+      "assetId": "ui.items.variants",
+      "index": 8
+    },
+    {
+      "group": "Set equipment",
+      "key": "s_fw_band",
+      "name": "First Witch's Band",
+      "base": "Ring",
+      "assetId": "ui.items.equipment",
+      "index": 15
+    },
+    {
+      "group": "Set equipment",
+      "key": "s_dragobane_0",
+      "name": "Dragonbane head",
+      "base": "Mithral Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Set equipment",
+      "key": "s_dragobane_1",
+      "name": "Dragonbane chest",
+      "base": "Mithral Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Set equipment",
+      "key": "s_dragobane_2",
+      "name": "Dragonbane main",
+      "base": "Mithral Sword",
+      "assetId": "ui.items.equipment",
+      "index": 136
+    },
+    {
+      "group": "Set equipment",
+      "key": "s_dragobane_3",
+      "name": "Dragonbane boots",
+      "base": "Mithral Greaves",
+      "assetId": "ui.items.variants",
+      "index": 27,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Set equipment",
+      "key": "s_stormcaller_0",
+      "name": "Raiment head",
+      "base": "Mithral Helm",
+      "assetId": "ui.items.variants",
+      "index": 25,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Set equipment",
+      "key": "s_stormcaller_1",
+      "name": "Raiment chest",
+      "base": "Mithral Cuirass",
+      "assetId": "ui.items.variants",
+      "index": 24,
+      "tint": {
+        "metal": "#dde8f4",
+        "wood": "#6a6a76"
+      }
+    },
+    {
+      "group": "Set equipment",
+      "key": "s_stormcaller_2",
+      "name": "Raiment main",
+      "base": "Mithral Sword",
+      "assetId": "ui.items.equipment",
+      "index": 136
+    },
+    {
+      "group": "Supplies",
+      "key": "hp1",
+      "name": "Minor Healing Draught",
+      "base": "Minor Healing Draught",
+      "assetId": "ui.items.variants",
+      "index": 28
+    },
+    {
+      "group": "Supplies",
+      "key": "hp2",
+      "name": "Healing Draught",
+      "base": "Healing Draught",
+      "assetId": "ui.items.misc",
+      "index": 1
+    },
+    {
+      "group": "Supplies",
+      "key": "mp1",
+      "name": "Minor Aether Draught",
+      "base": "Minor Aether Draught",
+      "assetId": "ui.items.variants",
+      "index": 29
+    },
+    {
+      "group": "Supplies",
+      "key": "mp2",
+      "name": "Aether Draught",
+      "base": "Aether Draught",
+      "assetId": "ui.items.misc",
+      "index": 2
+    },
+    {
+      "group": "Supplies",
+      "key": "rejuv",
+      "name": "Cinder Tonic",
+      "base": "Cinder Tonic",
+      "assetId": "ui.items.variants",
+      "index": 1
+    },
+    {
+      "group": "Supplies",
+      "key": "tp",
+      "name": "Scroll of Passage",
+      "base": "Scroll of Passage",
+      "assetId": "ui.items.misc",
+      "index": 3
+    },
+    {
+      "group": "Supplies",
+      "key": "idscroll",
+      "name": "Scroll of Insight",
+      "base": "Scroll of Insight",
+      "assetId": "ui.items.variants",
+      "index": 3
+    },
+    {
+      "group": "Supplies",
+      "key": "respec",
+      "name": "Ashen Tonic",
+      "base": "Ashen Tonic",
+      "assetId": "ui.items.variants",
+      "index": 2
+    },
+    {
+      "group": "Glyphs",
+      "key": "g_ember",
+      "name": "Glyph of Embers",
+      "base": "Glyph of Embers",
+      "assetId": "ui.items.misc",
+      "index": 4,
+      "tint": "#ff9040"
+    },
+    {
+      "group": "Glyphs",
+      "key": "g_rime",
+      "name": "Glyph of Rime",
+      "base": "Glyph of Rime",
+      "assetId": "ui.items.misc",
+      "index": 4,
+      "tint": "#9fd8ff"
+    },
+    {
+      "group": "Glyphs",
+      "key": "g_storm",
+      "name": "Glyph of Storms",
+      "base": "Glyph of Storms",
+      "assetId": "ui.items.misc",
+      "index": 4,
+      "tint": "#f0e080"
+    },
+    {
+      "group": "Glyphs",
+      "key": "g_blood",
+      "name": "Glyph of Blood",
+      "base": "Glyph of Blood",
+      "assetId": "ui.items.misc",
+      "index": 4,
+      "tint": "#d04040"
+    },
+    {
+      "group": "Glyphs",
+      "key": "g_stone",
+      "name": "Glyph of Stone",
+      "base": "Glyph of Stone",
+      "assetId": "ui.items.misc",
+      "index": 4,
+      "tint": "#b0a890"
+    },
+    {
+      "group": "Glyphs",
+      "key": "g_fortune",
+      "name": "Glyph of Fortune",
+      "base": "Glyph of Fortune",
+      "assetId": "ui.items.misc",
+      "index": 4,
+      "tint": "#7fd8c0"
+    },
+    {
+      "group": "Glyphs",
+      "key": "g_doom",
+      "name": "Doomglyph",
+      "base": "Doomglyph",
+      "assetId": "ui.items.misc",
+      "index": 4,
+      "tint": "#ff5050"
+    },
+    {
+      "group": "Glyphs",
+      "key": "g_void",
+      "name": "Voidglyph",
+      "base": "Voidglyph",
+      "assetId": "ui.items.misc",
+      "index": 4,
+      "tint": "#a060e0"
+    },
+    {
+      "group": "Glyphs",
+      "key": "g_titan",
+      "name": "Titanglyph",
+      "base": "Titanglyph",
+      "assetId": "ui.items.misc",
+      "index": 4,
+      "tint": "#e0a040"
+    },
+    {
+      "group": "Glyphs",
+      "key": "g_wraith",
+      "name": "Wraithglyph",
+      "base": "Wraithglyph",
+      "assetId": "ui.items.misc",
+      "index": 4,
+      "tint": "#80d0c0"
+    },
+    {
+      "group": "Glyphs",
+      "key": "g_aegis",
+      "name": "Aegisglyph",
+      "base": "Aegisglyph",
+      "assetId": "ui.items.misc",
+      "index": 4,
+      "tint": "#f0e090"
+    },
+    {
+      "group": "Glyphs",
+      "key": "g_venom",
+      "name": "Venomglyph",
+      "base": "Venomglyph",
+      "assetId": "ui.items.misc",
+      "index": 4,
+      "tint": "#90e040"
+    },
+    {
+      "group": "Charms",
+      "key": "small",
+      "name": "Small Charm",
+      "base": "Small Charm",
+      "assetId": "ui.items.variants",
+      "index": 4
+    },
+    {
+      "group": "Charms",
+      "key": "large",
+      "name": "Large Charm",
+      "base": "Large Charm",
+      "assetId": "ui.items.variants",
+      "index": 5
+    },
+    {
+      "group": "Charms",
+      "key": "grand",
+      "name": "Grand Charm",
+      "base": "Grand Charm",
+      "assetId": "ui.items.variants",
+      "index": 6
+    },
+    {
+      "group": "Unique charms",
+      "key": "uc_thief",
+      "name": "Cutpurse Charm",
+      "base": "Small Charm",
+      "assetId": "ui.items.variants",
+      "index": 4
+    },
+    {
+      "group": "Unique charms",
+      "key": "uc_ember",
+      "name": "Emberheart Charm",
+      "base": "Small Charm",
+      "assetId": "ui.items.variants",
+      "index": 4
+    },
+    {
+      "group": "Unique charms",
+      "key": "uc_quick",
+      "name": "Hare's Charm",
+      "base": "Small Charm",
+      "assetId": "ui.items.variants",
+      "index": 4
+    },
+    {
+      "group": "Unique charms",
+      "key": "uc_mystic",
+      "name": "Mystic Orbcharm",
+      "base": "Large Charm",
+      "assetId": "ui.items.variants",
+      "index": 5
+    },
+    {
+      "group": "Unique charms",
+      "key": "uc_grave",
+      "name": "Gravewarden Charm",
+      "base": "Large Charm",
+      "assetId": "ui.items.variants",
+      "index": 5
+    },
+    {
+      "group": "Unique charms",
+      "key": "uc_vampire",
+      "name": "Sanguine Charm",
+      "base": "Large Charm",
+      "assetId": "ui.items.variants",
+      "index": 5
+    },
+    {
+      "group": "Unique charms",
+      "key": "uc_hunt",
+      "name": "Huntress Talisman",
+      "base": "Grand Charm",
+      "assetId": "ui.items.variants",
+      "index": 6
+    },
+    {
+      "group": "Unique charms",
+      "key": "uc_warlord",
+      "name": "Warlord's Sigil",
+      "base": "Grand Charm",
+      "assetId": "ui.items.variants",
+      "index": 6
+    },
+    {
+      "group": "Unique charms",
+      "key": "uc_wyrm",
+      "name": "Wyrmscale Charm",
+      "base": "Grand Charm",
+      "assetId": "ui.items.variants",
+      "index": 6
+    },
+    {
+      "group": "Jewels",
+      "key": "jewel_0",
+      "name": "Jewel",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#d04040"
+    },
+    {
+      "group": "Jewels",
+      "key": "jewel_1",
+      "name": "Jewel",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#40a0d0"
+    },
+    {
+      "group": "Jewels",
+      "key": "jewel_2",
+      "name": "Jewel",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#d0c040"
+    },
+    {
+      "group": "Jewels",
+      "key": "jewel_3",
+      "name": "Jewel",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#40c060"
+    },
+    {
+      "group": "Jewels",
+      "key": "jewel_4",
+      "name": "Jewel",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#b060d0"
+    },
+    {
+      "group": "Jewels",
+      "key": "jewel_5",
+      "name": "Jewel",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#e08840"
+    },
+    {
+      "group": "Unique jewels",
+      "key": "uj_rainbow",
+      "name": "Prismfire Jewel",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#c060d0"
+    },
+    {
+      "group": "Unique jewels",
+      "key": "uj_rage",
+      "name": "Jewel of Rage",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#d04040"
+    },
+    {
+      "group": "Unique jewels",
+      "key": "uj_frost",
+      "name": "Heartfrost Jewel",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#40a0d0"
+    },
+    {
+      "group": "Unique jewels",
+      "key": "uj_ward",
+      "name": "Wardstone Jewel",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#60c060"
+    },
+    {
+      "group": "Unique jewels",
+      "key": "uj_leech",
+      "name": "Bloodthirst Jewel",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#a02030"
+    },
+    {
+      "group": "Unique jewels",
+      "key": "uj_storm",
+      "name": "Stormshard Jewel",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#e0c040"
+    },
+    {
+      "group": "Unique jewels",
+      "key": "uj_titan",
+      "name": "Titanfall Jewel",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#d08040"
+    },
+    {
+      "group": "Unique jewels",
+      "key": "uj_seer",
+      "name": "Seer's Jewel",
+      "base": "Jewel",
+      "assetId": "ui.items.variants",
+      "index": 0,
+      "tint": "#8060e0"
+    }
+  ]
+}

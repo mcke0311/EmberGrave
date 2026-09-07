@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><base href="../"><title>Flattened starter atlas sampling contract</title></head>
+<body>
+  <pre id="result">PENDING</pre>
+  <script src="js/utils.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/sprite_manifest.js"></script>
+  <script src="js/sprite_assets.js"></script>
+  <script>
+    "use strict";
+    (async () => {
+      const out = document.getElementById("result");
+      const classes = ["vanguard", "emberwitch", "gravebinder", "wildkeeper", "veilranger"];
+      let checks = 0;
+      const ok = (value, message) => { checks++; if (!value) throw new Error(message); };
+
+      const renderedAlpha = (frame, reference) => {
+        let isolated = null;
+        if (reference) {
+          const source = document.createElement("canvas");
+          source.width = source.height = 192;
+          source.getContext("2d").drawImage(
+            frame.image, frame.sx, frame.sy, frame.sw, frame.sh, 0, 0, 192, 192,
+          );
+          isolated = source;
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = canvas.height = 128;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        if (reference) {
+          ctx.save();
+          ctx.translate(64, 104);
+          ctx.scale(0.42, 0.42);
+          ctx.drawImage(isolated, -frame.anchorX, -frame.anchorY);
+          ctx.restore();
+        } else {
+          SpriteAssets.drawFrame(ctx, frame, 64, 104, { scale: 0.42 });
+        }
+        const rgba = ctx.getImageData(0, 0, 128, 128).data;
+        const alpha = new Uint8Array(128 * 128);
+        for (let src = 3, dst = 0; src < rgba.length; src += 4, dst++) alpha[dst] = rgba[src];
+        return alpha;
+      };
+
+      try {
+        const starterMap = DATA.SPRITE_MANIFEST.maps.playerStarterLoadouts;
+        ok(starterMap && Object.keys(starterMap).length === 5, "starter atlas map must contain five classes");
+        const isolatedIds = Object.entries(DATA.SPRITE_MANIFEST.entries)
+          .filter(([, entry]) => entry.isolateFrameSampling === true).map(([assetId]) => assetId).sort();
+        ok(JSON.stringify(isolatedIds) === JSON.stringify(classes.map(classId => `player.starter.${classId}`).sort()),
+          "only the five flattened starter atlases may opt into isolated cell sampling");
+        for (const classId of classes) {
+          await SpriteAssets.loadBundle(`player:${classId}`);
+          const assetId = starterMap[classId];
+          ok(assetId === `player.starter.${classId}`, `${classId}: starter asset ID mismatch`);
+          ok(DATA.SPRITE_MANIFEST.entries[assetId].isolateFrameSampling === true,
+            `${classId}: starter atlas must isolate its cell before scaled Canvas sampling`);
+          for (let index = 0; index < 72; index++) {
+            const frame = SpriteAssets.getFrame(assetId, index);
+            ok(frame.index === index && frame.sw === 192 && frame.sh === 192,
+              `${classId} frame ${index}: wrong decoded frame rectangle`);
+            ok(frame.sx === (index % 8) * 192 && frame.sy === Math.floor(index / 8) * 192,
+              `${classId} frame ${index}: atlas frame index was clamped or remapped`);
+            const runtime = renderedAlpha(frame, false);
+            const isolated = renderedAlpha(frame, true);
+            let worst = 0, leaked = 0;
+            for (let pixel = 0; pixel < runtime.length; pixel++) {
+              const difference = Math.abs(runtime[pixel] - isolated[pixel]);
+              if (difference > worst) worst = difference;
+              if (difference > 2) leaked++;
+            }
+            ok(leaked === 0, `${classId} frame ${index}: packed atlas sampled across a cell edge (${leaked} pixels, max alpha delta ${worst})`);
+          }
+        }
+        document.body.dataset.testStatus = "passed";
+        out.textContent = `PASS: ${checks} flattened starter decode/index/sampling checks`;
+      } catch (err) {
+        document.body.dataset.testStatus = "failed";
+        out.textContent = `FAIL: ${err.stack || err}`;
+      }
+    })();
+  </script>
+</body>
+</html>

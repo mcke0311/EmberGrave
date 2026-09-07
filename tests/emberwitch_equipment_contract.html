@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><base href="../"><title>Emberwitch authored equipment contract</title></head>
+<body>
+  <pre id="result">PENDING</pre>
+  <script src="js/utils.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/sprite_manifest.js"></script>
+  <script src="js/sprite_assets.js"></script>
+  <script>
+    "use strict";
+    (async () => {
+      const out = document.getElementById("result"), classId = "emberwitch";
+      const mainBases = {
+        sword_1h: "sword_t0", sword_2h: "sword2h_t0",
+        axe_1h: "axe_t0", axe_2h: "axe2h_t0",
+        mace_1h: "mace_t0", mace_2h: "mace2h_t0",
+        dagger_1h: "dagger_t0", spear_2h: "spear2h_t0",
+        bow_2h: "bow2h_t0", crossbow_2h: "crossbow2h_t0",
+        wand_1h: "wand_t0", staff_2h: "staff2h_t0",
+      };
+      const armorBases = {
+        head: { light: "helm_t0", mail: "helm_t3", plate: "helm_t6", mythic: "helm_t10" },
+        chest: { light: "chest_t0", mail: "chest_t3", plate: "chest_t6", mythic: "chest_t10" },
+      };
+      const expected = {
+        unarmed: [], main: Object.keys(mainBases), shield: ["shield"],
+        head: Object.keys(armorBases.head), chest: Object.keys(armorBases.chest),
+      };
+      const planes = ["rear", "body", "worn", "held", "grip", "front"];
+      let checks = 0;
+      const ok = (value, message) => { checks++; if (!value) throw new Error(message); };
+      const gear = (baseId, materialTier) => {
+        const base = DATA.BASES[baseId];
+        return {
+          baseId, slot: base.slot, cat: base.cat, twoHand: !!base.twoHand,
+          playerVisualFamily: base.playerVisualFamily,
+          materialTier: materialTier == null ? base.materialTier : materialTier,
+        };
+      };
+      const pose = (row, dir) => ({
+        ...[
+          { state: "idle", t: 0, ex: {} },
+          { state: "walk", t: 0, ex: { walkPh: 0 } },
+          { state: "walk", t: 0, ex: { walkPh: Math.PI } },
+          { state: "attack", t: .1, ex: {} },
+          { state: "attack", t: .9, ex: {} },
+          { state: "cast", t: .5, ex: {} },
+          { state: "hit", t: .5, ex: {} },
+          { state: "death", t: .1, ex: {} },
+          { state: "death", t: .9, ex: {} },
+        ][row],
+        ang: dir * Math.PI / 4,
+      });
+      const refs = value => {
+        if (!value) return [];
+        if (typeof value === "string") return [value];
+        if (Array.isArray(value)) return value.flatMap(refs);
+        if (value.assetId || value.id) return [value.assetId || value.id];
+        return Object.values(value).flatMap(refs);
+      };
+      const renderedRefs = (family, plane) => {
+        const masks = family.masks && family.masks[plane];
+        const maskRefs = refs(masks);
+        return maskRefs.length ? maskRefs : refs(family[plane]);
+      };
+      const sourceCanvas = visual => {
+        const canvas = document.createElement("canvas"), ctx = canvas.getContext("2d", { willReadFrequently: true });
+        canvas.width = canvas.height = 192;
+        const plan = SpriteAssets.getPlayerDrawPlan(visual, pose(0, 0));
+        for (const layer of plan.layers) {
+          SpriteAssets.drawFrame(ctx, SpriteAssets.getFrame(layer.assetId, plan.index), 96, 184, {
+            scale: 1, tint: layer.tint,
+          });
+        }
+        return canvas;
+      };
+      const digest = canvas => {
+        const data = canvas.getContext("2d", { willReadFrequently: true }).getImageData(0, 0, 192, 192).data;
+        let hash = 2166136261;
+        for (let i = 0; i < data.length; i++) hash = Math.imul(hash ^ data[i], 16777619);
+        return hash >>> 0;
+      };
+      try {
+        const manifest = DATA.SPRITE_MANIFEST, coverage = manifest.maps.playerEquipmentCoverage;
+        const rig = manifest.maps.playerRigs[classId], declared = coverage.classes[classId];
+        ok(coverage.mode === "declared-partial-v1", "Emberwitch must remain fail-closed while other classes are unfinished");
+        ok(rig.coverageMode === "declared-partial-v1", "Emberwitch rig lost declared-partial lifecycle semantics");
+        for (const slot of Object.keys(expected)) {
+          ok(rig.available[slot].slice().sort().join(",") === expected[slot].slice().sort().join(","),
+            `${slot}: complete authored availability mismatch`);
+          ok(declared.available[slot].slice().sort().join(",") === expected[slot].slice().sort().join(","),
+            `${slot}: coverage map availability mismatch`);
+          ok(declared.planned[slot].length === 0, `${slot}: complete Emberwitch family remains planned`);
+          ok(rig.unavailable[slot].every(family => !rig.available[slot].includes(family)),
+            `${slot}: family is both available and unavailable`);
+        }
+        ok(rig.unarmed === null, "Emberwitch neutral undergear should remain body-only when no weapon is equipped");
+        for (const [slot, families] of Object.entries({ main: rig.main, shield: rig.shield, head: rig.head, chest: rig.chest })) {
+          ok(Object.keys(families).sort().join(",") === expected[slot].slice().sort().join(","),
+            `${slot}: runtime family map is not exact`);
+          for (const [family, definition] of Object.entries(families)) {
+            const required = slot === "main" || slot === "shield" ? ["held", "grip"] : ["worn"];
+            for (const plane of required) ok(renderedRefs(definition, plane).length > 0, `${slot}/${family}: missing ${plane}`);
+            for (const plane of slot === "main" || slot === "shield" ? ["rear", "held", "grip", "front"] : ["rear", "worn", "front"]) {
+              for (const assetId of renderedRefs(definition, plane)) {
+                const entry = manifest.entries[assetId];
+                ok(entry && entry.kind === "atlas" && entry.cell[0] === 192 && entry.cell[1] === 192 &&
+                   entry.cols === 8 && entry.rows === 9 && entry.anchor[0] === 96 && entry.anchor[1] === 184,
+                  `${slot}/${family}/${plane}: malformed atlas ${assetId}`);
+                ok(entry.rigClass === classId && entry.rigSlot === slot && entry.rigFamily === family && entry.rigPlane === plane,
+                  `${slot}/${family}/${plane}: incorrect rig metadata ${assetId}`);
+              }
+            }
+          }
+        }
+
+        await SpriteAssets.loadBundle("core");
+        for (const [family, baseId] of Object.entries(mainBases)) {
+          const visual = SpriteAssets.resolvePlayerVisual(classId, { main: gear(baseId) }, []);
+          await SpriteAssets.loadPlayerLoadout(visual);
+          for (let row = 0; row < 9; row++) for (let dir = 0; dir < 8; dir++) {
+            const plan = SpriteAssets.getPlayerDrawPlan(visual, pose(row, dir));
+            ok(plan.index === row * 8 + dir, `${family}: wrong direction/pose frame ${plan.index}`);
+            ok(plan.layers.some(layer => layer.slot === "main" && layer.plane === "held"), `${family}/${plan.index}: held plane missing`);
+            ok(plan.layers.some(layer => layer.slot === "main" && layer.plane === "grip"), `${family}/${plan.index}: grip plane missing`);
+            const ranks = plan.layers.map(layer => planes.indexOf(layer.plane));
+            ok(ranks.every((rank, index) => index === 0 || rank >= ranks[index - 1]), `${family}/${plan.index}: plane order drifted`);
+            for (const layer of plan.layers) SpriteAssets.getFrame(layer.assetId, plan.index);
+          }
+          SpriteAssets.discardPlayerLoadout(visual);
+        }
+
+        const shieldVisual = SpriteAssets.resolvePlayerVisual(classId, { off: gear("shield_t0") }, []);
+        await SpriteAssets.loadPlayerLoadout(shieldVisual);
+        const shieldPlan = SpriteAssets.getPlayerDrawPlan(shieldVisual, pose(8, 7));
+        ok(shieldPlan.layers.some(layer => layer.slot === "shield" && layer.plane === "held"), "shield held plane missing in dead/NE");
+        ok(shieldPlan.layers.some(layer => layer.slot === "shield" && layer.plane === "grip"), "shield grip plane missing in dead/NE");
+        SpriteAssets.discardPlayerLoadout(shieldVisual);
+
+        for (const slot of ["head", "chest"]) {
+          const signatures = new Set();
+          for (const [family, baseId] of Object.entries(armorBases[slot])) {
+            const equip = {}; equip[slot] = gear(baseId);
+            const visual = SpriteAssets.resolvePlayerVisual(classId, equip, []);
+            await SpriteAssets.loadPlayerLoadout(visual);
+            const plan = SpriteAssets.getPlayerDrawPlan(visual, pose(0, 0));
+            ok(plan.layers.some(layer => layer.slot === slot && layer.plane === "worn"), `${slot}/${family}: worn layer missing`);
+            signatures.add(digest(sourceCanvas(visual)));
+            SpriteAssets.discardPlayerLoadout(visual);
+          }
+          ok(signatures.size === 4, `${slot}: light/mail/plate/mythic runtime composites are not all distinct`);
+        }
+        for (const slot of ["head", "chest"]) {
+          const baseId = armorBases[slot].light, lowEquip = {}, highEquip = {};
+          lowEquip[slot] = gear(baseId, 0); highEquip[slot] = gear(baseId, 13);
+          const low = SpriteAssets.resolvePlayerVisual(classId, lowEquip, []);
+          const high = SpriteAssets.resolvePlayerVisual(classId, highEquip, []);
+          await SpriteAssets.loadPlayerLoadout(low); const lowDigest = digest(sourceCanvas(low));
+          await SpriteAssets.loadPlayerLoadout(high); const highDigest = digest(sourceCanvas(high));
+          ok(lowDigest !== highDigest, `${slot}: material tiers 0 and 13 render identically`);
+          SpriteAssets.discardPlayerLoadout(low); SpriteAssets.discardPlayerLoadout(high);
+        }
+
+        const active = SpriteAssets.resolvePlayerVisual(classId, { main: gear("wand_t0") }, []);
+        await SpriteAssets.loadPlayerLoadout(active); SpriteAssets.activatePlayerLoadout(active);
+        const activeHeld = SpriteAssets.getPlayerDrawPlan(active, pose(0, 0)).layers.find(layer => layer.slot === "main" && layer.plane === "held").assetId;
+        const replacement = SpriteAssets.resolvePlayerVisual(classId, { main: gear("sword_t0") }, []);
+        await SpriteAssets.loadPlayerLoadout(replacement);
+        SpriteAssets.getFrame(activeHeld, 0);
+        ok(true, "preloading a replacement evicted the live Emberwitch weapon");
+        SpriteAssets.activatePlayerLoadout(replacement);
+        const replacementHeld = SpriteAssets.getPlayerDrawPlan(replacement, pose(0, 0)).layers.find(layer => layer.slot === "main" && layer.plane === "held").assetId;
+        SpriteAssets.getFrame(replacementHeld, 0);
+
+        const failed = SpriteAssets.resolvePlayerVisual(classId, { main: gear("spear2h_t0") }, []);
+        const failedHeld = SpriteAssets.getPlayerDrawPlan(failed, pose(0, 0)).layers.find(layer => layer.slot === "main" && layer.plane === "held").assetId;
+        const failedDef = manifest.entries[failedHeld], source = failedDef.src;
+        failedDef.src = "assets/sprites/__deliberately_missing_emberwitch_family__.webp";
+        let preloadBlocked = false;
+        try { await SpriteAssets.loadPlayerLoadout(failed); }
+        catch (error) { preloadBlocked = error.name === "SpriteAssetError" && error.assetId === failedHeld; }
+        finally { failedDef.src = source; SpriteAssets.discardPlayerLoadout(failed); }
+        ok(preloadBlocked, "missing Emberwitch family did not block preload precisely");
+        SpriteAssets.getFrame(replacementHeld, 0);
+        ok(true, "failed Emberwitch preload replaced or evicted the active loadout");
+
+        let missingBlocked = false;
+        try {
+          SpriteAssets.resolvePlayerVisual(classId, {
+            main: { ...gear("wand_t0"), playerVisualFamily: "__missing_emberwitch_family__" },
+          }, []);
+        } catch (error) {
+          missingBlocked = error.name === "SpriteAssetError" &&
+            error.assetId === "emberwitch.main.__missing_emberwitch_family__" &&
+            /current equipment was kept/.test(error.message);
+        }
+        ok(missingBlocked, "missing Emberwitch mapping did not fail closed");
+        SpriteAssets.deactivatePlayerLoadout();
+
+        document.body.dataset.testStatus = "passed";
+        out.textContent = `PASS: ${checks} complete Emberwitch equipment, compositor, and lifecycle checks`;
+      } catch (error) {
+        document.body.dataset.testStatus = "failed";
+        out.textContent = `FAIL: ${error.stack || error}`;
+      }
+    })();
+  </script>
+</body>
+</html>

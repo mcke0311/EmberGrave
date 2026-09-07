@@ -1,0 +1,45 @@
+{
+  "descriptorCount": 240,
+  "excludedRoles": [
+    "path",
+    "wall"
+  ],
+  "method": "painted-source-normalization-v1",
+  "qaContactSheets": [
+    "assets/sprites_src/gameplay_art/qa/backdrop_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/cliff_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/form_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/ground_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/hazard_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/item_icons_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/massif_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/monster_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/npc_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/path_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/prop_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/skill_icons_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/summon_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/trap_painted_sources_v1.png",
+    "assets/sprites_src/gameplay_art/qa/wall_painted_sources_v1.png"
+  ],
+  "review": "visual-contact-sheet-v1",
+  "roles": {
+    "backdrop": 8,
+    "cliff": 20,
+    "form": 4,
+    "ground": 32,
+    "hazard": 9,
+    "item-icons": 2,
+    "massif": 36,
+    "monster": 19,
+    "npc": 9,
+    "path": 20,
+    "prop": 51,
+    "skill-icons": 1,
+    "summon": 8,
+    "trap": 3,
+    "wall": 18
+  },
+  "sourcePolicy": "approved-painted-libraries-only-never-assets/sprites",
+  "version": 1
+}

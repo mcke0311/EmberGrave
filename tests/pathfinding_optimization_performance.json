@@ -1,0 +1,59 @@
+{
+  "node": "v22.11.0",
+  "platform": "win32",
+  "method": "Nine alternating batches after warmup; median CPU milliseconds per query. Both versions share a JS realm; exact result equality required. Excludes browser rendering and GPU work.",
+  "results": [
+    {
+      "name": "North recorded query 1",
+      "repetitions": 5,
+      "found": false,
+      "beforeMedianMs": 0.1703,
+      "afterMedianMs": 0.0179,
+      "reductionPercent": 89.5
+    },
+    {
+      "name": "North recorded query 2",
+      "repetitions": 5,
+      "found": true,
+      "waypoints": 57,
+      "beforeMedianMs": 19.3864,
+      "afterMedianMs": 12.2262,
+      "reductionPercent": 36.9
+    },
+    {
+      "name": "North recorded query 3",
+      "repetitions": 5,
+      "found": true,
+      "waypoints": 44,
+      "beforeMedianMs": 15.1727,
+      "afterMedianMs": 9.4511,
+      "reductionPercent": 37.7
+    },
+    {
+      "name": "A* long corridor",
+      "repetitions": 10,
+      "found": true,
+      "waypoints": 3859,
+      "beforeMedianMs": 1.3228,
+      "afterMedianMs": 0.9281,
+      "reductionPercent": 29.8
+    },
+    {
+      "name": "A* short corridor",
+      "repetitions": 1000,
+      "found": true,
+      "waypoints": 7,
+      "beforeMedianMs": 0.0024,
+      "afterMedianMs": 0.0021,
+      "reductionPercent": 15.3
+    },
+    {
+      "name": "Collision sweep, 40 tiles",
+      "repetitions": 1000,
+      "found": true,
+      "beforeMedianMs": 0.031,
+      "afterMedianMs": 0.0162,
+      "reductionPercent": 47.6
+    }
+  ]
+}

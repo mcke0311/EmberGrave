@@ -1,0 +1,42 @@
+/* A quiet chapter cue over the playable world; only Skip accepts pointer input. */
+.opening-ui { position:absolute; inset:0; z-index:35; pointer-events:none; color:#eee0c7; font-family:Georgia,'Palatino Linotype',serif; }
+.opening-objective { position:absolute; top:32px; left:32px; width:min(360px,calc(100vw - 285px)); padding:18px 24px 19px; border-left:2px solid #a99163; background:linear-gradient(90deg,rgba(12,18,24,.87),rgba(12,18,24,.54) 80%,transparent); }
+.opening-kicker { display:block; font:10px/1.5 Georgia,serif; letter-spacing:3px; color:#baa581; }
+.opening-goal { font-size:19px; line-height:1.45; margin:10px 0 6px; text-shadow:0 2px 6px #000; }
+.opening-hint { margin:0; font:12px/1.6 system-ui,sans-serif; color:#b8c5cb; }
+.opening-boss .opening-objective { top:105px; width:min(280px,calc(100vw - 330px)); padding:12px 18px; }
+.opening-boss .opening-goal { font-size:17px; }
+.opening-boss .opening-kicker { color:#a8d7e4; }
+.opening-skip { position:absolute; right:28px; top:196px; pointer-events:auto; padding:9px 14px; border:1px solid #70634f; background:rgba(15,20,25,.88); color:#d2c4aa; font:12px/1.4 system-ui,sans-serif; cursor:pointer; border-radius:2px; }
+.opening-skip:hover { background:#292c2e; border-color:#d4b982; color:#fff3d8; }
+.opening-skip:focus-visible { outline:2px solid #ffe2a5; outline-offset:4px; }
+.opening-skip:disabled { cursor:wait; opacity:.65; }
+.opening-caption { position:absolute; left:50%; bottom:210px; transform:translateX(-50%); width:max-content; max-width:min(680px,85vw); box-sizing:border-box; padding:15px 28px 17px; text-align:center; opacity:0; transition:opacity .3s; background:linear-gradient(90deg,transparent,rgba(8,12,16,.9) 12%,rgba(8,12,16,.9) 88%,transparent); text-shadow:0 2px 3px #000; }
+.opening-caption.visible { opacity:1; }
+.opening-speaker { display:block; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#d5b47c; margin-bottom:7px; }
+.opening-speaker:empty { display:none; }
+.opening-line { font-size:19px; line-height:1.6; }
+.opening-arrival { position:absolute; top:26%; left:50%; transform:translateX(-50%); width:90%; text-align:center; text-shadow:0 3px 12px #000,0 2px 3px #000; animation:opening-arrive 1.2s ease both; }
+.opening-arrival .opening-kicker { color:#dfcbaa; }
+.opening-town { font-size:clamp(28px,5vw,64px); letter-spacing:.18em; margin:10px 0; }
+.opening-arrival p { font-size:17px; font-style:italic; letter-spacing:2px; }
+.opening-wake::before { content:''; position:absolute; inset:0; background:#050a10; animation:opening-wake 2.3s ease-out forwards; }
+@keyframes opening-wake { from { opacity:.96; } to { opacity:0; } }
+@keyframes opening-arrive { from { opacity:0; } to { opacity:1; } }
+@media(max-width:900px) {
+  .opening-objective { top:16px; left:16px; width:calc(100vw - 290px); padding:12px 16px; }
+  .opening-goal { font-size:16px; }
+  .opening-kicker { font-size:9px; letter-spacing:2px; }
+  .opening-line { font-size:16px; }
+  .opening-caption { bottom:190px; padding:10px 18px; }
+}
+@media(max-height:650px) {
+  .opening-caption { bottom:162px; padding:8px 20px; }
+  .opening-line { font-size:16px; }
+  .opening-objective { top:14px; padding:10px 18px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .opening-wake::before { display:none; }
+  .opening-arrival { animation:none; }
+  .opening-caption { transition:none; }
+}

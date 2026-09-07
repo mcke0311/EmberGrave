@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Skill audio mix headroom</title>
+<style>body{background:#151a1d;color:#e0d4bd;font:16px system-ui;margin:32px}button{padding:12px}pre{white-space:pre-wrap}</style>
+<h1>Skill audio mix headroom</h1><p>Silent offline rendering of 24 heavy critical impacts through the production mixer at maximum volume.</p>
+<button id="run">Render mix</button><pre id="result">Ready</pre>
+<script src="../js/skill_audio_catalog.js"></script><script type="module">
+import {renderSkillMix} from './skill_audio_mix.mjs';
+document.getElementById('run').onclick=async()=>{const out=document.getElementById('result');out.textContent='Rendering…';try{const result=await renderSkillMix(SkillAudioCatalog);const pass=result.peak<.8&&result.energy>1&&result.admitted===24;out.textContent=(pass?'PASS':'FAIL')+' — '+JSON.stringify(result,null,2);document.body.dataset.testStatus=pass?'passed':'failed';}catch(e){out.textContent='FAIL — '+e.stack;document.body.dataset.testStatus='failed';}};
+</script></html>

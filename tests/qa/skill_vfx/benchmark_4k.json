@@ -1,0 +1,72 @@
+{
+  "samples": [
+    {
+      "enabled": false,
+      "viewport": [
+        3840,
+        2160
+      ],
+      "cpuMs": {
+        "median": 22,
+        "p95": 42.19999998807907,
+        "max": 93.09999996423721
+      },
+      "frameMs": {
+        "median": 23.399999976158142,
+        "p95": 44.30000001192093,
+        "max": 94.59999996423721
+      },
+      "vfx": {
+        "enabled": false,
+        "recipes": 107,
+        "particles": 0,
+        "events": 0,
+        "ghosts": 0,
+        "peakParticles": 0,
+        "peakEvents": 0,
+        "dropped": 0,
+        "limits": {
+          "particles": 520,
+          "events": 96,
+          "trail": 12,
+          "ghosts": 12
+        }
+      }
+    },
+    {
+      "enabled": true,
+      "viewport": [
+        3840,
+        2160
+      ],
+      "cpuMs": {
+        "median": 22.399999976158142,
+        "p95": 48.69999998807907,
+        "max": 93.89999997615814
+      },
+      "frameMs": {
+        "median": 24.19999998807907,
+        "p95": 53.5,
+        "max": 94.89999997615814
+      },
+      "vfx": {
+        "enabled": true,
+        "recipes": 107,
+        "particles": 121,
+        "events": 8,
+        "ghosts": 0,
+        "peakParticles": 200,
+        "peakEvents": 25,
+        "dropped": 0,
+        "limits": {
+          "particles": 520,
+          "events": 96,
+          "trail": 12,
+          "ghosts": 12
+        }
+      }
+    }
+  ],
+  "delta": 6.5,
+  "withinBudget": true
+}

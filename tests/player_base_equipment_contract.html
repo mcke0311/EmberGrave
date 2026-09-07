@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><base href="../"><title>Base player-equipment coverage contract</title></head>
+<body>
+  <pre id="result">PENDING</pre>
+  <script src="js/utils.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/sprite_manifest.js"></script>
+  <script src="js/sprite_assets.js"></script>
+  <script>
+    "use strict";
+    (() => {
+      const out = document.getElementById("result");
+      let checks = 0;
+      const ok = (value, message) => { checks++; if (!value) throw new Error(message); };
+      const starter = {
+        vanguard: { main: "shortsword", chest: "quiltvest", family: "sword_1h" },
+        emberwitch: { main: "gnarlwand", chest: "quiltvest", family: "wand_1h" },
+        gravebinder: { main: "gnarlwand", chest: "quiltvest", family: "wand_1h" },
+        wildkeeper: { main: "ashstaff", chest: "quiltvest", family: "staff_2h" },
+        veilranger: { main: "huntbow", chest: "quiltvest", family: "bow_2h" },
+      };
+      const gear = baseId => ({
+        baseId, slot: DATA.BASES[baseId].slot, cat: DATA.BASES[baseId].cat,
+        twoHand: !!DATA.BASES[baseId].twoHand,
+        playerVisualFamily: DATA.BASES[baseId].playerVisualFamily,
+        materialTier: DATA.BASES[baseId].materialTier,
+      });
+      try {
+        const coverage = DATA.SPRITE_MANIFEST.maps.playerEquipmentCoverage;
+        ok(coverage && coverage.mode === "declared-partial-v1", "partial coverage map missing");
+        ok(Object.keys(DATA.SPRITE_MANIFEST.maps.playerStarterLoadouts || {}).length === 5,
+          "five flattened starter assets are required");
+        for (const [classId, expected] of Object.entries(starter)) {
+          const rig = DATA.SPRITE_MANIFEST.maps.playerRigs[classId];
+          const starterAsset = DATA.SPRITE_MANIFEST.maps.playerStarterLoadouts[classId];
+          ok(rig.coverageMode === "declared-partial-v1", `${classId}: coverage mode missing`);
+          ok(starterAsset === `player.starter.${classId}`, `${classId}: flattened starter map mismatch`);
+          ok(rig.starterLoadout === starterAsset, `${classId}: rig starter binding mismatch`);
+          ok(coverage.starterBaseIds[classId].main === expected.main &&
+             coverage.starterBaseIds[classId].chest === expected.chest,
+            `${classId}: starter base IDs drifted`);
+          const declared = coverage.classes[classId];
+          ok(JSON.stringify(rig.available) === JSON.stringify(declared.available),
+            `${classId}: runtime available coverage differs from manifest coverage`);
+          ok(JSON.stringify(rig.planned) === JSON.stringify(declared.planned),
+            `${classId}: runtime planned coverage differs from manifest coverage`);
+          ok(JSON.stringify(rig.unavailable) === JSON.stringify(declared.unavailable),
+            `${classId}: runtime unavailable coverage differs from manifest coverage`);
+          for (const slot of ["main", "shield", "head", "chest"]) {
+            ok(Object.keys(rig[slot]).sort().join(",") === rig.available[slot].slice().sort().join(","),
+              `${classId}/${slot}: runtime families differ from explicit availability`);
+            ok(rig.planned[slot].every(family => !rig[slot][family]),
+              `${classId}/${slot}: planned modular sprites leaked into runtime coverage`);
+          }
+          ok(rig.unarmed === null && rig.available.unarmed.length === 0, `${classId}: partial mode should use neutral-body bare hands`);
+          const naked = SpriteAssets.resolvePlayerVisual(classId, {}, []);
+          const nakedPlan = SpriteAssets.getPlayerDrawPlan(naked, { state: "idle", t: 0, ang: 0, ex: {} });
+          ok(nakedPlan.layers.length === 1 && nakedPlan.layers[0].slot === "body", `${classId}: naked visual is not body-only`);
+          const visual = SpriteAssets.resolvePlayerVisual(classId, {
+            main: gear(expected.main), chest: gear(expected.chest),
+          }, []);
+          const plan = SpriteAssets.getPlayerDrawPlan(visual, { state: "idle", t: 0, ang: 0, ex: {} });
+          if (rig.available.main.includes(expected.family) && rig.available.chest.includes("light")) {
+            ok(!visual.flattenedAssetId, `${classId}: installed starter layers were replaced by flattened art`);
+            ok(plan.layers.some(layer => layer.slot === "body" && layer.assetId === rig.body) &&
+               plan.layers.some(layer => layer.slot === "chest" && layer.plane === "worn"),
+              `${classId}: starter must preserve the neutral body and compose its light vest`);
+            ok(plan.layers.some(layer => layer.slot === "main" && layer.plane === "held") &&
+               plan.layers.some(layer => layer.slot === "main" && layer.plane === "grip"),
+              `${classId}: starter modular weapon must retain held/grip layers`);
+          } else {
+            ok(visual.flattenedAssetId === starterAsset, `${classId}: unavailable modular starter lost its exact flattened fallback`);
+            ok(plan.layers.length === 1, `${classId}: flattened starter must draw as exactly one layer`);
+            ok(plan.layers[0].assetId === starterAsset && plan.layers[0].slot === "starter" && plan.layers[0].plane === "body",
+              `${classId}: flattened starter draw plan is not the authored runtime asset`);
+          }
+
+          if (rig.available.main.includes(expected.family)) {
+            const modular = SpriteAssets.resolvePlayerVisual(classId, { main: gear(expected.main) }, []);
+            const modularPlan = SpriteAssets.getPlayerDrawPlan(modular, { state: "idle", t: 0, ang: 0, ex: {} });
+            ok(!modular.flattenedAssetId, `${classId}: non-exact modular loadout incorrectly selected flattened starter art`);
+            ok(modularPlan.layers.some(layer => layer.slot === "main" && layer.plane === "held") &&
+               modularPlan.layers.some(layer => layer.slot === "main" && layer.plane === "grip"),
+              `${classId}: declared-available starter weapon lacks held/grip layers`);
+          } else {
+            let incompleteBlocked = false;
+            try { SpriteAssets.resolvePlayerVisual(classId, { main: gear(expected.main) }, []); }
+            catch (err) { incompleteBlocked = err.name === "SpriteAssetError" && /current equipment was kept/.test(err.message); }
+            ok(incompleteBlocked, `${classId}: non-exact starter combination bypassed modular unavailability`);
+          }
+        }
+        let blocked = false;
+        try {
+          SpriteAssets.resolvePlayerVisual("vanguard", {
+            main: { ...gear("handaxe"), playerVisualFamily: "__deliberately_missing_family__" },
+          }, []);
+        }
+        catch (err) {
+          blocked = err.name === "SpriteAssetError"
+            && err.assetId === "vanguard.main.__deliberately_missing_family__"
+            && /has no authored sprite family/.test(err.message)
+            && /current equipment was kept/.test(err.message);
+        }
+        ok(blocked, "undeclared equipment family did not fail precisely");
+        document.body.dataset.testStatus = "passed";
+        out.textContent = `PASS: ${checks} base equipment coverage checks`;
+      } catch (err) {
+        document.body.dataset.testStatus = "failed";
+        out.textContent = `FAIL: ${err.stack || err}`;
+      }
+    })();
+  </script>
+</body>
+</html>

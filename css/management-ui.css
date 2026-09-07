@@ -1,0 +1,148 @@
+/* Equipment, journals and town services share the discipline screen's materials. */
+#panelWorkspace { position:absolute; inset:0; pointer-events:none; z-index:20; }
+#panelWorkspace .panel { pointer-events:auto; }
+.panel.management-panel {
+  width:408px; top:22px; bottom:194px; padding:22px;
+  border:1px solid #8a7452; border-radius:6px 6px 2px 2px;
+  background:radial-gradient(ellipse at 20% 0%,#8c64301c,transparent 55%),linear-gradient(145deg,#1c2229fa,#0b1016fc 78%);
+  box-shadow:inset 0 0 0 4px #080c11,0 18px 55px #000b;
+  scrollbar-width:thin; scrollbar-color:#6d6048 #111820;
+  color:#dad5c8; font:13px/1.5 system-ui,sans-serif;
+}
+.management-panel .ptitle { position:sticky; top:-22px; z-index:5; margin:-2px -4px 0; padding:0 32px 12px 4px; min-height:44px; text-align:left; font:25px/1.2 Georgia,serif; letter-spacing:.25px; color:#eee0c0; background:#1b2027; border-bottom:1px solid #ad8b5340; }
+.management-panel .pclose { position:sticky; float:right; margin-top:-43px; margin-right:-6px; top:-12px; right:auto; z-index:6; width:32px; height:32px; border:1px solid #75604480; border-radius:3px; background:#151b22; color:#c9bda3; font:23px/1 system-ui; }
+.manage-eyebrow { margin:9px 0 16px; font:10px/1.5 system-ui; letter-spacing:1.6px; text-transform:uppercase; color:#a6acb5; }
+.manage-section { display:flex; justify-content:space-between; gap:10px; align-items:center; margin:21px 0 9px; padding:0 0 7px; border-bottom:1px solid #66717b40; font:16px/1.3 Georgia; color:#d6bf92; }
+.manage-section small { font:11px/1.3 system-ui; color:#e9c681; letter-spacing:0; }
+.manage-button,.manage-primary,.recipe-choice,.shop-entry { cursor:pointer; font:12px/1.4 system-ui; border:1px solid #59616a; border-radius:3px; color:#d2d5d5; background:linear-gradient(#242d36,#19212a); padding:9px 12px; }
+.manage-button:hover,.recipe-choice:hover,.shop-entry:hover { background:#303a43; border-color:#b0915d; color:#f3e4c5; }
+.management-panel button:focus-visible,.management-panel input:focus-visible,.management-panel summary:focus-visible,.management-panel [tabindex]:focus-visible { outline:2px solid #f2cb7d; outline-offset:3px; }
+.management-panel button:disabled { opacity:.44; cursor:default; filter:saturate(.4); }
+.manage-primary { display:block; width:100%; padding:13px 16px; min-height:44px; border-color:#b4945c; background:linear-gradient(#aa8141,#74522a); color:#fff0cc; font-weight:650; letter-spacing:.4px; text-shadow:0 1px #36210c; }
+.manage-primary:not(:disabled):hover { background:linear-gradient(#bd9656,#896137); border-color:#f6d596; }
+.manage-tabs { display:flex; flex-wrap:wrap; gap:5px; margin:12px 0; }
+.manage-tabs .manage-button { flex:1; padding:7px 9px; min-height:34px; }
+.manage-tabs .selected { color:#f4d8a5; border-color:#ba975f; background:#66513450; }
+.manage-empty { padding:26px 8px; color:#a4abb3; text-align:center; }
+.pack-help { margin:12px 0 0; font:11px/1.65 system-ui; color:#a9b2bb; }
+.selling-mode { border:1px solid #c394554f; border-left:3px solid #d5a85c; padding:10px 12px; background:#b4812715; color:#ebc994; }
+.manage-warning { margin:9px 0; font:11px/1.6 system-ui; color:#e3aa88; }
+/* Equipment surrounds a central armor column; the backpack retains exact grid geometry. */
+.management-panel #equipwrap { width:340px; height:285px; margin:20px auto 8px; background:radial-gradient(ellipse,#8596a00c,transparent 70%); }
+.management-panel .eqslot { border:1px solid #62615a; border-radius:3px; background:linear-gradient(145deg,#242b32,#10171e); box-shadow:inset 0 0 16px #0007; }
+.management-panel .eqslot::after { content:attr(data-label); position:absolute; top:100%; left:50%; transform:translateX(-50%); white-space:nowrap; color:#a0a9af; font:9px/1.8 system-ui; text-transform:capitalize; letter-spacing:.5px; pointer-events:none; }
+.management-panel .eqslot .ph { color:#737e86; font:10px system-ui; text-transform:capitalize; }
+.management-panel .eqslot:has(.ph)::before { content:'◇'; position:absolute; inset:0; display:grid; place-items:center; color:#71829220; font:50px Georgia; }
+.management-panel .invgrid { margin:0 auto; border-color:#817154; background:#080d12; box-shadow:0 0 0 4px #11171d,inset 0 0 28px #0008; }
+.management-panel .invcell { border-color:#44505965; background:linear-gradient(135deg,#71819208,transparent); }
+.management-panel .invitem:hover { outline:1px solid #d8bd84; z-index:3; }
+.management-panel .invitem.search-dim { opacity:.25; }
+.management-panel .invitem.search-match { outline:2px solid #e9c982; z-index:3; }
+.management-panel #goldrow { padding:11px 0; color:#e1c187; font:12px system-ui; }
+.management-panel #goldrow span { color:#a8b0b8; }
+.pack-toolbar { display:flex; gap:8px; margin:0 0 13px; }
+.pack-toolbar input { min-width:0; flex:1; width:150px; padding:9px 10px; border:1px solid #59636c; border-radius:3px; background:#0c131b; color:#e4e1d6; font:12px system-ui; user-select:text; }
+.pack-toolbar input::placeholder { color:#929da9; }
+.pack-toolbar button { flex:none; }
+.hero-identity { font:28px/1.2 Georgia; color:#f1e5ca; margin:19px 0 0; overflow-wrap:anywhere; }
+.management-panel .statrow { font:12px/1.5 system-ui; padding:8px 2px; border-bottom:1px solid #5f6d7826; gap:12px; align-items:center; }
+.management-panel .statrow .v { font-variant-numeric:tabular-nums; text-align:right; color:#ebddbd; }
+.management-panel .attrbtn { width:29px; height:29px; line-height:24px; background:#80613240; border:1px solid #ae8b53; border-radius:3px; font:19px system-ui; color:#f1d39a; }
+.management-panel .attrbtn:hover { background:#856736; }
+.management-panel .qacts { gap:5px; margin:16px 0 14px; }
+.management-panel .qtab { flex:1; min-height:49px; font:15px Georgia; color:#a8b1bb; background:#17202a; border:1px solid #4f5a62; border-radius:3px; padding:7px 5px; }
+.management-panel .qtab small { font:10px system-ui; margin-top:5px; color:#a4aeb5; }
+.management-panel .qtab.sel { color:#f3d699; border-color:#bf9f62; background:#6d57363a; }
+.management-panel .qacthead { margin:6px 0; color:#c7c9c5; font:11px/1.5 system-ui; letter-spacing:1.2px; }
+.management-panel .qrow { width:100%; text-align:left; border-radius:3px; padding:10px; min-height:40px; background:#17212b; border-color:#4c59624d; }
+.management-panel .qrow .qn { font:12px/1.5 system-ui; color:#c0c6ca; }
+.management-panel .qrow.locked .qn { color:#7f8992; }
+.management-panel .qrow.active .qn { color:#eee1c2; }
+.management-panel .qrow.sel { background:#705b3630; border-color:#b49b66; }
+.management-panel .qdetail { background:#0d141c; padding:16px; border-color:#53616c80; border-radius:3px; }
+.management-panel .qdetail h3 { font:21px/1.25 Georgia; color:#e7d3aa; }
+.management-panel .qdetail p { color:#b7c0c8; font:12px/1.7 system-ui; }
+.management-panel .qdetail .manage-section { font-size:14px; margin-top:16px; }
+.management-panel .qdetail .qst { font:12px/1.5 system-ui; }
+.management-panel .qdetail .quest-objective { color:#e6ddc8; }
+.management-panel .qdetail .quest-rewards { color:#d6b575; }
+.management-panel .qdetail .quest-location { font-size:11px; margin-top:7px; }
+.management-panel .qlegend { font:10px system-ui; margin:14px 0 0; }
+.shop-wallet { font:20px Georgia; color:#e5c284; padding:2px 0 7px; }
+.shop-list { display:flex; flex-direction:column; gap:5px; max-height:265px; overflow:auto; scrollbar-width:thin; scrollbar-color:#75644a #151c24; }
+.shop-entry { display:flex; align-items:center; gap:10px; padding:9px; text-align:left; border-color:#53626d60; width:100%; min-height:67px; }
+.shop-entry.selected { background:#6e543332; border-color:#ba9a62; }
+.shop-entry canvas,.shop-entry img { flex:none; width:43px!important; height:49px!important; object-fit:contain; }
+.shop-entry-label { min-width:0; flex:1; }
+.shop-entry strong { display:block; font:13px/1.4 Georgia; color:var(--rarity,#dfd2b9); overflow-wrap:anywhere; }
+.shop-entry small { display:block; margin-top:4px; font:10px/1.4 system-ui; color:#a8b1b9; }
+.shop-price { color:#e9c889; font:12px system-ui; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.shop-price.unaffordable { color:#d79c8a; }
+.shop-detail { padding:15px; margin:14px 0 10px; background:#0b1219; border:1px solid #60687580; border-radius:3px; font:12px/1.55 system-ui; }
+.shop-detail .tt-name { font:20px/1.2 Georgia; margin-bottom:8px; }
+.shop-compare { margin:8px 0 12px; padding:9px 11px; border:1px solid #65717c50; background:#16202b; }
+.shop-compare summary { cursor:pointer; font:11px/1.5 system-ui; color:#c6c8c6; }
+.shop-compare > div { margin-top:12px; font:12px/1.6 system-ui; }
+.shop-buy { position:sticky; bottom:-14px; z-index:4; margin-top:12px; box-shadow:0 -5px 16px #10171bea; }
+#panelCenter.management-panel[data-kind="forge"] { width:460px; }
+.recipe-list { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:16px 0; }
+.recipe-choice { padding:12px; text-align:left; min-height:100px; }
+.recipe-choice strong { display:block; font:16px/1.2 Georgia; color:#e6d2ad; }
+.recipe-choice small { display:block; margin-top:8px; font:11px/1.5 system-ui; color:#a7b3bf; }
+.recipe-choice.selected { border-color:#c19a5e; background:#8a66292e; }
+.management-panel #forgeRow { gap:10px; margin:16px 0; }
+.management-panel .fslot { width:75px; height:85px; padding:5px; border:1px solid #8b795a; border-radius:3px; background:radial-gradient(ellipse,#84663420,#0e151e); position:relative; cursor:pointer; display:grid; place-items:center; }
+.management-panel .fslot canvas,.management-panel .fslot img { max-width:100%; max-height:100%; object-fit:contain; }
+.slot-number { font:26px Georgia; color:#5b6265; }
+.management-panel .fslot .stk { position:absolute; bottom:3px; right:6px; color:#f0dab6; font:12px system-ui; }
+.recipe-requirements { padding:0; list-style:none; margin:16px 0; }
+.recipe-requirements li { padding:4px 0; font:12px/1.5 system-ui; }
+.recipe-requirements .met { color:#a6d2b1; }.recipe-requirements .missing { color:#a9b2ba; }
+.recipe-outcome { padding:13px 15px; background:#84643516; border-left:2px solid #ad874f; color:#ddcaa5; font:12px/1.65 system-ui; }
+.forge-status { margin:15px 0; font:12px/1.6 system-ui; color:#aebac4; }.forge-status.ready { color:#a8d4b5; }
+/* Paired services share a layout instead of overlapping absolute panels. */
+#panelWorkspace.paired { inset:22px 18px 194px; display:flex; justify-content:space-between; align-items:stretch; gap:16px; }
+#panelWorkspace.paired .management-panel { position:relative; inset:auto; margin:0; transform:none; flex:0 0 408px; }
+#panelWorkspace.paired #panelCenter { order:0; flex-basis:460px; }
+#panelWorkspace.paired #panelRight { order:1; }
+body:has(.management-panel:not(.hidden)) #player3dControls { display:none!important; }
+@media(max-width:1100px) {
+  #panelWorkspace.paired { inset:14px 14px 194px; display:flex; flex-direction:column; align-items:center; overflow:auto; pointer-events:auto; background:#090f17ed; border:1px solid #776547; padding:12px; scrollbar-width:thin; }
+  #panelWorkspace.paired .management-panel,#panelWorkspace.paired #panelCenter { flex:none; width:min(100%,460px); overflow:visible; }
+  #panelWorkspace.paired .ptitle,#panelWorkspace.paired .pclose,#panelWorkspace.paired .shop-buy { position:relative; top:auto; bottom:auto; }
+}
+@media(max-width:700px) {
+  .panel.management-panel { width:min(408px,calc(100vw - 20px)); left:10px!important; right:auto!important; padding:15px; top:12px; }
+  #panelWorkspace.paired .management-panel { left:auto!important; }
+  .management-panel .ptitle { font-size:23px; }
+}
+@media(max-width:480px) {
+  #panelWorkspace.paired { left:6px; right:6px; padding:2px; }
+  .panel.management-panel { padding:12px; }
+}
+
+.management-panel .eqslot .ph { font-size:0; }
+.management-panel .eqslot::after { font-size:10px; }
+.management-panel .manage-eyebrow.selling-mode { padding:7px 9px; letter-spacing:.3px; margin:8px 0; font-size:10px; }
+#forgeCraft { position:sticky; bottom:-14px; z-index:4; box-shadow:0 -5px 16px #10171bea; }
+@media(max-height:850px) {
+  .management-panel[data-kind="inv"] .manage-eyebrow { margin:6px 0; }
+  .management-panel #equipwrap { display:grid; grid-template-columns:repeat(5,1fr); grid-template-rows:repeat(2,44px); gap:20px 10px; height:112px; margin:12px auto 14px; }
+  .management-panel #equipwrap .eqslot { position:relative; left:auto!important; top:auto!important; width:auto!important; height:44px!important; }
+  .management-panel #equipwrap .eqslot canvas { object-fit:contain; }
+  .management-panel #goldrow { padding:7px 0; }
+  .management-panel .pack-toolbar { margin-bottom:10px; }
+  .management-panel .pack-toolbar input,.management-panel .pack-toolbar button { padding-top:7px; padding-bottom:7px; }
+  .management-panel .recipe-choice { min-height:79px; padding:9px; }
+  .management-panel .recipe-choice strong { font-size:14px; }
+  .management-panel .recipe-choice small { font-size:10px; margin-top:5px; }
+}
+
+.management-panel .manage-primary:disabled { opacity:1; filter:none; color:#9f9d93; border-color:#665d4c; background:#34332d; text-shadow:none; }
+#panelLeft.management-panel[data-kind="quest"] { width:min(780px,calc(100vw - 36px)); }
+.quest-body { display:grid; grid-template-columns:minmax(200px,.85fr) minmax(280px,1.15fr); gap:16px; align-items:start; }
+.management-panel .quest-body .qdetail { margin-top:0; }
+.management-panel .quest-body .qlist { gap:7px; }
+.management-panel[data-kind="quest"] .qacts { max-width:460px; }
+.management-panel[data-kind="quest"] .qacthead { text-align:left; margin:14px 0; }
+@media(max-width:700px) { .quest-body { grid-template-columns:1fr; }.management-panel .quest-body .qlist { max-height:175px; overflow:auto; } }

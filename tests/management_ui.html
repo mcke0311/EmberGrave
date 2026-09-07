@@ -1,0 +1,121 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Management screens review</title>
+<style>body{margin:16px;background:#0d131b;color:#ded4be;font:13px system-ui}h1{font:25px Georgia;margin:8px 0}p{color:#abb6c2}pre{white-space:pre-wrap}button,select{padding:8px 12px;margin:5px 5px 12px 0;background:#27313c;border:1px solid #8b754e;color:#eadabd}iframe{display:block;border:1px solid #82704f;max-width:none}#host{overflow:auto}</style>
+<h1>Equipment, character, quests & town services</h1><p>Temporary heroes and isolated saves. The review controls restore a populated example.</p>
+<pre id="result">Running interaction checks…</pre><div id="controls"></div><div id="host"></div>
+<script type="module">
+const out=document.getElementById('result'),store=new Map();window.managementStore=store;
+const params=new URLSearchParams(location.search),width=+(params.get('w')||1366),height=+(params.get('h')||768);
+let checks=0;const ok=(v,m)=>{checks++;if(!v)throw Error(m)};
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+async function until(fn,label){for(let i=0;i<500;i++){if(fn())return;await delay(40)}throw Error('Timed out: '+label)}
+try {
+ const source=await fetch('../index.html',{cache:'no-store'}).then(r=>r.text());
+ const frame=document.createElement('iframe');frame.title='Isolated management review';frame.style.width=width+'px';frame.style.height=height+'px';
+ const gameURL=new URL('../index.html',location.href);if(params.has('player3d'))gameURL.searchParams.set('player3d',params.get('player3d'));
+ const injection=`<base href="${gameURL}"><script>const isolated=parent.managementStore;Object.defineProperty(window,'localStorage',{value:{get length(){return isolated.size},key:i=>[...isolated.keys()][i]??null,getItem:k=>isolated.get(k)??null,setItem:(k,v)=>isolated.set(String(k),String(v)),removeItem:k=>isolated.delete(k),clear:()=>isolated.clear()}});window.reviewErrors=[];window.addEventListener('error',e=>reviewErrors.push(e.message));window.addEventListener('unhandledrejection',e=>reviewErrors.push(String(e.reason)));<\/script>`;
+ frame.srcdoc=source.replace('<head>','<head>'+injection);document.getElementById('host').appendChild(frame);await new Promise(r=>frame.onload=r);
+ const win=frame.contentWindow,doc=win.document;await until(()=>doc.querySelector('#titleMenu button'),'startup');
+ const game=win.eval('Game'),ui=win.eval('UI'),items=win.eval('Items'),data=win.eval('DATA');win.eval('Sfx').setVol('master',0);
+ await game.newGame('Kaelen','vanguard',false);await game.skipOpening();ui.closeAll();game.state.monsters=[];game.debugFlags.god=true;
+ let p=game.state.player;p.gold=2400;p.lvl=12;p.attrPts=5;p.computeStats();p.hp=p.stats.maxHp;
+ const base=Object.keys(data.BASES).find(k=>data.BASES[k].slot==='main'&&!data.BASES[k].twoHand&&data.BASES[k].ilvl<=1);
+ const glyph=Object.keys(data.GLYPHS)[0];
+ const rightClick=el=>el.dispatchEvent(new win.MouseEvent('contextmenu',{bubbles:true,cancelable:true}));
+ function pack(){ui.setCursorItem(null);p.inv.items=[];for(const it of [items.fromBase(base),items.makeConsumable('hp1',6),items.makeConsumable('mp1',4),items.makeGlyph(glyph),items.makeGlyph(glyph),items.makeGlyph(glyph)])items.autoPlace(p.inv,it);ui.refreshGrids();}
+ function shop(){game.state.vendorStock.hewn=[items.fromBase(base),items.fromBase(Object.keys(data.BASES).find(k=>data.BASES[k].slot==='chest')),items.makeConsumable('hp1',2)];ui.openVendor('hewn');}
+ pack();shop();let gold=p.gold,count=p.inv.items.length;
+ ui.setCursorItem(items.makeGlyph(glyph));ok(doc.querySelector(".shop-buy").disabled,"buy allowed a carried item");ui.setCursorItem(null);ok(!doc.querySelector(".shop-buy").disabled,"buy stayed disabled after releasing a carried item");
+ doc.querySelector('.shop-entry').click();ok(p.gold===gold&&p.inv.items.length===count,'inspecting a shop item bought it');
+ const price=items.value(game.state.vendorStock.hewn[0]);doc.querySelector('.shop-buy').click();ok(p.gold===gold-price&&p.inv.items.length===count+1,'buy transaction failed');
+ const sold=p.inv.items[0],value=items.sellValue(sold);gold=p.gold;rightClick(doc.querySelector('#panelRight .invgrid .invitem'));ok(!p.inv.items.includes(sold)&&p.gold===gold+value,'right-click selling failed');
+ ui.togglePanel('char');ok(!doc.querySelector('.selling-mode'),'vendor context leaked into character panel');
+ const attrs=p.attr.str,points=p.attrPts;doc.querySelector('[aria-label="Increase Strength"]').click();ok(p.attr.str===attrs+1&&p.attrPts===points-1,'attribute allocation failed');
+ ok(doc.querySelectorAll('#panelLeft .manage-section').length===4,'character stat grouping missing');
+ const hp=p.hp;p.hp-=7;ui.refreshHUD();ok(doc.querySelector('[data-stat="Life"] .v').textContent.startsWith(Math.ceil(p.hp)+" /"),"character life not live");p.hp=hp;
+ ui.closeAll();pack();ui.togglePanel('inv');const search=doc.querySelector('.pack-toolbar input');search.value='no such item';search.dispatchEvent(new win.Event('input'));ok(doc.querySelectorAll('.search-dim').length===p.inv.items.length,'inventory search did not highlight without hiding items');
+ search.value='';search.dispatchEvent(new win.Event('input'));const ids=p.inv.items.map(i=>i.uid).sort().join();doc.getElementById('inventoryTidy').click();ok(p.inv.items.map(i=>i.uid).sort().join()===ids,'tidy changed item identities');
+ doc.querySelector('#panelRight .invgrid .invitem').click();ok(doc.getElementById('inventoryTidy').disabled,'tidy allowed a carried item');items.autoPlace(p.inv,ui.cursorItem);ui.setCursorItem(null);ui.refreshGrids();
+ // Full pack blocks a purchase without touching stacks or gold.
+ p.inv.items=[];for(let y=0;y<4;y++)for(let x=0;x<10;x++)items.place(p.inv,items.makeGlyph(glyph),x,y);shop();gold=p.gold;ok(doc.querySelector('.shop-buy').disabled,'full pack allowed purchase');doc.querySelector('.shop-buy').click();ok(p.gold===gold&&p.inv.items.length===40,'failed purchase mutated inventory');
+ // Equipment swaps still pass through the asynchronous visual transaction.
+ ui.closeAll();pack();ui.togglePanel('inv');const weapon=p.inv.items.find(i=>i.kind==='gear');rightClick(doc.querySelector('#panelRight .invgrid .invitem'));await until(()=>p.equip.main===weapon,'equipment swap');ok(!p.inv.items.includes(weapon),'equipped weapon remained in pack');
+ rightClick(doc.querySelector('#equipwrap .eqslot[data-label="Main hand"] .invitem'));await until(()=>!p.equip.main,'unequip');ok(p.inv.items.includes(weapon),'unequip lost weapon');
+ ui.closeAll();pack();shop();ui.openForge();ok(!doc.querySelector('.selling-mode')&&doc.getElementById('panelLeft').classList.contains('hidden'),'shop stayed active during forge');ok(doc.getElementById('forgeCraft').disabled,'empty altar allows crafting');
+ function offer(it,index){items.remove(p.inv,it);ui.setCursorItem(it);doc.querySelectorAll('.fslot')[index].click();ui.refreshGrids();}
+ const offering=p.inv.items.filter(i=>i.kind==='glyph');offering.forEach((it,i)=>offer(it,i));ok(!doc.getElementById('forgeCraft').disabled,'valid glyph offering rejected');doc.getElementById('forgeCraft').click();ok(doc.querySelectorAll('.fslot canvas').length===1,'glyph recipe did not produce one result');ui.closeAll();ok(p.inv.items.filter(i=>i.kind==='glyph').length===1,'closing forge lost result');
+ pack();ui.openForge();offer(p.inv.items.find(i=>i.baseId==='hp1'),0);ok(!doc.getElementById('forgeCraft').disabled,'stacked potion recipe rejected');doc.getElementById('forgeCraft').click();ui.closeAll();ok(p.inv.items.some(i=>i.baseId==='hp2'&&i.count===1)&&p.inv.items.some(i=>i.baseId==='hp1'&&i.count===3),'potion result or leftovers wrong');
+ pack();ui.openForge();offer(p.inv.items.find(i=>i.kind==='gear'),0);offer(p.inv.items.find(i=>i.kind==='glyph'),1);ok(!doc.getElementById('forgeCraft').disabled,'tempering offering rejected');doc.getElementById('forgeCraft').click();ui.closeAll();ok(p.inv.items.some(i=>i.kind==='gear'&&i.rarity==='enhanced'),'tempering failed');
+
+ pack();const rare=p.inv.items.find(i=>i.kind==='gear');items.rollAffixesOnto(rare,'rare');rare.identified=false;ui.openForge();offer(rare,0);p.inv.items.filter(i=>i.kind==='glyph').slice().forEach((it,i)=>offer(it,i+1));doc.querySelectorAll('.recipe-choice')[2].click();ok(doc.getElementById('forgeCraft').disabled,'unidentified rare could be reforged');
+ doc.querySelectorAll('.fslot')[0].click();rare.identified=true;doc.querySelectorAll('.fslot')[0].click();ok(!doc.getElementById('forgeCraft').disabled,'identified rare could not be reforged');doc.getElementById('forgeCraft').click();ui.closeAll();ok(p.inv.items.includes(rare)&&rare.rarity==='rare'&&!p.inv.items.some(i=>i.kind==='glyph'),'reweaving lost item or retained consumed glyphs');
+ pack();ui.openForge();const returned=p.inv.items.find(i=>i.kind==='glyph');offer(returned,0);ui.openDialog(game.state.npcs[0]);ok(p.inv.items.includes(returned),'opening dialog stranded altar materials');ui.closeAll();
+ p.inv.items=[];const potStacks=Array.from({length:4},()=>items.makeConsumable('hp1',10));potStacks.forEach((it,i)=>items.place(p.inv,it,i,0));ui.openForge();potStacks.forEach((it,i)=>offer(it,i));
+ for(let y=0;y<4;y++)for(let x=0;x<10;x++)items.place(p.inv,items.makeGlyph(glyph),x,y);ui.refreshGrids();
+ const groundStart=game.state.ground.length;doc.getElementById('forgeCraft').click();ui.closeAll();const drops=game.state.ground.slice(groundStart).map(g=>g.item);
+ ok(drops.filter(i=>i.baseId==='hp1').reduce((n,i)=>n+i.count,0)===37&&drops.filter(i=>i.baseId==='hp2').reduce((n,i)=>n+i.count,0)===1,'full-pack potion overflow lost quantities');ok(drops.every(i=>i.count<=i.maxStack),'forge created an oversized stack');
+ pack();
+ game.state.quests.q7={state:'active',count:3};game.state.quests.q8={state:'reward',count:8};game.state.quests.q8b={state:'done'};
+ ui.togglePanel('quest');ok(doc.querySelector('.quest-objective')&&doc.querySelector('.quest-rewards'),'quest objective/rewards missing');
+ [...doc.querySelectorAll('#panelLeft .manage-tabs button')].find(b=>b.textContent==='Active').click();ok(doc.querySelectorAll('.qrow').length===2,'active filter omitted turn-in');
+ [...doc.querySelectorAll('#panelLeft .manage-tabs button')].find(b=>b.textContent==='Completed').click();ok(doc.querySelectorAll('.qrow').length===1,'completed quest filter wrong');
+ [...doc.querySelectorAll('#panelLeft .manage-tabs button')].find(b=>b.textContent==='All').click();doc.querySelector('.qrow.locked').click();ok(!doc.querySelector('.quest-rewards')&&doc.querySelector('.qdetail h3').textContent==='Sealed Trial','locked quest spoiled details');
+
+ // Run actual game routing and the Player update loop on a temporary terrain fixture.
+ ui.closeAll();const oldMap=game.state.map,oldPosition={x:p.x,y:p.y},oldTime=game.state.time;
+ const terrain={...oldMap,w:16,h:8,blocked:new Uint8Array(128),elev:new Uint8Array(128),hazard:new Uint8Array(128),hasElev:true};
+ for(let y=0;y<8;y++)for(let x=6;x<16;x++)terrain.elev[x+y*16]=2;
+ game.state.map=terrain;p.x=2.5;p.y=4.5;p._navCache=null;p.command={type:'move'};game.repath(p,12.5,4.5);
+ const initialPath=p.path;game.repath(p,12.5,4.5);ok(p.path===initialPath,'unchanged held destination replanned');
+ let hops=0;for(let i=0;i<500&&(p.command||p.jumping);i++){game.state.time+=.016;const was=!!p.jumping;p.update(.016);if(p.jumping&&!was)hops++;}
+ ok(hops===1&&Math.hypot(p.x-12.5,p.y-4.5)<.02,'game player failed terrain route');
+ // The original interaction resumes after the jump instead of being discarded.
+ p.x=2.5;p.y=4.5;p._navCache=null;let interacted=false;p.command={type:'interact',obj:{x:12.5,y:4.5},run:()=>interacted=true};game.repath(p,12.5,4.5);
+ for(let i=0;i<500&&!interacted;i++){game.state.time+=.016;p.update(.016);}ok(interacted,'hop discarded interaction');
+ p.x=2.5;p.y=4.5;p._navCache=null;p.command={type:'move'};game.repath(p,12.5,4.5);
+ for(let i=0;i<200&&!p.jumping;i++){game.state.time+=.016;p.update(.016);}ok(!!p.jumping,'steering fixture did not hop');
+ const inFlight=p.path;game.repath(p,10.5,6.5);ok(p.path===inFlight&&p._navPendingGoal.x===10.5,'new destination interrupted the hop');
+ for(let i=0;i<500&&(p.command||p.jumping);i++){game.state.time+=.016;p.update(.016);}ok(Math.hypot(p.x-10.5,p.y-6.5)<.02,'queued destination did not resume after landing');
+
+ const Minion=win.eval('Minion');const companion=new Minion('skeleton',{hp:10,dmg:[1,2],speed:4,atkRate:1,range:1},p);companion.x=2.5;companion.y=4.5;game.state.minions=[companion];p.x=12.5;p.y=4.5;
+ let companionHops=0;for(let i=0;i<600&&Math.hypot(companion.x-p.x,companion.y-p.y)>2.6;i++){game.state.time+=.016;const was=!!companion.jumping;companion.update(.016,p,terrain);if(companion.jumping&&!was)companionHops++;}ok(companionHops===1&&companion.x>6,'companion did not follow across ledge');game.state.minions=[];
+ const Entity=win.eval('Entity'),enemy=new Entity(2.5,4.5);game.repath(enemy,12.5,4.5);ok(enemy.path===null,'ground enemy received a hop route');
+ p.jumping={fx:p.x,fy:p.y,tx:p.x,ty:p.y,t:0,dur:.42};p.jumpZ=20;
+ game.state.map=oldMap;p.x=oldPosition.x;p.y=oldPosition.y;game.state.time=oldTime;
+ await game.enterMap('frosthaven','default');ok(!p.jumping&&p.jumpZ===0&&!p._navPendingGoal,'map transition retained traversal');
+ p.jumping={fx:p.x,fy:p.y,tx:p.x+.5,ty:p.y,t:0,dur:.42};p.jumpZ=20;p._navPendingGoal={x:10,y:10};p._pendingClick={rightBtn:false,mouse:{}};game.onPlayerDeath(null);
+ ok(!p.jumping&&p.jumpZ===0&&!p._pendingClick&&!p._navPendingGoal,'death retained traversal state');
+ p.dead=false;p.action=null;p.hp=p.stats.maxHp;p.mana=p.stats.maxMana;await game.enterMap('frosthaven','default');doc.getElementById('centerMsg').classList.add('hidden');
+
+ // Item identity is consistent through pack, held item, tooltip, shop and sockets.
+ ui.closeAll();p.inv.items=[];
+ const jewel=items.makeUniqueJewel(data.UNIQUE_JEWELS[0]);items.autoPlace(p.inv,jewel);ui.togglePanel('inv');
+ const jewelCell=doc.querySelector('#panelRight .invgrid .invitem');
+ jewelCell.focus();ok(doc.querySelector('#tooltip .tt-type').textContent==='Jewel · Socketable','jewel type label missing');
+ ok(doc.querySelector('#tooltip .item-icon').getAttribute('aria-label')===jewel.name,'tooltip preview identity differs');
+ jewelCell.click();ok(ui.cursorItem===jewel&&doc.querySelector('#cursorItem .item-icon').getAttribute('aria-label')===jewel.name,'held jewel identity differs');
+ items.autoPlace(p.inv,jewel);ui.setCursorItem(null);ui.refreshGrids();
+ const socketed=items.fromBase('shortsword');socketed.sockets=[null];items.autoPlace(p.inv,socketed);ui.refreshGrids();
+ doc.querySelector('#panelRight .invgrid .invitem').click();doc.querySelector('#panelRight .invgrid .invitem').click();
+ ok(socketed.sockets[0]?.jewel&&socketed.sockets[0].name===jewel.name&&!ui.cursorItem,'jewel socket action lost identity');
+ ui.showItemTooltip(items.makeConsumable('hp1'),300,300);ok(doc.getElementById('tooltip').textContent.includes('40% of maximum Life'),'healing draught amount omitted');
+ ui.showItemTooltip(socketed,300,300,'equip');ok(doc.getElementById('tooltip').textContent.includes('Right-click to unequip'),'equipped item has wrong action hint');ui.hideTooltip();
+ const quest=data.QUESTS.find(q=>q.giver!=='board'&&data.NPCS[q.giver]);const npc={id:quest.giver,def:data.NPCS[quest.giver]};
+ const oldQuest=game.state.quests[quest.id];game.state.quests[quest.id]={state:'offered'};ui.closeAll();ui.openDialog(npc);
+ ok([...doc.querySelectorAll('.dlgopt')].every(el=>el.tagName==='BUTTON'),'dialog choices not keyboard buttons');
+ [...doc.querySelectorAll('.dlgopt')].find(el=>el.textContent.includes(quest.name)).click();
+ ok(doc.querySelector('.dlgquest h3').textContent===quest.name&&doc.querySelector('.dlgobjective'),'dialog missing quest summary');
+ ok(doc.activeElement===doc.querySelector('.dlgchoices button'),'dialog did not focus first choice');
+ ok(doc.getElementById('panelCenter').scrollWidth<=doc.getElementById('panelCenter').clientWidth+1,'dialog has horizontal overflow');
+ game.state.quests[quest.id]=oldQuest;ui.closeAll();
+ function reviewJewels(){ui.closeAll();p.inv.items=[];for(const def of data.UNIQUE_JEWELS)items.autoPlace(p.inv,items.makeUniqueJewel(def));for(const id of ['rejuv','respec','tp','idscroll','hp1','mp1'])items.autoPlace(p.inv,items.makeConsumable(id));for(const id of Object.keys(data.CHARM_BASES))items.autoPlace(p.inv,items.makeCharm(id,1,{}));ui.togglePanel('inv');}
+ function reviewDialog(){ui.closeAll();game.state.quests[quest.id]={state:'offered'};ui.openDialog(npc);}
+ ui.closeAll();pack();shop();await delay(100);
+ function bounds(){for(const el of doc.querySelectorAll('.management-panel:not(.hidden)'))ok(el.scrollWidth<=el.clientWidth+1,'panel has clipped horizontal content');const workspace=doc.getElementById('panelWorkspace');if(width<=1100)ok(win.getComputedStyle(workspace).flexDirection==='column','narrow pair is not stacked');else {const a=doc.getElementById('panelLeft').getBoundingClientRect(),b=doc.getElementById('panelRight').getBoundingClientRect();ok(a.right<=b.left,'paired panels overlap');ok(doc.querySelector('#panelRight .invgrid').getBoundingClientRect().bottom<=b.bottom,'backpack grid below the fold');}}
+ bounds();ok(!doc.getElementById('appFatal')&&!win.reviewErrors.length,'runtime errors: '+win.reviewErrors.join('; '));
+ const controls=document.getElementById('controls');
+ for(const [label,fn] of [['Shop',()=>{ui.closeAll();pack();shop();}],['Inventory',()=>{ui.closeAll();pack();ui.togglePanel('inv');}],['Character',()=>{ui.closeAll();ui.togglePanel('char');}],['Quests',()=>{ui.closeAll();ui.togglePanel('quest');}],['Forge',()=>{ui.closeAll();pack();ui.openForge();}]]){const b=document.createElement('button');b.textContent=label;b.onclick=fn;controls.appendChild(b);}
+ const select=document.createElement('select');select.setAttribute('aria-label','Review class');for(const [id,cls] of Object.entries(data.CLASSES)){const option=document.createElement('option');option.value=id;option.textContent=cls.name;select.appendChild(option);}select.onchange=async()=>{ui.closeAll();await game.newGame('Kaelen',select.value,false);await game.skipOpening();ui.closeAll();p=game.state.player;p.gold=2400;p.attrPts=5;game.state.monsters=[];pack();shop();};controls.appendChild(select);
+ for(const [label,fn] of [['Jewels & supplies',reviewJewels],['Dialogue',reviewDialog]]){const b=document.createElement('button');b.textContent=label;b.onclick=fn;controls.appendChild(b);}
+ out.textContent=`PASS — ${checks} interaction checks at ${width} × ${height}. Item identity, socketing, dialogue, buying, selling, full pack, equipment swaps, search/tidy, forge, quests, stats and panel transitions. Saves isolated.`;
+} catch(error){out.textContent='FAIL: '+error.stack;}
+</script></html>

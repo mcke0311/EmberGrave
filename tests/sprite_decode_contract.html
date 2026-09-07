@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Sprite decode contract</title></head>
+<body>
+  <pre id="result">PENDING</pre>
+  <script>
+    "use strict";
+    const DATA = { SPRITE_MANIFEST: {
+      version: 1, wallHeight: 72, wallViewHeight: 128,
+      entries: { "test.bad-decode": {
+        src: "virtual/bad-decode.webp", kind: "static", anchor: [0, 0], bundle: "core"
+      } }, maps: {}
+    } };
+    class DecodeRejectingImage {
+      constructor() { this.naturalWidth = 8; this.naturalHeight = 8; this.decoding = ""; }
+      set src(value) { this._src = value; Promise.resolve().then(() => this.onload()); }
+      get src() { return this._src; }
+      decode() { return Promise.reject(new DOMException("authored pixels are corrupt", "EncodingError")); }
+    }
+    window.Image = DecodeRejectingImage;
+  </script>
+  <script src="../js/sprite_assets.js"></script>
+  <script>
+    "use strict";
+    SpriteAssets.loadBundle("core").then(() => {
+      document.body.dataset.testStatus = "failed";
+      document.getElementById("result").textContent = "FAIL: load completed before decode rejection";
+    }).catch(err => {
+      const exact = err.name === "SpriteAssetError" && err.assetId === "test.bad-decode" &&
+        err.src === "virtual/bad-decode.webp" && /could not be decoded/.test(err.message) &&
+        /authored pixels are corrupt/.test(err.message);
+      document.body.dataset.testStatus = exact ? "passed" : "failed";
+      document.getElementById("result").textContent = `${exact ? "PASS" : "FAIL"}: ${err.message}`;
+    });
+  </script>
+</body>
+</html>

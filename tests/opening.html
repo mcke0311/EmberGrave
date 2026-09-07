@@ -1,0 +1,122 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>The Last Warm Wall — opening review</title>
+<style>body{margin:16px;background:#10171e;color:#e2d4bb;font:14px system-ui}h1{font:25px Georgia}p{color:#abbcc6}button,select{margin:4px;padding:8px;background:#26323b;color:#ecdabe;border:1px solid #827051}pre{white-space:pre-wrap}iframe{display:block;width:1280px;height:720px;max-width:100%;border:1px solid #73634e}#controls{margin-bottom:12px}</style>
+<h1>The Last Warm Wall</h1><p>Isolated heroes and saves. Play the opening, inspect a checkpoint, or run the five-class combat walkthrough.</p>
+<div id="controls"><select id="hero" aria-label="Hero class"><option value="vanguard">Vanguard</option><option value="emberwitch">Ember Witch</option><option value="gravebinder">Gravebinder</option><option value="veilranger">Veil Ranger</option><option value="wildkeeper">Wildkeeper</option></select><button id="restart" disabled>Play from the start</button><button id="reveal" disabled>Awakening</button><button id="rescue" disabled>Traveler rescue</button><button id="escort" disabled>Escort</button><button id="gate" disabled>Gate encounter</button><button id="supplies" disabled>Watch supplies</button><button id="boss" disabled>Captain</button><button id="phase" disabled>Second phase</button><button id="warning" disabled>Frost warning</button><button id="hearth" disabled>Hearth arrival</button><button id="run" disabled>Run all five classes</button><button id="summons" disabled>Run companion classes</button><button id="pause" disabled>Pause scene</button><button id="small">960 × 600</button><button id="large">1280 × 720</button></div>
+<pre id="result">Loading isolated game…</pre><div id="host"></div>
+<script type="module">
+const out=document.getElementById('result'),store=new Map();window.openingStore=store;
+let frame,win,game,ui,doc,checks=0,busy=false,paused=false;
+const ok=(v,m)=>{checks++;if(!v)throw Error(m);};
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+const controls=[...document.querySelectorAll('button')];
+const setBusy=v=>{busy=v;controls.forEach(b=>b.disabled=v);};
+try {
+  const [html,source]=await Promise.all(['../index.html','../js/game.js'].map(url=>fetch(url,{cache:'no-store'}).then(r=>r.text())));
+  const hooked=source.replace('    init, newGame, loadGame,','    __openingReview:{opening,update,updateCamera,updateBossEncounter,render,tick},\n    init, newGame, loadGame,');
+  const injection=`<base href="${new URL('../index.html',location.href)}"><script>
+    const testStore=parent.openingStore;
+    Object.defineProperty(window,'localStorage',{value:{get length(){return testStore.size},key:i=>[...testStore.keys()][i]??null,getItem:k=>testStore.get(k)??null,setItem:(k,v)=>testStore.set(String(k),String(v)),removeItem:k=>testStore.delete(k)}});
+    window.openingErrors=[];window.addEventListener('error',e=>openingErrors.push(e.message));window.addEventListener('unhandledrejection',e=>openingErrors.push(String(e.reason)));
+    window.liveRAF=window.requestAnimationFrame;window.requestAnimationFrame=()=>0;
+  <\/script>`;
+  frame=document.createElement('iframe');frame.title='Isolated playable opening';
+  frame.srcdoc=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>'+hooked+'<\/script>');
+  document.getElementById('host').append(frame);await new Promise(r=>frame.onload=r);
+  win=frame.contentWindow;doc=win.document;
+  for(let i=0;i<400 && !doc.querySelector('#titleMenu button');i++){if(doc.getElementById('appFatal'))throw Error(doc.getElementById('appFatal').textContent);await delay(30);}
+  game=win.eval('Game');ui=win.eval('UI');win.eval('Sfx').setVol('master',0);
+  const test=game.__openingReview;
+  const render=()=>{if(!game.state?.map)return;test.updateBossEncounter();test.updateCamera(.05);test.render();};
+  win.addEventListener('resize',()=>{if(!busy&&game.state?.map)render();});
+  const start=async()=>{
+    ui.closeAll();await game.newGame('Opening Review',document.getElementById('hero').value,false);
+    if(game.state?.map?.id!=='frosthaven_approach')throw Error('Opening assets could not load. Reload the review to retry.');
+    test.opening.update(.05);render();
+  };
+  // A single review loop drives the normal game clock; contract runs temporarily
+  // take over it, so background tabs cannot change the test's elapsed time.
+  let last=performance.now();
+  function live(t){const dt=Math.min(.05,(t-last)/1000);last=t;if(!busy&&!paused&&game.state&&!ui.escOpen()&&!ui.cinematicActive()){test.update(dt);render();}requestAnimationFrame(live);}
+  await start();requestAnimationFrame(live);
+  document.getElementById('restart').onclick=async()=>{setBusy(true);try{await start();out.textContent='Ready — click the road inside the game to play. Audio is muted for this review.';}finally{setBusy(false);}};
+  document.getElementById('reveal').onclick=async()=>{setBusy(true);try{await start();Object.assign(game.state.player,game.state.map.spawns.awakening);test.opening.update(.1);test.opening.update(1.2);test.updateCamera(2);render();}finally{setBusy(false);}};
+  async function scene(stage){
+    await start();game.state.flags.opening.stage=stage;
+    const o=game.state.flags.opening;
+    o.defeated=['guard'];
+    o.rescued=['escort','combat','provision','boss','gate'].includes(stage);
+    if(o.rescued)o.defeated.push('rescue0','rescue1','rescue2');
+    if(['provision','boss','gate'].includes(stage))o.defeated.push('gate0','gate1');
+    if(stage==='gate')o.defeated.push('captain');
+    game.saveGame();await game.loadGame(game.listSaves().find(s=>s.name==='Opening Review').slot);render();
+  }
+  for(const [id,stage] of [['rescue','rescue'],['escort','escort'],['supplies','provision'],['boss','boss']])document.getElementById(id).onclick=async()=>{setBusy(true);try{await scene(stage);test.opening.update(.05);render();}finally{setBusy(false);}};
+  document.getElementById('phase').onclick=async()=>{setBusy(true);try{await scene('boss');const b=game.state.monsters.find(m=>m.isBoss);b.hp=b.maxHp*.49;test.opening.update(.05);render();}finally{setBusy(false);}};
+  document.getElementById('warning').onclick=async()=>{setBusy(true);try{await scene('boss');const b=game.state.monsters.find(m=>m.isBoss);Object.assign(game.state.player,{x:b.x-1.8,y:b.y+1.4});b.startTelegraphedSlam(game.state.player,game.state.map);test.update(.5);test.updateCamera(2);paused=true;document.getElementById('pause').textContent='Resume scene';render();}finally{setBusy(false);}};
+  document.getElementById('pause').onclick=()=>{paused=!paused;document.getElementById('pause').textContent=paused?'Resume scene':'Pause scene';};
+  document.getElementById('gate').onclick=async()=>{setBusy(true);try{await scene('combat');}finally{setBusy(false);}};
+  document.getElementById('hearth').onclick=async()=>{setBusy(true);try{await scene('gate');await game.enterMap('frosthaven','from_wild',{openingMode:'gate'});const sera=game.state.npcs.find(n=>n.id==='sera');Object.assign(game.state.player,{x:sera.x+1,y:sera.y+3});test.opening.update(.05);test.updateCamera(2);render();}finally{setBusy(false);}};
+  document.getElementById('small').onclick=()=>{frame.style.width='960px';frame.style.height='600px';};
+  document.getElementById('large').onclick=()=>{frame.style.width='1280px';frame.style.height='720px';};
+  async function walkthrough(withSummons=false){
+    setBusy(true);checks=0;const results=[];
+    try {
+      for(const option of document.getElementById('hero').options) {
+        if(withSummons&&!['gravebinder','wildkeeper'].includes(option.value))continue;
+        document.getElementById('hero').value=option.value;await start();
+        const p=game.state.player;let elapsed=0,waypoint=0,bossStart=null,summoned=false,dodgeUntil=0;
+        if(withSummons){const skill=option.value==='gravebinder'?'raise_dead':'call_wolf';p.skills[skill]=1;p.skillPts=Math.max(0,p.skillPts-1);p.computeStats();p.skillR=skill;}
+        const road=game.state.map.opening.road.slice(1);
+        const go=pos=>{p.command={type:'move'};game.repath(p,pos.x,pos.y);};
+        for(let frameN=0;frameN<18000 && game.state.flags.opening.stage!=='gate';frameN++) {
+          const stage=game.state.flags.opening.stage;
+          if(stage==='bossIntro'&&bossStart===null)bossStart=elapsed;
+          const enemies=game.state.monsters.filter(m=>!m.dead);
+          if(p.hp<p.stats.maxHp*.55&&p.healPool<p.stats.maxHp*.15){const slot=p.belt.findIndex(b=>b?.id==='hp1'&&b.count);if(slot>=0)p.quaff(slot);}
+          const warning=game.state.fx.find(f=>f.type==='slamwarning'&&f.ttl>0);
+          if(warning&&Math.hypot(p.x-warning.x,p.y-warning.y)<warning.radius+.5){
+            if(elapsed>=dodgeUntil){const a=Math.atan2(p.y-warning.y,p.x-warning.x);for(const turn of [0,.5,-.5,1,-1,Math.PI]){const dest={x:warning.x+Math.cos(a+turn)*(warning.radius+1.5),y:warning.y+Math.sin(a+turn)*(warning.radius+1.5)};if(win.eval('MapGen').walkable(game.state.map,dest.x,dest.y)){go(dest);dodgeUntil=elapsed+warning.ttl+.1;break;}}}
+          } else if(elapsed<dodgeUntil) {
+            // Finish stepping out of the visible warning before attacking again.
+          } else if(stage==='rescueTalk') {
+            const n=game.state.npcs.find(n=>n.id==='opening_mara');p.command={type:'interact',obj:n};game.repath(p,n.x,n.y);
+          } else if(stage==='provision') {
+            if(!game.state.flags.opening.supply){const cache=game.state.map.props.find(p=>p.interact==='opening_supply');p.command={type:'interact',obj:cache};game.repath(p,cache.x,cache.y);}
+            else {const cache=game.state.map.opening.cache;const drop=game.state.ground.find(g=>g.item?.baseId==='hp1'&&Math.hypot(g.x-cache.x,g.y-cache.y)<4);if(drop){p.command={type:'pickup',gi:drop};game.repath(p,drop.x,drop.y);}else go(game.state.map.opening.bossTrigger);}
+          } else if(withSummons&&!summoned&&['road','escort'].includes(stage)) {
+            const corpse=game.state.monsters.find(m=>m.dead&&!m.husk);
+            p.command={type:'skillPoint',skill:p.skillR,point:corpse?{x:corpse.x,y:corpse.y}:{x:p.x,y:p.y}};
+            summoned=game.state.minions.length>0;
+          } else if(enemies.length) {
+            const target=enemies.sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
+            if(!p.command || p.command.target!==target || p.command.type!=='attack')p.command={type:'attack',target,skill:p.skillL,hold:true};
+          } else if(!['awakening','guard','rescue','combat','bossIntro','boss'].includes(stage)) {
+            while(waypoint<road.length && Math.hypot(p.x-road[waypoint][0],p.y-road[waypoint][1])<1.4)waypoint++;
+            if(waypoint<road.length && !p.path?.length){p.command={type:'move'};game.repath(p,...road[waypoint]);}
+          }
+          test.update(.05);elapsed+=.05;
+          if(frameN%60===0){render();out.textContent=`Testing ${option.text}: ${game.state.flags.opening.stage}, ${elapsed.toFixed(1)}s, life ${p.hp.toFixed(0)}/${p.stats.maxHp}, position ${p.x.toFixed(1)},${p.y.toFixed(1)}`;await delay(0);}
+          ok(!p.dead,option.text+' died during starter encounter');
+          ok(!doc.getElementById('appFatal'),'render failure');
+        }
+        ok(game.state.flags.opening.stage==='gate',option.text+' encounter did not complete');
+        ok(game.state.flags.opening.defeated.includes('captain')&&game.state.flags.opening.rescued,'rescue and captain completed');
+        if(withSummons)ok(summoned,'actual companion summoned');
+        ok(game.state.quests.q7.count===0,'opening kills changed quest');
+        await game.enterMap('frosthaven','from_wild',{openingMode:'gate'});test.opening.update(.05);render();
+        ok(!!doc.querySelector('.opening-arrival:not([hidden])'),'Frosthaven title visible');
+        game.interact(game.state.npcs.find(n=>n.id==='sera'));
+        ok(doc.querySelector('.dlgtext').textContent==='The light spared you. It did not spare them.','short Seraneth greeting');
+        ok(game.state.flags.seenIntro&&game.state.flags.opening.stage==='done','handoff finishes');
+        ui.closeAll();render();results.push(`${option.text}: ${elapsed.toFixed(1)}s through combat, boss ${(elapsed-bossStart).toFixed(1)}s, ${p.hp.toFixed(0)}/${p.stats.maxHp} life${withSummons?' (with summons)':''}`);
+      }
+      ok(!win.openingErrors.length,win.openingErrors.join('\n'));
+      out.textContent=`PASS ${checks} checks — ${withSummons?'two companion classes':'five classes'} using actual movement/combat and starter equipment.\n`+results.join('\n');
+    } catch(error){out.textContent='FAIL '+error.stack+'\n'+results.join('\n')+'\n'+JSON.stringify({stage:game.state.flags.opening.stage,hero:game.state.player.classId,belt:game.state.player.belt,boss:game.state.monsters.filter(m=>m.isBoss).map(m=>({hp:m.hp,maxHp:m.maxHp,phase:m.phaseIdx})),enemies:game.state.monsters.filter(m=>!m.dead).map(m=>m.openingId)},null,2);console.error(error);}
+    finally{setBusy(false);}
+  }
+  document.getElementById('run').onclick=()=>walkthrough();
+  document.getElementById('summons').onclick=()=>walkthrough(true);
+  setBusy(false);out.textContent='Ready — click the road inside the game to play. Audio is muted for this review.';
+} catch(error){out.textContent='FAIL '+error.stack;console.error(error);}
+</script>

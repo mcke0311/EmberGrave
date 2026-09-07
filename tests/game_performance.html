@@ -1,0 +1,81 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Map center performance review</title>
+<style>body{background:#17202a;color:#eee;font:14px system-ui;margin:16px}pre{white-space:pre-wrap}#report{max-height:140px;overflow:auto}iframe{width:1920px;height:1080px;border:0;transform:scale(.5);transform-origin:top left}#host{height:560px;overflow:hidden}</style>
+<h1>Map center performance review</h1><p id="description">Loading the isolated game. Temporary hero and in-memory saves.</p><pre id="status">Loading…</pre><pre id="report"></pre><div id="host"></div>
+<script type="module">
+const status=document.getElementById('status'),report=document.getElementById('report');
+const params=new URLSearchParams(location.search),zone=params.get('zone')||'north_wild';
+window.perfStore=new Map();window.uncached=new URLSearchParams(location.search).has('uncached');const results=[];
+const raf=()=>new Promise(r=>requestAnimationFrame(r));
+function summary(values){const a=values.toSorted((a,b)=>a-b);return {median:+a[Math.floor(a.length*.5)].toFixed(2),p95:+a[Math.floor(a.length*.95)].toFixed(2),max:+a.at(-1).toFixed(2)};}
+try{
+ const vfxBefore=new URLSearchParams(location.search).has('vfxbefore');
+ const [html,gameSource]=await Promise.all(['../index.html',vfxBefore?'../tests/fixtures/skill_vfx_before/js/game.js':'../js/game.js'].map(p=>fetch(p,{cache:'no-store'}).then(r=>r.text())));
+ const names=['render','update','updateHover','heldUpdate','renderLighting','renderMinimap','drawEntity','drawProp','drawBackdrop','repath'];
+ const hooks=names.map(n=>`${n}=window.__wrap('${n}',${n});`).join('\n');
+ const source=gameSource.replace('Game.init().catch','Game.init().then(()=>window.__gameReady=true).catch').replaceAll('LevelTerrain.','window.__terrain.').replace('  /* messages passthrough */',hooks+'\n  /* messages passthrough */').replace('    init, newGame, loadGame,',`    __perf:{render,update,followCamera:updateCamera,place(x,y){state.player.x=x;state.player.y=y;state.player.path=null;state.player.command=null;camPos={x:U.isoX(x,y)-canvas.width/2,y:U.isoY(x,y)-canvas.height/2-20};shakeOx=shakeOy=0;}},\n    init, newGame, loadGame,`);
+ if(!source.includes('__perf:'))throw Error('Performance hooks missing');
+ const injection=`<base href="${new URL('../index.html',location.href)}"><script>
+ const store=parent.perfStore;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});
+ window.requestAnimationFrame=()=>0;window.__samples={};window.__errors=[];window.addEventListener('error',e=>window.__errors.push(e.message));
+ window.__wrap=(name,fn)=>function(...args){const t=performance.now();try{return fn.apply(this,args);}finally{const s=window.__samples[name]||(window.__samples[name]={ms:0,calls:0,max:0}),ms=performance.now()-t;s.ms+=ms;s.calls++;s.max=Math.max(s.max,ms);}};
+ <\/script>`;
+ const frame=document.createElement('iframe');frame.title='Isolated performance game';
+ frame.srcdoc=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>window.__terrain=Object.fromEntries(Object.entries(LevelTerrain).map(([k,v])=>[k,typeof v===\'function\'&&[\'drawSurface\',\'drawFloor\',\'clipBehind\',\'beginFrame\'].includes(k)?window.__wrap(k,function(...args){if((k===\'drawSurface\'||k===\'drawFloor\')&&parent.uncached)args[8]=false;return v(...args);}):v]));'+source+'<\/script>');
+ if(vfxBefore)frame.srcdoc=frame.srcdoc.replace(/src="js\/entities.js[^\"]*"/,'src="tests/fixtures/skill_vfx_before/js/entities.js"');
+ document.getElementById('host').append(frame);await new Promise(r=>frame.onload=r);
+ const win=frame.contentWindow,doc=win.document;
+ for(let i=0;i<600&&!win.__gameReady;i++){if(doc.querySelector('#appFatal'))throw Error(doc.querySelector('#appFatalDetail').textContent);await new Promise(r=>setTimeout(r,30));}
+ if(!win.__gameReady)throw Error('Game startup did not finish');
+ const {Game:game,UI:ui,Sfx:sfx,TerrainSurface:S,TerrainNavigation:N}=win.eval('({Game,UI,Sfx,TerrainSurface,TerrainNavigation})');
+ if(vfxBefore)win.eval('SkillVFX').setEnabled(false);
+ const slowPaths=[],findPath=N.findPath;
+ N.findPath=(m,from,to,profile)=>{const a={x:from.x,y:from.y},t=performance.now();const result=findPath(m,from,to,profile),ms=performance.now()-t;if(ms>20)slowPaths.push({from:a,to,profile,ms:+ms.toFixed(2),found:!!result});return result;};
+ ui.refreshHUD=win.__wrap('HUD',ui.refreshHUD);
+ sfx.setVol('master',0);await game.newGame('Performance review','vanguard',false);await game.skipOpening();ui.closeAll();game.debugFlags.god=true;game.options.screenShake=false;game.state.seed=12345;
+ win.Math.random=win.eval('U.rng(7331)');
+ if(!await game.enterMap(zone,'from_camp'))throw Error('Could not enter profiling zone');
+ ui.closeAll();ui.hideTitle();win.Math.random=win.eval('U.rng(7331)');
+ if(win.getComputedStyle(doc.getElementById('title')).display!=='none')throw Error('Title obscures the profiling canvas');
+ const state=game.state,api=game.__perf,m=state.map;
+ const entry={...(m.spawns.from_camp||m.spawns.default)},candidates=[];
+ for(let y=0;y<m.h;y++)for(let x=0;x<m.w;x++)if(N.clear(m,x+.5,y+.5,.36)&&(!m.surfaceVersion||S.supported(m,x+.5,y+.5,.36)))candidates.push({x:x+.5,y:y+.5});
+ candidates.sort((a,b)=>Math.hypot(a.x-m.w/2,a.y-m.h/2)-Math.hypot(b.x-m.w/2,b.y-m.h/2));
+ const center=candidates.find(c=>N.findPath(m,entry,c,{radius:.36,hop:false}))||entry;
+ const destination=Object.values(m.spawns).filter(c=>Math.hypot(c.x-center.x,c.y-center.y)>5).sort((a,b)=>Math.hypot(b.x-center.x,b.y-center.y)-Math.hypot(a.x-center.x,a.y-center.y)).find(c=>N.findPath(m,center,c,{radius:.36,hop:false}))||entry;
+ const wide=new URLSearchParams(location.search).has('wide');
+ if(wide){frame.style.width='3840px';frame.style.height='2160px';frame.style.transform='scale(.25)';await raf();await raf();}
+ document.getElementById('description').textContent=`${m.zone.name}: seed 12345, ${wide?'3840 × 2160':'1920 × 1080'}, ${window.uncached?'full terrain repaint':'cached terrain'}. Temporary hero and in-memory saves. Timings include instrumentation overhead; synchronous CPU submission is separate from animation-frame intervals.`;
+ for(const [where,p] of [['entry',entry],['center',center],['moving',center],['combat',center]].filter(([where])=>!params.has('phase')||params.get('phase')===where)){
+  const roster=state.monsters;
+  if(where==='moving'&&params.has('clearRoute'))state.monsters=[];
+  if(where==='combat')for(const mon of state.monsters)if(Math.hypot(mon.x-p.x,mon.y-p.y)<20)mon.aggro=true;
+  api.place(p.x,p.y);api.render();
+  if(where==='moving'){game.repath(state.player,destination.x,destination.y);state.player.command={type:'move'};}
+  for(const simulate of where==='moving'||where==='combat'?[true]:[false,true]){
+   status.textContent=`Measuring ${where}, ${simulate?'active enemies':'render only'}…`;const totals=[],intervals=[],costs={};let previous=performance.now(),builds=0,distanceWalked=0;
+   const viewBuilds=win.__terrain.getDiagnostics().surfaceViewBuilds;
+   const frames=where==='moving'?600:180;
+   for(let i=0;i<frames;i++){
+    await raf();const now=performance.now();if(i)intervals.push(now-previous);previous=now;win.__samples={};
+    
+    const before={x:state.player.x,y:state.player.y,jumping:!!state.player.jumping};
+    const t=performance.now();if(simulate)api.update(1/60);if(where==='moving')api.followCamera(1/60);api.render();totals.push(performance.now()-t);
+    if(where==='moving'){
+     distanceWalked+=Math.hypot(state.player.x-before.x,state.player.y-before.y);
+     if(!before.jumping&&!state.player.jumping&&!N.segment(m,before.x,before.y,state.player.x,state.player.y,state.player.radius))throw Error('Walking profile crossed blocked terrain');
+    }
+    builds+=win.__terrain.getDiagnostics().chunkBuilds;
+    for(const [name,s] of Object.entries(win.__samples)){const a=costs[name]||(costs[name]={times:[],calls:0,max:0});a.times.push(s.ms);a.calls+=s.calls;a.max=Math.max(a.max,s.max);}
+    if(win.__errors.length||doc.querySelector('#appFatal'))throw Error(win.__errors.join(';')||doc.querySelector('#appFatalDetail').textContent);
+   }
+   if(where==='moving'&&params.has('clearRoute')&&distanceWalked<5)throw Error('Clear walking route stalled');
+   results.push({zone,where,position:p,endPosition:{x:state.player.x,y:state.player.y},distanceWalked,clearRoute:params.has('clearRoute'),viewport:[doc.querySelector('#view').width,doc.querySelector('#view').height],simulate,frames,monsters:state.monsters.length,aggro:state.monsters.filter(m=>m.aggro).length,cpuMs:summary(totals),frameIntervalMs:summary(intervals),builds,viewBuilds:win.__terrain.getDiagnostics().surfaceViewBuilds-viewBuilds,parts:Object.fromEntries(Object.entries(costs).map(([k,v])=>[k,{...summary(v.times),calls:v.calls,maxCall:+v.max.toFixed(2)}]))});report.textContent=JSON.stringify(results,null,2);
+  }
+  state.monsters=roster;
+ }
+ window.perfResults={results,slowPaths,titleHidden:win.getComputedStyle(doc.getElementById('title')).display==='none'};report.textContent=JSON.stringify(window.perfResults,null,2);
+ if(!window.perfResults.titleHidden)throw Error('Title obscured the profiling canvas');
+ if(new URLSearchParams(location.search).has('vfxrecord'))await fetch('http://localhost:8742/map_'+(vfxBefore?'before':'after')+(wide?'_4k':''),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({results,slowPaths})});
+ status.textContent='PASS — profiling complete';document.body.dataset.testStatus='passed';
+}catch(e){status.textContent='FAIL '+e.stack;document.body.dataset.testStatus='failed';}
+</script></html>

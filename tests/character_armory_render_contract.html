@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Full 3D armory render contract</title><style>body{background:#201c25;color:#decbb5;font:14px system-ui;margin:24px}canvas{max-width:100%;background:#292733}pre{white-space:pre-wrap}</style>
+<h1>Five-class 3D armory rendering</h1><pre id="result">Running…</pre><canvas id="sheet" width="1440" height="1300" aria-label="All five classes with each weapon family"></canvas>
+<script src="../js/utils.js"></script><script src="../js/data.js"></script><script>window.TestData=DATA;</script>
+<script type="module">
+import {createCharacterRenderer,STATES} from '../js/character3d.mjs?v=14';
+import {CLASS_STYLES,WEAPON_FAMILIES,resolveCharacterVisual} from '../js/character_catalog3d.mjs';
+const data=window.TestData,out=document.getElementById('result'),sx=document.getElementById('sheet').getContext('2d');
+const cell=document.createElement('canvas');cell.width=cell.height=256;const cx=cell.getContext('2d',{willReadFrequently:true});
+const ok=(v,m)=>{checks++;if(!v)throw new Error(m);};let view,checks=0;
+function render(id,equip,state='idle',dir=2,t=.5){const v=resolveCharacterVisual(data,id,equip);const canvas=view.render({state,t:state==='idle'?t*3:t,ang:dir*Math.PI/4,ex:{walkPh:t*Math.PI*2}},v.equipment,id);cx.clearRect(0,0,256,256);cx.drawImage(canvas,0,0);return cx.getImageData(0,0,256,256).data;}
+function stats(pixels){let visible=0,edge=0,hash=0;for(let y=0;y<256;y++)for(let x=0;x<256;x++){const i=(y*256+x)*4;if(pixels[i+3]>15){visible++;if(x<2||y<2||x>253||y>253)edge++;hash=(hash+pixels[i]*3+pixels[i+1]*5+pixels[i+2]*7+i)>>>0;}}return {visible,edge,hash};}
+try{
+  view=createCharacterRenderer({size:256});let row=0;const start=performance.now();
+  for(const classId of Object.keys(CLASS_STYLES)){
+    for(let f=0;f<WEAPON_FAMILIES.length;f++){
+      const family=WEAPON_FAMILIES[f],base=Object.values(data.BASES).find(b=>b.playerVisualFamily===family&&b.id.endsWith('_t13'));
+      const equip={main:{baseId:base.id},head:{baseId:'helm_t13'},chest:{baseId:'chest_t13'},gloves:{baseId:'gloves_t13'},boots:{baseId:'boots_t13'},belt:{baseId:'belt_t13'},amulet:{baseId:'amulet_t13'}};
+      if(!base.twoHand)equip.off={baseId:'shield_t13'};
+      for(const state of STATES)for(let dir=0;dir<8;dir++){
+        for(const t of [0,.25,.45,.6,.8,1]){const s=stats(render(classId,equip,state,dir,t));ok(s.visible>140,`${classId}/${family}/${state}/${dir}/${t}: invisible`);ok(s.edge===0,`${classId}/${family}/${state}/${dir}/${t}: WebGL canvas clips ${s.edge} pixels`);}
+        await new Promise(resolve=>setTimeout(resolve,0));
+      }
+      render(classId,equip,'idle',1);sx.drawImage(cell,f*120,row*260,120,120);sx.fillStyle='#d9c7b3';sx.font='10px system-ui';sx.fillText(family,f*120+3,row*260+133);
+      render(classId,{main:{baseId:base.id},chest:{baseId:'quiltvest'}},'attack',1);sx.drawImage(cell,f*120,row*260+135,120,120);
+      await new Promise(resolve=>setTimeout(resolve,0));
+    }
+    row++;out.textContent=`Checked ${row}/5 classes…`;await new Promise(resolve=>setTimeout(resolve,0));
+  }
+  for(const classId of Object.keys(CLASS_STYLES)){
+    const light=stats(render(classId,{chest:{baseId:'quiltvest'}})),plate=stats(render(classId,{chest:{baseId:'chest_t7'}})),mythic=stats(render(classId,{chest:{baseId:'chest_t13'}}));
+    ok(light.hash!==plate.hash&&plate.hash!==mythic.hash,`${classId}: armor tiers look identical`);
+    const a=stats(render(classId,{},'walk',0,.25)),b=stats(render(classId,{},'walk',0,.75));ok(a.hash!==b.hash,`${classId}: frozen gait`);
+  }
+  // Textured equipment must release its GPU resources when it is replaced.
+  const outfit=tier=>({main:{baseId:'sword_t'+tier},chest:{baseId:'chest_t'+tier},head:{baseId:'helm_t'+tier},boots:{baseId:'boots_t'+tier},gloves:{baseId:'gloves_t'+tier}});
+  for(const classId of Object.keys(CLASS_STYLES)){
+    render(classId,outfit(5));render(classId,outfit(7));const warm={...view.renderer.info.memory};
+    for(let i=0;i<12;i++)render(classId,outfit(i%2?7:5));
+    ok(view.renderer.info.memory.textures<=warm.textures,classId+': equipment changes leaked GPU textures');
+    ok(view.renderer.info.memory.geometries<=warm.geometries,classId+': equipment changes leaked GPU geometry');
+  }
+  out.textContent=`PASS: ${checks} rendered checks; five classes × 12 weapon families × eight states × eight directions × six timeline samples, with full mythic armor.\nCompleted in ${Math.round(performance.now()-start)} ms. The sheet also shows light armor and attacks.`;document.body.dataset.testStatus='passed';
+}catch(error){out.textContent='FAIL: '+error.stack;document.body.dataset.testStatus='failed';}finally{view?.dispose();}
+</script></html>
+
+

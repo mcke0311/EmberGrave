@@ -1,0 +1,21 @@
+# Local working files and caches
+/tmp/
+/.claude/
+/24
+__pycache__/
+*.py[cod]
+node_modules/
+.venv/
+venv/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo

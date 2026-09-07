@@ -1,0 +1,8238 @@
+{
+  "contract": {
+    "anchor": [
+      32,
+      0
+    ],
+    "cell": [
+      64,
+      128
+    ],
+    "cols": 4,
+    "frameOrder": [
+      "southwest_1",
+      "southwest_2",
+      "southwest_3",
+      "southwest_4",
+      "southeast_1",
+      "southeast_2",
+      "southeast_3",
+      "southeast_4"
+    ],
+    "frames": 8,
+    "rows": 2,
+    "size": [
+      256,
+      256
+    ]
+  },
+  "masterQA": "assets/sprites_src/gameplay_art/qa/cliff_authored_sources_v1.png",
+  "operation": "alpha-clean-slice-shared-uniform-resize-v1",
+  "promptManifest": "assets/sprites_src/gameplay_art_authored/cliffs/prompts_v1.json",
+  "promptManifestSha256": "e9aa2c723b509226c6a4edae6d7909cef4531402e4a7570cc0af72b9a7316454",
+  "review": "visual-contact-sheet-v1",
+  "sourceKind": "imagegen-authored-cliff-sheets",
+  "themes": {
+    "bastion": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/bastion_alpha_v1.png",
+      "alphaSourceSha256": "267cc25f4d2c0e70fd699b2b90cbff069063e814ac3e57a1cfc2df4fcf2904dc",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          1,
+          0,
+          32,
+          44
+        ],
+        [
+          1,
+          0,
+          32,
+          55
+        ],
+        [
+          1,
+          0,
+          32,
+          68
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          58
+        ],
+        [
+          32,
+          0,
+          63,
+          73
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            68,
+            295,
+            281,
+            482
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 0.999696,
+          "paintedSize": [
+            213,
+            187
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            68,
+            295,
+            33,
+            145
+          ]
+        },
+        {
+          "alphaBBox": [
+            51,
+            193,
+            263,
+            495
+          ],
+          "canonicalPaintedSize": [
+            31,
+            44
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 0.99939,
+          "paintedSize": [
+            212,
+            302
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            51,
+            193,
+            50,
+            132
+          ]
+        },
+        {
+          "alphaBBox": [
+            35,
+            128,
+            251,
+            511
+          ],
+          "canonicalPaintedSize": [
+            31,
+            55
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999899,
+          "paintedSize": [
+            216,
+            383
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            35,
+            128,
+            62,
+            116
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            82,
+            239,
+            553
+          ],
+          "canonicalPaintedSize": [
+            31,
+            68
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.999922,
+          "paintedSize": [
+            214,
+            471
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            82,
+            75,
+            74
+          ]
+        },
+        {
+          "alphaBBox": [
+            65,
+            177,
+            282,
+            367
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            217,
+            190
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            65,
+            177,
+            32,
+            260
+          ]
+        },
+        {
+          "alphaBBox": [
+            42,
+            101,
+            261,
+            429
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.999676,
+          "paintedSize": [
+            219,
+            328
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            42,
+            101,
+            52,
+            198
+          ]
+        },
+        {
+          "alphaBBox": [
+            24,
+            62,
+            246,
+            461
+          ],
+          "canonicalPaintedSize": [
+            32,
+            58
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.99983,
+          "paintedSize": [
+            222,
+            399
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            24,
+            62,
+            67,
+            166
+          ]
+        },
+        {
+          "alphaBBox": [
+            19,
+            17,
+            237,
+            520
+          ],
+          "canonicalPaintedSize": [
+            31,
+            73
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 0.999918,
+          "paintedSize": [
+            218,
+            503
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            19,
+            17,
+            77,
+            107
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/bastion.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/bastion_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/bastion_raw_v1.png",
+      "rawSourceSha256": "7e33741bde59161e6884624c3bdc43adbcbbff28915a0a2b87975b0d691d410f",
+      "rows": 2,
+      "sha256": "96355194c50d8a052fdb5682e2dc4cd4c67a46f8c1449395a1339053c9298c36",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14414414414414414
+    },
+    "cathedral": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/cathedral_alpha_v1.png",
+      "alphaSourceSha256": "65adf523a9fe4e0bcef08d0d25c202cdaf6d34536c74a3db985e47942dac5b1d",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          1,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          54
+        ],
+        [
+          1,
+          0,
+          32,
+          68
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          57
+        ],
+        [
+          32,
+          0,
+          63,
+          72
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            69,
+            293,
+            284,
+            481
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            215,
+            188
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            69,
+            293,
+            30,
+            146
+          ]
+        },
+        {
+          "alphaBBox": [
+            54,
+            194,
+            267,
+            493
+          ],
+          "canonicalPaintedSize": [
+            31,
+            43
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            213,
+            299
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            54,
+            194,
+            46,
+            134
+          ]
+        },
+        {
+          "alphaBBox": [
+            37,
+            129,
+            254,
+            508
+          ],
+          "canonicalPaintedSize": [
+            31,
+            54
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999899,
+          "paintedSize": [
+            217,
+            379
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            37,
+            129,
+            59,
+            119
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            80,
+            242,
+            552
+          ],
+          "canonicalPaintedSize": [
+            31,
+            68
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.999935,
+          "paintedSize": [
+            217,
+            472
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            80,
+            72,
+            75
+          ]
+        },
+        {
+          "alphaBBox": [
+            65,
+            176,
+            283,
+            367
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            191
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            65,
+            176,
+            31,
+            260
+          ]
+        },
+        {
+          "alphaBBox": [
+            41,
+            100,
+            262,
+            428
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.999758,
+          "paintedSize": [
+            221,
+            328
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            41,
+            100,
+            51,
+            199
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            61,
+            248,
+            460
+          ],
+          "canonicalPaintedSize": [
+            32,
+            57
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.999923,
+          "paintedSize": [
+            223,
+            399
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            61,
+            65,
+            167
+          ]
+        },
+        {
+          "alphaBBox": [
+            21,
+            17,
+            239,
+            521
+          ],
+          "canonicalPaintedSize": [
+            31,
+            72
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            504
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            21,
+            17,
+            75,
+            106
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/cathedral.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/cathedral_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/cathedral_raw_v1.png",
+      "rawSourceSha256": "d5d66f206cd4e73204c19ec926e6b205be8c6467180a6d45833bec43da2a0b62",
+      "rows": 2,
+      "sha256": "e2584844ce68fdf81c3c22048d6abf385a7f3d697f5893ac1b14c0c1ce57387e",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14349775784753363
+    },
+    "chapel": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/chapel_alpha_v1.png",
+      "alphaSourceSha256": "edb6d4c732689609113f9964bcd1212cf2fa411588088b8ad8989087e318ebe4",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          2,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          54
+        ],
+        [
+          2,
+          0,
+          32,
+          68
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          57
+        ],
+        [
+          32,
+          0,
+          63,
+          72
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            76,
+            310,
+            294,
+            501
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            191
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            76,
+            310,
+            20,
+            126
+          ]
+        },
+        {
+          "alphaBBox": [
+            62,
+            210,
+            277,
+            514
+          ],
+          "canonicalPaintedSize": [
+            30,
+            43
+          ],
+          "canonicalPosition": [
+            2,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            215,
+            304
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            62,
+            210,
+            36,
+            113
+          ]
+        },
+        {
+          "alphaBBox": [
+            49,
+            144,
+            267,
+            528
+          ],
+          "canonicalPaintedSize": [
+            31,
+            54
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999868,
+          "paintedSize": [
+            218,
+            384
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            49,
+            144,
+            46,
+            99
+          ]
+        },
+        {
+          "alphaBBox": [
+            39,
+            93,
+            254,
+            573
+          ],
+          "canonicalPaintedSize": [
+            30,
+            68
+          ],
+          "canonicalPosition": [
+            2,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            215,
+            480
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            39,
+            93,
+            60,
+            54
+          ]
+        },
+        {
+          "alphaBBox": [
+            71,
+            209,
+            292,
+            402
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            221,
+            193
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            71,
+            209,
+            22,
+            225
+          ]
+        },
+        {
+          "alphaBBox": [
+            47,
+            132,
+            271,
+            464
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.999922,
+          "paintedSize": [
+            224,
+            332
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            47,
+            132,
+            42,
+            163
+          ]
+        },
+        {
+          "alphaBBox": [
+            33,
+            93,
+            259,
+            497
+          ],
+          "canonicalPaintedSize": [
+            32,
+            57
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.99988,
+          "paintedSize": [
+            226,
+            404
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            33,
+            93,
+            54,
+            130
+          ]
+        },
+        {
+          "alphaBBox": [
+            33,
+            48,
+            252,
+            558
+          ],
+          "canonicalPaintedSize": [
+            31,
+            72
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            219,
+            510
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            33,
+            48,
+            62,
+            69
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/chapel.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/chapel_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/chapel_raw_v1.png",
+      "rawSourceSha256": "660d71579da03fd6fa3e5974b72d6eb732d634dd821b9c2834db60fb8ef0ac1a",
+      "rows": 2,
+      "sha256": "76e7c9594fd8cb163c1dd83902d71c7013a75f83c5f9e6059ed2dcd224651d4c",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.1415929203539823
+    },
+    "crypt": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/crypt_alpha_v1.png",
+      "alphaSourceSha256": "8ffa9aa86d9a76ef37e3eaefeeac643d7e88d90dd06a66741206040700233147",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          1,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          55
+        ],
+        [
+          1,
+          0,
+          32,
+          68
+        ],
+        [
+          32,
+          0,
+          63,
+          28
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          58
+        ],
+        [
+          32,
+          0,
+          63,
+          73
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            73,
+            298,
+            287,
+            486
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            214,
+            188
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            73,
+            298,
+            27,
+            141
+          ]
+        },
+        {
+          "alphaBBox": [
+            56,
+            200,
+            270,
+            499
+          ],
+          "canonicalPaintedSize": [
+            31,
+            43
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            214,
+            299
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            56,
+            200,
+            43,
+            128
+          ]
+        },
+        {
+          "alphaBBox": [
+            39,
+            135,
+            256,
+            514
+          ],
+          "canonicalPaintedSize": [
+            31,
+            55
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999831,
+          "paintedSize": [
+            217,
+            379
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            39,
+            135,
+            57,
+            113
+          ]
+        },
+        {
+          "alphaBBox": [
+            26,
+            86,
+            242,
+            558
+          ],
+          "canonicalPaintedSize": [
+            31,
+            68
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.999922,
+          "paintedSize": [
+            216,
+            472
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            26,
+            86,
+            72,
+            69
+          ]
+        },
+        {
+          "alphaBBox": [
+            69,
+            183,
+            285,
+            374
+          ],
+          "canonicalPaintedSize": [
+            31,
+            28
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            216,
+            191
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            69,
+            183,
+            29,
+            253
+          ]
+        },
+        {
+          "alphaBBox": [
+            43,
+            107,
+            264,
+            436
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.9999,
+          "paintedSize": [
+            221,
+            329
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            43,
+            107,
+            49,
+            191
+          ]
+        },
+        {
+          "alphaBBox": [
+            27,
+            68,
+            249,
+            467
+          ],
+          "canonicalPaintedSize": [
+            32,
+            58
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.999938,
+          "paintedSize": [
+            222,
+            399
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            27,
+            68,
+            64,
+            160
+          ]
+        },
+        {
+          "alphaBBox": [
+            22,
+            24,
+            239,
+            528
+          ],
+          "canonicalPaintedSize": [
+            31,
+            73
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            217,
+            504
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            22,
+            24,
+            75,
+            99
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/crypt.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/crypt_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/crypt_raw_v1.png",
+      "rawSourceSha256": "a36c60c8493e34ef3d93180cebaa0f6eaeade3b85496bfc04f048086cad74147",
+      "rows": 2,
+      "sha256": "9f2c39a7db6a8b8c4611447abe89a68ac8068a0cb2bd12186e32440eadeee2aa",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14414414414414414
+    },
+    "desert": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/desert_alpha_v1.png",
+      "alphaSourceSha256": "878a051ab54cae9e7fb3881d1f0f77ebfbfacfe91f8e3351224cdeb8331907cf",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          2,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          54
+        ],
+        [
+          1,
+          0,
+          32,
+          68
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          57
+        ],
+        [
+          32,
+          0,
+          63,
+          72
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            68,
+            295,
+            282,
+            481
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 0.999852,
+          "paintedSize": [
+            214,
+            186
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            68,
+            295,
+            32,
+            146
+          ]
+        },
+        {
+          "alphaBBox": [
+            54,
+            195,
+            265,
+            493
+          ],
+          "canonicalPaintedSize": [
+            30,
+            43
+          ],
+          "canonicalPosition": [
+            2,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            211,
+            298
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            54,
+            195,
+            48,
+            134
+          ]
+        },
+        {
+          "alphaBBox": [
+            37,
+            129,
+            253,
+            508
+          ],
+          "canonicalPaintedSize": [
+            31,
+            54
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.99978,
+          "paintedSize": [
+            216,
+            379
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            37,
+            129,
+            60,
+            119
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            80,
+            240,
+            552
+          ],
+          "canonicalPaintedSize": [
+            31,
+            68
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.999923,
+          "paintedSize": [
+            215,
+            472
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            80,
+            74,
+            75
+          ]
+        },
+        {
+          "alphaBBox": [
+            66,
+            178,
+            283,
+            366
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            217,
+            188
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            66,
+            178,
+            31,
+            261
+          ]
+        },
+        {
+          "alphaBBox": [
+            41,
+            101,
+            262,
+            428
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            221,
+            327
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            41,
+            101,
+            51,
+            199
+          ]
+        },
+        {
+          "alphaBBox": [
+            24,
+            61,
+            247,
+            460
+          ],
+          "canonicalPaintedSize": [
+            32,
+            57
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.99983,
+          "paintedSize": [
+            223,
+            399
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            24,
+            61,
+            66,
+            167
+          ]
+        },
+        {
+          "alphaBBox": [
+            21,
+            17,
+            239,
+            520
+          ],
+          "canonicalPaintedSize": [
+            31,
+            72
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            503
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            21,
+            17,
+            75,
+            107
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/desert.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/desert_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/desert_raw_v1.png",
+      "rawSourceSha256": "f6aefbed296a6631f0ac822bd74df5f5ba9724af45e35c0a48efda3f753f2160",
+      "rows": 2,
+      "sha256": "9797dbc529415034b35d09843f82c00e5ca69618f080d498d644102f01579de8",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14349775784753363
+    },
+    "drowned": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/drowned_alpha_v1.png",
+      "alphaSourceSha256": "56af91a8ba052499bbe3f9d634d25091b593352735895b85e3998b55b53d7db4",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          1,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          55
+        ],
+        [
+          1,
+          0,
+          32,
+          68
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          58
+        ],
+        [
+          32,
+          0,
+          63,
+          73
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            69,
+            294,
+            284,
+            481
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            215,
+            187
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            69,
+            294,
+            30,
+            146
+          ]
+        },
+        {
+          "alphaBBox": [
+            54,
+            195,
+            267,
+            494
+          ],
+          "canonicalPaintedSize": [
+            31,
+            43
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 0.999906,
+          "paintedSize": [
+            213,
+            299
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            54,
+            195,
+            46,
+            133
+          ]
+        },
+        {
+          "alphaBBox": [
+            37,
+            129,
+            254,
+            508
+          ],
+          "canonicalPaintedSize": [
+            31,
+            55
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999882,
+          "paintedSize": [
+            217,
+            379
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            37,
+            129,
+            59,
+            119
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            81,
+            241,
+            552
+          ],
+          "canonicalPaintedSize": [
+            31,
+            68
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.99991,
+          "paintedSize": [
+            216,
+            471
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            81,
+            73,
+            75
+          ]
+        },
+        {
+          "alphaBBox": [
+            66,
+            177,
+            284,
+            367
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            190
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            66,
+            177,
+            30,
+            260
+          ]
+        },
+        {
+          "alphaBBox": [
+            41,
+            100,
+            262,
+            429
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.999919,
+          "paintedSize": [
+            221,
+            329
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            41,
+            100,
+            51,
+            198
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            61,
+            247,
+            460
+          ],
+          "canonicalPaintedSize": [
+            32,
+            58
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.999908,
+          "paintedSize": [
+            222,
+            399
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            61,
+            66,
+            167
+          ]
+        },
+        {
+          "alphaBBox": [
+            21,
+            17,
+            238,
+            521
+          ],
+          "canonicalPaintedSize": [
+            31,
+            73
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            217,
+            504
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            21,
+            17,
+            76,
+            106
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/drowned.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/drowned_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/drowned_raw_v1.png",
+      "rawSourceSha256": "a95b77d61144bcc2279ef2b730fe4f0a4cd98e8a034993a66a32e1e6ab23c0d1",
+      "rows": 2,
+      "sha256": "871ab61e782644832b399d92299adcb96aa6d718218860d38660a18cb430d80d",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14414414414414414
+    },
+    "fields": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/fields_alpha_v1.png",
+      "alphaSourceSha256": "c664a02bac8146666832454b3cb9481167a88a47499ede06e3cf69857fa13fd4",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          2,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          54
+        ],
+        [
+          1,
+          0,
+          32,
+          67
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          57
+        ],
+        [
+          32,
+          0,
+          63,
+          72
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            68,
+            293,
+            285,
+            481
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            217,
+            188
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            68,
+            293,
+            29,
+            146
+          ]
+        },
+        {
+          "alphaBBox": [
+            54,
+            194,
+            267,
+            493
+          ],
+          "canonicalPaintedSize": [
+            30,
+            43
+          ],
+          "canonicalPosition": [
+            2,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            213,
+            299
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            54,
+            194,
+            46,
+            134
+          ]
+        },
+        {
+          "alphaBBox": [
+            37,
+            128,
+            254,
+            508
+          ],
+          "canonicalPaintedSize": [
+            31,
+            54
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            217,
+            380
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            37,
+            128,
+            59,
+            119
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            80,
+            242,
+            552
+          ],
+          "canonicalPaintedSize": [
+            31,
+            67
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            217,
+            472
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            80,
+            72,
+            75
+          ]
+        },
+        {
+          "alphaBBox": [
+            65,
+            176,
+            283,
+            367
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            191
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            65,
+            176,
+            31,
+            260
+          ]
+        },
+        {
+          "alphaBBox": [
+            40,
+            100,
+            262,
+            429
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            222,
+            329
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            40,
+            100,
+            51,
+            198
+          ]
+        },
+        {
+          "alphaBBox": [
+            24,
+            61,
+            248,
+            461
+          ],
+          "canonicalPaintedSize": [
+            32,
+            57
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            224,
+            400
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            24,
+            61,
+            65,
+            166
+          ]
+        },
+        {
+          "alphaBBox": [
+            22,
+            17,
+            240,
+            521
+          ],
+          "canonicalPaintedSize": [
+            31,
+            72
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            504
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            22,
+            17,
+            74,
+            106
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/fields.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/fields_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/fields_raw_v1.png",
+      "rawSourceSha256": "3c2920a4a561f00e0ec8a55d23eaf372f35ccfbc3d1b57b953e4d44346d89590",
+      "rows": 2,
+      "sha256": "73f190162068f49f95421d49c4a70d60e4d120a0a7cc0bf2337ea1487b2416a8",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14285714285714285
+    },
+    "forest": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/forest_alpha_v1.png",
+      "alphaSourceSha256": "08565b774df5d2b7a7e15ebc2024df55212960de023c305cf7e377a8c7a3c964",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          1,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          55
+        ],
+        [
+          1,
+          0,
+          32,
+          68
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          58
+        ],
+        [
+          32,
+          0,
+          63,
+          73
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            69,
+            294,
+            284,
+            481
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            215,
+            187
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            69,
+            294,
+            30,
+            146
+          ]
+        },
+        {
+          "alphaBBox": [
+            54,
+            195,
+            267,
+            493
+          ],
+          "canonicalPaintedSize": [
+            31,
+            43
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            213,
+            298
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            54,
+            195,
+            46,
+            134
+          ]
+        },
+        {
+          "alphaBBox": [
+            37,
+            129,
+            254,
+            508
+          ],
+          "canonicalPaintedSize": [
+            31,
+            55
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999814,
+          "paintedSize": [
+            217,
+            379
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            37,
+            129,
+            59,
+            119
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            81,
+            241,
+            552
+          ],
+          "canonicalPaintedSize": [
+            31,
+            68
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.999896,
+          "paintedSize": [
+            216,
+            471
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            81,
+            73,
+            75
+          ]
+        },
+        {
+          "alphaBBox": [
+            66,
+            177,
+            283,
+            367
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            217,
+            190
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            66,
+            177,
+            31,
+            260
+          ]
+        },
+        {
+          "alphaBBox": [
+            41,
+            100,
+            262,
+            429
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.999899,
+          "paintedSize": [
+            221,
+            329
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            41,
+            100,
+            51,
+            198
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            61,
+            247,
+            460
+          ],
+          "canonicalPaintedSize": [
+            32,
+            58
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.999861,
+          "paintedSize": [
+            222,
+            399
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            61,
+            66,
+            167
+          ]
+        },
+        {
+          "alphaBBox": [
+            22,
+            17,
+            239,
+            520
+          ],
+          "canonicalPaintedSize": [
+            31,
+            73
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            217,
+            503
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            22,
+            17,
+            75,
+            107
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/forest.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/forest_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/forest_raw_v1.png",
+      "rawSourceSha256": "d8d7416f7f36024db722d461f346fee1bc5e10663fd9693c4ee7993d79a93d29",
+      "rows": 2,
+      "sha256": "2d80d811c33e6ecc5a382b09f585a790ac476910c93375972b4bc8cceb2da4a5",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14414414414414414
+    },
+    "hellwild": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/hellwild_alpha_v1.png",
+      "alphaSourceSha256": "8b69a6d6f2366b4ee450fbf3b2d5f0e8da6bc067517871c458843721c251c559",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          1,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          55
+        ],
+        [
+          1,
+          0,
+          32,
+          68
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          58
+        ],
+        [
+          32,
+          0,
+          64,
+          73
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            69,
+            295,
+            284,
+            481
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            215,
+            186
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            69,
+            295,
+            30,
+            146
+          ]
+        },
+        {
+          "alphaBBox": [
+            54,
+            195,
+            267,
+            494
+          ],
+          "canonicalPaintedSize": [
+            31,
+            43
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            213,
+            299
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            54,
+            195,
+            46,
+            133
+          ]
+        },
+        {
+          "alphaBBox": [
+            37,
+            129,
+            255,
+            508
+          ],
+          "canonicalPaintedSize": [
+            31,
+            55
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999882,
+          "paintedSize": [
+            218,
+            379
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            37,
+            129,
+            58,
+            119
+          ]
+        },
+        {
+          "alphaBBox": [
+            26,
+            81,
+            242,
+            552
+          ],
+          "canonicalPaintedSize": [
+            31,
+            68
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.99991,
+          "paintedSize": [
+            216,
+            471
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            26,
+            81,
+            72,
+            75
+          ]
+        },
+        {
+          "alphaBBox": [
+            66,
+            177,
+            283,
+            367
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            217,
+            190
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            66,
+            177,
+            31,
+            260
+          ]
+        },
+        {
+          "alphaBBox": [
+            42,
+            100,
+            262,
+            429
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.99994,
+          "paintedSize": [
+            220,
+            329
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            42,
+            100,
+            51,
+            198
+          ]
+        },
+        {
+          "alphaBBox": [
+            26,
+            61,
+            248,
+            461
+          ],
+          "canonicalPaintedSize": [
+            32,
+            58
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.999923,
+          "paintedSize": [
+            222,
+            400
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            26,
+            61,
+            65,
+            166
+          ]
+        },
+        {
+          "alphaBBox": [
+            21,
+            17,
+            240,
+            521
+          ],
+          "canonicalPaintedSize": [
+            32,
+            73
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            219,
+            504
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            21,
+            17,
+            74,
+            106
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/hellwild.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/hellwild_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/hellwild_raw_v1.png",
+      "rawSourceSha256": "0e6dbbb9f42318b65e8886f8f224af983be826ee3c6760d130780aca693c95fe",
+      "rows": 2,
+      "sha256": "e6fec9e190ddca4bd372d8925f218c42e9950fd6209e9d880c56338d0e74995f",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14414414414414414
+    },
+    "icecave": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/icecave_alpha_v1.png",
+      "alphaSourceSha256": "2edf4cca87ff310295606b79b369d3a853bd9b74446c253b14fbca8930f5ad93",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          28
+        ],
+        [
+          1,
+          0,
+          32,
+          45
+        ],
+        [
+          1,
+          0,
+          32,
+          56
+        ],
+        [
+          2,
+          0,
+          32,
+          70
+        ],
+        [
+          32,
+          0,
+          63,
+          28
+        ],
+        [
+          32,
+          0,
+          64,
+          49
+        ],
+        [
+          32,
+          0,
+          64,
+          60
+        ],
+        [
+          32,
+          0,
+          63,
+          75
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            60,
+            299,
+            272,
+            490
+          ],
+          "canonicalPaintedSize": [
+            31,
+            28
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 0.99966,
+          "paintedSize": [
+            212,
+            191
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            60,
+            299,
+            42,
+            137
+          ]
+        },
+        {
+          "alphaBBox": [
+            50,
+            195,
+            259,
+            505
+          ],
+          "canonicalPaintedSize": [
+            31,
+            45
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            209,
+            310
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            50,
+            195,
+            54,
+            122
+          ]
+        },
+        {
+          "alphaBBox": [
+            40,
+            133,
+            251,
+            518
+          ],
+          "canonicalPaintedSize": [
+            31,
+            56
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            211,
+            385
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            40,
+            133,
+            62,
+            109
+          ]
+        },
+        {
+          "alphaBBox": [
+            31,
+            82,
+            238,
+            563
+          ],
+          "canonicalPaintedSize": [
+            30,
+            70
+          ],
+          "canonicalPosition": [
+            2,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            207,
+            481
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            31,
+            82,
+            76,
+            64
+          ]
+        },
+        {
+          "alphaBBox": [
+            59,
+            197,
+            272,
+            389
+          ],
+          "canonicalPaintedSize": [
+            31,
+            28
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            213,
+            192
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            59,
+            197,
+            42,
+            238
+          ]
+        },
+        {
+          "alphaBBox": [
+            36,
+            118,
+            255,
+            452
+          ],
+          "canonicalPaintedSize": [
+            32,
+            49
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.999941,
+          "paintedSize": [
+            219,
+            334
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            36,
+            118,
+            58,
+            175
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            75,
+            244,
+            483
+          ],
+          "canonicalPaintedSize": [
+            32,
+            60
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            219,
+            408
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            75,
+            69,
+            144
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            30,
+            240,
+            542
+          ],
+          "canonicalPaintedSize": [
+            31,
+            75
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 0.999954,
+          "paintedSize": [
+            215,
+            512
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            30,
+            74,
+            85
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/icecave.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/icecave_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/icecave_raw_v1.png",
+      "rawSourceSha256": "56f4dd4e7d74d0f06eea21de13e4a8dc6ee9eced80b64f695521df22c340e154",
+      "rows": 2,
+      "sha256": "f975540e55acc71c6707d78cec73b6dbd161be62758ce3c378f6ff49ce62c3a0",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.1461187214611872
+    },
+    "marsh": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/marsh_alpha_v1.png",
+      "alphaSourceSha256": "0a11c3f1c51bc3bacabe022e821e9d1d96abc357ee6111560aea8df267fb555e",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          2,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          55
+        ],
+        [
+          1,
+          0,
+          32,
+          68
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          57
+        ],
+        [
+          32,
+          0,
+          63,
+          72
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            68,
+            293,
+            284,
+            481
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            216,
+            188
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            68,
+            293,
+            30,
+            146
+          ]
+        },
+        {
+          "alphaBBox": [
+            53,
+            193,
+            265,
+            496
+          ],
+          "canonicalPaintedSize": [
+            30,
+            43
+          ],
+          "canonicalPosition": [
+            2,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            212,
+            303
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            53,
+            193,
+            48,
+            131
+          ]
+        },
+        {
+          "alphaBBox": [
+            36,
+            127,
+            253,
+            511
+          ],
+          "canonicalPaintedSize": [
+            31,
+            55
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999883,
+          "paintedSize": [
+            217,
+            384
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            36,
+            127,
+            60,
+            116
+          ]
+        },
+        {
+          "alphaBBox": [
+            22,
+            77,
+            241,
+            556
+          ],
+          "canonicalPaintedSize": [
+            31,
+            68
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            219,
+            479
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            22,
+            77,
+            73,
+            71
+          ]
+        },
+        {
+          "alphaBBox": [
+            65,
+            176,
+            283,
+            367
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            191
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            65,
+            176,
+            31,
+            260
+          ]
+        },
+        {
+          "alphaBBox": [
+            39,
+            101,
+            261,
+            430
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.99984,
+          "paintedSize": [
+            222,
+            329
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            39,
+            101,
+            52,
+            197
+          ]
+        },
+        {
+          "alphaBBox": [
+            23,
+            60,
+            248,
+            462
+          ],
+          "canonicalPaintedSize": [
+            32,
+            57
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            225,
+            402
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            23,
+            60,
+            65,
+            165
+          ]
+        },
+        {
+          "alphaBBox": [
+            18,
+            17,
+            239,
+            524
+          ],
+          "canonicalPaintedSize": [
+            31,
+            72
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            221,
+            507
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            18,
+            17,
+            75,
+            103
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/marsh.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/marsh_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/marsh_raw_v1.png",
+      "rawSourceSha256": "87bf90152921672e928fea9eeda5ae3363cc26c07d3eab1cac810e73b136ea53",
+      "rows": 2,
+      "sha256": "852cdb55e3bc49c77e777f8f7ffa25f96c683e09b1382963822cb3403d89384c",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14222222222222222
+    },
+    "mine": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/mine_alpha_v1.png",
+      "alphaSourceSha256": "04fbf89d25333999d3785fcafcf17ff1cede7ba14529543c6be5526617eb31c5",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          2,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          55
+        ],
+        [
+          1,
+          0,
+          32,
+          68
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          57
+        ],
+        [
+          32,
+          0,
+          63,
+          72
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            70,
+            300,
+            284,
+            489
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 0.999803,
+          "paintedSize": [
+            214,
+            189
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            70,
+            300,
+            30,
+            138
+          ]
+        },
+        {
+          "alphaBBox": [
+            55,
+            201,
+            267,
+            501
+          ],
+          "canonicalPaintedSize": [
+            30,
+            43
+          ],
+          "canonicalPosition": [
+            2,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            212,
+            300
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            55,
+            201,
+            46,
+            126
+          ]
+        },
+        {
+          "alphaBBox": [
+            38,
+            135,
+            255,
+            516
+          ],
+          "canonicalPaintedSize": [
+            31,
+            55
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999933,
+          "paintedSize": [
+            217,
+            381
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            38,
+            135,
+            58,
+            111
+          ]
+        },
+        {
+          "alphaBBox": [
+            26,
+            87,
+            241,
+            560
+          ],
+          "canonicalPaintedSize": [
+            31,
+            68
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.999922,
+          "paintedSize": [
+            215,
+            473
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            26,
+            87,
+            73,
+            67
+          ]
+        },
+        {
+          "alphaBBox": [
+            66,
+            185,
+            284,
+            376
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            191
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            66,
+            185,
+            30,
+            251
+          ]
+        },
+        {
+          "alphaBBox": [
+            42,
+            109,
+            262,
+            438
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.9999,
+          "paintedSize": [
+            220,
+            329
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            42,
+            109,
+            51,
+            189
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            70,
+            248,
+            470
+          ],
+          "canonicalPaintedSize": [
+            32,
+            57
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.999893,
+          "paintedSize": [
+            223,
+            400
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            70,
+            65,
+            157
+          ]
+        },
+        {
+          "alphaBBox": [
+            20,
+            26,
+            238,
+            530
+          ],
+          "canonicalPaintedSize": [
+            31,
+            72
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            504
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            20,
+            26,
+            76,
+            97
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/mine.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/mine_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/mine_raw_v1.png",
+      "rawSourceSha256": "0afb29f234d90d0455c2996e37ba8eb452842a39a130e1faf0755d36a855129a",
+      "rows": 2,
+      "sha256": "e6aabd172b5d6d24cdc039a197254a84f27d0efe13639ca52d3717cc198dd63e",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14349775784753363
+    },
+    "monastery": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/monastery_alpha_v1.png",
+      "alphaSourceSha256": "3fcc05e32ef74cce58261d1dfde9b883ccd4b71890cd12a71ea25ce430d66d2a",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          29
+        ],
+        [
+          2,
+          0,
+          32,
+          47
+        ],
+        [
+          1,
+          0,
+          32,
+          58
+        ],
+        [
+          1,
+          0,
+          32,
+          74
+        ],
+        [
+          32,
+          0,
+          63,
+          28
+        ],
+        [
+          32,
+          0,
+          64,
+          49
+        ],
+        [
+          32,
+          0,
+          64,
+          59
+        ],
+        [
+          32,
+          0,
+          64,
+          75
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            65,
+            302,
+            273,
+            493
+          ],
+          "canonicalPaintedSize": [
+            31,
+            29
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 0.99985,
+          "paintedSize": [
+            208,
+            191
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            65,
+            302,
+            41,
+            134
+          ]
+        },
+        {
+          "alphaBBox": [
+            49,
+            192,
+            249,
+            506
+          ],
+          "canonicalPaintedSize": [
+            30,
+            47
+          ],
+          "canonicalPosition": [
+            2,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 0.999749,
+          "paintedSize": [
+            200,
+            314
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            49,
+            192,
+            64,
+            121
+          ]
+        },
+        {
+          "alphaBBox": [
+            31,
+            131,
+            240,
+            521
+          ],
+          "canonicalPaintedSize": [
+            31,
+            58
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999685,
+          "paintedSize": [
+            209,
+            390
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            31,
+            131,
+            73,
+            106
+          ]
+        },
+        {
+          "alphaBBox": [
+            19,
+            72,
+            229,
+            566
+          ],
+          "canonicalPaintedSize": [
+            31,
+            74
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.99995,
+          "paintedSize": [
+            210,
+            494
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            19,
+            72,
+            85,
+            61
+          ]
+        },
+        {
+          "alphaBBox": [
+            63,
+            203,
+            273,
+            392
+          ],
+          "canonicalPaintedSize": [
+            31,
+            28
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            210,
+            189
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            63,
+            203,
+            41,
+            235
+          ]
+        },
+        {
+          "alphaBBox": [
+            35,
+            126,
+            246,
+            452
+          ],
+          "canonicalPaintedSize": [
+            32,
+            49
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.999792,
+          "paintedSize": [
+            211,
+            326
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            35,
+            126,
+            67,
+            175
+          ]
+        },
+        {
+          "alphaBBox": [
+            20,
+            87,
+            234,
+            484
+          ],
+          "canonicalPaintedSize": [
+            32,
+            59
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.999984,
+          "paintedSize": [
+            214,
+            397
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            20,
+            87,
+            79,
+            143
+          ]
+        },
+        {
+          "alphaBBox": [
+            15,
+            42,
+            228,
+            542
+          ],
+          "canonicalPaintedSize": [
+            32,
+            75
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 0.999833,
+          "paintedSize": [
+            213,
+            500
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            15,
+            42,
+            86,
+            85
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/monastery.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/monastery_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/monastery_raw_v1.png",
+      "rawSourceSha256": "e4625cc2d157cab711b1136939bdb42982c5643a5e7b72a8111b4702cbd73785",
+      "rows": 2,
+      "sha256": "7317e527c5e8aaedf6510b4336f6beafeb3ea407deb7ce15ad0ab7966eb1c1d2",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14953271028037382
+    },
+    "palace": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/palace_alpha_v1.png",
+      "alphaSourceSha256": "0d213343e61e48ad6f533f7fd606d84570cb98932b44f770da3e88b7bd012a99",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          2,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          54
+        ],
+        [
+          1,
+          0,
+          32,
+          67
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          57
+        ],
+        [
+          32,
+          0,
+          63,
+          72
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            68,
+            293,
+            284,
+            481
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            216,
+            188
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            68,
+            293,
+            30,
+            146
+          ]
+        },
+        {
+          "alphaBBox": [
+            54,
+            194,
+            267,
+            493
+          ],
+          "canonicalPaintedSize": [
+            30,
+            43
+          ],
+          "canonicalPosition": [
+            2,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            213,
+            299
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            54,
+            194,
+            46,
+            134
+          ]
+        },
+        {
+          "alphaBBox": [
+            37,
+            128,
+            255,
+            508
+          ],
+          "canonicalPaintedSize": [
+            31,
+            54
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999916,
+          "paintedSize": [
+            218,
+            380
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            37,
+            128,
+            58,
+            119
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            80,
+            242,
+            552
+          ],
+          "canonicalPaintedSize": [
+            31,
+            67
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.99991,
+          "paintedSize": [
+            217,
+            472
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            80,
+            72,
+            75
+          ]
+        },
+        {
+          "alphaBBox": [
+            65,
+            176,
+            283,
+            367
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            191
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            65,
+            176,
+            31,
+            260
+          ]
+        },
+        {
+          "alphaBBox": [
+            41,
+            100,
+            262,
+            429
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.999739,
+          "paintedSize": [
+            221,
+            329
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            41,
+            100,
+            51,
+            198
+          ]
+        },
+        {
+          "alphaBBox": [
+            24,
+            61,
+            248,
+            461
+          ],
+          "canonicalPaintedSize": [
+            32,
+            57
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.999862,
+          "paintedSize": [
+            224,
+            400
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            24,
+            61,
+            65,
+            166
+          ]
+        },
+        {
+          "alphaBBox": [
+            21,
+            17,
+            240,
+            521
+          ],
+          "canonicalPaintedSize": [
+            31,
+            72
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            219,
+            504
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            21,
+            17,
+            74,
+            106
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/palace.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/palace_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/palace_raw_v1.png",
+      "rawSourceSha256": "f3c28170185dcdc45bbfd3b0101d3be681c6a8449609a3d9d713c79782502fb6",
+      "rows": 2,
+      "sha256": "8e2cf718cccec2cf490e6c3c1493efdfb045c77835c2bb7066d0cde4742ab304",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14285714285714285
+    },
+    "snowwild": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/snowwild_alpha_v1.png",
+      "alphaSourceSha256": "10437e7a5a9c74d9bfa313c7fa7b784f31bc62ff2a65f02af0825ff1be5e2c64",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          1,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          55
+        ],
+        [
+          1,
+          0,
+          32,
+          68
+        ],
+        [
+          32,
+          0,
+          63,
+          28
+        ],
+        [
+          32,
+          0,
+          64,
+          48
+        ],
+        [
+          32,
+          0,
+          64,
+          58
+        ],
+        [
+          32,
+          0,
+          64,
+          73
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            69,
+            294,
+            284,
+            481
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            215,
+            187
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            69,
+            294,
+            30,
+            146
+          ]
+        },
+        {
+          "alphaBBox": [
+            54,
+            195,
+            267,
+            493
+          ],
+          "canonicalPaintedSize": [
+            31,
+            43
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            213,
+            298
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            54,
+            195,
+            46,
+            134
+          ]
+        },
+        {
+          "alphaBBox": [
+            37,
+            129,
+            253,
+            508
+          ],
+          "canonicalPaintedSize": [
+            31,
+            55
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999915,
+          "paintedSize": [
+            216,
+            379
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            37,
+            129,
+            60,
+            119
+          ]
+        },
+        {
+          "alphaBBox": [
+            26,
+            80,
+            241,
+            552
+          ],
+          "canonicalPaintedSize": [
+            31,
+            68
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            215,
+            472
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            26,
+            80,
+            73,
+            75
+          ]
+        },
+        {
+          "alphaBBox": [
+            66,
+            176,
+            283,
+            367
+          ],
+          "canonicalPaintedSize": [
+            31,
+            28
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            217,
+            191
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            66,
+            176,
+            31,
+            260
+          ]
+        },
+        {
+          "alphaBBox": [
+            42,
+            100,
+            261,
+            429
+          ],
+          "canonicalPaintedSize": [
+            32,
+            48
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.999919,
+          "paintedSize": [
+            219,
+            329
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            42,
+            100,
+            52,
+            198
+          ]
+        },
+        {
+          "alphaBBox": [
+            26,
+            61,
+            247,
+            461
+          ],
+          "canonicalPaintedSize": [
+            32,
+            58
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.999907,
+          "paintedSize": [
+            221,
+            400
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            26,
+            61,
+            66,
+            166
+          ]
+        },
+        {
+          "alphaBBox": [
+            21,
+            18,
+            239,
+            521
+          ],
+          "canonicalPaintedSize": [
+            32,
+            73
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 0.999953,
+          "paintedSize": [
+            218,
+            503
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            21,
+            18,
+            75,
+            106
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/snowwild.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/snowwild_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/snowwild_raw_v1.png",
+      "rawSourceSha256": "6d2d848789a46964bc17c379c263c6a526edd52b37c154884a3cdf7cdf2f27d0",
+      "rows": 2,
+      "sha256": "e61022db22bb67cdae32f56e49a9221a958d97f285041dc9e8c6ec81a793e6c3",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14479638009049775
+    },
+    "temple": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/temple_alpha_v1.png",
+      "alphaSourceSha256": "4e854c630c9d60b1ab5384a839e11d19ad870d5d09d41c63769886bbcecf3505",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          28
+        ],
+        [
+          1,
+          0,
+          32,
+          44
+        ],
+        [
+          1,
+          0,
+          32,
+          56
+        ],
+        [
+          0,
+          0,
+          32,
+          70
+        ],
+        [
+          32,
+          0,
+          63,
+          28
+        ],
+        [
+          32,
+          0,
+          63,
+          48
+        ],
+        [
+          32,
+          0,
+          64,
+          58
+        ],
+        [
+          32,
+          0,
+          64,
+          74
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            60,
+            302,
+            275,
+            494
+          ],
+          "canonicalPaintedSize": [
+            31,
+            28
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 0.999282,
+          "paintedSize": [
+            215,
+            192
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            60,
+            302,
+            39,
+            133
+          ]
+        },
+        {
+          "alphaBBox": [
+            43,
+            202,
+            252,
+            506
+          ],
+          "canonicalPaintedSize": [
+            31,
+            44
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 0.99963,
+          "paintedSize": [
+            209,
+            304
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            43,
+            202,
+            61,
+            121
+          ]
+        },
+        {
+          "alphaBBox": [
+            27,
+            138,
+            241,
+            522
+          ],
+          "canonicalPaintedSize": [
+            31,
+            56
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999668,
+          "paintedSize": [
+            214,
+            384
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            27,
+            138,
+            72,
+            105
+          ]
+        },
+        {
+          "alphaBBox": [
+            16,
+            89,
+            234,
+            567
+          ],
+          "canonicalPaintedSize": [
+            32,
+            70
+          ],
+          "canonicalPosition": [
+            0,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.999888,
+          "paintedSize": [
+            218,
+            478
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            16,
+            89,
+            80,
+            60
+          ]
+        },
+        {
+          "alphaBBox": [
+            58,
+            191,
+            272,
+            380
+          ],
+          "canonicalPaintedSize": [
+            31,
+            28
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 0.999616,
+          "paintedSize": [
+            214,
+            189
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            58,
+            191,
+            42,
+            247
+          ]
+        },
+        {
+          "alphaBBox": [
+            34,
+            116,
+            248,
+            443
+          ],
+          "canonicalPaintedSize": [
+            31,
+            48
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.999776,
+          "paintedSize": [
+            214,
+            327
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            34,
+            116,
+            65,
+            184
+          ]
+        },
+        {
+          "alphaBBox": [
+            17,
+            77,
+            236,
+            476
+          ],
+          "canonicalPaintedSize": [
+            32,
+            58
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.999723,
+          "paintedSize": [
+            219,
+            399
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            17,
+            77,
+            77,
+            151
+          ]
+        },
+        {
+          "alphaBBox": [
+            16,
+            33,
+            234,
+            537
+          ],
+          "canonicalPaintedSize": [
+            32,
+            74
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 0.999757,
+          "paintedSize": [
+            218,
+            504
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            16,
+            33,
+            80,
+            90
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/temple.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/temple_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/temple_raw_v1.png",
+      "rawSourceSha256": "ebd3eb9dbe8a12f6e99cf5074d4138e8358b9b1db62999b09812f65afc1feed3",
+      "rows": 2,
+      "sha256": "f69993a8db97f73be9e74e532365c341b24bf866d11f6a745faab410fcea7794",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.1461187214611872
+    },
+    "throne": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/throne_alpha_v1.png",
+      "alphaSourceSha256": "057c8b5a952f9443bfcc80f450beb2dbadc045325fd70e5aa8e0ffa32c37c24a",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          1,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          55
+        ],
+        [
+          1,
+          0,
+          32,
+          68
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          57
+        ],
+        [
+          32,
+          0,
+          63,
+          72
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            69,
+            293,
+            284,
+            481
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            215,
+            188
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            69,
+            293,
+            30,
+            146
+          ]
+        },
+        {
+          "alphaBBox": [
+            54,
+            194,
+            267,
+            493
+          ],
+          "canonicalPaintedSize": [
+            31,
+            43
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            213,
+            299
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            54,
+            194,
+            46,
+            134
+          ]
+        },
+        {
+          "alphaBBox": [
+            37,
+            128,
+            254,
+            508
+          ],
+          "canonicalPaintedSize": [
+            31,
+            55
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999865,
+          "paintedSize": [
+            217,
+            380
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            37,
+            128,
+            59,
+            119
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            80,
+            242,
+            552
+          ],
+          "canonicalPaintedSize": [
+            31,
+            68
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.999923,
+          "paintedSize": [
+            217,
+            472
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            80,
+            72,
+            75
+          ]
+        },
+        {
+          "alphaBBox": [
+            65,
+            176,
+            283,
+            367
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            191
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            65,
+            176,
+            31,
+            260
+          ]
+        },
+        {
+          "alphaBBox": [
+            41,
+            100,
+            262,
+            429
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.99992,
+          "paintedSize": [
+            221,
+            329
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            41,
+            100,
+            51,
+            198
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            61,
+            248,
+            460
+          ],
+          "canonicalPaintedSize": [
+            32,
+            57
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            223,
+            399
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            61,
+            65,
+            167
+          ]
+        },
+        {
+          "alphaBBox": [
+            21,
+            17,
+            240,
+            520
+          ],
+          "canonicalPaintedSize": [
+            31,
+            72
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            219,
+            503
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            21,
+            17,
+            74,
+            107
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/throne.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/throne_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/throne_raw_v1.png",
+      "rawSourceSha256": "a0c33cf46df4d5ea380f22e1b5913f31d02afd8442c97a58c4f5dab81d46ef3b",
+      "rows": 2,
+      "sha256": "ad031f41ac3ab003afd614766644fca7af72dd8c961e39e8945079acc1b0de12",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14349775784753363
+    },
+    "tombs": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/tombs_alpha_v1.png",
+      "alphaSourceSha256": "85cc028da1ad33eb1705f41683fcfe2e8bcd6b5d65a18611940dd79bcfb0764a",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          1,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          55
+        ],
+        [
+          1,
+          0,
+          32,
+          68
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          57
+        ],
+        [
+          32,
+          0,
+          63,
+          73
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            70,
+            295,
+            284,
+            483
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 0.999652,
+          "paintedSize": [
+            214,
+            188
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            70,
+            295,
+            30,
+            144
+          ]
+        },
+        {
+          "alphaBBox": [
+            54,
+            196,
+            267,
+            494
+          ],
+          "canonicalPaintedSize": [
+            31,
+            43
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            213,
+            298
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            54,
+            196,
+            46,
+            133
+          ]
+        },
+        {
+          "alphaBBox": [
+            37,
+            130,
+            254,
+            509
+          ],
+          "canonicalPaintedSize": [
+            31,
+            55
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999798,
+          "paintedSize": [
+            217,
+            379
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            37,
+            130,
+            59,
+            118
+          ]
+        },
+        {
+          "alphaBBox": [
+            24,
+            81,
+            241,
+            553
+          ],
+          "canonicalPaintedSize": [
+            31,
+            68
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.999949,
+          "paintedSize": [
+            217,
+            472
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            24,
+            81,
+            73,
+            74
+          ]
+        },
+        {
+          "alphaBBox": [
+            66,
+            177,
+            284,
+            367
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            190
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            66,
+            177,
+            30,
+            260
+          ]
+        },
+        {
+          "alphaBBox": [
+            42,
+            101,
+            262,
+            428
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.999757,
+          "paintedSize": [
+            220,
+            327
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            42,
+            101,
+            51,
+            199
+          ]
+        },
+        {
+          "alphaBBox": [
+            25,
+            62,
+            247,
+            460
+          ],
+          "canonicalPaintedSize": [
+            32,
+            57
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.999954,
+          "paintedSize": [
+            222,
+            398
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            25,
+            62,
+            66,
+            167
+          ]
+        },
+        {
+          "alphaBBox": [
+            21,
+            18,
+            239,
+            521
+          ],
+          "canonicalPaintedSize": [
+            31,
+            73
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            218,
+            503
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            21,
+            18,
+            75,
+            106
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/tombs.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/tombs_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/tombs_raw_v1.png",
+      "rawSourceSha256": "f52043d94147e5d163c6b492e7186554285a10527eb029d8b6f3a453385d43bb",
+      "rows": 2,
+      "sha256": "28c83773911f41951a6fbe7271787c9bd495fdfa30c39ce0ddd0f67634b03a75",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14414414414414414
+    },
+    "town": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/town_alpha_v1.png",
+      "alphaSourceSha256": "8655b0966a01b937126bcb78e13892b4ccf89588de281299ed2646f89cbf776e",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          27
+        ],
+        [
+          1,
+          0,
+          32,
+          43
+        ],
+        [
+          1,
+          0,
+          32,
+          55
+        ],
+        [
+          1,
+          0,
+          32,
+          69
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          48
+        ],
+        [
+          32,
+          0,
+          64,
+          58
+        ],
+        [
+          32,
+          0,
+          63,
+          73
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            70,
+            295,
+            283,
+            482
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 0.999849,
+          "paintedSize": [
+            213,
+            187
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            70,
+            295,
+            31,
+            145
+          ]
+        },
+        {
+          "alphaBBox": [
+            55,
+            196,
+            266,
+            494
+          ],
+          "canonicalPaintedSize": [
+            31,
+            43
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 0.999905,
+          "paintedSize": [
+            211,
+            298
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            55,
+            196,
+            47,
+            133
+          ]
+        },
+        {
+          "alphaBBox": [
+            38,
+            129,
+            252,
+            509
+          ],
+          "canonicalPaintedSize": [
+            31,
+            55
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.999898,
+          "paintedSize": [
+            214,
+            380
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            38,
+            129,
+            61,
+            118
+          ]
+        },
+        {
+          "alphaBBox": [
+            27,
+            81,
+            241,
+            553
+          ],
+          "canonicalPaintedSize": [
+            31,
+            69
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            214,
+            472
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            27,
+            81,
+            73,
+            74
+          ]
+        },
+        {
+          "alphaBBox": [
+            67,
+            178,
+            283,
+            367
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 0.999904,
+          "paintedSize": [
+            216,
+            189
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            67,
+            178,
+            31,
+            260
+          ]
+        },
+        {
+          "alphaBBox": [
+            43,
+            101,
+            262,
+            429
+          ],
+          "canonicalPaintedSize": [
+            32,
+            48
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.999799,
+          "paintedSize": [
+            219,
+            328
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            43,
+            101,
+            51,
+            198
+          ]
+        },
+        {
+          "alphaBBox": [
+            26,
+            62,
+            246,
+            461
+          ],
+          "canonicalPaintedSize": [
+            32,
+            58
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            220,
+            399
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            26,
+            62,
+            67,
+            166
+          ]
+        },
+        {
+          "alphaBBox": [
+            23,
+            18,
+            239,
+            520
+          ],
+          "canonicalPaintedSize": [
+            31,
+            73
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 0.999953,
+          "paintedSize": [
+            216,
+            502
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            23,
+            18,
+            75,
+            107
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/town.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/town_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/town_raw_v1.png",
+      "rawSourceSha256": "fd2b67554b6492a196bfaaf0d9f4e6f82a8fed7a0c60fece401c255ee32fa24f",
+      "rows": 2,
+      "sha256": "30426283e8044f975229b09958feac77ecf3037d337b25d4db3694510978bd21",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14545454545454545
+    },
+    "vigil": {
+      "alphaClean": {
+        "autoKey": "border",
+        "despill": true,
+        "opaqueThreshold": 220,
+        "softMatte": true,
+        "tool": "imagegen/remove_chroma_key.py",
+        "transparentThreshold": 12
+      },
+      "alphaSource": "assets/sprites_src/gameplay_art_authored/cliffs/vigil_alpha_v1.png",
+      "alphaSourceSha256": "a4015611a319821c810b4804caef8cf367d8a200dfb29f1290031522bc6fdd0c",
+      "anchor": [
+        32,
+        0
+      ],
+      "canonicalAlphaBBoxes": [
+        [
+          1,
+          0,
+          32,
+          28
+        ],
+        [
+          1,
+          0,
+          32,
+          44
+        ],
+        [
+          1,
+          0,
+          32,
+          56
+        ],
+        [
+          1,
+          0,
+          32,
+          69
+        ],
+        [
+          32,
+          0,
+          63,
+          27
+        ],
+        [
+          32,
+          0,
+          64,
+          47
+        ],
+        [
+          32,
+          0,
+          64,
+          57
+        ],
+        [
+          32,
+          0,
+          64,
+          72
+        ]
+      ],
+      "canonicalSize": [
+        256,
+        256
+      ],
+      "cell": [
+        64,
+        128
+      ],
+      "cols": 4,
+      "frameOrder": [
+        "southwest_1",
+        "southwest_2",
+        "southwest_3",
+        "southwest_4",
+        "southeast_1",
+        "southeast_2",
+        "southeast_3",
+        "southeast_4"
+      ],
+      "frames": [
+        {
+          "alphaBBox": [
+            71,
+            293,
+            285,
+            486
+          ],
+          "canonicalPaintedSize": [
+            31,
+            28
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 0,
+          "label": "southwest_1",
+          "largestComponentRatio": 0.999714,
+          "paintedSize": [
+            214,
+            193
+          ],
+          "slice": [
+            0,
+            0,
+            314,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            71,
+            293,
+            29,
+            141
+          ]
+        },
+        {
+          "alphaBBox": [
+            56,
+            194,
+            267,
+            499
+          ],
+          "canonicalPaintedSize": [
+            31,
+            44
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 1,
+          "label": "southwest_2",
+          "largestComponentRatio": 1.0,
+          "paintedSize": [
+            211,
+            305
+          ],
+          "slice": [
+            314,
+            0,
+            627,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            56,
+            194,
+            46,
+            128
+          ]
+        },
+        {
+          "alphaBBox": [
+            37,
+            128,
+            252,
+            514
+          ],
+          "canonicalPaintedSize": [
+            31,
+            56
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 2,
+          "label": "southwest_3",
+          "largestComponentRatio": 0.9999,
+          "paintedSize": [
+            215,
+            386
+          ],
+          "slice": [
+            627,
+            0,
+            940,
+            627
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            37,
+            128,
+            61,
+            113
+          ]
+        },
+        {
+          "alphaBBox": [
+            23,
+            80,
+            239,
+            558
+          ],
+          "canonicalPaintedSize": [
+            31,
+            69
+          ],
+          "canonicalPosition": [
+            1,
+            0
+          ],
+          "index": 3,
+          "label": "southwest_4",
+          "largestComponentRatio": 0.999924,
+          "paintedSize": [
+            216,
+            478
+          ],
+          "slice": [
+            940,
+            0,
+            1254,
+            627
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            23,
+            80,
+            75,
+            69
+          ]
+        },
+        {
+          "alphaBBox": [
+            68,
+            182,
+            284,
+            371
+          ],
+          "canonicalPaintedSize": [
+            31,
+            27
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 4,
+          "label": "southeast_1",
+          "largestComponentRatio": 0.999665,
+          "paintedSize": [
+            216,
+            189
+          ],
+          "slice": [
+            0,
+            627,
+            314,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            68,
+            182,
+            30,
+            256
+          ]
+        },
+        {
+          "alphaBBox": [
+            42,
+            107,
+            262,
+            432
+          ],
+          "canonicalPaintedSize": [
+            32,
+            47
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 5,
+          "label": "southeast_2",
+          "largestComponentRatio": 0.999755,
+          "paintedSize": [
+            220,
+            325
+          ],
+          "slice": [
+            314,
+            627,
+            627,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            42,
+            107,
+            51,
+            195
+          ]
+        },
+        {
+          "alphaBBox": [
+            24,
+            68,
+            245,
+            464
+          ],
+          "canonicalPaintedSize": [
+            32,
+            57
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 6,
+          "label": "southeast_3",
+          "largestComponentRatio": 0.999891,
+          "paintedSize": [
+            221,
+            396
+          ],
+          "slice": [
+            627,
+            627,
+            940,
+            1254
+          ],
+          "sourceCellSize": [
+            313,
+            627
+          ],
+          "sourceMargins": [
+            24,
+            68,
+            68,
+            163
+          ]
+        },
+        {
+          "alphaBBox": [
+            19,
+            24,
+            237,
+            524
+          ],
+          "canonicalPaintedSize": [
+            32,
+            72
+          ],
+          "canonicalPosition": [
+            32,
+            0
+          ],
+          "index": 7,
+          "label": "southeast_4",
+          "largestComponentRatio": 0.999929,
+          "paintedSize": [
+            218,
+            500
+          ],
+          "slice": [
+            940,
+            627,
+            1254,
+            1254
+          ],
+          "sourceCellSize": [
+            314,
+            627
+          ],
+          "sourceMargins": [
+            19,
+            24,
+            77,
+            103
+          ]
+        }
+      ],
+      "path": "assets/sprites_src/gameplay_art/world/cliffs/vigil.png",
+      "qa": "assets/sprites_src/gameplay_art/qa/cliffs/vigil_cliff_faces_v1.png",
+      "rawSource": "assets/sprites_src/gameplay_art_authored/cliffs/vigil_raw_v1.png",
+      "rawSourceSha256": "cd047594226414e6a8248d36c2b3e4d8090c22f547592d045b79489483eac3fa",
+      "rows": 2,
+      "sha256": "102b1edf14a4f1851b42608c4e649ca804e533fde91acd2521e9ae2c67f6bf59",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "uniformScale": 0.14479638009049775
+    }
+  },
+  "version": 1
+}

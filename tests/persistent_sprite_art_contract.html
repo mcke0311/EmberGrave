@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><base href="../"><title>Persistent sprite-art runtime contract</title></head>
+<body>
+  <pre id="result">PENDING</pre>
+  <canvas id="scene" width="960" height="540"></canvas>
+  <script src="js/utils.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/sprite_manifest.js"></script>
+  <script src="js/sprite_assets.js"></script>
+  <script>
+    "use strict";
+    (async () => {
+      const out = document.getElementById("result"), manifest = DATA.SPRITE_MANIFEST;
+      const ctx = document.getElementById("scene").getContext("2d");
+      const expectedBackdrops = ["default","desert","dungeon","fields","forest","hellwild","marsh","snowwild"];
+      const expectedTraps = ["barbed","frost","powder"];
+      const expectedForms = ["form_apex","form_brute","form_fang","form_stone"];
+      let checks = 0;
+      const ok = (value, message) => { checks++; if (!value) throw new Error(message); };
+      const pixelsDiffer = (left, right) => {
+        if (left.length !== right.length) return true;
+        for (let i = 0; i < left.length; i++) if (left[i] !== right[i]) return true;
+        return false;
+      };
+      const alphaOf = (frame) => {
+        const c = document.createElement("canvas"), cx = c.getContext("2d", { willReadFrequently: true });
+        c.width = frame.sw; c.height = frame.sh;
+        cx.drawImage(frame.image, frame.sx, frame.sy, frame.sw, frame.sh, 0, 0, frame.sw, frame.sh);
+        const data = cx.getImageData(0, 0, c.width, c.height).data, alpha = new Uint8Array(c.width * c.height);
+        for (let i = 0; i < alpha.length; i++) alpha[i] = data[i * 4 + 3];
+        return alpha;
+      };
+      const translatedCliffPoints = (alpha, rootX, rootY) => {
+        const points = [], keys = new Set();
+        for (let y = 0; y < 128; y++) for (let x = 0; x < 64; x++) if (alpha[y * 64 + x] > 8) {
+          const point = [rootX + x - 32, rootY + y];
+          points.push(point); keys.add(`${point[0]},${point[1]}`);
+        }
+        return { points, keys };
+      };
+      const cliffContactNear = (left, right, socket) => {
+        for (const [x,y] of left.points) {
+          if (Math.abs(x - socket[0]) > 8 || Math.abs(y - socket[1]) > 10) continue;
+          for (let dx = -4; dx <= 4; dx++) for (let dy = -4 + Math.abs(dx); dy <= 4 - Math.abs(dx); dy++)
+            if (right.keys.has(`${x + dx},${y + dy}`)) return true;
+        }
+        return false;
+      };
+      try {
+        await SpriteAssets.loadBundle("all");
+        const gameSource = await fetch("js/game.js", { cache: "no-store" }).then(response => {
+          if (!response.ok) throw new Error(`could not load js/game.js for renderer contract: HTTP ${response.status}`);
+          return response.text();
+        });
+        const cliffStart = gameSource.indexOf("const lD =");
+        const cliffEnd = gameSource.indexOf("LevelTerrain.drawTile", cliffStart);
+        const cliffBlock = cliffStart >= 0 && cliffEnd > cliffStart ? gameSource.slice(cliffStart, cliffEnd) : "";
+        ok(!!cliffBlock, "game.js elevated-terrain cliff render branch is missing");
+        ok(/if\s*\(\s*lD\s*>\s*0\s*\)\s*\{?\s*SpriteAssets\.drawCliff\(\s*ctx\s*,\s*SpriteAssets\.getFrame\(\s*cliffId\s*,\s*4\s*\+\s*U\.clamp\(\s*Math\.ceil\(\s*lD\s*\/\s*EH\s*\)\s*,\s*1\s*,\s*4\s*\)\s*-\s*1\s*\)\s*,\s*sx\s*-\s*32\s*,\s*sy\s*,\s*lD\s*\)/.test(cliffBlock),
+          "y+1 terrain drops must use right-extending cliff frames 4-7 at the tile left vertex (sx-32,sy)");
+        ok(/if\s*\(\s*rD\s*>\s*0\s*\)\s*\{?\s*SpriteAssets\.drawCliff\(\s*ctx\s*,\s*SpriteAssets\.getFrame\(\s*cliffId\s*,\s*U\.clamp\(\s*Math\.ceil\(\s*rD\s*\/\s*EH\s*\)\s*,\s*1\s*,\s*4\s*\)\s*-\s*1\s*\)\s*,\s*sx\s*\+\s*32\s*,\s*sy\s*,\s*rD\s*\)/.test(cliffBlock),
+          "x+1 terrain drops must use left-extending cliff frames 0-3 at the tile right vertex (sx+32,sy)");
+        const wallStart = gameSource.indexOf('        case "wall":');
+        const wallEnd = gameSource.indexOf('        case "prop":', wallStart);
+        const wallBlock = wallStart >= 0 && wallEnd > wallStart ? gameSource.slice(wallStart, wallEnd) : "";
+        ok(!!wallBlock, "game.js wall/wallcap render branch is missing");
+        const connectedStart = wallBlock.indexOf('} else if (d.kind === "wall")');
+        const massifBlock = connectedStart >= 0 ? wallBlock.slice(0, connectedStart) : "";
+        const massifDraw = massifBlock.indexOf("SpriteAssets.drawFrame(ctx, SpriteAssets.getFrame(massifId, 0)");
+        const massifWallGuard = massifBlock.indexOf('if (d.kind === "wall")');
+        ok(massifDraw >= 0 && massifWallGuard >= 0 && massifWallGuard < massifDraw,
+          "outdoor massif sprites must draw only for wall boundaries, never wallcap interiors");
+        const connectedEnd = connectedStart >= 0 ? wallBlock.indexOf("} else {", connectedStart + 1) : -1;
+        const connectedBlock = connectedStart >= 0 && connectedEnd > connectedStart
+          ? wallBlock.slice(connectedStart, connectedEnd) : "";
+        ok(/SpriteAssets\.drawFrame\(\s*ctx\s*,\s*SpriteAssets\.getFrame\(\s*wallId\s*,\s*d\.wallMask\s*\)\s*,\s*d\.sx\s*,\s*d\.sy\s*\)/.test(connectedBlock),
+          "authored connected walls must draw at their registered d.sy anchor");
+        ok(!/d\.sy\s*\+\s*16/.test(connectedBlock),
+          "authored connected walls retain the obsolete procedural +16 offset");
+        ok(JSON.stringify(Object.keys(manifest.maps.backdrops || {}).sort()) === JSON.stringify(expectedBackdrops),
+          "maps.backdrops must contain exactly eight authored scenic plates");
+        ok(JSON.stringify(Object.keys(manifest.maps.traps || {}).sort()) === JSON.stringify(expectedTraps),
+          "maps.traps must contain exactly three authored devices");
+        ok(JSON.stringify(Object.keys(manifest.maps.forms || {}).sort()) === JSON.stringify([...expectedForms].sort()),
+          "maps.forms must contain exactly four dedicated transformations");
+        const requiredStatic = [
+          ...expectedBackdrops.map(key => ["backdrop", key, [1920,1080], [0,0], "world"]),
+          ...expectedTraps.map(key => ["trap", key, [32,24], [16,18], "world"]),
+          ...expectedForms.map(key => ["form", key, [192,192], [96,178], "actors"]),
+        ];
+        const seenIds = new Set();
+        for (const [role, key, size, anchor, bundle] of requiredStatic) {
+          const mapName = role === "backdrop" ? "backdrops" : role === "trap" ? "traps" : "forms";
+          const id = manifest.maps[mapName][key], def = manifest.entries[id], frame = SpriteAssets.getFrame(id);
+          ok(!!def && def.kind === "static", `${role}/${key}: missing strict static entry`);
+          ok(def.anchor[0] === anchor[0] && def.anchor[1] === anchor[1] && def.bundle === bundle,
+            `${role}/${key}: anchor/bundle mismatch`);
+          ok(frame.sw === size[0] && frame.sh === size[1], `${role}/${key}: decoded size mismatch`);
+          ok(!seenIds.has(id), `${role}/${key}: persistent sprite aliases another required asset`); seenIds.add(id);
+        }
+        const formAlpha = expectedForms.map(key => alphaOf(SpriteAssets.getFrame(manifest.maps.forms[key])));
+        for (let a = 0; a < formAlpha.length; a++) for (let b = a + 1; b < formAlpha.length; b++)
+          ok(pixelsDiffer(formAlpha[a], formAlpha[b]), `${expectedForms[a]}/${expectedForms[b]} are identical form silhouettes`);
+        for (const [theme, id] of Object.entries(manifest.maps.walls || {})) {
+          const def = manifest.entries[id];
+          ok(def && def.kind === "atlas" && def.cell[0] === 128 && def.cell[1] === 128 && def.cols === 4 && def.rows === 4 && def.anchor[0] === 64 && def.anchor[1] === 112,
+            `${theme}: malformed wall atlas contract`);
+          const alphas = Array.from({ length: 16 }, (_, index) => alphaOf(SpriteAssets.getFrame(id, index)));
+          for (let a = 0; a < 16; a++) for (let b = a + 1; b < 16; b++)
+            ok(pixelsDiffer(alphas[a], alphas[b]), `${theme}: duplicated wall masks ${a}/${b}`);
+        }
+        for (const [theme, id] of Object.entries(manifest.maps.cliffs || {})) {
+          const def = manifest.entries[id];
+          ok(def && def.kind === "atlas" && def.cell[0] === 64 && def.cell[1] === 128 && def.cols === 4 && def.rows === 2 && def.anchor[0] === 32 && def.anchor[1] === 0,
+            `${theme}: malformed cliff atlas contract`);
+          const cliffAlphas = Array.from({ length:8 }, (_, index) => alphaOf(SpriteAssets.getFrame(id, index)));
+          const heights = [];
+          const profiles = [];
+          for (let index = 0; index < 8; index++) {
+            const alpha = cliffAlphas[index], visible = (x,y) => alpha[y * 64 + x] > 8;
+            let top = 128, bottom = -1, minX = 64, maxX = -1;
+            for (let y = 0; y < 128; y++) for (let x = 0; x < 64; x++) if (visible(x,y)) {
+              top = Math.min(top,y); bottom = Math.max(bottom,y); minX = Math.min(minX,x); maxX = Math.max(maxX,x);
+            }
+            ok(bottom >= 0 && top <= 1, `${theme}/${index}: cliff misses seam-root y=0`);
+            ok(index < 4 ? maxX <= 32 : minX >= 31, `${theme}/${index}: cliff crosses facing half-cell`);
+            const xs = index < 4 ? [29,30,31] : [32,33,34];
+            const profile = Array.from({ length:128 }, (_, y) => xs.some(x => visible(x,y)));
+            profiles.push(profile); heights.push(bottom - top + 1);
+            const rows = profile.flatMap((value,y) => value ? [y] : []);
+            ok(rows.length > 0 && rows[0] <= 1, `${theme}/${index}: cliff misses its seam strip`);
+            ok(rows.every((_, offset) => profile[rows[0] + offset]), `${theme}/${index}: broken seam-root edge`);
+          }
+          for (let row = 0; row < 2; row++) for (let depth = 1; depth < 4; depth++)
+            ok(heights[row * 4 + depth] > heights[row * 4 + depth - 1], `${theme}: cliff depths are not strictly increasing`);
+          for (let depth = 0; depth < 4; depth++)
+            ok(Math.abs(heights[depth] - heights[4 + depth]) <= 6, `${theme}: mirrored cliff depth ${depth + 1} differs by >6px`);
+          for (let sw = 0; sw < 4; sw++) for (let se = 4; se < 8; se++)
+            ok(Array.from({length:6}, (_,y) => y).some(y => profiles[sw][y] && [y-1,y,y+1].some(yy => yy >= 0 && yy < 6 && profiles[se][yy])),
+              `${theme}: cliff halves ${sw}/${se} leave a seam-root gap`);
+          for (let depth = 0; depth < 4; depth++) {
+            const leftFace = translatedCliffPoints(cliffAlphas[depth], 0, 0);
+            const nextLeftFace = translatedCliffPoints(cliffAlphas[depth], -32, 16);
+            ok(cliffContactNear(leftFace, nextLeftFace, [-32,16]),
+              `${theme}: left-extending cliff depth ${depth + 1} does not chain at tile delta (-32,+16)`);
+            const rightFace = translatedCliffPoints(cliffAlphas[4 + depth], 0, 0);
+            const nextRightFace = translatedCliffPoints(cliffAlphas[4 + depth], 32, 16);
+            ok(cliffContactNear(rightFace, nextRightFace, [32,16]),
+              `${theme}: right-extending cliff depth ${depth + 1} does not chain at tile delta (+32,+16)`);
+            const southLeft = translatedCliffPoints(cliffAlphas[depth], 32, 0);
+            const southRight = translatedCliffPoints(cliffAlphas[4 + depth], -32, 0);
+            ok(cliffContactNear(southLeft, southRight, [0,16]),
+              `${theme}: translated cliff depth ${depth + 1} halves miss the tile south vertex`);
+          }
+        }
+        const pathSockets = { 1:[48,8], 2:[48,24], 4:[16,24], 8:[16,8] };
+        const pathReciprocal = { 1:4, 2:8, 4:1, 8:2 };
+        for (const [theme, id] of Object.entries(manifest.maps.paths || {})) {
+          const def = manifest.entries[id];
+          ok(def && def.kind === "atlas" && def.cell[0] === 64 && def.cell[1] === 32 && def.cols === 4 && def.rows === 4,
+            `${theme}: malformed path atlas contract`);
+          const frameAlphas = [];
+          for (let mask = 0; mask < 16; mask++) {
+            const frame = SpriteAssets.getFrame(id, mask), c = document.createElement("canvas"), cx = c.getContext("2d", { willReadFrequently:true });
+            c.width = 64; c.height = 32; cx.drawImage(frame.image, frame.sx, frame.sy, 64, 32, 0, 0, 64, 32);
+            const rgba = cx.getImageData(0, 0, 64, 32).data, alpha = new Uint8Array(64 * 32);
+            for (let i = 0; i < alpha.length; i++) alpha[i] = rgba[i * 4 + 3];
+            frameAlphas.push(alpha);
+            const visible = point => alpha[point[1] * 64 + point[0]] > 8;
+            const window = point => {
+              const result = [];
+              for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++)
+                result.push(alpha[(point[1] + dy) * 64 + point[0] + dx] > 8);
+              return result;
+            };
+            ok(visible([32,16]), `${theme}/${mask}: path center is transparent`);
+            for (const [bitText, point] of Object.entries(pathSockets)) {
+              const bit = +bitText;
+              if (mask & bit) ok(window(point).some(Boolean), `${theme}/${mask}: connected path arm misses socket band ${bit}`);
+              else ok(!visible(point), `${theme}/${mask}: disconnected path arm occupies socket ${bit}`);
+            }
+          }
+          const window = (alpha, point) => {
+            const result = [];
+            for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++)
+              result.push(alpha[(point[1] + dy) * 64 + point[0] + dx] > 8);
+            return result;
+          };
+          for (const [bitText, reciprocal] of Object.entries(pathReciprocal)) {
+            const bit = +bitText;
+            for (let local = 0; local < 16; local++) if (local & bit) {
+              const left = window(frameAlphas[local], pathSockets[bit]);
+              for (let neighbor = 0; neighbor < 16; neighbor++) if (neighbor & reciprocal) {
+                const right = window(frameAlphas[neighbor], pathSockets[reciprocal]);
+                ok(left.some((value, index) => value && right[index]),
+                  `${theme}: reciprocal seam gap bit ${bit}, masks ${local}/${neighbor}`);
+              }
+            }
+          }
+        }
+        const titleId = manifest.maps.uiScenes && manifest.maps.uiScenes.titleCamp;
+        const title = titleId && manifest.entries[titleId], titleFrame = titleId && SpriteAssets.getFrame(titleId);
+        ok(title && title.kind === "static" && title.bundle === "core" && title.anchor[0] === 0 && title.anchor[1] === 0,
+          "titleCamp is not a core SpriteAssets scene");
+        ok(titleFrame && titleFrame.sw === 1672 && titleFrame.sh === 941, "titleCamp decoded dimensions are wrong");
+        SpriteAssets.drawFrame(ctx, SpriteAssets.getFrame(manifest.maps.backdrops.default), 0, 0, { scale: .5 });
+        expectedTraps.forEach((key, index) => SpriteAssets.drawFrame(ctx, SpriteAssets.getFrame(manifest.maps.traps[key]), 120 + index * 80, 460, { scale: 2 }));
+        expectedForms.forEach((key, index) => SpriteAssets.drawFrame(ctx, SpriteAssets.getFrame(manifest.maps.forms[key]), 520 + index * 105, 500, { scale: .45 }));
+        document.body.dataset.testStatus = "passed";
+        out.textContent = `PASS: ${checks} persistent-art checks; backdrops, traps, transformations, walls, and title scene decode strictly through SpriteAssets.`;
+      } catch (err) {
+        document.body.dataset.testStatus = "failed";
+        out.textContent = `FAIL: ${err.stack || err}`;
+      }
+    })();
+  </script>
+</body>
+</html>

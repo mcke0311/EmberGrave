@@ -1,0 +1,6507 @@
+{
+  "classes": {
+    "emberwitch": {
+      "frames": [
+        {
+          "direction": "E",
+          "index": 0,
+          "mainForearmROI": [
+            59,
+            101,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            118,
+            91,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 1,
+          "mainForearmROI": [
+            58,
+            103,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            115,
+            88,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 2,
+          "mainForearmROI": [
+            56,
+            97,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            117,
+            97,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 3,
+          "mainForearmROI": [
+            59,
+            88,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            114,
+            100,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 4,
+          "mainForearmROI": [
+            100,
+            104,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            63,
+            96,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 5,
+          "mainForearmROI": [
+            109,
+            95,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            62,
+            98,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 6,
+          "mainForearmROI": [
+            119,
+            100,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            56,
+            99,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 7,
+          "mainForearmROI": [
+            113,
+            102,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            72,
+            97,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 8,
+          "mainForearmROI": [
+            54,
+            102,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            122,
+            85,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 9,
+          "mainForearmROI": [
+            59,
+            101,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            118,
+            84,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 10,
+          "mainForearmROI": [
+            56,
+            104,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            120,
+            102,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 11,
+          "mainForearmROI": [
+            52,
+            84,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            119,
+            101,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 12,
+          "mainForearmROI": [
+            93,
+            104,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            53,
+            88,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 13,
+          "mainForearmROI": [
+            117,
+            97,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            58,
+            100,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 14,
+          "mainForearmROI": [
+            118,
+            102,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            56,
+            99,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 15,
+          "mainForearmROI": [
+            119,
+            99,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            63,
+            98,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 16,
+          "mainForearmROI": [
+            54,
+            108,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            121,
+            86,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 17,
+          "mainForearmROI": [
+            53,
+            106,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            123,
+            87,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 18,
+          "mainForearmROI": [
+            56,
+            103,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            117,
+            102,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 19,
+          "mainForearmROI": [
+            53,
+            86,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            122,
+            105,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 20,
+          "mainForearmROI": [
+            96,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            53,
+            87,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 21,
+          "mainForearmROI": [
+            118,
+            100,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            60,
+            104,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 22,
+          "mainForearmROI": [
+            117,
+            102,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            56,
+            103,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 23,
+          "mainForearmROI": [
+            113,
+            104,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            61,
+            87,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 24,
+          "mainForearmROI": [
+            124,
+            24,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            92,
+            41,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 25,
+          "mainForearmROI": [
+            122,
+            25,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            111,
+            41,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 26,
+          "mainForearmROI": [
+            67,
+            15,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            94,
+            39,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 27,
+          "mainForearmROI": [
+            64,
+            25,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            93,
+            38,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 28,
+          "mainForearmROI": [
+            113,
+            17,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            65,
+            28,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 29,
+          "mainForearmROI": [
+            90,
+            5,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            76,
+            40,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 30,
+          "mainForearmROI": [
+            108,
+            18,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            75,
+            38,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 31,
+          "mainForearmROI": [
+            107,
+            27,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            64,
+            19,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 32,
+          "mainForearmROI": [
+            124,
+            68,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            74,
+            59,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 33,
+          "mainForearmROI": [
+            128,
+            76,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            62,
+            55,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 34,
+          "mainForearmROI": [
+            106,
+            52,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            73,
+            60,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 35,
+          "mainForearmROI": [
+            47,
+            74,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            112,
+            63,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 36,
+          "mainForearmROI": [
+            43,
+            74,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            108,
+            71,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 37,
+          "mainForearmROI": [
+            102,
+            91,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            47,
+            95,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 38,
+          "mainForearmROI": [
+            108,
+            100,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            66,
+            99,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 39,
+          "mainForearmROI": [
+            135,
+            98,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            73,
+            78,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 40,
+          "mainForearmROI": [
+            46,
+            55,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            136,
+            47,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 41,
+          "mainForearmROI": [
+            53,
+            57,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            52,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 42,
+          "mainForearmROI": [
+            48,
+            61,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            133,
+            61,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 43,
+          "mainForearmROI": [
+            47,
+            57,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            54,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 44,
+          "mainForearmROI": [
+            51,
+            60,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            118,
+            60,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 45,
+          "mainForearmROI": [
+            53,
+            60,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            129,
+            56,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 46,
+          "mainForearmROI": [
+            46,
+            60,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            132,
+            60,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 47,
+          "mainForearmROI": [
+            50,
+            63,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            131,
+            57,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 48,
+          "mainForearmROI": [
+            98,
+            117,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            132,
+            125,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 49,
+          "mainForearmROI": [
+            97,
+            119,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            129,
+            127,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 50,
+          "mainForearmROI": [
+            54,
+            124,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            123,
+            132,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 51,
+          "mainForearmROI": [
+            52,
+            131,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            118,
+            120,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 52,
+          "mainForearmROI": [
+            50,
+            123,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            116,
+            116,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 53,
+          "mainForearmROI": [
+            50,
+            122,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            114,
+            116,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 54,
+          "mainForearmROI": [
+            55,
+            124,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            111,
+            124,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 55,
+          "mainForearmROI": [
+            129,
+            124,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            58,
+            122,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 56,
+          "mainForearmROI": [
+            69,
+            86,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            132,
+            144,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 57,
+          "mainForearmROI": [
+            70,
+            84,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            130,
+            143,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 58,
+          "mainForearmROI": [
+            63,
+            93,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            137,
+            148,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 59,
+          "mainForearmROI": [
+            82,
+            88,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            135,
+            142,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 60,
+          "mainForearmROI": [
+            134,
+            148,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            67,
+            115,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 61,
+          "mainForearmROI": [
+            132,
+            150,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            46,
+            130,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 62,
+          "mainForearmROI": [
+            118,
+            147,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            31,
+            134,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 63,
+          "mainForearmROI": [
+            132,
+            146,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            65,
+            97,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 64,
+          "mainForearmROI": [
+            118,
+            109,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            50,
+            152,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 65,
+          "mainForearmROI": [
+            121,
+            112,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            50,
+            148,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 66,
+          "mainForearmROI": [
+            128,
+            123,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            42,
+            142,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 67,
+          "mainForearmROI": [
+            124,
+            149,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            66,
+            112,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 68,
+          "mainForearmROI": [
+            120,
+            149,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            56,
+            113,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 69,
+          "mainForearmROI": [
+            117,
+            159,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            73,
+            113,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 70,
+          "mainForearmROI": [
+            129,
+            115,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            58,
+            146,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 71,
+          "mainForearmROI": [
+            131,
+            120,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            70,
+            157,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        }
+      ]
+    },
+    "gravebinder": {
+      "frames": [
+        {
+          "direction": "E",
+          "index": 0,
+          "mainForearmROI": [
+            62,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            117,
+            96,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 1,
+          "mainForearmROI": [
+            61,
+            103,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            116,
+            95,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 2,
+          "mainForearmROI": [
+            56,
+            97,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            120,
+            98,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 3,
+          "mainForearmROI": [
+            62,
+            94,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            113,
+            104,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 4,
+          "mainForearmROI": [
+            101,
+            103,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            83,
+            86,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 5,
+          "mainForearmROI": [
+            66,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            71,
+            90,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 6,
+          "mainForearmROI": [
+            119,
+            100,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            56,
+            101,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 7,
+          "mainForearmROI": [
+            109,
+            104,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            98,
+            90,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 8,
+          "mainForearmROI": [
+            55,
+            102,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            120,
+            89,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 9,
+          "mainForearmROI": [
+            55,
+            103,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            122,
+            90,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 10,
+          "mainForearmROI": [
+            55,
+            95,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            119,
+            96,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 11,
+          "mainForearmROI": [
+            63,
+            88,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            120,
+            103,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 12,
+          "mainForearmROI": [
+            96,
+            103,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            50,
+            88,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 13,
+          "mainForearmROI": [
+            107,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            60,
+            101,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 14,
+          "mainForearmROI": [
+            118,
+            93,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            54,
+            91,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 15,
+          "mainForearmROI": [
+            117,
+            103,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            68,
+            89,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 16,
+          "mainForearmROI": [
+            55,
+            103,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            121,
+            90,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 17,
+          "mainForearmROI": [
+            54,
+            104,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            121,
+            90,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 18,
+          "mainForearmROI": [
+            56,
+            96,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            118,
+            98,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 19,
+          "mainForearmROI": [
+            62,
+            89,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            119,
+            104,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 20,
+          "mainForearmROI": [
+            98,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            50,
+            88,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 21,
+          "mainForearmROI": [
+            111,
+            103,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            58,
+            102,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 22,
+          "mainForearmROI": [
+            119,
+            95,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            55,
+            94,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 23,
+          "mainForearmROI": [
+            115,
+            104,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            68,
+            94,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 24,
+          "mainForearmROI": [
+            77,
+            28,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            104,
+            60,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 25,
+          "mainForearmROI": [
+            76,
+            31,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            97,
+            57,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 26,
+          "mainForearmROI": [
+            66,
+            25,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            75,
+            66,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 27,
+          "mainForearmROI": [
+            60,
+            29,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            75,
+            58,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 28,
+          "mainForearmROI": [
+            67,
+            32,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            62,
+            26,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 29,
+          "mainForearmROI": [
+            70,
+            31,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            88,
+            7,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 30,
+          "mainForearmROI": [
+            104,
+            21,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            72,
+            30,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 31,
+          "mainForearmROI": [
+            68,
+            28,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            99,
+            54,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 32,
+          "mainForearmROI": [
+            99,
+            62,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            129,
+            74,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 33,
+          "mainForearmROI": [
+            96,
+            61,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            131,
+            79,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 34,
+          "mainForearmROI": [
+            101,
+            61,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            88,
+            68,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 35,
+          "mainForearmROI": [
+            96,
+            61,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            77,
+            77,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 36,
+          "mainForearmROI": [
+            88,
+            62,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            43,
+            76,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 37,
+          "mainForearmROI": [
+            46,
+            95,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            71,
+            95,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 38,
+          "mainForearmROI": [
+            110,
+            76,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            68,
+            76,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 39,
+          "mainForearmROI": [
+            124,
+            95,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            69,
+            67,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 40,
+          "mainForearmROI": [
+            127,
+            44,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            44,
+            54,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 41,
+          "mainForearmROI": [
+            127,
+            47,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            37,
+            53,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 42,
+          "mainForearmROI": [
+            128,
+            48,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            48,
+            46,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 43,
+          "mainForearmROI": [
+            124,
+            50,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            44,
+            46,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 44,
+          "mainForearmROI": [
+            131,
+            45,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            40,
+            47,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 45,
+          "mainForearmROI": [
+            129,
+            45,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            41,
+            46,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 46,
+          "mainForearmROI": [
+            129,
+            50,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            43,
+            46,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 47,
+          "mainForearmROI": [
+            122,
+            51,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            50,
+            39,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 48,
+          "mainForearmROI": [
+            80,
+            146,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            129,
+            111,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 49,
+          "mainForearmROI": [
+            62,
+            156,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            130,
+            128,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 50,
+          "mainForearmROI": [
+            54,
+            112,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            123,
+            156,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 51,
+          "mainForearmROI": [
+            43,
+            135,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            120,
+            154,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 52,
+          "mainForearmROI": [
+            46,
+            152,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            116,
+            146,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 53,
+          "mainForearmROI": [
+            40,
+            153,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            109,
+            154,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 54,
+          "mainForearmROI": [
+            55,
+            156,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            125,
+            155,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 55,
+          "mainForearmROI": [
+            58,
+            118,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            104,
+            152,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 56,
+          "mainForearmROI": [
+            62,
+            143,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            104,
+            100,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 57,
+          "mainForearmROI": [
+            62,
+            143,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            105,
+            101,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 58,
+          "mainForearmROI": [
+            125,
+            143,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            70,
+            103,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 59,
+          "mainForearmROI": [
+            129,
+            120,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            44,
+            133,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 60,
+          "mainForearmROI": [
+            137,
+            120,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            47,
+            140,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 61,
+          "mainForearmROI": [
+            127,
+            137,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            50,
+            117,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 62,
+          "mainForearmROI": [
+            129,
+            135,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            64,
+            109,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 63,
+          "mainForearmROI": [
+            131,
+            124,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            70,
+            102,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 64,
+          "mainForearmROI": [
+            43,
+            146,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            108,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 65,
+          "mainForearmROI": [
+            44,
+            149,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            128,
+            110,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 66,
+          "mainForearmROI": [
+            129,
+            135,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            43,
+            114,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 67,
+          "mainForearmROI": [
+            134,
+            146,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            64,
+            115,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 68,
+          "mainForearmROI": [
+            129,
+            143,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            58,
+            114,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 69,
+          "mainForearmROI": [
+            125,
+            166,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            76,
+            111,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 70,
+          "mainForearmROI": [
+            129,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            121,
+            109,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 71,
+          "mainForearmROI": [
+            137,
+            143,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            50,
+            103,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        }
+      ]
+    },
+    "vanguard": {
+      "frames": [
+        {
+          "direction": "E",
+          "index": 0,
+          "mainForearmROI": [
+            61,
+            101,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            118,
+            88,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 1,
+          "mainForearmROI": [
+            60,
+            102,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            120,
+            91,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 2,
+          "mainForearmROI": [
+            68,
+            101,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            101,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 3,
+          "mainForearmROI": [
+            52,
+            88,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            121,
+            103,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 4,
+          "mainForearmROI": [
+            70,
+            85,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            80,
+            104,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 5,
+          "mainForearmROI": [
+            121,
+            92,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            62,
+            104,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 6,
+          "mainForearmROI": [
+            124,
+            101,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            53,
+            101,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 7,
+          "mainForearmROI": [
+            118,
+            102,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            60,
+            90,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 8,
+          "mainForearmROI": [
+            53,
+            98,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            118,
+            83,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 9,
+          "mainForearmROI": [
+            53,
+            100,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            120,
+            84,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 10,
+          "mainForearmROI": [
+            58,
+            102,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            126,
+            98,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 11,
+          "mainForearmROI": [
+            49,
+            83,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            126,
+            102,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 12,
+          "mainForearmROI": [
+            60,
+            83,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            100,
+            104,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 13,
+          "mainForearmROI": [
+            122,
+            97,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            55,
+            106,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 14,
+          "mainForearmROI": [
+            124,
+            102,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            53,
+            101,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 15,
+          "mainForearmROI": [
+            126,
+            104,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            62,
+            85,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 16,
+          "mainForearmROI": [
+            52,
+            99,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            119,
+            82,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 17,
+          "mainForearmROI": [
+            53,
+            100,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            124,
+            84,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 18,
+          "mainForearmROI": [
+            58,
+            102,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            98,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 19,
+          "mainForearmROI": [
+            50,
+            83,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            128,
+            103,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 20,
+          "mainForearmROI": [
+            52,
+            80,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            103,
+            104,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 21,
+          "mainForearmROI": [
+            122,
+            101,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            53,
+            104,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 22,
+          "mainForearmROI": [
+            125,
+            101,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            53,
+            101,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 23,
+          "mainForearmROI": [
+            126,
+            103,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            60,
+            83,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 24,
+          "mainForearmROI": [
+            103,
+            34,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            118,
+            18,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 25,
+          "mainForearmROI": [
+            102,
+            37,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            118,
+            20,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 26,
+          "mainForearmROI": [
+            68,
+            11,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            87,
+            51,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 27,
+          "mainForearmROI": [
+            60,
+            20,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            87,
+            36,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 28,
+          "mainForearmROI": [
+            98,
+            15,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            65,
+            32,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 29,
+          "mainForearmROI": [
+            101,
+            7,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            64,
+            31,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 30,
+          "mainForearmROI": [
+            112,
+            14,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            71,
+            34,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 31,
+          "mainForearmROI": [
+            114,
+            35,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            66,
+            23,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 32,
+          "mainForearmROI": [
+            125,
+            67,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            74,
+            53,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 33,
+          "mainForearmROI": [
+            79,
+            64,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            131,
+            73,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 34,
+          "mainForearmROI": [
+            75,
+            50,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            112,
+            54,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 35,
+          "mainForearmROI": [
+            52,
+            72,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            108,
+            54,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 36,
+          "mainForearmROI": [
+            40,
+            74,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            103,
+            56,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 37,
+          "mainForearmROI": [
+            103,
+            54,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            44,
+            86,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 38,
+          "mainForearmROI": [
+            102,
+            61,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            74,
+            61,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 39,
+          "mainForearmROI": [
+            136,
+            90,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            66,
+            59,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 40,
+          "mainForearmROI": [
+            95,
+            60,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            132,
+            34,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 41,
+          "mainForearmROI": [
+            88,
+            59,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            134,
+            39,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 42,
+          "mainForearmROI": [
+            48,
+            46,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            138,
+            46,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 43,
+          "mainForearmROI": [
+            53,
+            34,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            90,
+            61,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 44,
+          "mainForearmROI": [
+            44,
+            50,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            80,
+            35,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 45,
+          "mainForearmROI": [
+            118,
+            50,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            51,
+            60,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 46,
+          "mainForearmROI": [
+            137,
+            38,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            46,
+            36,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 47,
+          "mainForearmROI": [
+            140,
+            35,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            44,
+            47,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 48,
+          "mainForearmROI": [
+            29,
+            118,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            134,
+            83,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 49,
+          "mainForearmROI": [
+            40,
+            74,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            137,
+            118,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 50,
+          "mainForearmROI": [
+            48,
+            86,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            134,
+            124,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 51,
+          "mainForearmROI": [
+            41,
+            140,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            139,
+            74,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 52,
+          "mainForearmROI": [
+            37,
+            84,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            135,
+            127,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 53,
+          "mainForearmROI": [
+            135,
+            122,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            44,
+            89,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 54,
+          "mainForearmROI": [
+            141,
+            103,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            41,
+            137,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 55,
+          "mainForearmROI": [
+            141,
+            86,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            42,
+            107,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 56,
+          "mainForearmROI": [
+            43,
+            133,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            129,
+            82,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 57,
+          "mainForearmROI": [
+            46,
+            143,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            131,
+            91,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 58,
+          "mainForearmROI": [
+            55,
+            143,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            131,
+            99,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 59,
+          "mainForearmROI": [
+            39,
+            137,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            135,
+            88,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 60,
+          "mainForearmROI": [
+            135,
+            98,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            36,
+            128,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 61,
+          "mainForearmROI": [
+            135,
+            94,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            38,
+            137,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 62,
+          "mainForearmROI": [
+            135,
+            131,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            39,
+            138,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 63,
+          "mainForearmROI": [
+            135,
+            93,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            36,
+            137,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 64,
+          "mainForearmROI": [
+            43,
+            135,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            129,
+            102,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 65,
+          "mainForearmROI": [
+            43,
+            139,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            131,
+            105,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 66,
+          "mainForearmROI": [
+            52,
+            132,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            114,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 67,
+          "mainForearmROI": [
+            56,
+            103,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            140,
+            135,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 68,
+          "mainForearmROI": [
+            49,
+            104,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            130,
+            136,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 69,
+          "mainForearmROI": [
+            135,
+            147,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            71,
+            100,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 70,
+          "mainForearmROI": [
+            120,
+            112,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            62,
+            112,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 71,
+          "mainForearmROI": [
+            140,
+            134,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            54,
+            100,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        }
+      ]
+    },
+    "veilranger": {
+      "frames": [
+        {
+          "direction": "E",
+          "index": 0,
+          "mainForearmROI": [
+            115,
+            88,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            63,
+            104,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 1,
+          "mainForearmROI": [
+            113,
+            94,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            62,
+            104,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 2,
+          "mainForearmROI": [
+            115,
+            96,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            60,
+            102,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 3,
+          "mainForearmROI": [
+            113,
+            104,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            58,
+            91,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 4,
+          "mainForearmROI": [
+            83,
+            104,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            80,
+            104,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 5,
+          "mainForearmROI": [
+            113,
+            89,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            67,
+            106,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 6,
+          "mainForearmROI": [
+            118,
+            101,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            57,
+            101,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 7,
+          "mainForearmROI": [
+            108,
+            104,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            64,
+            88,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 8,
+          "mainForearmROI": [
+            119,
+            87,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            57,
+            105,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 9,
+          "mainForearmROI": [
+            121,
+            92,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            57,
+            106,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 10,
+          "mainForearmROI": [
+            115,
+            98,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            61,
+            104,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 11,
+          "mainForearmROI": [
+            118,
+            106,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            52,
+            93,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 12,
+          "mainForearmROI": [
+            82,
+            93,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            61,
+            87,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 13,
+          "mainForearmROI": [
+            110,
+            93,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            58,
+            107,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 14,
+          "mainForearmROI": [
+            118,
+            102,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            57,
+            102,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 15,
+          "mainForearmROI": [
+            113,
+            106,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            66,
+            89,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 16,
+          "mainForearmROI": [
+            118,
+            91,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            56,
+            107,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 17,
+          "mainForearmROI": [
+            120,
+            91,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            57,
+            108,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 18,
+          "mainForearmROI": [
+            113,
+            102,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            61,
+            106,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 19,
+          "mainForearmROI": [
+            120,
+            108,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            54,
+            92,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 20,
+          "mainForearmROI": [
+            84,
+            86,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            53,
+            84,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 21,
+          "mainForearmROI": [
+            110,
+            96,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            58,
+            107,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 22,
+          "mainForearmROI": [
+            118,
+            102,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            58,
+            102,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 23,
+          "mainForearmROI": [
+            113,
+            108,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            68,
+            91,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 24,
+          "mainForearmROI": [
+            114,
+            20,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            97,
+            41,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 25,
+          "mainForearmROI": [
+            114,
+            23,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            98,
+            45,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 26,
+          "mainForearmROI": [
+            70,
+            9,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            94,
+            43,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 27,
+          "mainForearmROI": [
+            66,
+            21,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            95,
+            43,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 28,
+          "mainForearmROI": [
+            64,
+            24,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            64,
+            44,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 29,
+          "mainForearmROI": [
+            76,
+            41,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            90,
+            3,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 30,
+          "mainForearmROI": [
+            105,
+            7,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            71,
+            43,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 31,
+          "mainForearmROI": [
+            105,
+            21,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            62,
+            42,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 32,
+          "mainForearmROI": [
+            124,
+            71,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            92,
+            60,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 33,
+          "mainForearmROI": [
+            128,
+            81,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            95,
+            63,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 34,
+          "mainForearmROI": [
+            94,
+            65,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            84,
+            70,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 35,
+          "mainForearmROI": [
+            47,
+            73,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            83,
+            77,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 36,
+          "mainForearmROI": [
+            43,
+            75,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            87,
+            83,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 37,
+          "mainForearmROI": [
+            84,
+            84,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            51,
+            83,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 38,
+          "mainForearmROI": [
+            110,
+            91,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            67,
+            91,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 39,
+          "mainForearmROI": [
+            134,
+            95,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            55,
+            79,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 40,
+          "mainForearmROI": [
+            64,
+            73,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            125,
+            66,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 41,
+          "mainForearmROI": [
+            47,
+            74,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            130,
+            78,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 42,
+          "mainForearmROI": [
+            48,
+            72,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            76,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 43,
+          "mainForearmROI": [
+            49,
+            71,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            124,
+            80,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 44,
+          "mainForearmROI": [
+            53,
+            74,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            126,
+            65,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 45,
+          "mainForearmROI": [
+            44,
+            80,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            132,
+            61,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 46,
+          "mainForearmROI": [
+            42,
+            63,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            131,
+            80,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 47,
+          "mainForearmROI": [
+            50,
+            67,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            110,
+            73,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 48,
+          "mainForearmROI": [
+            47,
+            134,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            128,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 49,
+          "mainForearmROI": [
+            50,
+            133,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            124,
+            135,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 50,
+          "mainForearmROI": [
+            48,
+            137,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            140,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 51,
+          "mainForearmROI": [
+            50,
+            136,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            124,
+            134,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 52,
+          "mainForearmROI": [
+            54,
+            127,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            70,
+            67,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 53,
+          "mainForearmROI": [
+            53,
+            129,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            70,
+            68,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 54,
+          "mainForearmROI": [
+            60,
+            127,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            122,
+            127,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 55,
+          "mainForearmROI": [
+            127,
+            134,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            47,
+            128,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 56,
+          "mainForearmROI": [
+            67,
+            74,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            132,
+            113,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 57,
+          "mainForearmROI": [
+            59,
+            78,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            131,
+            113,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 58,
+          "mainForearmROI": [
+            47,
+            89,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            131,
+            109,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 59,
+          "mainForearmROI": [
+            63,
+            86,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            136,
+            120,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 60,
+          "mainForearmROI": [
+            137,
+            123,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            50,
+            115,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 61,
+          "mainForearmROI": [
+            130,
+            95,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            47,
+            119,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 62,
+          "mainForearmROI": [
+            128,
+            110,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            41,
+            123,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 63,
+          "mainForearmROI": [
+            118,
+            86,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            36,
+            114,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 64,
+          "mainForearmROI": [
+            50,
+            150,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            45,
+            86,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 65,
+          "mainForearmROI": [
+            45,
+            148,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            44,
+            86,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 66,
+          "mainForearmROI": [
+            124,
+            122,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            75,
+            83,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 67,
+          "mainForearmROI": [
+            126,
+            86,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            124,
+            148,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 68,
+          "mainForearmROI": [
+            123,
+            86,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            119,
+            147,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 69,
+          "mainForearmROI": [
+            128,
+            112,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            110,
+            165,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 70,
+          "mainForearmROI": [
+            130,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            90,
+            99,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 71,
+          "mainForearmROI": [
+            98,
+            97,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            140,
+            144,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        }
+      ]
+    },
+    "wildkeeper": {
+      "frames": [
+        {
+          "direction": "E",
+          "index": 0,
+          "mainForearmROI": [
+            58,
+            109,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            117,
+            97,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 1,
+          "mainForearmROI": [
+            59,
+            107,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            120,
+            98,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 2,
+          "mainForearmROI": [
+            63,
+            108,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            123,
+            103,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 3,
+          "mainForearmROI": [
+            52,
+            97,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            118,
+            110,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 4,
+          "mainForearmROI": [
+            70,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            82,
+            111,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 5,
+          "mainForearmROI": [
+            118,
+            96,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            61,
+            110,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 6,
+          "mainForearmROI": [
+            126,
+            108,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            52,
+            108,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 7,
+          "mainForearmROI": [
+            115,
+            112,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            63,
+            97,
+            17,
+            17
+          ],
+          "pose": "idle",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 8,
+          "mainForearmROI": [
+            54,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            119,
+            85,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 9,
+          "mainForearmROI": [
+            54,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            122,
+            87,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 10,
+          "mainForearmROI": [
+            59,
+            106,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            101,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 11,
+          "mainForearmROI": [
+            50,
+            87,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            105,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 12,
+          "mainForearmROI": [
+            59,
+            86,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            102,
+            109,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 13,
+          "mainForearmROI": [
+            119,
+            99,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            55,
+            108,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 14,
+          "mainForearmROI": [
+            126,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            54,
+            105,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 15,
+          "mainForearmROI": [
+            123,
+            108,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            66,
+            91,
+            17,
+            17
+          ],
+          "pose": "walkA",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 16,
+          "mainForearmROI": [
+            54,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            120,
+            86,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 17,
+          "mainForearmROI": [
+            54,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            123,
+            87,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 18,
+          "mainForearmROI": [
+            60,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            100,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 19,
+          "mainForearmROI": [
+            50,
+            86,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            128,
+            105,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 20,
+          "mainForearmROI": [
+            54,
+            83,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            103,
+            109,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 21,
+          "mainForearmROI": [
+            118,
+            97,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            54,
+            106,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 22,
+          "mainForearmROI": [
+            126,
+            105,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            53,
+            105,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 23,
+          "mainForearmROI": [
+            122,
+            106,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            66,
+            91,
+            17,
+            17
+          ],
+          "pose": "walkB",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 24,
+          "mainForearmROI": [
+            101,
+            35,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            118,
+            21,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 25,
+          "mainForearmROI": [
+            102,
+            36,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            119,
+            22,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 26,
+          "mainForearmROI": [
+            65,
+            12,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            86,
+            51,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 27,
+          "mainForearmROI": [
+            59,
+            23,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            87,
+            37,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 28,
+          "mainForearmROI": [
+            98,
+            15,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            65,
+            34,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 29,
+          "mainForearmROI": [
+            101,
+            7,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            65,
+            32,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 30,
+          "mainForearmROI": [
+            112,
+            14,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            71,
+            35,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 31,
+          "mainForearmROI": [
+            115,
+            38,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            65,
+            23,
+            17,
+            17
+          ],
+          "pose": "attackWindup",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 32,
+          "mainForearmROI": [
+            125,
+            74,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            76,
+            59,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 33,
+          "mainForearmROI": [
+            78,
+            69,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            132,
+            80,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 34,
+          "mainForearmROI": [
+            75,
+            56,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            112,
+            61,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 35,
+          "mainForearmROI": [
+            50,
+            79,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            108,
+            59,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 36,
+          "mainForearmROI": [
+            39,
+            83,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            103,
+            61,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 37,
+          "mainForearmROI": [
+            103,
+            61,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            43,
+            93,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 38,
+          "mainForearmROI": [
+            102,
+            69,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            74,
+            69,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 39,
+          "mainForearmROI": [
+            137,
+            98,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            66,
+            64,
+            17,
+            17
+          ],
+          "pose": "attackImpact",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 40,
+          "mainForearmROI": [
+            71,
+            70,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            133,
+            61,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 41,
+          "mainForearmROI": [
+            70,
+            71,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            134,
+            62,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 42,
+          "mainForearmROI": [
+            49,
+            67,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            136,
+            67,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 43,
+          "mainForearmROI": [
+            50,
+            61,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            91,
+            75,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 44,
+          "mainForearmROI": [
+            43,
+            70,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            81,
+            62,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 45,
+          "mainForearmROI": [
+            118,
+            69,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            45,
+            70,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 46,
+          "mainForearmROI": [
+            137,
+            67,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            45,
+            67,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 47,
+          "mainForearmROI": [
+            135,
+            71,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            44,
+            68,
+            17,
+            17
+          ],
+          "pose": "cast",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 48,
+          "mainForearmROI": [
+            62,
+            132,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            131,
+            112,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 49,
+          "mainForearmROI": [
+            70,
+            131,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            132,
+            125,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 50,
+          "mainForearmROI": [
+            67,
+            158,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            122,
+            130,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 51,
+          "mainForearmROI": [
+            44,
+            127,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            108,
+            128,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 52,
+          "mainForearmROI": [
+            84,
+            122,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            39,
+            123,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 53,
+          "mainForearmROI": [
+            86,
+            122,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            39,
+            126,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 54,
+          "mainForearmROI": [
+            120,
+            130,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            54,
+            129,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 55,
+          "mainForearmROI": [
+            131,
+            123,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            82,
+            123,
+            17,
+            17
+          ],
+          "pose": "hit",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 56,
+          "mainForearmROI": [
+            48,
+            131,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            75,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 57,
+          "mainForearmROI": [
+            44,
+            144,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            126,
+            87,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 58,
+          "mainForearmROI": [
+            53,
+            145,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            123,
+            99,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 59,
+          "mainForearmROI": [
+            34,
+            138,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            126,
+            90,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 60,
+          "mainForearmROI": [
+            135,
+            75,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            37,
+            140,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 61,
+          "mainForearmROI": [
+            138,
+            81,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            36,
+            142,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 62,
+          "mainForearmROI": [
+            140,
+            131,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            37,
+            136,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 63,
+          "mainForearmROI": [
+            149,
+            140,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            42,
+            82,
+            17,
+            17
+          ],
+          "pose": "death",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "E",
+          "index": 64,
+          "mainForearmROI": [
+            44,
+            135,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            128,
+            105,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SE",
+          "index": 65,
+          "mainForearmROI": [
+            45,
+            139,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            110,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "S",
+          "index": 66,
+          "mainForearmROI": [
+            54,
+            133,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            127,
+            117,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "SW",
+          "index": 67,
+          "mainForearmROI": [
+            54,
+            111,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            140,
+            134,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "W",
+          "index": 68,
+          "mainForearmROI": [
+            50,
+            104,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            130,
+            136,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NW",
+          "index": 69,
+          "mainForearmROI": [
+            136,
+            147,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            73,
+            104,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "N",
+          "index": 70,
+          "mainForearmROI": [
+            120,
+            112,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            62,
+            112,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        },
+        {
+          "direction": "NE",
+          "index": 71,
+          "mainForearmROI": [
+            141,
+            134,
+            17,
+            17
+          ],
+          "offForearmROI": [
+            55,
+            102,
+            17,
+            17
+          ],
+          "pose": "dead",
+          "review": "authored-visual-v1"
+        }
+      ]
+    }
+  },
+  "method": "authored-final-body-forearm-rois-v1",
+  "review": "visual-overlay-v1",
+  "version": 1
+}

@@ -1,0 +1,143 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Chest, kick and death sound review</title>
+<style>body{margin:24px;background:#151b20;color:#e9ddc5;font:14px/1.5 system-ui}h1{font:28px Georgia}button,select{padding:10px;background:#293641;color:#eedcba;border:1px solid #806d52;margin:4px}pre{white-space:pre-wrap}iframe{width:100%;height:640px;border:0}canvas{background:#263039;max-width:100%}#result{color:#b9d7a4}</style>
+<h1>Chests, kicks and the player's death cry</h1><p>Isolated review character; no real saves. Automated checks use the production game update and render functions.</p>
+<button id="run" disabled>Run interaction checks</button><button id="replay" disabled>Replay kick and chest</button><button id="death" disabled>Play player death</button>
+<label>Class <select id="class" disabled></select></label><pre id="result">Loading…</pre><canvas id="poses" width="1120" height="250"></canvas><div id="host"></div>
+<script type="module">
+import {createCharacterRenderer} from '../js/character3d.mjs?v=12';
+import {resolveCharacterVisual,CLASS_STYLES} from '../js/character_catalog3d.mjs';
+const out=document.getElementById('result'),run=document.getElementById('run'),replay=document.getElementById('replay'),deathButton=document.getElementById('death'),select=document.getElementById('class');
+window.addEventListener('unhandledrejection',e=>{out.textContent='FAIL · '+(e.reason?.stack||e.reason);});
+window.propReviewStore=new Map();let checks=0;const ok=(v,m)=>{checks++;if(!v)throw Error(m);};
+const [html,source]=await Promise.all(['../index.html','../js/game.js'].map(p=>fetch(p,{cache:'no-store'}).then(r=>r.text())));
+const hooked=source.replace('    init, newGame, loadGame,',`    __propTest:{update,render,drawProp,place(x,y){state.player.x=x;state.player.y=y;camPos={x:U.isoX(x,y)-canvas.width/2,y:U.isoY(x,y)-canvas.height/2-20};shakeOx=shakeOy=0;},click(prop){mouse.x=U.isoX(prop.x,prop.y)-camPos.x;mouse.y=U.isoY(prop.x,prop.y)-camPos.y-12;updateHover();const r=canvas.getBoundingClientRect();canvas.dispatchEvent(new MouseEvent("mousedown",{button:0,clientX:r.left+mouse.x*r.width/canvas.width,clientY:r.top+mouse.y*r.height/canvas.height,bubbles:true}));window.dispatchEvent(new MouseEvent("mouseup",{button:0}));}},
+    init, newGame, loadGame,`);
+const injection=`<base href="${new URL('../index.html',location.href)}"><script>
+const store=parent.propReviewStore;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});
+window.requestAnimationFrame=()=>0;window.propProbe={decoded:[],starts:[],syntheticStarts:0,oscillatorStarts:0,errors:[],connections:new WeakMap()};window.addEventListener('error',e=>propProbe.errors.push(e.message));window.addEventListener('unhandledrejection',e=>propProbe.errors.push(String(e.reason)));
+const decode=AudioContext.prototype.decodeAudioData;AudioContext.prototype.decodeAudioData=function(...a){return decode.apply(this,a).then(b=>{propProbe.decoded.push(b);return b;});};
+const connect=AudioNode.prototype.connect;AudioNode.prototype.connect=function(dest,...a){propProbe.connections.set(this,dest);return connect.call(this,dest,...a);};
+const start=AudioBufferSourceNode.prototype.start;AudioBufferSourceNode.prototype.start=function(...a){if(propProbe.decoded.includes(this.buffer))propProbe.starts.push(this);else propProbe.syntheticStarts++;return start.apply(this,a);};
+const oscStart=OscillatorNode.prototype.start;OscillatorNode.prototype.start=function(...a){propProbe.oscillatorStarts++;return oscStart.apply(this,a);};
+<\/script>`;
+const iframe=document.createElement('iframe');iframe.title='Prop interaction game';iframe.srcdoc=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>'+hooked+'<\/script>');document.getElementById('host').append(iframe);await new Promise(r=>iframe.onload=r);
+const win=iframe.contentWindow,doc=win.document;for(let i=0;i<300&&!doc.querySelector('#titleMenu button');i++)await new Promise(r=>setTimeout(r,30));
+const game=win.eval('Game'),ui=win.eval('UI'),sfx=win.eval('Sfx'),data=win.eval('DATA'),sprites=win.eval('SpriteAssets'),api=game.__propTest,probe=win.propProbe;
+const drawIds=[],nativeDraw=sprites.drawFrame;sprites.drawFrame=(ctx,frame,...args)=>{drawIds.push(frame.image.src);return nativeDraw(ctx,frame,...args);};
+const render3D=createCharacterRenderer(),board=document.getElementById('poses'),b=board.getContext('2d');
+for(const id of Object.keys(CLASS_STYLES))select.add(new Option(data.CLASSES[id].name,id));select.value='vanguard';
+function step(seconds){for(let left=seconds;left>1e-8;){const dt=Math.min(.01,left);api.update(dt);left-=dt;}}
+function prop(type,x,y,extra={}){const pr={type,x,y,blocks:type!=='chest',...extra};game.state.map.props.push(pr);if(pr.blocks)game.state.map.blocked[(x|0)+(y|0)*game.state.map.w]=1;return pr;}
+async function setup(id='vanguard'){
+ await game.newGame('Interaction review',id,false);await game.skipOpening();ui.closeAll();await game.enterMap('fields','default');sfx.stopMusic();
+ const s=game.state,m=s.map;s.monsters=[];s.minions=[];s.npcs=[];s.ground=[];m.props=[];m.traps=[];m.exits=[];m.walls.fill(0);m.blocked.fill(0);m.elev.fill(0);m.hazard.fill(0);m.floor.fill(0);m.explored.fill(1);
+ game.options.screenShake=false;api.place(20.5,20.5);s.player.visAng=s.player.angT=0;s.player.action=null;return s.player;
+}
+function poses(id){
+ b.clearRect(0,0,board.width,board.height);b.fillStyle='#e8d8b6';b.font='14px system-ui';
+ const equipment=resolveCharacterVisual(data,id,game.state.player.equip).equipment;
+ for(const [i,t] of [0,.24,.5,.7,1].entries()){
+  b.save();b.translate(100+i*175,188);render3D.draw(b,{state:'kick',t,ang:.35,ex:{}},equipment,{classId:id,scale:2.2});b.restore();b.fillText(['Ready','Knee raised','Impact','Recovery','Planted'][i],65+i*175,230);
+ }
+ sprites.drawFrame(b,sprites.getFrame(sprites.maps.props.chest,0),985,105,{scale:1.6});sprites.drawFrame(b,sprites.getFrame(sprites.maps.props.chest_open,0),985,208,{scale:1.6});b.fillText('Closed / opened',920,240);
+}
+run.disabled=false;out.textContent='Ready. Run checks to verify click interactions, kick timing, chest states and the supplied death MP3.';
+run.onclick=async()=>{
+ run.disabled=true;
+ try{
+  sfx.setVol('master',.12);sfx.setVol('sfx',.35);sfx.setVol('music',0);await sfx.init();const p=await setup();
+  ok(probe.decoded.length===2,'recorded effects did not decode exactly once');
+  const m=game.state.map,chest=prop('chest',21.5,20.5,{lootable:true,rich:true});
+  api.render();ok(drawIds.some(s=>s.includes('/chest.webp')),'closed chest sprite not drawn');drawIds.length=0;
+  api.click(chest);step(.01);ok(chest.opened&&!chest.lootable&&m.props.includes(chest),'clicked chest did not remain open');
+  const loot=game.state.ground.length;game.interact(chest);ok(game.state.ground.length===loot,'opened chest generated duplicate loot');api.render();ok(drawIds.some(s=>s.includes('/chest_open.webp')),'open state drew the closed sprite');
+  await game.enterMap('mines','default');await game.enterMap('fields','default');ok(game.state.map.props.includes(chest)&&chest.opened,'revisiting a map closed the chest');game.state.monsters=[];game.state.npcs=[];game.state.ground=[];api.place(20.5,20.5);m.props=[];
+  const cache=prop('chest',22.5,20.5,{interact:'event',event:true,ev:data.EVENTS?.find?.(e=>e.kind==='cache')||{kind:'cache',name:'Cache',drops:1}});game.interact(cache);ok(cache.opened&&!cache.interact&&m.props.includes(cache),'event cache did not stay open');const cacheLoot=game.state.ground.length;game.interact(cache);ok(game.state.ground.length===cacheLoot,'event cache yielded twice');
+  for(const type of ['urn','barrel','crate']){
+   game.state.ground=[];m.props=[];p.action=null;p.command=null;api.place(20.5,20.5);const pr=prop(type,21.5,20.5,{breakable:true});api.render();api.click(pr);step(.01);
+   ok(p.action?.state==='kick'&&p.pose().state==='kick',type+': click did not start a kick');ok(!pr.broken,type+': broke before wind-up');const action=p.action;game.interact(pr);ok(p.action===action,type+': repeated click restarted the kick');
+   step(.25);ok(!pr.broken,type+': broke before impact');step(.04);ok(pr.broken&&!m.props.includes(pr),type+': not broken at impact');ok(!m.blocked[21+20*m.w],type+': collision remained');const n=game.state.ground.length;ok(!game.breakProp(pr)&&game.state.ground.length===n,type+': duplicate break rewards');step(.3);ok(!p.action&&p.pose().state==='idle',type+': failed to recover');
+  }
+  for(const reason of ['hit','death','removed','moved']){
+   game.state.ground=[];m.props=[];p.action=null;p.dead=false;p.stunT=0;api.place(20.5,20.5);const pr=prop('urn',21.5,20.5,{breakable:true});game.interact(pr);
+   if(reason==='hit')p.startAction('hit',.4);if(reason==='death')p.dead=true;if(reason==='removed')m.props=[];if(reason==='moved')p.x-=4;
+   step(.3);ok(!pr.broken,reason+': cancelled kick broke an object');p.dead=false;p.action=null;
+  }
+  api.place(20.5,20.5);m.props=[];const far=prop('barrel',25.5,20.5,{breakable:true});game.interact(far);ok(!p.action&&!far.broken,'remote interaction kicked across the map');game.breakPropsNear(far.x,far.y,1);ok(far.broken&&!p.action,'AoE break triggered a kick');
+  // Real enemy AI must keep running near the corpse. The previous empty-room
+  // death test missed enemies replaying their aggro voices every game frame.
+  const Monster=win.eval('Monster');game.state.monsters=['risen','grave_hound','cult_acolyte','tomb_husk','fallen_blade','crypt_widow'].map((id,i)=>{
+   const a=i*Math.PI/3,mon=new Monster(id,p.x+Math.cos(a)*2,p.y+Math.sin(a)*2,{});
+   mon.aggro=true;mon.def.speed=0;mon.wanderT=100;mon.attackCd=100;return mon;
+  });
+  sfx.music('fallenNorth');const fieldMusic=doc.querySelector('#music-fallenNorth');
+  ok(fieldMusic&&!fieldMusic.paused,'background music was not playing before death');
+  const deathCount=()=>probe.starts.filter(s=>s.buffer===deathBuffer).length;const before=probe.starts.length,beforeNoise=probe.syntheticStarts,beforeOscillators=probe.oscillatorStarts;p.takeDamage(1e6,null,'fire');ok(probe.starts.length===before+1,'player death did not play a recorded sound');ok(probe.syntheticStarts===beforeNoise,'fatal hit added synthetic noise over the voice');const deathSource=probe.starts.at(-1),deathBuffer=deathSource.buffer;
+  const deathScreen=doc.querySelector('#deathScreen'),back=doc.querySelector('#backToTown');
+  ok([...doc.querySelectorAll('audio')].every(a=>a.paused),'background music continued after death');
+  ok(deathScreen.open&&back.textContent==='Back to Town','persistent death dialog or return button missing');
+  ok(doc.activeElement===back,'return button did not receive keyboard focus');
+  const deathMap=game.state.map,deathGold=p.gold;
+  step(2.3);
+  ok(p.dead,'death animation ended before the expected respawn delay');
+  ok(game.state.monsters.every(mon=>!mon.aggro),'nearby monsters reacquired the dead player');
+  ok(probe.syntheticStarts===beforeNoise,'enemy AI stacked noise sources during death');
+  ok(probe.oscillatorStarts===beforeOscillators,'enemy AI stacked buzzing oscillators during death');
+  ok(deathCount()===1,'enemy updates replayed the player death clip');
+  ok(deathBuffer.duration>0&&deathBuffer.length>1000,'death MP3 has no audio');let peak=0;for(const v of deathBuffer.getChannelData(0))peak=Math.max(peak,Math.abs(v));ok(peak>.001,'death MP3 is silent');
+  const deathGain=probe.connections.get(deathSource),bus=probe.connections.get(deathGain),master=probe.connections.get(bus);ok(!!deathGain.gain,'death lacks its own volume envelope');ok(Math.abs(bus.gain.value-.35)<.0001&&Math.abs(master.gain.value-.12)<.0001,'death bypassed SFX/master volume');ok(probe.connections.get(master)===sfx.ctx.destination,'death is not routed to output');
+  let n=deathCount();game.onPlayerDeath();ok(deathCount()===n,'dead player yelled twice');sfx.setVol('sfx',0);sfx.play('death');ok(deathCount()===n,'SFX mute failed');sfx.setVol('sfx',.35);sfx.setVol('master',0);sfx.play('death');ok(deathCount()===n,'master mute failed');
+  const loaded=win.performance.getEntriesByType('resource').filter(r=>decodeURI(r.name).endsWith('/assets/sound-effects/'+sfx.EFFECTS.death));ok(loaded.length===1,'wrong death file or repeated fetching');
+  step(30);
+  ok(p.dead&&game.state.map===deathMap,'player automatically revived or teleported while waiting');
+  ok(p.hp===0&&p.gold===deathGold,'waiting on death changed life or charged the penalty again');
+  ok(deathScreen.open,'death dialog disappeared on a timer');
+  ok(probe.syntheticStarts===beforeNoise&&probe.oscillatorStarts===beforeOscillators,'waiting on death reintroduced the enemy buzz');
+  const cancel=new win.Event('cancel',{cancelable:true});deathScreen.dispatchEvent(cancel);
+  ok(cancel.defaultPrevented&&deathScreen.open,'Escape can dismiss the death dialog');
+  win.dispatchEvent(new win.KeyboardEvent('keydown',{key:'i',bubbles:true}));
+  ok(!ui.anyOpen(),'gameplay shortcut opened a panel behind the death screen');
+  doc.dispatchEvent(new win.Event('pointerdown',{bubbles:true}));doc.dispatchEvent(new win.KeyboardEvent('keydown',{key:'Shift',bubbles:true}));
+  ok([...doc.querySelectorAll('audio')].every(a=>a.paused),'input restarted background music while dead');
+  const voiceEnded=new Promise(resolve=>deathSource.addEventListener('ended',resolve,{once:true}));
+  back.click();ok(back.disabled,'return button did not disable while loading');
+  back.click();ok(await game.returnToTown()===false,'duplicate return started another transition');
+  await Promise.race([voiceEnded,new Promise((_,reject)=>setTimeout(()=>reject(Error('death voice continued after respawn')),1000))]);
+  for(let i=0;i<200&&game.state.map.id!==game.state.home;i++)await new Promise(r=>setTimeout(r,10));
+  ok(!p.dead&&game.state.map.id===game.state.home,'respawn failed to return home after stopping the voice');
+  ok(!deathScreen.open,'death screen remained after returning to town');
+  ok(p.hp===p.stats.maxHp&&p.mana===p.stats.maxMana,'return did not restore life and aether');
+  ok(p.gold===deathGold&&p.deaths===1,'return duplicated death penalty or death count');
+  ok(!doc.querySelector('#music-frosthaven').paused,'town music did not resume after clicking return');
+  ok(await game.returnToTown()===false,'living player can use the death return');
+  // A second death must expose a fresh, enabled button, even in town itself.
+  p.takeDamage(1e6,null,'fire');ok(p.dead&&deathScreen.open&&!back.disabled,'second death did not reset the return button');
+  ok([...doc.querySelectorAll('audio')].every(a=>a.paused),'town music survived a second death');
+  const loadBundle=sprites.loadBundle;try {
+   sprites.loadBundle=async()=>{throw Error('Simulated town loading failure');};
+   back.click();for(let i=0;i<100&&back.disabled;i++)await new Promise(r=>setTimeout(r,10));
+   ok(p.dead&&p.hp===0&&deathScreen.open,'failed town loading revived or dismissed the dead player');
+   ok(!back.disabled&&doc.querySelector('#deathStatus').textContent.includes('try again'),'failed return did not offer a retry');
+   ok(!doc.querySelector('#spriteFatal'),'recoverable return failure left a fatal overlay');
+   ok([...doc.querySelectorAll('audio')].every(a=>a.paused),'failed return restarted music');
+  } finally { sprites.loadBundle=loadBundle; }
+  back.click();for(let i=0;i<200&&p.dead;i++)await new Promise(r=>setTimeout(r,10));
+  ok(!p.dead&&!deathScreen.open,'second button return failed');
+  ok(probe.errors.length===0,'runtime errors: '+probe.errors.join('; '));
+  await setup();poses('vanguard');api.render();out.textContent=`PASS · ${checks} checks: chests, kicks, death audio, music stopped on death, persistent dialog, 30 seconds without auto-respawn, explicit return, duplicate-click guard, full restoration and town music. Saves isolated.`;
+  replay.disabled=deathButton.disabled=select.disabled=false;
+ }catch(e){out.textContent='FAIL · '+e.stack;sfx.setVol('master',0);}finally{run.disabled=false;}
+};
+async function replayScene(die=false){
+ replay.disabled=deathButton.disabled=true;const p=await setup(select.value);poses(select.value);sfx.setVol('master',.18);sfx.setVol('sfx',.5);await sfx.init();
+ const urn=prop('urn',21.5,20.5,{breakable:true}),barrel=prop('barrel',20.5,22.5,{breakable:true}),chest=prop('chest',18.5,20.5,{lootable:true});
+ if(die)p.takeDamage(1e6,null,'fire');else{api.click(urn);step(.01);}
+ let elapsed=0,last=performance.now();await new Promise(resolve=>{function frame(now){const dt=Math.min(.03,(now-last)/1000);last=now;elapsed+=dt;api.update(dt);api.render();if(elapsed<1.3)requestAnimationFrame(frame);else resolve();}requestAnimationFrame(frame);});
+ if(!die){game.interact(chest);api.render();}
+ const fatal=doc.querySelector('#spriteFatal')||doc.querySelector('#appFatal');
+ if(fatal||probe.errors.length)out.textContent='FAIL preview · '+(fatal?.textContent||probe.errors.join('; '));
+ iframe.scrollIntoView({block:'center'});
+ replay.disabled=deathButton.disabled=false;
+}
+replay.onclick=()=>replayScene();deathButton.onclick=()=>replayScene(true);select.onchange=()=>replayScene();
+</script></html>

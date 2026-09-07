@@ -1,0 +1,408 @@
+{
+  "source": "assets/sprites_src/gameplay_art_authored/items/items_chroma_v1.png",
+  "sourceSha256": "75108719666def198a2a743f3f6a03fff40fe413e53dffd4b88f799d4985d71a",
+  "output": "assets/sprites_src/gameplay_art/ui/items_variants.png",
+  "sha256": "72c369ee97e138672e6bd24f83c4c5853f12559076bc88cfae130f8f0392b6c8",
+  "parameters": {
+    "operation": "chroma-key-component-slice-uniform-scale",
+    "columns": 6,
+    "rows": 5,
+    "cell": [
+      64,
+      64
+    ],
+    "padding": 4,
+    "items": {
+      "jewel": {
+        "index": 0,
+        "sourceBox": [
+          52,
+          40,
+          229,
+          182
+        ],
+        "outputSize": [
+          56,
+          45
+        ]
+      },
+      "potP": {
+        "index": 1,
+        "sourceBox": [
+          325,
+          17,
+          449,
+          196
+        ],
+        "outputSize": [
+          39,
+          56
+        ]
+      },
+      "potG": {
+        "index": 2,
+        "sourceBox": [
+          580,
+          13,
+          717,
+          195
+        ],
+        "outputSize": [
+          42,
+          56
+        ]
+      },
+      "scrollB": {
+        "index": 3,
+        "sourceBox": [
+          806,
+          17,
+          1010,
+          193
+        ],
+        "outputSize": [
+          56,
+          48
+        ]
+      },
+      "charm_small": {
+        "index": 4,
+        "sourceBox": [
+          1103,
+          21,
+          1244,
+          193
+        ],
+        "outputSize": [
+          46,
+          56
+        ]
+      },
+      "charm_large": {
+        "index": 5,
+        "sourceBox": [
+          1358,
+          9,
+          1491,
+          210
+        ],
+        "outputSize": [
+          37,
+          56
+        ]
+      },
+      "charm_grand": {
+        "index": 6,
+        "sourceBox": [
+          52,
+          206,
+          217,
+          412
+        ],
+        "outputSize": [
+          45,
+          56
+        ]
+      },
+      "cap": {
+        "index": 7,
+        "sourceBox": [
+          300,
+          230,
+          477,
+          380
+        ],
+        "outputSize": [
+          56,
+          47
+        ]
+      },
+      "quiltvest": {
+        "index": 8,
+        "sourceBox": [
+          577,
+          207,
+          718,
+          409
+        ],
+        "outputSize": [
+          39,
+          56
+        ]
+      },
+      "hauberk": {
+        "index": 9,
+        "sourceBox": [
+          803,
+          207,
+          1004,
+          407
+        ],
+        "outputSize": [
+          56,
+          56
+        ]
+      },
+      "ljgloves": {
+        "index": 10,
+        "sourceBox": [
+          1059,
+          220,
+          1255,
+          393
+        ],
+        "outputSize": [
+          56,
+          49
+        ]
+      },
+      "warboots": {
+        "index": 11,
+        "sourceBox": [
+          1302,
+          218,
+          1493,
+          399
+        ],
+        "outputSize": [
+          56,
+          53
+        ]
+      },
+      "sash": {
+        "index": 12,
+        "sourceBox": [
+          42,
+          424,
+          220,
+          611
+        ],
+        "outputSize": [
+          53,
+          56
+        ]
+      },
+      "buckler": {
+        "index": 13,
+        "sourceBox": [
+          303,
+          408,
+          477,
+          594
+        ],
+        "outputSize": [
+          52,
+          56
+        ]
+      },
+      "flangedmace": {
+        "index": 14,
+        "sourceBox": [
+          552,
+          406,
+          750,
+          594
+        ],
+        "outputSize": [
+          56,
+          53
+        ]
+      },
+      "cudgel": {
+        "index": 15,
+        "sourceBox": [
+          800,
+          407,
+          995,
+          595
+        ],
+        "outputSize": [
+          56,
+          54
+        ]
+      },
+      "sword2h": {
+        "index": 16,
+        "sourceBox": [
+          1038,
+          390,
+          1266,
+          603
+        ],
+        "outputSize": [
+          56,
+          52
+        ]
+      },
+      "axe2h": {
+        "index": 17,
+        "sourceBox": [
+          1306,
+          402,
+          1519,
+          604
+        ],
+        "outputSize": [
+          56,
+          53
+        ]
+      },
+      "mace2h": {
+        "index": 18,
+        "sourceBox": [
+          33,
+          595,
+          232,
+          798
+        ],
+        "outputSize": [
+          55,
+          56
+        ]
+      },
+      "chest_leather": {
+        "index": 19,
+        "sourceBox": [
+          307,
+          602,
+          467,
+          797
+        ],
+        "outputSize": [
+          46,
+          56
+        ]
+      },
+      "helm_leather": {
+        "index": 20,
+        "sourceBox": [
+          576,
+          596,
+          731,
+          793
+        ],
+        "outputSize": [
+          44,
+          56
+        ]
+      },
+      "helm_mail": {
+        "index": 21,
+        "sourceBox": [
+          797,
+          596,
+          977,
+          795
+        ],
+        "outputSize": [
+          51,
+          56
+        ]
+      },
+      "gloves_mail": {
+        "index": 22,
+        "sourceBox": [
+          1057,
+          608,
+          1259,
+          795
+        ],
+        "outputSize": [
+          56,
+          52
+        ]
+      },
+      "boots_mail": {
+        "index": 23,
+        "sourceBox": [
+          1297,
+          611,
+          1492,
+          796
+        ],
+        "outputSize": [
+          56,
+          53
+        ]
+      },
+      "chest_plate": {
+        "index": 24,
+        "sourceBox": [
+          53,
+          800,
+          215,
+          1006
+        ],
+        "outputSize": [
+          44,
+          56
+        ]
+      },
+      "helm_plate": {
+        "index": 25,
+        "sourceBox": [
+          312,
+          803,
+          451,
+          1003
+        ],
+        "outputSize": [
+          39,
+          56
+        ]
+      },
+      "gloves_plate": {
+        "index": 26,
+        "sourceBox": [
+          546,
+          811,
+          753,
+          995
+        ],
+        "outputSize": [
+          56,
+          50
+        ]
+      },
+      "boots_plate": {
+        "index": 27,
+        "sourceBox": [
+          798,
+          804,
+          965,
+          1009
+        ],
+        "outputSize": [
+          46,
+          56
+        ]
+      },
+      "hp1": {
+        "index": 28,
+        "sourceBox": [
+          1127,
+          808,
+          1174,
+          997
+        ],
+        "outputSize": [
+          14,
+          56
+        ]
+      },
+      "mp1": {
+        "index": 29,
+        "sourceBox": [
+          1382,
+          808,
+          1428,
+          997
+        ],
+        "outputSize": [
+          14,
+          56
+        ]
+      }
+    }
+  }
+}

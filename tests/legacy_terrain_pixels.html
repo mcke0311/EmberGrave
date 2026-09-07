@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="../"><title>Act 2 terrain cache pixels</title>
+<style>body{background:#182029;color:#eee;font:14px system-ui;margin:16px}canvas{max-width:960px;display:block;margin:10px 0}pre{white-space:pre-wrap}</style>
+<h1>Act 2 terrain cache pixels</h1><pre id="result">Loading…</pre><div id="views"></div>
+<script src="js/utils.js"></script><script src="js/data.js"></script><script src="js/data_overrides.js"></script><script src="js/sprite_manifest.js"></script><script src="js/sprite_assets.js"></script><script src="js/mapgen.js"></script><script src="js/level_terrain.js"></script><script src="tests/fixtures/legacy_floor_before.js"></script>
+<script>
+(async()=>{const out=document.getElementById('result'),results=[];try{
+ await SpriteAssets.loadBundle('world');
+ const make=(w=960,h=640)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
+ const cached=make(),b=cached.getContext('2d',{willReadFrequently:true});
+ for(const zone of ['weeping_marsh','drowned_crypt','ritual_site','hollow_reeds','spawn_pools']){
+  await SpriteAssets.loadBundle('zone:'+zone);const m=MapGen.generate(zone,12345),cx=U.isoX(m.w/2,m.h/2)-480,cy=U.isoY(m.w/2,m.h/2)-320;
+  function render(ctx,cam,useCache){const w=ctx.canvas.width,h=ctx.canvas.height;ctx.clearRect(0,0,w,h);LevelTerrain.beginFrame(m);try{
+   const visible=(x,y)=>x>-96&&x<w+96&&y>-224&&y<h+96;
+   if(useCache)LevelTerrain.drawFloor(ctx,m,cam,0,m.w-1,0,m.h-1,visible,true);
+   else drawLegacyFloorReference(ctx,m,cam,0,m.w-1,0,m.h-1,visible);
+  }finally{LevelTerrain.endFrame();}}
+  for(const [dx,dy] of [[0,0],[59,107],[-300,450],[-300.35,450.65],[.2,-1.3]]){
+   const cam={x:cx+dx,y:cy+dy};render(b,cam,true);
+   const before=LevelTerrain.getDiagnostics();render(b,cam,true);const after=LevelTerrain.getDiagnostics();
+   if(after.surfaceViewBuilds!==before.surfaceViewBuilds||after.tileDraws||after.chunkBuilds)throw Error('Warm floor repainted '+zone);
+   const raster=make(964,644),origin={x:Math.floor(cam.x)-2,y:Math.floor(cam.y)-2};render(raster.getContext('2d'),origin,false);
+   const canonical=make(),g=canonical.getContext('2d',{willReadFrequently:true});g.drawImage(raster,origin.x-cam.x,origin.y-cam.y);
+   const expected=g.getImageData(0,0,960,640).data,actual=b.getImageData(0,0,960,640).data;let error=0,max=0,holes=0;
+   for(let i=0;i<actual.length;i++){const d=Math.abs(actual[i]-expected[i]);error+=d;max=Math.max(max,d);if(i%4===3&&expected[i]===255&&actual[i]<250)holes++;}
+   const row={zone,cam,meanChannelError:+(error/actual.length).toFixed(6),maxChannelError:max,holes};results.push(row);
+   if(error/actual.length>.01||max>3||holes)throw Error('Cached floor changed original pixels '+JSON.stringify(row));
+   raster.width=raster.height=canonical.width=canonical.height=0;
+  }
+ }
+ document.getElementById('views').append(cached);out.textContent='PASS — 25 Act 2 views match the original floor renderer, including scrolls and fractional cameras.\n'+JSON.stringify(results,null,2);document.body.dataset.testStatus='passed';
+}catch(e){out.textContent='FAIL '+e.stack+'\n'+JSON.stringify(results,null,2);document.body.dataset.testStatus='failed';}})();
+</script></html>

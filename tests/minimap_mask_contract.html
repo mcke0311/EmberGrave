@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="../"><title>Minimap mask regression</title>
+<style>body{font:15px system-ui;background:#182029;color:#eee;margin:24px}canvas{width:492px;image-rendering:pixelated}pre{white-space:pre-wrap}</style>
+<h1>Minimap exploration mask</h1><pre id="result">Loading…</pre><div id="views"></div>
+<script src="js/utils.js"></script><script src="js/data.js"></script><script src="js/data_overrides.js"></script><script src="js/sprite_manifest.js"></script><script src="js/mapgen.js"></script>
+<script>
+(async()=>{let checks=0;try{
+ const source=await fetch('js/game.js').then(r=>r.text()),start=source.indexOf('  let mmCanvas = null;'),end=source.indexOf('  function renderMinimap(',start);
+ const state={map:null},api=new Function('state',source.slice(start,end)+';return {rebuild:rebuildMm,get canvas(){return mmCanvas;}};')(state);
+ const read=CanvasRenderingContext2D.prototype.getImageData;
+ for(const id of ['weeping_marsh','drowned_crypt','marshcamp','ritual_site']){
+  const m=MapGen.generate(id,12345);state.map=m;
+  for(const mode of ['none','some','all','hidden-again']){
+   for(let i=0;i<m.explored.length;i++)m.explored[i]=mode==='all'?1:mode==='some'&&i%3?1:0;
+   CanvasRenderingContext2D.prototype.getImageData=()=>{throw Error('Minimap rebuilt using a canvas readback');};
+   try{api.rebuild();api.rebuild();}finally{CanvasRenderingContext2D.prototype.getImageData=read;}
+   const c=document.createElement('canvas');c.width=m.w;c.height=m.h;const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(m.minimapBase,0,0);
+   const expected=ctx.getImageData(0,0,m.w,m.h);for(let i=0;i<m.explored.length;i++)if(!m.explored[i])expected.data[i*4+3]=0;ctx.putImageData(expected,0,0);
+   const pixels=ctx.getImageData(0,0,m.w,m.h).data,actual=api.canvas.getContext('2d').getImageData(0,0,m.w,m.h).data;
+   for(let i=0;i<pixels.length;i++){if(pixels[i]!==actual[i])throw Error(id+' '+mode+' pixel '+i+' differs');checks++;}
+   c.width=c.height=0;
+  }
+ }
+ document.getElementById('views').append(api.canvas);document.getElementById('result').textContent=`PASS ${checks} minimap channel checks: exact pixels, reveal/hide, unchanged frames, map changes, resize and zero rebuild readbacks.`;document.body.dataset.testStatus='passed';
+}catch(e){document.getElementById('result').textContent='FAIL '+e.stack;document.body.dataset.testStatus='failed';}})();
+</script></html>

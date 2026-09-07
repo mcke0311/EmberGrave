@@ -1,0 +1,107 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Act I–V boss review</title>
+<style>body{margin:16px;background:#11171d;color:#e9ddc6;font:14px system-ui}h1{font:25px Georgia}p{color:#bac5cc}button,select{padding:8px;margin:3px;border:1px solid #7f7056;background:#25313a;color:#f2e4c9}iframe{width:1440px;height:900px;max-width:100%;display:block;border:1px solid #796d58}pre{white-space:pre-wrap}#status{min-height:22px}button:disabled{opacity:.5}</style>
+<h1>Act I–V · Boss encounters</h1>
+<p>Play with an isolated hero and save store. Major attacks mark their damage area before striking. Step outside the gold arena boundary to reset the fight.</p>
+<div id="controls"><select id="boss" aria-label="Boss"></select><select id="hero" aria-label="Hero class"></select><select id="phase" aria-label="Phase"></select><select id="pose" aria-label="Pose"><option value="live">Live combat</option><option>idle</option><option>movement</option><option>windup</option><option>impact</option><option>recovery</option><option>death</option></select><button id="start">Restart encounter</button><button id="pause">Pause</button><label><input id="god" type="checkbox">Invulnerable review</label><button id="check">Check all poses</button></div>
+<pre id="status">Loading isolated review…</pre><div id="host"></div>
+<script type="module">
+window.bossStore=new Map();
+const out=document.getElementById('status'),delay=ms=>new Promise(r=>setTimeout(r,ms));
+let paused=true,busy=true,frame,game,ui,win,api,current;
+const setStatus=text=>out.textContent=text;
+try {
+  const [html,source,loadouts]=await Promise.all(['../index.html','../js/game.js','boss_loadouts.js'].map(u=>fetch(u,{cache:'no-store'}).then(r=>r.text())));
+  const hooked=source.replace('    init, newGame, loadGame,','    __bossReview:{update,updateCamera,updateBossEncounter,render,settle:seconds=>{state.time+=seconds;for(let i=delayed.length-1;i>=0;i--)if(state.time>=delayed[i].t){const fn=delayed[i].fn;delayed.splice(i,1);fn();}}},\n    init, newGame, loadGame,');
+  const injection=`<base href="${new URL('../index.html',location.href)}"><script>
+    const store=parent.bossStore;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k)}});
+    window.bossErrors=[];window.addEventListener('error',e=>bossErrors.push(e.message));window.addEventListener('unhandledrejection',e=>bossErrors.push(String(e.reason)));
+    window.requestAnimationFrame=()=>0;
+  <\/script>`;
+  frame=document.createElement('iframe');frame.title='Isolated playable boss arena';
+  frame.srcdoc=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>'+hooked+'<\/script><script>'+loadouts+'<\/script>');
+  document.getElementById('host').append(frame);await new Promise(r=>frame.onload=r);
+  win=frame.contentWindow;const doc=win.document;
+  for(let i=0;i<600&&!doc.querySelector('#titleMenu button');i++){if(doc.getElementById('appFatal'))throw Error(doc.getElementById('appFatal').textContent);await delay(30);}
+  api=win.eval('({DATA,Game,UI,Monster,SpriteAssets,BossEncounters,BossLoadouts,MapGen,Items,U})');game=api.Game;ui=api.UI;
+  win.eval('Sfx').setVol('master',0);game.firstSightCutscene=()=>{};
+  const test=game.__bossReview;
+  for(const [id,d] of Object.entries(api.DATA.BOSS_ENCOUNTERS)){const o=document.createElement('option');o.value=id;o.textContent=api.DATA.ENEMIES[id].name;document.getElementById('boss').append(o);}
+  for(const c of Object.values(api.DATA.CLASSES).filter(c=>c.playable)){const o=document.createElement('option');o.value=c.id;o.textContent=c.name;document.getElementById('hero').append(o);}
+  function phases(id){const box=document.getElementById('phase');box.replaceChildren();api.DATA.BOSS_ENCOUNTERS[id].phases.forEach((name,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+' · '+name;box.append(o);});}
+  const render=()=>{test.updateBossEncounter();test.updateCamera(.1);test.render();};
+  async function setup(id=document.getElementById('boss').value,classId=document.getElementById('hero').value,phase=0) {
+    busy=true;paused=true;ui.closeAll();
+    await game.newGame('Boss Review',classId,false);await game.skipOpening();ui.closeAll();
+    game.state.seed=123;const zone=api.DATA.BOSS_ENCOUNTERS[id].zone;
+    game.state.quests.q16={state:'done'};game.state.quests.q17={state:'done'};
+    if(!await game.enterMap(zone,'default'))throw Error('Could not load '+zone);
+    ui.closeAll();game.state.monsters=[];game.state.map.explored.fill(1);
+    const p=game.state.player,a=game.state.map.bossArena;
+    current=api.BossLoadouts.apply(p,api.DATA.ENEMIES[id].lvl);
+    const prepared=await game.preparePlayerEquipment(p.equip);game.commitPlayerEquipment(prepared);
+    p.x=a.cx+2.5;p.y=a.cy+2.5;
+    const m=new api.Monster(id,a.cx,a.cy);m.aggro=true;game.state.monsters=[m];
+    api.BossLoadouts.prepareSummons(p,current.summon,test.settle);p.mana=p.stats.maxMana;
+    api.BossLoadouts.prepareSummons(p,current.secondarySummon,test.settle);p.mana=p.stats.maxMana;
+    for(let i=1;i<=phase;i++){m.hp=m.maxHp*m.def.phases[i-1].at;m.encounter.phaseChange(i);}
+    m.encounter.active=true;
+    document.getElementById('boss').value=id;document.getElementById('hero').value=classId;phases(id);document.getElementById('phase').value=phase;
+    document.getElementById('pose').value='live';
+    game.debugFlags.god=document.getElementById('god').checked;
+    test.updateCamera(5);render();busy=false;paused=false;document.getElementById('pause').textContent='Pause';
+    ui.refreshHUD();ui.refreshBelt();
+    doc.getElementById('msglog').replaceChildren();doc.getElementById('centerMsg').classList.add('hidden');
+    setStatus(`${api.DATA.ENEMIES[id].name} · level ${p.lvl} ${api.DATA.CLASSES[classId].name} · ordinary equipment · six healing and six aether draughts`);
+    return {boss:m,player:p,state:game.state,loadout:current};
+  }
+  function advance(seconds,step=.025){for(let t=0;t<seconds;t+=step)test.update(Math.min(step,seconds-t));render();}
+  function showPose(pose){const m=game.state.monsters.find(m=>m.encounter);if(!m)return;paused=pose!=='live';if(paused){m.encounter.pose=pose;m.encounter.setArt();m.action=null;render();}}
+  async function check(){busy=true;paused=true;let checks=0;
+    const scratch=win.document.createElement('canvas');scratch.width=scratch.height=800;
+    const ctx=scratch.getContext('2d',{willReadFrequently:true});
+    for(const id of Object.keys(api.DATA.BOSS_ENCOUNTERS)){
+      await setup(id,'vanguard');busy=true;paused=true;const m=game.state.monsters[0];
+      const def=api.DATA.SPRITE_MANIFEST.entries[api.DATA.SPRITE_MANIFEST.maps.bosses[id]];
+      if(def.rows!==m.encounter.config.phases.length||def.cols!==6)throw Error(id+' pose atlas dimensions');checks++;
+      for(let phase=0;phase<def.rows;phase++){
+       if(phase)m.encounter.phaseChange(phase);
+       for(const pose of ['idle','movement','windup','impact','recovery','death']){
+        m.encounter.phase=phase;m.encounter.pose=pose;m.encounter.setArt();render();
+        const g=api.SpriteAssets.actorGeometry(m.spriteOpts,m.pose(),0,0);
+        if(!Number.isFinite(g.top)||g.right<=g.left||g.bottom<=g.top)throw Error(id+' invalid '+pose+' geometry');checks++;
+        for(const ang of [0,Math.PI])for(const flash of [false,true]){
+          const poseData={...m.pose(),ang},bounds=api.SpriteAssets.actorGeometry(m.spriteOpts,poseData,400,700);
+          ctx.clearRect(0,0,800,800);ctx.save();ctx.translate(400,700);
+          const create=win.document.createElement;
+          win.document.createElement=()=>{throw Error('Boss pose allocated a canvas during combat');};
+          try{api.SpriteAssets.drawActor(ctx,{...m.spriteOpts,bossFlash:flash},poseData);}finally{win.document.createElement=create;ctx.restore();}
+          const rgba=ctx.getImageData(0,0,800,800).data;
+          for(let y=Math.max(0,Math.floor(bounds.top)-2);y<Math.min(800,bounds.bottom+2);y+=3)for(let x=Math.max(0,Math.floor(bounds.left)-2);x<Math.min(800,bounds.right+2);x+=3){
+            if(rgba[(x+y*800)*4+3]<100)continue;
+            if(!api.SpriteAssets.hitTestGeometry(bounds,x+.5,y+.5,1))throw Error(id+' '+pose+' painted pixel cannot be selected');checks++;
+          }
+          if(api.SpriteAssets.hitTestGeometry(bounds,bounds.left-15,bounds.top-15,3))throw Error(id+' transparent margin is selectable');checks++;
+        }
+       }
+      }
+    }
+    if(win.bossErrors.length)throw Error(win.bossErrors.join('\n'));
+    await setup('korvath','vanguard');paused=true;document.getElementById('pause').textContent='Resume';
+    setStatus(`PASS ${checks} browser checks: all six atlases, all 96 poses, shared picking bounds and in-arena rendering.`);
+    document.body.dataset.testStatus='passed';return checks;
+  }
+  const run=fn=>async()=>{try{await fn();}catch(e){busy=false;paused=true;document.body.dataset.testStatus='failed';setStatus('FAIL: '+e.stack);console.error(e);}};
+  document.getElementById('start').onclick=run(()=>setup());
+  document.getElementById('boss').onchange=run(()=>setup());
+  document.getElementById('hero').onchange=run(()=>setup());
+  document.getElementById('phase').onchange=run(()=>setup(document.getElementById('boss').value,document.getElementById('hero').value,+document.getElementById('phase').value));
+  document.getElementById('pose').onchange=()=>showPose(document.getElementById('pose').value);
+  document.getElementById('pause').onclick=()=>{paused=!paused;document.getElementById('pause').textContent=paused?'Resume':'Pause';};
+  document.getElementById('god').onchange=()=>game.debugFlags.god=document.getElementById('god').checked;
+  document.getElementById('check').onclick=run(check);
+  window.bossQA={api,setup,advance,render,check,showPose,get frame(){return frame;},setPaused:value=>paused=value};
+  await setup('korvath','vanguard');
+  let last=performance.now();function live(t){const dt=Math.min(.05,(t-last)/1000);last=t;if(!busy&&!paused&&!ui.escOpen()&&!ui.cinematicActive()){try{test.update(dt);render();}catch(e){paused=true;setStatus('FAIL: '+e.stack);document.body.dataset.testStatus='failed';}}requestAnimationFrame(live);}requestAnimationFrame(live);
+  if(new URLSearchParams(location.search).has('check'))await check();
+}catch(e){document.body.dataset.testStatus='failed';out.textContent='FAIL: '+e.stack;console.error(e);}
+</script></html>

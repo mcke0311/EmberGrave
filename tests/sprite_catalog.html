@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <base href="../">
+  <title>SpriteAssets coverage harness</title>
+  <style>body{margin:0;background:#111;color:#ddd;font:14px monospace}#result{padding:12px;white-space:pre-wrap}canvas{display:block;background:#181818}</style>
+</head>
+<body>
+  <pre id="result">LOADING</pre>
+  <canvas id="catalog" width="1200" height="760"></canvas>
+  <script src="js/utils.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/sprite_manifest.js"></script>
+  <script src="js/sprite_assets.js"></script>
+  <script>
+    "use strict";
+    (async () => {
+      const result=document.getElementById("result"), manifest=DATA.SPRITE_MANIFEST;
+      const classes=["vanguard","emberwitch","gravebinder","wildkeeper","veilranger"];
+      const mains=["sword_1h","sword_2h","axe_1h","axe_2h","mace_1h","mace_2h","dagger_1h","spear_2h","bow_2h","crossbow_2h","wand_1h","staff_2h"];
+      const mainBases={sword_1h:"sword_t0",sword_2h:"sword2h_t0",axe_1h:"axe_t0",axe_2h:"axe2h_t0",mace_1h:"mace_t0",mace_2h:"mace2h_t0",dagger_1h:"dagger_t0",spear_2h:"spear2h_t0",bow_2h:"bow2h_t0",crossbow_2h:"crossbow2h_t0",wand_1h:"wand_t0",staff_2h:"staff2h_t0"};
+      const poses=[
+        {state:"idle",t:0,ex:{}},{state:"walk",t:0,ex:{walkPh:0}},{state:"walk",t:0,ex:{walkPh:Math.PI}},
+        {state:"attack",t:0,ex:{}},{state:"attack",t:1,ex:{}},{state:"cast",t:.5,ex:{}},
+        {state:"hit",t:.5,ex:{}},{state:"death",t:0,ex:{}},{state:"death",t:1,ex:{}}
+      ];
+      const item=(baseId,family,tier=5)=>({baseId,slot:DATA.BASES[baseId].slot,cat:DATA.BASES[baseId].cat,twoHand:!!DATA.BASES[baseId].twoHand,playerVisualFamily:family,materialTier:tier});
+      const visual=(classId,family="sword_1h",tier=5)=>SpriteAssets.resolvePlayerVisual(classId,{
+        main:item(mainBases[family],family,tier),off:family.endsWith("_2h")?null:item("shield_t5","shield",tier),
+        head:item(tier<3?"helm_t0":tier<6?"helm_t3":tier<10?"helm_t6":"helm_t10",tier<3?"light":tier<6?"mail":tier<10?"plate":"mythic",tier),
+        chest:item(tier<3?"chest_t0":tier<6?"chest_t3":tier<10?"chest_t6":"chest_t10",tier<3?"light":tier<6?"mail":tier<10?"plate":"mythic",tier)
+      },[]);
+      try {
+        await SpriteAssets.loadBundle("all");
+        let frameChecks=0;
+        for(const [id,def] of Object.entries(manifest.entries)){
+          SpriteAssets.getFrame(id,0);SpriteAssets.getFrame(id,def.kind==="atlas"?def.cols*def.rows-1:0);frameChecks+=2;
+          if(def.kind==="atlas")for(const bad of [-1,def.cols*def.rows,1.5]){let strict=false;try{SpriteAssets.getFrame(id,bad)}catch(_){strict=true}if(!strict)throw new Error(`${id}: accepted invalid frame ${bad}`)}
+        }
+        const rigs=manifest.maps.playerRigs;
+        if(!rigs||JSON.stringify(Object.keys(rigs).sort())!==JSON.stringify([...classes].sort()))throw new Error("maps.playerRigs does not contain exactly five playable classes");
+        for(const classId of classes){
+          const rig=rigs[classId];if(rig.frames.length!==72)throw new Error(`${classId}: expected 72 socket records`);
+          for(const family of mains)if(!rig.main[family])throw new Error(`${classId}: missing ${family}`);
+          for(let row=0;row<9;row++)for(let dir=0;dir<8;dir++){
+            const family=mains[(row*8+dir)%mains.length],v=visual(classId,family,(row+dir)%14),plan=SpriteAssets.getPlayerDrawPlan(v,{...poses[row],ang:dir*Math.PI/4});
+            if(plan.index!==row*8+dir)throw new Error(`${classId}: wrong pose/direction index ${plan.index}`);
+            for(const layer of plan.layers){SpriteAssets.getFrame(layer.assetId,plan.index);frameChecks++}
+            if(!plan.layers.some(x=>x.slot==="main"&&x.plane==="held")||!plan.layers.some(x=>x.slot==="main"&&x.plane==="grip"))throw new Error(`${classId} ${family} frame ${plan.index}: held/grip plane missing`);
+          }
+        }
+        for(const assetId of Object.values(manifest.maps.forms))SpriteAssets.getFrame(assetId,0);
+        for(let tier=0;tier<14;tier++)for(const col of Object.values(manifest.maps.itemCategories)){SpriteAssets.getFrame("ui.items.equipment",tier*17+col);frameChecks++}
+
+        /* Regression guard: authored 192px cells must keep the actor's feet on
+           one world anchor at gameplay scale across every pose/direction. */
+        const worldHeights=[];
+        function playerBounds(classId,dir,pose){
+          const scratch=document.createElement("canvas");scratch.width=192;scratch.height=192;const sc=scratch.getContext("2d");sc.translate(96,184);
+          SpriteAssets.drawPlayer(sc,SpriteAssets.resolvePlayerVisual(classId,{},[]),{...pose,ang:dir*Math.PI/4});
+          const pixels=sc.getImageData(0,0,192,192).data;let minY=192,maxY=-1;
+          for(let y=0;y<192;y++)for(let x=0;x<192;x++)if(pixels[(y*192+x)*4+3]){minY=Math.min(minY,y);maxY=Math.max(maxY,y)}
+          return{height:maxY-minY+1,maxY};
+        }
+        for(const classId of classes)for(let dir=0;dir<8;dir++){
+          const idle=playerBounds(classId,dir,poses[0]);if(idle.height<52||idle.height>92)throw new Error(`${classId} dir ${dir}: invalid world height=${idle.height}`);worldHeights.push(idle.height);
+          for(let row=0;row<9;row++){const bounds=playerBounds(classId,dir,poses[row]);if(bounds.maxY<180||bounds.maxY>185)throw new Error(`${classId} dir ${dir} pose ${row}: unstable feet=${bounds.maxY}`)}
+        }
+
+        const canvas=document.getElementById("catalog"),ctx=canvas.getContext("2d");ctx.imageSmoothingEnabled=true;
+        const wallId=manifest.maps.walls.town;for(let i=0;i<16;i++)SpriteAssets.drawFrame(ctx,SpriteAssets.getFrame(wallId,i),72+(i%4)*138,140+Math.floor(i/4)*132,{scale:.82});
+        classes.forEach((classId,i)=>{ctx.save();ctx.translate(650+i*105,270);SpriteAssets.drawPlayer(ctx,visual(classId,mains[i*2],i*3),{state:"idle",t:0,ang:i*Math.PI/4,ex:{}});ctx.restore()});
+        for(let tier=0;tier<14;tier++)for(let col=0;col<17;col++)SpriteAssets.drawFrame(ctx,SpriteAssets.getFrame("ui.items.equipment",tier*17+col),618+col*33,378+tier*27,{scale:.42});
+        document.body.dataset.testStatus="passed";
+        result.textContent=`PASS: ${Object.keys(manifest.entries).length} browser-decoded assets; ${frameChecks} strict frame/layer checks; player world height ${Math.min(...worldHeights)}-${Math.max(...worldHeights)}px with stable feet; five classes; 12 weapon families; four armor/helmet families; four forms; 14 material tiers; 16 wall masks.`;
+      } catch(err){document.body.dataset.testStatus="failed";result.textContent=`FAIL: ${err.stack||err}`}
+    })();
+  </script>
+</body>
+</html>

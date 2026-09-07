@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><base href="../"><title>Player rig runtime contract</title></head>
+<body>
+  <pre id="result">PENDING</pre>
+  <script src="js/utils.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/sprite_manifest.js"></script>
+  <script src="js/sprite_assets.js"></script>
+  <script>
+    "use strict";
+    (async()=>{
+      const out=document.getElementById("result"),classes=["vanguard","emberwitch","gravebinder","wildkeeper","veilranger"],families=["sword_1h","sword_2h","axe_1h","axe_2h","mace_1h","mace_2h","dagger_1h","spear_2h","bow_2h","crossbow_2h","wand_1h","staff_2h"],bases={sword_1h:"sword_t0",sword_2h:"sword2h_t0",axe_1h:"axe_t0",axe_2h:"axe2h_t0",mace_1h:"mace_t0",mace_2h:"mace2h_t0",dagger_1h:"dagger_t0",spear_2h:"spear2h_t0",bow_2h:"bow2h_t0",crossbow_2h:"crossbow2h_t0",wand_1h:"wand_t0",staff_2h:"staff2h_t0"},planes=["rear","body","worn","held","grip","front"],slots=["chest","head","shield","main","unarmed"];
+      let checks=0;const ok=(value,message)=>{checks++;if(!value)throw new Error(message)},gear=(baseId,family,tier=5)=>({baseId,slot:DATA.BASES[baseId].slot,cat:DATA.BASES[baseId].cat,twoHand:!!DATA.BASES[baseId].twoHand,playerVisualFamily:family,materialTier:tier}),pose=(row,dir)=>[{state:"idle",t:0,ex:{}},{state:"walk",t:0,ex:{walkPh:0}},{state:"walk",t:0,ex:{walkPh:Math.PI}},{state:"attack",t:0,ex:{}},{state:"attack",t:1,ex:{}},{state:"cast",t:.5,ex:{}},{state:"hit",t:.5,ex:{}},{state:"death",t:0,ex:{}},{state:"death",t:1,ex:{}}][row],inside=(point,region)=>Array.isArray(point)&&Array.isArray(region)&&region.length===4&&point[0]>=region[0]&&point[0]<region[0]+region[2]&&point[1]>=region[1]&&point[1]<region[1]+region[3],bodyPoseRows=(assetId)=>{const rows=[];for(let row=0;row<9;row++){const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d",{willReadFrequently:true});canvas.width=1536;canvas.height=192;for(let dir=0;dir<8;dir++){const frame=SpriteAssets.getFrame(assetId,row*8+dir);ctx.drawImage(frame.image,frame.sx,frame.sy,frame.sw,frame.sh,dir*192,0,192,192)}rows.push(ctx.getImageData(0,0,1536,192).data)}return rows},samePixels=(a,b)=>a.length===b.length&&a.every((value,index)=>value===b[index]),opaqueBounds=canvas=>{const {data,width,height}=canvas.getContext("2d",{willReadFrequently:true}).getImageData(0,0,canvas.width,canvas.height);let x0=width,y0=height,x1=-1,y1=-1;for(let y=0;y<height;y++)for(let x=0;x<width;x++)if(data[(y*width+x)*4+3]>8){x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x);y1=Math.max(y1,y)}return x1<0?null:[x0,y0,x1-x0+1,y1-y0+1]},renderActor=(visual,row=0,dir=0)=>{const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d");canvas.width=canvas.height=240;ctx.translate(120,210);SpriteAssets.drawActor(ctx,{playerVisual:visual},pose(row,dir));return canvas},changedPixels=(a,b)=>{const aa=a.getContext("2d",{willReadFrequently:true}).getImageData(0,0,a.width,a.height).data,bb=b.getContext("2d",{willReadFrequently:true}).getImageData(0,0,b.width,b.height).data;let n=0;for(let i=0;i<aa.length;i+=4)if(aa[i]!==bb[i]||aa[i+1]!==bb[i+1]||aa[i+2]!==bb[i+2]||aa[i+3]!==bb[i+3])n++;return n};
+      try{
+        await SpriteAssets.loadBundle("core");
+        for(const classId of classes){const visual=SpriteAssets.resolvePlayerVisual(classId,{},[]);await SpriteAssets.loadPlayerLoadout(visual);const rig=DATA.SPRITE_MANIFEST.maps.playerRigs[classId],bodyDef=DATA.SPRITE_MANIFEST.entries[rig.body],rows=bodyPoseRows(rig.body),actor=renderActor(visual),bounds=opaqueBounds(actor);ok(bodyDef.rigScale===1&&bodyDef.rigScaleMethod==="class-shared-final-aligned",`${classId}: body atlas is not verbatim final-aligned art`);ok(visual.scale==null,`${classId}: ordinary visual overrides PLAYER_BASE_SCALE`);ok(bounds&&bounds[2]<=82&&bounds[3]<=82,`${classId}: ordinary actor footprint ${bounds&&bounds.slice(2)} exceeds 192px rig at base scale .42`);for(let a=0;a<rows.length;a++)for(let b=a+1;b<rows.length;b++)ok(!samePixels(rows[a],rows[b]),`${classId}: body pose rows ${a} and ${b} are identical`);}
+        for(const classId of classes)for(const family of families){
+          const two=family.endsWith("_2h"),visual=SpriteAssets.resolvePlayerVisual(classId,{main:gear(bases[family],family),off:two?null:gear("shield_t5","shield"),head:gear("helm_t5","mail"),chest:gear("chest_t5","mail")},[]);
+          await SpriteAssets.loadPlayerLoadout(visual);
+          for(let row=0;row<9;row++)for(let dir=0;dir<8;dir++){
+            const plan=SpriteAssets.getPlayerDrawPlan(visual,{...pose(row,dir),ang:dir*Math.PI/4});ok(plan.index===row*8+dir,`${classId}/${family}: frame order`);ok(inside(plan.frameMeta.mainGrip,plan.frameMeta.mainHandROI),`${classId}/${family}/${plan.index}: mainGrip outside reviewed mainHandROI`);ok(inside(plan.frameMeta.offGrip,plan.frameMeta.offHandROI),`${classId}/${family}/${plan.index}: offGrip outside reviewed offHandROI`);
+            const pr=plan.layers.map(x=>planes.indexOf(x.plane));ok(pr.every((x,i)=>i===0||x>=pr[i-1]),`${classId}/${family}/${plan.index}: plane order`);
+            for(const plane of planes){const sr=plan.layers.filter(x=>x.plane===plane&&x.slot!=="body").map(x=>slots.indexOf(x.slot));ok(sr.every((x,i)=>x>=0&&(i===0||x>=sr[i-1])),`${classId}/${family}/${plan.index}: slot order`)}
+            ok(plan.layers.some(x=>x.slot==="main"&&x.plane==="held"),`${classId}/${family}/${plan.index}: held missing`);ok(plan.layers.some(x=>x.slot==="main"&&x.plane==="grip"),`${classId}/${family}/${plan.index}: grip missing`);for(const layer of plan.layers)SpriteAssets.getFrame(layer.assetId,plan.index);
+          }
+        }
+        for(const classId of classes){
+          const naked=SpriteAssets.resolvePlayerVisual(classId,{},[]);await SpriteAssets.loadPlayerLoadout(naked);const baseCanvas=renderActor(naked);
+          for(const [slot,baseId,family] of [["main","sword_t0","sword_1h"],["off","shield_t5","shield"],["head","helm_t5","mail"],["chest","chest_t5","mail"]]){
+            const equip={};equip[slot]=gear(baseId,family);const equipped=SpriteAssets.resolvePlayerVisual(classId,equip,[]);await SpriteAssets.loadPlayerLoadout(equipped);ok(changedPixels(baseCanvas,renderActor(equipped))>0,`${classId}/${slot}/${family}: equipped compositor is pixel-identical to naked actor`);
+          }
+          const inventoryOnly={gloves:{baseId:"ljgloves"},boots:{baseId:"warboots"},belt:{baseId:"sash"},ring:{baseId:"ring"},amulet:{baseId:"amulet"}},
+            invisible=SpriteAssets.resolvePlayerVisual(classId,inventoryOnly,[]);
+          await SpriteAssets.loadPlayerLoadout(invisible);
+          ok(JSON.stringify(invisible.equipment)===JSON.stringify(naked.equipment),`${classId}: inventory-only slots changed resolved world equipment`);
+          ok(changedPixels(baseCanvas,renderActor(invisible))===0,`${classId}: inventory-only slots changed world actor pixels`);
+        }
+        for(const classId of classes){
+          const lowEquip={main:gear("sword_t0","sword_1h",0),off:gear("shield_t0","shield",0),head:gear("helm_t0","light",0),chest:gear("chest_t0","light",0)},
+            highEquip={main:gear("sword_t13","sword_1h",13),off:gear("shield_t13","shield",13),head:gear("helm_t13","mythic",13),chest:gear("chest_t13","mythic",13)},
+            low=SpriteAssets.resolvePlayerVisual(classId,lowEquip,[]),high=SpriteAssets.resolvePlayerVisual(classId,highEquip,[]);
+          await SpriteAssets.loadPlayerLoadout(low);const lowCanvas=renderActor(low);await SpriteAssets.loadPlayerLoadout(high);const highCanvas=renderActor(high);
+          ok(changedPixels(lowCanvas,highCanvas)>0,`${classId}: material tiers 0 and 13 render identical actor pixels`);
+          for(const slot of ["head","chest"]){
+            const lightEquip={};lightEquip[slot]=gear(slot==="head"?"helm_t0":"chest_t0","light",0);
+            const mythicEquip={};mythicEquip[slot]=gear(slot==="head"?"helm_t13":"chest_t13","mythic",13);
+            const light=SpriteAssets.resolvePlayerVisual(classId,lightEquip,[]),mythic=SpriteAssets.resolvePlayerVisual(classId,mythicEquip,[]);
+            await SpriteAssets.loadPlayerLoadout(light);const lightCanvas=renderActor(light);await SpriteAssets.loadPlayerLoadout(mythic);
+            ok(changedPixels(lightCanvas,renderActor(mythic))>0,`${classId}/${slot}: light and mythic silhouettes/finishes render identically`);
+          }
+        }
+        const sample=SpriteAssets.resolvePlayerVisual("wildkeeper",{main:gear("sword_t0","sword_1h"),head:gear("helm_t10","mythic"),chest:gear("chest_t10","mythic")},[{id:"form_fang"}]);ok(sample.kind==="form"&&Object.keys(sample.equipment).length===0,"form leaked equipment");
+        let threw=false;try{SpriteAssets.getFrame(Object.keys(DATA.SPRITE_MANIFEST.entries).find(id=>DATA.SPRITE_MANIFEST.entries[id].kind==="atlas"),-1)}catch(_){threw=true}ok(threw,"negative frame did not throw");
+        document.body.dataset.testStatus="passed";out.textContent=`PASS: ${checks} exhaustive player-rig runtime contract checks`;
+      }catch(err){document.body.dataset.testStatus="failed";out.textContent=`FAIL: ${err.stack||err}`}
+    })();
+  </script>
+</body>
+</html>

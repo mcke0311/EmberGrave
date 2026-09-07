@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><base href="../"><title>Ember Witch Quilted Vest regression</title>
+  <style>
+    body{margin:24px;background:#26322d;color:#edf3ef;font:14px system-ui}
+    label{margin-right:20px}select,button{padding:6px;background:#35463d;color:white;border:1px solid #8ca398}
+    canvas{display:block;max-width:100%;margin-top:20px;background:#8ba195}pre{white-space:pre-wrap}
+  </style>
+</head>
+<body>
+  <h1>Ember Witch — Quilted Vest</h1>
+  <pre id="result">PENDING</pre>
+  <label>Armor <select id="armor"><option value="vest">Quilted Vest</option><option value="none">No chest armor</option></select></label>
+  <label>Pose <select id="pose"><option>idle</option><option>walk</option><option>attack</option><option>cast</option><option>hit</option><option>death</option></select></label>
+  <p>Eight directions at game scale (top) and enlarged (bottom). This preview does not create or save a character.</p>
+  <canvas id="preview" width="1280" height="370" aria-label="Ember Witch wearing the Quilted Vest in eight directions"></canvas>
+  <script src="js/utils.js"></script><script src="js/data.js"></script>
+  <script src="js/sprite_manifest.js"></script><script src="js/sprite_assets.js"></script>
+  <script>
+    "use strict";
+    (async () => {
+      const ui=id=>document.getElementById(id), gear=baseId=>({baseId,...DATA.BASES[baseId]});
+      const rig=DATA.SPRITE_MANIFEST.maps.playerRigs.emberwitch, views={};
+      let checks=0;
+      const ok=(value,message)=>{checks++;if(!value)throw new Error(message);};
+      const canvas=()=>{const c=document.createElement("canvas");c.width=c.height=240;return c;};
+      const rawRender=(visual,pose)=>{
+        const c=canvas(),cx=c.getContext("2d"),plan=SpriteAssets.getPlayerDrawPlan(visual,pose);
+        for(const layer of plan.layers)
+          SpriteAssets.drawFrame(cx,SpriteAssets.getFrame(layer.assetId,plan.index),120,210,{tint:layer.tint});
+        return cx.getImageData(0,0,240,240).data;
+      };
+      const walkRender=(visual,pose)=>{
+        const c=canvas(),cx=c.getContext("2d");cx.translate(120,210);
+        SpriteAssets.drawPlayer(cx,{...visual,scale:1},pose);
+        return cx.getImageData(0,0,240,240).data;
+      };
+      const preservesAlpha=(before,after,label)=>{
+        let holes=0;
+        for(let i=3;i<before.length;i+=4)if(after[i]+1<before[i])holes++;
+        ok(holes===0,`${label}: equipping Quilted Vest removed opacity from ${holes} sprite pixels`);
+      };
+      try {
+        await SpriteAssets.loadBundle("player:emberwitch");
+        views.none=SpriteAssets.resolvePlayerVisual("emberwitch",{main:gear("gnarlwand")},[]);
+        views.vest=SpriteAssets.resolvePlayerVisual("emberwitch",{main:gear("gnarlwand"),chest:gear("quiltvest")},[]);
+        ok(!views.vest.flattenedAssetId,"Quilted Vest replaced the clean body with the perforated flattened starter atlas");
+        const poses=[{state:"idle"},{state:"walk",ex:{frame:0}},{state:"walk",ex:{frame:1}},
+          {state:"attack",t:.2},{state:"attack",t:.8},{state:"cast"},{state:"hit"},
+          {state:"death",t:.2},{state:"death",t:.8}];
+        for(let row=0;row<9;row++)for(let dir=0;dir<8;dir++){
+          const pose={t:0,ex:{},...poses[row],ang:dir*Math.PI/4};
+          if(row===1||row===2)pose.ex={walkPh:row===1?0:Math.PI};
+          const plan=SpriteAssets.getPlayerDrawPlan(views.vest,pose);
+          ok(plan.index===row*8+dir,`wrong frame for row ${row}, direction ${dir}`);
+          ok(plan.layers.some(l=>l.slot==="body"&&l.assetId===rig.body),`frame ${plan.index}: neutral body is missing`);
+          ok(plan.layers.some(l=>l.slot==="chest"&&l.plane==="worn"),`frame ${plan.index}: vest is missing`);
+          ok(plan.layers.some(l=>l.slot==="main"&&l.plane==="held")&&plan.layers.some(l=>l.slot==="main"&&l.plane==="grip"),
+            `frame ${plan.index}: wand or grip is missing`);
+          preservesAlpha(rawRender(views.none,pose),rawRender(views.vest,pose),`frame ${plan.index}`);
+        }
+        for(let dir=0;dir<8;dir++)for(let step=0;step<8;step++){
+          const pose={state:"walk",t:0,ang:dir*Math.PI/4,ex:{walkPh:step*Math.PI/4}};
+          preservesAlpha(walkRender(views.none,pose),walkRender(views.vest,pose),`walk ${dir}/${step}`);
+        }
+        // A later equip/unequip cycle must resolve to the same clean layers.
+        const again=SpriteAssets.resolvePlayerVisual("emberwitch",{main:gear("gnarlwand"),chest:gear("quiltvest")},[]);
+        ok(JSON.stringify(again)===JSON.stringify(views.vest),"reequipping changed the vest visual");
+        const vestFamily=rig.chest.light;
+        try {
+          for(const broken of [null,{}]){
+            if(broken===null)delete rig.chest.light;else rig.chest.light=broken;
+            let rejected=false;
+            try{SpriteAssets.resolvePlayerVisual("emberwitch",{main:gear("gnarlwand"),chest:gear("quiltvest")},[]);}
+            catch(err){rejected=err.name==="SpriteAssetError"&&err.assetId==="emberwitch.chest.light";}
+            ok(rejected,"missing or malformed installed vest silently fell back to damaged starter art");
+          }
+        }finally{rig.chest.light=vestFamily;}
+        document.body.dataset.testStatus="passed";
+        ui("result").textContent=`PASS: ${checks} checks — all 72 authored poses and 64 walk phases preserve body opacity when the vest is equipped.`;
+      }catch(err){document.body.dataset.testStatus="failed";ui("result").textContent=`FAIL: ${err.stack||err}`;}
+      const cx=ui("preview").getContext("2d"),dirs=["E","SE","S","SW","W","NW","N","NE"];
+      function tick(time){
+        cx.clearRect(0,0,1280,370);
+        const visual=views[ui("armor").value];
+        if(visual)for(let dir=0;dir<8;dir++){
+          const pose={state:ui("pose").value,t:(time/1600)%1,ang:dir*Math.PI/4,ex:{walkPh:time/1000*4.6/2.4*Math.PI*2}};
+          for(const [scale,y] of [[.42,106],[1,340]]){
+            cx.save();cx.translate(dir*160+80,y);SpriteAssets.drawPlayer(cx,{...visual,scale},pose);cx.restore();
+          }
+          cx.fillStyle="#18291e";cx.fillText(dirs[dir],dir*160+74,362);
+        }
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>

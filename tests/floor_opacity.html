@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><base href="../"><title>Floor opacity across every level</title>
+<style>body{margin:24px;background:#111820;color:#d9dfda;font:14px/1.6 system-ui}h1,h2{font-family:Georgia;color:#edd7b1}button,select{background:#26323b;border:1px solid #8c7957;color:#eee1bf;padding:9px;font:inherit}canvas{display:block;max-width:100%;margin:15px 0;background:repeating-conic-gradient(#fa00fa 0 25%,#00ffff 0 50%) 0/32px 32px}pre{white-space:pre-wrap}#result{color:#aad4ad}</style>
+<h1>Solid floors, walls and raised terrain</h1><p>A bright checkerboard exposes gaps in the floor beneath transparent wall edges and cliff artwork. Temporary maps; no saves.</p>
+<p id="result">Checking…</p><label>Level <select id="level" disabled></select></label><button id="replay" disabled>Replay camera pan</button><canvas id="scene" width="800" height="400"></canvas><pre id="details"></pre>
+<script src="js/utils.js"></script><script src="js/data.js"></script><script src="js/sprite_manifest.js"></script><script src="js/sprite_assets.js"></script><script src="js/mapgen.js"></script><script src="js/level_terrain.js"></script><script src="js/town_terrain.js"></script>
+<script>
+(async()=>{
+ const result=document.getElementById('result'),details=document.getElementById('details'),select=document.getElementById('level');
+ const params=new URLSearchParams(location.search),baseline=params.has('baseline');
+ try{
+  const source=await fetch(baseline?'tests/fixtures/floor_before_foundation.js':'js/game.js',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Could not load floor renderer: '+r.status);return r.text();});
+  const a=source.indexOf('    /* ---- floors ---- */'),b=source.indexOf('    /* ---- ground items:',a);
+  if(a<0||b<a)throw Error('Production floor pass not found');
+  const draw=new Function('ctx','m','cam','tx0','tx1','ty0','ty1','inView','EH','MASSIF_THEMES',"LevelTerrain.beginFrame(m);try{"+source.slice(a,b)+"}finally{LevelTerrain.endFrame();}");
+  await SpriteAssets.loadBundle('world');
+  const themes=new Set(['fields','forest','snowwild','marsh','desert','hellwild']),scenes=[];
+  const canvas=document.getElementById('scene'),ctx=canvas.getContext('2d',{willReadFrequently:true});let samples=0,holes=0,affected=0;
+  function render(scene,offset=0){
+   const m=scene.map,cam={x:U.isoX(m.w/2,m.h/2)-400+offset,y:U.isoY(m.w/2,m.h/2)-200+.35};
+   ctx.clearRect(0,0,800,400);draw(ctx,m,cam,0,m.w-1,0,m.h-1,(x,y)=>x>-100&&x<900&&y>-240&&y<550,14,themes);
+  }
+  const ids=Object.keys(DATA.ZONES);
+  for(const id of ids){
+   await SpriteAssets.loadBundle('zone:'+(DATA.ZONES[id].artZone||id));
+   const generated=MapGen.generate(id,12345);let m=generated;
+   if(!generated.settlement){
+    const w=26,h=26,n=w*h;m={id,zone:generated.zone,outdoor:generated.outdoor,w,h,walls:new Uint8Array(n),floor:new Uint8Array(n),elev:new Uint8Array(n),hazard:new Uint8Array(n)};
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+     const i=x+y*w;m.walls[i]=+(x===9||y===9||(x>=15&&x<=19&&y>=14&&y<=18));
+     m.floor[i]=(x===12||y===12)?4:0;
+     if(m.outdoor)m.elev[i]=(x>6&&x<20&&y>5&&y<21)?Math.max(0,4-Math.floor((x+y-12)/5)):0;
+    }
+   }
+   const frozen=JSON.stringify([Array.from(m.walls),Array.from(m.elev),Array.from(m.floor),Array.from(m.hazard)]);
+   const scene={id,map:m};scenes.push(scene);let open=0;
+   for(const offset of [0,.35,.75,7.35]){
+    render(scene,offset);const pixels=ctx.getImageData(0,0,800,400).data;
+    // The central viewport is completely inside the rectangular map footprint.
+    for(let y=30;y<370;y++)for(let x=30;x<770;x++){samples++;if(pixels[(x+y*800)*4+3]<250)open++;}
+   }
+   if(frozen!==JSON.stringify([Array.from(m.walls),Array.from(m.elev),Array.from(m.floor),Array.from(m.hazard)]))throw Error(id+': floor rendering changed gameplay geometry');
+   holes+=open;if(open)affected++;details.textContent+=`${id}: ${open} exposed background samples\n`;
+   select.add(new Option(generated.zone.name,id));result.textContent=`Checked ${scenes.length}/${ids.length} levels · ${holes.toLocaleString()} gaps`;
+   await new Promise(r=>requestAnimationFrame(r));
+  }
+  function inspect(){render(scenes.find(s=>s.id===select.value),.35);}
+  select.disabled=false;select.onchange=inspect;select.value='mines';inspect();
+  const replay=document.getElementById('replay');replay.disabled=false;replay.onclick=async()=>{replay.disabled=true;for(let i=0;i<80;i++){render(scenes.find(s=>s.id===select.value),i/20);await new Promise(r=>requestAnimationFrame(r));}replay.disabled=false;};
+  result.textContent=`${holes?'FAIL':'PASS'} · ${ids.length} levels · ${samples.toLocaleString()} pixel samples · ${holes.toLocaleString()} exposed background samples across ${affected} levels. ${baseline?'Before fix.':'Production floor pass; four camera positions; geometry unchanged.'}`;
+  document.body.dataset.testStatus=holes?'failed':'passed';
+ }catch(error){result.textContent='FAIL · '+error.stack;document.body.dataset.testStatus='failed';}
+})();
+</script></html>

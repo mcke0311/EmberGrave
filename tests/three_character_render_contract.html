@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Three.js character rendering checks</title>
+<style>body{background:#201c25;color:#decbb5;font:14px system-ui;margin:24px}canvas{max-width:100%;background:#292733}pre{white-space:pre-wrap}button{padding:12px}</style>
+<h1>Three.js character rendering checks</h1><pre id="result">Running…</pre><canvas id="sheet" width="1120" height="900"></canvas>
+<script type="module">
+import {createCharacterRenderer,STATES} from '../js/emberwitch3d.mjs';
+const output=document.getElementById('result'),sheet=document.getElementById('sheet'),sx=sheet.getContext('2d');
+const cell=document.createElement('canvas');cell.width=cell.height=160;const cx=cell.getContext('2d',{willReadFrequently:true});
+let checks=0,view;
+const ok=(v,m)=>{checks++;if(!v)throw new Error(m);};
+function capture(state,dir,t=.5,equipment={chest:'light',main:true}) {
+  cx.clearRect(0,0,160,160);cx.save();cx.translate(80,122);
+  view.draw(cx,{state,t,ang:dir*Math.PI/4,ex:{walkPh:t*Math.PI*2}},equipment);cx.restore();
+  return cx.getImageData(0,0,160,160).data;
+}
+const changed=(a,b)=>{let n=0;for(let i=0;i<a.length;i+=4)if(Math.abs(a[i]-b[i])+Math.abs(a[i+1]-b[i+1])+Math.abs(a[i+2]-b[i+2])+Math.abs(a[i+3]-b[i+3])>50)n++;return n;};
+try {
+  view=createCharacterRenderer({size:256});const start=performance.now();
+  for(let row=0;row<STATES.length;row++)for(let dir=0;dir<8;dir++) {
+    const pixels=capture(STATES[row],dir);
+    let visible=0,edge=0;for(let y=0;y<160;y++)for(let x=0;x<160;x++){if(pixels[(y*160+x)*4+3]>10){visible++;if(x<2||x>157||y<2||y>157)edge++;}}
+    ok(visible>130,`${STATES[row]}/${dir}: invisible character`);ok(!edge,`${STATES[row]}/${dir}: character clipped by compositor`);
+    sx.drawImage(cell,dir*140,row*125,140,140);sx.fillStyle='#ddd';sx.fillText(`${STATES[row]} / ${dir}`,dir*140+10,row*125+13);
+  }
+  const idle=capture('idle',2),cast=capture('cast',2,.5);ok(changed(idle,cast)>200,'casting does not change the rendered pose');
+  const light=capture('idle',2,.5,{chest:'light',main:true}),mail=capture('idle',2,.5,{chest:'mail',main:true});ok(changed(light,mail)>100,'armor selection does not change rendered pixels');
+  const unarmed=capture('idle',0,.5,{chest:'light',main:false}),armed=capture('idle',0,.5,{chest:'light',main:true});ok(changed(unarmed,armed)>15,'wand does not disappear when unequipped');
+  for(let dir=0;dir<8;dir++){const a=capture('walk',dir,.25),b=capture('walk',dir,.75);ok(changed(a,b)>70,`direction ${dir}: walk feet do not alternate`);}
+  // Compositing the WebGL character into the ordered 2D pass preserves occlusion.
+  capture('idle',2);cx.fillStyle='#ff00ff';cx.fillRect(50,40,60,95);
+  const pixel=cx.getImageData(80,70,1,1).data;ok(pixel[0]===255&&pixel[1]===0&&pixel[2]===255,'foreground draw does not occlude the 3D character');
+  cx.clearRect(0,0,160,160);cx.fillStyle='#ff00ff';cx.fillRect(50,40,60,95);cx.save();cx.translate(80,122);view.draw(cx,{state:'idle',t:0,ang:Math.PI/2,ex:{}},{chest:'light',main:true});cx.restore();
+  const front=cx.getImageData(80,70,1,1).data;ok(front[1]>0||front[0]!==255||front[2]!==255,'character cannot appear in front of a background prop');
+  output.textContent=`PASS: ${checks} WebGL visibility, clipping, equipment, animation and 2D occlusion checks.\n${Math.round(performance.now()-start)} ms for the complete offscreen render suite (not a gameplay FPS benchmark).`;
+  document.body.dataset.testStatus='passed';
+}catch(error){output.textContent='FAIL: '+error.stack;document.body.dataset.testStatus='failed';}finally{view?.dispose();}
+</script></html>

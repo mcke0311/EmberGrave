@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SpriteAssets missing-file contract</title>
+</head>
+<body>
+  <pre id="result">PENDING</pre>
+  <script>
+    "use strict";
+    const DATA = {
+      SPRITE_MANIFEST: {
+        version: 1,
+        directions: ["E", "SE", "S", "SW", "W", "NW", "N", "NE"],
+        poses: ["idle", "walkA", "walkB", "attackWindup", "attackImpact", "cast", "hit", "death", "dead"],
+        wallHeight: 72,
+        wallViewHeight: 128,
+        entries: {
+          "test.required-missing": {
+            src: "../assets/sprites/__deliberately_missing_required_sprite__.webp",
+            kind: "static",
+            anchor: [0, 0],
+            bundle: "core"
+          }
+        },
+        maps: {}
+      }
+    };
+  </script>
+  <script src="../js/sprite_assets.js"></script>
+  <script>
+    "use strict";
+    SpriteAssets.loadBundle("core").then(() => {
+      document.body.dataset.testStatus = "failed";
+      document.getElementById("result").textContent = "FAIL: missing required sprite was accepted";
+    }).catch(err => {
+      const exact = err.name === "SpriteAssetError" &&
+        err.assetId === "test.required-missing" &&
+        err.src === "../assets/sprites/__deliberately_missing_required_sprite__.webp";
+      document.body.dataset.testStatus = exact ? "passed" : "failed";
+      document.getElementById("result").textContent = `${exact ? "PASS" : "FAIL"}: ${err.message}`;
+    });
+  </script>
+</body>
+</html>

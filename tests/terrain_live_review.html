@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Frosthaven terraces — live review</title>
+<style>body{margin:0;background:#171c23;color:#e9e3d5;font:14px system-ui}header{padding:14px 20px}h1{font-size:22px;margin:0 0 8px}button{background:#34454c;color:#fff;border:1px solid #6d827f;padding:8px 12px;margin:4px}iframe{display:block;width:100%;height:740px;border:0}pre{white-space:pre-wrap}#error{color:#ff9990}</style>
+<header><h1>Frosthaven terraces</h1><div>This review uses temporary heroes and an in-memory save store.</div>
+<p id="result">Loading the running game…</p><div id="controls" hidden>
+<button id="low">Below ramp</button><button id="middle">Mid-ramp</button><button id="high">Atop terrace</button>
+<button id="up">Walk up</button><button id="down">Walk down</button><button id="stop">Stop</button>
+<button id="behind">Behind raised ground</button><button id="beside">Beside cliff</button><button id="sprite">Show sprite companion</button>
+</div><div id="position"></div><pre id="error"></pre></header><main id="host"></main>
+<script type="module">
+const out=document.getElementById('result'),error=document.getElementById('error');
+window.terrainReviewStore=new Map();
+try{
+ const source=await fetch('../index.html',{cache:'no-store'}).then(r=>r.text());
+ const injection=`<base href="${new URL('../index.html',location.href)}"><script>
+ const store=parent.terrainReviewStore;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});
+ window.addEventListener('error',e=>parent.document.getElementById('error').textContent=e.message);
+ <\/script>`;
+ const frame=document.createElement('iframe');frame.title='Live terrain game';frame.srcdoc=source.replace('<head>','<head>'+injection);document.getElementById('host').append(frame);
+ await new Promise(r=>frame.onload=r);const win=frame.contentWindow,doc=win.document;
+ for(let i=0;i<600&&!doc.querySelector('#titleMenu button');i++){if(doc.querySelector('#appFatal'))throw Error(doc.querySelector('#appFatalDetail').textContent);await new Promise(r=>setTimeout(r,30));}
+ const {Game:game,UI:ui,TerrainSurface:S,TerrainNavigation:N,Entity,Minion}=win.eval('({Game,UI,TerrainSurface,TerrainNavigation,Entity,Minion})');
+ win.eval('Sfx').setVol('master',0);await game.newGame('Terrain review','vanguard',false);await game.skipOpening();ui.closeAll();game.state.seed=12345;
+ await game.enterMap('north_wild','default');game.state.monsters=[];game.state.map.explored.fill(1);game.state.player.hp=game.state.player.stats.maxHp;
+ const m=game.state.map,p=game.state.player;
+ const ramp=[...m.ramps].filter(r=>r.x>12&&r.y>12&&r.x<m.w-12&&r.y<m.h-12).sort((a,b)=>b.length-a.length||Math.hypot(a.x-80,a.y-80)-Math.hypot(b.x-80,b.y-80))[0];
+ const low={x:ramp.x-ramp.dx+.5,y:ramp.y-ramp.dy+.5},high={x:ramp.x+ramp.dx*ramp.length+.5,y:ramp.y+ramp.dy*ramp.length+.5};
+ let companion=null;
+ const place=point=>{p.x=point.x;p.y=point.y;p.path=null;p.command=null;p.jumping=null;p.jumpZ=0;p._navCache=null;p._animationController?.reset();if(companion){companion.x=p.x;companion.y=p.y;companion.path=null;}};
+ const walk=point=>{p._navCache=null;p.command={type:'move'};game.repath(p,point.x,point.y);};
+ document.getElementById('low').onclick=()=>place(low);
+ document.getElementById('high').onclick=()=>place(high);
+ document.getElementById('middle').onclick=()=>place({x:(low.x+high.x)/2,y:(low.y+high.y)/2});
+ document.getElementById('up').onclick=()=>walk(high);document.getElementById('down').onclick=()=>walk(low);
+ document.getElementById('stop').onclick=()=>{p.path=null;p.command=null;};
+ // Pick a low tile immediately behind a taller foreground terrace. The camera
+ // looks toward increasing x+y, so these are the two back edges of the shelf.
+ let behind=null,beside=null;
+ for(let y=16;y<m.h-16&&!behind;y++)for(let x=16;x<m.w-16&&!behind;x++){
+  if(!S.supported(m,x+.5,y+.5,.36))continue;
+  for(const [dx,dy] of [[1,0],[0,1]])if(!m.blocked[x+dx+(y+dy)*m.w]&&S.heightAt(m,x+dx+.5,y+dy+.5)-S.heightAt(m,x+.5,y+.5)>=2){behind={x:x+.5,y:y+.5};beside={x:x+dx+.5,y:y+dy+.5};break;}
+ }
+ document.getElementById('behind').onclick=()=>{if(behind)place(behind);};
+ document.getElementById('beside').onclick=()=>{if(beside)place(beside);};
+ document.getElementById('sprite').onclick=()=>{
+  if(companion){game.state.minions=[];companion=null;return;}
+  companion=new Minion('skel_warrior',{hp:100,dmg:[1,2],speed:4,atkRate:1,range:1},p);companion.x=p.x;companion.y=p.y;game.state.minions.push(companion);
+ };
+ place(low);document.getElementById('controls').hidden=false;
+ out.textContent=`PASS · Seed 12345: ${m.ramps.length} ramps, ${m.terrainDiagnostics.raisedTiles} raised tiles. Selected ramp (${ramp.x}, ${ramp.y}), ${ramp.low} → ${ramp.high}.`;
+ document.body.dataset.testStatus='passed';
+ setInterval(()=>{
+  document.getElementById('position').textContent=`Position ${p.x.toFixed(3)}, ${p.y.toFixed(3)} · height ${S.heightAt(m,p.x,p.y).toFixed(3)} · ${p.jumping?'jumping':p.moving?'walking':'stopped'}`;
+  if(doc.querySelector('#appFatal')){error.textContent=doc.querySelector('#appFatalDetail').textContent;document.body.dataset.testStatus='failed';}
+ },150);
+}catch(e){out.textContent='FAIL';error.textContent=e.stack;document.body.dataset.testStatus='failed';}
+</script></html>

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><base href="../"><title>Fallen North terrain regression</title>
+<style>body{margin:16px;background:#141820;color:#e2e8f0;font:14px system-ui}canvas{display:block;background:#241c32;margin:8px 0 24px}pre{white-space:pre-wrap}button{margin:8px}</style></head>
+<body>
+<h1>Fallen North terrain regression</h1>
+<pre id="result">PENDING</pre>
+<script src="js/utils.js?v=6"></script><script src="js/data.js?v=21"></script>
+<script src="js/sprite_manifest.js?v=11"></script><script src="js/sprite_assets.js?v=12"></script>
+<script src="js/mapgen.js?v=9"></script>
+<script src="js/level_terrain.js?v=12"></script>
+<script>
+"use strict";
+(async () => {
+  const result = document.getElementById("result");
+  try {
+    await Promise.all([SpriteAssets.loadBundle("world"), SpriteAssets.loadBundle("zone:north_wild")]);
+    const source = await fetch("js/game.js?v=39", {cache:"no-store"}).then(r => r.text());
+    const start = source.indexOf("    /* ---- floors ---- */");
+    const end = source.indexOf("    /* ---- ground items:", start);
+    if (start < 0 || end < start) throw Error("Missing production floor renderer");
+    const draw = new Function("ctx", "m", "cam", "tx0", "tx1", "ty0", "ty1", "inView", "EH", "MASSIF_THEMES", "LevelTerrain.beginFrame(m);try {"+source.slice(start,end)+"} finally {LevelTerrain.endFrame();}");
+    const blank = (w,h) => ({id:"north_wild",zone:DATA.ZONES.north_wild,outdoor:true,w,h,
+      walls:new Uint8Array(w*h),floor:new Uint8Array(w*h),elev:new Uint8Array(w*h),hazard:new Uint8Array(w*h)});
+    let checks=0, legacyHoles=0;
+    const ok=(value,message)=>{checks++;if(!value)throw Error(message);};
+    const probe=document.createElement("canvas");probe.width=256;probe.height=192;
+    const pc=probe.getContext("2d",{willReadFrequently:true});
+    for(const [theme,id] of Object.entries(SpriteAssets.maps.cliffs))for(let step=1;step<=4;step++){
+      const height=step*14;
+      for(const facing of [0,4]){
+        const frame=SpriteAssets.getFrame(id,facing+step-1);
+        const dx=facing===0?-32:32;
+        for(const fractional of [0,.35]){
+          const x=112+fractional,y=40+fractional;
+          pc.clearRect(0,0,256,192);
+          SpriteAssets.drawCliff(pc,frame,x,y,height);
+          SpriteAssets.drawCliff(pc,frame,x+dx,y+16,height);
+          const alpha=pc.getImageData(0,0,256,192).data;
+          for(let d=2;d<height-2;d++){
+            const px=Math.round(x+dx),py=Math.round(y+16+d);
+            ok(alpha[(px+py*256)*4+3]>=220,`${theme}/${facing}/${step}: open chained seam at ${px},${py}`);
+          }
+          const midX=Math.round(x+dx/2),midY=Math.round(y+8);
+          // Painted texture can retain soft alpha within the face; verify
+          // coverage here, not opacity. Seams above have the stricter threshold.
+          for(let d=2;d<height-2;d++)ok(alpha[(midX+(midY+d)*256)*4+3]>=128,
+            `${theme}/${facing}/${step}: painted face does not cover height at ${midX},${midY+d} (alpha=${alpha[(midX+(midY+d)*256)*4+3]}, camera=${fractional})`);
+          ok(alpha[(midX+(midY+height+4)*256)*4+3]<=8,
+            `${theme}/${facing}/${step}: painted face extends below its terrain height`);
+        }
+        pc.clearRect(0,0,256,192);
+        SpriteAssets.drawFrame(pc,frame,112,40);
+        SpriteAssets.drawFrame(pc,frame,112+dx,56);
+        const old=pc.getImageData(0,0,256,192).data;
+        for(let d=2;d<height-2;d++)if(old[(112+dx+(56+d)*256)*4+3]<220)legacyHoles++;
+      }
+      for(const fractional of [0,.35]){
+        const x=112+fractional,y=40+fractional;
+        pc.clearRect(0,0,256,192);
+        SpriteAssets.drawCliff(pc,SpriteAssets.getFrame(id,step-1),x+32,y,height);
+        SpriteAssets.drawCliff(pc,SpriteAssets.getFrame(id,4+step-1),x-32,y,height);
+        const alpha=pc.getImageData(0,0,256,192).data;
+        for(let d=2;d<height-2;d++){
+          const px=Math.round(x),py=Math.round(y+16+d);
+          ok(alpha[(px+py*256)*4+3]>=220,`${theme}/${step}: open convex corner at ${px},${py}`);
+        }
+      }
+    }
+    ok(legacyHoles>0,"Regression probe must catch the previous unfitted cliff renderer");
+    const scenes = [];
+    const flat = blank(14,14); scenes.push({name:"Flat ground",map:flat,cx:7,cy:7});
+    const plateau = blank(14,14);
+    for(let y=3;y<10;y++) for(let x=3;x<10;x++) plateau.elev[x+y*14]=3;
+    plateau.surfaceVersion=1;plateau.ramps=[{x:3,y:6,dx:1,dy:0,width:3,length:6,low:0,high:3}];
+    TerrainSurface.rebuild(plateau);
+    scenes.push({name:"Rear cliff rims and an open ramp",map:plateau,cx:7,cy:7});
+    const stepped = blank(14,14);
+    for(let y=2;y<11;y++) for(let x=2;x<11;x++) stepped.elev[x+y*14]=Math.max(0,4-Math.floor((x+y-4)/3));
+    scenes.push({name:"Stepped shelves and concave corners",map:stepped,cx:7,cy:7});
+    const north = MapGen.generate("north_wild",12345);
+    let best={n:0,x:8,y:8};
+    for(let y=10;y<north.h-10;y+=4) for(let x=10;x<north.w-10;x+=4) {
+      let n=0;for(let oy=-6;oy<7;oy++)for(let ox=-6;ox<7;ox++){
+        const i=x+ox+(y+oy)*north.w;
+        if(north.elev[i]>north.elev[i+1])n++;
+        if(north.elev[i]>north.elev[i+north.w])n++;
+      }
+      if(n>best.n)best={n,x,y};
+    }
+    scenes.unshift({name:`Fallen North seed 12345 / tiles ${best.x},${best.y}`,map:north,cx:best.x,cy:best.y});
+    for(const scene of scenes){
+      const title=document.createElement("h2");title.textContent=scene.name;document.body.append(title);
+      const canvas=document.createElement("canvas");canvas.width=1056;canvas.height=576;document.body.append(canvas);
+      const ctx=canvas.getContext("2d");
+      const cam={x:U.isoX(scene.cx+.5,scene.cy+.5)-528,y:U.isoY(scene.cx+.5,scene.cy+.5)-288};
+      draw(ctx,scene.map,cam,0,scene.map.w-1,0,scene.map.h-1,(x,y)=>x>-96&&x<1152&&y>-200&&y<700,14,new Set(["snowwild"]));
+    }
+    // Verify the production depth clip with an opaque actor silhouette. Pixel
+    // interiors are compared against the nearest actual surface, including
+    // overlapping caps; skip antialiased polygon boundaries.
+    let hiddenPixels=0,visiblePixels=0;
+    for(const cached of [false,true])for(const raised of [false,true])for(const fractional of [0,.35]){
+      const map=blank(14,14);map.blocked=new Uint8Array(196);map.surfaceVersion=1;map.ramps=[];
+      for(let y=0;y<14;y++)for(let x=6;x<14;x++)map.elev[x+y*14]=3;
+      TerrainSurface.rebuild(map);
+      const actor={x:raised?6.5:5.5,y:6.5},h=TerrainSurface.heightAt(map,actor.x,actor.y);
+      const sx=U.isoX(actor.x,actor.y),sy=U.isoY(actor.x,actor.y)-14*h,cam={x:sx-128+fractional,y:sy-128+fractional};
+      const c=document.createElement('canvas');c.width=256;c.height=192;const g=c.getContext('2d',{willReadFrequently:true});
+      LevelTerrain.beginFrame(map);
+      try{
+        LevelTerrain.drawSurface(g,map,cam,0,13,0,13,()=>true,cached);
+        g.save();LevelTerrain.clipBehind(g,map,cam,actor.x,actor.y);g.fillStyle='#ff00ff';g.fillRect(sx-cam.x-12,sy-cam.y-64,24,64);g.restore();
+      }finally{LevelTerrain.endFrame();}
+      const pixels=g.getImageData(0,0,256,192).data;
+      const hidden=(x,y)=>{const hit=TerrainSurface.pick(map,x+cam.x,y+cam.y);return !!(hit&&hit.depth>actor.x+actor.y+1e-7&&hit.z>h+1e-7&&!(hit.kind==='ground'&&hit.tx===Math.floor(actor.x)&&hit.ty===Math.floor(actor.y)));};
+      for(let y=66;y<126;y++)for(let x=118;x<138;x++){
+        const expected=hidden(x+.5,y+.5);
+        if([[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>hidden(x+.5+dx,y+.5+dy)!==expected))continue;
+        const i=(x+y*256)*4,painted=pixels[i]>240&&pixels[i+1]<16&&pixels[i+2]>240;
+        ok(painted!==expected,'foreground depth clip disagrees with picking at '+x+','+y);
+        if(expected)hiddenPixels++;else visiblePixels++;
+      }
+    }
+    ok(hiddenPixels>50&&visiblePixels>1000,'occlusion test did not cover both hidden and visible actor pixels');
+    result.textContent=`PASS: ${checks} terrain checks; ${hiddenPixels} foreground-occluded actor pixels and ${visiblePixels} visible pixels verified. ${legacyHoles} old seam failures reproduced. Rendered ${scenes.length} scenes. North has elevation: ${north.hasElev}.`;
+    document.body.dataset.testStatus="passed";
+  }catch(err){result.textContent=`FAIL: ${err.stack||err}`;document.body.dataset.testStatus="failed";}
+})();
+</script></body></html>

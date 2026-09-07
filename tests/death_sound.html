@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="../"><title>Player death sound regression</title>
+<style>body{margin:28px;background:#161b22;color:#e9ddc5;font:15px/1.6 system-ui}button{padding:12px;margin-right:8px;background:#293845;border:1px solid #a38b65;color:#fff0d8}pre{white-space:pre-wrap}#result{color:#b9d7a4}</style>
+<h1>Player death sound</h1><p>Checks the real MP3 and production audio routing. Automated playback is practically muted.</p>
+<button id="run">Run death audio checks</button><button id="play" disabled>Preview corrected death sound</button><button id="stop" disabled>Stop preview</button><pre id="result">Ready</pre><pre id="details"></pre>
+<script>
+window.deathProbe={starts:[],connections:new WeakMap(),events:new WeakMap(),errors:[],oscillators:0};
+const p=deathProbe,start=AudioBufferSourceNode.prototype.start,connect=AudioNode.prototype.connect;
+AudioBufferSourceNode.prototype.start=function(...a){p.starts.push(this);return start.apply(this,a);};
+AudioNode.prototype.connect=function(to,...a){p.connections.set(this,to);return connect.call(this,to,...a);};
+for(const method of ['setValueAtTime','linearRampToValueAtTime','cancelAndHoldAtTime']){const original=AudioParam.prototype[method];AudioParam.prototype[method]=function(...a){const events=p.events.get(this)||[];events.push({method,args:a});p.events.set(this,events);return original.apply(this,a);};}
+const oscillator=AudioContext.prototype.createOscillator;AudioContext.prototype.createOscillator=function(...a){p.oscillators++;return oscillator.apply(this,a);};
+window.addEventListener('unhandledrejection',e=>p.errors.push(String(e.reason)));
+</script><script src="js/audio.js?v=9"></script>
+<script>
+const out=document.getElementById('result'),details=document.getElementById('details'),run=document.getElementById('run');let checks=0;
+function ok(v,m){checks++;if(!v)throw Error(m);}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function stats(buffer){let peak=0,sum=0,count=0;for(let c=0;c<buffer.numberOfChannels;c++)for(const sample of buffer.getChannelData(c)){peak=Math.max(peak,Math.abs(sample));sum+=sample*sample;count++;}return {peak,rms:Math.sqrt(sum/count),duration:buffer.duration};}
+run.onclick=async()=>{
+ run.disabled=true;checks=0;out.textContent='Checking…';
+ try{
+  Sfx.setVol('master',.000001);Sfx.setVol('sfx',.5);Sfx.setVol('music',0);await Sfx.init();
+  const before=deathProbe.starts.length,tones=deathProbe.oscillators;Sfx.play('death');
+  ok(deathProbe.starts.length===before+1,'death must start one recorded source');ok(deathProbe.oscillators===tones,'death generated a synthetic tone');
+  const source=deathProbe.starts.at(-1),gain=deathProbe.connections.get(source),bus=deathProbe.connections.get(gain),master=deathProbe.connections.get(bus);
+  ok(!!gain.gain&&gain!==bus,'missing dedicated death level');ok(Math.abs(bus.gain.value-.5)<1e-6&&Math.abs(master.gain.value-.000001)<1e-9,'SFX/master routing changed');ok(deathProbe.connections.get(master)===Sfx.ctx.destination,'audio destination missing');
+  const events=deathProbe.events.get(gain.gain),ramps=events.filter(e=>e.method==='linearRampToValueAtTime');
+  ok(events[0].args[0]===0,'death starts abruptly');ok(ramps.length===2&&ramps[0].args[0]===.4&&ramps[1].args[0]===0,'missing level or natural fade');
+  const raw=stats(source.buffer);ok(raw.peak>0&&raw.duration>.2,'empty death recording');
+  const offline=new OfflineAudioContext(source.buffer.numberOfChannels,source.buffer.length,source.buffer.sampleRate),input=offline.createBufferSource(),level=offline.createGain();
+  input.buffer=source.buffer;input.connect(level);level.connect(offline.destination);
+  const origin=events[0].args[1];for(const e of events)level.gain[e.method](e.args[0],e.args[1]-origin);input.start();
+  const mixed=stats(await offline.startRendering());ok(mixed.peak<=raw.peak*.401,'death level exceeds the intended attenuation');ok(mixed.rms<raw.rms*.401,'death mix is still at full loudness');
+  const finished=new Promise(resolve=>source.addEventListener('ended',resolve,{once:true}));Sfx.stopDeath();await Promise.race([finished,new Promise((_,reject)=>setTimeout(()=>reject(Error('voice did not stop after fade')),1000))]);
+  ok((deathProbe.events.get(gain.gain)||[]).some(e=>e.method==='cancelAndHoldAtTime'),'stopping the voice skipped its fade');
+  Sfx.play('death');const first=deathProbe.starts.at(-1);Sfx.play('death');const second=deathProbe.starts.at(-1);ok(first!==second,'a later death reused a playing source');await wait(130);Sfx.stopDeath();await wait(130);
+  let n=deathProbe.starts.length;Sfx.setVol('sfx',0);Sfx.play('death');ok(deathProbe.starts.length===n,'SFX mute ignored');Sfx.setVol('sfx',.5);Sfx.setVol('master',0);Sfx.play('death');ok(deathProbe.starts.length===n,'master mute ignored');
+  ok(deathProbe.errors.length===0,'unhandled audio errors');details.textContent=JSON.stringify({file:Sfx.EFFECTS.death,original:raw,corrected:mixed,attenuationDb:20*Math.log10(mixed.rms/raw.rms)},null,2);
+  out.textContent=`PASS · ${checks} real audio checks: one recording, no synthetic death tone, reduced level, soft start/end/stop, replacement, SFX/master volume and silent offline rendering.`;
+  document.getElementById('play').disabled=document.getElementById('stop').disabled=false;
+ }catch(e){out.textContent='FAIL · '+e.stack;}finally{Sfx.stopDeath();Sfx.setVol('master',0);run.disabled=false;}
+};
+document.getElementById('play').onclick=async()=>{Sfx.setVol('master',.6);Sfx.setVol('sfx',.9);await Sfx.init();Sfx.play('death');};
+document.getElementById('stop').onclick=()=>Sfx.stopDeath();
+</script></html>

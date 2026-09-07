@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <base href="../">
+  <title>Grip-accurate player rig QA</title>
+  <style>
+    :root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0d0f13;color:#d9d2c4;font:13px/1.35 ui-monospace,Consolas,monospace}
+    header{position:sticky;top:0;z-index:4;padding:10px 14px;background:#151820ee;border-bottom:1px solid #353b48;backdrop-filter:blur(6px)}
+    #result{margin:0 0 8px;white-space:pre-wrap}.pass{color:#83d889}.fail{color:#ff887d}.loading{color:#e0c17b}
+    .controls{display:flex;gap:9px;align-items:end;flex-wrap:wrap}.controls label{display:grid;gap:3px;color:#aaa}.controls select,.controls input,.controls button{font:inherit;color:#eee;background:#252a34;border:1px solid #424b5d;border-radius:4px;padding:5px 7px}
+    button{cursor:pointer}main{display:grid;grid-template-columns:minmax(600px,1fr) 330px;gap:12px;padding:12px}.panel{background:#13161c;border:1px solid #2c323d;border-radius:6px;padding:10px;overflow:auto}
+    canvas{display:block;background:repeating-conic-gradient(#171b22 0 25%,#13171d 0 50%) 0/24px 24px;max-width:none}.legend{display:grid;grid-template-columns:12px 1fr;gap:4px 7px;margin:8px 0}.swatch{width:10px;height:10px;border-radius:50%}
+    #details{white-space:pre-wrap;word-break:break-word;color:#bfc5d0}.hint{color:#8d95a5;margin-top:8px}@media(max-width:1000px){main{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <pre id="result" class="loading">LOADING authored player-rig bundle…</pre>
+    <div class="controls">
+      <label>Class<select id="classId"></select></label>
+      <label>Main hand<select id="mainFamily"></select></label>
+      <label>Shield<select id="shield"><option value="">none</option><option value="shield">shield</option></select></label>
+      <label>Helmet<select id="headFamily"></select></label>
+      <label>Chest<select id="chestFamily"></select></label>
+      <label>Material<select id="materialTier"></select></label>
+      <label>Pose<select id="pose"></select></label>
+      <label>Direction<select id="direction"></select></label>
+      <label>Plane<select id="plane"><option value="all">all planes</option><option>rear</option><option>body</option><option>worn</option><option>held</option><option>grip</option><option>front</option></select></label>
+      <label><span>Overlays</span><span><input id="overlays" type="checkbox" checked> sockets / ROIs</span></label>
+      <button id="contact">Contact sheet</button>
+      <button id="single">Single frame</button>
+    </div>
+  </header>
+  <main>
+    <section class="panel"><canvas id="preview" width="1536" height="1080"></canvas></section>
+    <aside class="panel">
+      <strong>Overlay legend</strong>
+      <div class="legend"><i class="swatch" style="background:#ff5252"></i><span>main-hand socket / reviewed hand ROI</span><i class="swatch" style="background:#55aaff"></i><span>off-hand socket / reviewed hand ROI</span><i class="swatch" style="background:#ffe66d"></i><span>head ROI</span><i class="swatch" style="background:#66e38f"></i><span>chest ROI</span></div>
+      <pre id="details">Waiting for strict contract checks.</pre>
+      <div class="hint">Contact sheet: eight directions across and nine poses down. Click a cell to inspect it. A red cell marker indicates a browser-side contract failure.</div>
+    </aside>
+  </main>
+  <script src="js/utils.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/sprite_manifest.js"></script>
+  <script src="js/sprite_assets.js"></script>
+  <script>
+    "use strict";
+    (() => {
+      const CLASSES=["vanguard","emberwitch","gravebinder","wildkeeper","veilranger"];
+      const MAINS=["","sword_1h","sword_2h","axe_1h","axe_2h","mace_1h","mace_2h","dagger_1h","spear_2h","bow_2h","crossbow_2h","wand_1h","staff_2h"];
+      const ARMOR=["","light","mail","plate","mythic"];
+      const POSES=["idle","walkA","walkB","attackWindup","attackImpact","cast","hit","death","dead"];
+      const DIRS=["E","SE","S","SW","W","NW","N","NE"];
+      const PLANES=["rear","body","worn","held","grip","front"];
+      const TWO_HAND=new Set(MAINS.filter(x=>x.endsWith("_2h")));
+      const ui=id=>document.getElementById(id), canvas=ui("preview"), ctx=canvas.getContext("2d",{willReadFrequently:true});
+      let mode="contact", contract={checks:0,failures:[]};
+
+      function options(id,values,label=x=>x||"none"){ui(id).innerHTML=values.map(v=>`<option value="${v}">${label(v)}</option>`).join("")}
+      options("classId",CLASSES);options("mainFamily",MAINS);options("headFamily",ARMOR);options("chestFamily",ARMOR);options("materialTier",Array.from({length:14},(_,i)=>String(i)),x=>`tier ${x}`);options("pose",POSES);options("direction",DIRS);
+      ui("mainFamily").value="sword_1h";ui("shield").value="shield";ui("headFamily").value="mail";ui("chestFamily").value="mail";ui("materialTier").value="5";
+
+      function assert(ok,message){contract.checks++;if(!ok)contract.failures.push(message)}
+      function item(slot,family,tier){if(!family)return null;const samples={main:{sword_1h:"sword_t0",sword_2h:"sword2h_t0",axe_1h:"axe_t0",axe_2h:"axe2h_t0",mace_1h:"mace_t0",mace_2h:"mace2h_t0",dagger_1h:"dagger_t0",spear_2h:"spear2h_t0",bow_2h:"bow2h_t0",crossbow_2h:"crossbow2h_t0",wand_1h:"wand_t0",staff_2h:"staff2h_t0"},shield:{shield:"shield_t0"},head:{light:"helm_t0",mail:"helm_t3",plate:"helm_t6",mythic:"helm_t10"},chest:{light:"chest_t0",mail:"chest_t3",plate:"chest_t6",mythic:"chest_t10"}};const baseId=samples[slot][family];return{baseId,slot:DATA.BASES[baseId].slot,cat:DATA.BASES[baseId].cat,twoHand:TWO_HAND.has(family),playerVisualFamily:family,materialTier:+tier}}
+      function selection(){const main=ui("mainFamily").value,shield=TWO_HAND.has(main)?"":ui("shield").value;return{classId:ui("classId").value,main,shield,head:ui("headFamily").value,chest:ui("chestFamily").value,tier:+ui("materialTier").value}}
+      function resolve(s){return SpriteAssets.resolvePlayerVisual(s.classId,{main:item("main",s.main,s.tier),off:item("shield",s.shield,s.tier),head:item("head",s.head,s.tier),chest:item("chest",s.chest,s.tier)},[])}
+      function runtimePose(row,dir){const ang=dir*Math.PI/4,base={ang,ex:{}};return[ {...base,state:"idle",t:0},{...base,state:"walk",t:0,ex:{walkPh:0}},{...base,state:"walk",t:0,ex:{walkPh:Math.PI}},{...base,state:"attack",t:0},{...base,state:"attack",t:1},{...base,state:"cast",t:.5},{...base,state:"hit",t:.5},{...base,state:"death",t:0},{...base,state:"death",t:1} ][row]}
+      function bodyPoseRows(assetId){const rows=[];for(let row=0;row<9;row++){const c=document.createElement("canvas"),cx=c.getContext("2d",{willReadFrequently:true});c.width=1536;c.height=192;for(let dir=0;dir<8;dir++){const frame=SpriteAssets.getFrame(assetId,row*8+dir);cx.drawImage(frame.image,frame.sx,frame.sy,frame.sw,frame.sh,dir*192,0,192,192)}rows.push(cx.getImageData(0,0,1536,192).data)}return rows}
+      function samePixels(a,b){return a.length===b.length&&a.every((value,index)=>value===b[index])}
+      function filtered(plan){const plane=ui("plane").value;return plane==="all"?plan.layers:plan.layers.filter(x=>x.plane===plane)}
+      function drawPlan(plan,x,y,scale){for(const layer of filtered(plan)){ctx.save();ctx.translate(x,y);SpriteAssets.drawFrame(ctx,SpriteAssets.getFrame(layer.assetId,plan.index),0,0,{scale,tint:layer.tint});ctx.restore()}if(ui("overlays").checked)overlay(plan.frameMeta,x,y,scale)}
+      function cross(x,y,color){ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x-5,y);ctx.lineTo(x+5,y);ctx.moveTo(x,y-5);ctx.lineTo(x,y+5);ctx.stroke()}
+      function overlay(meta,x,y,s){ctx.save();ctx.globalAlpha=.92;cross(x+(meta.mainGrip[0]-96)*s,y+(meta.mainGrip[1]-184)*s,"#ff5252");cross(x+(meta.offGrip[0]-96)*s,y+(meta.offGrip[1]-184)*s,"#55aaff");for(const [key,color] of [["mainHandROI","#ff5252"],["offHandROI","#55aaff"],["headROI","#ffe66d"],["chestROI","#66e38f"]]){const r=meta[key];if(!r)continue;ctx.strokeStyle=color;ctx.strokeRect(x+(r[0]-96)*s,y+(r[1]-184)*s,r[2]*s,r[3]*s)}ctx.restore()}
+      function alphaBounds(){const d=ctx.getImageData(0,0,canvas.width,canvas.height).data;let minX=canvas.width,minY=canvas.height,maxX=-1,maxY=-1;for(let y=0;y<canvas.height;y++)for(let x=0;x<canvas.width;x++)if(d[(y*canvas.width+x)*4+3]){minX=Math.min(minX,x);minY=Math.min(minY,y);maxX=Math.max(maxX,x);maxY=Math.max(maxY,y)}return{minX,minY,maxX,maxY}}
+      async function render(){const s=selection(),visual=resolve(s);await SpriteAssets.loadPlayerLoadout(visual);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingEnabled=true;const details=[];
+        if(mode==="single"){canvas.width=768;canvas.height=768;const row=POSES.indexOf(ui("pose").value),dir=DIRS.indexOf(ui("direction").value),plan=SpriteAssets.getPlayerDrawPlan(visual,runtimePose(row,dir));drawPlan(plan,384,620,2.1);details.push(`${s.classId} / ${s.main||"unarmed"} / ${s.head||"no helm"} / ${s.chest||"no chest"}`,`frame ${plan.index}: ${POSES[row]} ${DIRS[dir]}`,`planes: ${plan.layers.map(x=>`${x.plane}:${x.slot}`).join(" → ")}`,JSON.stringify(plan.frameMeta,null,2));}
+        else{canvas.width=1536;canvas.height=1728;for(let row=0;row<9;row++)for(let dir=0;dir<8;dir++){const plan=SpriteAssets.getPlayerDrawPlan(visual,runtimePose(row,dir)),x=dir*192+96,y=row*192+184;drawPlan(plan,x,y,1);ctx.fillStyle="#d8d1bf";ctx.fillText(`${DIRS[dir]} ${POSES[row]}`,dir*192+5,row*192+14)}details.push(`${s.classId}: ${s.main||"unarmed"}, ${s.shield||"no shield"}, ${s.head||"no helm"}, ${s.chest||"no chest"}`,"8 directions × 9 synchronized poses",`plane filter: ${ui("plane").value}`)}
+        ui("details").textContent=details.join("\n");updateResult();}
+
+      async function runContract(){contract={checks:0,failures:[]};const m=DATA.SPRITE_MANIFEST,slotOrder=["chest","head","shield","main","unarmed"];assert(JSON.stringify(m.directions)===JSON.stringify(DIRS),"direction order mismatch");assert(JSON.stringify(m.poses)===JSON.stringify(POSES),"pose order mismatch");assert(m.maps.playerRigs&&Object.keys(m.maps.playerRigs).length===5,"five player rigs missing");
+        await SpriteAssets.loadBundle("core");
+        for(const classId of CLASSES){const rig=m.maps.playerRigs[classId];assert(!!rig,`${classId}: rig missing`);if(!rig)continue;assert(rig.frames.length===72,`${classId}: not 72 frame metadata records`);for(const family of MAINS.slice(1))assert(!!rig.main[family],`${classId}: ${family} missing`);for(const slot of ["head","chest"])for(const family of ARMOR.slice(1))assert(!!rig[slot][family],`${classId}: ${slot}/${family} missing`);
+          const naked=resolve({classId,main:"",shield:"",head:"",chest:"",tier:0});await SpriteAssets.loadPlayerLoadout(naked);const bodyRows=bodyPoseRows(rig.body);for(let a=0;a<bodyRows.length;a++)for(let b=a+1;b<bodyRows.length;b++)assert(!samePixels(bodyRows[a],bodyRows[b]),`${classId}: body pose rows ${POSES[a]} and ${POSES[b]} are identical`);
+          const bodyDef=m.entries[rig.body];assert(bodyDef.rigScale===1&&bodyDef.rigScaleMethod==="class-shared-final-aligned",`${classId}: body atlas is not verbatim final-aligned art`);
+          for(let row=0;row<9;row++)for(let dir=0;dir<8;dir++){const s={classId,main:MAINS[1+(row*8+dir)%12],shield:"",head:ARMOR[1+(row%4)],chest:ARMOR[1+(dir%4)],tier:(row+dir)%14},visual=resolve(s);await SpriteAssets.loadPlayerLoadout(visual);const plan=SpriteAssets.getPlayerDrawPlan(visual,runtimePose(row,dir));assert(plan.index===row*8+dir,`${classId}: wrong frame index ${plan.index}`);for(const [socketKey,roiKey] of [["mainGrip","mainHandROI"],["offGrip","offHandROI"]]){const p=plan.frameMeta[socketKey],r=plan.frameMeta[roiKey];assert(Array.isArray(r)&&r.length===4,`${classId} frame ${plan.index}: ${roiKey} missing`);assert(r&&p[0]>=r[0]&&p[0]<r[0]+r[2]&&p[1]>=r[1]&&p[1]<r[1]+r[3],`${classId} frame ${plan.index}: ${socketKey} outside ${roiKey}`)}const planeRanks=plan.layers.map(x=>PLANES.indexOf(x.plane));assert(planeRanks.every((rank,i)=>i===0||rank>=planeRanks[i-1]),`${classId} frame ${plan.index}: plane order mismatch`);for(const plane of PLANES){const ranks=plan.layers.filter(x=>x.plane===plane&&x.slot!=="body").map(x=>slotOrder.indexOf(x.slot));assert(ranks.every((rank,i)=>rank>=0&&(i===0||rank>=ranks[i-1])),`${classId} frame ${plan.index}/${plane}: slot order mismatch`)}assert(plan.layers.some(x=>x.slot==="main"&&x.plane==="held"),`${classId} frame ${plan.index}: held weapon missing`);assert(plan.layers.some(x=>x.slot==="main"&&x.plane==="grip"),`${classId} frame ${plan.index}: gripping hand missing`);for(const layer of plan.layers)SpriteAssets.getFrame(layer.assetId,plan.index)}}
+        const probe=Object.values(m.entries).find(x=>x.kind==="atlas"),probeId=Object.keys(m.entries).find(id=>m.entries[id]===probe);for(const bad of [-1,probe.cols*probe.rows,1.5,"nope"]){let threw=false;try{SpriteAssets.getFrame(probeId,bad)}catch(_){threw=true}assert(threw,`getFrame accepted invalid index ${bad}`)}
+        const base=resolve({classId:"vanguard",main:"sword_1h",shield:"shield",head:"mail",chest:"mail",tier:5}),pose=runtimePose(0,0);await SpriteAssets.loadPlayerLoadout(base);const a=SpriteAssets.getPlayerDrawPlan(base,pose);for(const invisible of ["gloves","boots","belt","ring1","amulet"]){const equip={main:item("main","sword_1h",5),off:item("shield","shield",5),head:item("head","mail",5),chest:item("chest","mail",5)};equip[invisible]={baseId:invisible};const b=SpriteAssets.getPlayerDrawPlan(SpriteAssets.resolvePlayerVisual("vanguard",equip,[]),pose);assert(JSON.stringify(a.layers)===JSON.stringify(b.layers),`${invisible} changed actor draw plan`)}
+        const low=SpriteAssets.getPlayerDrawPlan(resolve({classId:"vanguard",main:"sword_1h",shield:"shield",head:"mail",chest:"mail",tier:0}),pose),high=SpriteAssets.getPlayerDrawPlan(resolve({classId:"vanguard",main:"sword_1h",shield:"shield",head:"mail",chest:"mail",tier:13}),pose);assert(low.layers.some(x=>x.tint),"material masks produce no tinted layers");assert(JSON.stringify(low.layers.map(x=>x.tint))!==JSON.stringify(high.layers.map(x=>x.tint)),"material tiers 0 and 13 produce identical actor finishes");
+        const light=SpriteAssets.getPlayerDrawPlan(resolve({classId:"vanguard",main:"",shield:"",head:"light",chest:"light",tier:0}),pose),mythic=SpriteAssets.getPlayerDrawPlan(resolve({classId:"vanguard",main:"",shield:"",head:"mythic",chest:"mythic",tier:13}),pose);for(const slot of ["head","chest"]){const worn=plan=>plan.layers.filter(x=>x.slot===slot&&x.plane==="worn").map(x=>x.assetId);assert(JSON.stringify(worn(light))!==JSON.stringify(worn(mythic)),`${slot} light/mythic silhouettes are aliases`)}
+        let rejected=false;try{const bad=JSON.parse(JSON.stringify(base));bad.equipment.main.family="missing_family";SpriteAssets.getPlayerDrawPlan(bad,pose)}catch(_){rejected=true}assert(rejected,"missing equipment family did not fail strictly");rejected=false;try{SpriteAssets.getPlayerDrawPlan({...base,rigRevision:"wrong"},pose)}catch(_){rejected=true}assert(rejected,"rig revision mismatch did not fail strictly");rejected=false;try{SpriteAssets.resolvePlayerVisual("vanguard",{main:item("main","sword_2h",5),off:item("shield","shield",5)},[])}catch(_){rejected=true}assert(rejected,"two-handed weapon plus shield was accepted");
+        const form=SpriteAssets.resolvePlayerVisual("wildkeeper",{main:item("main","sword_1h",5),head:item("head","mythic",13),chest:item("chest","mythic",13)},[{id:"form_fang"}]),formPlan=SpriteAssets.getPlayerDrawPlan(form,pose);assert(form.kind==="form"&&Object.keys(form.equipment).length===0&&formPlan.form&&formPlan.layers.length===0,"Wildkeeper form did not suppress equipment layers");
+      }
+      function updateResult(){const result=ui("result");if(contract.failures.length){document.body.dataset.testStatus="failed";result.className="fail";result.textContent=`FAIL: ${contract.failures.length}/${contract.checks} contract checks failed\n${contract.failures.slice(0,8).join("\n")}`;}else{document.body.dataset.testStatus="passed";result.className="pass";result.textContent=`PASS: ${contract.checks} strict rig checks; five classes; 12 main families; shield; four helmets; four chest silhouettes; eight directions; nine poses; death/dead gear retained.`}}
+      for(const el of document.querySelectorAll("select,input"))el.addEventListener("change",()=>render().catch(fail));ui("contact").onclick=()=>{mode="contact";render().catch(fail)};ui("single").onclick=()=>{mode="single";render().catch(fail)};canvas.onclick=e=>{if(mode!=="contact")return;const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*canvas.width/r.width,y=(e.clientY-r.top)*canvas.height/r.height;ui("direction").value=DIRS[Math.max(0,Math.min(7,Math.floor(x/192)))];ui("pose").value=POSES[Math.max(0,Math.min(8,Math.floor(y/192)))];mode="single";render().catch(fail)};
+      function fail(err){document.body.dataset.testStatus="failed";ui("result").className="fail";ui("result").textContent=`FAIL: ${err.stack||err}`}
+      (async()=>{try{await runContract();await render()}catch(err){fail(err)}})();
+    })();
+  </script>
+</body>
+</html>

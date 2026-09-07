@@ -1,0 +1,1986 @@
+{
+  "format": "mono 44.1 kHz 16-bit PCM WAV",
+  "license": "CC0-1.0",
+  "processing": "Trim silence; remove DC and sub-45 Hz; soft lowpass; constant-rate resample; layer; short reflection; RMS/peak headroom; edge fades.",
+  "archives": {
+    "impact": "029d734af1582474edf3a694d1b0cebc97c1c152f2f39fa34d4c2bafc5de77f8",
+    "rpg": "3ae398ad63e293f9c450bda22d5d81c3af69c74df66fc1400f33c012c0bbc231",
+    "creatures": "1c2f06ff4e8563b5b8b745b23cf213c1474142a69bb82bd8f5e10d9b3f7a7bbd"
+  },
+  "clips": {
+    "cloth_1.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth1.ogg",
+          "sha256": "ddb93a3671233f95da0e0b10367f082f7eb42fa6caaddcf776410aa8833c747d",
+          "level": 0.8,
+          "playbackRate": 0.9,
+          "lowpass": 4000,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.6734,
+      "peakDb": -4.44,
+      "rmsDb": -26.87,
+      "sha256": "1fb67cd4e905c67e71d9eaa86dea8e9604feb48d964c982dd03fdeecfaa54c8f"
+    },
+    "cloth_2.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth2.ogg",
+          "sha256": "8a7451193c38bc05483aec25dd193e163a15d44cf7fff04ac7912573231b0201",
+          "level": 0.8,
+          "playbackRate": 0.9,
+          "lowpass": 4000,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.4433,
+      "peakDb": -4.44,
+      "rmsDb": -24.14,
+      "sha256": "32afecedc5e906590abe375ca3f741741e1da8671259e849b298347ef4aa18f5"
+    },
+    "cloth_3.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth3.ogg",
+          "sha256": "a48632d17a4f1416541d261a32a31612e01267144c407fa3ecab3ff410f0085b",
+          "level": 0.8,
+          "playbackRate": 0.9,
+          "lowpass": 4000,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5518,
+      "peakDb": -4.44,
+      "rmsDb": -25.21,
+      "sha256": "ba36a0299e0282629c6310eb3200028ab5dd1dec9f061e16e1b722473ef1486c"
+    },
+    "blade_1.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/knifeSlice.ogg",
+          "sha256": "4cd96dc630bed9840c15f1dd2306da2cc56a4da26a5d3f1a03c5a7265ac5e54f",
+          "level": 0.75,
+          "playbackRate": 0.82,
+          "lowpass": 6200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth3.ogg",
+          "sha256": "a48632d17a4f1416541d261a32a31612e01267144c407fa3ecab3ff410f0085b",
+          "level": 0.3,
+          "playbackRate": 1,
+          "lowpass": 3500,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.498,
+      "peakDb": -4.44,
+      "rmsDb": -20.63,
+      "sha256": "9f185cd8e12c5b3eeb7e54492af84dcd4a6b3f97ee414a27f04b47b2f554e4c8"
+    },
+    "blade_2.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/knifeSlice2.ogg",
+          "sha256": "6c2064d0ef988d1ec3d56868e823ea8823a5cac00f2742560052633529407def",
+          "level": 0.75,
+          "playbackRate": 0.82,
+          "lowpass": 6200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth4.ogg",
+          "sha256": "e7ab9a6c4466dea874196c61f59bf1da05cfe58748f42fadd695d441a154a99b",
+          "level": 0.3,
+          "playbackRate": 1,
+          "lowpass": 3500,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5866,
+      "peakDb": -4.44,
+      "rmsDb": -26.17,
+      "sha256": "3d036e07d0ecf97a89d55ac47db10210e98cbeb4897bc041a0c0ea232d836d9d"
+    },
+    "blade_3.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/drawKnife1.ogg",
+          "sha256": "276403e72c3b71c47bc24db3083970c23f8e5551ffa78f436f83483c56f3f0bb",
+          "level": 0.75,
+          "playbackRate": 0.82,
+          "lowpass": 6200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth2.ogg",
+          "sha256": "8a7451193c38bc05483aec25dd193e163a15d44cf7fff04ac7912573231b0201",
+          "level": 0.3,
+          "playbackRate": 1,
+          "lowpass": 3500,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.3746,
+      "peakDb": -9.04,
+      "rmsDb": -27.84,
+      "sha256": "bcdc764fdd43449f7b3fe1d8dc5ee35342f3f8ec53092aa29ee58a2f3c37a5b9"
+    },
+    "steel_1.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactMetal_medium_000.ogg",
+          "sha256": "a96f879fec0864a8938e0c745b6996a6c5679c16a234ce31a01cc995e8401003",
+          "level": 0.7,
+          "playbackRate": 0.78,
+          "lowpass": 5200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactPunch_heavy_000.ogg",
+          "sha256": "b33a8f14068aec24ec69ba85e5e87fdc41228975f6a1a3e44a6e7d6fc3d9f8d8",
+          "level": 0.5,
+          "playbackRate": 0.9,
+          "lowpass": 1800,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5545,
+      "peakDb": -4.44,
+      "rmsDb": -21.57,
+      "sha256": "c1df71bed1e4d3d753c3b86269bb80f3e7d083c5d80202d4d85fc79b40e505a1"
+    },
+    "steel_2.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactMetal_medium_001.ogg",
+          "sha256": "e8a9eaba7c4d27422e4eeb3e6c7100d5d7dc0f83e005efc98c960adcc5265337",
+          "level": 0.7,
+          "playbackRate": 0.78,
+          "lowpass": 5200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactPunch_heavy_001.ogg",
+          "sha256": "f92f5cb6ba4ff2766497292ffd90865654317eeca976f5652e0708dbdcdc0dd9",
+          "level": 0.5,
+          "playbackRate": 0.9,
+          "lowpass": 1800,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.4694,
+      "peakDb": -4.44,
+      "rmsDb": -20.83,
+      "sha256": "9f30f84a7226859100b436920c5496ca73ce1f10e0e6614d1dbc32f7f3d4c1a8"
+    },
+    "steel_3.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactMetal_medium_002.ogg",
+          "sha256": "7e89ce2ca0dbda95ea2b78d4b50791cab35c10d20e9f5ccd45dd0b00e99ff548",
+          "level": 0.7,
+          "playbackRate": 0.78,
+          "lowpass": 5200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactPunch_heavy_002.ogg",
+          "sha256": "7993dd4c156b9979ad69f17be5ebe31850b16039a3857f8477141be54dfee1b3",
+          "level": 0.5,
+          "playbackRate": 0.9,
+          "lowpass": 1800,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.4166,
+      "peakDb": -4.44,
+      "rmsDb": -20.06,
+      "sha256": "bed5da880ab0cd17b38519fc7d3263c0213655fc99c359c8cab7b0b43c15eaaa"
+    },
+    "shield_1.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactPlate_heavy_000.ogg",
+          "sha256": "112d4f93ddcc370b410630f971c0f5d991856102da9c76bc5c5540d388e75aaa",
+          "level": 0.75,
+          "playbackRate": 0.68,
+          "lowpass": 4000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactSoft_heavy_000.ogg",
+          "sha256": "49e7ca88743fca974bb8676ea138b751cfd8f9033b5e7af8736c2a215d6edbc1",
+          "level": 0.5,
+          "playbackRate": 0.75,
+          "lowpass": 1600,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.6672,
+      "peakDb": -4.44,
+      "rmsDb": -24.45,
+      "sha256": "286c61f1e397f8866f546dca0002565c91d1be492a6acabfa3298b9b1f9b40cf"
+    },
+    "shield_2.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactPlate_heavy_001.ogg",
+          "sha256": "142fd6c77f13d25f318265901163f70f8dfe12f87829169a570025be43de7011",
+          "level": 0.75,
+          "playbackRate": 0.68,
+          "lowpass": 4000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactSoft_heavy_001.ogg",
+          "sha256": "4d0096364ba9e46119d2ff6df493fdc101bd2e1efae061da5e5f77a53b3fdcb6",
+          "level": 0.5,
+          "playbackRate": 0.75,
+          "lowpass": 1600,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.675,
+      "peakDb": -4.44,
+      "rmsDb": -22.46,
+      "sha256": "09cb1730b1a238e985219df5bc642f54f5b351dc9ef5e977eb92ae0e9866420c"
+    },
+    "shield_3.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactPlate_heavy_002.ogg",
+          "sha256": "b0cab75d1befa32b4cf215d8ee7e1c400a39182e8b105963b8e310f825b198a1",
+          "level": 0.75,
+          "playbackRate": 0.68,
+          "lowpass": 4000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactSoft_heavy_002.ogg",
+          "sha256": "d130ae541951243d3f6ed963d0057450a445ffe117fbf9a084d34eb1635cb563",
+          "level": 0.5,
+          "playbackRate": 0.75,
+          "lowpass": 1600,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.6743,
+      "peakDb": -4.44,
+      "rmsDb": -22.51,
+      "sha256": "0b8093664db8d240e203f287b590afcfb82988c85af445fc64f2055f8e0e42ef"
+    },
+    "chain_1.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "chain_01.ogg",
+          "sha256": "d376caf0f61384b1d2e0b447f64f06be56d0ee0622ba70dd01cfdd78b3a10687",
+          "level": 0.8,
+          "playbackRate": 0.78,
+          "lowpass": 4700,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5603,
+      "peakDb": -4.44,
+      "rmsDb": -28.41,
+      "sha256": "330a75a6166d2cd3c7b7ba0817892a15d0cb7fbf315d25648c7f4e17b3a2d7e1"
+    },
+    "chain_2.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "chain_02.ogg",
+          "sha256": "dd3b753e54fd4e6ed94c36231d1950fafd681ff4a93462cfa3980099a6454ecb",
+          "level": 0.8,
+          "playbackRate": 0.78,
+          "lowpass": 4700,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5138,
+      "peakDb": -4.44,
+      "rmsDb": -25.99,
+      "sha256": "117478784f185886e5aee7a059383d4190dbc687e809f960c516d441b94c090c"
+    },
+    "chain_3.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "chain_03.ogg",
+          "sha256": "ae2247dc68aa85bca15d87355353b5858441644b6a65172e9659f4d0819b42d6",
+          "level": 0.8,
+          "playbackRate": 0.78,
+          "lowpass": 4700,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.6749,
+      "peakDb": -4.44,
+      "rmsDb": -31.27,
+      "sha256": "dc91ebc4b75607cd5156fbb46cfb0d57c96aef0fdad9ba234f08c75e24de1ebb"
+    },
+    "bow_1.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/creak1.ogg",
+          "sha256": "8a346186fd297254248cab8e8117060a52a5cf2a84f603153a762108550ea95e",
+          "level": 0.36,
+          "playbackRate": 1.35,
+          "lowpass": 4000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/knifeSlice2.ogg",
+          "sha256": "6c2064d0ef988d1ec3d56868e823ea8823a5cac00f2742560052633529407def",
+          "level": 0.9,
+          "playbackRate": 1.22,
+          "lowpass": 6000,
+          "offset": 0.025,
+          "reverse": false
+        }
+      ],
+      "duration": 0.4632,
+      "peakDb": -4.44,
+      "rmsDb": -26.75,
+      "sha256": "e63b3b99ef21331e4cdb3b0d849d3cd1d6a4205ec7f882d7a931906455e14f35"
+    },
+    "bow_2.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/creak2.ogg",
+          "sha256": "8a990afdc03aebb91d528f5385e2f95582dbfa8e2c12c71098ab01be9142294a",
+          "level": 0.36,
+          "playbackRate": 1.35,
+          "lowpass": 4000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/knifeSlice.ogg",
+          "sha256": "4cd96dc630bed9840c15f1dd2306da2cc56a4da26a5d3f1a03c5a7265ac5e54f",
+          "level": 0.9,
+          "playbackRate": 1.22,
+          "lowpass": 6000,
+          "offset": 0.025,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5974,
+      "peakDb": -4.44,
+      "rmsDb": -22.68,
+      "sha256": "7eaa02e1b3b878dca3c3af0885dd514bb8199a31b3fcaf11c6e510c7a1dc3b67"
+    },
+    "bow_3.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/creak3.ogg",
+          "sha256": "f9638787f95004b9d2d06f8eff8e99d4e594c21b51947daf562856fbcec905d1",
+          "level": 0.36,
+          "playbackRate": 1.35,
+          "lowpass": 4000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth1.ogg",
+          "sha256": "ddb93a3671233f95da0e0b10367f082f7eb42fa6caaddcf776410aa8833c747d",
+          "level": 0.9,
+          "playbackRate": 1.22,
+          "lowpass": 6000,
+          "offset": 0.025,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5286,
+      "peakDb": -4.44,
+      "rmsDb": -25.2,
+      "sha256": "22b0bd42337d7a68dfdab02f082952909f1f7323b11db92e24da09b91fddcc25"
+    },
+    "arrow_1.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactWood_light_000.ogg",
+          "sha256": "eb45e35b4bed784d3f120de4afec4b0d6ac09d9e143cce8cfcb7d739e1b1f3c3",
+          "level": 0.8,
+          "playbackRate": 1.15,
+          "lowpass": 5000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactPunch_medium_000.ogg",
+          "sha256": "486988aa2d6440ffc4c62a0e8ccf3c23673ba84424bd4723378d451b7255eb5c",
+          "level": 0.5,
+          "playbackRate": 1.15,
+          "lowpass": 2800,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.2983,
+      "peakDb": -4.44,
+      "rmsDb": -21.63,
+      "sha256": "c171edf42fd8d97d31ed9c179a54ac30825a2f311408177fabc3ed6c77cdacf4"
+    },
+    "arrow_2.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactWood_light_001.ogg",
+          "sha256": "4b76bf3ccc8e60d19188f3165b778a7817786faa6887c55d9049bcbeef3b425f",
+          "level": 0.8,
+          "playbackRate": 1.15,
+          "lowpass": 5000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactPunch_medium_001.ogg",
+          "sha256": "e71d23abcc3f10d9d6bc9615b2a431fff70b12333a5fcdd9964457564ace4349",
+          "level": 0.5,
+          "playbackRate": 1.15,
+          "lowpass": 2800,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.2863,
+      "peakDb": -5.03,
+      "rmsDb": -19.58,
+      "sha256": "2e143e0618358ee58d3fd110ace036d397443e32064b0f9aba8797fa278cb80b"
+    },
+    "arrow_3.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactWood_light_002.ogg",
+          "sha256": "b183cf7a5bd783817e0e4b82af34ac6658fa1927049089dadc8b15c2ecc771dc",
+          "level": 0.8,
+          "playbackRate": 1.15,
+          "lowpass": 5000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactPunch_medium_002.ogg",
+          "sha256": "6492f9ccbc8d24dcef607bb1b48790b7870961474561f7fe5601e1c73a3018ef",
+          "level": 0.5,
+          "playbackRate": 1.15,
+          "lowpass": 2800,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.361,
+      "peakDb": -4.44,
+      "rmsDb": -22.79,
+      "sha256": "82dabcf047d9f32e8ec56c147923830759d682ce35cf01d723e32a457eb38209"
+    },
+    "stone_1.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "stones_01.ogg",
+          "sha256": "d11ce95031c2c36ae2a00979620fa95a7a3f5c6d6f2ac86962ed292aa556be8d",
+          "level": 0.65,
+          "playbackRate": 0.62,
+          "lowpass": 3500,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactMining_000.ogg",
+          "sha256": "36b4ea107222d073c67ca64dde26944975609202d5090b2f2021213c1a7e35cd",
+          "level": 0.6,
+          "playbackRate": 0.68,
+          "lowpass": 2500,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.675,
+      "peakDb": -4.44,
+      "rmsDb": -26.89,
+      "sha256": "c34bc9c499b5fc4e102481db33b5477a1519a46398e121a719d0c1de767c2a00"
+    },
+    "stone_2.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "stones_02.ogg",
+          "sha256": "57dc6b85ee986e68ddc4b7fb2b41cc1c885151677d32439fdb299492a3103a65",
+          "level": 0.65,
+          "playbackRate": 0.62,
+          "lowpass": 3500,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactMining_001.ogg",
+          "sha256": "61235a18de3f3d92118235398222dbf51d448f1be70b1c8bc962b10b86f2d9c6",
+          "level": 0.6,
+          "playbackRate": 0.68,
+          "lowpass": 2500,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.675,
+      "peakDb": -4.44,
+      "rmsDb": -24.4,
+      "sha256": "fbe903123f23d1cd85c47489ea4dcd257ea8d9b3110c1e5476fa03a811ed46b8"
+    },
+    "stone_3.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "stones_03.ogg",
+          "sha256": "b86d143d7ef4974c2b97fda9e5d1861482646eec754e15935eeb3680ea0d71da",
+          "level": 0.65,
+          "playbackRate": 0.62,
+          "lowpass": 3500,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactMining_002.ogg",
+          "sha256": "059558ec751115ca6b1441e00f0adc837c1a3eeb0a066b109e0fd879fc5d0b0c",
+          "level": 0.6,
+          "playbackRate": 0.68,
+          "lowpass": 2500,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.675,
+      "peakDb": -4.44,
+      "rmsDb": -27.44,
+      "sha256": "caa6b8e375e92ddae55fe0f572be7e473da90b1a149d6f847c839003995ffda4"
+    },
+    "bone_1.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "wood_01.ogg",
+          "sha256": "55d4527a1f7d8e158eff0921f7a533340ab6be69a7b9b52fdac7a19b9d8e1cb2",
+          "level": 0.6,
+          "playbackRate": 1.15,
+          "lowpass": 5000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactWood_light_000.ogg",
+          "sha256": "eb45e35b4bed784d3f120de4afec4b0d6ac09d9e143cce8cfcb7d739e1b1f3c3",
+          "level": 0.65,
+          "playbackRate": 1.3,
+          "lowpass": 6500,
+          "offset": 0.02,
+          "reverse": false
+        }
+      ],
+      "duration": 0.2094,
+      "peakDb": -4.44,
+      "rmsDb": -25.85,
+      "sha256": "266b9a19074746fd4e7b8425eaa56782d28598a4c12ca9311e33bb01fa7b4c7b"
+    },
+    "bone_2.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "wood_02.ogg",
+          "sha256": "e64b95a1ec7675f28f8837ee4e4e81aa8e5b28e272159a0b3ed124fed037fc4f",
+          "level": 0.6,
+          "playbackRate": 1.15,
+          "lowpass": 5000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactWood_light_001.ogg",
+          "sha256": "4b76bf3ccc8e60d19188f3165b778a7817786faa6887c55d9049bcbeef3b425f",
+          "level": 0.65,
+          "playbackRate": 1.3,
+          "lowpass": 6500,
+          "offset": 0.02,
+          "reverse": false
+        }
+      ],
+      "duration": 0.1615,
+      "peakDb": -4.44,
+      "rmsDb": -24.89,
+      "sha256": "5aaa022f0db0437bd53dc6e9637cf9ecd7b7e305c320da8733526e58b0375fc4"
+    },
+    "bone_3.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "wood_03.ogg",
+          "sha256": "64bc25ac915ded78136ef36f71867b08ac462b9178f7db9b461dafaea0a27fdd",
+          "level": 0.6,
+          "playbackRate": 1.15,
+          "lowpass": 5000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactWood_light_002.ogg",
+          "sha256": "b183cf7a5bd783817e0e4b82af34ac6658fa1927049089dadc8b15c2ecc771dc",
+          "level": 0.65,
+          "playbackRate": 1.3,
+          "lowpass": 6500,
+          "offset": 0.02,
+          "reverse": false
+        }
+      ],
+      "duration": 0.2363,
+      "peakDb": -4.44,
+      "rmsDb": -23.38,
+      "sha256": "6f4375ee4635720bdf7cd8ff69367983f5c167a1e5af4ab7cf7b2d915781dce9"
+    },
+    "fire_1.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "spell_fire_04.ogg",
+          "sha256": "64d653cd0cc6eb71bb45a1dfbba29eaa769ed5b663cce275082d6971e4f2ca8e",
+          "level": 0.65,
+          "playbackRate": 0.73,
+          "lowpass": 4900,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactSoft_heavy_000.ogg",
+          "sha256": "49e7ca88743fca974bb8676ea138b751cfd8f9033b5e7af8736c2a215d6edbc1",
+          "level": 0.35,
+          "playbackRate": 0.6,
+          "lowpass": 1300,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 1.747,
+      "peakDb": -4.44,
+      "rmsDb": -22.46,
+      "sha256": "8e531b4e3d663b9549d8ea4528686120f509e485f7f5c7c0dd11983dbed333bc"
+    },
+    "fire_2.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "spell_fire_05.ogg",
+          "sha256": "18025b21a4ecb3b41acc0dccb0697a8930262109ea198ff8c5ef0853d3ed1cfa",
+          "level": 0.65,
+          "playbackRate": 0.73,
+          "lowpass": 4900,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactSoft_heavy_001.ogg",
+          "sha256": "4d0096364ba9e46119d2ff6df493fdc101bd2e1efae061da5e5f77a53b3fdcb6",
+          "level": 0.35,
+          "playbackRate": 0.6,
+          "lowpass": 1300,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 1.6454,
+      "peakDb": -4.44,
+      "rmsDb": -21.85,
+      "sha256": "2f961af43091d0a69989e9d3caae2dc9e4298423a6b58326f02901ecf56a4b6d"
+    },
+    "fire_3.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "spell_fire_06.ogg",
+          "sha256": "66fa753e8033d08f3837d6ef1706b0450297db68c0d4b21782a03fd9ae960d63",
+          "level": 0.65,
+          "playbackRate": 0.73,
+          "lowpass": 4900,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactSoft_heavy_002.ogg",
+          "sha256": "d130ae541951243d3f6ed963d0057450a445ffe117fbf9a084d34eb1635cb563",
+          "level": 0.35,
+          "playbackRate": 0.6,
+          "lowpass": 1300,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 1.2485,
+      "peakDb": -4.44,
+      "rmsDb": -22.26,
+      "sha256": "1d2eaa662125980053aa60f5828e07953b1a60751aaf42a6473f86a86f275712"
+    },
+    "ember_1.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "spell_fire_01.ogg",
+          "sha256": "02fa3a2c6e79e868e546802f45127c5cdda69aba6d5a24ac997ea66f81a816cb",
+          "level": 0.65,
+          "playbackRate": 0.86,
+          "lowpass": 5300,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.675,
+      "peakDb": -10.16,
+      "rmsDb": -32.24,
+      "sha256": "275ee75d44bdac61ec2950675e7f97eb213ef3dba7ea88f6b77f0f5d08adc2b9"
+    },
+    "ember_2.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "spell_fire_02.ogg",
+          "sha256": "bf1eef4993f0adb4bd3a1c1ec91f8f6e4ddeb32d922671a14561846d5b7cab98",
+          "level": 0.65,
+          "playbackRate": 0.86,
+          "lowpass": 5300,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.675,
+      "peakDb": -18.62,
+      "rmsDb": -34.62,
+      "sha256": "9ec9a04bb41ebddc4d0dc67b0e0c0872576ceb68e1f5073a050355647f16a41e"
+    },
+    "ember_3.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "spell_fire_03.ogg",
+          "sha256": "2e4edee4ff8d7898198f1ab5213e086965e14a665cb947d53759505e28ddd3e4",
+          "level": 0.65,
+          "playbackRate": 0.86,
+          "lowpass": 5300,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.675,
+      "peakDb": -9.15,
+      "rmsDb": -31.98,
+      "sha256": "7ac039335d7d2c3912530dae354e9aec6d8084bd4e2ea3c88caf2d149546850f"
+    },
+    "frost_1.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactGlass_heavy_000.ogg",
+          "sha256": "b44b39a940e8948e74b9bd3776bff980df43cf220abdaf0d467dc4c43c0244a5",
+          "level": 0.65,
+          "playbackRate": 0.64,
+          "lowpass": 7200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "creatures",
+          "file": "stones_02.ogg",
+          "sha256": "57dc6b85ee986e68ddc4b7fb2b41cc1c885151677d32439fdb299492a3103a65",
+          "level": 0.25,
+          "playbackRate": 1.3,
+          "lowpass": 5700,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.527,
+      "peakDb": -4.44,
+      "rmsDb": -27.08,
+      "sha256": "6966012276f445acb6df35fa26361d663c08957c4b3ecbf5a354401c65e6b81d"
+    },
+    "frost_2.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactGlass_heavy_001.ogg",
+          "sha256": "58686e0e562612cc566791844a10e269f8d1921f4766c14ba43976fd0a429f4e",
+          "level": 0.65,
+          "playbackRate": 0.64,
+          "lowpass": 7200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "creatures",
+          "file": "stones_03.ogg",
+          "sha256": "b86d143d7ef4974c2b97fda9e5d1861482646eec754e15935eeb3680ea0d71da",
+          "level": 0.25,
+          "playbackRate": 1.3,
+          "lowpass": 5700,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.6572,
+      "peakDb": -4.44,
+      "rmsDb": -28.5,
+      "sha256": "882d02a21eca54d7aa656414c01e419be1ce570e2112e2c3c7f2643f2753274c"
+    },
+    "frost_3.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactGlass_heavy_002.ogg",
+          "sha256": "4978654ac840ad519692d5d5ba48a8101cabce13b9a577be73ad589185e5e9ed",
+          "level": 0.65,
+          "playbackRate": 0.64,
+          "lowpass": 7200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "creatures",
+          "file": "stones_04.ogg",
+          "sha256": "66f1cef820f66d86414d481b37a48a7b7ea11f4a5d7358372ebcfb506af0e652",
+          "level": 0.25,
+          "playbackRate": 1.3,
+          "lowpass": 5700,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.4682,
+      "peakDb": -4.44,
+      "rmsDb": -25.8,
+      "sha256": "343d5f863c2822966d0932ddb79f9ada29ad84cfd5684be143a17fc208238b8e"
+    },
+    "ice_1.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactGlass_light_000.ogg",
+          "sha256": "d750cf88097d0c3e69920e6e14496e1444e1a9da01aa4cca8f5ec8cb44c57b4f",
+          "level": 0.7,
+          "playbackRate": 0.86,
+          "lowpass": 8200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/footstep_snow_000.ogg",
+          "sha256": "c05fa4a9dc9a7aabc04996466fb589537e49af76de9998d8f9e6270ec92dcef7",
+          "level": 0.45,
+          "playbackRate": 1.15,
+          "lowpass": 5500,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.2119,
+      "peakDb": -4.44,
+      "rmsDb": -20.67,
+      "sha256": "508067e4f61f678a6c01e498a3971e4bbd87115d9cc46bbc562b916049aabcb1"
+    },
+    "ice_2.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactGlass_light_001.ogg",
+          "sha256": "05e513fbd42829060eb37855f8c3866722ec5c39a8937c9bfde518cc609effa2",
+          "level": 0.7,
+          "playbackRate": 0.86,
+          "lowpass": 8200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/footstep_snow_001.ogg",
+          "sha256": "980fb9a1c9227aed7995067b0357f373053337f2416316db8ea0438418542fb4",
+          "level": 0.45,
+          "playbackRate": 1.15,
+          "lowpass": 5500,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.2111,
+      "peakDb": -4.44,
+      "rmsDb": -22.13,
+      "sha256": "9b4e964ede711e516281193d29979be667a99f8996679d9a1c6b10b4ca37c7a0"
+    },
+    "ice_3.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactGlass_light_002.ogg",
+          "sha256": "710db7451bb7857b9140dfe6afe4621ea2188ad65eda3919c569d1bb285b933d",
+          "level": 0.7,
+          "playbackRate": 0.86,
+          "lowpass": 8200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/footstep_snow_002.ogg",
+          "sha256": "db52bafdc66304f3b999f2c29227826c65993916e630ac2ffbca17d07b263178",
+          "level": 0.45,
+          "playbackRate": 1.15,
+          "lowpass": 5500,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.2246,
+      "peakDb": -4.44,
+      "rmsDb": -21.36,
+      "sha256": "be9f827ba5b74e909aed1212b5fdbcd899836c71aa097bf28bb46df39b9d36cb"
+    },
+    "spark_1.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactTin_medium_000.ogg",
+          "sha256": "f4bbee66ca191ec744b84fc07ac9ed2a6fda955d51cfed8360f12b62815d3cbd",
+          "level": 0.7,
+          "playbackRate": 1.7,
+          "lowpass": 9000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactGlass_light_000.ogg",
+          "sha256": "d750cf88097d0c3e69920e6e14496e1444e1a9da01aa4cca8f5ec8cb44c57b4f",
+          "level": 0.22,
+          "playbackRate": 1.65,
+          "lowpass": 7000,
+          "offset": 0.025,
+          "reverse": false
+        }
+      ],
+      "duration": 0.1474,
+      "peakDb": -4.44,
+      "rmsDb": -21.79,
+      "sha256": "78f16756dcc0866948e057fda6f3ec9dda0220c88d69394d073ae69bc5553695"
+    },
+    "spark_2.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactTin_medium_001.ogg",
+          "sha256": "84253095543c094d83cd749f42ecfbc96e356b60385f18a192c18eafb25b3cc6",
+          "level": 0.7,
+          "playbackRate": 1.7,
+          "lowpass": 9000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactGlass_light_001.ogg",
+          "sha256": "05e513fbd42829060eb37855f8c3866722ec5c39a8937c9bfde518cc609effa2",
+          "level": 0.22,
+          "playbackRate": 1.65,
+          "lowpass": 7000,
+          "offset": 0.025,
+          "reverse": false
+        }
+      ],
+      "duration": 0.147,
+      "peakDb": -4.44,
+      "rmsDb": -22.81,
+      "sha256": "20652075597e31aa43cf10e692110e4683946f9334421212457b7ecd67a02b6b"
+    },
+    "spark_3.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactTin_medium_002.ogg",
+          "sha256": "c1d2c4f9910d4529581ae56a9a9a01454c4619fbb7d6da7616221d8ec58cc0c4",
+          "level": 0.7,
+          "playbackRate": 1.7,
+          "lowpass": 9000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactGlass_light_002.ogg",
+          "sha256": "710db7451bb7857b9140dfe6afe4621ea2188ad65eda3919c569d1bb285b933d",
+          "level": 0.22,
+          "playbackRate": 1.65,
+          "lowpass": 7000,
+          "offset": 0.025,
+          "reverse": false
+        }
+      ],
+      "duration": 0.154,
+      "peakDb": -4.44,
+      "rmsDb": -20.16,
+      "sha256": "06d4baa9e99e7bf2c70802c9ae38e2197e39d2f824b2d2b249ac8c7055fd732f"
+    },
+    "thunder_1.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactMetal_heavy_000.ogg",
+          "sha256": "e07045693e4a2b3d165c424e3dab4c781d9ff8880a386880ac89a51315d7f831",
+          "level": 0.6,
+          "playbackRate": 0.28,
+          "lowpass": 1900,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "creatures",
+          "file": "stones_02.ogg",
+          "sha256": "57dc6b85ee986e68ddc4b7fb2b41cc1c885151677d32439fdb299492a3103a65",
+          "level": 0.8,
+          "playbackRate": 0.38,
+          "lowpass": 1500,
+          "offset": 0.045,
+          "reverse": false
+        }
+      ],
+      "duration": 1.7385,
+      "peakDb": -4.44,
+      "rmsDb": -30.18,
+      "sha256": "b0906016ab4aabae560a0809d9fa76956a1e605b727b6f5acf7c7ee85f10e76b"
+    },
+    "thunder_2.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactMetal_heavy_001.ogg",
+          "sha256": "83554049f81f4db9209379e103c30bfa63f65c42189a03f300b045c2c82e23ae",
+          "level": 0.6,
+          "playbackRate": 0.28,
+          "lowpass": 1900,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "creatures",
+          "file": "stones_03.ogg",
+          "sha256": "b86d143d7ef4974c2b97fda9e5d1861482646eec754e15935eeb3680ea0d71da",
+          "level": 0.8,
+          "playbackRate": 0.38,
+          "lowpass": 1500,
+          "offset": 0.045,
+          "reverse": false
+        }
+      ],
+      "duration": 1.825,
+      "peakDb": -4.44,
+      "rmsDb": -29.31,
+      "sha256": "9259c98eb8c15d561d8029de9a66e06ec32af0d776788354025612f6d7635944"
+    },
+    "thunder_3.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactMetal_heavy_002.ogg",
+          "sha256": "b914c8f1eb7c0f34bb165d7c77f4be0351f6be0660c13c53e65424e262e2c093",
+          "level": 0.6,
+          "playbackRate": 0.28,
+          "lowpass": 1900,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "creatures",
+          "file": "stones_04.ogg",
+          "sha256": "66f1cef820f66d86414d481b37a48a7b7ea11f4a5d7358372ebcfb506af0e652",
+          "level": 0.8,
+          "playbackRate": 0.38,
+          "lowpass": 1500,
+          "offset": 0.045,
+          "reverse": false
+        }
+      ],
+      "duration": 0.6961,
+      "peakDb": -4.44,
+      "rmsDb": -24.7,
+      "sha256": "8dfedfc1ebd426566d1306baa1dbe23fefd7297ea8f204a5113fc153cefa0d12"
+    },
+    "hex_1.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_misc_04.ogg",
+          "sha256": "43108cdb25a82a156b2b3be9da8bb2688536d78b70d8e01fbcf9a3ec7e29d5f8",
+          "level": 0.55,
+          "playbackRate": 0.64,
+          "lowpass": 2400,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth4.ogg",
+          "sha256": "e7ab9a6c4466dea874196c61f59bf1da05cfe58748f42fadd695d441a154a99b",
+          "level": 0.3,
+          "playbackRate": 0.52,
+          "lowpass": 1700,
+          "offset": 0.04,
+          "reverse": true
+        }
+      ],
+      "duration": 0.8041,
+      "peakDb": -4.44,
+      "rmsDb": -27.26,
+      "sha256": "f097513562daf30138562f8d32c9ad0d97fae7ce86ab07ba419670c3450cabb6"
+    },
+    "hex_2.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_misc_06.ogg",
+          "sha256": "a304bbc2628cb2cfed87be7666c758f9c47746a72d45fe1a75de9c748b790614",
+          "level": 0.55,
+          "playbackRate": 0.64,
+          "lowpass": 2400,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth2.ogg",
+          "sha256": "8a7451193c38bc05483aec25dd193e163a15d44cf7fff04ac7912573231b0201",
+          "level": 0.3,
+          "playbackRate": 0.52,
+          "lowpass": 1700,
+          "offset": 0.04,
+          "reverse": true
+        }
+      ],
+      "duration": 0.782,
+      "peakDb": -7.99,
+      "rmsDb": -26.74,
+      "sha256": "c25fad7995a85130f5b34d8293cb7de6b05588c899052635c7b978ec9e61276d"
+    },
+    "hex_3.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_misc_08.ogg",
+          "sha256": "86dfb9bb5bf12a1af301ad6ad76ef35e29401240a7f93e37ccfd811770438c4c",
+          "level": 0.55,
+          "playbackRate": 0.64,
+          "lowpass": 2400,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth3.ogg",
+          "sha256": "a48632d17a4f1416541d261a32a31612e01267144c407fa3ecab3ff410f0085b",
+          "level": 0.3,
+          "playbackRate": 0.52,
+          "lowpass": 1700,
+          "offset": 0.04,
+          "reverse": true
+        }
+      ],
+      "duration": 0.9656,
+      "peakDb": -4.44,
+      "rmsDb": -28.02,
+      "sha256": "8fd08e159e1e36d20465279b1d10b6c5db41e62840ed9650ff9456f64e36cce3"
+    },
+    "rot_1.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_slime_01.ogg",
+          "sha256": "746d6ef073abfadd43fe184c50c6a2528350d4f566f2c0f54cd51ff0eb665118",
+          "level": 0.65,
+          "playbackRate": 0.83,
+          "lowpass": 4200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactSoft_medium_000.ogg",
+          "sha256": "7d3ba0bb5e60a11b5d3e558c141303dcf494256675fbf753c0d252d2cf0481e3",
+          "level": 0.4,
+          "playbackRate": 0.8,
+          "lowpass": 1900,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.675,
+      "peakDb": -4.44,
+      "rmsDb": -22.54,
+      "sha256": "e06242c7022d36a11c28fb0f7a098b3d8fcdbc4aa23d3099ae1897205b978afb"
+    },
+    "rot_2.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_slime_02.ogg",
+          "sha256": "8c26b66076752b712dad7be704a3e4e11d3a49847fbd804ba7f858024ff33c8d",
+          "level": 0.65,
+          "playbackRate": 0.83,
+          "lowpass": 4200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactSoft_medium_001.ogg",
+          "sha256": "7642a4fd43e547afe4f7adfadb3dabb681c0ff512f52c1674bae30a726841faf",
+          "level": 0.4,
+          "playbackRate": 0.8,
+          "lowpass": 1900,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.6083,
+      "peakDb": -4.44,
+      "rmsDb": -21.02,
+      "sha256": "7376e00041322a88d4c5c68efa355b96aa3341876abe228d11629f68ec03e20c"
+    },
+    "rot_3.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_slime_03.ogg",
+          "sha256": "0edd014144dbce5ff0386647c25e0c206ae3b382a16683240ab188bd926da8eb",
+          "level": 0.65,
+          "playbackRate": 0.83,
+          "lowpass": 4200,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "impact",
+          "file": "Audio/impactSoft_medium_002.ogg",
+          "sha256": "5069e3571a77d7f7aae9ef71d0364aa245fb7d64a7c8cc9956f221d03088c089",
+          "level": 0.4,
+          "playbackRate": 0.8,
+          "lowpass": 1900,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.4904,
+      "peakDb": -4.44,
+      "rmsDb": -19.87,
+      "sha256": "ee99e3657b03d86229bc4cb84c044099a108837c50d0f8826ae3e94e2aa3d7c6"
+    },
+    "shadow_1.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth4.ogg",
+          "sha256": "e7ab9a6c4466dea874196c61f59bf1da05cfe58748f42fadd695d441a154a99b",
+          "level": 0.7,
+          "playbackRate": 0.5,
+          "lowpass": 2300,
+          "offset": 0,
+          "reverse": true
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/creak3.ogg",
+          "sha256": "f9638787f95004b9d2d06f8eff8e99d4e594c21b51947daf562856fbcec905d1",
+          "level": 0.2,
+          "playbackRate": 0.6,
+          "lowpass": 1400,
+          "offset": 0.04,
+          "reverse": false
+        }
+      ],
+      "duration": 0.7937,
+      "peakDb": -7.26,
+      "rmsDb": -23.97,
+      "sha256": "f39d2c7ae6e91014840186816d61e1c870aea634babcc9f8b634867eb4561c38"
+    },
+    "shadow_2.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth3.ogg",
+          "sha256": "a48632d17a4f1416541d261a32a31612e01267144c407fa3ecab3ff410f0085b",
+          "level": 0.7,
+          "playbackRate": 0.5,
+          "lowpass": 2300,
+          "offset": 0,
+          "reverse": true
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/creak1.ogg",
+          "sha256": "8a346186fd297254248cab8e8117060a52a5cf2a84f603153a762108550ea95e",
+          "level": 0.2,
+          "playbackRate": 0.6,
+          "lowpass": 1400,
+          "offset": 0.04,
+          "reverse": false
+        }
+      ],
+      "duration": 1.0329,
+      "peakDb": -4.44,
+      "rmsDb": -25.31,
+      "sha256": "abf20fcdfce58ebfb7bbf66cf8bbaa26d6cf43d278ed6f95b1a89844479be123"
+    },
+    "shadow_3.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth2.ogg",
+          "sha256": "8a7451193c38bc05483aec25dd193e163a15d44cf7fff04ac7912573231b0201",
+          "level": 0.7,
+          "playbackRate": 0.5,
+          "lowpass": 2300,
+          "offset": 0,
+          "reverse": true
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/creak2.ogg",
+          "sha256": "8a990afdc03aebb91d528f5385e2f95582dbfa8e2c12c71098ab01be9142294a",
+          "level": 0.2,
+          "playbackRate": 0.6,
+          "lowpass": 1400,
+          "offset": 0.04,
+          "reverse": false
+        }
+      ],
+      "duration": 1.299,
+      "peakDb": -4.44,
+      "rmsDb": -25.79,
+      "sha256": "408768aa08dc57fbdf9666bbbfa95fa3ecb012d8e5de59776514c40c2b63d3d9"
+    },
+    "growl_1.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_monster_01.ogg",
+          "sha256": "28d047e95058cecc3513eb831d14072318526fcb9207d8a50aad0f666e17893a",
+          "level": 0.75,
+          "playbackRate": 0.87,
+          "lowpass": 3700,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.2117,
+      "peakDb": -4.44,
+      "rmsDb": -23.73,
+      "sha256": "663a8a1a16e5546d15982085c92bb22dea1584d191bd394f229a4d7790f46195"
+    },
+    "growl_2.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_monster_02.ogg",
+          "sha256": "2892a32ddfc8d0fc3896f6487adf5a2eb6f3f5766fa02151bddd55e18f218f2f",
+          "level": 0.75,
+          "playbackRate": 0.87,
+          "lowpass": 3700,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.1931,
+      "peakDb": -4.44,
+      "rmsDb": -25.52,
+      "sha256": "348a34ece733a339cdd28288be8294361f10560d619b99156331f14b8a86e903"
+    },
+    "growl_3.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_monster_03.ogg",
+          "sha256": "b13abf8c710750bb3699ae61b450fc7c12e92cb9c180581b0f1a681f7f692c8b",
+          "level": 0.75,
+          "playbackRate": 0.87,
+          "lowpass": 3700,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.9786,
+      "peakDb": -4.44,
+      "rmsDb": -20.1,
+      "sha256": "783e32dceec94959c2e307b1061a92ccb485272fa8c6856b7e7fe63bb4cd2395"
+    },
+    "howl_1.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_roar_01.ogg",
+          "sha256": "ca1b9198490f29037e6e6487dd6db6165ca8b2583a445c0edd6b9f474d2d1f5f",
+          "level": 0.75,
+          "playbackRate": 0.85,
+          "lowpass": 3400,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.696,
+      "peakDb": -8.07,
+      "rmsDb": -19.58,
+      "sha256": "203c2443457cfd562fbd1bae42248719bc82d8a2daf2a6ad70dc3206aa07127a"
+    },
+    "howl_2.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_roar_02.ogg",
+          "sha256": "4da0cf77a3506e1b573ec40e3688dc66400d1734853510db357fb3f843cde242",
+          "level": 0.75,
+          "playbackRate": 0.85,
+          "lowpass": 3400,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 1.0895,
+      "peakDb": -4.44,
+      "rmsDb": -22.57,
+      "sha256": "8e9dce3c90be3028509fc24066b83e6b9201199633a642fe26428de69dcdf35a"
+    },
+    "howl_3.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_roar_03.ogg",
+          "sha256": "3571f6372012fdebb2a38ef89e18a6137b3f17d519f1259aafeb166dbdd94195",
+          "level": 0.75,
+          "playbackRate": 0.85,
+          "lowpass": 3400,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 1.0807,
+      "peakDb": -5.23,
+      "rmsDb": -19.58,
+      "sha256": "93ef8670dc54efbb2ca12e3840b12229e032152374072d2302adc3deccc4af30"
+    },
+    "roots_1.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/creak1.ogg",
+          "sha256": "8a346186fd297254248cab8e8117060a52a5cf2a84f603153a762108550ea95e",
+          "level": 0.5,
+          "playbackRate": 0.62,
+          "lowpass": 3000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "creatures",
+          "file": "wood_03.ogg",
+          "sha256": "64bc25ac915ded78136ef36f71867b08ac462b9178f7db9b461dafaea0a27fdd",
+          "level": 0.55,
+          "playbackRate": 0.77,
+          "lowpass": 4300,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.9834,
+      "peakDb": -4.44,
+      "rmsDb": -25.5,
+      "sha256": "b785d12a13fbf56a081d838f0d22236835e4209d37a6ed1002945c6c4f4d79ac"
+    },
+    "roots_2.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/creak2.ogg",
+          "sha256": "8a990afdc03aebb91d528f5385e2f95582dbfa8e2c12c71098ab01be9142294a",
+          "level": 0.5,
+          "playbackRate": 0.62,
+          "lowpass": 3000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "creatures",
+          "file": "wood_04.ogg",
+          "sha256": "bd5dc8469c4f1cb3abff35e2e01b541d4c97d58033f67dfe1c8e3b62ad5350ba",
+          "level": 0.55,
+          "playbackRate": 0.77,
+          "lowpass": 4300,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 1.2727,
+      "peakDb": -4.44,
+      "rmsDb": -23.9,
+      "sha256": "089c789e43cfcb746a10d7ddc7d9eb45ffbd5186f0954824a70853e58954e638"
+    },
+    "roots_3.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/creak3.ogg",
+          "sha256": "f9638787f95004b9d2d06f8eff8e99d4e594c21b51947daf562856fbcec905d1",
+          "level": 0.5,
+          "playbackRate": 0.62,
+          "lowpass": 3000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "creatures",
+          "file": "wood_05.ogg",
+          "sha256": "767fbe18abd5c37ced7d9fa86b36862f9680abb79bb0acda448f70850675e7bf",
+          "level": 0.55,
+          "playbackRate": 0.77,
+          "lowpass": 4300,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5494,
+      "peakDb": -4.44,
+      "rmsDb": -24.06,
+      "sha256": "97e1b1b9267b4f06ec04c0d11b46a5c2fa08ab2b28b138fe7c0e0078f4e771c1"
+    },
+    "wind_1.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth2.ogg",
+          "sha256": "8a7451193c38bc05483aec25dd193e163a15d44cf7fff04ac7912573231b0201",
+          "level": 0.8,
+          "playbackRate": 0.35,
+          "lowpass": 3800,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/knifeSlice.ogg",
+          "sha256": "4cd96dc630bed9840c15f1dd2306da2cc56a4da26a5d3f1a03c5a7265ac5e54f",
+          "level": 0.3,
+          "playbackRate": 0.55,
+          "lowpass": 2500,
+          "offset": 0.08,
+          "reverse": true
+        }
+      ],
+      "duration": 1.1007,
+      "peakDb": -4.44,
+      "rmsDb": -23.42,
+      "sha256": "fb65f9c0271f4353f35f6ceaa7dc628e3769cbd9f13ab594efd1baa0388a5ad7"
+    },
+    "wind_2.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth3.ogg",
+          "sha256": "a48632d17a4f1416541d261a32a31612e01267144c407fa3ecab3ff410f0085b",
+          "level": 0.8,
+          "playbackRate": 0.35,
+          "lowpass": 3800,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/knifeSlice2.ogg",
+          "sha256": "6c2064d0ef988d1ec3d56868e823ea8823a5cac00f2742560052633529407def",
+          "level": 0.3,
+          "playbackRate": 0.55,
+          "lowpass": 2500,
+          "offset": 0.08,
+          "reverse": true
+        }
+      ],
+      "duration": 1.3779,
+      "peakDb": -4.44,
+      "rmsDb": -24.13,
+      "sha256": "20b2806ab824f7fc5680c1472aef9b064dc7fbf428d39d8fc4b66a32bc979958"
+    },
+    "wind_3.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth4.ogg",
+          "sha256": "e7ab9a6c4466dea874196c61f59bf1da05cfe58748f42fadd695d441a154a99b",
+          "level": 0.8,
+          "playbackRate": 0.35,
+          "lowpass": 3800,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth1.ogg",
+          "sha256": "ddb93a3671233f95da0e0b10367f082f7eb42fa6caaddcf776410aa8833c747d",
+          "level": 0.3,
+          "playbackRate": 0.55,
+          "lowpass": 2500,
+          "offset": 0.08,
+          "reverse": true
+        }
+      ],
+      "duration": 1.1626,
+      "peakDb": -5.04,
+      "rmsDb": -25.25,
+      "sha256": "11d97935a6e91db1579739027977d14c34d3e58317dc1b5d9db9651bece9fd7f"
+    },
+    "blood_1.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactPunch_heavy_000.ogg",
+          "sha256": "b33a8f14068aec24ec69ba85e5e87fdc41228975f6a1a3e44a6e7d6fc3d9f8d8",
+          "level": 0.6,
+          "playbackRate": 0.8,
+          "lowpass": 2600,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "creatures",
+          "file": "creature_slime_02.ogg",
+          "sha256": "8c26b66076752b712dad7be704a3e4e11d3a49847fbd804ba7f858024ff33c8d",
+          "level": 0.35,
+          "playbackRate": 0.88,
+          "lowpass": 3000,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.6207,
+      "peakDb": -4.44,
+      "rmsDb": -21.62,
+      "sha256": "a5cd54a807b658bf0d9e12fed405e40856384060b17aa15d71647cf6da037373"
+    },
+    "blood_2.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactPunch_heavy_001.ogg",
+          "sha256": "f92f5cb6ba4ff2766497292ffd90865654317eeca976f5652e0708dbdcdc0dd9",
+          "level": 0.6,
+          "playbackRate": 0.8,
+          "lowpass": 2600,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "creatures",
+          "file": "creature_slime_03.ogg",
+          "sha256": "0edd014144dbce5ff0386647c25e0c206ae3b382a16683240ab188bd926da8eb",
+          "level": 0.35,
+          "playbackRate": 0.88,
+          "lowpass": 3000,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.525,
+      "peakDb": -4.44,
+      "rmsDb": -21.16,
+      "sha256": "e474df0d0f2fd905ef98406f1a30fe46a9353dda52ba9aba14d1717215b0814e"
+    },
+    "blood_3.wav": {
+      "sources": [
+        {
+          "archive": "impact",
+          "file": "Audio/impactPunch_heavy_002.ogg",
+          "sha256": "7993dd4c156b9979ad69f17be5ebe31850b16039a3857f8477141be54dfee1b3",
+          "level": 0.6,
+          "playbackRate": 0.8,
+          "lowpass": 2600,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "creatures",
+          "file": "creature_slime_04.ogg",
+          "sha256": "720c15c73a7fae29a02a9cd3cb5b9940ae8213e4b50f8deb0c531796289290d9",
+          "level": 0.35,
+          "playbackRate": 0.88,
+          "lowpass": 3000,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5566,
+      "peakDb": -4.44,
+      "rmsDb": -20.36,
+      "sha256": "75de59286bfa97edd3f15fed1d546384cb720619d4a15227dc5b094034f014be"
+    },
+    "breath_1.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_hurt_01.ogg",
+          "sha256": "9948f9ce067e1aae7bd780e974d51ceae03f2611a52afffb0e092ba47e9dc8e1",
+          "level": 0.55,
+          "playbackRate": 0.85,
+          "lowpass": 2800,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5626,
+      "peakDb": -5.87,
+      "rmsDb": -19.58,
+      "sha256": "1130d96668605019d01cfb6fbd346b8cba87a6d6bea45809948c07d8db54f94a"
+    },
+    "breath_2.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_hurt_02.ogg",
+          "sha256": "a4ea983e62ace874754c51d78239bd8b6532227119bd511c38fa827b2ccbca70",
+          "level": 0.55,
+          "playbackRate": 0.85,
+          "lowpass": 2800,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5755,
+      "peakDb": -4.44,
+      "rmsDb": -20.57,
+      "sha256": "762213f286229be67fabf47e1cd156dd21c2635a612102b11a1824167faaf645"
+    },
+    "breath_3.wav": {
+      "sources": [
+        {
+          "archive": "creatures",
+          "file": "creature_misc_05.ogg",
+          "sha256": "09cdd7df30a0f3918cb8a3ce86b999d260c7f289c2049122b550cab65bf9fa9c",
+          "level": 0.55,
+          "playbackRate": 0.85,
+          "lowpass": 2800,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5946,
+      "peakDb": -4.44,
+      "rmsDb": -24.28,
+      "sha256": "fb9a3cceddb4bcfbeda7cd58dbcff13e3e6d2a35f8309340535b5d2bf1995968"
+    },
+    "latch_1.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/metalLatch.ogg",
+          "sha256": "ba9ba60b172b3ebc131a940f25793cd2e207aca7af73dc80d637277f060f1708",
+          "level": 0.7,
+          "playbackRate": 0.85,
+          "lowpass": 5000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/clothBelt.ogg",
+          "sha256": "f29560a2aea95bbfeb643e1e8f56ec2b6f7e32f32ce4e140645a36db81de3253",
+          "level": 0.2,
+          "playbackRate": 1,
+          "lowpass": 3300,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.6251,
+      "peakDb": -4.44,
+      "rmsDb": -31.57,
+      "sha256": "5d68da9e10e92b92b019cc05dc48105a5917d85c10865e7bdb1c6e7f839a80ed"
+    },
+    "latch_2.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/metalClick.ogg",
+          "sha256": "9851a69d0c613e13bceef08060ecc4148f098ef487927cbebe270d642398a3b3",
+          "level": 0.7,
+          "playbackRate": 0.85,
+          "lowpass": 5000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/clothBelt2.ogg",
+          "sha256": "d545b1d9f20e6188140aaf551a96f1e82fe0d15f7ca066fac8b065e1231e0038",
+          "level": 0.2,
+          "playbackRate": 1,
+          "lowpass": 3300,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5028,
+      "peakDb": -4.44,
+      "rmsDb": -28.71,
+      "sha256": "1231fb12014190a61fdd218f8fe8d24161fec38346e051ed092c910147d688b4"
+    },
+    "latch_3.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/beltHandle1.ogg",
+          "sha256": "2ef665bd8b65dbe669f4560be38a6d8f04a162e618b15a49e3e71b58e558aab0",
+          "level": 0.7,
+          "playbackRate": 0.85,
+          "lowpass": 5000,
+          "offset": 0,
+          "reverse": false
+        },
+        {
+          "archive": "rpg",
+          "file": "OGG/cloth1.ogg",
+          "sha256": "ddb93a3671233f95da0e0b10367f082f7eb42fa6caaddcf776410aa8833c747d",
+          "level": 0.2,
+          "playbackRate": 1,
+          "lowpass": 3300,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.5974,
+      "peakDb": -8.74,
+      "rmsDb": -29.45,
+      "sha256": "f58001344b287e6bbeafa952540a7ac044b7a16c66e9ac47b5d5d79d370390c8"
+    },
+    "draw_1.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/creak1.ogg",
+          "sha256": "8a346186fd297254248cab8e8117060a52a5cf2a84f603153a762108550ea95e",
+          "level": 0.6,
+          "playbackRate": 0.56,
+          "lowpass": 3500,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 1.0887,
+      "peakDb": -4.44,
+      "rmsDb": -21.75,
+      "sha256": "b1622ea6ed8ac68d1b0da736cebd602215b916bac7708121c897c263630578b4"
+    },
+    "draw_2.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/creak2.ogg",
+          "sha256": "8a990afdc03aebb91d528f5385e2f95582dbfa8e2c12c71098ab01be9142294a",
+          "level": 0.6,
+          "playbackRate": 0.56,
+          "lowpass": 3500,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 1.4065,
+      "peakDb": -4.44,
+      "rmsDb": -22.05,
+      "sha256": "ea4780492b6025d2758b037cd47a165493d1a6940e4893596992a0406bd8d849"
+    },
+    "draw_3.wav": {
+      "sources": [
+        {
+          "archive": "rpg",
+          "file": "OGG/creak3.ogg",
+          "sha256": "f9638787f95004b9d2d06f8eff8e99d4e594c21b51947daf562856fbcec905d1",
+          "level": 0.6,
+          "playbackRate": 0.56,
+          "lowpass": 3500,
+          "offset": 0,
+          "reverse": false
+        }
+      ],
+      "duration": 0.6069,
+      "peakDb": -5.58,
+      "rmsDb": -19.58,
+      "sha256": "9b76867e3ba80ba5dc7ef3c5589b1ad6fb4ce60d8f28715f5bf3927b760f220f"
+    }
+  }
+}

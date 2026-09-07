@@ -1,0 +1,178 @@
+{
+  "version": 1,
+  "mode": "declared-partial-v1",
+  "sourceKind": "authored-final-aligned",
+  "review": "visual-contact-sheet-v1",
+  "root": "assets/sprites_src/player_rig_authored",
+  "starterBaseIds": {
+    "emberwitch": { "main": "gnarlwand", "chest": "quiltvest" },
+    "gravebinder": { "main": "gnarlwand", "chest": "quiltvest" },
+    "vanguard": { "main": "shortsword", "chest": "quiltvest" },
+    "veilranger": { "main": "huntbow", "chest": "quiltvest" },
+    "wildkeeper": { "main": "ashstaff", "chest": "quiltvest" }
+  },
+  "classes": {
+    "emberwitch": {
+      "available": {
+        "unarmed": {},
+        "main": {
+          "wand_1h": {
+            "rear": null,
+            "held": null,
+            "grip": "assets/sprites_src/player_rig_authored/emberwitch/main/wand_1h/grip.png",
+            "front": null,
+            "masks": { "held": { "wood": "assets/sprites_src/player_rig_authored/emberwitch/main/wand_1h/held_mask_wood.png" } }
+          }
+        },
+        "shield": {},
+        "head": {
+          "light": {
+            "rear": null,
+            "worn": "assets/sprites_src/player_rig_authored/emberwitch/head/light/worn.png",
+            "front": null,
+            "masks": {}
+          },
+          "mail": {
+            "rear": null,
+            "worn": "assets/sprites_src/player_rig_authored/emberwitch/head/mail/worn.png",
+            "front": null,
+            "masks": {}
+          }
+        },
+        "chest": {
+          "light": {
+            "rear": null,
+            "worn": null,
+            "front": null,
+            "masks": { "worn": { "leather": "assets/sprites_src/player_rig_authored/emberwitch/chest/light/worn_mask_leather.png" } }
+          },
+          "mail": {
+            "rear": null,
+            "worn": "assets/sprites_src/player_rig_authored/emberwitch/chest/mail/worn.png",
+            "front": null,
+            "masks": {}
+          },
+          "plate": {
+            "rear": null,
+            "worn": "assets/sprites_src/player_rig_authored/emberwitch/chest/plate/worn.png",
+            "front": null,
+            "masks": {}
+          },
+          "mythic": {
+            "rear": null,
+            "worn": "assets/sprites_src/player_rig_authored/emberwitch/chest/mythic/worn.png",
+            "front": null,
+            "masks": {}
+          }
+        }
+      },
+      "planned": {
+        "unarmed": {},
+        "main": {},
+        "shield": {},
+        "head": {},
+        "chest": {}
+      }
+    },
+    "gravebinder": {
+      "available": { "unarmed": {}, "main": {}, "shield": {}, "head": {}, "chest": {} },
+      "planned": {
+        "unarmed": {},
+        "main": {
+          "wand_1h": {
+            "rear": null,
+            "held": null,
+            "grip": "assets/sprites_src/player_rig_authored/gravebinder/main/wand_1h/grip.png",
+            "front": null,
+            "masks": { "held": { "wood": "assets/sprites_src/player_rig_authored/gravebinder/main/wand_1h/held_mask_wood.png" } }
+          }
+        },
+        "shield": {},
+        "head": {},
+        "chest": {
+          "light": {
+            "rear": null,
+            "worn": null,
+            "front": null,
+            "masks": { "worn": { "leather": "assets/sprites_src/player_rig_authored/gravebinder/chest/light/worn_mask_leather.png" } }
+          }
+        }
+      }
+    },
+    "vanguard": {
+      "available": { "unarmed": {}, "main": {}, "shield": {}, "head": {}, "chest": {} },
+      "planned": {
+        "unarmed": {},
+        "main": {
+          "sword_1h": {
+            "rear": null,
+            "held": null,
+            "grip": "assets/sprites_src/player_rig_authored/vanguard/main/sword_1h/grip.png",
+            "front": null,
+            "masks": { "held": { "metal": "assets/sprites_src/player_rig_authored/vanguard/main/sword_1h/held_mask_metal.png" } }
+          }
+        },
+        "shield": {},
+        "head": {},
+        "chest": {
+          "light": {
+            "rear": null,
+            "worn": null,
+            "front": null,
+            "masks": { "worn": { "leather": "assets/sprites_src/player_rig_authored/vanguard/chest/light/worn_mask_leather.png" } }
+          }
+        }
+      }
+    },
+    "veilranger": {
+      "available": { "unarmed": {}, "main": {}, "shield": {}, "head": {}, "chest": {} },
+      "planned": {
+        "unarmed": {},
+        "main": {
+          "bow_2h": {
+            "rear": null,
+            "held": null,
+            "grip": "assets/sprites_src/player_rig_authored/veilranger/main/bow_2h/grip.png",
+            "front": null,
+            "masks": { "held": { "wood": "assets/sprites_src/player_rig_authored/veilranger/main/bow_2h/held_mask_wood.png" } }
+          }
+        },
+        "shield": {},
+        "head": {},
+        "chest": {
+          "light": {
+            "rear": null,
+            "worn": null,
+            "front": null,
+            "masks": { "worn": { "leather": "assets/sprites_src/player_rig_authored/veilranger/chest/light/worn_mask_leather.png" } }
+          }
+        }
+      }
+    },
+    "wildkeeper": {
+      "available": { "unarmed": {}, "main": {}, "shield": {}, "head": {}, "chest": {} },
+      "planned": {
+        "unarmed": {},
+        "main": {
+          "staff_2h": {
+            "rear": null,
+            "held": null,
+            "grip": "assets/sprites_src/player_rig_authored/wildkeeper/main/staff_2h/grip.png",
+            "front": null,
+            "masks": { "held": { "wood": "assets/sprites_src/player_rig_authored/wildkeeper/main/staff_2h/held_mask_wood.png" } }
+          }
+        },
+        "shield": {},
+        "head": {},
+        "chest": {
+          "light": {
+            "rear": null,
+            "worn": null,
+            "front": null,
+            "masks": { "worn": { "leather": "assets/sprites_src/player_rig_authored/wildkeeper/chest/light/worn_mask_leather.png" } }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,128 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Class skill trees and combat HUD</title>
+<style>body{margin:18px;background:#121720;color:#ded3bb;font:13px system-ui}h1{font:25px Georgia}p{color:#adb8c3}pre{white-space:pre-wrap;font:12px/1.5 system-ui}select,button{background:#26303a;color:#ead7b3;border:1px solid #766244;padding:7px 12px;margin:0 8px 12px 0}iframe{width:100%;height:800px;display:block;border:1px solid #766244;box-sizing:border-box}#gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin:16px 0}.icon-card{padding:12px;background:#1c242d;border:1px solid #4c5355;text-align:center}.icon-card svg{display:block;margin:0 auto 10px}.icon-card small{display:block;font:10px system-ui;color:#a2b1be;margin-top:5px}summary{cursor:pointer;padding:12px 0}</style>
+<h1>Class disciplines & combat console</h1><p>Review all five classes. This scene uses temporary heroes and an isolated save store.</p>
+<pre id="result">Running interaction checks…</pre><label>Class <select id="classSelect" disabled></select></label><label>Viewport <select id="sizeSelect"><option value="100%">Full width</option><option value="900px">900 px</option><option value="680px">680 px</option></select></label><div id="host"></div>
+<details><summary>Review all 107 skill emblems</summary><div id="gallery"></div></details>
+<script type="module">
+const out=document.getElementById('result');window.skillTestStore=new Map();let checks=0;
+const ok=(value,message)=>{checks++;if(!value)throw new Error(message);};
+const wait=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+try{
+  const source=await fetch('../index.html',{cache:'no-store'}).then(r=>r.text());
+  const injection=`<base href="${new URL('../index.html',location.href)}"><script>
+    const testStore=parent.skillTestStore;
+    Object.defineProperty(window,'localStorage',{value:{get length(){return testStore.size},key:i=>[...testStore.keys()][i]??null,getItem:k=>testStore.get(k)??null,setItem:(k,v)=>testStore.set(String(k),String(v)),removeItem:k=>testStore.delete(k),clear:()=>testStore.clear()}});
+    window.__isolatedSkillTest=true;
+  <\/script>`;
+  const frame=document.createElement('iframe');frame.title='Class skill tree review';frame.srcdoc=source.replace('<head>','<head>'+injection);document.getElementById('host').appendChild(frame);
+  await new Promise(r=>frame.onload=r);const win=frame.contentWindow,doc=win.document;
+  for(let i=0;i<300&&!doc.querySelector('#titleMenu button');i++)await new Promise(r=>setTimeout(r,30));
+  ok(win.__isolatedSkillTest,'save isolation missing');
+  const game=win.eval('Game'),ui=win.eval('UI'),data=win.eval('DATA'),icons=win.eval('SkillIcons');
+  win.eval('Sfx').setVol('master',0);
+  const all=Object.values(data.SKILLS),classes=Object.keys(data.CLASSES);
+  for(const sk of [data.BASIC_ATTACK,...all]){
+    const svg=icons.create(sk);ok(svg.tagName.toLowerCase()==='svg'&&!svg.innerHTML.includes('undefined'),sk.id+': incomplete emblem');
+    ok(svg.dataset.skill===sk.id&&svg.dataset.motif,sk.id+': missing semantic mapping');
+    ok(!/undefined|NaN/.test(sk.desc(1)),sk.id+': invalid description');
+    const card=document.createElement('div');card.className='icon-card';card.appendChild(svg);
+    const label=document.createElement('div');label.textContent=sk.name;card.appendChild(label);
+    const role=document.createElement('small');role.textContent=icons.describe(sk).role;card.appendChild(role);document.getElementById('gallery').appendChild(card);
+  }
+  const select=document.getElementById('classSelect');for(const id of classes){const option=document.createElement('option');option.value=id;option.textContent=data.CLASSES[id].name;select.appendChild(option);}
+  async function hero(id){
+    ui.closeAll();await game.newGame('UI review',id,false);await game.skipOpening();ui.closeAll();
+    ok(!ui.cinematicActive(),'test prologue did not close');
+    const p=game.state.player;p.lvl=24;p.skillPts=30;p.computeStats();p.hp=p.stats.maxHp;p.mana=p.stats.maxMana;
+    game.state.monsters=[];ui.refreshHUD();ui.togglePanel('skills');await wait();return p;
+  }
+  for(const id of classes){
+    const p=await hero(id);ok(doc.querySelector('.talent-class').textContent===p.cls.name,id+': wrong class heading');
+    const comparison=doc.querySelector('#player3dControls');if(comparison)ok(win.getComputedStyle(comparison).display==='none',id+': comparison controls overlap the skill tree');
+    for(let tree=0;tree<3;tree++){
+      doc.querySelector('#discipline-'+tree).click();const skills=all.filter(s=>s.cls===id&&s.tree===tree);
+      ok(doc.querySelectorAll('.talent-node').length===skills.length,id+'/'+tree+': missing nodes');
+      for(const label of doc.querySelectorAll('.talent-node-name'))ok(label.scrollWidth<=label.clientWidth+1,id+'/'+tree+': skill name is clipped');
+      ok(doc.querySelectorAll('.talent-wires path').length===skills.filter(s=>s.prereq&&data.SKILLS[s.prereq].tree===tree).length,id+'/'+tree+': missing prerequisites');
+      for(const sk of skills){
+        const before=p.skillPts,node=doc.querySelector(`.talent-node[data-skill="${sk.id}"]`);node.click();
+        ok(p.skillPts===before,sk.id+': inspecting spent a point');
+        ok(doc.querySelector('#skillDetail h2').textContent===sk.name,sk.id+': details mismatch');
+        ok(doc.querySelector('#skillDetail .skill-emblem').dataset.skill===sk.id,sk.id+': detail icon mismatch');
+        ok(doc.querySelectorAll('.skill-perk-tier').length===2&&doc.querySelectorAll('.perk-option').length===6,sk.id+': missing perk choices');
+        ok([...doc.querySelectorAll('.perk-choose')].every(b=>b.disabled),sk.id+': perk unlocked before invested rank 5');
+        ok(!/undefined|NaN|dmgTakenPct|pManaPerBeast/.test(doc.querySelector('#skillDetail').textContent),sk.id+': implementation names leaked into details');
+        const shouldLock=p.lvl<sk.reqLvl||(sk.prereq&&!p.skills[sk.prereq]);
+        ok(doc.querySelector('.skill-learn').disabled===!!shouldLock,sk.id+': incorrect lock state');
+      }
+      const root=skills[0];doc.querySelector(`.talent-node[data-skill="${root.id}"]`).click();let before=p.skillPts;
+      doc.querySelector('.skill-learn').click();ok(p.skills[root.id]===1&&p.skillPts===before-1,root.id+': learning did not spend exactly one point');
+      ok(doc.querySelector('.skill-next'),root.id+': missing next-rank preview');
+      doc.querySelector('.skill-binding-row button[aria-label$="F4"]').click();
+      ok(p.quickSlots[3]===root.id&&doc.querySelector('#quickbar').children[3].dataset.skill===root.id,root.id+': F4 binding failed');
+      const hudNode=doc.querySelector('#quickbar').children[3];hudNode.focus();await wait();
+      ok(doc.querySelector('#quickbar').children[3]===hudNode&&doc.activeElement===hudNode,root.id+': HUD refresh destroyed keyboard focus');
+      p.skillCd[root.id]=game.state.time+5;ui.refreshHUD();ok(hudNode.classList.contains('cooling')&&hudNode.querySelector('.skill-cooldown').textContent,root.id+': cooldown missing');p.skillCd[root.id]=0;
+      before=p.skillPts;doc.querySelector('.skill-learn').click();ok(p.skills[root.id]===2&&p.skillPts===before-1,root.id+': rank upgrade failed');
+      const passive=skills.find(s=>s.type==='passive');
+      if(passive){p.skills[passive.id]=1;ui.renderIfOpen('skills');doc.querySelector(`.talent-node[data-skill="${passive.id}"]`).click();ok(!doc.querySelector('.skill-binding-row'),passive.id+': passive can be bound');}
+    }
+    const root=all.find(s=>s.cls===id&&s.tree===0);doc.querySelector('#discipline-0').click();doc.querySelector(`.talent-node[data-skill="${root.id}"]`).click();
+    p.skillPts=0;ui.renderIfOpen('skills');ok(doc.querySelector('.skill-learn').disabled,id+': zero points still allows upgrade');
+    p.skillPts=4;p.skills[root.id]=root.maxRank;ui.renderIfOpen('skills');ok(doc.querySelector('.skill-learn').disabled&&doc.querySelector('.skill-learn').textContent.includes('Maximum'),id+': max rank gate failed');
+    p.stats.skillAll=2;ui.renderIfOpen('skills');ok(doc.querySelector('.skill-rank').textContent.includes('+2 from gear'),id+': equipment bonus hidden');p.stats.skillAll=0;
+    p.lvl=1;ui.renderIfOpen('skills');const deep=all.find(s=>s.cls===id&&s.reqLvl===24);doc.querySelector('#discipline-'+deep.tree).click();doc.querySelector(`.talent-node[data-skill="${deep.id}"]`).click();
+    ok(doc.querySelector('.skill-learn').disabled&&doc.querySelector('#skillDetail').textContent.includes('Reach character level 24'),id+': level requirement missing');
+    ui.togglePanel('char');ok(!doc.querySelector('#panelLeft').classList.contains('talent-panel'),id+': tree layout leaked into character sheet');ui.togglePanel('skills');ui.togglePanel('inv');
+    ok(doc.querySelector('#panelLeft').classList.contains('hidden'),id+': expanded skill panel overlaps inventory');ui.closeAll();
+    p.lvl=24;p.skillPerks={};ui.togglePanel('skills');doc.querySelector('#discipline-'+root.tree).click();doc.querySelector(`.talent-node[data-skill="${root.id}"]`).click();
+    ok(doc.querySelector('.perk-ready-badge')&&doc.querySelector('.perk-pending-summary').textContent.includes('2 perk'),id+': missing pending choices');
+    for(const tier of [5,10]){
+      const options=data.SKILL_PERKS[root.id][tier],pick=options[tier===5?1:2],before=p.skillPts;
+      const rankBefore=p.skills[root.id];doc.querySelector(`[data-perk="${pick.id}"]`).click();
+      ok(!p.skillPerks[root.id]?.[tier]&&p.skillPts===before,id+': inspection committed a perk');
+      ok(doc.querySelector(`[data-perk-tier="${tier}"] .perk-description`).textContent===pick.description,id+': wrong perk preview');
+      doc.querySelector(`[data-perk-tier="${tier}"] .perk-choose`).click();
+      ok(p.skillPerks[root.id][tier]===pick.id&&p.skillPts===before&&p.skills[root.id]===rankBefore,id+': perk selection cost points or changed rank');
+      ok(doc.querySelector(`[data-perk-tier="${tier}"] .perk-choose`).disabled,id+': selected perk can be replaced');
+      ok(doc.activeElement.dataset.perk===pick.id,id+': perk selection lost keyboard focus');
+    }
+    const selected=JSON.stringify(p.skillPerks);game.saveGame();
+    const slot=game.listSaves().find(s=>s.classId===id).slot;
+    await game.loadGame(slot);ok(JSON.stringify(game.state.player.skillPerks)===selected,id+': load lost perks');
+    const old=JSON.parse(win.localStorage.getItem(slot));delete old.skillPerks;win.localStorage.setItem(slot,JSON.stringify(old));
+    await game.loadGame(slot);ok(!Object.keys(game.state.player.skillPerks).length,id+': old save selected defaults');
+    ok(win.eval('SkillPerks').pending(game.state.player,root.id)===2,id+': old save did not grant banked choices');
+    game.doRespec();ok(!Object.keys(game.state.player.skills).length&&!Object.keys(game.state.player.skillPerks).length,id+': reset left ranks or choices');ui.closeAll();
+    out.textContent=`Checked ${p.cls.name}…`;
+  }
+  const p=await hero('emberwitch');p.skills.emberwitch_0_0=10;p.skills.emberwitch_0_1=5;p.skills.emberwitch_0_2=1;p.skillPts=4;
+  p.quickSlots=['emberwitch_0_0','emberwitch_0_1',null,null];p.skillL='basic';p.skillR='emberwitch_0_0';p.xp=Math.floor(data.xpForLevel(p.lvl)*.63);p.computeStats();ui.refreshHUD();ui.renderIfOpen('skills');
+  for(const width of ['100%','900px','680px']){
+    frame.style.width=width;await wait();const panel=doc.querySelector('#panelLeft'),hud=doc.querySelector('#hudmid');
+    ok(panel.getBoundingClientRect().right<=win.innerWidth+1,width+': skill panel outside viewport');
+    ok(hud.scrollWidth<=hud.clientWidth+2,width+': HUD content overflow');
+    ok(doc.querySelector('#quickbar').getBoundingClientRect().width>0,width+': quick skills hidden');
+    for(const node of doc.querySelectorAll('.talent-node')){const r=node.getBoundingClientRect(),area=doc.querySelector('#treeArea').getBoundingClientRect();ok(r.left>=area.left-1&&r.right<=area.right+1,width+': node clips outside tree');}
+    for(const option of doc.querySelectorAll('.perk-option,.perk-choose'))ok(option.scrollWidth<=option.clientWidth+2,width+': perk text overflows');
+  }
+  frame.style.width='100%';await wait();
+  doc.querySelector('#skillR').click();await wait();const picker=doc.querySelector('#skillPick'),pr=picker.getBoundingClientRect();
+  ok(!picker.classList.contains('hidden')&&pr.top>=0&&pr.right<=win.innerWidth,'skill picker clips outside viewport');
+  ok([...picker.querySelectorAll('.pickopt')].every(n=>n.textContent.trim()),'picker contains unlabeled skills');
+  picker.querySelector('.pickopt').click();ok(p.skillR==='basic','picker did not assign selected skill');
+  ok(doc.activeElement===doc.querySelector('#skillR'),'picker did not restore HUD focus');
+  ok(doc.querySelector('#skillR .skill-emblem').dataset.motif.startsWith('wand/'),'basic attack does not reflect the equipped weapon');
+  let worldKey=false;const detect=()=>worldKey=true;win.addEventListener('keydown',detect);
+  doc.querySelector('#skillR').dispatchEvent(new win.KeyboardEvent('keydown',{key:' ',bubbles:true,cancelable:true}));win.removeEventListener('keydown',detect);
+  ok(!worldKey,'Space on a focused UI button leaked into world controls');
+  p.skillR='emberwitch_0_0';ui.refreshHUD();
+  doc.querySelector('#skillPick').classList.add('hidden');ui.hideTooltip?.();
+  doc.querySelector('.talent-node[data-skill="emberwitch_0_1"]').click();select.value='emberwitch';select.disabled=false;
+  select.addEventListener('change',async()=>{select.disabled=true;await hero(select.value);select.disabled=false;});
+  document.getElementById('sizeSelect').addEventListener('change',e=>{frame.style.width=e.target.value;});
+  ok(!doc.querySelector('#appFatal'),'game raised a runtime error');
+  out.textContent=`PASS: ${checks} checks across all 5 classes, 15 disciplines and 107 skills. All 642 perk choices, inspection, free selection, rank gates, pending badges, save/load, old saves, talent reset, hotkeys, cooldowns, keyboard focus and responsive layouts verified. Saves isolated in memory.`;
+  document.body.dataset.testStatus='passed';
+}catch(error){out.textContent='FAIL: '+error.stack;document.body.dataset.testStatus='failed';}
+</script></html>

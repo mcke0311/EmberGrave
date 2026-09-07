@@ -1,0 +1,4010 @@
+{
+  "classes": {
+    "emberwitch": {
+      "baseSourceScale": 1.15384615,
+      "cells": [
+        {
+          "alphaBBox": [
+            60,
+            14,
+            72,
+            170
+          ],
+          "direction": "E",
+          "index": 0,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            61,
+            14,
+            69,
+            170
+          ],
+          "direction": "SE",
+          "index": 1,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            60,
+            17,
+            72,
+            167
+          ],
+          "direction": "S",
+          "index": 2,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            61,
+            13,
+            69,
+            171
+          ],
+          "direction": "SW",
+          "index": 3,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            66,
+            14,
+            60,
+            170
+          ],
+          "direction": "W",
+          "index": 4,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            65,
+            13,
+            61,
+            171
+          ],
+          "direction": "NW",
+          "index": 5,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            60,
+            14,
+            72,
+            170
+          ],
+          "direction": "N",
+          "index": 6,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            63,
+            16,
+            65,
+            168
+          ],
+          "direction": "NE",
+          "index": 7,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            55,
+            13,
+            81,
+            171
+          ],
+          "direction": "E",
+          "index": 8,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            58,
+            13,
+            76,
+            171
+          ],
+          "direction": "SE",
+          "index": 9,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            59,
+            18,
+            74,
+            166
+          ],
+          "direction": "S",
+          "index": 10,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            56,
+            13,
+            80,
+            171
+          ],
+          "direction": "SW",
+          "index": 11,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            58,
+            16,
+            76,
+            168
+          ],
+          "direction": "W",
+          "index": 12,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            59,
+            12,
+            73,
+            172
+          ],
+          "direction": "NW",
+          "index": 13,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            61,
+            14,
+            70,
+            170
+          ],
+          "direction": "N",
+          "index": 14,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            58,
+            14,
+            76,
+            170
+          ],
+          "direction": "NE",
+          "index": 15,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            56,
+            19,
+            80,
+            165
+          ],
+          "direction": "E",
+          "index": 16,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            55,
+            18,
+            82,
+            166
+          ],
+          "direction": "SE",
+          "index": 17,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            58,
+            20,
+            75,
+            164
+          ],
+          "direction": "S",
+          "index": 18,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            55,
+            18,
+            82,
+            166
+          ],
+          "direction": "SW",
+          "index": 19,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            58,
+            19,
+            76,
+            165
+          ],
+          "direction": "W",
+          "index": 20,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            63,
+            16,
+            65,
+            168
+          ],
+          "direction": "NW",
+          "index": 21,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            60,
+            17,
+            72,
+            167
+          ],
+          "direction": "N",
+          "index": 22,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            66,
+            17,
+            59,
+            167
+          ],
+          "direction": "NE",
+          "index": 23,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            52,
+            18,
+            87,
+            166
+          ],
+          "direction": "E",
+          "index": 24,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            55,
+            24,
+            82,
+            160
+          ],
+          "direction": "SE",
+          "index": 25,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            59,
+            12,
+            73,
+            172
+          ],
+          "direction": "S",
+          "index": 26,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            56,
+            24,
+            80,
+            160
+          ],
+          "direction": "SW",
+          "index": 27,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            63,
+            18,
+            66,
+            166
+          ],
+          "direction": "W",
+          "index": 28,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            64,
+            4,
+            63,
+            180
+          ],
+          "direction": "NW",
+          "index": 29,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            66,
+            11,
+            60,
+            173
+          ],
+          "direction": "N",
+          "index": 30,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            60,
+            16,
+            72,
+            168
+          ],
+          "direction": "NE",
+          "index": 31,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            52,
+            18,
+            87,
+            166
+          ],
+          "direction": "E",
+          "index": 32,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            48,
+            20,
+            96,
+            164
+          ],
+          "direction": "SE",
+          "index": 33,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            59,
+            25,
+            73,
+            159
+          ],
+          "direction": "S",
+          "index": 34,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            44,
+            21,
+            103,
+            163
+          ],
+          "direction": "SW",
+          "index": 35,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            48,
+            28,
+            95,
+            156
+          ],
+          "direction": "W",
+          "index": 36,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            48,
+            25,
+            95,
+            159
+          ],
+          "direction": "NW",
+          "index": 37,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            72,
+            24,
+            48,
+            160
+          ],
+          "direction": "N",
+          "index": 38,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            47,
+            22,
+            97,
+            162
+          ],
+          "direction": "NE",
+          "index": 39,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            45,
+            10,
+            101,
+            174
+          ],
+          "direction": "E",
+          "index": 40,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            55,
+            13,
+            82,
+            171
+          ],
+          "direction": "SE",
+          "index": 41,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            47,
+            14,
+            98,
+            170
+          ],
+          "direction": "S",
+          "index": 42,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            49,
+            13,
+            93,
+            171
+          ],
+          "direction": "SW",
+          "index": 43,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            52,
+            17,
+            87,
+            167
+          ],
+          "direction": "W",
+          "index": 44,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            52,
+            17,
+            88,
+            167
+          ],
+          "direction": "NW",
+          "index": 45,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            47,
+            15,
+            98,
+            169
+          ],
+          "direction": "N",
+          "index": 46,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            51,
+            17,
+            90,
+            167
+          ],
+          "direction": "NE",
+          "index": 47,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            50,
+            71,
+            92,
+            113
+          ],
+          "direction": "E",
+          "index": 48,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            53,
+            68,
+            86,
+            116
+          ],
+          "direction": "SE",
+          "index": 49,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            56,
+            69,
+            80,
+            115
+          ],
+          "direction": "S",
+          "index": 50,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            50,
+            70,
+            91,
+            114
+          ],
+          "direction": "SW",
+          "index": 51,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            48,
+            68,
+            96,
+            116
+          ],
+          "direction": "W",
+          "index": 52,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            49,
+            64,
+            93,
+            120
+          ],
+          "direction": "NW",
+          "index": 53,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            60,
+            63,
+            72,
+            121
+          ],
+          "direction": "N",
+          "index": 54,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            54,
+            66,
+            84,
+            118
+          ],
+          "direction": "NE",
+          "index": 55,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            22,
+            68,
+            148,
+            116
+          ],
+          "direction": "E",
+          "index": 56,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            27,
+            60,
+            138,
+            124
+          ],
+          "direction": "SE",
+          "index": 57,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            30,
+            61,
+            131,
+            123
+          ],
+          "direction": "S",
+          "index": 58,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            23,
+            68,
+            145,
+            116
+          ],
+          "direction": "SW",
+          "index": 59,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            26,
+            81,
+            140,
+            103
+          ],
+          "direction": "W",
+          "index": 60,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            30,
+            69,
+            131,
+            115
+          ],
+          "direction": "NW",
+          "index": 61,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            34,
+            75,
+            123,
+            109
+          ],
+          "direction": "N",
+          "index": 62,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            24,
+            68,
+            143,
+            116
+          ],
+          "direction": "NE",
+          "index": 63,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            33,
+            82,
+            125,
+            102
+          ],
+          "direction": "E",
+          "index": 64,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            33,
+            86,
+            126,
+            98
+          ],
+          "direction": "SE",
+          "index": 65,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            44,
+            84,
+            103,
+            100
+          ],
+          "direction": "S",
+          "index": 66,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            36,
+            85,
+            119,
+            99
+          ],
+          "direction": "SW",
+          "index": 67,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            39,
+            84,
+            114,
+            100
+          ],
+          "direction": "W",
+          "index": 68,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            38,
+            112,
+            115,
+            72
+          ],
+          "direction": "NW",
+          "index": 69,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            47,
+            109,
+            97,
+            75
+          ],
+          "direction": "N",
+          "index": 70,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            36,
+            102,
+            119,
+            82
+          ],
+          "direction": "NE",
+          "index": 71,
+          "pose": "dead"
+        }
+      ],
+      "finalRigScale": 1.0,
+      "output": "assets/sprites_src/player_rig/emberwitch/body.png",
+      "scaleMethod": "class-shared-final-aligned",
+      "source": "assets/sprites_src/players/emberwitch_undergear_v2_alpha.png"
+    },
+    "gravebinder": {
+      "baseSourceScale": 1.125,
+      "cells": [
+        {
+          "alphaBBox": [
+            62,
+            19,
+            68,
+            165
+          ],
+          "direction": "E",
+          "index": 0,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            61,
+            18,
+            69,
+            166
+          ],
+          "direction": "SE",
+          "index": 1,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            58,
+            20,
+            76,
+            164
+          ],
+          "direction": "S",
+          "index": 2,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            59,
+            19,
+            73,
+            165
+          ],
+          "direction": "SW",
+          "index": 3,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            69,
+            13,
+            53,
+            171
+          ],
+          "direction": "W",
+          "index": 4,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            68,
+            14,
+            56,
+            170
+          ],
+          "direction": "NW",
+          "index": 5,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            58,
+            18,
+            76,
+            166
+          ],
+          "direction": "N",
+          "index": 6,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            68,
+            15,
+            56,
+            169
+          ],
+          "direction": "NE",
+          "index": 7,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            54,
+            15,
+            83,
+            169
+          ],
+          "direction": "E",
+          "index": 8,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            55,
+            16,
+            82,
+            168
+          ],
+          "direction": "SE",
+          "index": 9,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            59,
+            16,
+            74,
+            168
+          ],
+          "direction": "S",
+          "index": 10,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            56,
+            16,
+            80,
+            168
+          ],
+          "direction": "SW",
+          "index": 11,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            54,
+            15,
+            83,
+            169
+          ],
+          "direction": "W",
+          "index": 12,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            56,
+            15,
+            80,
+            169
+          ],
+          "direction": "NW",
+          "index": 13,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            58,
+            8,
+            75,
+            176
+          ],
+          "direction": "N",
+          "index": 14,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            59,
+            12,
+            73,
+            172
+          ],
+          "direction": "NE",
+          "index": 15,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            55,
+            18,
+            82,
+            166
+          ],
+          "direction": "E",
+          "index": 16,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            54,
+            20,
+            83,
+            164
+          ],
+          "direction": "SE",
+          "index": 17,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            58,
+            18,
+            75,
+            166
+          ],
+          "direction": "S",
+          "index": 18,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            55,
+            19,
+            82,
+            165
+          ],
+          "direction": "SW",
+          "index": 19,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            50,
+            19,
+            92,
+            165
+          ],
+          "direction": "W",
+          "index": 20,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            59,
+            15,
+            74,
+            169
+          ],
+          "direction": "NW",
+          "index": 21,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            58,
+            11,
+            75,
+            173
+          ],
+          "direction": "N",
+          "index": 22,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            60,
+            15,
+            72,
+            169
+          ],
+          "direction": "NE",
+          "index": 23,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            52,
+            18,
+            87,
+            166
+          ],
+          "direction": "E",
+          "index": 24,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            54,
+            21,
+            84,
+            163
+          ],
+          "direction": "SE",
+          "index": 25,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            59,
+            8,
+            74,
+            176
+          ],
+          "direction": "S",
+          "index": 26,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            57,
+            15,
+            78,
+            169
+          ],
+          "direction": "SW",
+          "index": 27,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            60,
+            24,
+            72,
+            160
+          ],
+          "direction": "W",
+          "index": 28,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            63,
+            4,
+            66,
+            180
+          ],
+          "direction": "NW",
+          "index": 29,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            64,
+            14,
+            63,
+            170
+          ],
+          "direction": "N",
+          "index": 30,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            60,
+            18,
+            72,
+            166
+          ],
+          "direction": "NE",
+          "index": 31,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            51,
+            22,
+            90,
+            162
+          ],
+          "direction": "E",
+          "index": 32,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            45,
+            26,
+            101,
+            158
+          ],
+          "direction": "SE",
+          "index": 33,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            56,
+            28,
+            80,
+            156
+          ],
+          "direction": "S",
+          "index": 34,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            44,
+            25,
+            104,
+            159
+          ],
+          "direction": "SW",
+          "index": 35,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            46,
+            30,
+            99,
+            154
+          ],
+          "direction": "W",
+          "index": 36,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            47,
+            26,
+            98,
+            158
+          ],
+          "direction": "NW",
+          "index": 37,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            69,
+            25,
+            54,
+            159
+          ],
+          "direction": "N",
+          "index": 38,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            47,
+            26,
+            98,
+            158
+          ],
+          "direction": "NE",
+          "index": 39,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            48,
+            17,
+            95,
+            167
+          ],
+          "direction": "E",
+          "index": 40,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            39,
+            18,
+            113,
+            166
+          ],
+          "direction": "SE",
+          "index": 41,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            36,
+            17,
+            120,
+            167
+          ],
+          "direction": "S",
+          "index": 42,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            52,
+            17,
+            87,
+            167
+          ],
+          "direction": "SW",
+          "index": 43,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            42,
+            17,
+            108,
+            167
+          ],
+          "direction": "W",
+          "index": 44,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            42,
+            19,
+            108,
+            165
+          ],
+          "direction": "NW",
+          "index": 45,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            49,
+            17,
+            94,
+            167
+          ],
+          "direction": "N",
+          "index": 46,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            48,
+            16,
+            95,
+            168
+          ],
+          "direction": "NE",
+          "index": 47,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            50,
+            68,
+            91,
+            116
+          ],
+          "direction": "E",
+          "index": 48,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            49,
+            81,
+            94,
+            103
+          ],
+          "direction": "SE",
+          "index": 49,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            49,
+            78,
+            93,
+            106
+          ],
+          "direction": "S",
+          "index": 50,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            43,
+            80,
+            106,
+            104
+          ],
+          "direction": "SW",
+          "index": 51,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            47,
+            76,
+            97,
+            108
+          ],
+          "direction": "W",
+          "index": 52,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            48,
+            76,
+            95,
+            108
+          ],
+          "direction": "NW",
+          "index": 53,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            49,
+            80,
+            93,
+            104
+          ],
+          "direction": "N",
+          "index": 54,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            50,
+            73,
+            91,
+            111
+          ],
+          "direction": "NE",
+          "index": 55,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            42,
+            72,
+            108,
+            112
+          ],
+          "direction": "E",
+          "index": 56,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            42,
+            73,
+            107,
+            111
+          ],
+          "direction": "SE",
+          "index": 57,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            48,
+            71,
+            95,
+            113
+          ],
+          "direction": "S",
+          "index": 58,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            48,
+            70,
+            96,
+            114
+          ],
+          "direction": "SW",
+          "index": 59,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            45,
+            69,
+            102,
+            115
+          ],
+          "direction": "W",
+          "index": 60,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            51,
+            65,
+            89,
+            119
+          ],
+          "direction": "NW",
+          "index": 61,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            43,
+            60,
+            106,
+            124
+          ],
+          "direction": "N",
+          "index": 62,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            43,
+            73,
+            106,
+            111
+          ],
+          "direction": "NE",
+          "index": 63,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            35,
+            79,
+            122,
+            105
+          ],
+          "direction": "E",
+          "index": 64,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            34,
+            85,
+            123,
+            99
+          ],
+          "direction": "SE",
+          "index": 65,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            41,
+            82,
+            110,
+            102
+          ],
+          "direction": "S",
+          "index": 66,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            36,
+            83,
+            119,
+            101
+          ],
+          "direction": "SW",
+          "index": 67,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            41,
+            83,
+            109,
+            101
+          ],
+          "direction": "W",
+          "index": 68,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            40,
+            108,
+            111,
+            76
+          ],
+          "direction": "NW",
+          "index": 69,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            47,
+            101,
+            98,
+            83
+          ],
+          "direction": "N",
+          "index": 70,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            36,
+            98,
+            120,
+            86
+          ],
+          "direction": "NE",
+          "index": 71,
+          "pose": "dead"
+        }
+      ],
+      "finalRigScale": 1.0,
+      "output": "assets/sprites_src/player_rig/gravebinder/body.png",
+      "scaleMethod": "class-shared-final-aligned",
+      "source": "assets/sprites_src/players/gravebinder_undergear_v2_alpha.png"
+    },
+    "vanguard": {
+      "baseSourceScale": 1.2,
+      "cells": [
+        {
+          "alphaBBox": [
+            59,
+            8,
+            73,
+            176
+          ],
+          "direction": "E",
+          "index": 0,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            58,
+            8,
+            76,
+            176
+          ],
+          "direction": "SE",
+          "index": 1,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            56,
+            8,
+            80,
+            176
+          ],
+          "direction": "S",
+          "index": 2,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            57,
+            8,
+            77,
+            176
+          ],
+          "direction": "SW",
+          "index": 3,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            68,
+            9,
+            55,
+            175
+          ],
+          "direction": "W",
+          "index": 4,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            59,
+            9,
+            74,
+            175
+          ],
+          "direction": "NW",
+          "index": 5,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            55,
+            9,
+            82,
+            175
+          ],
+          "direction": "N",
+          "index": 6,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            62,
+            6,
+            67,
+            178
+          ],
+          "direction": "NE",
+          "index": 7,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            54,
+            6,
+            84,
+            178
+          ],
+          "direction": "E",
+          "index": 8,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            50,
+            6,
+            91,
+            178
+          ],
+          "direction": "SE",
+          "index": 9,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            54,
+            6,
+            84,
+            178
+          ],
+          "direction": "S",
+          "index": 10,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            51,
+            6,
+            90,
+            178
+          ],
+          "direction": "SW",
+          "index": 11,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            48,
+            6,
+            96,
+            178
+          ],
+          "direction": "W",
+          "index": 12,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            52,
+            4,
+            88,
+            180
+          ],
+          "direction": "NW",
+          "index": 13,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            55,
+            5,
+            82,
+            179
+          ],
+          "direction": "N",
+          "index": 14,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            56,
+            5,
+            79,
+            179
+          ],
+          "direction": "NE",
+          "index": 15,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            52,
+            14,
+            88,
+            170
+          ],
+          "direction": "E",
+          "index": 16,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            49,
+            11,
+            94,
+            173
+          ],
+          "direction": "SE",
+          "index": 17,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            55,
+            10,
+            82,
+            174
+          ],
+          "direction": "S",
+          "index": 18,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            50,
+            11,
+            91,
+            173
+          ],
+          "direction": "SW",
+          "index": 19,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            45,
+            16,
+            101,
+            168
+          ],
+          "direction": "W",
+          "index": 20,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            51,
+            12,
+            90,
+            172
+          ],
+          "direction": "NW",
+          "index": 21,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            55,
+            10,
+            82,
+            174
+          ],
+          "direction": "N",
+          "index": 22,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            55,
+            12,
+            82,
+            172
+          ],
+          "direction": "NE",
+          "index": 23,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            51,
+            6,
+            90,
+            178
+          ],
+          "direction": "E",
+          "index": 24,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            51,
+            15,
+            89,
+            169
+          ],
+          "direction": "SE",
+          "index": 25,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            54,
+            5,
+            84,
+            179
+          ],
+          "direction": "S",
+          "index": 26,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            53,
+            16,
+            86,
+            168
+          ],
+          "direction": "SW",
+          "index": 27,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            63,
+            20,
+            65,
+            164
+          ],
+          "direction": "W",
+          "index": 28,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            57,
+            11,
+            78,
+            173
+          ],
+          "direction": "NW",
+          "index": 29,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            60,
+            11,
+            71,
+            173
+          ],
+          "direction": "N",
+          "index": 30,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            58,
+            12,
+            76,
+            172
+          ],
+          "direction": "NE",
+          "index": 31,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            49,
+            17,
+            94,
+            167
+          ],
+          "direction": "E",
+          "index": 32,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            42,
+            22,
+            108,
+            162
+          ],
+          "direction": "SE",
+          "index": 33,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            54,
+            24,
+            83,
+            160
+          ],
+          "direction": "S",
+          "index": 34,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            39,
+            22,
+            113,
+            162
+          ],
+          "direction": "SW",
+          "index": 35,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            43,
+            28,
+            106,
+            156
+          ],
+          "direction": "W",
+          "index": 36,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            45,
+            24,
+            102,
+            160
+          ],
+          "direction": "NW",
+          "index": 37,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            62,
+            29,
+            67,
+            155
+          ],
+          "direction": "N",
+          "index": 38,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            41,
+            22,
+            109,
+            162
+          ],
+          "direction": "NE",
+          "index": 39,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            34,
+            7,
+            123,
+            177
+          ],
+          "direction": "E",
+          "index": 40,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            34,
+            6,
+            123,
+            178
+          ],
+          "direction": "SE",
+          "index": 41,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            36,
+            9,
+            119,
+            175
+          ],
+          "direction": "S",
+          "index": 42,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            46,
+            4,
+            99,
+            180
+          ],
+          "direction": "SW",
+          "index": 43,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            41,
+            6,
+            109,
+            178
+          ],
+          "direction": "W",
+          "index": 44,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            37,
+            11,
+            118,
+            173
+          ],
+          "direction": "NW",
+          "index": 45,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            38,
+            8,
+            116,
+            176
+          ],
+          "direction": "N",
+          "index": 46,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            43,
+            9,
+            106,
+            175
+          ],
+          "direction": "NE",
+          "index": 47,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            33,
+            47,
+            125,
+            137
+          ],
+          "direction": "E",
+          "index": 48,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            39,
+            53,
+            113,
+            131
+          ],
+          "direction": "SE",
+          "index": 49,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            39,
+            64,
+            113,
+            120
+          ],
+          "direction": "S",
+          "index": 50,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            43,
+            61,
+            106,
+            123
+          ],
+          "direction": "SW",
+          "index": 51,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            36,
+            47,
+            120,
+            137
+          ],
+          "direction": "W",
+          "index": 52,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            36,
+            51,
+            120,
+            133
+          ],
+          "direction": "NW",
+          "index": 53,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            32,
+            61,
+            127,
+            123
+          ],
+          "direction": "N",
+          "index": 54,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            34,
+            58,
+            123,
+            126
+          ],
+          "direction": "NE",
+          "index": 55,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            34,
+            54,
+            123,
+            130
+          ],
+          "direction": "E",
+          "index": 56,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            29,
+            57,
+            133,
+            127
+          ],
+          "direction": "SE",
+          "index": 57,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            33,
+            56,
+            126,
+            128
+          ],
+          "direction": "S",
+          "index": 58,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            43,
+            51,
+            106,
+            133
+          ],
+          "direction": "SW",
+          "index": 59,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            44,
+            53,
+            104,
+            131
+          ],
+          "direction": "W",
+          "index": 60,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            35,
+            57,
+            122,
+            127
+          ],
+          "direction": "NW",
+          "index": 61,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            33,
+            65,
+            125,
+            119
+          ],
+          "direction": "N",
+          "index": 62,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            28,
+            68,
+            135,
+            116
+          ],
+          "direction": "NE",
+          "index": 63,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            32,
+            72,
+            127,
+            112
+          ],
+          "direction": "E",
+          "index": 64,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            32,
+            77,
+            128,
+            107
+          ],
+          "direction": "SE",
+          "index": 65,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            40,
+            76,
+            112,
+            108
+          ],
+          "direction": "S",
+          "index": 66,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            33,
+            77,
+            125,
+            107
+          ],
+          "direction": "SW",
+          "index": 67,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            38,
+            76,
+            116,
+            108
+          ],
+          "direction": "W",
+          "index": 68,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            36,
+            108,
+            119,
+            76
+          ],
+          "direction": "NW",
+          "index": 69,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            44,
+            100,
+            104,
+            84
+          ],
+          "direction": "N",
+          "index": 70,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            33,
+            94,
+            125,
+            90
+          ],
+          "direction": "NE",
+          "index": 71,
+          "pose": "dead"
+        }
+      ],
+      "finalRigScale": 1.0,
+      "output": "assets/sprites_src/player_rig/vanguard/body.png",
+      "scaleMethod": "class-shared-final-aligned",
+      "source": "assets/sprites_src/players/vanguard_undergear_v2_alpha.png"
+    },
+    "veilranger": {
+      "baseSourceScale": 1.16883117,
+      "cells": [
+        {
+          "alphaBBox": [
+            63,
+            9,
+            65,
+            175
+          ],
+          "direction": "E",
+          "index": 0,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            62,
+            8,
+            67,
+            176
+          ],
+          "direction": "SE",
+          "index": 1,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            62,
+            9,
+            67,
+            175
+          ],
+          "direction": "S",
+          "index": 2,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            61,
+            6,
+            69,
+            178
+          ],
+          "direction": "SW",
+          "index": 3,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            71,
+            8,
+            50,
+            176
+          ],
+          "direction": "W",
+          "index": 4,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            64,
+            6,
+            63,
+            178
+          ],
+          "direction": "NW",
+          "index": 5,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            60,
+            8,
+            71,
+            176
+          ],
+          "direction": "N",
+          "index": 6,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            67,
+            6,
+            58,
+            178
+          ],
+          "direction": "NE",
+          "index": 7,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            59,
+            10,
+            74,
+            174
+          ],
+          "direction": "E",
+          "index": 8,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            60,
+            9,
+            72,
+            175
+          ],
+          "direction": "SE",
+          "index": 9,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            62,
+            10,
+            67,
+            174
+          ],
+          "direction": "S",
+          "index": 10,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            58,
+            9,
+            75,
+            175
+          ],
+          "direction": "SW",
+          "index": 11,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            53,
+            9,
+            85,
+            175
+          ],
+          "direction": "W",
+          "index": 12,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            57,
+            6,
+            78,
+            178
+          ],
+          "direction": "NW",
+          "index": 13,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            60,
+            8,
+            71,
+            176
+          ],
+          "direction": "N",
+          "index": 14,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            61,
+            6,
+            70,
+            178
+          ],
+          "direction": "NE",
+          "index": 15,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            58,
+            16,
+            75,
+            168
+          ],
+          "direction": "E",
+          "index": 16,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            57,
+            13,
+            77,
+            171
+          ],
+          "direction": "SE",
+          "index": 17,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            62,
+            15,
+            67,
+            169
+          ],
+          "direction": "S",
+          "index": 18,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            57,
+            12,
+            78,
+            172
+          ],
+          "direction": "SW",
+          "index": 19,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            53,
+            16,
+            85,
+            168
+          ],
+          "direction": "W",
+          "index": 20,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            55,
+            10,
+            82,
+            174
+          ],
+          "direction": "NW",
+          "index": 21,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            61,
+            10,
+            70,
+            174
+          ],
+          "direction": "N",
+          "index": 22,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            61,
+            11,
+            70,
+            173
+          ],
+          "direction": "NE",
+          "index": 23,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            54,
+            9,
+            84,
+            175
+          ],
+          "direction": "E",
+          "index": 24,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            57,
+            15,
+            78,
+            169
+          ],
+          "direction": "SE",
+          "index": 25,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            60,
+            4,
+            72,
+            180
+          ],
+          "direction": "S",
+          "index": 26,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            58,
+            13,
+            75,
+            171
+          ],
+          "direction": "SW",
+          "index": 27,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            67,
+            19,
+            57,
+            165
+          ],
+          "direction": "W",
+          "index": 28,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            60,
+            4,
+            71,
+            180
+          ],
+          "direction": "NW",
+          "index": 29,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            65,
+            5,
+            62,
+            179
+          ],
+          "direction": "N",
+          "index": 30,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            61,
+            6,
+            70,
+            178
+          ],
+          "direction": "NE",
+          "index": 31,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            54,
+            13,
+            84,
+            171
+          ],
+          "direction": "E",
+          "index": 32,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            50,
+            17,
+            92,
+            167
+          ],
+          "direction": "SE",
+          "index": 33,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            60,
+            19,
+            72,
+            165
+          ],
+          "direction": "S",
+          "index": 34,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            49,
+            16,
+            94,
+            168
+          ],
+          "direction": "SW",
+          "index": 35,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            48,
+            19,
+            96,
+            165
+          ],
+          "direction": "W",
+          "index": 36,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            50,
+            18,
+            91,
+            166
+          ],
+          "direction": "NW",
+          "index": 37,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            66,
+            18,
+            60,
+            166
+          ],
+          "direction": "N",
+          "index": 38,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            48,
+            13,
+            96,
+            171
+          ],
+          "direction": "NE",
+          "index": 39,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            48,
+            25,
+            95,
+            159
+          ],
+          "direction": "E",
+          "index": 40,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            44,
+            28,
+            104,
+            156
+          ],
+          "direction": "SE",
+          "index": 41,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            45,
+            25,
+            102,
+            159
+          ],
+          "direction": "S",
+          "index": 42,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            48,
+            26,
+            96,
+            158
+          ],
+          "direction": "SW",
+          "index": 43,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            51,
+            23,
+            90,
+            161
+          ],
+          "direction": "W",
+          "index": 44,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            42,
+            26,
+            108,
+            158
+          ],
+          "direction": "NW",
+          "index": 45,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            41,
+            26,
+            109,
+            158
+          ],
+          "direction": "N",
+          "index": 46,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            48,
+            25,
+            95,
+            159
+          ],
+          "direction": "NE",
+          "index": 47,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            48,
+            59,
+            95,
+            125
+          ],
+          "direction": "E",
+          "index": 48,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            51,
+            61,
+            89,
+            123
+          ],
+          "direction": "SE",
+          "index": 49,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            50,
+            61,
+            92,
+            123
+          ],
+          "direction": "S",
+          "index": 50,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            52,
+            61,
+            88,
+            123
+          ],
+          "direction": "SW",
+          "index": 51,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            54,
+            52,
+            83,
+            132
+          ],
+          "direction": "W",
+          "index": 52,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            54,
+            52,
+            84,
+            132
+          ],
+          "direction": "NW",
+          "index": 53,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            54,
+            50,
+            84,
+            134
+          ],
+          "direction": "N",
+          "index": 54,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            48,
+            59,
+            95,
+            125
+          ],
+          "direction": "NE",
+          "index": 55,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            32,
+            35,
+            128,
+            149
+          ],
+          "direction": "E",
+          "index": 56,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            35,
+            34,
+            122,
+            150
+          ],
+          "direction": "SE",
+          "index": 57,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            45,
+            34,
+            101,
+            150
+          ],
+          "direction": "S",
+          "index": 58,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            35,
+            39,
+            121,
+            145
+          ],
+          "direction": "SW",
+          "index": 59,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            40,
+            47,
+            111,
+            137
+          ],
+          "direction": "W",
+          "index": 60,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            49,
+            40,
+            94,
+            144
+          ],
+          "direction": "NW",
+          "index": 61,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            43,
+            44,
+            106,
+            140
+          ],
+          "direction": "N",
+          "index": 62,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            38,
+            36,
+            115,
+            148
+          ],
+          "direction": "NE",
+          "index": 63,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            33,
+            78,
+            125,
+            106
+          ],
+          "direction": "E",
+          "index": 64,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            33,
+            80,
+            125,
+            104
+          ],
+          "direction": "SE",
+          "index": 65,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            47,
+            76,
+            98,
+            108
+          ],
+          "direction": "S",
+          "index": 66,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            37,
+            80,
+            117,
+            104
+          ],
+          "direction": "SW",
+          "index": 67,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            40,
+            80,
+            111,
+            104
+          ],
+          "direction": "W",
+          "index": 68,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            38,
+            109,
+            116,
+            75
+          ],
+          "direction": "NW",
+          "index": 69,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            48,
+            102,
+            96,
+            82
+          ],
+          "direction": "N",
+          "index": 70,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            36,
+            96,
+            119,
+            88
+          ],
+          "direction": "NE",
+          "index": 71,
+          "pose": "dead"
+        }
+      ],
+      "finalRigScale": 1.0,
+      "output": "assets/sprites_src/player_rig/veilranger/body.png",
+      "scaleMethod": "class-shared-final-aligned",
+      "source": "assets/sprites_src/players/veilranger_undergear_v2_alpha.png"
+    },
+    "wildkeeper": {
+      "baseSourceScale": 1.14649682,
+      "cells": [
+        {
+          "alphaBBox": [
+            58,
+            17,
+            75,
+            167
+          ],
+          "direction": "E",
+          "index": 0,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            59,
+            15,
+            73,
+            169
+          ],
+          "direction": "SE",
+          "index": 1,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            58,
+            15,
+            75,
+            169
+          ],
+          "direction": "S",
+          "index": 2,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            60,
+            15,
+            71,
+            169
+          ],
+          "direction": "SW",
+          "index": 3,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            68,
+            17,
+            56,
+            167
+          ],
+          "direction": "W",
+          "index": 4,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            63,
+            15,
+            66,
+            169
+          ],
+          "direction": "NW",
+          "index": 5,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            56,
+            14,
+            79,
+            170
+          ],
+          "direction": "N",
+          "index": 6,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            65,
+            14,
+            61,
+            170
+          ],
+          "direction": "NE",
+          "index": 7,
+          "pose": "idle"
+        },
+        {
+          "alphaBBox": [
+            55,
+            10,
+            81,
+            174
+          ],
+          "direction": "E",
+          "index": 8,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            52,
+            12,
+            87,
+            172
+          ],
+          "direction": "SE",
+          "index": 9,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            57,
+            10,
+            78,
+            174
+          ],
+          "direction": "S",
+          "index": 10,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            52,
+            12,
+            87,
+            172
+          ],
+          "direction": "SW",
+          "index": 11,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            49,
+            11,
+            94,
+            173
+          ],
+          "direction": "W",
+          "index": 12,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            54,
+            10,
+            84,
+            174
+          ],
+          "direction": "NW",
+          "index": 13,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            54,
+            9,
+            83,
+            175
+          ],
+          "direction": "N",
+          "index": 14,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            57,
+            10,
+            77,
+            174
+          ],
+          "direction": "NE",
+          "index": 15,
+          "pose": "walkA"
+        },
+        {
+          "alphaBBox": [
+            53,
+            12,
+            85,
+            172
+          ],
+          "direction": "E",
+          "index": 16,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            50,
+            11,
+            91,
+            173
+          ],
+          "direction": "SE",
+          "index": 17,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            56,
+            9,
+            79,
+            175
+          ],
+          "direction": "S",
+          "index": 18,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            51,
+            12,
+            89,
+            172
+          ],
+          "direction": "SW",
+          "index": 19,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            48,
+            17,
+            95,
+            167
+          ],
+          "direction": "W",
+          "index": 20,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            51,
+            10,
+            89,
+            174
+          ],
+          "direction": "NW",
+          "index": 21,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            54,
+            11,
+            83,
+            173
+          ],
+          "direction": "N",
+          "index": 22,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            55,
+            10,
+            81,
+            174
+          ],
+          "direction": "NE",
+          "index": 23,
+          "pose": "walkB"
+        },
+        {
+          "alphaBBox": [
+            50,
+            4,
+            91,
+            180
+          ],
+          "direction": "E",
+          "index": 24,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            52,
+            12,
+            87,
+            172
+          ],
+          "direction": "SE",
+          "index": 25,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            54,
+            6,
+            83,
+            178
+          ],
+          "direction": "S",
+          "index": 26,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            54,
+            15,
+            84,
+            169
+          ],
+          "direction": "SW",
+          "index": 27,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            64,
+            17,
+            64,
+            167
+          ],
+          "direction": "W",
+          "index": 28,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            57,
+            7,
+            78,
+            177
+          ],
+          "direction": "NW",
+          "index": 29,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            61,
+            10,
+            70,
+            174
+          ],
+          "direction": "N",
+          "index": 30,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            57,
+            10,
+            77,
+            174
+          ],
+          "direction": "NE",
+          "index": 31,
+          "pose": "attackWindup"
+        },
+        {
+          "alphaBBox": [
+            52,
+            26,
+            87,
+            158
+          ],
+          "direction": "E",
+          "index": 32,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            43,
+            30,
+            105,
+            154
+          ],
+          "direction": "SE",
+          "index": 33,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            56,
+            32,
+            80,
+            152
+          ],
+          "direction": "S",
+          "index": 34,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            41,
+            30,
+            109,
+            154
+          ],
+          "direction": "SW",
+          "index": 35,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            45,
+            36,
+            101,
+            148
+          ],
+          "direction": "W",
+          "index": 36,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            45,
+            32,
+            102,
+            152
+          ],
+          "direction": "NW",
+          "index": 37,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            64,
+            30,
+            64,
+            154
+          ],
+          "direction": "N",
+          "index": 38,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            44,
+            30,
+            104,
+            154
+          ],
+          "direction": "NE",
+          "index": 39,
+          "pose": "attackImpact"
+        },
+        {
+          "alphaBBox": [
+            46,
+            12,
+            99,
+            172
+          ],
+          "direction": "E",
+          "index": 40,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            47,
+            13,
+            98,
+            171
+          ],
+          "direction": "SE",
+          "index": 41,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            44,
+            15,
+            103,
+            169
+          ],
+          "direction": "S",
+          "index": 42,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            48,
+            14,
+            95,
+            170
+          ],
+          "direction": "SW",
+          "index": 43,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            48,
+            18,
+            96,
+            166
+          ],
+          "direction": "W",
+          "index": 44,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            48,
+            17,
+            96,
+            167
+          ],
+          "direction": "NW",
+          "index": 45,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            38,
+            17,
+            115,
+            167
+          ],
+          "direction": "N",
+          "index": 46,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            48,
+            16,
+            96,
+            168
+          ],
+          "direction": "NE",
+          "index": 47,
+          "pose": "cast"
+        },
+        {
+          "alphaBBox": [
+            49,
+            74,
+            94,
+            110
+          ],
+          "direction": "E",
+          "index": 48,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            42,
+            81,
+            108,
+            103
+          ],
+          "direction": "SE",
+          "index": 49,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            60,
+            84,
+            72,
+            100
+          ],
+          "direction": "S",
+          "index": 50,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            44,
+            81,
+            104,
+            103
+          ],
+          "direction": "SW",
+          "index": 51,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            47,
+            68,
+            97,
+            116
+          ],
+          "direction": "W",
+          "index": 52,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            49,
+            70,
+            93,
+            114
+          ],
+          "direction": "NW",
+          "index": 53,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            62,
+            73,
+            67,
+            111
+          ],
+          "direction": "N",
+          "index": 54,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            52,
+            69,
+            88,
+            115
+          ],
+          "direction": "NE",
+          "index": 55,
+          "pose": "hit"
+        },
+        {
+          "alphaBBox": [
+            13,
+            44,
+            165,
+            140
+          ],
+          "direction": "E",
+          "index": 56,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            17,
+            49,
+            157,
+            135
+          ],
+          "direction": "SE",
+          "index": 57,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            17,
+            55,
+            158,
+            129
+          ],
+          "direction": "S",
+          "index": 58,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            10,
+            57,
+            171,
+            127
+          ],
+          "direction": "SW",
+          "index": 59,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            17,
+            45,
+            158,
+            139
+          ],
+          "direction": "W",
+          "index": 60,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            19,
+            45,
+            154,
+            139
+          ],
+          "direction": "NW",
+          "index": 61,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            20,
+            48,
+            152,
+            136
+          ],
+          "direction": "N",
+          "index": 62,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            13,
+            54,
+            165,
+            130
+          ],
+          "direction": "NE",
+          "index": 63,
+          "pose": "death"
+        },
+        {
+          "alphaBBox": [
+            34,
+            77,
+            123,
+            107
+          ],
+          "direction": "E",
+          "index": 64,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            34,
+            83,
+            123,
+            101
+          ],
+          "direction": "SE",
+          "index": 65,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            43,
+            81,
+            105,
+            103
+          ],
+          "direction": "S",
+          "index": 66,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            36,
+            82,
+            119,
+            102
+          ],
+          "direction": "SW",
+          "index": 67,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            38,
+            80,
+            115,
+            104
+          ],
+          "direction": "W",
+          "index": 68,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            39,
+            109,
+            114,
+            75
+          ],
+          "direction": "NW",
+          "index": 69,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            46,
+            104,
+            99,
+            80
+          ],
+          "direction": "N",
+          "index": 70,
+          "pose": "dead"
+        },
+        {
+          "alphaBBox": [
+            35,
+            98,
+            122,
+            86
+          ],
+          "direction": "NE",
+          "index": 71,
+          "pose": "dead"
+        }
+      ],
+      "finalRigScale": 1.0,
+      "output": "assets/sprites_src/player_rig/wildkeeper/body.png",
+      "scaleMethod": "class-shared-final-aligned",
+      "source": "assets/sprites_src/players/wildkeeper_undergear_v2_alpha.png"
+    }
+  },
+  "version": 1
+}

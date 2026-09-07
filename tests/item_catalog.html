@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><base href="../"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Item identity catalogue — Embergrave</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#10171e;color:#dbd9cf;font:13px/1.5 system-ui}header{position:sticky;top:0;z-index:1;padding:20px 28px;background:#18212bf5;border-bottom:1px solid #8d7850}h1{font:28px Georgia;margin:0 0 6px;color:#eedab4}p{margin:4px 0;color:#aebbc3}#result{color:#a7cfb1}nav{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}input,select,button{font:13px system-ui;color:#e3d5ba;background:#0b131b;border:1px solid #747363;border-radius:3px;padding:9px}input{width:240px}button{cursor:pointer}#catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;padding:24px 28px}.card{border:1px solid #53606b;border-radius:4px;background:#1a242e;padding:12px;min-height:176px}.card canvas{display:block;margin:0 auto 10px;width:72px;height:72px;object-fit:contain}.card strong{display:block;color:var(--rarity,#e1d3b8);font:14px Georgia}.card small{display:block;color:#abb5ba;font-size:11px;margin-top:5px}.card .key{color:#7e949f;overflow-wrap:anywhere}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #edcc89;outline-offset:3px}
+</style>
+<header><h1>Every item, by name</h1><p>Shared runtime artwork for ground loot, pack, equipment, shop, storage, forge and item details. No saves are read or written.</p><p id="result">Loading artwork…</p>
+<nav><input id="search" aria-label="Find an item" placeholder="Find an item or base…"><select id="group" aria-label="Item category"><option value="all">All items</option></select><button id="previous">Previous</button><span id="page"></span><button id="next">Next</button></nav></header><main id="catalog"></main>
+<script src="js/utils.js"></script><script src="js/data.js"></script><script src="js/items.js"></script><script src="js/sprite_manifest.js"></script><script src="js/sprite_assets.js"></script><script src="tests/item_catalog.js"></script>
+<script>
+(async()=>{
+ const result=document.getElementById('result'),root=document.getElementById('catalog'),select=document.getElementById('group'),search=document.getElementById('search');
+ try{
+  await SpriteAssets.loadBundle('core');
+  for(const group of new Set(ItemCatalog.map(row=>row.group))){const option=document.createElement('option');option.value=option.textContent=group;select.appendChild(option);}
+  let page=0;const size=30;
+  const params=new URLSearchParams(location.search);select.value=params.get('group')||'all';
+  function render(){
+   const query=search.value.toLowerCase();const filtered=ItemCatalog.filter(row=>(select.value==='all'||row.group===select.value)&&[row.item.name,row.item.baseName,row.key].join(' ').toLowerCase().includes(query));
+   const pages=Math.max(1,Math.ceil(filtered.length/size));page=Math.min(page,pages-1);root.replaceChildren();
+   for(const {key,group,item} of filtered.slice(page*size,(page+1)*size)){
+    const card=document.createElement('article');card.className='card';card.style.setProperty('--rarity',Items.RARITY_COLOR[item.rarity]);card.appendChild(SpriteAssets.itemIcon(item,96));
+    for(const [tag,cls,text] of [['strong','',item.name],['small','',item.baseName+' · '+group],['small','key',key]]){const el=document.createElement(tag);el.className=cls;el.textContent=text;card.appendChild(el);}root.appendChild(card);
+   }
+   document.getElementById('page').textContent=`${filtered.length} items · Page ${page+1} / ${pages}`;document.getElementById('previous').disabled=page===0;document.getElementById('next').disabled=page===pages-1;
+  }
+  // Decode and paint every entry, including off-page entries, before declaring success.
+  for(const {key,item} of ItemCatalog){const icon=SpriteAssets.itemIcon(item);const pixels=icon.getContext('2d').getImageData(0,0,64,64).data;let opaque=0;for(let i=3;i<pixels.length;i+=4)if(pixels[i]>32)opaque++;if(opaque<25)throw Error(key+': empty icon');}
+  result.textContent=`PASS — ${ItemCatalog.length} item icons decoded and painted. Browse each category to inspect names and silhouettes.`;
+  search.oninput=select.onchange=()=>{page=0;render();};document.getElementById('previous').onclick=()=>{page--;render();};document.getElementById('next').onclick=()=>{page++;render();};render();
+ }catch(error){result.textContent='FAIL: '+error.stack;}
+})();
+</script></html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EMBERGRAVE — The Sunderstone Saga</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="css/style.css?v=6">
+<link rel="stylesheet" href="css/combat-ui.css?v=3">
+<link rel="stylesheet" href="css/title-ui.css?v=3">
+<link rel="stylesheet" href="css/management-ui.css?v=4">
+<link rel="stylesheet" href="css/opening.css?v=2">
+</head>
+<body>
+<div id="game">
+  <canvas id="view"></canvas>
+
+  <!-- Minimap -->
+  <canvas id="minimap" width="220" height="160"></canvas>
+  <div id="zonelabel"></div>
+
+  <!-- Bottom HUD -->
+  <div id="hud">
+    <div class="orbwrap" id="orbHpWrap"><span class="orb-caption">VITALITY</span><canvas id="orbHp" width="132" height="132"></canvas><div class="orblabel" id="hpText"></div><span class="orb-foot">LIFE</span></div>
+    <div id="hudmid">
+      <div id="hudIdentity"><span id="hudClass"></span><span id="hudLevel"></span><span id="xpText"></span></div>
+      <div id="xpbar" role="progressbar" aria-label="Experience"><div id="xpfill"></div></div>
+      <div id="hudrow">
+        <div class="hud-group"><span class="hud-group-label">Draughts</span><div id="beltBar"></div></div>
+        <div class="hud-group active-group"><span class="hud-group-label">Combat</span><div class="active-skills">
+          <button type="button" class="skillbtn" id="skillL" title="Assign left mouse skill"></button>
+          <button type="button" class="skillbtn" id="skillR" title="Assign right mouse skill"></button>
+        </div></div>
+        <div class="hud-group"><span class="hud-group-label">Ready skills</span><div id="quickbar"></div></div>
+      </div>
+      <div id="hudbuttons">
+        <button class="hbtn" data-panel="char"><kbd>C</kbd>Character</button>
+        <button class="hbtn" data-panel="inv"><kbd>I</kbd>Inventory</button>
+        <button class="hbtn" data-panel="skills"><kbd>T</kbd>Talents<span id="talentNotice" hidden></span></button>
+        <button class="hbtn" data-panel="quest"><kbd>Q</kbd>Quests</button>
+      </div>
+    </div>
+    <div class="orbwrap" id="orbMpWrap"><span class="orb-caption">SPIRIT</span><canvas id="orbMp" width="132" height="132"></canvas><div class="orblabel" id="mpText"></div><span class="orb-foot">AETHER</span></div>
+  </div>
+
+  <!-- Buff icons -->
+  <div id="buffs"></div>
+
+  <!-- Panels -->
+  <div id="panelWorkspace">
+  <div id="panelLeft" class="panel hidden"></div>
+  <div id="panelRight" class="panel hidden"></div>
+  <div id="panelCenter" class="panel hidden"></div>
+  </div>
+
+  <div id="tooltip" class="hidden"></div>
+  <div id="tooltipCmp" class="hidden"></div>
+  <div id="cursorItem" class="hidden"></div>
+
+  <div id="msglog"></div>
+  <div id="centerMsg" class="hidden"></div>
+
+  <dialog id="deathScreen" aria-labelledby="deathTitle" aria-describedby="deathMessage">
+    <div class="death-mark" aria-hidden="true">◆</div>
+    <h2 id="deathTitle">YOU HAVE DIED</h2>
+    <p id="deathMessage"></p>
+    <button id="backToTown" class="menubtn" type="button" autofocus>Back to Town</button>
+    <p id="deathStatus" role="status"></p>
+  </dialog>
+
+  <!-- Skill picker popup -->
+  <div id="skillPick" class="hidden"></div>
+
+  <!-- Debug console -->
+  <div id="debug" class="hidden"></div>
+
+  <!-- Escape menu -->
+  <div id="escmenu" class="hidden"></div>
+
+  <!-- Cinematic / ending overlay -->
+  <div id="cinematic" class="hidden"></div>
+
+  <!-- Title screen -->
+  <div id="title" data-screen="main" role="dialog" aria-modal="true" aria-label="Embergrave main menu">
+    <div class="title-backdrop" aria-hidden="true"></div>
+    <div id="titleInner">
+      <header class="title-brand">
+        <div id="titleEyebrow">The dead dream &middot; the living forget</div>
+        <h1>EMBERGRAVE</h1>
+        <h2>The Sunderstone Saga</h2>
+      </header>
+      <div id="titleMenu"></div>
+      <div id="titleFoot"><span class="title-diamond">&#9670;</span> A world broken. A legend unwritten.</div>
+    </div>
+  </div>
+</div>
+
+<script src="js/bootstrap.js?v=1"></script>
+<script src="js/utils.js?v=7"></script>
+<script src="js/data.js?v=24"></script>
+<script src="js/data_overrides.js?v=2"></script>
+<script src="js/boss_encounters.js?v=1"></script>
+<script src="js/skill_perks.js?v=1"></script>
+<script src="js/sprite_manifest.js?v=12"></script>
+<script src="js/sprite_assets.js?v=13"></script>
+<script src="js/player3d.js?v=19"></script>
+<script src="js/skill_audio_catalog.js?v=1"></script>
+<script src="js/skill_audio.js?v=1"></script>
+<script src="js/audio.js?v=10"></script>
+<script src="js/mapgen.js?v=11"></script>
+<script src="js/navigation.js?v=7"></script>
+<script src="js/town_terrain.js?v=1"></script>
+<script src="js/level_terrain.js?v=14"></script>
+<script src="js/items.js?v=4"></script>
+<script src="js/lootfilter.js?v=2"></script>
+<script src="js/skill_vfx.js?v=1"></script>
+<script src="js/entities.js?v=26"></script>
+<script src="js/skill_icons.js?v=2"></script>
+<script src="js/title_screen.js?v=4"></script>
+<script src="js/management.js?v=1"></script>
+<script src="js/ui.js?v=24"></script>
+<script src="js/game.js?v=49"></script>
+</body>
+</html>

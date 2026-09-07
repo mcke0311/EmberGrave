@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><base href="../"><title>Player loadout lifecycle contract</title></head>
+<body>
+  <pre id="result">PENDING</pre>
+  <script src="js/utils.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/sprite_manifest.js"></script>
+  <script src="js/sprite_assets.js"></script>
+  <script>
+    "use strict";
+    (async () => {
+      const out = document.getElementById("result");
+      let checks = 0;
+      const ok = (value, message) => { checks++; if (!value) throw new Error(message); };
+      const gear = baseId => ({
+        baseId, slot: DATA.BASES[baseId].slot, cat: DATA.BASES[baseId].cat,
+        twoHand: !!DATA.BASES[baseId].twoHand,
+        playerVisualFamily: DATA.BASES[baseId].playerVisualFamily,
+        materialTier: DATA.BASES[baseId].materialTier,
+      });
+      const heldId = visual => SpriteAssets.getPlayerDrawPlan(visual, { state: "idle", t: 0, ang: 0, ex: {} })
+        .layers.find(layer => layer.slot === "main" && layer.plane === "held").assetId;
+      try {
+        await SpriteAssets.loadBundle("core");
+        const active = SpriteAssets.resolvePlayerVisual("vanguard", { main: gear("sword_t0") }, []);
+        await SpriteAssets.loadPlayerLoadout(active);
+        SpriteAssets.activatePlayerLoadout(active);
+        const activeHeld = heldId(active);
+        SpriteAssets.getFrame(activeHeld, 0);
+
+        const sharedPrepared = SpriteAssets.resolvePlayerVisual("vanguard", {
+          main: { ...gear("sword_t0"), materialTier: 13 }
+        }, []);
+        await SpriteAssets.loadPlayerLoadout(sharedPrepared);
+        SpriteAssets.discardPlayerLoadout(sharedPrepared);
+        await new Promise(resolve => setTimeout(resolve, 0));
+        SpriteAssets.getFrame(activeHeld, 0);
+        ok(true, "discard evicted a source shared with the active visual");
+
+        const abandoned = SpriteAssets.resolvePlayerVisual("vanguard", { main: gear("axe2h_t0") }, []);
+        await SpriteAssets.loadPlayerLoadout(abandoned);
+        const abandonedHeld = heldId(abandoned);
+        SpriteAssets.getFrame(abandonedHeld, 0);
+        SpriteAssets.discardPlayerLoadout(abandoned);
+        let discardedBlocked = false;
+        try { SpriteAssets.activatePlayerLoadout(abandoned); }
+        catch (err) { discardedBlocked = err.name === "SpriteAssetError" && /Discarded player loadout/.test(err.message); }
+        ok(discardedBlocked, "discarded prepared loadout could still be activated");
+        await new Promise(resolve => setTimeout(resolve, 0));
+        let abandonedEvicted = false;
+        try { SpriteAssets.getFrame(abandonedHeld, 0); } catch (err) { abandonedEvicted = err.name === "SpriteAssetError"; }
+        ok(abandonedEvicted, "discarded prepared family stayed decoded");
+        SpriteAssets.getFrame(activeHeld, 0);
+        ok(true, "active family was evicted with abandoned preload");
+
+        const failed = SpriteAssets.resolvePlayerVisual("vanguard", { main: gear("spear2h_t0") }, []);
+        const failedHeld = heldId(failed), failedDef = DATA.SPRITE_MANIFEST.entries[failedHeld];
+        const authoredSrc = failedDef.src;
+        failedDef.src = "assets/sprites/__deliberately_missing_loadout_family__.webp";
+        let blocked = false;
+        try { await SpriteAssets.loadPlayerLoadout(failed); }
+        catch (err) { blocked = err.name === "SpriteAssetError" && err.assetId === failedHeld; }
+        finally { failedDef.src = authoredSrc; SpriteAssets.discardPlayerLoadout(failed); }
+        ok(blocked, "missing equipment family did not block preparation precisely");
+        SpriteAssets.getFrame(activeHeld, 0);
+        ok(true, "failed preload replaced or evicted the live loadout");
+
+        document.body.dataset.testStatus = "passed";
+        out.textContent = `PASS: ${checks} player loadout lifecycle checks`;
+      } catch (err) {
+        document.body.dataset.testStatus = "failed";
+        out.textContent = `FAIL: ${err.stack || err}`;
+      }
+    })();
+  </script>
+</body>
+</html>

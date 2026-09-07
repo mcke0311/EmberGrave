@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="../">
+<title>Terrain strip pixel regression</title>
+<style>body{background:#182029;color:#eee;font:14px system-ui;margin:20px}pre{white-space:pre-wrap}</style>
+<h1>Terrain strip pixel regression</h1><pre id="result">Loading…</pre>
+<script src="js/utils.js"></script><script src="js/data.js"></script><script src="js/data_overrides.js"></script>
+<script src="js/sprite_manifest.js"></script><script src="js/sprite_assets.js"></script><script src="js/mapgen.js"></script><script src="js/level_terrain.js"></script>
+<script>
+(async()=>{const out=document.getElementById('result');let channels=0,views=0,maxError=0;try{
+  const source=await fetch('tests/fixtures/level_terrain_before_input_latency.js').then(r=>r.text());
+  const before=new Function(source+'\nreturn LevelTerrain;')();
+  await SpriteAssets.loadBundle('world');
+  const make=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
+  for(const zone of ['north_wild','weeping_marsh']){
+    await SpriteAssets.loadBundle('zone:'+zone);const map=MapGen.generate(zone,12345);
+    for(const [width,height] of [[1920,1080],[3840,2160]]){
+      const a=make(width,height),b=make(width,height),ac=a.getContext('2d'),bc=b.getContext('2d');
+      for(const [dx,dy] of [[0,0],[700,250],[1200,700],[850,-200],[-300,-450],[-300.35,-449.65]]){
+        const cam={x:-width/2+dx,y:map.h*16-height/2+dy};
+        for(const [renderer,ctx] of [[before,ac],[LevelTerrain,bc]]){
+          ctx.clearRect(0,0,width,height);renderer.beginFrame(map);
+          try{renderer[map.surfaceVersion?'drawSurface':'drawFloor'](ctx,map,cam,0,map.w-1,0,map.h-1,
+            (x,y)=>x>-96&&x<width+96&&y>-224&&y<height+96,true);}finally{renderer.endFrame();}
+        }
+        // Check the whole frame at 1080p, and five broad regions spanning the
+        // center and corners at 4K. Cover both scroll axes and fractional motion.
+        const regions=width===1920?[[0,0,width,height]]:
+          [[0,0,640,480],[width-640,0,640,480],[0,height-480,640,480],[width-640,height-480,640,480],[width/2-480,height/2-320,960,640]];
+        for(const rect of regions){
+          const old=ac.getImageData(...rect).data,current=bc.getImageData(...rect).data;
+          let total=0,largest=0,alpha=0;const worst=[];
+          for(let i=0;i<old.length;i++){const delta=Math.abs(old[i]-current[i]);total+=delta;largest=Math.max(largest,delta);
+            if(i%4===3)alpha=Math.max(alpha,delta);
+            if(delta>3&&worst.length<5){const pixel=i-i%4;worst.push({x:rect[0]+(pixel/4)%rect[2],y:rect[1]+Math.floor(pixel/4/rect[2]),old:Array.from(old.slice(pixel,pixel+4)),current:Array.from(current.slice(pixel,pixel+4))});}
+          }
+          channels+=old.length;maxError=Math.max(maxError,largest);
+          if(largest>3||total/old.length>.01)throw Error(JSON.stringify({zone,width,cam,rect,largest,alpha,mean:total/old.length,worst}));
+        }
+        views++;
+      }
+      a.width=a.height=b.width=b.height=0;
+    }
+  }
+  out.textContent=`PASS ${views} terrain views, ${channels} channel comparisons; maximum difference ${maxError}/255. Scrolls, reversals, overlapping strips, 1080p/4K and fractional cameras match the previous renderer.`;
+  document.body.dataset.testStatus='passed';
+}catch(e){out.textContent='FAIL '+e.stack;document.body.dataset.testStatus='failed';}})();
+</script></html>

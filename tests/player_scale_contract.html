@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><base href="../"><title>Player world scale contract</title></head>
+<body>
+  <pre id="result">PENDING</pre>
+  <script src="js/utils.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/sprite_manifest.js"></script>
+  <script src="js/sprite_assets.js"></script>
+  <script>
+    "use strict";
+    (async () => {
+      const out = document.getElementById("result");
+      const classes = ["vanguard", "emberwitch", "gravebinder", "wildkeeper", "veilranger"];
+      let checks = 0;
+      const ok = (value, message) => { checks++; if (!value) throw new Error(message); };
+      const opaqueBounds = canvas => {
+        const { data, width, height } = canvas.getContext("2d", { willReadFrequently: true })
+          .getImageData(0, 0, canvas.width, canvas.height);
+        let x0 = width, y0 = height, x1 = -1, y1 = -1;
+        for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
+          if (data[(y * width + x) * 4 + 3] <= 8) continue;
+          x0 = Math.min(x0, x); y0 = Math.min(y0, y);
+          x1 = Math.max(x1, x); y1 = Math.max(y1, y);
+        }
+        return x1 < 0 ? null : [x0, y0, x1 - x0 + 1, y1 - y0 + 1];
+      };
+      try {
+        await SpriteAssets.loadBundle("core");
+        for (const classId of classes) {
+          const visual = SpriteAssets.resolvePlayerVisual(classId, {}, []);
+          await SpriteAssets.loadPlayerLoadout(visual);
+          ok(visual.kind === "player" && visual.scale == null,
+            `${classId}: ordinary resolved player has a scale override`);
+          const canvas = document.createElement("canvas"), ctx = canvas.getContext("2d");
+          canvas.width = canvas.height = 240;
+          ctx.translate(120, 210);
+          SpriteAssets.drawActor(ctx, { playerVisual: visual }, { state: "idle", t: 0, ang: 0, ex: {} });
+          const bounds = opaqueBounds(canvas);
+          ok(bounds != null, `${classId}: ordinary player rendered no pixels`);
+          ok(bounds[2] <= 82 && bounds[3] <= 82,
+            `${classId}: ${bounds[2]}x${bounds[3]} world actor exceeds a 192px rig at scale .42`);
+          ok(bounds[2] >= 16 && bounds[3] >= 24,
+            `${classId}: ${bounds[2]}x${bounds[3]} world actor is implausibly small`);
+        }
+        document.body.dataset.testStatus = "passed";
+        out.textContent = `PASS: ${checks} ordinary-player base-scale checks`;
+      } catch (err) {
+        document.body.dataset.testStatus = "failed";
+        out.textContent = `FAIL: ${err.stack || err}`;
+      }
+    })();
+  </script>
+</body>
+</html>

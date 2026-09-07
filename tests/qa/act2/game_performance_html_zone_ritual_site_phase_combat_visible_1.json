@@ -1,0 +1,151 @@
+{
+  "status": "passed",
+  "text": "PASS — profiling complete",
+  "performance": {
+    "results": [
+      {
+        "zone": "ritual_site",
+        "where": "combat",
+        "position": {
+          "x": 64.5,
+          "y": 63.5
+        },
+        "endPosition": {
+          "x": 64.5,
+          "y": 63.5
+        },
+        "distanceWalked": 0,
+        "clearRoute": false,
+        "viewport": [
+          1920,
+          1080
+        ],
+        "simulate": true,
+        "frames": 180,
+        "monsters": 103,
+        "aggro": 12,
+        "cpuMs": {
+          "median": 7.8,
+          "p95": 10.2,
+          "max": 29.8
+        },
+        "frameIntervalMs": {
+          "median": 16.7,
+          "p95": 20.2,
+          "max": 40.4
+        },
+        "builds": 0,
+        "viewBuilds": 0,
+        "parts": {
+          "updateHover": {
+            "median": 0.3,
+            "p95": 0.4,
+            "max": 1.5,
+            "calls": 180,
+            "maxCall": 1.5
+          },
+          "heldUpdate": {
+            "median": 0,
+            "p95": 0,
+            "max": 0.1,
+            "calls": 180,
+            "maxCall": 0.1
+          },
+          "repath": {
+            "median": 0,
+            "p95": 0.2,
+            "max": 6.2,
+            "calls": 50,
+            "maxCall": 3.5
+          },
+          "update": {
+            "median": 1,
+            "p95": 1.4,
+            "max": 12.7,
+            "calls": 180,
+            "maxCall": 12.7
+          },
+          "beginFrame": {
+            "median": 0.1,
+            "p95": 0.2,
+            "max": 1.8,
+            "calls": 180,
+            "maxCall": 1.8
+          },
+          "drawBackdrop": {
+            "median": 0,
+            "p95": 0.1,
+            "max": 0.2,
+            "calls": 180,
+            "maxCall": 0.2
+          },
+          "drawFloor": {
+            "median": 0,
+            "p95": 0.1,
+            "max": 0.2,
+            "calls": 180,
+            "maxCall": 0.2
+          },
+          "clipBehind": {
+            "median": 0,
+            "p95": 0.1,
+            "max": 0.2,
+            "calls": 8919,
+            "maxCall": 0.1
+          },
+          "drawProp": {
+            "median": 0.2,
+            "p95": 0.4,
+            "max": 1,
+            "calls": 4860,
+            "maxCall": 0.8
+          },
+          "drawEntity": {
+            "median": 1.3,
+            "p95": 1.9,
+            "max": 3.4,
+            "calls": 3699,
+            "maxCall": 2.8
+          },
+          "renderLighting": {
+            "median": 0.1,
+            "p95": 0.1,
+            "max": 1.2,
+            "calls": 180,
+            "maxCall": 1.2
+          },
+          "renderMinimap": {
+            "median": 0,
+            "p95": 0.3,
+            "max": 0.9,
+            "calls": 180,
+            "maxCall": 0.9
+          },
+          "HUD": {
+            "median": 0.3,
+            "p95": 0.4,
+            "max": 0.6,
+            "calls": 180,
+            "maxCall": 0.6
+          },
+          "render": {
+            "median": 6.8,
+            "p95": 9.2,
+            "max": 17.1,
+            "calls": 180,
+            "maxCall": 17.1
+          }
+        }
+      }
+    ],
+    "slowPaths": [],
+    "titleHidden": true
+  },
+  "environment": {
+    "browser": "152.0.7977.76",
+    "platform": "win32"
+  },
+  "browserMessages": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ]
+}

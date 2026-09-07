@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>UI sound checks</title>
+<style>body{background:#141923;color:#ddd3bf;font:14px system-ui;margin:20px}button{padding:10px 18px}pre{white-space:pre-wrap}iframe{width:100%;height:720px;border:1px solid #67563e}</style>
+<h1>Recorded UI click</h1><p>Real decoding and audio routing with an isolated save store.</p>
+<button id="run" disabled>Run UI sound checks</button><pre id="result">Loading…</pre><div id="host"></div>
+<script type="module">
+const store=new Map();window.soundTestStore=store;
+const source=await fetch('../index.html',{cache:'no-store'}).then(r=>r.text()),frame=document.createElement('iframe');
+const injection=`<base href="${new URL('../index.html',location.href)}"><script>
+const saved=parent.soundTestStore;Object.defineProperty(window,'localStorage',{value:{get length(){return saved.size},key:i=>[...saved.keys()][i]??null,getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(String(k),String(v)),removeItem:k=>saved.delete(k),clear:()=>saved.clear()}});
+window.audioProbe={decoded:[],starts:[],connections:new WeakMap(),errors:[]};
+window.addEventListener('unhandledrejection',e=>audioProbe.errors.push(String(e.reason)));
+const nativeDecode=AudioContext.prototype.decodeAudioData;
+AudioContext.prototype.decodeAudioData=function(...args){return nativeDecode.apply(this,args).then(buffer=>{audioProbe.decoded.push(buffer);return buffer;});};
+const nativeConnect=AudioNode.prototype.connect;
+AudioNode.prototype.connect=function(destination,...args){audioProbe.connections.set(this,destination);return nativeConnect.call(this,destination,...args);};
+const nativeStart=AudioBufferSourceNode.prototype.start;
+AudioBufferSourceNode.prototype.start=function(...args){if(audioProbe.decoded.includes(this.buffer))audioProbe.starts.push(this);return nativeStart.apply(this,args);};
+<\/script>`;
+frame.srcdoc=source.replace('<head>','<head>'+injection);document.getElementById('host').append(frame);await new Promise(r=>frame.onload=r);
+const win=frame.contentWindow,doc=win.document,out=document.getElementById('result'),run=document.getElementById('run');
+const delay=ms=>new Promise(r=>setTimeout(r,ms));async function until(fn,label){for(let i=0;i<400;i++){if(fn())return;await delay(50)}throw Error('Timed out: '+label)}
+let checks=0;function ok(pass,label){checks++;if(!pass)throw Error(label)}
+await until(()=>doc.querySelector('#titleMenu button'),'title startup');run.disabled=false;out.textContent='Ready. The first menu activation must load and play the supplied sound exactly once.';
+run.onclick=async()=>{
+ run.disabled=true;out.textContent='Checking first click, menus, inventory, settings, audio routing and rapid input…';
+ const sfx=win.eval('Sfx'),ui=win.eval('UI'),game=win.eval('Game'),items=win.eval('Items'),data=win.eval('DATA'),probe=win.audioProbe;
+ const count=()=>probe.starts.length;
+ function once(node,label,type='click'){
+  ok(!!node,label+': missing control');const before=count();
+  if(type==='click')node.click();else node.dispatchEvent(new win.Event(type,{bubbles:true,cancelable:true}));
+  const verify=()=>ok(count()===before+1,label+': expected exactly one recorded click, got '+(count()-before));
+  if(type==='change')return Promise.resolve().then(verify);verify();
+ }
+ try{
+  sfx.setVol('master',.15);sfx.setVol('sfx',.25);sfx.setVol('music',0);
+  [...doc.querySelectorAll('#titleMenu button')].find(b=>b.textContent==='NEW HERO').click();
+  await until(()=>count()===1&&sfx.ctx.state==='running','first activation playback');
+  await win.eval('SkillAudio.ready');
+  const expectedDecodes=2+win.eval('SkillAudio.snapshot().expected');
+  ok(probe.decoded.length===expectedDecodes,'click, death and skill textures must each decode once');
+  const buffer=probe.starts[0].buffer;ok(buffer.duration>0&&buffer.length>1000,'MP3 failed to decode');
+  const samples=buffer.getChannelData(0);let peak=0;for(let i=0;i<samples.length;i++)peak=Math.max(peak,Math.abs(samples[i]));ok(peak>.001,'decoded sound is silent');
+  const soundBus=probe.connections.get(probe.starts[0]),master=probe.connections.get(soundBus);
+  ok(Math.abs(soundBus.gain.value-.25)<.00001&&Math.abs(master.gain.value-.15)<.00001,'click bypasses SFX/master volume');
+  ok(probe.connections.get(master)===sfx.ctx.destination,'click is not routed to audio output');
+  once(doc.querySelector('.class-tab')||doc.querySelector('[role=tab]'),'class selection');
+  once(doc.querySelector('#hcBox'),'hardcore checkbox');
+  once(doc.querySelector('#nameInput'),'name focus');let before=count();doc.querySelector('#nameInput').dispatchEvent(new win.Event('input',{bubbles:true}));ok(count()===before,'typing produced a click');
+  await game.newGame('Sound Test','vanguard',false);await game.skipOpening();ui.closeAll();game.state.monsters=[];game.debugFlags.god=true;sfx.stopMusic();
+  const p=game.state.player;p.gold=2400;p.attrPts=2;p.computeStats();
+  once(doc.querySelector('[data-panel=inv]'),'HUD inventory');
+  once(doc.getElementById('inventoryTidy'),'tidy');
+  const glyph=Object.keys(data.GLYPHS)[0];items.autoPlace(p.inv,items.makeGlyph(glyph));ui.refreshGrids();
+  once(doc.querySelector('#panelRight .invgrid .invitem'),'inventory item');
+  ok(doc.getElementById('inventoryTidy').disabled,'tidy must be disabled while carrying');
+  before=count();doc.getElementById('inventoryTidy').click();ok(count()===before,'disabled control played a sound');
+  items.autoPlace(p.inv,ui.cursorItem);ui.setCursorItem(null);ui.refreshGrids();ui.closeAll();
+  once(doc.querySelector('[data-panel=char]'),'HUD character');once(doc.querySelector('[aria-label="Increase Strength"]'),'attribute allocation');
+  ui.closeAll();once(doc.querySelector('[data-panel=quest]'),'HUD quests');once(doc.querySelector('.qtab'),'quest act');once(doc.querySelector('.manage-tabs button'),'quest filter');
+  ui.closeAll();ui.openVendor('hewn');once(doc.querySelector('.shop-entry'),'shop inspection');
+  once(doc.querySelector('#panelRight .invgrid .invitem'),'right-click item sale','contextmenu');
+  before=count();doc.querySelector('#panelRight .invgrid .invitem').dispatchEvent(new win.KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));ok(count()===before+1,'keyboard item action did not play exactly one click');
+  ui.closeAll();ui.openEsc();once([...doc.querySelectorAll('#escmenu button')].find(b=>/Settings/i.test(b.textContent)),'settings');
+  const range=doc.querySelector('#escmenu input[type=range]');await once(range,'volume change','change');
+  const select=doc.querySelector('#escmenu select');await once(select,'select change','change');
+  ui.closeAll();ui.closeEsc();before=count();doc.getElementById('view').dispatchEvent(new win.MouseEvent('click',{bubbles:true}));ok(count()===before,'ground click played UI feedback');
+  sfx.setVol('music',0);once(doc.querySelector('[data-panel=inv]'),'music mute keeps UI sound');
+  sfx.setVol('sfx',0);before=count();sfx.play('click');ok(count()===before&&soundBus.gain.value===0,'SFX mute failed');
+  sfx.setVol('sfx',.25);sfx.setVol('master',0);sfx.play('click');ok(count()===before&&master.gain.value===0,'master mute failed');sfx.setVol('master',.15);
+  before=count();for(let i=0;i<12;i++)sfx.play('click');ok(count()===before+12,'rapid clicks did not retrigger');ok(new Set(probe.starts.slice(-12)).size===12,'rapid clicks reused a playing source');
+  await sfx.ctx.suspend();before=count();for(let i=0;i<5;i++)sfx.play('click');await until(()=>sfx.ctx.state==='running'&&count()>before,'autoplay/context resume');await delay(80);ok(count()===before+1,'resume queued a burst of stale clicks');
+  ok(probe.decoded.length===expectedDecodes,'repeated activations redecoded audio');ok(probe.errors.length===0,'unhandled audio error: '+probe.errors.join());
+  const loaded=win.performance.getEntriesByType('resource').filter(r=>decodeURI(r.name).endsWith('/assets/sound-effects/Dark Fantasy Game Mouse Click Sound.mp3'));
+  ok(loaded.length===1,'click MP3 fetched repeatedly or from wrong path');
+  out.textContent=`PASS — ${checks} checks. Supplied MP3 decoded (${buffer.duration.toFixed(2)}s), first activation, one click per action, title/class selection, inventory, quests, shop selling, settings, disabled controls, typing, volume/mute, rapid retrigger and context recovery. Saves isolated.`;
+  sfx.setVol('master',0);
+ }catch(error){sfx.setVol('master',0);out.textContent='FAIL: '+error.stack;}
+};
+</script></html>

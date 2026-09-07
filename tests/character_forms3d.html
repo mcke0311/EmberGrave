@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Wildkeeper — 3D forms</title>
+<style>body{margin:24px;background:#121b18;color:#e0d9bd;font:14px system-ui}h1{font:34px Georgia}#gallery{display:grid;grid-template-columns:repeat(4,minmax(220px,1fr));gap:14px}article{padding:12px;background:radial-gradient(ellipse at 50% 65%,#35473b,#1c2923 68%);border:1px solid #465b49;text-align:center;border-radius:8px}canvas{display:block;margin:auto;max-width:100%}button,select{padding:8px;background:#2f4035;color:#ede0b3;font:inherit;border:1px solid #667e58;border-radius:4px}button{cursor:pointer}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #dcecc2;outline-offset:3px}#result{color:#9dd3a1}.transport{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0}.transport input{width:200px;accent-color:#b8d58f}article p{color:#adc0ae;min-height:36px;font-size:12px}#phase{color:#b9c5b0;min-width:135px}h2{font:22px Georgia;margin:0 0 10px}@media(max-width:980px){#gallery{grid-template-columns:repeat(2,minmax(220px,1fr))}}@media(max-width:520px){#gallery{grid-template-columns:1fr}}</style>
+<p><a href="class_animation_styles.html" style="color:#d6b77c">Before/after comparison · frame stepping · gameplay sequence</a></p><h1>The Wildkeeper’s shapes</h1><p id="result">Checking live 3D forms…</p><p><label>Animation <select id="animation"><option>idle</option><option>walk</option><option>attack</option><option>cast</option><option>kick</option><option>charge</option><option>spin</option><option>channel</option><option>airborne</option><option>hit</option><option>death</option><option>dead</option></select></label> <label>Facing <select id="facing"><option value="0">East</option><option value="1">Southeast</option><option value="2" selected>South</option><option value="3">Southwest</option><option value="4">West</option><option value="5">Northwest</option><option value="6">North</option><option value="7">Northeast</option></select></label></p><section id="gallery"></section>
+<div class="transport"><button id="shift">Transform</button><button id="revert">Revert</button><button id="change">Change beast</button><button id="pause">Pause</button><label>Transition progress <input id="progress" type="range" min="0" max="100" value="0"></label><span id="phase">Choose a transition</span></div>
+<script src="../js/data.js"></script><script type="module">
+import {createCharacterRenderer} from '../js/character3d.mjs?v=17';import {FORM_STYLES} from '../js/character_forms3d.mjs?v=9';
+import {resolveCharacterVisual} from '../js/character_catalog3d.mjs';
+import {shiftDuration} from '../js/character_wildshape3d.mjs';
+const out=document.getElementById('result'),view=createCharacterRenderer(),states=['idle','walk','attack','cast','kick','charge','spin','channel','airborne','hit','death','dead'];let checks=0;
+const ok=(v,m)=>{checks++;if(!v)throw Error(m)};
+try{
+ const probe=document.createElement('canvas');probe.width=180;probe.height=180;const p=probe.getContext('2d',{willReadFrequently:true});
+ for(const form of Object.keys(FORM_STYLES))for(const state of states)for(let d=0;d<8;d++){
+  p.clearRect(0,0,180,180);p.save();p.translate(90,144);view.draw(p,{state,t:.5,ang:d*Math.PI/4,ex:{walkPh:Math.PI/2}},{},{classId:'wildkeeper',form});p.restore();
+  const pixels=p.getImageData(0,0,180,180).data;let count=0,minX=180,minY=180,maxX=0,maxY=0;
+  for(let y=0;y<180;y++)for(let x=0;x<180;x++)if(pixels[(x+y*180)*4+3]>20){count++;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);}
+  ok(count>300,form+'/'+state+'/'+d+' invisible');ok(minX>2&&maxX<177&&minY>2&&maxY<177,form+'/'+state+'/'+d+' clipped');
+ }
+ const equipment=resolveCharacterVisual(DATA,'wildkeeper',{main:{baseId:'staff2h_t7'},chest:{baseId:'chest_t7'},head:{baseId:'helm_t7'}}).equipment;
+ const forms=Object.keys(FORM_STYLES),idle={state:'idle',t:0,ang:1,ex:{}};
+ for(const form of forms)for(const mode of ['shift','revert','change'])for(const t of [0,.2,.38,.5,.72,.9,1])for(let d=0;d<8;d++){
+   const from=mode==='shift'?null:mode==='change'?forms[(forms.indexOf(form)+3)%4]:form,to=mode==='revert'?null:form;
+   p.clearRect(0,0,180,180);p.save();p.translate(90,137);view.draw(p,{...idle,ang:d*Math.PI/4,ex:{wildshape:{from,to,t,pose:idle}}},equipment,{classId:'wildkeeper',form:to});p.restore();
+   const pixels=p.getImageData(0,0,180,180).data;let count=0,edge=0;
+   for(let y=0;y<180;y++)for(let x=0;x<180;x++)if(pixels[(x+y*180)*4+3]>20){count++;if(x<2||x>177||y<2||y>177)edge++;}
+   ok(count>300,'invisible transition '+form+'/'+mode+'/'+t+'/'+d);ok(edge===0,'clipped transition '+form+'/'+mode+'/'+t+'/'+d);
+ }
+ const descriptions=['Silver guard hairs, a tapered muzzle and a sweeping tail.','A broad shoulder hump, tawny breast and heavy claws.','Layered shale, root bindings and luminous fissures.','Branching crown, bark mantle and a living grove sigil.'];
+ const cards=Object.entries(FORM_STYLES).map(([form,style],i)=>{const article=document.createElement('article'),h=document.createElement('h2'),canvas=document.createElement('canvas'),p=document.createElement('p');h.textContent=style.name;p.textContent=descriptions[i];canvas.width=280;canvas.height=320;article.append(canvas,h,p);document.getElementById('gallery').append(article);return {form,canvas,ctx:canvas.getContext('2d')};});
+ const progress=document.getElementById('progress'),phase=document.getElementById('phase'),pause=document.getElementById('pause');let mode=null,age=0,clock=0,paused=false,last=performance.now();
+ for(const id of ['shift','revert','change'])document.getElementById(id).onclick=()=>{mode=id;age=0;paused=false;pause.textContent='Pause';};
+ pause.onclick=()=>{paused=!paused;pause.textContent=paused?'Play':'Pause';};
+ progress.oninput=()=>{mode=mode||'shift';age=Number(progress.value)/100*1.12;paused=true;pause.textContent='Play';};
+ document.getElementById('animation').onchange=()=>{mode=null;};
+ document.getElementById('facing').value='1';
+ // Place playback controls above the cards, in keyboard reading order.
+ document.getElementById('gallery').before(document.querySelector('.transport'));
+ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(!paused){age+=dt;clock+=dt;}
+   const state=document.getElementById('animation').value,ang=+document.getElementById('facing').value*Math.PI/4;
+   if(mode&&!paused&&age>2.5)age=0;
+   if(!paused)progress.value=String(Math.min(100,age/1.12*100));
+   phase.textContent=mode?(age<.28?'Gather':age<.68?'Reshape':age<1.12?'Settle':'Complete'):'Choose a transition';
+   for(const {form,canvas,ctx} of cards){
+     const from=mode==='shift'?null:mode==='change'?forms[(forms.indexOf(form)+3)%4]:form,to=mode==='revert'?null:form;
+     const pose={state,t:['idle','walk'].includes(state)?clock:state==='dead'?1:(clock%2)/2,ang,ex:{walkPh:clock*5}};
+     if(mode)pose.ex.wildshape={from,to,t:Math.min(1,paused?Number(progress.value)/100:age/shiftDuration(from,to)),pose:{...idle,ang}};
+     ctx.clearRect(0,0,canvas.width,canvas.height);ctx.save();ctx.translate(140,272);
+     // Small contact shadow provides a terrain reference for the dissolve.
+     const shadow=ctx.createRadialGradient(0,0,1,0,0,43);shadow.addColorStop(0,'#0000005c');shadow.addColorStop(1,'#00000000');ctx.fillStyle=shadow;ctx.save();ctx.scale(1,.4);ctx.fillRect(-43,-43,86,86);ctx.restore();
+     view.draw(ctx,pose,equipment,{classId:'wildkeeper',form:mode?to:form,scale:2.25});ctx.restore();
+   }
+ }requestAnimationFrame(loop);
+ out.textContent=`PASS · ${checks} visibility and clipping checks · four forms · twelve animations · shifts, reversions and beast changes in eight facings.`;document.body.dataset.testStatus='passed';
+}catch(e){out.textContent='FAIL · '+e.stack;document.body.dataset.testStatus='failed';view.dispose();}
+</script></html>

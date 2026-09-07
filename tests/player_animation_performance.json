@@ -1,0 +1,12 @@
+{
+  "baseline": {
+    "medianMs": 0.8582999999998719,
+    "p95Ms": 1.089100000000144
+  },
+  "refined": {
+    "medianMs": 0.722400000000107,
+    "p95Ms": 0.9790000000002692
+  },
+  "p95ChangePercent": -10.109264530333329,
+  "method": "Nine equipped rigs per batch, 120 frames, three warmups, nine alternating runs; includes controller updates and skeleton evaluation; excludes GPU rendering, same process."
+}

@@ -1,0 +1,106 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>3D player game integration</title><style>body{background:#191820;color:#dccab8;font:14px system-ui;margin:20px}pre{white-space:pre-wrap}iframe{width:100%;height:700px;border:1px solid #756343}</style>
+<h1>3D-only player integration</h1><p>This isolated test uses an in-memory save store. It does not read or write your heroes.</p><pre id="result">Running…</pre><button id="classes" disabled>Show class selection</button><div id="host"></div>
+<script type="module">
+const out=document.getElementById('result'),store=new Map();window.integrationStore=store;
+let checks=0;const ok=(v,m)=>{checks++;if(!v)throw new Error(m);};
+const source=await fetch('../index.html',{cache:'no-store'}).then(r=>r.text());
+async function frame(renderer='',fail3D=false){
+  const old=document.querySelector('iframe');if(old)old.remove();
+  const iframe=document.createElement('iframe');iframe.title='Game under test';
+  const gameURL=new URL('../index.html',location.href);if(renderer)gameURL.searchParams.set('player3d',renderer);
+  const injection=`<base href="${gameURL}"><script>
+    const testStore=parent.integrationStore;
+    Object.defineProperty(window,'localStorage',{value:{get length(){return testStore.size},key:i=>[...testStore.keys()][i]??null,getItem:k=>testStore.get(k)??null,setItem:(k,v)=>testStore.set(String(k),String(v)),removeItem:k=>testStore.delete(k),clear:()=>testStore.clear()}});
+    window.__usingTestStore=true;
+    ${fail3D?"const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(kind,...args){return kind.startsWith('webgl')?null:original.call(this,kind,...args)};":''}
+  <\/script>`;
+  const guard=`<script>for(const name of ['drawPlayer','drawPlayerPreview','resolvePlayerVisual','loadPlayerLoadout','activatePlayerLoadout'])SpriteAssets[name]=()=>{throw new Error('Forbidden legacy player sprite call: '+name)};<\/script>`;
+  iframe.srcdoc=source.replace('<head>','<head>'+injection).replace('</body>',guard+'</body>');document.getElementById('host').append(iframe);
+  await new Promise((resolve,reject)=>{iframe.onload=resolve;iframe.onerror=reject;});
+  const win=iframe.contentWindow;
+  for(let i=0;i<300;i++){if(win.document.querySelector('#titleMenu button'))break;if(fail3D&&win.document.getElementById('appFatal'))break;if(win.document.getElementById('appFatal'))throw new Error(win.document.getElementById('appFatalDetail').textContent);await new Promise(r=>setTimeout(r,30));}
+  ok(win.__usingTestStore===true,'save-store isolation failed');return {win,game:win.eval('Game'),items:win.eval('Items'),sprites:win.eval('SpriteAssets')};
+}
+try{
+  let {win,game,items,sprites}=await frame('0');
+  await game.newGame('Legacy URL baseline','vanguard',false);
+  ok(win.Player3D.only3D&&game.state.player._playerVisual.kind==='player3d','legacy player3d=0 URL switched away from 3D');
+  await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
+  ok(!win.document.getElementById('appFatal'),'3D game failed to render from legacy URL');
+  game.saveAndQuit();const legacySlot=game.listSaves()[0].slot,legacy=JSON.parse(store.get(legacySlot));
+  ({win,game,items,sprites}=await frame());
+  ok(win.Player3D.only3D,'ordinary game URL did not require 3D');
+  ok(!win.document.getElementById('playerRendererNote')&&!win.document.getElementById('player3dControls'),'retired renderer controls remain');
+  [...win.document.querySelectorAll('#titleMenu button')].find(b=>b.textContent==='NEW HERO').click();
+  await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
+  ok(!!win.document.querySelector('#titleMenu canvas')&&!win.document.getElementById('appFatal'),'live 3D class selection failed');
+  for(const preference of ['sprites',undefined]){
+    const older={...legacy};if(preference)older.playerRenderer=preference;else delete older.playerRenderer;store.set(legacySlot,JSON.stringify(older));
+    await game.loadGame(legacySlot);ok(game.state.player._playerVisual.kind==='player3d','existing '+preference+' hero did not upgrade to 3D');
+    ok(game.state.player.name===legacy.name&&game.state.player.lvl===legacy.lvl,'loading an existing hero changed character progress');
+  }
+  game.saveAndQuit();
+  ({win,game,items,sprites}=await frame('0'));await game.loadGame(legacySlot);
+  ok(win.Player3D.only3D&&game.state.player._playerVisual.kind==='player3d','old sprite preference overrode mandatory 3D');
+  game.saveAndQuit();({win,game,items,sprites}=await frame());
+  const classes=['vanguard','emberwitch','gravebinder','wildkeeper','veilranger'];
+  for(const id of classes){
+    await game.newGame('3D integration '+id,id,false);const p=game.state.player;
+    ok(p._playerVisual.kind==='player3d',id+': new hero did not use 3D');
+    const next=Object.fromEntries(Object.entries({main:'sword2h_t13',head:'helm_t13',chest:'chest_t13',gloves:'gloves_t13',boots:'boots_t13',belt:'belt_t13',ring1:'ring_t13',ring2:'ring_t12',amulet:'amulet_t13'}).map(([slot,base])=>[slot,items.fromBase(base)]));
+    const prepared=await game.preparePlayerEquipment(next);ok(!!prepared,id+': full equipment preload failed');p.equip=next;ok(game.commitPlayerEquipment(prepared),id+': equipment commit failed');p.computeStats();
+    ok(p._playerVisual.equipment.gloves.baseId==='gloves_t13',id+': glove update lost');
+    ok(p._playerVisual.equipment.boots.baseId==='boots_t13',id+': boot update lost');
+    const before=p._playerVisual;let rejected=false;
+    try{await game.preparePlayerEquipment({...next,off:items.fromBase('shield_t13')});}catch(error){rejected=/two-handed/.test(error.message);}
+    ok(rejected&&p._playerVisual===before,id+': invalid two-handed/shield transaction changed appearance');
+    const candidateA={...next,main:items.fromBase('wand_t12')},candidateB={...next,main:items.fromBase('crossbow2h_t13')};
+    const [a,b]=await Promise.all([game.preparePlayerEquipment(candidateA),game.preparePlayerEquipment(candidateB)]);
+    ok(a===null&&!!b,id+': stale prepare was not discarded');p.equip=candidateB;ok(game.commitPlayerEquipment(b),id+': newest prepared loadout did not commit');
+    game.saveGame();
+    const saved=JSON.parse(store.get(game.listSaves()[0].slot));ok(saved.playerRenderer==='three',id+': save lost renderer preference');
+    await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
+    ok(!win.document.getElementById('appFatal'),id+': game render failed with full gear');
+    if(id==='wildkeeper'){
+      for(const form of ['form_fang','form_brute','form_stone','form_apex']){
+        p.buffs=[{id:form,until:Infinity,infinite:true,stats:{}}];
+        await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
+        ok(!win.document.getElementById('appFatal')&&p._formVisual?.kind==='player3d'&&p._formVisual.form===form,'3D Wildkeeper transformation failed: '+form);
+        const equipment={...p.equip,main:items.fromBase('staff2h_t7')},ready=await game.preparePlayerEquipment(equipment);p.equip=equipment;ok(game.commitPlayerEquipment(ready),'equipment transaction failed during '+form);
+        p.buffs=[];await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
+        ok(!win.document.getElementById('appFatal')&&!p._formVisual&&p._playerVisual.equipment.main.baseId==='staff2h_t7','equipped model did not return after '+form);
+      }
+    }
+    if(id==='veilranger'){
+      const skill=Object.values(win.eval('DATA').SKILLS).find(s=>s.type==='afterimage');p.skills[skill.id]=1;p.mp=p.stats.maxMp;
+      const actorDraw=sprites.drawActor;sprites.drawActor=(ctx,opts,pose)=>{if(opts.summonArt==='decoy')throw Error('After-Image fell back to a 2D avatar');return actorDraw(ctx,opts,pose);};
+      ok(p.performSkill(skill.id,null,{x:p.x+.25,y:p.y}),'After-Image cast failed');
+      const echo=game.state.minions.find(m=>m.playerEcho);ok(echo?.playerEcho._playerVisual.kind==='player3d','After-Image used a 2D avatar');
+      await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));ok(!win.document.getElementById('appFatal'),'3D After-Image failed to render');sprites.drawActor=actorDraw;
+    }
+    // All weapon families can use the actual equipment transaction, including shields.
+    for(const base of ['sword_t0','axe_t0','mace_t0','dagger_t0','sword2h_t0','axe2h_t0','mace2h_t0','spear2h_t0','bow2h_t0','crossbow2h_t0','wand_t0','staff2h_t0']){
+      const equipment={...next,main:items.fromBase(base)};if(!equipment.main.twoHand)equipment.off=items.fromBase('shield_t0');
+      const ready=await game.preparePlayerEquipment(equipment);p.equip=equipment;ok(game.commitPlayerEquipment(ready),id+'/'+base+': weapon commit failed');
+    }
+    game.saveGame();out.textContent=`Checked ${id}…`;
+  }
+  const slot=game.listSaves()[0].slot;({win,game,items,sprites}=await frame());
+  ok(win.Player3D.only3D,'reload did not begin in default 3D mode');
+  await game.loadGame(slot);
+  ok(win.Player3D.only3D&&game.state.player._playerVisual.kind==='player3d','loading a 3D save did not restore 3D rendering');
+  ok(game.state.player.equip.main.baseId==='staff2h_t0'&&game.state.player.equip.gloves.baseId==='gloves_t13','equipment did not survive save/reload');
+  await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
+  ok(!win.document.getElementById('appFatal'),'restored game failed to render');
+  ok(!win.document.querySelector('#player3dControls,#playerRendererNote'),'sprite switch is still available');
+  const legacyRequests=win.performance.getEntriesByType('resource').filter(r=>/\/players\/|\/forms\//.test(r.name));
+  ok(legacyRequests.length===0,'legacy player sprites were downloaded: '+legacyRequests.map(r=>r.name).join(', '));
+  ({win,game,items,sprites}=await frame('0',true));
+  ok(!!win.document.getElementById('appFatal')&&/WebGL/.test(win.document.getElementById('appFatalDetail').textContent),'WebGL failure did not stop with a visible error');
+  ok(!game.state&&!win.performance.getEntriesByType('resource').some(r=>/\/players\/|\/forms\//.test(r.name)),'WebGL failure fell back to player sprites');
+  ({win,game,items,sprites}=await frame());await game.loadGame(slot);
+  document.getElementById('classes').disabled=false;document.getElementById('classes').onclick=()=>{game.saveAndQuit();[...win.document.querySelectorAll('#titleMenu button')].find(b=>b.textContent==='NEW HERO').click();};
+  out.textContent=`PASS: ${checks} checks: mandatory 3D, class selection, older saves and URLs, five classes, equipment transactions, all four transformations, save/reload, and zero legacy player sprite calls or downloads, and WebGL failure handling.\nAll saves were isolated in memory.`;
+  document.body.dataset.testStatus='passed';
+}catch(error){out.textContent='FAIL: '+error.stack;document.body.dataset.testStatus='failed';}
+</script></html>

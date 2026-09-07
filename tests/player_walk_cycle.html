@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><base href="../"><title>Player walk cycles — five classes</title>
+  <style>
+    body{margin:24px;background:#20242a;color:#eee;font:14px system-ui}h1{font-size:23px}
+    label,button{margin-right:18px}select,button{padding:6px;background:#303740;color:#eee;border:1px solid #627180}
+    canvas{display:block;margin:14px 0;max-width:100%;background:#292f37}pre{white-space:pre-wrap;color:#b3e0c2}
+  </style>
+</head>
+<body>
+  <h1>Player walk cycles</h1>
+  <p>Live production renderer · five classes · eight directions · distance-driven alternating steps</p>
+  <pre id="result">PENDING</pre>
+  <label>Loadout <select id="loadout"><option value="starter">Starter equipment</option><option value="body">Unarmed body</option></select></label>
+  <label>Speed <select id="speed"><option value="4.6">Normal</option><option value="2.3">Slowed</option><option value="7">Fast</option></select></label>
+  <button id="pause">Pause</button>
+  <canvas id="preview" width="1120" height="610" aria-label="All five classes walking in eight directions"></canvas>
+  <label>Inspect <select id="class"></select></label>
+  <label>Direction <select id="direction"></select></label>
+  <canvas id="contact" width="1536" height="438" aria-label="Eight phases of the selected walk cycle, above the old two-pose cycle"></canvas>
+  <script src="js/utils.js"></script><script src="js/data.js"></script>
+  <script src="js/sprite_manifest.js"></script><script src="js/sprite_assets.js"></script>
+  <script src="js/items.js"></script><script src="js/mapgen.js"></script><script src="js/entities.js"></script>
+  <script>
+    "use strict";
+    (async () => {
+      const classes = ["vanguard","emberwitch","gravebinder","veilranger","wildkeeper"];
+      const dirs = ["E","SE","S","SW","W","NW","N","NE"], tau = Math.PI * 2;
+      const ui = id => document.getElementById(id), views = {};
+      let checks = 0;
+      const ok = (value, message) => { checks++; if (!value) throw new Error(message); };
+      const gear = baseId => ({baseId, ...DATA.BASES[baseId]});
+      const pose = (dir, phase) => ({state:"walk",t:0,ang:dir*tau/8,ex:{walkPh:phase}});
+      const render = (visual, p) => {
+        const c = document.createElement("canvas"); c.width = c.height = 240;
+        const cx = c.getContext("2d",{willReadFrequently:true}); cx.translate(120,210);
+        SpriteAssets.drawPlayer(cx,visual,p); return c;
+      };
+      const pixels = c => c.getContext("2d").getImageData(0,0,240,240).data;
+      const changed = (a,b,y0,y1) => {
+        let count = 0;
+        for(let y=y0;y<y1;y++)for(let x=65;x<175;x++) {
+          const i=(y*240+x)*4;
+          if(Math.abs(a[i]-b[i])+Math.abs(a[i+1]-b[i+1])+Math.abs(a[i+2]-b[i+2])+Math.abs(a[i+3]-b[i+3])>32)count++;
+        }
+        return count;
+      };
+      try {
+        for(const id of classes) {
+          await SpriteAssets.loadBundle(`player:${id}`);
+          const ids=DATA.SPRITE_MANIFEST.maps.playerEquipmentCoverage.starterBaseIds[id];
+          views[id]={starter:SpriteAssets.resolvePlayerVisual(id,{main:gear(ids.main),chest:gear(ids.chest)},[]),
+            body:SpriteAssets.resolvePlayerVisual(id,{},[])};
+          if(id==="emberwitch")views[id].modular=SpriteAssets.resolvePlayerVisual(id,{
+            main:gear("wand_t0"),head:gear("helm_t3"),chest:gear("chest_t6")},[]);
+          ui("class").add(new Option(DATA.CLASSES[id].name,id));
+          for(const mode of Object.keys(views[id])) {
+            const visual=views[id][mode];
+            await SpriteAssets.loadPlayerLoadout(visual);
+            for(let dir=0;dir<8;dir++) {
+              const a=pixels(render(visual,pose(dir,0))), b=pixels(render(visual,pose(dir,Math.PI)));
+              ok(changed(a,b,184,222)>60,`${id}/${mode}/${dirs[dir]}: opposite footfalls do not change leg pixels`);
+              ok(changed(a,b,130,180)===0,`${id}/${mode}/${dirs[dir]}: torso/equipment detached between footfalls`);
+              const c=pixels(render(visual,pose(dir,.35))), d=pixels(render(visual,pose(dir,.65)));
+              ok(changed(c,d,184,222)>25,`${id}/${mode}/${dirs[dir]}: walk held the same pose within a half stride`);
+              ok(changed(a,pixels(render(visual,pose(dir,tau))),125,225)===0,`${id}/${mode}/${dirs[dir]}: cycle does not loop exactly`);
+            }
+          }
+          const p=new Player("Walk test",id), map={w:64,h:64,blocked:new Uint8Array(4096),elev:new Uint8Array(4096)};
+          p.x=p.y=12; p.visAng=0; p.path=[{cx:32,cy:12}];
+          p.moveAlong(.1,4.6,map,[]);
+          ok(p.pose().state==="walk"&&p.stride>0,`${id}: movement never advances the walk`);
+          const fastPhase=p.pose().ex.walkPh;
+          p.x=12; p.y=12; p.stride=0; p.slowT=1; p.slowPct=50;
+          p.moveAlong(.2,4.6,map,[]);
+          ok(Math.abs(p.pose().ex.walkPh-fastPhase)<1e-9,`${id}: slow walk is driven by time instead of distance`);
+          const before=p.stride; map.blocked.fill(1); p.moveAlong(.1,4.6,map,[]);
+          ok(p.pose().state==="idle"&&p.stride===before&&p.curSpeed===0,`${id}: blocked actor holds a walking foot out`);
+          p.path=null; p.moveAlong(.1,4.6,map,[]);
+          ok(p.pose().state==="idle",`${id}: stopped actor did not return to idle`);
+          p.moving=true; p.startAction("attack",1);
+          ok(p.pose().state==="attack",`${id}: walking overrides attacks`);
+          p.action=null; p.jumping={};
+          ok(p.pose().ex.airborne===true,`${id}: airborne player lost its jump state`);
+          p.jumping=null; ok(p.pose().ex.airborne===false,`${id}: airborne state leaked after landing`);
+        }
+        const proto=CanvasRenderingContext2D.prototype, original=proto.getImageData;
+        proto.getImageData=function(){throw new Error("Sprite animation must not read pixels from file-loaded canvases");};
+        try {for(const id of classes)for(let dir=0;dir<8;dir++)render(views[id].starter,pose(dir,.8));}
+        finally {proto.getImageData=original;}
+        ok(true,"walk renderer has no pixel-readback requirement");
+        document.body.dataset.testStatus="passed";
+        ui("result").textContent=`PASS: ${checks} walk rendering/movement checks; five classes, starter/unarmed and installed modular armor, eight directions.`;
+      } catch(err) {
+        document.body.dataset.testStatus="failed"; ui("result").textContent=`FAIL: ${err.stack||err}`;
+      }
+      for(let i=0;i<8;i++)ui("direction").add(new Option(dirs[i],i));
+      const preview=ui("preview"), cx=preview.getContext("2d"), sheet=ui("contact"), sx=sheet.getContext("2d");
+      function draw(visual,p,ctx,x,y,scale) {ctx.save();ctx.translate(x,y);SpriteAssets.drawPlayer(ctx,{...visual,scale},p);ctx.restore();}
+      function contact() {
+        const id=ui("class").value,dir=+ui("direction").value,visual=views[id]&&views[id][ui("loadout").value];
+        if(!visual)return; sx.clearRect(0,0,sheet.width,sheet.height);sx.fillStyle="#ddd";sx.font="14px system-ui";
+        sx.fillText("New: alternating contact, passing, and lift",8,18);
+        sx.fillText("Previous: walkA / walkB paintings",8,236);
+        for(let i=0;i<8;i++) {
+          const p=pose(dir,i*tau/8),x=i*192+96;
+          draw(visual,p,sx,x,210,1);sx.fillText(`${i*45}°`,i*192+8,214);
+          const plan=SpriteAssets.getPlayerDrawPlan(visual,p);
+          for(const layer of plan.layers)SpriteAssets.drawFrame(sx,SpriteAssets.getFrame(layer.assetId,plan.index),x,432,{tint:layer.tint});
+        }
+      }
+      let paused=false,phase=0,last=0;
+      ui("pause").onclick=()=>{paused=!paused;ui("pause").textContent=paused?"Resume":"Pause";};
+      for(const id of ["class","direction","loadout"])ui(id).onchange=contact;
+      function tick(t) {
+        if(!paused)phase=(phase+Math.min(.05,last?(t-last)/1000:0)*(+ui("speed").value)/2.4*tau)%tau;
+        last=t;cx.clearRect(0,0,preview.width,preview.height);cx.font="13px system-ui";
+        for(let row=0;row<classes.length;row++) {
+          const id=classes[row],visual=views[id]&&views[id][ui("loadout").value]; if(!visual)continue;
+          for(let dir=0;dir<8;dir++) {
+            const x=dir*140+70,y=row*120+104;
+            cx.strokeStyle="#54606c";cx.beginPath();cx.moveTo(x-36,y);cx.lineTo(x+36,y);cx.stroke();
+            draw(visual,pose(dir,phase),cx,x,y,.42);
+            cx.fillStyle="#c8d2dc";cx.fillText(`${id} ${dirs[dir]}`,x-58,y+19);
+          }
+        }
+        requestAnimationFrame(tick);
+      }
+      contact();requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+{
+  "operation": "whole-image-resize-v1",
+  "outputSize": [
+    1920,
+    1080
+  ],
+  "outputs": {
+    "default": {
+      "path": "assets/sprites_src/gameplay_art/world/backdrops/default.png",
+      "resampling": "LANCZOS",
+      "sha256": "0d36976c1959cd14d9414e369a332c7cd06f76df1cbe57b4a388ec592bfc57fd",
+      "size": [
+        1920,
+        1080
+      ],
+      "source": "assets/sprites_src/gameplay_art_authored/backdrops/default_raw_v1.png",
+      "sourceSha256": "343872551ba1ad72fe7351f4f82f72bf0ccd00733b87120a4703a7837e2f45f4",
+      "sourceSize": [
+        1672,
+        941
+      ]
+    },
+    "desert": {
+      "path": "assets/sprites_src/gameplay_art/world/backdrops/desert.png",
+      "resampling": "LANCZOS",
+      "sha256": "6730df1be10469c067dda4673e7c0689505687859a91b5e246b3e401af098583",
+      "size": [
+        1920,
+        1080
+      ],
+      "source": "assets/sprites_src/gameplay_art_authored/backdrops/desert_raw_v1.png",
+      "sourceSha256": "6120e90cecd0860d3f9b7ebb774488e1b847acf2ee4dbf2af51ee529b0a09b22",
+      "sourceSize": [
+        1672,
+        941
+      ]
+    },
+    "dungeon": {
+      "path": "assets/sprites_src/gameplay_art/world/backdrops/dungeon.png",
+      "resampling": "LANCZOS",
+      "sha256": "8c64b7a7791a4aa7370b0c17f7e12aff729ea0fa1fd157c4636696e3109ad980",
+      "size": [
+        1920,
+        1080
+      ],
+      "source": "assets/sprites_src/gameplay_art_authored/backdrops/dungeon_raw_v1.png",
+      "sourceSha256": "da60221de501eedce40b487b6e4a18ba52a2db2c8da45473b09619fae0754cac",
+      "sourceSize": [
+        1672,
+        941
+      ]
+    },
+    "fields": {
+      "path": "assets/sprites_src/gameplay_art/world/backdrops/fields.png",
+      "resampling": "LANCZOS",
+      "sha256": "8ae1463c16472f81e0eb3ad1d914c8e1ba935b43bf611f45bfcc94f83a0a3abb",
+      "size": [
+        1920,
+        1080
+      ],
+      "source": "assets/sprites_src/gameplay_art_authored/backdrops/fields_raw_v1.png",
+      "sourceSha256": "41664717b1203d1cba41dc97acfb7283e29fbe434ce56327ecd05b27877e8a2a",
+      "sourceSize": [
+        1672,
+        941
+      ]
+    },
+    "forest": {
+      "path": "assets/sprites_src/gameplay_art/world/backdrops/forest.png",
+      "resampling": "LANCZOS",
+      "sha256": "a7ce56d43e91db488ead963ee7366adb0c368546277c3f7f4f10443afad7496e",
+      "size": [
+        1920,
+        1080
+      ],
+      "source": "assets/sprites_src/gameplay_art_authored/backdrops/forest_raw_v1.png",
+      "sourceSha256": "2845ea348cf7398fd3048db52996677ee787b8f493e81186c837c6f05e44f885",
+      "sourceSize": [
+        1672,
+        941
+      ]
+    },
+    "hellwild": {
+      "path": "assets/sprites_src/gameplay_art/world/backdrops/hellwild.png",
+      "resampling": "LANCZOS",
+      "sha256": "2e5ce074ae88287a5d00d7b83a3b9c033690052b360e6d7df8c8373571cc00c1",
+      "size": [
+        1920,
+        1080
+      ],
+      "source": "assets/sprites_src/gameplay_art_authored/backdrops/hellwild_raw_v1.png",
+      "sourceSha256": "11b97aa0ed130fbb4db6afba7fbd2b20fdc69f65a6900155be26298f2adeb4e9",
+      "sourceSize": [
+        1672,
+        941
+      ]
+    },
+    "marsh": {
+      "path": "assets/sprites_src/gameplay_art/world/backdrops/marsh.png",
+      "resampling": "LANCZOS",
+      "sha256": "7a92aad18002679b5937e8fde2a9c8f40db7008e65e1de13a3a24323d426431f",
+      "size": [
+        1920,
+        1080
+      ],
+      "source": "assets/sprites_src/gameplay_art_authored/backdrops/marsh_raw_v1.png",
+      "sourceSha256": "a253602fe7727aef1df8068f6a859385ce412fa6912e29a66e8bfd4ac3e1446d",
+      "sourceSize": [
+        1672,
+        941
+      ]
+    },
+    "snowwild": {
+      "path": "assets/sprites_src/gameplay_art/world/backdrops/snowwild.png",
+      "resampling": "LANCZOS",
+      "sha256": "3398406f58e7df4ffabe6acd8958e3568d2f47459f181a39a5a9ee194d9aed79",
+      "size": [
+        1920,
+        1080
+      ],
+      "source": "assets/sprites_src/gameplay_art_authored/backdrops/snowwild_raw_v1.png",
+      "sourceSha256": "af5d541e7888f4b8fb524be591d34077cb470d242c93439aa1629ffd082bc65f",
+      "sourceSize": [
+        1672,
+        941
+      ]
+    }
+  },
+  "review": "visual-contact-sheet-v1",
+  "sourceKind": "imagegen-authored-scenic-plates",
+  "version": 1
+}

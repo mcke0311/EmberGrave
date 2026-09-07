@@ -1,0 +1,17 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>EMBERGRAVE · Skill effects atelier</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#13171b;color:#d9d5ca;font:14px system-ui}header{padding:24px 32px 16px;border-bottom:1px solid #49443b;background:#1b2024}h1{margin:4px 0 7px;font:30px Georgia;color:#edddbb}header p{margin:0;color:#a9adae}.eyebrow{color:#c4a26c;font-size:10px;letter-spacing:.25em}nav{display:flex;gap:12px;align-items:end;flex-wrap:wrap;padding:16px 32px;background:#181d21}label{display:grid;gap:5px;font-size:11px;color:#abb5b8}select,button,input{font:13px system-ui;background:#242c31;color:#e9dfca;border:1px solid #566064;border-radius:4px;padding:8px}button{cursor:pointer}button:hover{background:#35434b}button:disabled{opacity:.5;cursor:wait}#status,#note{margin:12px 32px;color:#cbb891}#host{height:590px;margin:0 32px;overflow:hidden;border:1px solid #4b5356;background:#0b0d10}iframe{width:1280px;height:720px;border:0;transform-origin:top left}#results{white-space:pre-wrap;margin:16px 32px;font:12px monospace;max-height:230px;overflow:auto}#sheets{margin:24px 32px;display:grid;gap:20px}#sheets canvas{width:min(100%,1280px);height:auto;border:1px solid #41494d}a{color:#e1ba7b}
+</style>
+<header><div class="eyebrow">EMBERGRAVE / COMBAT ART</div><h1>Skill effects atelier</h1><p>All five disciplines of war. Real skill casts, temporary heroes, isolated saves.</p></header>
+<nav>
+<label>Class<select id="class"><option value="vanguard">Vanguard</option><option value="emberwitch">Ember Witch</option><option value="gravebinder">Gravebinder</option><option value="veilranger">Veil Ranger</option><option value="wildkeeper">Wildkeeper</option></select></label>
+<label>Skill<select id="skill"></select></label><label>Rank<select id="rank"><option>1</option><option>5</option><option selected>10</option></select></label>
+<label>Rank 5 perk<select id="perk5"><option value="-1">No choice</option></select></label><label>Rank 10 perk<select id="perk10"><option value="-1">No choice</option></select></label>
+<label>Stage<select id="stage"><option value="snowwild">Snow · bright</option><option value="crypt">Crypt · dark</option></select></label>
+<label>Presentation<select id="effects"><option value="1">New effects</option><option value="0">Original effects</option></select></label>
+<label>Speed<select id="speed"><option value="1">Normal</option><option value="0.25">Quarter speed</option></select></label>
+<button id="replay" disabled>Replay skill</button><button id="pause" disabled>Pause</button><button id="step" disabled>Step 1/60 s</button>
+<button id="audit" disabled>Review all 107</button><button id="benchmark" disabled>Benchmark skill spam</button>
+</nav><p id="status">Loading…</p><p id="note">The current game uses live 3D players and authored sprite companions. Effect anchoring also has a facing-based fallback, covered by the contracts.</p>
+<div id="host"></div><pre id="results"></pre><div id="sheets"></div>
+<script type="module" src="skill_vfx_review.mjs"></script></html>
