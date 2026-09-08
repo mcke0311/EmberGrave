@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "contracts": [
+    {
+      "test": "story_campaign_contract.mjs",
+      "status": "PASS",
+      "checks": 214
+    },
+    {
+      "test": "navigation_contract.mjs",
+      "status": "PASS",
+      "checks": 216
+    },
+    {
+      "test": "terrain_surface_contract.mjs",
+      "status": "PASS",
+      "checks": 10734
+    },
+    {
+      "test": "terrain_view_cache_contract.mjs",
+      "status": "PASS",
+      "checks": 3980
+    },
+    {
+      "test": "town_layout_contract.mjs",
+      "status": "PASS",
+      "checks": 54280
+    },
+    {
+      "test": "frontier_layout_contract.mjs",
+      "status": "PASS",
+      "checks": 118293
+    },
+    {
+      "test": "frontier_quest_contract.mjs",
+      "status": "PASS",
+      "checks": 153
+    },
+    {
+      "test": "boss_encounter_contract.mjs",
+      "status": "PASS",
+      "checks": 85616
+    }
+  ],
+  "note": "Executed during Act III implementation against the shared working tree. Navigation/layout/quest details for Act III are recorded separately."
+}

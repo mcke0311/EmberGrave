@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><link rel="icon" href="data:,"><title>Sprite request budget</title><pre id="result">Loading…</pre>
+<script>
+const DATA={SPRITE_MANIFEST:{version:1,wallHeight:72,wallViewHeight:128,entries:{},maps:{}}};
+for(let i=0;i<96;i++)DATA.SPRITE_MANIFEST.entries['test.'+i]={src:'virtual/'+(i%64)+'.webp',kind:'static',anchor:[0,0],bundle:'core'};
+let active=0,peak=0,decoded=0;const requests=new Map();
+class BudgetedImage{
+ constructor(){this.naturalWidth=this.naturalHeight=8;}
+ set src(value){this._src=value;requests.set(value,(requests.get(value)||0)+1);active++;peak=Math.max(peak,active);
+  setTimeout(()=>active>16?this.onerror():this.onload(),2);
+ }
+ get src(){return this._src;}
+ async decode(){await new Promise(resolve=>setTimeout(resolve,2));active--;decoded++;}
+}
+window.Image=BudgetedImage;
+</script><script src="../js/sprite_assets.js"></script><script>
+(async()=>{try{
+ const progress=[];await SpriteAssets.loadBundle('core',(done,total,id)=>{if(decoded<done)throw Error('Progress reported before decode');progress.push(done);});
+ if(peak>16||peak<2||requests.size!==64||[...requests.values()].some(n=>n!==1)||decoded!==64||progress.at(-1)!==64)throw Error(JSON.stringify({peak,requests:requests.size,decoded,progress}));
+ await SpriteAssets.loadBundle('core');if(decoded!==64)throw Error('Warm bundle reloaded');
+ document.getElementById('result').textContent='PASS: 96 sprite references, 64 unique decodes, bounded parallel requests, accurate progress, no warm reload.';document.body.dataset.testStatus='passed';
+}catch(e){document.getElementById('result').textContent=e.stack;document.body.dataset.testStatus='failed';}})();
+</script></html>

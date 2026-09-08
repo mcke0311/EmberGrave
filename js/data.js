@@ -432,6 +432,13 @@ DATA.BASIC_ATTACK = { id: "basic", name: "Attack", type: "melee", icon: "basic",
           reqLvl: s.reqLvl || REQ[s.row] || 1, prereq: s.pre ? nameToId[s.pre] : undefined,
           maxRank: 10, icon: s.icon, flavor: s.fl || "", synergy: s.synergy,
         }, made);
+        // Rank one remains the balance anchor; perks modify this shared curve.
+        if (sk.mana) {
+          sk.baseMana = sk.mana(1);
+          sk.mana = rank => sk.baseMana * Math.max(1, rank);
+        }
+        if (cls === "veilranger" && ["melee", "wfan", "charge_shot", "ricochet", "wpierce", "rain", "weapon_coat"].includes(sk.type))
+          sk.requiredWeapons = ["bow", "crossbow"];
         DATA.SKILLS[s._id] = sk;
       });
     });
@@ -696,6 +703,7 @@ DATA.UNIQUE_CHARMS = [
   { id: "uc_wyrm",     name: "Wyrmscale Charm",   size: "grand", ilvl: 62, stats: { resAll: 18, hp: 55, dmgReduceFlat: 6 }, flavor: "Shed by something far older than you." },
 ];
 DATA.UNIQUE_JEWELS = [
+  { id: "uj_oak",     name: "Old Oak's Heart",   ilvl: 16, jcol: "#8b5a2b", affixes: [{ stat: "hp", val: 20 }, { stat: "resPoison", val: 15 }], flavor: "A thousand winters sleep inside this polished brown knot." },
   { id: "uj_rainbow", name: "Prismfire Jewel",   ilvl: 22, jcol: "#c060d0", affixes: [{ stat: "resAll", val: 12 }, { stat: "hp", val: 25 }], flavor: "All colours, one promise." },
   { id: "uj_rage",    name: "Jewel of Rage",     ilvl: 28, jcol: "#d04040", affixes: [{ stat: "dmgPct", val: 35 }, { stat: "ias", val: 10 }], flavor: "It wants you to swing." },
   { id: "uj_frost",   name: "Heartfrost Jewel",  ilvl: 34, jcol: "#40a0d0", affixes: [{ stat: "coldDmg", val: 30 }, { stat: "resCold", val: 20 }], flavor: "Cold enough to bite back." },
@@ -1522,13 +1530,13 @@ DATA._buildRoster = (function () { return function buildRoster() {
   }
   /* drop them into level-appropriate zone spawn pools */
   for (const z of Object.values(DATA.ZONES)) {
-    if (!z.spawns || z.kind === "town" || z.kind === "camp") continue;
+    if (!z.spawns || z.kind === "town" || z.kind === "camp" || DATA.ACT3_ROSTERS?.[z.id]) continue;
     for (const d of roster) if (Math.abs((z.lvl || 1) - d.lvl) <= 4) z.spawns.push(d.id);
   }
   /* sprinkle the hand-authored signature beasts (dragons / serpents / gargoyles / axe-demons) by level */
   const SIG = ["frost_wyrm", "cave_python", "ash_drake", "bone_dragon", "marsh_serpent", "dune_serpent", "stone_gargoyle", "chapel_grotesque", "void_gargoyle", "brimstone_brute", "ashfiend_reaver", "infernal_warlord", "flesh_engine", "grave_wraith", "frost_wraith", "void_wraith", "caustic_ooze", "sludge_horror", "cinder_imp", "hex_imp", "gnarl_treant", "blight_treant"];
   for (const z of Object.values(DATA.ZONES)) {
-    if (!z.spawns || z.kind === "town" || z.kind === "camp") continue;
+    if (!z.spawns || z.kind === "town" || z.kind === "camp" || DATA.ACT3_ROSTERS?.[z.id]) continue;
     for (const id of SIG) { const e = DATA.ENEMIES[id]; if (e && Math.abs((z.lvl || 1) - e.lvl) <= 4) z.spawns.push(id); }
   }
   DATA.ROSTER_IDS = roster.map(d => d.id);
@@ -2299,6 +2307,10 @@ DATA.ZONES = {
             spawns:["hollow_knight","choir_priest","soul_eater","memory_wraith"], boss:"empty_archangel", shifting:true },
   cathedral2: { id:"cathedral2", musicTrack:"cathedral", name:"The Cathedral Heart", kind:"dungeon", theme:"cathedral", dark:0.80, lvl:20, music:"dungeon",
             spawns:["hollow_knight","choir_priest","memory_wraith","soul_eater"], boss:"malthoron", shifting:true },
+  cathedral_cinderwatch: { id:"cathedral_cinderwatch", artZone:"cathedral1", musicTrack:"cathedral", name:"Cinderwatch Remembered", kind:"dungeon", theme:"cathedral", dark:0.57, lvl:18, music:"dungeon", memoryParent:"cathedral1",
+            spawns:["hollow_knight","memory_wraith","soul_eater"] },
+  cathedral_bastion: { id:"cathedral_bastion", artZone:"cathedral2", musicTrack:"cathedral", name:"The Last Bastion’s Echo", kind:"dungeon", theme:"cathedral", dark:0.61, lvl:20, music:"dungeon", memoryParent:"cathedral2",
+            spawns:["hollow_knight","choir_priest","memory_wraith"] },
 
   /* ===== ACT V — The Throne of Cinders ===== */
   hellgate: { id:"hellgate", musicTrack:"breach", name:"The Breach", kind:"camp", theme:"hellwild", dark:0.50, lvl:20, music:"town" },
@@ -2321,7 +2333,7 @@ DATA.ACTS = [
   { id:3, rn:"III",name:"The City Beneath the Sand", camp:"khalcamp", boss:"azram",     next:"cathedral1", intro:["THE CITY BENEATH THE SAND","Khal-Zahir — Act III"],
     zones:["khalcamp","desert_wastes","underground_market","sand_tombs","khal_palace"] },
   { id:4, rn:"IV", name:"The Shattered Cathedral", camp:"cathedral1", boss:"malthoron", next:"hellgate",   intro:["THE SHATTERED CATHEDRAL","The Drifting Cathedral — Act IV"],
-    zones:["cathedral1","cathedral2"] },
+    zones:["cathedral1","cathedral_cinderwatch","cathedral2","cathedral_bastion"] },
   { id:5, rn:"V",  name:"The Throne of Cinders", camp:"hellgate",  boss:"vethriss",     next:null,         intro:["THE THRONE OF CINDERS","The Burning Hells — Act V"],
     zones:["hellgate","ash_wastes","cinder_bastion","throne"] },
 ];
@@ -2632,6 +2644,126 @@ DATA.WORLD_SPRITE_SOURCES = {
   prop_level_hazard_spring: { src: "assets/sprites_src/gameplay_art/world/props/level_hazard_spring.png", raw: true },
   prop_level_hazard_static: { src: "assets/sprites_src/gameplay_art/world/props/level_hazard_static.png", raw: true },
   /* End continuous level materials. */
+  /* Frontier landmark library v1. */
+  prop_frontier_watchtower: { src: "assets/sprites_src/gameplay_art/world/props/frontier_watchtower.png", raw: true },
+  prop_frontier_tollhouse: { src: "assets/sprites_src/gameplay_art/world/props/frontier_tollhouse.png", raw: true },
+  prop_frontier_minehead: { src: "assets/sprites_src/gameplay_art/world/props/frontier_minehead.png", raw: true },
+  prop_frontier_supports: { src: "assets/sprites_src/gameplay_art/world/props/frontier_supports.png", raw: true },
+  prop_frontier_temple: { src: "assets/sprites_src/gameplay_art/world/props/frontier_temple.png", raw: true },
+  prop_frontier_memorial: { src: "assets/sprites_src/gameplay_art/world/props/frontier_memorial.png", raw: true },
+  prop_frontier_pilgrim_stones: { src: "assets/sprites_src/gameplay_art/world/props/frontier_pilgrim_stones.png", raw: true },
+  prop_frontier_shelter: { src: "assets/sprites_src/gameplay_art/world/props/frontier_shelter.png", raw: true },
+  prop_frontier_summit: { src: "assets/sprites_src/gameplay_art/world/props/frontier_summit.png", raw: true },
+  prop_frontier_ice_ribs: { src: "assets/sprites_src/gameplay_art/world/props/frontier_ice_ribs.png", raw: true },
+  prop_frontier_ice_arch: { src: "assets/sprites_src/gameplay_art/world/props/frontier_ice_arch.png", raw: true },
+  prop_frontier_spring: { src: "assets/sprites_src/gameplay_art/world/props/frontier_spring.png", raw: true },
+  prop_frontier_tracks: { src: "assets/sprites_src/gameplay_art/world/props/frontier_tracks.png", raw: true },
+  prop_frontier_paving: { src: "assets/sprites_src/gameplay_art/world/props/frontier_paving.png", raw: true },
+  prop_frontier_rubble: { src: "assets/sprites_src/gameplay_art/world/props/frontier_rubble.png", raw: true },
+  /* End frontier landmark library v1. */
+  /* Cinder kingdom library v1. */
+  prop_cinders_breach_gate: { src: "assets/sprites_src/gameplay_art/world/props/cinders_breach_gate.png", raw: true },
+  prop_cinders_bastion_gate: { src: "assets/sprites_src/gameplay_art/world/props/cinders_bastion_gate.png", raw: true },
+  prop_cinders_bastion_return: { src: "assets/sprites_src/gameplay_art/world/props/cinders_bastion_return.png", raw: true },
+  prop_cinders_throne_gate: { src: "assets/sprites_src/gameplay_art/world/props/cinders_throne_gate.png", raw: true },
+  prop_cinders_throne_return: { src: "assets/sprites_src/gameplay_art/world/props/cinders_throne_return.png", raw: true },
+  prop_cinders_siege_tower: { src: "assets/sprites_src/gameplay_art/world/props/cinders_siege_tower.png", raw: true },
+  prop_cinders_siege_engine: { src: "assets/sprites_src/gameplay_art/world/props/cinders_siege_engine.png", raw: true },
+  prop_cinders_impaled_monument: { src: "assets/sprites_src/gameplay_art/world/props/cinders_impaled_monument.png", raw: true },
+  prop_cinders_furnace_forge: { src: "assets/sprites_src/gameplay_art/world/props/cinders_furnace_forge.png", raw: true },
+  prop_cinders_fallen_statue: { src: "assets/sprites_src/gameplay_art/world/props/cinders_fallen_statue.png", raw: true },
+  prop_cinders_throne_backdrop: { src: "assets/sprites_src/gameplay_art/world/props/cinders_throne_backdrop.png", raw: true },
+  prop_cinders_ash_drifts: { src: "assets/sprites_src/gameplay_art/world/props/cinders_ash_drifts.png", raw: true },
+  prop_cinders_ceremonial_paving: { src: "assets/sprites_src/gameplay_art/world/props/cinders_ceremonial_paving.png", raw: true },
+  prop_cinders_chain_rubble: { src: "assets/sprites_src/gameplay_art/world/props/cinders_chain_rubble.png", raw: true },
+  /* End cinder kingdom library v1. */
+  /* Act 2 environment library v1. */
+  prop_act2_monastery_out: { src: "assets/sprites_src/gameplay_art/world/props/act2_monastery_out.png", raw: true },
+  prop_act2_monastery_in: { src: "assets/sprites_src/gameplay_art/world/props/act2_monastery_in.png", raw: true },
+  prop_act2_reeds_out: { src: "assets/sprites_src/gameplay_art/world/props/act2_reeds_out.png", raw: true },
+  prop_act2_reeds_in: { src: "assets/sprites_src/gameplay_art/world/props/act2_reeds_in.png", raw: true },
+  prop_act2_sluice_out: { src: "assets/sprites_src/gameplay_art/world/props/act2_sluice_out.png", raw: true },
+  prop_act2_sluice_in: { src: "assets/sprites_src/gameplay_art/world/props/act2_sluice_in.png", raw: true },
+  prop_act2_ritual_out: { src: "assets/sprites_src/gameplay_art/world/props/act2_ritual_out.png", raw: true },
+  prop_act2_ritual_in: { src: "assets/sprites_src/gameplay_art/world/props/act2_ritual_in.png", raw: true },
+  prop_act2_bell_tower: { src: "assets/sprites_src/gameplay_art/world/props/act2_bell_tower.png", raw: true },
+  prop_act2_stilt_hut: { src: "assets/sprites_src/gameplay_art/world/props/act2_stilt_hut.png", raw: true },
+  prop_act2_cloister: { src: "assets/sprites_src/gameplay_art/world/props/act2_cloister.png", raw: true },
+  prop_act2_ossuary: { src: "assets/sprites_src/gameplay_art/world/props/act2_ossuary.png", raw: true },
+  prop_act2_submerged_shrine: { src: "assets/sprites_src/gameplay_art/world/props/act2_submerged_shrine.png", raw: true },
+  prop_act2_boat_wreck: { src: "assets/sprites_src/gameplay_art/world/props/act2_boat_wreck.png", raw: true },
+  prop_act2_nesting_roots: { src: "assets/sprites_src/gameplay_art/world/props/act2_nesting_roots.png", raw: true },
+  prop_act2_root_crown: { src: "assets/sprites_src/gameplay_art/world/props/act2_root_crown.png", raw: true },
+  prop_act2_boardwalk_x: { src: "assets/sprites_src/gameplay_art/world/props/act2_boardwalk_x.png", raw: true },
+  prop_act2_boardwalk_y: { src: "assets/sprites_src/gameplay_art/world/props/act2_boardwalk_y.png", raw: true },
+  prop_act2_paving: { src: "assets/sprites_src/gameplay_art/world/props/act2_paving.png", raw: true },
+  prop_act2_water_edge: { src: "assets/sprites_src/gameplay_art/world/props/act2_water_edge.png", raw: true },
+  prop_act2_root_mat: { src: "assets/sprites_src/gameplay_art/world/props/act2_root_mat.png", raw: true },
+  prop_act2_reed_clump: { src: "assets/sprites_src/gameplay_art/world/props/act2_reed_clump.png", raw: true },
+  prop_act2_votives: { src: "assets/sprites_src/gameplay_art/world/props/act2_votives.png", raw: true },
+  prop_act2_black_water: { src: "assets/sprites_src/gameplay_art/world/props/act2_black_water.png", raw: true },
+  /* End Act 2 environment library v1. */
+  /* Act III imperial art v1. */
+  prop_act3_checkpoint: { src: "assets/sprites_src/gameplay_art/world/props/act3_checkpoint.png", raw: true },
+  prop_act3_market_gate: { src: "assets/sprites_src/gameplay_art/world/props/act3_market_gate.png", raw: true },
+  prop_act3_tomb_gate: { src: "assets/sprites_src/gameplay_art/world/props/act3_tomb_gate.png", raw: true },
+  prop_act3_palace_gate: { src: "assets/sprites_src/gameplay_art/world/props/act3_palace_gate.png", raw: true },
+  prop_act3_aqueduct_gate: { src: "assets/sprites_src/gameplay_art/world/props/act3_aqueduct_gate.png", raw: true },
+  prop_act3_mausoleum_gate: { src: "assets/sprites_src/gameplay_art/world/props/act3_mausoleum_gate.png", raw: true },
+  prop_act3_crane: { src: "assets/sprites_src/gameplay_art/world/props/act3_crane.png", raw: true },
+  prop_act3_colossus: { src: "assets/sprites_src/gameplay_art/world/props/act3_colossus.png", raw: true },
+  prop_act3_aqueduct: { src: "assets/sprites_src/gameplay_art/world/props/act3_aqueduct.png", raw: true },
+  prop_act3_stall: { src: "assets/sprites_src/gameplay_art/world/props/act3_stall.png", raw: true },
+  prop_act3_awning: { src: "assets/sprites_src/gameplay_art/world/props/act3_awning.png", raw: true },
+  prop_act3_relay_active: { src: "assets/sprites_src/gameplay_art/world/props/act3_relay_active.png", raw: true },
+  prop_act3_relay_disabled: { src: "assets/sprites_src/gameplay_art/world/props/act3_relay_disabled.png", raw: true },
+  prop_act3_mechanism: { src: "assets/sprites_src/gameplay_art/world/props/act3_mechanism.png", raw: true },
+  prop_act3_sarcophagus: { src: "assets/sprites_src/gameplay_art/world/props/act3_sarcophagus.png", raw: true },
+  prop_act3_shards: { src: "assets/sprites_src/gameplay_art/world/props/act3_shards.png", raw: true },
+  prop_act3_columns: { src: "assets/sprites_src/gameplay_art/world/props/act3_columns.png", raw: true },
+  prop_act3_throne: { src: "assets/sprites_src/gameplay_art/world/props/act3_throne.png", raw: true },
+  prop_act3_paving: { src: "assets/sprites_src/gameplay_art/world/props/act3_paving.png", raw: true },
+  prop_act3_mosaic: { src: "assets/sprites_src/gameplay_art/world/props/act3_mosaic.png", raw: true },
+  prop_act3_tracks: { src: "assets/sprites_src/gameplay_art/world/props/act3_tracks.png", raw: true },
+  prop_act3_rubble: { src: "assets/sprites_src/gameplay_art/world/props/act3_rubble.png", raw: true },
+  prop_act3_sand_drift: { src: "assets/sprites_src/gameplay_art/world/props/act3_sand_drift.png", raw: true },
+  prop_act3_ground_sand: { src: "assets/sprites_src/gameplay_art/world/props/act3_ground_sand.png", raw: true },
+  prop_act3_ground_market: { src: "assets/sprites_src/gameplay_art/world/props/act3_ground_market.png", raw: true },
+  prop_act3_ground_tomb: { src: "assets/sprites_src/gameplay_art/world/props/act3_ground_tomb.png", raw: true },
+  prop_act3_ground_palace: { src: "assets/sprites_src/gameplay_art/world/props/act3_ground_palace.png", raw: true },
+  /* End Act III imperial art v1. */
+  /* Cathedral memory library v1. */
+  prop_cathedral_void_backdrop: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_void_backdrop.png", raw: true },
+  prop_cathedral_arrival: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_arrival.png", raw: true },
+  prop_cathedral_heart_gate: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_heart_gate.png", raw: true },
+  prop_cathedral_cinder_gate: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_cinder_gate.png", raw: true },
+  prop_cathedral_bastion_gate: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_bastion_gate.png", raw: true },
+  prop_cathedral_hell_portal: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_hell_portal.png", raw: true },
+  prop_cathedral_broken_arch: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_broken_arch.png", raw: true },
+  prop_cathedral_buttress: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_buttress.png", raw: true },
+  prop_cathedral_column: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_column.png", raw: true },
+  prop_cathedral_parapet: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_parapet.png", raw: true },
+  prop_cathedral_rubble: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_rubble.png", raw: true },
+  prop_cathedral_foundation: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_foundation.png", raw: true },
+  prop_cathedral_rose_window: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_rose_window.png", raw: true },
+  prop_cathedral_houses: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_houses.png", raw: true },
+  prop_cathedral_defenses: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_defenses.png", raw: true },
+  prop_cathedral_mountain_shrine: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_mountain_shrine.png", raw: true },
+  prop_cathedral_throne: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_throne.png", raw: true },
+  prop_cathedral_memorial: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_memorial.png", raw: true },
+  prop_cathedral_soul_bound: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_soul_bound.png", raw: true },
+  prop_cathedral_soul_free: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_soul_free.png", raw: true },
+  prop_cathedral_seal: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_seal.png", raw: true },
+  prop_cathedral_seal_broken: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_seal_broken.png", raw: true },
+  prop_cathedral_reliquary: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_reliquary.png", raw: true },
+  prop_cathedral_reliquary_open: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_reliquary_open.png", raw: true },
+  prop_cathedral_floor_pale: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_floor_pale.png", raw: true },
+  prop_cathedral_floor_dark: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_floor_dark.png", raw: true },
+  prop_cathedral_floor_street: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_floor_street.png", raw: true },
+  prop_cathedral_floor_fortress: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_floor_fortress.png", raw: true },
+  prop_cathedral_glass: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_glass.png", raw: true },
+  prop_cathedral_rubble_decal: { src: "assets/sprites_src/gameplay_art/world/props/cathedral_rubble_decal.png", raw: true },
+  /* End cathedral memory library v1. */
   /* Town architecture library v2. */
   prop_frosthaven_dwelling: { src: "assets/sprites_src/gameplay_art/world/props/frosthaven_dwelling.png", raw: true },
   prop_frosthaven_firebowl: { src: "assets/sprites_src/gameplay_art/world/props/frosthaven_firebowl.png", raw: true },
@@ -2707,6 +2839,48 @@ DATA.WORLD_SPRITE_SOURCES = {
    on-screen base height, and the palette field used for roster colour variants.
    Aliases deliberately share a silhouette while keeping their own palette. */
 DATA.MONSTER_SPRITE_SOURCES = {
+  /* Enemy identity artwork v1. */
+  identity_wasp: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_wasp.png", raw: true, height: 43 },
+  identity_larva: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_larva.png", raw: true, height: 43 },
+  identity_bone_archer: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_bone_archer.png", raw: true, height: 66 },
+  identity_frost_archer: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_archer.png", raw: true, height: 66 },
+  identity_barbarian_axe: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_barbarian_axe.png", raw: true, height: 72 },
+  identity_barbarian_spear: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_barbarian_spear.png", raw: true, height: 72 },
+  identity_barbarian_sword: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_barbarian_sword.png", raw: true, height: 72 },
+  identity_crystal_golem: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_crystal_golem.png", raw: true, height: 73 },
+  identity_gilded_construct: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_gilded_construct.png", raw: true, height: 72 },
+  identity_glacial_crawler: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_glacial_crawler.png", raw: true, height: 72 },
+  identity_marauder_mace: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_marauder_mace.png", raw: true, height: 66 },
+  identity_warlord_axe: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_warlord_axe.png", raw: true, height: 76 },
+  identity_shatter_wasp: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_shatter_wasp.png", raw: true, height: 43 },
+  identity_shard_thrall: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_shard_thrall.png", raw: true, height: 70 },
+  identity_drowned: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_drowned.png", raw: true, height: 66 },
+  identity_hollow_child: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_hollow_child.png", raw: true, height: 55 },
+  identity_chained_soul: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_chained_soul.png", raw: true, height: 72 },
+  identity_frost_soldier: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_soldier.png", raw: true, height: 66 },
+  identity_bone_dragon: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_bone_dragon.png", raw: true, height: 74 },
+  identity_frost_wyrm: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_wyrm.png", raw: true, height: 74 },
+  identity_ash_drake: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_ash_drake.png", raw: true, height: 74 },
+  identity_ice_hound: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_ice_hound.png", raw: true, height: 52 },
+  identity_cinder_hound: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_cinder_hound.png", raw: true, height: 52 },
+  identity_gilded_guard: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_gilded_guard.png", raw: true, height: 69 },
+  identity_frost_ooze: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_ooze.png", raw: true, height: 47 },
+  identity_storm_skeleton: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_storm_skeleton.png", raw: true, height: 66 },
+  identity_ember_skeleton: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_ember_skeleton.png", raw: true, height: 66 },
+  identity_ember_treant: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_ember_treant.png", raw: true, height: 78 },
+  identity_ember_knight: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_ember_knight.png", raw: true, height: 69 },
+  identity_storm_knight: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_storm_knight.png", raw: true, height: 69 },
+  identity_frost_brute: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_brute.png", raw: true, height: 72 },
+  identity_ember_brute: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_ember_brute.png", raw: true, height: 72 },
+  identity_storm_brute: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_storm_brute.png", raw: true, height: 72 },
+  identity_frost_imp: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_imp.png", raw: true, height: 52 },
+  identity_storm_imp: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_storm_imp.png", raw: true, height: 52 },
+  identity_radiant_robed: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_radiant_robed.png", raw: true, height: 70 },
+  identity_ember_robed: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_ember_robed.png", raw: true, height: 70 },
+  identity_frost_robed: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_robed.png", raw: true, height: 70 },
+  identity_frost_wraith: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_wraith.png", raw: true, height: 72 },
+  identity_gilded_wraith: { src: "assets/sprites_src/gameplay_art/actors/monsters/identity_gilded_wraith.png", raw: true, height: 72 },
+  /* End enemy identity artwork v1. */
   human:       { src: "assets/monsters/marauder.webp",    height: 66, tintKey: "armor" },
   skeleton:    { src: "assets/monsters/skeleton.webp",    height: 66, tintKey: "bone" },
   robed:       { src: "assets/monsters/occultist.webp",   height: 70, tintKey: "robe" },
@@ -3140,7 +3314,192 @@ DATA.xpForLevel = lvl => Math.floor(80 * Math.pow(lvl, 1.62));
 DATA.MAX_LEVEL = 100;
 
 /* build the 100-enemy roster now that ENEMIES and ZONES both exist */
+DATA.ACT3_ROSTERS = {
+  desert_wastes:['sand_raider','tomb_guard','dune_shade','soul_chained','dune_serpent','stone_gargoyle'],
+  underground_market:['sand_raider','soul_chained','gilt_construct'],
+  sand_tombs:['tomb_guard','soul_chained','gilt_construct','prisoned_shade','stone_gargoyle'],
+  khal_palace:['tomb_guard','gilded_thrall','gilt_construct','soul_chained','dune_shade'],
+  shard_flats:['sand_raider','dune_shade','gilt_construct','shard_construct','crystal_marauder','dune_serpent'],
+  tomb_sanctum:['tomb_guard','soul_chained','gilt_construct','gilded_thrall','prisoned_shade'],
+};
+for (const [id,pool] of Object.entries(DATA.ACT3_ROSTERS)) DATA.ZONES[id].spawns=pool.slice();
 DATA._buildRoster();
+
+/* Act 2 pools are authored after the level-based expansion. Event spawns read
+   the same pools; shared enemy definitions and other acts remain unchanged. */
+DATA.ACT2_COMBAT = {
+  revision:1,
+  pools:{
+    weeping_marsh:{drowned_dead:30,marsh_wretch:20,silent_cultist:20,bog_bloat:15,marsh_serpent:10,gnarl_treant:5},
+    drowned_crypt:{drowned_dead:35,silent_cultist:25,stone_gargoyle:15,bog_bloat:10,lure_child:10,song_thrall:5},
+    hollow_reeds:{song_thrall:30,marsh_wretch:20,drowned_dead:20,marsh_serpent:15,gnarl_treant:10,lure_child:5},
+    spawn_pools:{marsh_larvae:35,marsh_wretch:20,bog_bloat:15,sludge_horror:15,silent_cultist:10,marsh_serpent:5},
+    ritual_site:{silent_cultist:30,song_thrall:20,drowned_dead:20,blight_treant:15,bog_bloat:10,lure_child:5}
+  },
+  /* Calibrated against tests/fixtures/act2_enemies_before.zip. */
+  balance:{
+    weeping_marsh:{"hp":2.45377,"damage":2.31309,"xp":1.68762},
+    drowned_crypt:{"hp":2.86816,"damage":2.41614,"xp":1.79052},
+    hollow_reeds:{"hp":2.70799,"damage":1.62383,"xp":1.73455},
+    spawn_pools:{"hp":2.93121,"damage":1.8378,"xp":1.82705},
+    ritual_site:{"hp":2.46316,"damage":2.8055,"xp":1.64853},
+  },
+  specialists:['gnarl_treant','blight_treant','stone_gargoyle','lure_child'],
+  role(id){return this.specialists.includes(id)?'specialist':DATA.ENEMIES[id].projectile?'ranged':'melee';},
+  quotas(zone,count){
+    const rows=Object.entries(this.pools[zone]).map(([id,weight],order)=>({id,order,exact:count*weight/100,count:Math.floor(count*weight/100)}));
+    let left=count-rows.reduce((n,r)=>n+r.count,0);
+    for(const row of [...rows].sort((a,b)=>(b.exact-b.count)-(a.exact-a.count)||a.order-b.order)){if(left--<=0)break;row.count++;}
+    return rows;
+  }
+};
+for(const [zone,pool] of Object.entries(DATA.ACT2_COMBAT.pools))DATA.ZONES[zone].spawns=Object.keys(pool);
+
+/* Shared Act 5 roles are applied after procedural roster construction, before
+   artwork and editor overrides. Null removes an incompatible generated skill. */
+DATA.ACT5_COMBAT_PROFILES = {
+  ash_fiend:{role:'melee'},
+  cinder_hound:{role:'skirmisher',meleeElem:'fire'},
+  impaler:{role:'caster'},
+  pit_brute:{role:'heavy'},
+  r41_brute:{role:'heavy'},
+  r44_imp:{role:'caster'},
+  r46_brute:{role:'heavy',meleeElem:'light',range:1.5,projectile:null,keepDist:null,slam:{cd:7,radius:2.8,mult:1.4,elem:'light'}},
+  r47_skeleton:{role:'melee'},
+  r48_robed:{role:'caster',range:9,keepDist:6,atkRate:.7,projectile:{kind:'soulbolt',speed:9,elem:'shadow'}},
+  r49_imp:{role:'skirmisher'},
+  r50_knight:{role:'melee',meleeElem:'fire',range:1.5,projectile:null,keepDist:null},
+  r51_wraith:{role:'spectral'},
+  r52_brute:{role:'heavy',meleeElem:'cold',range:1.5,projectile:null,keepDist:null,slam:{cd:7,radius:2.8,mult:1.4,elem:'cold'}},
+  r53_imp:{role:'skirmisher',shield:null,block:null,leap:{cd:6,range:6,radius:1.5,mult:1.7}},
+  r54_robed:{role:'caster'},
+  r55_knight:{role:'melee',meleeElem:'fire',range:1.5,projectile:null,keepDist:null,volley:null,charge:{cd:6,range:9,speed:10,mult:1.7,elem:'fire'}},
+  r56_wraith:{role:'spectral',meleeElem:'shadow',whirl:null,slam:{cd:7,radius:2.8,mult:1.4,elem:'shadow'}},
+  r57_brute:{role:'heavy',range:1.5,teleports:null,charge:{cd:6,range:9,speed:10,mult:1.7}},
+  r58_imp:{role:'skirmisher'},
+  r59_robed:{role:'caster'},
+  r60_knight:{role:'melee'},
+  r61_wraith:{role:'caster'},
+  r62_brute:{role:'heavy',range:1.5,shield:null,block:null,slam:{cd:7,radius:2.8,mult:1.4}},
+  r63_imp:{role:'caster'},
+  r64_robed:{role:'caster'},
+  r65_knight:{role:'melee'},
+  r66_wraith:{role:'spectral',meleeElem:'shadow'},
+  r67_brute:{role:'heavy'},
+  r68_imp:{role:'caster'},
+  r69_robed:{role:'caster',range:9,keepDist:6,atkRate:.7,projectile:{kind:'shardbolt',speed:9,elem:'light'}},
+  r70_knight:{role:'melee',meleeElem:'cold',range:1.5,projectile:null,keepDist:null},
+  r71_wraith:{role:'spectral',meleeElem:'shadow',shield:null,block:null,teleports:{cd:5,minDist:4}},
+  r72_brute:{role:'heavy',meleeElem:'light',range:1.5,projectile:null,keepDist:null,slam:{cd:7,radius:2.8,mult:1.4,elem:'light'}},
+  r73_imp:{role:'caster'},
+  r74_robed:{role:'caster',range:9,keepDist:6,atkRate:.7,projectile:{kind:'soulbolt',speed:9,elem:'shadow'},whirl:null,volley:{cd:6,count:3,spread:.5}},
+  r75_wraith:{role:'spectral',meleeElem:'shadow',whirl:null,slam:{cd:7,radius:2.8,mult:1.4,elem:'shadow'}},
+  r76_knight:{role:'commander'},
+  r77_treant:{role:'caster'},
+  r78_brute:{role:'heavy'},
+  r79_warlord:{role:'commander',meleeElem:'light',range:1.8,projectile:null,keepDist:null},
+  r81_knight:{role:'defender'},
+  r82_treant:{role:'heavy',whirl:null,slam:{cd:7,radius:2.8,mult:1.4}},
+  r84_warlord:{role:'melee',meleeElem:'fire',range:1.8,projectile:null,keepDist:null,volley:null,whirl:{cd:7,dur:2.2,tick:.3,mult:.7,radius:2.2,elem:'fire'}},
+  bone_dragon:{role:'caster',range:9,keepDist:6},
+  void_gargoyle:{role:'skirmisher'},
+  infernal_warlord:{role:'heavy'},
+  flesh_engine:{role:'heavy'},
+  void_wraith:{role:'caster'},
+  blight_treant:{role:'heavy'},
+  wretch_lord:{role:'caller'},
+};
+for(const [id,profile] of Object.entries(DATA.ACT5_COMBAT_PROFILES)) {
+  const def=DATA.ENEMIES[id];
+  for(const [key,value] of Object.entries(profile)) {
+    if(value===null)delete def[key];else def[key]=JSON.parse(JSON.stringify(value));
+  }
+  def.warnings={slam:.8,charge:.6,leap:.6,whirl:.6,deathBurst:.6};
+}
+
+/* Art identity is independent of the legacy animation kind. These assignments
+   change pixels only: statistics, names, weapons, AI and collisions stay intact.
+   Elemental variants are authored assets, never per-frame recolors. */
+DATA.assignEnemyArt = function (d) {
+  const exact = {
+    bone_archer:'bone_archer', frost_archer:'frost_archer', blight_wasp:'wasp',
+    shatter_wasp:'shatter_wasp', marsh_larvae:'larva', frost_risen:'frost_soldier',
+    frost_watch_captain:'frost_soldier', shard_sentinel:'frost_soldier',
+    shard_thrall:'shard_thrall', barb_axe:'barbarian_axe', barb_pole:'barbarian_spear',
+    barb_sword:'barbarian_sword', drowned_dead:'drowned', lure_child:'hollow_child',
+    shard_construct:'crystal_golem', crystal_marauder:'crystal_golem',
+    gilt_construct:'gilded_construct', glacial_crawler:'glacial_crawler',
+    gilded_thrall:'gilded_guard', soul_chained:'chained_soul', prisoned_shade:'chained_soul',
+    chained_sovereign:'chained_soul', ice_lurker:'ice_hound', cinder_hound:'cinder_hound',
+    bone_dragon:'bone_dragon', frost_wyrm:'frost_wyrm', ash_drake:'ash_drake',
+    barb_guard:'frost_brute', rimebound_guardian:'frost_brute',
+  };
+  const reuse = {thorn_shambler:'treant',gloom_shade:'wraith',dune_shade:'wraith',
+    memory_wraith:'wraith',bog_bloat:'abom',brood_mother:'spider'};
+  let art = exact[d.id];
+  const element = /frost|rime|frozen|glacial/i.test(d.name)?'cold':
+    /galvanic|arcing|storm|radiant|gilded/i.test(d.name)?'light':
+    /ember|smouldering|charred|cinder|ashen/i.test(d.name)?'fire':d.elem||d.projectile?.elem||'physical';
+  if (!art && d.sprite==='human' && d.weapon==='mace') art='marauder_mace';
+  if (!art && d.sprite==='warlord' && d.weapon==='axe') art='warlord_axe';
+  const variants = {
+    skeleton:{cold:'frost_soldier',fire:'ember_skeleton',light:'storm_skeleton'},
+    knight:{cold:'frost_soldier',fire:'ember_knight',light:'storm_knight'},
+    brute:{cold:'frost_brute',fire:'ember_brute',light:'storm_brute'},
+    robed:{cold:'frost_robed',fire:'ember_robed',light:'radiant_robed'},
+    imp:{cold:'frost_imp',light:'storm_imp'},ooze:{cold:'frost_ooze'},treant:{fire:'ember_treant'},wraith:{cold:'frost_wraith',light:'gilded_wraith'},
+  };
+  if (!art && !reuse[d.id]) art=variants[d.sprite]?.[element];
+  d.artId = art ? 'identity_'+art : reuse[d.id] || d.sprite;
+  const anatomy = {human:'humanoid',skeleton:'skeletal humanoid',robed:'robed humanoid',
+    hound:'canine quadruped',wolf:'canine quadruped',spider:'eight-legged arachnid',
+    brute:'hulking humanoid',knight:'armored humanoid',boss:'armored undead lord',
+    warlord:'armored undead lord',ironlord:'armored undead lord',dragon:'winged dragon',
+    serpent:'serpentine',gargoyle:'winged stone creature',demon:'horned demon',
+    golem:'bone construct',abom:'bloated flesh abomination',wraith:'spectral form',
+    ooze:'amorphous slime',imp:'small horned demon',treant:'woody root creature',
+    grizzly:'bear quadruped',beacon:'ritual structure'};
+  const corrected = {wasp:'winged insect',shatter_wasp:'winged crystal insect',larva:'segmented larva',
+    crystal_golem:'crystal construct',gilded_construct:'gold metal construct',
+    glacial_crawler:'ice-armored crawling quadruped',chained_soul:'chained spectral humanoid',
+    hollow_child:'small undead humanoid',drowned:'waterlogged undead humanoid',bone_dragon:'skeletal winged dragon'};
+  const visibleWeapons = {bone_archer:'bow',frost_archer:'bow',barbarian_axe:'axe',barbarian_spear:'spear',
+    barbarian_sword:'sword',marauder_mace:'mace',warlord_axe:'axe',gilded_guard:'sword and shield',
+    frost_soldier:'sword and shield',ember_knight:'sword and shield',storm_knight:'sword and shield',
+    ember_skeleton:'sword and shield',storm_skeleton:'sword and shield',radiant_robed:'wand',ember_robed:'wand',frost_robed:'wand',shard_thrall:'wand',
+    chained_soul:'none',hollow_child:'none',drowned:'none',frost_wraith:'none',gilded_wraith:'none'};
+  d.artReview = {anatomy:corrected[art]||anatomy[reuse[d.id]||d.sprite]||'humanoid',
+    weapon:visibleWeapons[art] || (reuse[d.id]?'none':d.weapon || (d.bow?'bow':
+      ['skeleton','knight'].includes(d.sprite)?'sword and shield':['boss','demon','ironlord'].includes(d.sprite)?'axe':d.sprite==='robed'?'wand':'none')),
+    element, note:art?'Authored anatomy, equipment and material.':reuse[d.id]?'Reassigned to matching existing anatomy.':'Matching existing painted silhouette.'};
+  return d;
+};
+Object.values(DATA.ENEMIES).forEach(DATA.assignEnemyArt);
+
+// Zone profiles do not mutate shared creatures or the catalog used by other acts.
+DATA.ACT3_ENEMY_PROFILES = {
+  sand_raider:{sprite:'human',weapon:'mace',act3Combat:{role:'flanker',sound:'swing'}},
+  tomb_guard:{act3Combat:{role:'defender',guard:25,sound:'swing',special:{kind:'bash',radius:1.8,arc:Math.PI/2,elem:'phys'}}},
+  dune_shade:{sprite:'wraith',weapon:'none',sounds:'bone',act3Combat:{role:'flanker',meleeElem:'shadow',sound:'curse',special:{kind:'blink',mode:'approach',cd:4,range:13,recovery:.5}}},
+  soul_chained:{weapon:'none',sounds:'bone',act3Combat:{role:'ranged',sound:'curse',projectileVisual:'chain',projectileColor:'#e6ce82'}},
+  gilt_construct:{act3Combat:{role:'heavy',sound:'hit',special:{kind:'pulse',radius:2.6,elem:'light'}}},
+  shard_construct:{range:9,keepDist:5,projectile:{kind:'shardbolt',elem:'phys',speed:8},act3Combat:{role:'ranged',sound:'frost',projectileVisual:'crystal',projectileColor:'#87c8e9',special:{kind:'fan',range:9,count:3,spread:.48,mult:.5,elem:'phys'}}},
+  crystal_marauder:{act3Combat:{role:'flanker',sound:'hit',special:{kind:'charge',range:7,speed:10,elem:'phys'}}},
+  gilded_thrall:{shield:true,block:20,act3Combat:{role:'defender',guard:20,sound:'swing',special:{kind:'sweep',radius:2.4,arc:Math.PI/2,elem:'light'}}},
+  prisoned_shade:{weapon:'none',sounds:'bone',act3Combat:{role:'ranged',sound:'curse',projectileVisual:'chain',projectileColor:'#b598d9',special:{kind:'blink',mode:'retreat',cd:5,range:3,recovery:.5}}},
+  dune_serpent:{act3Combat:{role:'flanker',sound:'hit',special:{kind:'charge',range:9,speed:13,cd:5,mult:1.8,elem:'phys'}}},
+  stone_gargoyle:{act3Combat:{role:'flanker',sound:'hit',special:{kind:'leap',range:8,radius:2.2,cd:6,mult:1.6,elem:'phys'}}},
+  chained_sovereign:{act3Combat:{role:'boss',sound:'hit',special:{kind:'pulse',radius:3,cd:6,mult:1.5,windup:.55,recovery:.25,elem:'phys'}}},
+};
+DATA.resolveEnemy = function(id,zoneId) {
+  const d=JSON.parse(JSON.stringify(DATA.ENEMIES[id]));
+  const p=DATA.ACT3_ROSTERS[zoneId]&&DATA.ACT3_ENEMY_PROFILES[id];
+  if(p){Object.assign(d,JSON.parse(JSON.stringify(p)));DATA.assignEnemyArt(d);
+    if(d.act3Combat.meleeElem)d.artReview.element=d.act3Combat.meleeElem;
+    if(d.act3Combat.special)d.act3Combat.special={windup:.75,recovery:.85,cd:7,mult:1.2,...d.act3Combat.special};
+  }
+  return d;
+};
 
 /* =====================  DEV-TOOL DATA OVERRIDES  =====================
    Applied by js/data_overrides.js (written by editor.html) AFTER all base

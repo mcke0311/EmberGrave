@@ -49,6 +49,11 @@ const TownTerrain = (() => {
       layer(ctx,material('town_marshwater',384),mask,.87);
     }
     layer(ctx,material(m.id+'_street',256),routeMask(m,w,h),m.id==='marshcamp'?.98:.9);
+    for(const d of m.act3?.decals||[]){
+      const f=SpriteAssets.getFrame(SpriteAssets.maps.props[d.type],0),s=d.scale||1;
+      ctx.save();ctx.setTransform(.5,-.5,1,1,d.x*SCALE,d.y*SCALE);ctx.scale(s,s);ctx.globalAlpha=d.alpha??1;
+      ctx.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,-f.anchorX,-f.anchorY,f.sw,f.sh);ctx.restore();
+    }
     // Project one continuous surface into the same 32x16 world coordinate system.
     const projected=canvas((m.w+m.h)*32+4,(m.w+m.h)*16+4),g=projected.getContext('2d');
     g.setTransform(1,.5,-1,.5,m.h*32+2,2);g.drawImage(surface,0,0);

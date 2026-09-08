@@ -1,5 +1,5 @@
 {
-  "checks": 2956,
+  "checks": 2961,
   "counts": {
     "Base equipment": 300,
     "Unique equipment": 139,
@@ -9,7 +9,7 @@
     "Charms": 3,
     "Unique charms": 9,
     "Jewels": 6,
-    "Unique jewels": 8
+    "Unique jewels": 9
   },
   "items": [
     {
@@ -4481,6 +4481,14 @@
       "assetId": "ui.items.variants",
       "index": 0,
       "tint": "#e08840"
+    },
+    {
+      "group": "Unique jewels",
+      "key": "uj_oak",
+      "name": "Old Oak's Heart",
+      "base": "Jewel",
+      "assetId": "ui.items.oak",
+      "index": 0
     },
     {
       "group": "Unique jewels",

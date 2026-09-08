@@ -1,0 +1,503 @@
+{
+  "version": 1,
+  "tool": "built-in image_gen",
+  "enemies": [
+    {
+      "id": "brute",
+      "reference": "assets/sprites/packed/actors/monsters/brute.webp",
+      "sequences": [
+        "melee",
+        "slam",
+        "charge",
+        "death"
+      ],
+      "enemies": [
+        "ash_fiend",
+        "pit_brute",
+        "r41_brute",
+        "r57_brute",
+        "r62_brute",
+        "r67_brute",
+        "r78_brute",
+        "tomb_husk"
+      ],
+      "weapon": "none",
+      "sprite": "brute",
+      "source": "assets/act5_animations/source/brute.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-3795f59c-a8b1-4bbb-8f7b-7697f5749383.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 4 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 24 separate complete character poses. Row order: melee, slam, charge, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Heavy slam: crouch, lift BOTH arms/weapon, fully overhead, smash into ground, recoil low, recover. Charge: brace, crouch forward, coiled launch, lunging forward, braking, regain upright stance. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "8bdf4573f850d190275f6e32efca0bbd44f44a50175c97a9ea0623afe97fb19a"
+    },
+    {
+      "id": "identity_cinder_hound",
+      "reference": "assets/sprites/packed/actors/monsters/identity_cinder_hound.webp",
+      "sequences": [
+        "melee",
+        "death"
+      ],
+      "enemies": [
+        "cinder_hound"
+      ],
+      "weapon": "none",
+      "sprite": "hound",
+      "source": "assets/act5_animations/source/identity_cinder_hound.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-f7fb97f8-f7ea-45a0-81f4-0ca075688112.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 2 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 12 separate complete character poses. Row order: melee, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "d17501411175ef84a63eabacc806e33d4a1666d57b1973d3615d50911e25155d"
+    },
+    {
+      "id": "identity_ember_robed",
+      "reference": "assets/sprites/packed/actors/monsters/identity_ember_robed.webp",
+      "sequences": [
+        "bolt",
+        "volley",
+        "summon",
+        "death"
+      ],
+      "enemies": [
+        "impaler",
+        "r59_robed",
+        "r64_robed",
+        "wretch_lord"
+      ],
+      "weapon": "wand",
+      "sprite": "robed",
+      "source": "assets/act5_animations/source/identity_ember_robed.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-408df07e-3d7d-4f33-8757-a9816fe351e1.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 4 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 24 separate complete character poses. Row order: bolt, volley, summon, death. Ranged spell: gather hands, draw energy back, aim, thrust release from hand or mouth, follow through, recover. Volley: raise both arms, gather several small sparks, aim wide, fan release, arms follow outward, recover. Summon: arms low, lift and curl fingers, hands overhead, command downward with small spectral wisps, lower arms, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "221d948349205bcb3517fef01e9ddba18fe8b007aca1f12c4ec7c7d581e0da57"
+    },
+    {
+      "id": "identity_frost_imp",
+      "reference": "assets/sprites/packed/actors/monsters/identity_frost_imp.webp",
+      "sequences": [
+        "bolt",
+        "death"
+      ],
+      "enemies": [
+        "r44_imp"
+      ],
+      "weapon": "none",
+      "sprite": "imp",
+      "source": "assets/act5_animations/source/identity_frost_imp.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-56c710ff-462c-4ed6-9d3e-83d47d1c989c.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 2 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 12 separate complete character poses. Row order: bolt, death. Ranged spell: gather hands, draw energy back, aim, thrust release from hand or mouth, follow through, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "a91857d938ff518d1737983eaa523b32aa8a0cc4121954401bfffb90853f6093"
+    },
+    {
+      "id": "identity_storm_brute",
+      "reference": "assets/sprites/packed/actors/monsters/identity_storm_brute.webp",
+      "sequences": [
+        "melee",
+        "slam",
+        "death"
+      ],
+      "enemies": [
+        "r46_brute",
+        "r72_brute"
+      ],
+      "weapon": "none",
+      "sprite": "brute",
+      "source": "assets/act5_animations/source/identity_storm_brute.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-3f875103-cba3-4bf5-88ab-d5650b3d7c20.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 3 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 18 separate complete character poses. Row order: melee, slam, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Heavy slam: crouch, lift BOTH arms/weapon, fully overhead, smash into ground, recoil low, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "84db59e33f2d611abdc4840994e00c60c3f3a64969c0cbc75796e9d5c12f10b8"
+    },
+    {
+      "id": "skeleton",
+      "reference": "assets/sprites/packed/actors/monsters/skeleton.webp",
+      "sequences": [
+        "melee",
+        "slam",
+        "death"
+      ],
+      "enemies": [
+        "r47_skeleton",
+        "risen"
+      ],
+      "weapon": "sword",
+      "sprite": "skeleton",
+      "source": "assets/act5_animations/source/skeleton.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-9d5aefe5-564d-4779-8657-13d4a8753383.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 3 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 18 separate complete character poses. Row order: melee, slam, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Heavy slam: crouch, lift BOTH arms/weapon, fully overhead, smash into ground, recoil low, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "dfa69424c85ad8cab119396862e5ac9bc75c97f03b65cb6726141fb1baad6c68"
+    },
+    {
+      "id": "robed",
+      "reference": "assets/sprites/packed/actors/monsters/robed.webp",
+      "sequences": [
+        "bolt",
+        "volley",
+        "death"
+      ],
+      "enemies": [
+        "r48_robed",
+        "r74_robed"
+      ],
+      "weapon": "wand",
+      "sprite": "robed",
+      "source": "assets/act5_animations/source/robed.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-d43cfa5a-9fa1-4e5a-9654-6000b276cb6c.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 3 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 18 separate complete character poses. Row order: bolt, volley, death. Ranged spell: gather hands, draw energy back, aim, thrust release from hand or mouth, follow through, recover. Volley: raise both arms, gather several small sparks, aim wide, fan release, arms follow outward, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "a3a89e2d9d0d2afafabd487c10683fe52e8c60f47b4b1685825c5befd4642262"
+    },
+    {
+      "id": "imp",
+      "reference": "assets/sprites/packed/actors/monsters/imp.webp",
+      "sequences": [
+        "melee",
+        "leap",
+        "bolt",
+        "volley",
+        "death"
+      ],
+      "enemies": [
+        "r49_imp",
+        "r53_imp",
+        "r58_imp",
+        "r68_imp",
+        "r73_imp"
+      ],
+      "weapon": "none",
+      "sprite": "imp",
+      "source": "assets/act5_animations/source/imp.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-9f8d422d-a6b0-4f80-a04d-2e444c405829.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 5 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 30 separate complete character poses. Row order: melee, leap, bolt, volley, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Leap: crouch, compress legs, push off, fully airborne limbs extended, landing crouch, recover. Ranged spell: gather hands, draw energy back, aim, thrust release from hand or mouth, follow through, recover. Volley: raise both arms, gather several small sparks, aim wide, fan release, arms follow outward, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "3d2b6884bc2d41ebf80eecd27506e568f7a076678b583895ba243a884c629594"
+    },
+    {
+      "id": "identity_ember_knight",
+      "reference": "assets/sprites/packed/actors/monsters/identity_ember_knight.webp",
+      "sequences": [
+        "melee",
+        "charge",
+        "death"
+      ],
+      "enemies": [
+        "r50_knight",
+        "r55_knight"
+      ],
+      "weapon": "sword and shield",
+      "sprite": "knight",
+      "source": "assets/act5_animations/source/identity_ember_knight.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-c5147a0c-0bba-4036-b64c-659ca31c10f7.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 3 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 18 separate complete character poses. Row order: melee, charge, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Charge: brace, crouch forward, coiled launch, lunging forward, braking, regain upright stance. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "a929db1fdae3ad4789b5bf4e9b395ec434fd46d895ef125d4f243caa55c7ea38"
+    },
+    {
+      "id": "identity_gilded_wraith",
+      "reference": "assets/sprites/packed/actors/monsters/identity_gilded_wraith.webp",
+      "sequences": [
+        "melee",
+        "death"
+      ],
+      "enemies": [
+        "r51_wraith"
+      ],
+      "weapon": "none",
+      "sprite": "wraith",
+      "source": "assets/act5_animations/source/identity_gilded_wraith.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-e03c30ba-ceb8-40eb-85b3-e77c96c93323.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 2 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 12 separate complete character poses. Row order: melee, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "fe97b21e88503cd12df748b88c2cc3dd6c52346fc3cef6eeb7008c13f7246b27"
+    },
+    {
+      "id": "identity_frost_brute",
+      "reference": "assets/sprites/packed/actors/monsters/identity_frost_brute.webp",
+      "sequences": [
+        "melee",
+        "slam",
+        "death"
+      ],
+      "enemies": [
+        "r52_brute"
+      ],
+      "weapon": "none",
+      "sprite": "brute",
+      "source": "assets/act5_animations/source/identity_frost_brute.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-a641dca4-54f0-4e35-b2f6-5e8879afcbc4.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 3 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 18 separate complete character poses. Row order: melee, slam, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Heavy slam: crouch, lift BOTH arms/weapon, fully overhead, smash into ground, recoil low, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "cdd3d425d08032100efe8388a7c5c02ced230b31ad9c6d7c576b2e88c989cd8a"
+    },
+    {
+      "id": "identity_radiant_robed",
+      "reference": "assets/sprites/packed/actors/monsters/identity_radiant_robed.webp",
+      "sequences": [
+        "bolt",
+        "death"
+      ],
+      "enemies": [
+        "r54_robed",
+        "r69_robed"
+      ],
+      "weapon": "wand",
+      "sprite": "robed",
+      "source": "assets/act5_animations/source/identity_radiant_robed.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-bde81b7e-64b8-4433-8159-59c85c6df58d.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 2 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 12 separate complete character poses. Row order: bolt, death. Ranged spell: gather hands, draw energy back, aim, thrust release from hand or mouth, follow through, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "124054273bf6ecda298bbabe85ad156b5a46650034e035050ca88c834f458e67"
+    },
+    {
+      "id": "wraith",
+      "reference": "assets/sprites/packed/actors/monsters/wraith.webp",
+      "sequences": [
+        "melee",
+        "slam",
+        "blink",
+        "bolt",
+        "death"
+      ],
+      "enemies": [
+        "r56_wraith",
+        "r66_wraith",
+        "r71_wraith",
+        "r75_wraith",
+        "void_wraith"
+      ],
+      "weapon": "none",
+      "sprite": "wraith",
+      "source": "assets/act5_animations/source/wraith.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-f57b7231-f5a3-4cf8-93f2-4b6338ba093a.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 5 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 30 separate complete character poses. Row order: melee, slam, blink, bolt, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Heavy slam: crouch, lift BOTH arms/weapon, fully overhead, smash into ground, recoil low, recover. Teleport: coil inward, fold cloak, compress silhouette, cloak flares apart, reform complete body, return ready. Every cell contains visible full character. Ranged spell: gather hands, draw energy back, aim, thrust release from hand or mouth, follow through, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "d40edfebc06e03b3d60a582e47bd97272e38c691d4692fb71f85168ac395730a"
+    },
+    {
+      "id": "identity_storm_knight",
+      "reference": "assets/sprites/packed/actors/monsters/identity_storm_knight.webp",
+      "sequences": [
+        "melee",
+        "death"
+      ],
+      "enemies": [
+        "r60_knight"
+      ],
+      "weapon": "sword and shield",
+      "sprite": "knight",
+      "source": "assets/act5_animations/source/identity_storm_knight.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-8f706307-c413-4d11-8ade-565903558f4d.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 2 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 12 separate complete character poses. Row order: melee, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "2cfb0c50cb46df5f054a818fd5412d0b0071363601134de473e25d4c7e211a77"
+    },
+    {
+      "id": "identity_frost_wraith",
+      "reference": "assets/sprites/packed/actors/monsters/identity_frost_wraith.webp",
+      "sequences": [
+        "bolt",
+        "death"
+      ],
+      "enemies": [
+        "r61_wraith"
+      ],
+      "weapon": "none",
+      "sprite": "wraith",
+      "source": "assets/act5_animations/source/identity_frost_wraith.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-58a2089f-05f3-4888-a934-2c12a6830cdd.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 2 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 12 separate complete character poses. Row order: bolt, death. Ranged spell: gather hands, draw energy back, aim, thrust release from hand or mouth, follow through, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "0933780039c666c23c3ed41d2c952dca87dd99e6de5c432307f5a4a074333920"
+    },
+    {
+      "id": "identity_storm_imp",
+      "reference": "assets/sprites/packed/actors/monsters/identity_storm_imp.webp",
+      "sequences": [
+        "bolt",
+        "death"
+      ],
+      "enemies": [
+        "r63_imp"
+      ],
+      "weapon": "none",
+      "sprite": "imp",
+      "source": "assets/act5_animations/source/identity_storm_imp.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-1413ef0d-af4f-4e3f-8868-3fe5d323d26d.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 2 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 12 separate complete character poses. Row order: bolt, death. Ranged spell: gather hands, draw energy back, aim, thrust release from hand or mouth, follow through, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "54e97ded706cd2312b86863fee6a3e40489d5836b332f55c59f7423688d1abee"
+    },
+    {
+      "id": "knight",
+      "reference": "assets/sprites/packed/actors/monsters/knight.webp",
+      "sequences": [
+        "melee",
+        "whirl",
+        "summon",
+        "death"
+      ],
+      "enemies": [
+        "r65_knight",
+        "r76_knight",
+        "r81_knight"
+      ],
+      "weapon": "sword",
+      "sprite": "knight",
+      "source": "assets/act5_animations/source/knight.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-af5e5688-6fb8-426f-9e96-12db0471c5e7.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 4 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 24 separate complete character poses. Row order: melee, whirl, summon, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Whirl: widen stance, draw weapon sideways, twist torso, spin with extended weapon, opposite-facing follow-through, recover. Summon: arms low, lift and curl fingers, hands overhead, command downward with small spectral wisps, lower arms, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "3f593fd8b54505f4490221129bd4420c06d90917e5703483d3bf9180b3872b06"
+    },
+    {
+      "id": "identity_frost_soldier",
+      "reference": "assets/sprites/packed/actors/monsters/identity_frost_soldier.webp",
+      "sequences": [
+        "melee",
+        "death"
+      ],
+      "enemies": [
+        "r70_knight",
+        "frost_risen"
+      ],
+      "weapon": "sword and shield",
+      "sprite": "knight",
+      "source": "assets/act5_animations/source/identity_frost_soldier.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-92d7150e-21c3-4246-8e8b-a95298a70487.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 2 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 12 separate complete character poses. Row order: melee, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "6262c1132e2de89be23d902eb11bbf37290a5662a3c19e9fe241134b7136b60a"
+    },
+    {
+      "id": "identity_ember_treant",
+      "reference": "assets/sprites/packed/actors/monsters/identity_ember_treant.webp",
+      "sequences": [
+        "bolt",
+        "volley",
+        "death"
+      ],
+      "enemies": [
+        "r77_treant"
+      ],
+      "weapon": "none",
+      "sprite": "treant",
+      "source": "assets/act5_animations/source/identity_ember_treant.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-02da071d-85db-4b1f-b418-997fbd3ea237.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 3 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 18 separate complete character poses. Row order: bolt, volley, death. Ranged spell: gather hands, draw energy back, aim, thrust release from hand or mouth, follow through, recover. Volley: raise both arms, gather several small sparks, aim wide, fan release, arms follow outward, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "74ddef506f742e47168e6af8d698ba2f9debde77a5ac69341e8afae83838bd6c"
+    },
+    {
+      "id": "identity_warlord_axe",
+      "reference": "assets/sprites/packed/actors/monsters/identity_warlord_axe.webp",
+      "sequences": [
+        "melee",
+        "heal",
+        "whirl",
+        "death"
+      ],
+      "enemies": [
+        "r79_warlord",
+        "r84_warlord"
+      ],
+      "weapon": "axe",
+      "sprite": "warlord",
+      "source": "assets/act5_animations/source/identity_warlord_axe.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-840b3148-e30b-45a8-9b73-5546ad6ea950.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 4 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 24 separate complete character poses. Row order: melee, heal, whirl, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Rally healing: lift free hand, draw light to chest, hold hand high, blessing outward, lower hand, recover. Whirl: widen stance, draw weapon sideways, twist torso, spin with extended weapon, opposite-facing follow-through, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "5a9a3bccb85541e428fb9fc5b28966c66cb1c6d4e6dab2ea0951f5e70590d3a3"
+    },
+    {
+      "id": "treant",
+      "reference": "assets/sprites/packed/actors/monsters/treant.webp",
+      "sequences": [
+        "melee",
+        "slam",
+        "death"
+      ],
+      "enemies": [
+        "r82_treant",
+        "blight_treant"
+      ],
+      "weapon": "none",
+      "sprite": "treant",
+      "source": "assets/act5_animations/source/treant.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-023a2e93-6925-47e6-9a0e-8f33feeede2c.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 3 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 18 separate complete character poses. Row order: melee, slam, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Heavy slam: crouch, lift BOTH arms/weapon, fully overhead, smash into ground, recoil low, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "3bf5c2bd1f6d7abbe157fb83ccd94fa871050a78d39e669cbc7682abb5edf43a"
+    },
+    {
+      "id": "identity_bone_dragon",
+      "reference": "assets/sprites/packed/actors/monsters/identity_bone_dragon.webp",
+      "sequences": [
+        "bolt",
+        "slam",
+        "death"
+      ],
+      "enemies": [
+        "bone_dragon"
+      ],
+      "weapon": "none",
+      "sprite": "dragon",
+      "source": "assets/act5_animations/source/identity_bone_dragon.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-bfb70832-e57c-49a8-969c-44b64cb88f03.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 3 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 18 separate complete character poses. Row order: bolt, slam, death. Ranged spell: gather hands, draw energy back, aim, thrust release from hand or mouth, follow through, recover. Heavy slam: crouch, lift BOTH arms/weapon, fully overhead, smash into ground, recoil low, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "af848f58faae1e5e46633cc40adbaf575f2648becfd86dc906290c85b1b23ec1"
+    },
+    {
+      "id": "gargoyle",
+      "reference": "assets/sprites/packed/actors/monsters/gargoyle.webp",
+      "sequences": [
+        "melee",
+        "leap",
+        "death"
+      ],
+      "enemies": [
+        "void_gargoyle"
+      ],
+      "weapon": "none",
+      "sprite": "gargoyle",
+      "source": "assets/act5_animations/source/gargoyle.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-a9f3bfcd-3732-49e5-bc6d-b520f50169ef.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 3 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 18 separate complete character poses. Row order: melee, leap, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Leap: crouch, compress legs, push off, fully airborne limbs extended, landing crouch, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "c5c692dc66cb799813026d3968b732b999ca487e0bb88223779a3637bb0925b8"
+    },
+    {
+      "id": "demon",
+      "reference": "assets/sprites/packed/actors/monsters/demon.webp",
+      "sequences": [
+        "melee",
+        "slam",
+        "charge",
+        "death"
+      ],
+      "enemies": [
+        "infernal_warlord"
+      ],
+      "weapon": "axe",
+      "sprite": "demon",
+      "source": "assets/act5_animations/source/demon.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-975fe8e4-3092-45d3-b2f0-6ab8a8ba787c.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 4 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 24 separate complete character poses. Row order: melee, slam, charge, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Heavy slam: crouch, lift BOTH arms/weapon, fully overhead, smash into ground, recoil low, recover. Charge: brace, crouch forward, coiled launch, lunging forward, braking, regain upright stance. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "1905f7d93ad091a05a191aed25f87d865bf800a43d172ada0d4fc5e66a3eaa71"
+    },
+    {
+      "id": "abom",
+      "reference": "assets/sprites/packed/actors/monsters/abom.webp",
+      "sequences": [
+        "melee",
+        "slam",
+        "throw",
+        "death"
+      ],
+      "enemies": [
+        "flesh_engine"
+      ],
+      "weapon": "none",
+      "sprite": "abom",
+      "source": "assets/act5_animations/source/abom.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-be0f4d4b-3113-4362-b435-0050dc62afdf.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 4 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 24 separate complete character poses. Row order: melee, slam, throw, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Heavy slam: crouch, lift BOTH arms/weapon, fully overhead, smash into ground, recoil low, recover. Throw undead: stoop, grasp small bundled corpse, lift it overhead, hurl forward, empty-handed follow-through, recover. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "39e84cf2a9ac6909d858193542f742e4a7248123ec9ca523502b79ec637bf098"
+    },
+    {
+      "id": "identity_drowned",
+      "reference": "assets/sprites/packed/actors/monsters/identity_drowned.webp",
+      "sequences": [
+        "melee",
+        "death"
+      ],
+      "enemies": [
+        "drowned_dead"
+      ],
+      "weapon": "none",
+      "sprite": "skeleton",
+      "source": "assets/act5_animations/source/identity_drowned.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08242-d3a2-7740-bb52-853cd6fe6980\\exec-612d7a0d-597f-4aab-9c25-10818a8ab0a3.png",
+      "prompt": "Create a production dark fantasy isometric RPG animation sprite sheet matching the reference character EXACTLY: anatomy, face, armor, weapons, materials and palette. TRUE TRANSPARENT ALPHA BACKGROUND, no checkerboard, no background color. 2 evenly spaced horizontal ROWS and exactly SIX COLUMNS, 12 separate complete character poses. Row order: melee, death. Weapon or fist attack: ready, pull back, maximum windup, contact forward, follow through, return ready. Death: stagger wounded, buckle knees, fall sideways, hit ground, settle, permanent low collapsed remains with equipment. Never return to standing. All poses face screen-right in elevated three-quarter isometric perspective except intentional spins and fallen corpses. SIX DISTINCT progressive body/limb poses per row; do not merely slide or rotate an unchanged cutout. Fixed character scale throughout, collapsed corpses must stay appropriately small. Root at bottom center of each cell. LARGE TRANSPARENT GUTTERS; every full body, limb, weapon and attached accent fits within its own cell with no contact between cells. No floor, cast shadows, scenery, ground circles, radius outlines, text, labels, grid, watermark or extra living characters. Restrained small attached magical accents only. Detailed painted game sprites, sharp silhouette. High resolution landscape sheet.",
+      "sourceHash": "fe122d7d4a507d2ef02549a74746614af2c370adaee3914e9550f2c2a0ff319e"
+    }
+  ]
+}

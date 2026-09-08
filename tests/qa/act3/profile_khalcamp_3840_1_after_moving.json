@@ -1,0 +1,39 @@
+{
+  "methodRevision": 2,
+  "layoutRevision": 3,
+  "width": 3840,
+  "zone": "khalcamp",
+  "pair": 1,
+  "version": "after",
+  "mode": "moving",
+  "position": {
+    "x": 16.5,
+    "y": 20.5
+  },
+  "monsters": 0,
+  "distance": 18.173333333333233,
+  "attackFrames": 0,
+  "enemyAttackFrames": 0,
+  "cpuMs": {
+    "median": 2.4,
+    "p95": 3.4,
+    "max": 4
+  },
+  "updateMs": {
+    "median": 0.1,
+    "p95": 0.2,
+    "max": 0.2
+  },
+  "renderMs": {
+    "median": 2.3,
+    "p95": 3.3,
+    "max": 3.9
+  },
+  "frameIntervalMs": {
+    "median": 18,
+    "p95": 18.2,
+    "max": 42.7
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

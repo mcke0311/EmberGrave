@@ -79,5 +79,11 @@ for(const zone of ['weeping_marsh','drowned_crypt','ritual_site','hollow_reeds',
   const before=legacy(m,cam),i=10+10*m.w,old=m[channel][i];m[channel][i]=old===1?0:1;
   const after=legacy(m,cam);ok(after.surfaceViewBuilds===before.surfaceViewBuilds+1,zone+' stale '+channel+' grid');m[channel][i]=old;
  }
+ if(m.act2){
+  const cold=render(m,cam),index=10+10*m.w;m.act2.water[index]^=1;
+  ok(render(m,cam).surfaceViewBuilds===cold.surfaceViewBuilds+1,zone+' stale scenic water');m.act2.water[index]^=1;
+  const stable=render(m,cam);m.act2.decals[0].x+=1;
+  ok(render(m,cam).surfaceViewBuilds===stable.surfaceViewBuilds+1,zone+' stale Act 2 decal');
+ }
 }
 console.log(`PASS ${checks} projected terrain cache checks: raised and legacy floors, movement, resizing, grid/geometry changes, map identity, and released backing stores.`);

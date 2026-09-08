@@ -1,0 +1,95 @@
+{
+  "status": "PASS",
+  "tests": [
+    {
+      "test": "act2_layout_contract.mjs",
+      "exitCode": 0,
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"checks\": 2073777,\n  \"seedCount\": 30,\n  \"areas\": [\n    {\n      \"zone\": \"weeping_marsh\",\n      \"furthest\": {\n        \"before\": 239,\n        \"after\": 209,\n        \"ratio\": 0.8744769874476988\n      },\n      \"enemies\": {\n        \"before\": 132,\n        \"after\": 137,\n        \"ratio\": 1.0378787878787878\n      }\n    },\n    {\n      \"zone\": \"drowned_crypt\",\n      \"furthest\": {\n        \"before\": 210,\n        \"after\": 207,\n        \"ratio\": 0.9857142857142858\n      },\n      \"enemies\": {\n        \"before\": 95,\n        \"after\": 96,\n        \"ratio\": 1.0105263157894737\n      }\n    },\n    {\n      \"zone\": \"hollow_reeds\",\n      \"furthest\": {\n        \"before\": 212,\n        \"after\": 183,\n        \"ratio\": 0.8632075471698113\n      },\n      \"enemies\": {\n        \"before\": 92,\n        \"after\": 97,\n        \"ratio\": 1.0543478260869565\n      }\n    },\n    {\n      \"zone\": \"spawn_pools\",\n      \"furthest\": {\n        \"before\": 198,\n        \"after\": 184,\n        \"ratio\": 0.9292929292929293\n      },\n      \"enemies\": {\n        \"before\": 93,\n        \"after\": 100,\n        \"ratio\": 1.075268817204301\n      }\n    },\n    {\n      \"zone\": \"ritual_site\",\n      \"furthest\": {\n        \"before\": 210,\n        \"after\": 206,\n        \"ratio\": 0.9809523809523809\n      },\n      \"enemies\": {\n        \"before\": 91,\n        \"after\": 97,\n        \"ratio\": 1.065934065934066\n      }\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "act2_quest_contract.mjs",
+      "exitCode": 0,
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"checks\": 103,\n  \"scenarios\": [\n    \"q10 interviews\",\n    \"q11 heart and Vorthel\",\n    \"q12 boss and shard\",\n    \"both optional quests\",\n    \"partial/legacy ritual saves\",\n    \"duplicate heart deaths\",\n    \"actual death/revive\",\n    \"early boss recovery\",\n    \"all exit destinations\",\n    \"portal round trips\",\n    \"shrine travel\",\n    \"reserved events\"\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "navigation_contract.mjs",
+      "exitCode": 0,
+      "stdout": "PASS 216 navigation checks; longest seeded query 20.6 ms.\n",
+      "stderr": ""
+    },
+    {
+      "test": "navigation_edge_contract.mjs",
+      "exitCode": 0,
+      "stdout": "PASS 75272 navigation checks: optimized edges match swept collision for ramps, walls, cliffs, diagonals, hopping and six body radii.\n",
+      "stderr": ""
+    },
+    {
+      "test": "terrain_surface_contract.mjs",
+      "exitCode": 0,
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"checks\": 10734,\n  \"maxWalkHeightDelta\": 0.07500000000000018,\n  \"seedResults\": [\n    {\n      \"seed\": 0,\n      \"ramps\": 2,\n      \"raisedTiles\": 19058,\n      \"targets\": 16,\n      \"ms\": 259\n    },\n    {\n      \"seed\": 1,\n      \"ramps\": 2,\n      \"raisedTiles\": 19284,\n      \"targets\": 16,\n      \"ms\": 129\n    },\n    {\n      \"seed\": 123,\n      \"ramps\": 2,\n      \"raisedTiles\": 19169,\n      \"targets\": 16,\n      \"ms\": 115\n    },\n    {\n      \"seed\": 12345,\n      \"ramps\": 2,\n      \"raisedTiles\": 19445,\n      \"targets\": 16,\n      \"ms\": 118\n    },\n    {\n      \"seed\": 4294967295,\n      \"ramps\": 2,\n      \"raisedTiles\": 19359,\n      \"targets\": 16,\n      \"ms\": 105\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "terrain_view_cache_contract.mjs",
+      "exitCode": 0,
+      "stdout": "PASS 3980 projected terrain cache checks: raised and legacy floors, movement, resizing, grid/geometry changes, map identity, and released backing stores.\n",
+      "stderr": ""
+    },
+    {
+      "test": "terrain_cache_contract.mjs",
+      "exitCode": 0,
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"checks\": 16407,\n  \"stationary\": [\n    {\n      \"viewport\": \"1920x1080\",\n      \"where\": \"entry\",\n      \"visibleChunks\": 19,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"1920x1080\",\n      \"where\": \"center\",\n      \"visibleChunks\": 31,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"2560x1440\",\n      \"where\": \"entry\",\n      \"visibleChunks\": 29,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"2560x1440\",\n      \"where\": \"center\",\n      \"visibleChunks\": 49,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"3840x2160\",\n      \"where\": \"entry\",\n      \"visibleChunks\": 46,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"3840x2160\",\n      \"where\": \"center\",\n      \"visibleChunks\": 97,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    }\n  ],\n  \"coverage\": \"Three seeds; walking, retracing, resizing, map identity, memory budget, materials retained, late wall caps, read-only diagnostics.\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "frontier_layout_contract.mjs",
+      "exitCode": 0,
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"checks\": 118293,\n  \"seedCount\": 30,\n  \"areas\": [\n    {\n      \"zone\": \"north_wild\",\n      \"minMonsters\": 79,\n      \"minBuildings\": 9,\n      \"maxBuildings\": 9\n    },\n    {\n      \"zone\": \"mines\",\n      \"minMonsters\": 60,\n      \"minBuildings\": 7,\n      \"maxBuildings\": 7\n    },\n    {\n      \"zone\": \"shattered_temple\",\n      \"minMonsters\": 52,\n      \"minBuildings\": 5,\n      \"maxBuildings\": 5\n    },\n    {\n      \"zone\": \"shardpeak_shrine\",\n      \"minMonsters\": 52,\n      \"minBuildings\": 6,\n      \"maxBuildings\": 6\n    },\n    {\n      \"zone\": \"deepfreeze_cavern\",\n      \"minMonsters\": 57,\n      \"minBuildings\": 6,\n      \"maxBuildings\": 6\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "frontier_quest_contract.mjs",
+      "exitCode": 0,
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"checks\": 153,\n  \"scenarios\": [\n    \"beacon orders and duplicate deaths\",\n    \"reload/re-entry\",\n    \"legacy counts and invalid trio coordinates\",\n    \"main quest chain\",\n    \"three survivor IDs\",\n    \"both optional quests\",\n    \"seeded reserved events\"\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "town_layout_contract.mjs",
+      "exitCode": 0,
+      "stdout": "PASS 54280 checks across five towns and four world seeds: paths, collisions, interactions, arrivals, return links and art.\n",
+      "stderr": ""
+    },
+    {
+      "test": "story_campaign_contract.mjs",
+      "exitCode": 0,
+      "stdout": "PASS 214 story checks: dialogue, objectives, old saves, boss wards, seeded routes, factions, phases, quest chest states and all endings.\n",
+      "stderr": ""
+    },
+    {
+      "test": "boss_encounter_contract.mjs",
+      "exitCode": 0,
+      "stdout": "PASS 85616 boss checks: warning geometry, dodge routes, recovery, phases, ownership, retreat, death, signatures and 192 seeded arenas.\n",
+      "stderr": ""
+    },
+    {
+      "test": "gameplay_input_contract.mjs",
+      "exitCode": 0,
+      "stdout": "PASS 153 gameplay checks: tap/hold input, gesture ownership, collision, interruption, jumping, hazards and damage visibility timers.\n",
+      "stderr": ""
+    },
+    {
+      "test": "player_death_sound_contract.mjs",
+      "exitCode": 0,
+      "stdout": "PASS 85 player death checks: fatal-hit audio, companion collapse, enemy AI throughout death and revival, repeat guards, hardcore and ordinary damage feedback.\n",
+      "stderr": ""
+    },
+    {
+      "test": "zone_boss_music_contract.mjs",
+      "exitCode": 0,
+      "stdout": "PASS 384 zone and boss music checks: all zones, random pool, fixed first areas, entry, boss/miniboss bars, multiple bosses, disengagement, deaths, revival, volume, fades, continuity and title handoff.\n",
+      "stderr": ""
+    }
+  ]
+}

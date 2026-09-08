@@ -1,0 +1,63 @@
+{
+  "status": "FAIL",
+  "baseline": "working-tree snapshot in tmp/cinders/before",
+  "method": "Three alternating before/after pairs, 90 warmup and 240 sampled frames per workload, full roster retained, nearest open combat pocket, twelve durable targets with a close melee target, verified attack exchange, real 3D Vanguard, cached production terrain.",
+  "results": [
+    {
+      "width": 1920,
+      "zone": "ash_wastes",
+      "mode": "moving",
+      "before": {
+        "median": 6.633333333333333,
+        "p95": 10
+      },
+      "after": {
+        "median": 7.166666666666667,
+        "p95": 11.166666666666666
+      },
+      "passed": false
+    },
+    {
+      "width": 1920,
+      "zone": "ash_wastes",
+      "mode": "combat",
+      "before": {
+        "median": 7.633333333333334,
+        "p95": 13.033333333333333
+      },
+      "after": {
+        "median": 9.766666666666666,
+        "p95": 15.6
+      },
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "ash_wastes",
+      "mode": "moving",
+      "before": {
+        "median": 11.300000000000002,
+        "p95": 16.4
+      },
+      "after": {
+        "median": 7.933333333333334,
+        "p95": 11.666666666666666
+      },
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "ash_wastes",
+      "mode": "combat",
+      "before": {
+        "median": 12.766666666666666,
+        "p95": 18.933333333333334
+      },
+      "after": {
+        "median": 10,
+        "p95": 15.5
+      },
+      "passed": true
+    }
+  ]
+}

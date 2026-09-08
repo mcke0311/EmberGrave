@@ -234,10 +234,10 @@ wildkeeper_2_6 fire apexform`;
     passive(p,elem==='fire'?'fire':elem==='cold'&&target.frozen>now?'frozen':'weapon',point);
     if(target.dead&&(target.curseFrailty||target.curseWither||target.doom||target.killMark))passive(p,'kill',point);
   }
-  function area(x,y,radius,owner){
+  function area(x,y,radius,owner,presentation){
     const c=context(owner||world?.player);if(!enabled||!c)return false;
     const r=c.recipe;
-    push('wave',r,{x,y},{radius,dur:r.material==='earth'?.75:.55});
+    if(!presentation?.hideRadius)push('wave',r,{x,y},{radius,dur:r.material==='earth'?.75:.55});
     burst(r,{x,y,z:terrain(x,y)+8},Math.min(24,8+radius*3),Math.min(2,radius*.6));
     if(['frailty','wither','doom','beckon'].includes(r.motif))passive(c.owner,'curse',{x,y,z:terrain(x,y)+20});
     return true;

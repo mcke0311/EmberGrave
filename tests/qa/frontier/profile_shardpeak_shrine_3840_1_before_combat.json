@@ -1,0 +1,28 @@
+{
+  "methodRevision": 2,
+  "width": 3840,
+  "zone": "shardpeak_shrine",
+  "pair": 1,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 80.5,
+    "y": 67.5
+  },
+  "monsters": 66,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 971,
+  "cpuMs": {
+    "median": 15.9,
+    "p95": 25.2,
+    "max": 30.7
+  },
+  "frameIntervalMs": {
+    "median": 19.8,
+    "p95": 30.5,
+    "max": 103.2
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

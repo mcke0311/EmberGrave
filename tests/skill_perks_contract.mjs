@@ -19,6 +19,7 @@ const approx=(a,b,label)=>ok(Math.abs(a-b)<1e-7,`${label}: ${a} != ${b}`);
 const plain=v=>JSON.parse(JSON.stringify(v));
 function fresh(classId='vanguard'){
   const p=new Player('Perk test',classId);p.lvl=100;p.x=10;p.y=10;
+  if(classId==='veilranger')p.equip.main={kind:'gear',cat:'bow',dmg:[1,3],speed:1,ranged:true,twoHand:true,affixes:[]};
   const state=G.__test.freshState(p,123);
   state.map={id:'test',w:40,h:40,tiles:new Uint8Array(1600),props:[],hazard:new Uint8Array(1600),zone:{lvl:1}};
   state.monsters=[];state.minions=[];state.quests={};state.fx=[];state.projectiles=[];state.traps=[];state.time=0;
@@ -132,7 +133,7 @@ ok(ids.size===642,'642 options');
   const wolf=state.minions.at(-1);approx(wolf.atkRate,1.3*1.25,'summon attack speed');
   approx(wolf.maxHp,Math.floor((26+8*10)*1.25),'summon life perk');
   pick(p,'fangform',10,0);p.performSkill('fangform');ok(p.buffs.some(b=>b.id==='form_fang'&&b.stats.ias===20&&b.until===Infinity),'form perk not retained in toggle');
-  pick(p,'totem_mastery',10,0);pick(p,'wildkeeper_1_0',10,0);for(let i=0;i<7;i++)p.performSkill('wildkeeper_1_0',target,{x:10,y:10});
+  pick(p,'totem_mastery',10,0);pick(p,'wildkeeper_1_0',10,0);for(let i=0;i<7;i++){p.mana=p.stats.maxMana;p.performSkill('wildkeeper_1_0',target,{x:10,y:10});}
   ok(state.fx.filter(f=>f.type==='totem').length===6,'totem capacity not combined');
 }
 {

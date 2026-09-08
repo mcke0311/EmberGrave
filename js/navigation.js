@@ -59,6 +59,16 @@ const TerrainNavigation = (() => {
     if(m.surfaceVersion&&maxRise===1&&!TerrainSurface.supported(m,ax,ay,radius))return false;
     const n = Math.max(1, Math.ceil(Math.hypot(bx - ax, by - ay) / .12));
     let px = ax, py = ay;
+    if(m.surfaceVersion&&maxRise===1&&m._surfaceFlatHeight!=null){
+      for(let i=1;i<=n;i++){
+        const x=ax+(bx-ax)*i/n,y=ay+(by-ay)*i/n;
+        if(!TerrainSurface.supported(m,x,y,radius))return false;
+        const tx=Math.floor(px),ty=Math.floor(py),nx=Math.floor(x),ny=Math.floor(y);
+        if(tx!==nx&&ty!==ny&&(m.blocked[nx+ty*m.w]||m.blocked[tx+ny*m.w]))return false;
+        px=x;py=y;
+      }
+      return true;
+    }
     for (let i = 1; i <= n; i++) {
       const x = ax + (bx - ax) * i / n, y = ay + (by - ay) * i / n;
       if (!clear(m, x, y, radius) || !step(m, px, py, x, y, maxRise)) return false;

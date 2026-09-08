@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "tool": "built-in image_gen",
+  "enemies": {
+    "drowned_dead": {
+      "id": "drowned_dead",
+      "reference": "assets/sprites/packed/actors/monsters/identity_drowned.webp",
+      "sequences": [
+        "melee",
+        "death"
+      ],
+      "description": "Heavy reaching unarmed swipe with shoulder windup, outward contact and recoil. Death: knees buckle and the drowned man falls sideways, last frame a complete prone corpse.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 2 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: melee, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Heavy reaching unarmed swipe with shoulder windup, outward contact and recoil. Death: knees buckle and the drowned man falls sideways, last frame a complete prone corpse. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "marsh_wretch": {
+      "id": "marsh_wretch",
+      "reference": "assets/sprites/packed/actors/monsters/spider.webp",
+      "sequences": [
+        "melee",
+        "death"
+      ],
+      "description": "Venomous spider bite: front legs rear, mandibles open, snapping forward contact, pull back. Death: legs buckle and curl inward around body, ending a dead curled spider.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 2 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: melee, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Venomous spider bite: front legs rear, mandibles open, snapping forward contact, pull back. Death: legs buckle and curl inward around body, ending a dead curled spider. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "silent_cultist": {
+      "id": "silent_cultist",
+      "reference": "assets/sprites/packed/actors/monsters/identity_frost_robed.webp",
+      "sequences": [
+        "bolt",
+        "death"
+      ],
+      "description": "Frost wizard: gather cold in raised hand, thrust wand to release frost bolt, recoil and settle. Death: knees buckle, robe and staff fall into a clearly prone corpse with dimming frost.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 2 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: bolt, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Frost wizard: gather cold in raised hand, thrust wand to release frost bolt, recoil and settle. Death: knees buckle, robe and staff fall into a clearly prone corpse with dimming frost. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "bog_bloat": {
+      "id": "bog_bloat",
+      "reference": "assets/sprites/packed/actors/monsters/abom.webp",
+      "sequences": [
+        "melee",
+        "death"
+      ],
+      "description": "Bloated marsh abomination swings massive hooked forearm. Death: 1 stagger, 2 swell, 3 maximum bloating, 4 non-graphic poisonous rupture, 5 sagging body, 6 collapsed remains.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 2 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: melee, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Bloated marsh abomination swings massive hooked forearm. Death: 1 stagger, 2 swell, 3 maximum bloating, 4 non-graphic poisonous rupture, 5 sagging body, 6 collapsed remains. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "marsh_serpent": {
+      "id": "marsh_serpent",
+      "reference": "assets/sprites/packed/actors/monsters/serpent.webp",
+      "sequences": [
+        "melee",
+        "lunge",
+        "death"
+      ],
+      "description": "Bite opens jaws and snaps forward. Lunge strongly coils body, lowers head, extends suddenly forward, slides and recoils. Death: neck droops, coils unravel and collapse into a dead serpent.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 3 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: melee, lunge, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Bite opens jaws and snaps forward. Lunge strongly coils body, lowers head, extends suddenly forward, slides and recoils. Death: neck droops, coils unravel and collapse into a dead serpent. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "gnarl_treant": {
+      "id": "gnarl_treant",
+      "reference": "assets/sprites/packed/actors/monsters/treant.webp",
+      "sequences": [
+        "melee",
+        "slam",
+        "death"
+      ],
+      "description": "Branch arm side swipe. Slam raises both branch arms high, drives them into ground with roots spreading, settles back. Death: trunk buckles, branches splinter, tree slumps into a broken wood corpse.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 3 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: melee, slam, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Branch arm side swipe. Slam raises both branch arms high, drives them into ground with roots spreading, settles back. Death: trunk buckles, branches splinter, tree slumps into a broken wood corpse. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "stone_gargoyle": {
+      "id": "stone_gargoyle",
+      "reference": "assets/sprites/packed/actors/monsters/gargoyle.webp",
+      "sequences": [
+        "melee",
+        "dive",
+        "death"
+      ],
+      "description": "Claw swipe. Dive frames: crouch, spread wings, launch, wings tucked diving forward, landing with compressed legs, folded wing recovery. Death: wing buckling, cracks and stone fragments, ending a collapsed gargoyle rubble corpse.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 3 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: melee, dive, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Claw swipe. Dive frames: crouch, spread wings, launch, wings tucked diving forward, landing with compressed legs, folded wing recovery. Death: wing buckling, cracks and stone fragments, ending a collapsed gargoyle rubble corpse. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "lure_child": {
+      "id": "lure_child",
+      "reference": "assets/sprites/packed/actors/monsters/identity_hollow_child.webp",
+      "sequences": [
+        "melee",
+        "blink",
+        "summon",
+        "death"
+      ],
+      "description": "Hollow Child claws with one hand. Blink: hunch, draw arms inward, shadow wraps body, transparent shadow silhouette, reappearing reaching silhouette, settled body. Summon beckons with both hands, raises them, casts shadow downward, lowers them. Death: knees buckle and small hollow figure crumples into a complete still body.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 4 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: melee, blink, summon, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Hollow Child claws with one hand. Blink: hunch, draw arms inward, shadow wraps body, transparent shadow silhouette, reappearing reaching silhouette, settled body. Summon beckons with both hands, raises them, casts shadow downward, lowers them. Death: knees buckle and small hollow figure crumples into a complete still body. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "song_thrall": {
+      "id": "song_thrall",
+      "reference": "assets/sprites/packed/actors/monsters/identity_frost_robed.webp",
+      "sequences": [
+        "bolt",
+        "volley",
+        "death"
+      ],
+      "description": "Frost casting one wand bolt. Volley uses a distinct wide two-arm gesture gathering three tiny ice shards in a fan and releasing them. Death collapses to side with robe and wand visibly prone.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 3 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: bolt, volley, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Frost casting one wand bolt. Volley uses a distinct wide two-arm gesture gathering three tiny ice shards in a fan and releasing them. Death collapses to side with robe and wand visibly prone. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "marsh_larvae": {
+      "id": "marsh_larvae",
+      "reference": "assets/sprites/packed/actors/monsters/identity_larva.webp",
+      "sequences": [
+        "melee",
+        "death"
+      ],
+      "description": "Grub bite: curl head back, raise front body, extend mandibles forward, contract body and recover. Death: sag, writhe, curl and flatten into a dead larva.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 2 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: melee, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Grub bite: curl head back, raise front body, extend mandibles forward, contract body and recover. Death: sag, writhe, curl and flatten into a dead larva. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "sludge_horror": {
+      "id": "sludge_horror",
+      "reference": "assets/sprites/packed/actors/monsters/ooze.webp",
+      "sequences": [
+        "melee",
+        "death"
+      ],
+      "description": "Sludge maw: draw back, open toothy jaws, thrust maw forward, recoil. Death: shudder, inflate, swell fully, split open non-graphically with poison drops, collapse into two connected deflated lobes, inert sludge remains.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 2 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: melee, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Sludge maw: draw back, open toothy jaws, thrust maw forward, recoil. Death: shudder, inflate, swell fully, split open non-graphically with poison drops, collapse into two connected deflated lobes, inert sludge remains. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "blight_treant": {
+      "id": "blight_treant",
+      "reference": "assets/sprites/packed/actors/monsters/treant.webp",
+      "sequences": [
+        "melee",
+        "slam",
+        "death"
+      ],
+      "description": "Poison-blighted treant branch swipe and two-arm root slam, restrained olive poison accents. Death buckles and splinters, poison escapes at frame four, ends a collapsed broken trunk.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 3 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: melee, slam, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Poison-blighted treant branch swipe and two-arm root slam, restrained olive poison accents. Death buckles and splinters, poison escapes at frame four, ends a collapsed broken trunk. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "choir_herald": {
+      "id": "choir_herald",
+      "reference": "assets/sprites/packed/actors/monsters/robed.webp",
+      "sequences": [
+        "bolt",
+        "summon",
+        "death"
+      ],
+      "description": "Dark robed herald releases a shadow bolt with staff thrust. Summon conducts a choir: raises both hands, gathers shadow, wide release gesture, lowers arms. Death staggers and collapses sideways with extinguished magic and staff lying down.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 3 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: bolt, summon, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Dark robed herald releases a shadow bolt with staff thrust. Summon conducts a choir: raises both hands, gathers shadow, wide release gesture, lowers arms. Death staggers and collapses sideways with extinguished magic and staff lying down. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "brood_mother": {
+      "id": "brood_mother",
+      "reference": "assets/sprites/packed/actors/monsters/spider.webp",
+      "sequences": [
+        "melee",
+        "summon",
+        "slam",
+        "death"
+      ],
+      "description": "Huge mother spider. Melee snapping mandibles. Summon lifts abdomen and spreads legs, releases small olive magical motes beneath abdomen, settles. Slam rears front four legs high and pounds them down, landing compression and recovery. Death legs collapse and curl, abdomen sags, ends a complete dead spider.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 4 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: melee, summon, slam, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Huge mother spider. Melee snapping mandibles. Summon lifts abdomen and spreads legs, releases small olive magical motes beneath abdomen, settles. Slam rears front four legs high and pounds them down, landing compression and recovery. Death legs collapse and curl, abdomen sags, ends a complete dead spider. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    },
+    "choirmaster": {
+      "id": "choirmaster",
+      "reference": "assets/sprites/packed/actors/monsters/robed.webp",
+      "sequences": [
+        "bolt",
+        "summon",
+        "sacrifice",
+        "requiem",
+        "death"
+      ],
+      "description": "Vorthel dark choirmaster. Bolt: staff thrust shadow cast. Summon: arms rising and conducting shadows. Sacrifice: draw hands inward, clench then forcefully pull apart shadow threads. Requiem: staff overhead, spread arms in grand conducting pose, violent downward staff strike and sweeping sustained channel, exhausted recovery. Death: staggers, knees buckle, falls sideways, magic fades, prone robe and staff corpse.",
+      "prompt": "Create a production sprite animation atlas with TRUE TRANSPARENT alpha background. Preserve the exact character identity, materials, colors, proportions, clothing, anatomy and painted dark fantasy RPG style of the reference. Six EQUAL COLUMNS by 5 EQUAL ROWS. Every cell contains ONE complete isolated full-body sprite facing screen-right in elevated three-quarter isometric perspective; generous clear transparent gutters, no parts crossing cells. Exact rows top to bottom: bolt, summon, sacrifice, requiem, death. Each row is SIX DISTINCT SEQUENTIAL AUTHORED FRAMES, not six copies or variations. For attacks: columns 1 beginning anticipation, 2 strong windup, 3 maximum anticipation, 4 actual release/contact, 5 follow-through, 6 recovery. Death rows progressively end in persistent dead remains. Vorthel dark choirmaster. Bolt: staff thrust shadow cast. Summon: arms rising and conducting shadows. Sacrifice: draw hands inward, clench then forcefully pull apart shadow threads. Requiem: staff overhead, spread arms in grand conducting pose, violent downward staff strike and sweeping sustained channel, exhausted recovery. Death: staggers, knees buckle, falls sideways, magic fades, prone robe and staff corpse. Consistent character size across ALL cells: do not enlarge low/collapsed poses to fill cells. Feet or base align near bottom center. No floor, shadows on a floor, text, labels, grid, border, scenery, background haze, other creatures, UI or opaque background. Small attached magical accents only, effects never obscure anatomy. High quality painted detailed sprites with clear changed limb poses."
+    }
+  }
+}

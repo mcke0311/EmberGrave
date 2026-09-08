@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Act V animation artwork</title>
+<style>
+body{margin:24px;background:#182126;color:#e3ddd0;font:15px/1.5 system-ui;max-width:1500px}h1{font:30px Georgia}a{color:#a5cee8}section{margin:30px 0;border-top:1px solid #42535a;padding-top:16px}img.sheet{display:block;width:100%;height:auto;background:#182126}.reference{max-height:150px;max-width:150px;float:right;margin:0 0 12px 20px}code{color:#bfccd1}p{max-width:850px}
+</style>
+<h1>Act V · Authored enemy animations</h1>
+<p>Original generated sheets and their existing character references. Each row contains six sequential poses. These originals are preserved; opaque checkerboards must be removed from separate copies before atlas installation.</p>
+<p><a href="cinders_review.html?enemies">Open the gameplay and frame review</a></p>
+<main id="sheets">Loading artwork…</main>
+<script type="module">
+const config=await (await fetch('../assets/act5_animations/generated.json')).json(),host=document.getElementById('sheets');host.textContent='';
+for(const g of config.enemies){
+ const section=document.createElement('section'),ref=document.createElement('img'),title=document.createElement('h2'),desc=document.createElement('p'),sheet=document.createElement('img');
+ ref.src='../'+g.reference;ref.alt='Current '+g.id;ref.className='reference';
+ title.textContent=g.id;desc.textContent='Rows: '+g.sequences.join(' → ')+'. Enemies: '+g.enemies.join(', ')+'.';
+ sheet.src='../'+g.source;sheet.alt=g.id+' sequential animation poses';sheet.className='sheet';sheet.loading='lazy';
+ section.append(ref,title,desc,sheet);host.append(section);
+}
+</script></html>

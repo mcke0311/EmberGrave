@@ -1,0 +1,117 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Act IV — Cathedral of Memories</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#171821;color:#d6d3cb;font:14px/1.5 system-ui}header{padding:18px 24px;border-bottom:1px solid #4b4659}h1{margin:0;color:#dfc99d;font:28px Georgia}p{margin:8px 0}label{display:inline-block;margin:6px 14px 6px 0}select,input,button{padding:7px;background:#2b2937;color:#e2dccd;border:1px solid #686076;border-radius:3px;font:inherit}button{cursor:pointer;margin:5px 7px 5px 0}input{width:116px}#host{overflow:hidden;margin:16px 0}iframe{border:0;display:block;transform-origin:top left}#status{color:#bfc7a6}#error{color:#ffb49e;white-space:pre-wrap}#report{max-height:210px;overflow:auto;padding:12px 24px}details{margin:12px 24px}#topology{width:360px;image-rendering:pixelated}
+</style>
+<header><h1>Act IV · Cathedral of Memories</h1><p>A fortress assembled from borrowed places. Temporary heroes and isolated saves.</p>
+<label>Zone <select id="zone"><option value="cathedral1">The Shattered Cathedral</option><option value="cathedral2">The Cathedral Heart</option><option value="cathedral_cinderwatch">Cinderwatch Remembered</option><option value="cathedral_bastion">The Last Bastion’s Echo</option></select></label>
+<label>Seed <input id="seed" type="number" value="12345"></label>
+<label>Version <select id="version"><option value="after">Redesigned</option><option value="animation_before">Before enemy animations</option><option value="skills_before">Before enemy skills</option><option value="before">Before redesign</option></select></label>
+<label>Canvas <select id="width"><option value="1920">1080p</option><option value="3840">4K</option></select></label>
+<label>Landmark <select id="view"><option value="arrival">Arrival</option></select></label>
+<div><button id="load">Load zone</button><button id="play">Play encounter</button><button id="walk">Walk to next landmark</button><button id="capture">Save scene image</button><button id="profile">Compare performance</button></div>
+<div><label>Enemy <select id="enemy"><option value="hollow_knight">Hollow Knight</option><option value="choir_priest">Choir Priest</option><option value="soul_eater">Soul Eater</option><option value="memory_wraith">Memory Wraith</option><option value="cathedral_knight_guardian">Cinderwatch guardian</option><option value="cathedral_priest_guardian">Bastion guardian</option></select></label><label>Skill <select id="skill"></select></label><button id="demo">Show animation</button><button id="step">Advance 0.1 s</button><button id="frameStep">Advance 1 frame</button><button id="death">Show death</button><label>Facing <select id="facing"><option value="right">Right</option><option value="left">Left</option></select></label><button id="mixed">Play mixed encounter</button><label><input type="checkbox" id="sound" style="width:auto"> Sound</label><label><input type="checkbox" id="god" checked style="width:auto"> Invulnerable preview</label></div>
+<p id="status">Preparing the cathedral…</p><pre id="error"></pre></header>
+<div id="host"></div><details><summary>Routes and memory islands</summary><canvas id="topology"></canvas></details><pre id="report"></pre>
+<script type="module">
+const el=id=>document.getElementById(id),params=new URLSearchParams(location.search),root=new URL('../',location.href),raf=()=>new Promise(r=>requestAnimationFrame(r));
+for(const id of ['zone','seed','version','width'])if(params.has(id))el(id).value=params.get(id);
+window.cathedralStore=new Map();const frames=new Map();let frame,win,api,game,map,playing=false,busy=false;
+function error(e){el('error').textContent=e.stack||String(e);el('status').textContent='FAIL';document.body.dataset.testStatus='failed';}
+function resize(){if(!frame)return;const w=+el('width').value,h=w*9/16,s=Math.min(1,innerWidth/w);Object.assign(frame.style,{width:w+'px',height:h+'px',transform:`scale(${s})`});el('host').style.height=h*s+'px';}
+addEventListener('resize',resize);
+async function load(version=el('version').value,zone=el('zone').value){
+ playing=false;el('error').textContent='';document.body.dataset.testStatus='loading';el('status').textContent='Loading '+zone+'…';
+ if(version==='before'&&zone.startsWith('cathedral_'))throw Error('The optional memories are new; select Redesigned to explore them.');
+ el('version').value=version;el('zone').value=zone;for(const f of frames.values())f.style.display='none';
+ if(frames.has(version)){frame=frames.get(version);frame.style.display='block';win=frame.contentWindow;resize();win.dispatchEvent(new Event('resize'));}
+ else{
+  const prefix=version==='animation_before'?'tmp/act4_animation/before/':version==='before'?'tmp/cathedral/before/':version==='skills_before'?'tmp/cathedral_skills/before/':'';
+  const [html,original]=await Promise.all([prefix+'index.html',prefix+'js/game.js'].map(async path=>{const r=await fetch(new URL(path,root));if(!r.ok)throw Error('Missing cathedral baseline snapshot: '+path);return r.text();}));
+  const source=original.replace('Game.init().catch','Game.init().then(()=>window.__ready=true).catch').replace('    init, newGame, loadGame,',
+  `    __cathedral:{render,update,updateCamera,syncStoryObjects,place(x,y){state.player.x=x;state.player.y=y;state.player.path=null;state.player.command=null;state.player.jumping=null;state.player.jumpZ=0;camPos={x:U.isoX(x,y)-canvas.width/2,y:U.isoY(x,y)-surfaceLift(x,y)-canvas.height/2-20};shakeOx=shakeOy=0;}},\n    init, newGame, loadGame,`);
+  const injection=`<base href="${root}"><script>const store=parent.cathedralStore;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k)}});window.requestAnimationFrame=()=>0;window.__errors=[];window.addEventListener('error',e=>window.__errors.push(e.message));<\/script>`;
+  let page=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>'+source+'<\/script>');
+  if(prefix)page=page.replaceAll('src="js/','src="'+prefix+'js/').replaceAll('href="css/','href="'+prefix+'css/');
+  frame=document.createElement('iframe');frame.title='Playable cathedral';frames.set(version,frame);frame.srcdoc=page;el('host').append(frame);resize();await new Promise(r=>frame.onload=r);win=frame.contentWindow;
+  for(let i=0;i<1200&&!win.__ready;i++){if(win.__errors.length)throw Error(win.__errors.join('\n'));await new Promise(r=>setTimeout(r,25));}
+  if(!win.__ready)throw Error('Game startup timed out');
+ }
+ api=win.eval('({Game,UI,Sfx,U,MapGen,TerrainNavigation,TerrainSurface,LevelTerrain,Monster,EnemySkills:typeof EnemySkills===\'undefined\'?null:EnemySkills})');game=api.Game;
+ api.Sfx.setVol('master',el('sound').checked?.25:0);await game.newGame('Cathedral review','vanguard',false);await game.skipOpening();api.UI.closeAll();api.UI.hideTitle();
+ game.state.seed=+el('seed').value>>>0;game.state.cathedralVisits=0;win.Math.random=api.U.rng(game.state.seed^7331);game.debugFlags.god=true;game.options.screenShake=false;
+ if(!await game.enterMap(zone,'default'))throw Error('Map entry failed');map=game.state.map;map.explored.fill(1);api.UI.closeAll();
+ el('view').replaceChildren(new Option('Arrival','arrival'),new Option('Map center','center'));
+ for(const n of map.cathedral?.rooms||[])el('view').add(new Option(n.label,n.id));
+ for(const n of map.cathedral?.rooms||[])if(n.landmark)el('view').add(new Option('Architecture · '+n.label,'landmark:'+n.id));
+ if(map.bossArena)el('view').add(new Option('Boss encounter','boss'));
+ if(map.cathedral?.anchors.hell_portal)el('view').add(new Option('Final shard portal · art preview','portal'));
+ if(params.has('view')&&[...el('view').options].some(o=>o.value===params.get('view')))el('view').value=params.get('view');
+ showView();drawTopology();el('status').textContent=`Ready · ${map.monsterSpawns.length} enemies · ${map.cathedral?map.cathedral.rooms.length+' composed landmarks · arrangement '+(map.cathedral.variant+1):'original dungeon halls'}`;
+ fillSkills();document.body.dataset.testStatus='passed';return{zone,version};
+}
+function fillSkills(){el('skill').replaceChildren();const p=api?.EnemySkills?.profiles[el('enemy').value];for(const id of Object.keys(p?.skills||{}))el('skill').add(new Option(({cleave:'Guarded Cleave',heal:'Mending Litany',rush:'Hunting Rush',blink:'Remembered Step',chorus:'Quieting Chorus'})[id],id));el('skill').add(new Option('Ordinary attack','basic'));el('skill').add(new Option('Death','death'));}
+function prepareCombat(){playing=false;api.EnemySkills?.cancelAll();const s=game.state;for(const m of [...s.monsters])m.encounter?.reset();s.monsters=[];s.projectiles=[];s.minions=[];s.fx=[];const n=map.cathedral?.rooms.find(n=>n.id==='memory'||n.id==='nave'||n.id==='ritual_0')||pointFor('center'),p=nearest(n);game.__cathedral.place(p.x,p.y);s.player.lvl=20;s.player.attr.str=65;s.player.attr.vit=120;s.player.attr.dex=45;s.player.computeStats();s.player.hp=s.player.stats.maxHp;game.debugFlags.god=el('god').checked;api.Sfx.setVol('master',el('sound').checked?.25:0);return p;}
+function demonstrate(id=el('enemy').value,skill=el('skill').value){
+ if(!api.EnemySkills)throw Error('Choose Redesigned to demonstrate the new skills.');const p=prepareCombat(),profile=api.EnemySkills.profiles[id],s=game.state;
+ const distance=['rush','blink'].includes(skill)||skill==='basic'&&profile.enemy==='choir_priest'?5:skill==='basic'?1.2:2;const pos=nearest({x:p.x-distance,y:p.y});const mon=new api.Monster(profile.enemy,pos.x,pos.y,{elite:!!profile.elite,skillProfile:id});s.monsters=[mon];mon.aggro=true;for(const k in mon.enemySkills.cooldowns)mon.enemySkills.cooldowns[k]=99;
+ if(skill==='heal'){const ally=new api.Monster('hollow_knight',p.x,p.y+2);ally.hp=ally.maxHp/2;ally.aggro=false;ally.stunT=99;s.monsters.push(ally);}
+ if(skill==='death')mon.die(s.player);else if(skill==='basic')mon.enemySkills.fight(s.player,map);else{mon.enemySkills.cooldowns[skill]=0;if(!mon.enemySkills.start(skill,s.player))throw Error('Skill needs more clear space at this seed.');}
+ mon.visAng=el('facing').value==='left'?Math.PI:0;
+ game.__cathedral.render();el('status').textContent=mon.name+' · '+skill+' · advance to inspect or Play encounter to dodge';return{id,skill,active:mon.enemySkills.active?.id};
+}
+function step(seconds=.1){for(let t=0;t<seconds-1e-8;t+=.025)game.__cathedral.update(Math.min(.025,seconds-t));for(const m of game.state.monsters)m.visAng=el('facing').value==='left'?Math.PI:0;game.__cathedral.render();return game.state.monsters.map(m=>({id:m.defId,hp:m.hp,action:m.enemySkills?.active?.id,stage:m.enemySkills?.active?.stage,remaining:m.enemySkills?.active?.remaining}));}
+function mixed(){if(!api.EnemySkills)throw Error('Choose Redesigned to play the new mixed encounters.');const p=prepareCombat(),s=game.state,ids=map.id==='cathedral_bastion'?['cathedral_priest_guardian','hollow_knight','hollow_knight','hollow_knight','memory_wraith']:map.id==='cathedral_cinderwatch'?['cathedral_knight_guardian','hollow_knight','hollow_knight','soul_eater','soul_eater']:['hollow_knight','hollow_knight','choir_priest','soul_eater','memory_wraith'];
+ for(const [i,id]of ids.entries()){const profile=api.EnemySkills.profiles[id],a=i*Math.PI*2/5,pos=nearest({x:p.x+Math.cos(a)*5,y:p.y+Math.sin(a)*5});const m=new api.Monster(profile.enemy,pos.x,pos.y,{elite:!!profile.elite,skillProfile:id});m.aggro=true;s.monsters.push(m);}playing=true;el('play').textContent='Pause encounter';game.__cathedral.render();return ids;}
+function nearest(p){let best=null,d=Infinity;for(let y=1;y<map.h-1;y++)for(let x=1;x<map.w-1;x++){const distance=(x+.5-p.x)**2+(y+.5-p.y)**2;if(distance<d&&api.TerrainNavigation.clear(map,x+.5,y+.5,.4)){d=distance;best={x:x+.5,y:y+.5};}}return best;}
+function pointFor(view){if(view==='arrival')return map.spawns.default;if(view==='boss'&&map.bossArena)return{x:map.bossArena.cx+4,y:map.bossArena.cy+3};if(view==='center')return nearest({x:map.w/2,y:map.h/2});if(view.startsWith('landmark:')){const n=map.cathedral.rooms.find(n=>n.id===view.slice(9)).landmark;return nearest({x:n.x+6,y:n.y+6});}const n=(view==='portal'?map.cathedral?.anchors.hell_portal:map.cathedral?.rooms.find(n=>n.id===view))||map.spawns.default;return nearest({x:n.x+4,y:n.y+4});}
+function showView(view=el('view').value){playing=false;el('view').value=view;el('play').textContent='Play encounter';game.__cathedral.syncStoryObjects();if(view==='portal')map.props.find(p=>p.storyId==='hell_portal').hidden=false;const p=pointFor(view);game.__cathedral.place(p.x,p.y);game.__cathedral.render();api.UI.refreshHUD();if(win.__errors.length)throw Error(win.__errors.join('\n'));}
+function drawTopology(){const canvas=el('topology');canvas.width=map.w*3;canvas.height=map.h*3;const g=canvas.getContext('2d');g.drawImage(map.minimapBase,0,0,canvas.width,canvas.height);for(const n of map.cathedral?.rooms||[]){g.fillStyle='#debd84';g.fillRect(n.x*3-2,n.y*3-2,4,4);}}
+async function record(name,body){const r=await fetch('/api/cathedral-review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,...body})});if(!r.ok)throw Error('Run python tests/cathedral_server.py to record review artifacts.');}
+async function capture(name){game.__cathedral.render();await record(name||`${map.id}_${el('width').value}_${el('version').value}_${el('view').value.replace(':','_')}.webp`,{png:win.document.getElementById('view').toDataURL('image/webp',.94)});}
+const summary=values=>{const a=values.toSorted((a,b)=>a-b);return{median:+a[Math.floor(a.length*.5)].toFixed(3),p95:+a[Math.floor(a.length*.95)].toFixed(3),max:+a.at(-1).toFixed(3)};};
+async function sample(mode){
+ const s=game.state,p=s.player,start=pointFor(mode==='combat'?'boss':'arrival');game.__cathedral.place(start.x,start.y);p.hp=p.stats.maxHp;s.time=10;
+ let destination;
+ if(mode==='moving'){
+  const points=[];for(let y=2;y<map.h-2;y+=2)for(let x=2;x<map.w-2;x+=2){const d=Math.hypot(x+.5-start.x,y+.5-start.y);if(d<18||d>30||!api.TerrainNavigation.clear(map,x+.5,y+.5,.4))continue;const route=api.TerrainNavigation.findPath(map,p,{x:x+.5,y:y+.5},{radius:.36,speed:4.5});if(route)points.push({x:x+.5,y:y+.5,route});}
+  destination=points.sort((a,b)=>a.route.length-b.route.length)[0];if(!destination)throw Error('Movement route unavailable');p.path=destination.route;p.command={type:'move'};
+ }else{
+  s.quests.q16={state:'done'};s.quests.q17={state:'done'};
+  const enemies=s.monsters.filter(m=>!m.isBoss&&!m.dead).sort((a,b)=>Number(!!a.def.projectile)-Number(!!b.def.projectile)).slice(0,12);
+  for(const [i,m]of enemies.entries()){const a=i*Math.PI/6,rr=i?3:1.3,pos=nearest({x:p.x+Math.cos(a)*rr,y:p.y+Math.sin(a)*rr});Object.assign(m,{x:pos.x,y:pos.y,aggro:true,hp:1e6,maxHp:1e6});}
+  const boss=s.monsters.find(m=>m.isBoss);if(boss){boss.hp=boss.maxHp=1e6;boss.aggro=true;}
+  p.command={type:'attack',target:enemies[0],skill:'basic',hold:true};
+ }
+ for(let i=0;i<60;i++){game.__cathedral.update(1/60);game.__cathedral.updateCamera(1/60);game.__cathedral.render();if(i%10===0)await raf();}
+ const times=[],intervals=[];let last=performance.now(),distance=0,previous={x:p.x,y:p.y},attacks=0,enemyAttacks=0;
+ for(let i=0;i<180;i++){
+  await raf();const now=performance.now();intervals.push(now-last);last=now;
+  if(mode==='moving'&&(!p.path||!p.path.length)){const target=Math.hypot(p.x-start.x,p.y-start.y)<3?destination:start;p.path=api.TerrainNavigation.findPath(map,p,target,{radius:.36,speed:4.5});p.command={type:'move'};}
+  const t=performance.now();game.__cathedral.update(1/60);game.__cathedral.updateCamera(1/60);game.__cathedral.render();times.push(performance.now()-t);
+  distance+=Math.hypot(p.x-previous.x,p.y-previous.y);previous={x:p.x,y:p.y};if(p.action?.state==='attack')attacks++;enemyAttacks+=s.monsters.filter(m=>m.action?.state==='attack').length;
+ }
+ if(mode==='moving'&&distance<3)throw Error('Movement workload stalled');if(mode==='combat'&&(!attacks||!enemyAttacks))throw Error('Combat workload did not exchange attacks');
+ game.__cathedral.render();const warm=api.LevelTerrain.getDiagnostics();for(let i=0;i<20;i++)game.__cathedral.render();const stable=api.LevelTerrain.getDiagnostics();
+ if(stable.totalBuilds!==warm.totalBuilds||stable.surfaceViewBuilds!==warm.surfaceViewBuilds)throw Error('Warm cache rebuilt');
+ return{mode,cpuMs:summary(times),frameIntervalMs:summary(intervals),distance,attacks,enemyAttacks,warmCacheStable:true};
+}
+async function profile(){
+ const zone=el('zone').value,width=+el('width').value;if(zone.startsWith('cathedral_'))throw Error('Compare either main cathedral level; the side zones are new.');const rows=[];
+ for(let pair=0;pair<3;pair++)for(const version of pair%2?['after','before']:['before','after'])for(const mode of ['moving','combat']){
+  await load(version,zone);el('status').textContent=`Profiling ${zone} · ${width}px · ${version} · ${mode} · pair ${pair+1}/3`;
+  const row={zone,width,pair,version,...await sample(mode)};rows.push(row);await record(`profile_${zone}_${width}_${pair}_${version}_${mode}.json`,{report:row});
+ }
+ const results=['moving','combat'].map(mode=>{const mean=(version,k)=>{const a=rows.filter(r=>r.version===version&&r.mode===mode);return a.reduce((n,r)=>n+r.cpuMs[k],0)/a.length;};const before={median:mean('before','median'),p95:mean('before','p95')},after={median:mean('after','median'),p95:mean('after','p95')};return{mode,before,after,passed:after.median<=before.median*1.1&&after.p95<=before.p95*1.1};});
+ const report={zone,width,status:results.every(r=>r.passed)?'PASS':'FAIL',method:'Three alternating pairs; 60 warm-up and 180 measured frames; production movement and combat, verified attack exchanges and warm cache stability.',results};
+ await record(`performance_${zone}_${width}.json`,{report});el('report').textContent=JSON.stringify(report,null,2);el('status').textContent=report.status+' · performance comparison complete';return report;
+}
+async function action(fn){if(busy)return;busy=true;try{return await fn();}catch(e){error(e);throw e;}finally{busy=false;}}
+el('load').onclick=()=>action(()=>load());el('view').onchange=()=>{try{showView();}catch(e){error(e);}};
+el('play').onclick=()=>{playing=!playing;el('play').textContent=playing?'Pause encounter':'Play encounter';};
+el('walk').onclick=()=>{const rooms=map.cathedral?.rooms||[],index=rooms.findIndex(n=>n.id===el('view').value),n=rooms[(index+1)%rooms.length];if(n){const p=nearest(n);game.repath(game.state.player,p.x,p.y);game.state.player.command={type:'move'};playing=true;}};
+el('capture').onclick=()=>action(()=>capture());el('profile').onclick=()=>action(profile);
+el('enemy').onchange=fillSkills;el('demo').onclick=()=>action(()=>demonstrate());el('step').onclick=()=>action(()=>step());el('frameStep').onclick=()=>action(()=>step(1/60));el('death').onclick=()=>action(()=>demonstrate(el('enemy').value,'death'));el('facing').onchange=()=>step(0);el('mixed').onclick=()=>action(()=>mixed());el('sound').onchange=()=>api.Sfx.setVol('master',el('sound').checked?.25:0);el('god').onchange=()=>game.debugFlags.god=el('god').checked;
+let previous=performance.now();function tick(now){const dt=Math.min(.05,(now-previous)/1000);previous=now;if(playing&&!busy&&game){try{game.__cathedral.update(dt);game.__cathedral.updateCamera(dt);game.__cathedral.render();}catch(e){playing=false;error(e);}}requestAnimationFrame(tick);}requestAnimationFrame(tick);
+window.cathedralReview={load,showView,capture,profile,sample,resize,demonstrate,step,mixed,get game(){return game;},get api(){return api;},get map(){return map;},get win(){return win;}};
+try{await load();}catch(e){error(e);}
+</script></html>

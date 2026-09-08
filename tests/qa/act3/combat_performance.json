@@ -1,0 +1,2482 @@
+{
+  "status": "INVESTIGATE",
+  "browser": "152.0.7977.76",
+  "method": "Headless Chrome, two alternating pairs, 90 warmup plus 240 measured updates/renders at 60 Hz; actual map rosters and character movement; immutable local pre-pass runtime snapshot.",
+  "rows": [
+    {
+      "width": 1920,
+      "zone": "desert_wastes",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 4.199999928474426,
+        "p95": 6.400000095367432
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 1
+      },
+      "render": {
+        "median": 3.6999999284744263,
+        "p95": 5.5
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 126
+    },
+    {
+      "width": 1920,
+      "zone": "desert_wastes",
+      "mode": "moving",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 5.199999928474426,
+        "p95": 10.100000023841858
+      },
+      "update": {
+        "median": 0.6999999284744263,
+        "p95": 1.7999999523162842
+      },
+      "render": {
+        "median": 4.5,
+        "p95": 8.5
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 123
+    },
+    {
+      "width": 1920,
+      "zone": "desert_wastes",
+      "mode": "moving",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 4,
+        "p95": 7.699999928474426
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 1.0999999046325684
+      },
+      "render": {
+        "median": 3.5,
+        "p95": 6.700000047683716
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 123
+    },
+    {
+      "width": 1920,
+      "zone": "desert_wastes",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 3.1999999284744263,
+        "p95": 5.600000023841858
+      },
+      "update": {
+        "median": 0.3999999761581421,
+        "p95": 0.7999999523162842
+      },
+      "render": {
+        "median": 2.799999952316284,
+        "p95": 5
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 126
+    },
+    {
+      "width": 1920,
+      "zone": "desert_wastes",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 3.5999999046325684,
+        "p95": 5.899999976158142
+      },
+      "update": {
+        "median": 0.6000000238418579,
+        "p95": 1.0999999046325684
+      },
+      "render": {
+        "median": 2.899999976158142,
+        "p95": 4.800000071525574
+      },
+      "distance": 0,
+      "attackFrames": 1478,
+      "monsters": 126
+    },
+    {
+      "width": 1920,
+      "zone": "desert_wastes",
+      "mode": "combat",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 4.100000023841858,
+        "p95": 6.5
+      },
+      "update": {
+        "median": 0.7000000476837158,
+        "p95": 1.2000000476837158
+      },
+      "render": {
+        "median": 3.399999976158142,
+        "p95": 5.200000047683716
+      },
+      "distance": 0,
+      "attackFrames": 2119,
+      "monsters": 123
+    },
+    {
+      "width": 1920,
+      "zone": "desert_wastes",
+      "mode": "combat",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 4.100000023841858,
+        "p95": 6.800000071525574
+      },
+      "update": {
+        "median": 0.7000000476837158,
+        "p95": 1.2000000476837158
+      },
+      "render": {
+        "median": 3.399999976158142,
+        "p95": 5.5
+      },
+      "distance": 0,
+      "attackFrames": 2119,
+      "monsters": 123
+    },
+    {
+      "width": 1920,
+      "zone": "desert_wastes",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 4.200000047683716,
+        "p95": 6.5
+      },
+      "update": {
+        "median": 0.6000000238418579,
+        "p95": 1.100000023841858
+      },
+      "render": {
+        "median": 3.600000023841858,
+        "p95": 5.600000023841858
+      },
+      "distance": 0,
+      "attackFrames": 1478,
+      "monsters": 126
+    },
+    {
+      "width": 1920,
+      "zone": "underground_market",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 2.899999976158142,
+        "p95": 5.799999952316284
+      },
+      "update": {
+        "median": 0.2999999523162842,
+        "p95": 0.6999999284744263
+      },
+      "render": {
+        "median": 2.6999999284744263,
+        "p95": 5.199999928474426
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 47
+    },
+    {
+      "width": 1920,
+      "zone": "underground_market",
+      "mode": "moving",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 2.399999976158142,
+        "p95": 5.700000047683716
+      },
+      "update": {
+        "median": 0.2999999523162842,
+        "p95": 0.6000000238418579
+      },
+      "render": {
+        "median": 2.100000023841858,
+        "p95": 5.100000023841858
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 49
+    },
+    {
+      "width": 1920,
+      "zone": "underground_market",
+      "mode": "moving",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 2.200000047683716,
+        "p95": 3.5
+      },
+      "update": {
+        "median": 0.20000004768371582,
+        "p95": 0.40000009536743164
+      },
+      "render": {
+        "median": 2,
+        "p95": 3.1999999284744263
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 49
+    },
+    {
+      "width": 1920,
+      "zone": "underground_market",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 2.3000000715255737,
+        "p95": 4
+      },
+      "update": {
+        "median": 0.20000004768371582,
+        "p95": 0.40000009536743164
+      },
+      "render": {
+        "median": 2.100000023841858,
+        "p95": 3.5
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 47
+    },
+    {
+      "width": 1920,
+      "zone": "underground_market",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 3.8000000715255737,
+        "p95": 6.5
+      },
+      "update": {
+        "median": 0.2999999523162842,
+        "p95": 0.5
+      },
+      "render": {
+        "median": 3.5,
+        "p95": 6.100000023841858
+      },
+      "distance": 0,
+      "attackFrames": 785,
+      "monsters": 47
+    },
+    {
+      "width": 1920,
+      "zone": "underground_market",
+      "mode": "combat",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 2.799999952316284,
+        "p95": 4.400000095367432
+      },
+      "update": {
+        "median": 0.20000004768371582,
+        "p95": 0.3999999761581421
+      },
+      "render": {
+        "median": 2.5,
+        "p95": 4.200000047683716
+      },
+      "distance": 0,
+      "attackFrames": 1694,
+      "monsters": 49
+    },
+    {
+      "width": 1920,
+      "zone": "underground_market",
+      "mode": "combat",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 3.100000023841858,
+        "p95": 5.099999904632568
+      },
+      "update": {
+        "median": 0.2999999523162842,
+        "p95": 0.40000009536743164
+      },
+      "render": {
+        "median": 2.799999952316284,
+        "p95": 4.799999952316284
+      },
+      "distance": 0,
+      "attackFrames": 1694,
+      "monsters": 49
+    },
+    {
+      "width": 1920,
+      "zone": "underground_market",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 4.100000023841858,
+        "p95": 7.299999952316284
+      },
+      "update": {
+        "median": 0.30000007152557373,
+        "p95": 0.6999999284744263
+      },
+      "render": {
+        "median": 3.799999952316284,
+        "p95": 6.699999928474426
+      },
+      "distance": 0,
+      "attackFrames": 785,
+      "monsters": 47
+    },
+    {
+      "width": 1920,
+      "zone": "sand_tombs",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 2.799999952316284,
+        "p95": 4.899999976158142
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 1.100000023841858
+      },
+      "render": {
+        "median": 2.200000047683716,
+        "p95": 3.899999976158142
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 112
+    },
+    {
+      "width": 1920,
+      "zone": "sand_tombs",
+      "mode": "moving",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 2.600000023841858,
+        "p95": 3.899999976158142
+      },
+      "update": {
+        "median": 0.6000000238418579,
+        "p95": 0.9000000953674316
+      },
+      "render": {
+        "median": 2,
+        "p95": 3.100000023841858
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 113
+    },
+    {
+      "width": 1920,
+      "zone": "sand_tombs",
+      "mode": "moving",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 2.6999999284744263,
+        "p95": 4.699999928474426
+      },
+      "update": {
+        "median": 0.6000000238418579,
+        "p95": 1
+      },
+      "render": {
+        "median": 2.100000023841858,
+        "p95": 3.6999999284744263
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 113
+    },
+    {
+      "width": 1920,
+      "zone": "sand_tombs",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 2.5,
+        "p95": 3.899999976158142
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 0.7999999523162842
+      },
+      "render": {
+        "median": 2,
+        "p95": 3.0999999046325684
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 112
+    },
+    {
+      "width": 1920,
+      "zone": "sand_tombs",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 3,
+        "p95": 5.300000071525574
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 1
+      },
+      "render": {
+        "median": 2.4000000953674316,
+        "p95": 4.5
+      },
+      "distance": 0,
+      "attackFrames": 2028,
+      "monsters": 112
+    },
+    {
+      "width": 1920,
+      "zone": "sand_tombs",
+      "mode": "combat",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 3.399999976158142,
+        "p95": 5.100000023841858
+      },
+      "update": {
+        "median": 0.6000000238418579,
+        "p95": 1
+      },
+      "render": {
+        "median": 2.700000047683716,
+        "p95": 4.200000047683716
+      },
+      "distance": 0,
+      "attackFrames": 3020,
+      "monsters": 113
+    },
+    {
+      "width": 1920,
+      "zone": "sand_tombs",
+      "mode": "combat",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 3.299999952316284,
+        "p95": 5
+      },
+      "update": {
+        "median": 0.6000000238418579,
+        "p95": 1.100000023841858
+      },
+      "render": {
+        "median": 2.6999999284744263,
+        "p95": 4
+      },
+      "distance": 0,
+      "attackFrames": 3020,
+      "monsters": 113
+    },
+    {
+      "width": 1920,
+      "zone": "sand_tombs",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 3.399999976158142,
+        "p95": 6
+      },
+      "update": {
+        "median": 0.6000000238418579,
+        "p95": 1.1999999284744263
+      },
+      "render": {
+        "median": 2.799999952316284,
+        "p95": 4.900000095367432
+      },
+      "distance": 0,
+      "attackFrames": 2028,
+      "monsters": 112
+    },
+    {
+      "width": 1920,
+      "zone": "khal_palace",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 2.799999952316284,
+        "p95": 4.800000071525574
+      },
+      "update": {
+        "median": 0.20000004768371582,
+        "p95": 0.5
+      },
+      "render": {
+        "median": 2.5,
+        "p95": 4.399999976158142
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 44
+    },
+    {
+      "width": 1920,
+      "zone": "khal_palace",
+      "mode": "moving",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 2.6999999284744263,
+        "p95": 4
+      },
+      "update": {
+        "median": 0.2999999523162842,
+        "p95": 0.5
+      },
+      "render": {
+        "median": 2.399999976158142,
+        "p95": 3.700000047683716
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 43
+    },
+    {
+      "width": 1920,
+      "zone": "khal_palace",
+      "mode": "moving",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 3.100000023841858,
+        "p95": 5
+      },
+      "update": {
+        "median": 0.30000007152557373,
+        "p95": 0.5
+      },
+      "render": {
+        "median": 2.799999952316284,
+        "p95": 4.5
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 43
+    },
+    {
+      "width": 1920,
+      "zone": "khal_palace",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 2.899999976158142,
+        "p95": 4.799999952316284
+      },
+      "update": {
+        "median": 0.20000004768371582,
+        "p95": 0.5
+      },
+      "render": {
+        "median": 2.6999999284744263,
+        "p95": 4.200000047683716
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 44
+    },
+    {
+      "width": 1920,
+      "zone": "khal_palace",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 2.6999999284744263,
+        "p95": 4.800000071525574
+      },
+      "update": {
+        "median": 0.20000004768371582,
+        "p95": 0.5
+      },
+      "render": {
+        "median": 2.5,
+        "p95": 4.5
+      },
+      "distance": 0,
+      "attackFrames": 912,
+      "monsters": 44
+    },
+    {
+      "width": 1920,
+      "zone": "khal_palace",
+      "mode": "combat",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 3.3000000715255737,
+        "p95": 5.799999952316284
+      },
+      "update": {
+        "median": 0.30000007152557373,
+        "p95": 0.6000000238418579
+      },
+      "render": {
+        "median": 3.0999999046325684,
+        "p95": 5.299999952316284
+      },
+      "distance": 0,
+      "attackFrames": 1456,
+      "monsters": 43
+    },
+    {
+      "width": 1920,
+      "zone": "khal_palace",
+      "mode": "combat",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 3.200000047683716,
+        "p95": 5.100000023841858
+      },
+      "update": {
+        "median": 0.30000007152557373,
+        "p95": 0.5999999046325684
+      },
+      "render": {
+        "median": 2.899999976158142,
+        "p95": 4.699999928474426
+      },
+      "distance": 0,
+      "attackFrames": 1456,
+      "monsters": 43
+    },
+    {
+      "width": 1920,
+      "zone": "khal_palace",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 3,
+        "p95": 4.700000047683716
+      },
+      "update": {
+        "median": 0.20000004768371582,
+        "p95": 0.40000009536743164
+      },
+      "render": {
+        "median": 2.799999952316284,
+        "p95": 4.399999976158142
+      },
+      "distance": 0,
+      "attackFrames": 912,
+      "monsters": 44
+    },
+    {
+      "width": 1920,
+      "zone": "shard_flats",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 3.600000023841858,
+        "p95": 6
+      },
+      "update": {
+        "median": 0.40000009536743164,
+        "p95": 0.7000000476837158
+      },
+      "render": {
+        "median": 3.100000023841858,
+        "p95": 5.299999952316284
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 68
+    },
+    {
+      "width": 1920,
+      "zone": "shard_flats",
+      "mode": "moving",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 3.5999999046325684,
+        "p95": 5.599999904632568
+      },
+      "update": {
+        "median": 0.40000009536743164,
+        "p95": 0.7999999523162842
+      },
+      "render": {
+        "median": 3.100000023841858,
+        "p95": 4.700000047683716
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 64
+    },
+    {
+      "width": 1920,
+      "zone": "shard_flats",
+      "mode": "moving",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 2.8000000715255737,
+        "p95": 4.799999952316284
+      },
+      "update": {
+        "median": 0.3999999761581421,
+        "p95": 0.6999999284744263
+      },
+      "render": {
+        "median": 2.5,
+        "p95": 4.200000047683716
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 64
+    },
+    {
+      "width": 1920,
+      "zone": "shard_flats",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 4.100000023841858,
+        "p95": 6.600000023841858
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 0.8999999761581421
+      },
+      "render": {
+        "median": 3.600000023841858,
+        "p95": 5.899999976158142
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 68
+    },
+    {
+      "width": 1920,
+      "zone": "shard_flats",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 3.5,
+        "p95": 6.200000047683716
+      },
+      "update": {
+        "median": 0.3999999761581421,
+        "p95": 0.7999999523162842
+      },
+      "render": {
+        "median": 3.0999999046325684,
+        "p95": 5.700000047683716
+      },
+      "distance": 0,
+      "attackFrames": 1249,
+      "monsters": 68
+    },
+    {
+      "width": 1920,
+      "zone": "shard_flats",
+      "mode": "combat",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 4,
+        "p95": 6.300000071525574
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 0.8000000715255737
+      },
+      "render": {
+        "median": 3.5,
+        "p95": 5.600000023841858
+      },
+      "distance": 0,
+      "attackFrames": 2418,
+      "monsters": 64
+    },
+    {
+      "width": 1920,
+      "zone": "shard_flats",
+      "mode": "combat",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 3.100000023841858,
+        "p95": 4.700000047683716
+      },
+      "update": {
+        "median": 0.3999999761581421,
+        "p95": 0.7000000476837158
+      },
+      "render": {
+        "median": 2.700000047683716,
+        "p95": 4.100000023841858
+      },
+      "distance": 0,
+      "attackFrames": 2418,
+      "monsters": 64
+    },
+    {
+      "width": 1920,
+      "zone": "shard_flats",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 3.700000047683716,
+        "p95": 6.5
+      },
+      "update": {
+        "median": 0.3999999761581421,
+        "p95": 0.7999999523162842
+      },
+      "render": {
+        "median": 3.299999952316284,
+        "p95": 5.899999976158142
+      },
+      "distance": 0,
+      "attackFrames": 1249,
+      "monsters": 68
+    },
+    {
+      "width": 1920,
+      "zone": "tomb_sanctum",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 3.700000047683716,
+        "p95": 6
+      },
+      "update": {
+        "median": 0.7000000476837158,
+        "p95": 1.3000000715255737
+      },
+      "render": {
+        "median": 3,
+        "p95": 4.899999976158142
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 125
+    },
+    {
+      "width": 1920,
+      "zone": "tomb_sanctum",
+      "mode": "moving",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 3.600000023841858,
+        "p95": 5.900000095367432
+      },
+      "update": {
+        "median": 0.7999999523162842,
+        "p95": 1.399999976158142
+      },
+      "render": {
+        "median": 2.799999952316284,
+        "p95": 4.599999904632568
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 122
+    },
+    {
+      "width": 1920,
+      "zone": "tomb_sanctum",
+      "mode": "moving",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 3.799999952316284,
+        "p95": 7.5
+      },
+      "update": {
+        "median": 0.8000000715255737,
+        "p95": 1.7999999523162842
+      },
+      "render": {
+        "median": 2.899999976158142,
+        "p95": 5.399999976158142
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 122
+    },
+    {
+      "width": 1920,
+      "zone": "tomb_sanctum",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 4,
+        "p95": 6.799999952316284
+      },
+      "update": {
+        "median": 0.7000000476837158,
+        "p95": 1.2999999523162842
+      },
+      "render": {
+        "median": 3.1999999284744263,
+        "p95": 5.399999976158142
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 125
+    },
+    {
+      "width": 1920,
+      "zone": "tomb_sanctum",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 4.900000095367432,
+        "p95": 7.699999928474426
+      },
+      "update": {
+        "median": 0.7000000476837158,
+        "p95": 1.2999999523162842
+      },
+      "render": {
+        "median": 4.100000023841858,
+        "p95": 6.5
+      },
+      "distance": 0,
+      "attackFrames": 2356,
+      "monsters": 125
+    },
+    {
+      "width": 1920,
+      "zone": "tomb_sanctum",
+      "mode": "combat",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 4.5,
+        "p95": 7
+      },
+      "update": {
+        "median": 0.7000000476837158,
+        "p95": 1.399999976158142
+      },
+      "render": {
+        "median": 3.700000047683716,
+        "p95": 5.899999976158142
+      },
+      "distance": 0,
+      "attackFrames": 3873,
+      "monsters": 122
+    },
+    {
+      "width": 1920,
+      "zone": "tomb_sanctum",
+      "mode": "combat",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 5,
+        "p95": 7.5
+      },
+      "update": {
+        "median": 0.7000000476837158,
+        "p95": 1.3000000715255737
+      },
+      "render": {
+        "median": 4.199999928474426,
+        "p95": 6.300000071525574
+      },
+      "distance": 0,
+      "attackFrames": 3873,
+      "monsters": 122
+    },
+    {
+      "width": 1920,
+      "zone": "tomb_sanctum",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 4.5,
+        "p95": 7.5
+      },
+      "update": {
+        "median": 0.6999999284744263,
+        "p95": 1.2999999523162842
+      },
+      "render": {
+        "median": 3.8000000715255737,
+        "p95": 6.400000095367432
+      },
+      "distance": 0,
+      "attackFrames": 2356,
+      "monsters": 125
+    },
+    {
+      "width": 3840,
+      "zone": "desert_wastes",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 9.299999952316284,
+        "p95": 14.099999904632568
+      },
+      "update": {
+        "median": 1,
+        "p95": 1.8000000715255737
+      },
+      "render": {
+        "median": 8.299999952316284,
+        "p95": 12.200000047683716
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 126
+    },
+    {
+      "width": 3840,
+      "zone": "desert_wastes",
+      "mode": "moving",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 12.699999928474426,
+        "p95": 17.699999928474426
+      },
+      "update": {
+        "median": 1.399999976158142,
+        "p95": 2
+      },
+      "render": {
+        "median": 11.299999952316284,
+        "p95": 16.199999928474426
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 123
+    },
+    {
+      "width": 3840,
+      "zone": "desert_wastes",
+      "mode": "moving",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 12.899999976158142,
+        "p95": 17.199999928474426
+      },
+      "update": {
+        "median": 1.5,
+        "p95": 2.700000047683716
+      },
+      "render": {
+        "median": 11.399999976158142,
+        "p95": 15
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 123
+    },
+    {
+      "width": 3840,
+      "zone": "desert_wastes",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 14.700000047683716,
+        "p95": 20.600000023841858
+      },
+      "update": {
+        "median": 1.4000000953674316,
+        "p95": 2.3000000715255737
+      },
+      "render": {
+        "median": 13.200000047683716,
+        "p95": 18.40000009536743
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 126
+    },
+    {
+      "width": 3840,
+      "zone": "desert_wastes",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 14.899999976158142,
+        "p95": 21.200000047683716
+      },
+      "update": {
+        "median": 1.2000000476837158,
+        "p95": 2.1999999284744263
+      },
+      "render": {
+        "median": 13.799999952316284,
+        "p95": 20
+      },
+      "distance": 0,
+      "attackFrames": 1478,
+      "monsters": 126
+    },
+    {
+      "width": 3840,
+      "zone": "desert_wastes",
+      "mode": "combat",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 14.700000047683716,
+        "p95": 19.399999976158142
+      },
+      "update": {
+        "median": 1.2999999523162842,
+        "p95": 2
+      },
+      "render": {
+        "median": 13.300000071525574,
+        "p95": 17.899999976158142
+      },
+      "distance": 0,
+      "attackFrames": 2119,
+      "monsters": 123
+    },
+    {
+      "width": 3840,
+      "zone": "desert_wastes",
+      "mode": "combat",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 14.199999928474426,
+        "p95": 21.399999976158142
+      },
+      "update": {
+        "median": 1.3000000715255737,
+        "p95": 2.3000000715255737
+      },
+      "render": {
+        "median": 12.900000095367432,
+        "p95": 19.600000023841858
+      },
+      "distance": 0,
+      "attackFrames": 2119,
+      "monsters": 123
+    },
+    {
+      "width": 3840,
+      "zone": "desert_wastes",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 15.600000023841858,
+        "p95": 24.100000023841858
+      },
+      "update": {
+        "median": 1.2000000476837158,
+        "p95": 2.200000047683716
+      },
+      "render": {
+        "median": 14.100000023841858,
+        "p95": 21.90000009536743
+      },
+      "distance": 0,
+      "attackFrames": 1478,
+      "monsters": 126
+    },
+    {
+      "width": 3840,
+      "zone": "underground_market",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 8.300000071525574,
+        "p95": 14.700000047683716
+      },
+      "update": {
+        "median": 0.3999999761581421,
+        "p95": 0.8000000715255737
+      },
+      "render": {
+        "median": 7.800000071525574,
+        "p95": 14.100000023841858
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 47
+    },
+    {
+      "width": 3840,
+      "zone": "underground_market",
+      "mode": "moving",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 8,
+        "p95": 14.600000023841858
+      },
+      "update": {
+        "median": 0.3999999761581421,
+        "p95": 0.7999999523162842
+      },
+      "render": {
+        "median": 7.600000023841858,
+        "p95": 14
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 49
+    },
+    {
+      "width": 3840,
+      "zone": "underground_market",
+      "mode": "moving",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 10.400000095367432,
+        "p95": 16.299999952316284
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 0.9000000953674316
+      },
+      "render": {
+        "median": 10,
+        "p95": 15.600000023841858
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 49
+    },
+    {
+      "width": 3840,
+      "zone": "underground_market",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 8.799999952316284,
+        "p95": 13.599999904632568
+      },
+      "update": {
+        "median": 0.3999999761581421,
+        "p95": 0.7999999523162842
+      },
+      "render": {
+        "median": 8.399999976158142,
+        "p95": 13
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 47
+    },
+    {
+      "width": 3840,
+      "zone": "underground_market",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 12.799999952316284,
+        "p95": 19.600000023841858
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 0.9000000953674316
+      },
+      "render": {
+        "median": 12.200000047683716,
+        "p95": 18.899999976158142
+      },
+      "distance": 0,
+      "attackFrames": 785,
+      "monsters": 47
+    },
+    {
+      "width": 3840,
+      "zone": "underground_market",
+      "mode": "combat",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 12.899999976158142,
+        "p95": 18.799999952316284
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 1
+      },
+      "render": {
+        "median": 12.300000071525574,
+        "p95": 18.100000023841858
+      },
+      "distance": 0,
+      "attackFrames": 1694,
+      "monsters": 49
+    },
+    {
+      "width": 3840,
+      "zone": "underground_market",
+      "mode": "combat",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 14.5,
+        "p95": 18.59999990463257
+      },
+      "update": {
+        "median": 0.5999999046325684,
+        "p95": 0.8000000715255737
+      },
+      "render": {
+        "median": 13.899999976158142,
+        "p95": 18
+      },
+      "distance": 0,
+      "attackFrames": 1694,
+      "monsters": 49
+    },
+    {
+      "width": 3840,
+      "zone": "underground_market",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 14.299999952316284,
+        "p95": 20.700000047683716
+      },
+      "update": {
+        "median": 0.6000000238418579,
+        "p95": 1
+      },
+      "render": {
+        "median": 13.799999952316284,
+        "p95": 19.899999976158142
+      },
+      "distance": 0,
+      "attackFrames": 785,
+      "monsters": 47
+    },
+    {
+      "width": 3840,
+      "zone": "sand_tombs",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 14.399999976158142,
+        "p95": 20.5
+      },
+      "update": {
+        "median": 1.3000000715255737,
+        "p95": 2.200000047683716
+      },
+      "render": {
+        "median": 13,
+        "p95": 19
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 112
+    },
+    {
+      "width": 3840,
+      "zone": "sand_tombs",
+      "mode": "moving",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 11.800000071525574,
+        "p95": 16.100000023841858
+      },
+      "update": {
+        "median": 1.2000000476837158,
+        "p95": 2.3000000715255737
+      },
+      "render": {
+        "median": 10.5,
+        "p95": 14.799999952316284
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 113
+    },
+    {
+      "width": 3840,
+      "zone": "sand_tombs",
+      "mode": "moving",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 10.699999928474426,
+        "p95": 15
+      },
+      "update": {
+        "median": 1.100000023841858,
+        "p95": 1.899999976158142
+      },
+      "render": {
+        "median": 9.599999904632568,
+        "p95": 13.5
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 113
+    },
+    {
+      "width": 3840,
+      "zone": "sand_tombs",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 9.799999952316284,
+        "p95": 15.399999976158142
+      },
+      "update": {
+        "median": 0.9000000953674316,
+        "p95": 1.600000023841858
+      },
+      "render": {
+        "median": 8.899999976158142,
+        "p95": 14.299999952316284
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 112
+    },
+    {
+      "width": 3840,
+      "zone": "sand_tombs",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 9.399999976158142,
+        "p95": 12.399999976158142
+      },
+      "update": {
+        "median": 0.7999999523162842,
+        "p95": 1.3000000715255737
+      },
+      "render": {
+        "median": 8.699999928474426,
+        "p95": 11.299999952316284
+      },
+      "distance": 0,
+      "attackFrames": 2028,
+      "monsters": 112
+    },
+    {
+      "width": 3840,
+      "zone": "sand_tombs",
+      "mode": "combat",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 10.5,
+        "p95": 14
+      },
+      "update": {
+        "median": 0.8999999761581421,
+        "p95": 1.4000000953674316
+      },
+      "render": {
+        "median": 9.700000047683716,
+        "p95": 13.100000023841858
+      },
+      "distance": 0,
+      "attackFrames": 3020,
+      "monsters": 113
+    },
+    {
+      "width": 3840,
+      "zone": "sand_tombs",
+      "mode": "combat",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 13.100000023841858,
+        "p95": 18.399999976158142
+      },
+      "update": {
+        "median": 1.100000023841858,
+        "p95": 1.7999999523162842
+      },
+      "render": {
+        "median": 11.899999976158142,
+        "p95": 16.700000047683716
+      },
+      "distance": 0,
+      "attackFrames": 3020,
+      "monsters": 113
+    },
+    {
+      "width": 3840,
+      "zone": "sand_tombs",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 9.299999952316284,
+        "p95": 14.299999952316284
+      },
+      "update": {
+        "median": 0.7999999523162842,
+        "p95": 1.399999976158142
+      },
+      "render": {
+        "median": 8.600000023841858,
+        "p95": 13.100000023841858
+      },
+      "distance": 0,
+      "attackFrames": 2028,
+      "monsters": 112
+    },
+    {
+      "width": 3840,
+      "zone": "khal_palace",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 4.100000023841858,
+        "p95": 6.400000095367432
+      },
+      "update": {
+        "median": 0.20000004768371582,
+        "p95": 0.40000009536743164
+      },
+      "render": {
+        "median": 3.899999976158142,
+        "p95": 6.100000023841858
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 44
+    },
+    {
+      "width": 3840,
+      "zone": "khal_palace",
+      "mode": "moving",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 3.399999976158142,
+        "p95": 4.800000071525574
+      },
+      "update": {
+        "median": 0.20000004768371582,
+        "p95": 0.3999999761581421
+      },
+      "render": {
+        "median": 3.100000023841858,
+        "p95": 4.400000095367432
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 43
+    },
+    {
+      "width": 3840,
+      "zone": "khal_palace",
+      "mode": "moving",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 3.1999999284744263,
+        "p95": 4.399999976158142
+      },
+      "update": {
+        "median": 0.20000004768371582,
+        "p95": 0.30000007152557373
+      },
+      "render": {
+        "median": 3,
+        "p95": 4.200000047683716
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 43
+    },
+    {
+      "width": 3840,
+      "zone": "khal_palace",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 3.399999976158142,
+        "p95": 4.800000071525574
+      },
+      "update": {
+        "median": 0.20000004768371582,
+        "p95": 0.30000007152557373
+      },
+      "render": {
+        "median": 3.1999999284744263,
+        "p95": 4.5
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 44
+    },
+    {
+      "width": 3840,
+      "zone": "khal_palace",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 4.300000071525574,
+        "p95": 6.200000047683716
+      },
+      "update": {
+        "median": 0.20000004768371582,
+        "p95": 0.3999999761581421
+      },
+      "render": {
+        "median": 4.100000023841858,
+        "p95": 5.899999976158142
+      },
+      "distance": 0,
+      "attackFrames": 912,
+      "monsters": 44
+    },
+    {
+      "width": 3840,
+      "zone": "khal_palace",
+      "mode": "combat",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 5.700000047683716,
+        "p95": 8.399999976158142
+      },
+      "update": {
+        "median": 0.2999999523162842,
+        "p95": 0.5
+      },
+      "render": {
+        "median": 5.300000071525574,
+        "p95": 8.100000023841858
+      },
+      "distance": 0,
+      "attackFrames": 1456,
+      "monsters": 43
+    },
+    {
+      "width": 3840,
+      "zone": "khal_palace",
+      "mode": "combat",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 5.899999976158142,
+        "p95": 10.199999928474426
+      },
+      "update": {
+        "median": 0.2999999523162842,
+        "p95": 0.6000000238418579
+      },
+      "render": {
+        "median": 5.699999928474426,
+        "p95": 9.5
+      },
+      "distance": 0,
+      "attackFrames": 1456,
+      "monsters": 43
+    },
+    {
+      "width": 3840,
+      "zone": "khal_palace",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 6.200000047683716,
+        "p95": 10.399999976158142
+      },
+      "update": {
+        "median": 0.2999999523162842,
+        "p95": 0.5
+      },
+      "render": {
+        "median": 5.899999976158142,
+        "p95": 9.900000095367432
+      },
+      "distance": 0,
+      "attackFrames": 912,
+      "monsters": 44
+    },
+    {
+      "width": 3840,
+      "zone": "shard_flats",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 7.5,
+        "p95": 11.5
+      },
+      "update": {
+        "median": 0.6000000238418579,
+        "p95": 1
+      },
+      "render": {
+        "median": 6.899999976158142,
+        "p95": 10.600000023841858
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 68
+    },
+    {
+      "width": 3840,
+      "zone": "shard_flats",
+      "mode": "moving",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 5.199999928474426,
+        "p95": 8.899999976158142
+      },
+      "update": {
+        "median": 0.40000009536743164,
+        "p95": 0.8999999761581421
+      },
+      "render": {
+        "median": 4.699999928474426,
+        "p95": 8.100000023841858
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 64
+    },
+    {
+      "width": 3840,
+      "zone": "shard_flats",
+      "mode": "moving",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 6.099999904632568,
+        "p95": 8.599999904632568
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 0.8999999761581421
+      },
+      "render": {
+        "median": 5.400000095367432,
+        "p95": 8
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 64
+    },
+    {
+      "width": 3840,
+      "zone": "shard_flats",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 6.400000095367432,
+        "p95": 9.5
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 0.9000000953674316
+      },
+      "render": {
+        "median": 5.899999976158142,
+        "p95": 8.700000047683716
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 68
+    },
+    {
+      "width": 3840,
+      "zone": "shard_flats",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 8.100000023841858,
+        "p95": 13
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 1
+      },
+      "render": {
+        "median": 7.600000023841858,
+        "p95": 12.399999976158142
+      },
+      "distance": 0,
+      "attackFrames": 1249,
+      "monsters": 68
+    },
+    {
+      "width": 3840,
+      "zone": "shard_flats",
+      "mode": "combat",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 8,
+        "p95": 11
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 0.9000000953674316
+      },
+      "render": {
+        "median": 7.5,
+        "p95": 10.200000047683716
+      },
+      "distance": 0,
+      "attackFrames": 2418,
+      "monsters": 64
+    },
+    {
+      "width": 3840,
+      "zone": "shard_flats",
+      "mode": "combat",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 7.199999928474426,
+        "p95": 9.799999952316284
+      },
+      "update": {
+        "median": 0.40000009536743164,
+        "p95": 0.7999999523162842
+      },
+      "render": {
+        "median": 6.699999928474426,
+        "p95": 9.200000047683716
+      },
+      "distance": 0,
+      "attackFrames": 2418,
+      "monsters": 64
+    },
+    {
+      "width": 3840,
+      "zone": "shard_flats",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 7.799999952316284,
+        "p95": 10.600000023841858
+      },
+      "update": {
+        "median": 0.5,
+        "p95": 0.8000000715255737
+      },
+      "render": {
+        "median": 7.399999976158142,
+        "p95": 10
+      },
+      "distance": 0,
+      "attackFrames": 1249,
+      "monsters": 68
+    },
+    {
+      "width": 3840,
+      "zone": "tomb_sanctum",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 5,
+        "p95": 7.300000071525574
+      },
+      "update": {
+        "median": 0.6000000238418579,
+        "p95": 1
+      },
+      "render": {
+        "median": 4.399999976158142,
+        "p95": 6.299999952316284
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 125
+    },
+    {
+      "width": 3840,
+      "zone": "tomb_sanctum",
+      "mode": "moving",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 4.5,
+        "p95": 6.600000023841858
+      },
+      "update": {
+        "median": 0.6999999284744263,
+        "p95": 1.100000023841858
+      },
+      "render": {
+        "median": 3.8000000715255737,
+        "p95": 5.600000023841858
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 122
+    },
+    {
+      "width": 3840,
+      "zone": "tomb_sanctum",
+      "mode": "moving",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 4.700000047683716,
+        "p95": 7.100000023841858
+      },
+      "update": {
+        "median": 0.7000000476837158,
+        "p95": 1.2000000476837158
+      },
+      "render": {
+        "median": 4,
+        "p95": 6
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 122
+    },
+    {
+      "width": 3840,
+      "zone": "tomb_sanctum",
+      "mode": "moving",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 5.100000023841858,
+        "p95": 7.400000095367432
+      },
+      "update": {
+        "median": 0.6000000238418579,
+        "p95": 1
+      },
+      "render": {
+        "median": 4.399999976158142,
+        "p95": 6.600000023841858
+      },
+      "distance": 25.300000000000438,
+      "attackFrames": 0,
+      "monsters": 125
+    },
+    {
+      "width": 3840,
+      "zone": "tomb_sanctum",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 0,
+      "cpu": {
+        "median": 9.899999976158142,
+        "p95": 13.900000095367432
+      },
+      "update": {
+        "median": 1,
+        "p95": 1.600000023841858
+      },
+      "render": {
+        "median": 8.899999976158142,
+        "p95": 12.399999976158142
+      },
+      "distance": 0,
+      "attackFrames": 2356,
+      "monsters": 125
+    },
+    {
+      "width": 3840,
+      "zone": "tomb_sanctum",
+      "mode": "combat",
+      "version": "after",
+      "pair": 0,
+      "cpu": {
+        "median": 8.199999928474426,
+        "p95": 11.200000047683716
+      },
+      "update": {
+        "median": 0.8000000715255737,
+        "p95": 1.5
+      },
+      "render": {
+        "median": 7.200000047683716,
+        "p95": 10.200000047683716
+      },
+      "distance": 0,
+      "attackFrames": 3873,
+      "monsters": 122
+    },
+    {
+      "width": 3840,
+      "zone": "tomb_sanctum",
+      "mode": "combat",
+      "version": "after",
+      "pair": 1,
+      "cpu": {
+        "median": 6.5,
+        "p95": 9.700000047683716
+      },
+      "update": {
+        "median": 0.7000000476837158,
+        "p95": 1.3000000715255737
+      },
+      "render": {
+        "median": 5.700000047683716,
+        "p95": 8.799999952316284
+      },
+      "distance": 0,
+      "attackFrames": 3873,
+      "monsters": 122
+    },
+    {
+      "width": 3840,
+      "zone": "tomb_sanctum",
+      "mode": "combat",
+      "version": "combat_before",
+      "pair": 1,
+      "cpu": {
+        "median": 7.599999904632568,
+        "p95": 11.100000023841858
+      },
+      "update": {
+        "median": 0.8000000715255737,
+        "p95": 1.2999999523162842
+      },
+      "render": {
+        "median": 6.699999928474426,
+        "p95": 10
+      },
+      "distance": 0,
+      "attackFrames": 2356,
+      "monsters": 125
+    }
+  ],
+  "comparisons": [
+    {
+      "width": 1920,
+      "zone": "desert_wastes",
+      "mode": "moving",
+      "before": {
+        "median": 3.6999999284744263,
+        "p95": 6.000000059604645
+      },
+      "after": {
+        "median": 4.599999964237213,
+        "p95": 8.899999976158142
+      },
+      "change": 0.24324325761105414,
+      "passed": false
+    },
+    {
+      "width": 1920,
+      "zone": "desert_wastes",
+      "mode": "combat",
+      "before": {
+        "median": 3.899999976158142,
+        "p95": 6.199999988079071
+      },
+      "after": {
+        "median": 4.100000023841858,
+        "p95": 6.650000035762787
+      },
+      "change": 0.05128206382214762,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "underground_market",
+      "mode": "moving",
+      "before": {
+        "median": 2.600000023841858,
+        "p95": 4.899999976158142
+      },
+      "after": {
+        "median": 2.300000011920929,
+        "p95": 4.600000023841858
+      },
+      "change": -0.11538461891151741,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "underground_market",
+      "mode": "combat",
+      "before": {
+        "median": 3.950000047683716,
+        "p95": 6.899999976158142
+      },
+      "after": {
+        "median": 2.949999988079071,
+        "p95": 4.75
+      },
+      "change": -0.25316456899565,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "sand_tombs",
+      "mode": "moving",
+      "before": {
+        "median": 2.649999976158142,
+        "p95": 4.399999976158142
+      },
+      "after": {
+        "median": 2.649999976158142,
+        "p95": 4.299999952316284
+      },
+      "change": 0,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "sand_tombs",
+      "mode": "combat",
+      "before": {
+        "median": 3.199999988079071,
+        "p95": 5.650000035762787
+      },
+      "after": {
+        "median": 3.349999964237213,
+        "p95": 5.050000011920929
+      },
+      "change": 0.046874992724042386,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "khal_palace",
+      "mode": "moving",
+      "before": {
+        "median": 2.849999964237213,
+        "p95": 4.800000011920929
+      },
+      "after": {
+        "median": 2.899999976158142,
+        "p95": 4.5
+      },
+      "change": 0.017543864052051328,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "khal_palace",
+      "mode": "combat",
+      "before": {
+        "median": 2.849999964237213,
+        "p95": 4.750000059604645
+      },
+      "after": {
+        "median": 3.2500000596046448,
+        "p95": 5.449999988079071
+      },
+      "change": 0.14035091241641107,
+      "passed": false
+    },
+    {
+      "width": 1920,
+      "zone": "shard_flats",
+      "mode": "moving",
+      "before": {
+        "median": 3.850000023841858,
+        "p95": 6.300000011920929
+      },
+      "after": {
+        "median": 3.199999988079071,
+        "p95": 5.199999928474426
+      },
+      "change": -0.1688311770746852,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "shard_flats",
+      "mode": "combat",
+      "before": {
+        "median": 3.600000023841858,
+        "p95": 6.350000023841858
+      },
+      "after": {
+        "median": 3.550000011920929,
+        "p95": 5.500000059604645
+      },
+      "change": -0.013888892108275597,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "tomb_sanctum",
+      "mode": "moving",
+      "before": {
+        "median": 3.850000023841858,
+        "p95": 6.399999976158142
+      },
+      "after": {
+        "median": 3.699999988079071,
+        "p95": 6.700000047683716
+      },
+      "change": -0.03896104800880085,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "tomb_sanctum",
+      "mode": "combat",
+      "before": {
+        "median": 4.700000047683716,
+        "p95": 7.599999964237213
+      },
+      "after": {
+        "median": 4.75,
+        "p95": 7.25
+      },
+      "change": 0.010638287618938591,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "desert_wastes",
+      "mode": "moving",
+      "before": {
+        "median": 12,
+        "p95": 17.349999964237213
+      },
+      "after": {
+        "median": 12.799999952316284,
+        "p95": 17.449999928474426
+      },
+      "change": 0.06666666269302368,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "desert_wastes",
+      "mode": "combat",
+      "before": {
+        "median": 15.25,
+        "p95": 22.650000035762787
+      },
+      "after": {
+        "median": 14.449999988079071,
+        "p95": 20.399999976158142
+      },
+      "change": -0.0524590171751429,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "underground_market",
+      "mode": "moving",
+      "before": {
+        "median": 8.550000011920929,
+        "p95": 14.149999976158142
+      },
+      "after": {
+        "median": 9.200000047683716,
+        "p95": 15.449999988079071
+      },
+      "change": 0.07602339588965124,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "underground_market",
+      "mode": "combat",
+      "before": {
+        "median": 13.549999952316284,
+        "p95": 20.150000035762787
+      },
+      "after": {
+        "median": 13.699999988079071,
+        "p95": 18.699999928474426
+      },
+      "change": 0.011070113379383795,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "sand_tombs",
+      "mode": "moving",
+      "before": {
+        "median": 12.099999964237213,
+        "p95": 17.94999998807907
+      },
+      "after": {
+        "median": 11.25,
+        "p95": 15.550000011920929
+      },
+      "change": -0.07024793113632022,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "sand_tombs",
+      "mode": "combat",
+      "before": {
+        "median": 9.349999964237213,
+        "p95": 13.349999964237213
+      },
+      "after": {
+        "median": 11.800000011920929,
+        "p95": 16.19999998807907
+      },
+      "change": 0.26203209166360564,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "khal_palace",
+      "mode": "moving",
+      "before": {
+        "median": 3.75,
+        "p95": 5.600000083446503
+      },
+      "after": {
+        "median": 3.299999952316284,
+        "p95": 4.600000023841858
+      },
+      "change": -0.12000001271565752,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "khal_palace",
+      "mode": "combat",
+      "before": {
+        "median": 5.250000059604645,
+        "p95": 8.300000011920929
+      },
+      "after": {
+        "median": 5.800000011920929,
+        "p95": 9.299999952316284
+      },
+      "change": 0.1047618944899027,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "shard_flats",
+      "mode": "moving",
+      "before": {
+        "median": 6.950000047683716,
+        "p95": 10.5
+      },
+      "after": {
+        "median": 5.649999916553497,
+        "p95": 8.749999940395355
+      },
+      "change": -0.18705037729654117,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "shard_flats",
+      "mode": "combat",
+      "before": {
+        "median": 7.949999988079071,
+        "p95": 11.800000011920929
+      },
+      "after": {
+        "median": 7.599999964237213,
+        "p95": 10.399999976158142
+      },
+      "change": -0.04402516029769543,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "tomb_sanctum",
+      "mode": "moving",
+      "before": {
+        "median": 5.050000011920929,
+        "p95": 7.350000083446503
+      },
+      "after": {
+        "median": 4.600000023841858,
+        "p95": 6.850000023841858
+      },
+      "change": -0.08910890832016038,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "tomb_sanctum",
+      "mode": "combat",
+      "before": {
+        "median": 8.749999940395355,
+        "p95": 12.500000059604645
+      },
+      "after": {
+        "median": 7.349999964237213,
+        "p95": 10.450000047683716
+      },
+      "change": -0.15999999836512968,
+      "passed": true
+    }
+  ],
+  "errors": []
+}

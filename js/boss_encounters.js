@@ -21,6 +21,9 @@ const BossEncounters = (() => {
   DATA.ENEMIES.boss_portal = { id:"boss_portal",name:"Portal to the Past",family:"construct",lvl:17,hp:95,dmg:[0,0],armor:0,def:0,xp:0,speed:0,atkRate:0,range:0,sight:0,sprite:"beacon",big:1.3,pal:{stone:"#826536",rune:"#ffd979",eye:"#ffd979"},sounds:"metal" };
   DATA.ENEMIES.boss_decoy = { id:"boss_decoy",name:"The Serpent's Lie",family:"demon",lvl:25,hp:1,dmg:[0,0],armor:0,def:0,xp:0,speed:0,atkRate:0,range:0,sight:0,sprite:"serpent",big:2.1,pal:{body:"#417d76"},sounds:"metal" };
 
+  DATA.assignEnemyArt(DATA.ENEMIES.boss_portal);
+  DATA.assignEnemyArt(DATA.ENEMIES.boss_decoy);
+
   const insideArena = (a,x,y,margin=0) => x >= a.x0+margin && x <= a.x1-margin && y >= a.y0+margin && y <= a.y1-margin;
   function contains(s,x,y) {
     const dx=x-s.x,dy=y-s.y,r2=dx*dx+dy*dy;
@@ -100,7 +103,7 @@ const BossEncounters = (() => {
       this.clearAttacks();this.phase=index;this.mon.phaseIdx=index;this.rotation=0;
       const m=this.mon,s=m.def.phases[index-1]?.set||{};
       // Preserve canonical form metadata while avoiding compounded stat multipliers.
-      if(s.sprite){m.spriteOpts.kind=s.sprite;delete m.spriteOpts.npcArt;}
+      if(s.sprite){m.spriteOpts.kind=s.sprite;m.spriteOpts.monsterArtId=s.artId||s.sprite;delete m.spriteOpts.npcArt;}
       if(s.name)m.name=s.name;
       if(s.weapon!==undefined)m.spriteOpts.weapon=s.weapon;
       if(s.pal)Object.assign(m.spriteOpts.pal,s.pal);
@@ -135,7 +138,7 @@ const BossEncounters = (() => {
       const living=this.owned.filter(m=>m.encounterKind!=="portal").length;
       if(kind!=="portal"&&living>=this.config.cap)return null;
       const point=this.safePoint(x,y);if(!point)return null;
-      const m=new Monster(id,point.x,point.y);
+      const m=new Monster(id,point.x,point.y,{act2Profile:false});
       m.bossOwner=this.mon;m.encounterKind=kind;m.aggro=true;m.minion=true;m.def.xp=0;
       // Summoned threats cannot recursively create untracked creatures or explosions.
       delete m.def.summons;delete m.def.splitOnDeath;delete m.def.deathBurst;delete m.def.throwUndead;
@@ -204,7 +207,7 @@ const BossEncounters = (() => {
         case "grasp":
           a.label="The Marsh Reaches";a.shapes=[{...base,kind:"ring",inner:2.7,radius:5}];a.elem="poison";a.mult=1.15;a.recovery=2.25;
           this.pools=this.pools.filter(p=>U.dist(m.x,m.y,p.x,p.y)>2.7+p.radius);break;
-        case "chains":a.label="Chains of Khal-Zahir";a.shapes=[line(angle,1.25,10),{...line(angle,1.25,10),x:m.x+Math.cos(angle+Math.PI/2)*3,y:m.y+Math.sin(angle+Math.PI/2)*3}];a.elem="light";break;
+        case "chains":a.label=m.defId==='malthoron'?'Quieting Chains':'Chains of Khal-Zahir';a.quieting=m.defId==='malthoron';a.shapes=[line(angle,1.25,10),{...line(angle,1.25,10),x:m.x+Math.cos(angle+Math.PI/2)*3,y:m.y+Math.sin(angle+Math.PI/2)*3}];a.elem="light";break;
         case "portals":a.label="Portals to the Past";a.shapes=[{x:m.x-3,y:m.y+2,kind:"circle",radius:1},{x:m.x+3,y:m.y-2,kind:"circle",radius:1}];a.mult=0;a.recovery=2;break;
         case "gold":a.label="Molten Crown";a.shapes=[{...base,kind:"cone",radius:6,arc:Math.PI*.65}];a.elem="fire";a.mult=1.2;break;
         case "wings":case "souls": {
@@ -235,6 +238,7 @@ const BossEncounters = (() => {
       if(sequence.recovery!==null)a.recovery=sequence.recovery;
       if(remembered)a.label=DATA.ENEMIES[remembered].name.split(",")[0]+" · "+a.label;
       this.attack=a;this.stage="windup";this.timer=a.windup;this.pose="windup";this.label=a.label;
+      if(typeof EnemySkills!=='undefined')EnemySkills.reserveBossWarning(this);
       if(typeof BossVFX!=='undefined')BossVFX.begin(this);
       m.path=null;m.moving=false;m.face(m.x+Math.cos(angle),m.y+Math.sin(angle));this.setArt();Sfx.play("shrine");
     }

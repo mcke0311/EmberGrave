@@ -1,0 +1,635 @@
+{
+  "format": "mono 44.1 kHz 16-bit PCM WAV",
+  "license": "CC0-1.0",
+  "sourceLedger": "assets/sound-effects/skills/sources.json",
+  "clips": {
+    "portalOpen.wav": {
+      "duration": 1.05,
+      "peakDb": -6.375175252488257,
+      "rmsDb": -24.525924515321496,
+      "sha256": "7db59911aa41812ee08b3ff23fdaeb3c3d34972aae7d3d09a7d42b7c2625eaad",
+      "sources": [
+        {
+          "file": "assets/sound-effects/skills/wind_1.wav",
+          "sha256": "fb65f9c0271f4353f35f6ceaa7dc628e3769cbd9f13ab594efd1baa0388a5ad7",
+          "originalSources": [
+            {
+              "archive": "rpg",
+              "file": "OGG/cloth2.ogg",
+              "sha256": "8a7451193c38bc05483aec25dd193e163a15d44cf7fff04ac7912573231b0201",
+              "level": 0.8,
+              "playbackRate": 0.35,
+              "lowpass": 3800,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "rpg",
+              "file": "OGG/knifeSlice.ogg",
+              "sha256": "4cd96dc630bed9840c15f1dd2306da2cc56a4da26a5d3f1a03c5a7265ac5e54f",
+              "level": 0.3,
+              "playbackRate": 0.55,
+              "lowpass": 2500,
+              "offset": 0.08,
+              "reverse": true
+            }
+          ],
+          "offset": 0,
+          "rate": 0.85,
+          "gain": 0.6,
+          "reverse": true,
+          "lowpass": 4600
+        },
+        {
+          "file": "assets/sound-effects/skills/shadow_1.wav",
+          "sha256": "f39d2c7ae6e91014840186816d61e1c870aea634babcc9f8b634867eb4561c38",
+          "originalSources": [
+            {
+              "archive": "rpg",
+              "file": "OGG/cloth4.ogg",
+              "sha256": "e7ab9a6c4466dea874196c61f59bf1da05cfe58748f42fadd695d441a154a99b",
+              "level": 0.7,
+              "playbackRate": 0.5,
+              "lowpass": 2300,
+              "offset": 0,
+              "reverse": true
+            },
+            {
+              "archive": "rpg",
+              "file": "OGG/creak3.ogg",
+              "sha256": "f9638787f95004b9d2d06f8eff8e99d4e594c21b51947daf562856fbcec905d1",
+              "level": 0.2,
+              "playbackRate": 0.6,
+              "lowpass": 1400,
+              "offset": 0.04,
+              "reverse": false
+            }
+          ],
+          "offset": 0.08,
+          "rate": 0.7,
+          "gain": 0.35,
+          "reverse": false,
+          "lowpass": 2400
+        },
+        {
+          "file": "assets/sound-effects/skills/ice_1.wav",
+          "sha256": "508067e4f61f678a6c01e498a3971e4bbd87115d9cc46bbc562b916049aabcb1",
+          "originalSources": [
+            {
+              "archive": "impact",
+              "file": "Audio/impactGlass_light_000.ogg",
+              "sha256": "d750cf88097d0c3e69920e6e14496e1444e1a9da01aa4cca8f5ec8cb44c57b4f",
+              "level": 0.7,
+              "playbackRate": 0.86,
+              "lowpass": 8200,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "impact",
+              "file": "Audio/footstep_snow_000.ogg",
+              "sha256": "c05fa4a9dc9a7aabc04996466fb589537e49af76de9998d8f9e6270ec92dcef7",
+              "level": 0.45,
+              "playbackRate": 1.15,
+              "lowpass": 5500,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0.36,
+          "rate": 0.65,
+          "gain": 0.16,
+          "reverse": false,
+          "lowpass": 5500
+        }
+      ]
+    },
+    "teleportTravel.wav": {
+      "duration": 1.45,
+      "peakDb": -6.375175252488256,
+      "rmsDb": -25.606622724254983,
+      "sha256": "2fb355fb4638489a674805cfc0058ca8c4ffd73026bb209a4bcb44820017efde",
+      "sources": [
+        {
+          "file": "assets/sound-effects/skills/wind_1.wav",
+          "sha256": "fb65f9c0271f4353f35f6ceaa7dc628e3769cbd9f13ab594efd1baa0388a5ad7",
+          "originalSources": [
+            {
+              "archive": "rpg",
+              "file": "OGG/cloth2.ogg",
+              "sha256": "8a7451193c38bc05483aec25dd193e163a15d44cf7fff04ac7912573231b0201",
+              "level": 0.8,
+              "playbackRate": 0.35,
+              "lowpass": 3800,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "rpg",
+              "file": "OGG/knifeSlice.ogg",
+              "sha256": "4cd96dc630bed9840c15f1dd2306da2cc56a4da26a5d3f1a03c5a7265ac5e54f",
+              "level": 0.3,
+              "playbackRate": 0.55,
+              "lowpass": 2500,
+              "offset": 0.08,
+              "reverse": true
+            }
+          ],
+          "offset": 0,
+          "rate": 1.15,
+          "gain": 0.7,
+          "reverse": true,
+          "lowpass": 5300
+        },
+        {
+          "file": "assets/sound-effects/skills/wind_1.wav",
+          "sha256": "fb65f9c0271f4353f35f6ceaa7dc628e3769cbd9f13ab594efd1baa0388a5ad7",
+          "originalSources": [
+            {
+              "archive": "rpg",
+              "file": "OGG/cloth2.ogg",
+              "sha256": "8a7451193c38bc05483aec25dd193e163a15d44cf7fff04ac7912573231b0201",
+              "level": 0.8,
+              "playbackRate": 0.35,
+              "lowpass": 3800,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "rpg",
+              "file": "OGG/knifeSlice.ogg",
+              "sha256": "4cd96dc630bed9840c15f1dd2306da2cc56a4da26a5d3f1a03c5a7265ac5e54f",
+              "level": 0.3,
+              "playbackRate": 0.55,
+              "lowpass": 2500,
+              "offset": 0.08,
+              "reverse": true
+            }
+          ],
+          "offset": 0.2,
+          "rate": 0.8,
+          "gain": 0.8,
+          "reverse": false,
+          "lowpass": 6000
+        },
+        {
+          "file": "assets/sound-effects/skills/thunder_1.wav",
+          "sha256": "b0906016ab4aabae560a0809d9fa76956a1e605b727b6f5acf7c7ee85f10e76b",
+          "originalSources": [
+            {
+              "archive": "impact",
+              "file": "Audio/impactMetal_heavy_000.ogg",
+              "sha256": "e07045693e4a2b3d165c424e3dab4c781d9ff8880a386880ac89a51315d7f831",
+              "level": 0.6,
+              "playbackRate": 0.28,
+              "lowpass": 1900,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "creatures",
+              "file": "stones_02.ogg",
+              "sha256": "57dc6b85ee986e68ddc4b7fb2b41cc1c885151677d32439fdb299492a3103a65",
+              "level": 0.8,
+              "playbackRate": 0.38,
+              "lowpass": 1500,
+              "offset": 0.045,
+              "reverse": false
+            }
+          ],
+          "offset": 0.3,
+          "rate": 0.65,
+          "gain": 0.36,
+          "reverse": false,
+          "lowpass": 1600
+        },
+        {
+          "file": "assets/sound-effects/skills/frost_1.wav",
+          "sha256": "6966012276f445acb6df35fa26361d663c08957c4b3ecbf5a354401c65e6b81d",
+          "originalSources": [
+            {
+              "archive": "impact",
+              "file": "Audio/impactGlass_heavy_000.ogg",
+              "sha256": "b44b39a940e8948e74b9bd3776bff980df43cf220abdaf0d467dc4c43c0244a5",
+              "level": 0.65,
+              "playbackRate": 0.64,
+              "lowpass": 7200,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "creatures",
+              "file": "stones_02.ogg",
+              "sha256": "57dc6b85ee986e68ddc4b7fb2b41cc1c885151677d32439fdb299492a3103a65",
+              "level": 0.25,
+              "playbackRate": 1.3,
+              "lowpass": 5700,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0.33,
+          "rate": 0.85,
+          "gain": 0.16,
+          "reverse": false,
+          "lowpass": 5900
+        }
+      ]
+    },
+    "questAccepted.wav": {
+      "duration": 0.65,
+      "peakDb": -6.375175252488256,
+      "rmsDb": -28.142249468440085,
+      "sha256": "e2eefda71c76f6015594bce3ee8990d0939771d1ee3aebe1a758533a9093965a",
+      "sources": [
+        {
+          "file": "assets/sound-effects/skills/cloth_1.wav",
+          "sha256": "1fb67cd4e905c67e71d9eaa86dea8e9604feb48d964c982dd03fdeecfaa54c8f",
+          "originalSources": [
+            {
+              "archive": "rpg",
+              "file": "OGG/cloth1.ogg",
+              "sha256": "ddb93a3671233f95da0e0b10367f082f7eb42fa6caaddcf776410aa8833c747d",
+              "level": 0.8,
+              "playbackRate": 0.9,
+              "lowpass": 4000,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0,
+          "rate": 0.8,
+          "gain": 0.65,
+          "reverse": false,
+          "lowpass": 3600
+        },
+        {
+          "file": "assets/sound-effects/skills/latch_1.wav",
+          "sha256": "5d68da9e10e92b92b019cc05dc48105a5917d85c10865e7bdb1c6e7f839a80ed",
+          "originalSources": [
+            {
+              "archive": "rpg",
+              "file": "OGG/metalLatch.ogg",
+              "sha256": "ba9ba60b172b3ebc131a940f25793cd2e207aca7af73dc80d637277f060f1708",
+              "level": 0.7,
+              "playbackRate": 0.85,
+              "lowpass": 5000,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "rpg",
+              "file": "OGG/clothBelt.ogg",
+              "sha256": "f29560a2aea95bbfeb643e1e8f56ec2b6f7e32f32ce4e140645a36db81de3253",
+              "level": 0.2,
+              "playbackRate": 1,
+              "lowpass": 3300,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0.08,
+          "rate": 0.7,
+          "gain": 0.42,
+          "reverse": false,
+          "lowpass": 4200
+        },
+        {
+          "file": "assets/sound-effects/skills/ice_1.wav",
+          "sha256": "508067e4f61f678a6c01e498a3971e4bbd87115d9cc46bbc562b916049aabcb1",
+          "originalSources": [
+            {
+              "archive": "impact",
+              "file": "Audio/impactGlass_light_000.ogg",
+              "sha256": "d750cf88097d0c3e69920e6e14496e1444e1a9da01aa4cca8f5ec8cb44c57b4f",
+              "level": 0.7,
+              "playbackRate": 0.86,
+              "lowpass": 8200,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "impact",
+              "file": "Audio/footstep_snow_000.ogg",
+              "sha256": "c05fa4a9dc9a7aabc04996466fb589537e49af76de9998d8f9e6270ec92dcef7",
+              "level": 0.45,
+              "playbackRate": 1.15,
+              "lowpass": 5500,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0.12,
+          "rate": 0.7,
+          "gain": 0.17,
+          "reverse": false,
+          "lowpass": 5200
+        }
+      ]
+    },
+    "questReady.wav": {
+      "duration": 0.5,
+      "peakDb": -6.375175252488256,
+      "rmsDb": -28.73148939438675,
+      "sha256": "995fedb91dfd05b95bd0410d713ac69239bd85496fc0e5d62a51edc70a53663a",
+      "sources": [
+        {
+          "file": "assets/sound-effects/skills/latch_1.wav",
+          "sha256": "5d68da9e10e92b92b019cc05dc48105a5917d85c10865e7bdb1c6e7f839a80ed",
+          "originalSources": [
+            {
+              "archive": "rpg",
+              "file": "OGG/metalLatch.ogg",
+              "sha256": "ba9ba60b172b3ebc131a940f25793cd2e207aca7af73dc80d637277f060f1708",
+              "level": 0.7,
+              "playbackRate": 0.85,
+              "lowpass": 5000,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "rpg",
+              "file": "OGG/clothBelt.ogg",
+              "sha256": "f29560a2aea95bbfeb643e1e8f56ec2b6f7e32f32ce4e140645a36db81de3253",
+              "level": 0.2,
+              "playbackRate": 1,
+              "lowpass": 3300,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0,
+          "rate": 1.1,
+          "gain": 0.26,
+          "reverse": false,
+          "lowpass": 4200
+        },
+        {
+          "file": "assets/sound-effects/skills/frost_1.wav",
+          "sha256": "6966012276f445acb6df35fa26361d663c08957c4b3ecbf5a354401c65e6b81d",
+          "originalSources": [
+            {
+              "archive": "impact",
+              "file": "Audio/impactGlass_heavy_000.ogg",
+              "sha256": "b44b39a940e8948e74b9bd3776bff980df43cf220abdaf0d467dc4c43c0244a5",
+              "level": 0.65,
+              "playbackRate": 0.64,
+              "lowpass": 7200,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "creatures",
+              "file": "stones_02.ogg",
+              "sha256": "57dc6b85ee986e68ddc4b7fb2b41cc1c885151677d32439fdb299492a3103a65",
+              "level": 0.25,
+              "playbackRate": 1.3,
+              "lowpass": 5700,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0.04,
+          "rate": 1.2,
+          "gain": 0.26,
+          "reverse": false,
+          "lowpass": 6200
+        }
+      ]
+    },
+    "questCompleted.wav": {
+      "duration": 1.4,
+      "peakDb": -6.375175252488257,
+      "rmsDb": -25.14829478177213,
+      "sha256": "013938c5c71ffe57cb3458bbce6ffb06891e9a444b851477c3b4ea6d358d7b33",
+      "sources": [
+        {
+          "file": "assets/sound-effects/skills/cloth_1.wav",
+          "sha256": "1fb67cd4e905c67e71d9eaa86dea8e9604feb48d964c982dd03fdeecfaa54c8f",
+          "originalSources": [
+            {
+              "archive": "rpg",
+              "file": "OGG/cloth1.ogg",
+              "sha256": "ddb93a3671233f95da0e0b10367f082f7eb42fa6caaddcf776410aa8833c747d",
+              "level": 0.8,
+              "playbackRate": 0.9,
+              "lowpass": 4000,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0,
+          "rate": 0.85,
+          "gain": 0.32,
+          "reverse": false,
+          "lowpass": 3300
+        },
+        {
+          "file": "assets/sound-effects/skills/chain_1.wav",
+          "sha256": "330a75a6166d2cd3c7b7ba0817892a15d0cb7fbf315d25648c7f4e17b3a2d7e1",
+          "originalSources": [
+            {
+              "archive": "creatures",
+              "file": "chain_01.ogg",
+              "sha256": "d376caf0f61384b1d2e0b447f64f06be56d0ee0622ba70dd01cfdd78b3a10687",
+              "level": 0.8,
+              "playbackRate": 0.78,
+              "lowpass": 4700,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0.02,
+          "rate": 0.8,
+          "gain": 0.25,
+          "reverse": false,
+          "lowpass": 3400
+        },
+        {
+          "file": "assets/sound-effects/skills/frost_1.wav",
+          "sha256": "6966012276f445acb6df35fa26361d663c08957c4b3ecbf5a354401c65e6b81d",
+          "originalSources": [
+            {
+              "archive": "impact",
+              "file": "Audio/impactGlass_heavy_000.ogg",
+              "sha256": "b44b39a940e8948e74b9bd3776bff980df43cf220abdaf0d467dc4c43c0244a5",
+              "level": 0.65,
+              "playbackRate": 0.64,
+              "lowpass": 7200,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "creatures",
+              "file": "stones_02.ogg",
+              "sha256": "57dc6b85ee986e68ddc4b7fb2b41cc1c885151677d32439fdb299492a3103a65",
+              "level": 0.25,
+              "playbackRate": 1.3,
+              "lowpass": 5700,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0.1,
+          "rate": 0.65,
+          "gain": 0.32,
+          "reverse": false,
+          "lowpass": 5600
+        },
+        {
+          "file": "assets/sound-effects/skills/ice_1.wav",
+          "sha256": "508067e4f61f678a6c01e498a3971e4bbd87115d9cc46bbc562b916049aabcb1",
+          "originalSources": [
+            {
+              "archive": "impact",
+              "file": "Audio/impactGlass_light_000.ogg",
+              "sha256": "d750cf88097d0c3e69920e6e14496e1444e1a9da01aa4cca8f5ec8cb44c57b4f",
+              "level": 0.7,
+              "playbackRate": 0.86,
+              "lowpass": 8200,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "impact",
+              "file": "Audio/footstep_snow_000.ogg",
+              "sha256": "c05fa4a9dc9a7aabc04996466fb589537e49af76de9998d8f9e6270ec92dcef7",
+              "level": 0.45,
+              "playbackRate": 1.15,
+              "lowpass": 5500,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0.23,
+          "rate": 0.82,
+          "gain": 0.28,
+          "reverse": false,
+          "lowpass": 5600
+        },
+        {
+          "file": "assets/sound-effects/skills/ice_1.wav",
+          "sha256": "508067e4f61f678a6c01e498a3971e4bbd87115d9cc46bbc562b916049aabcb1",
+          "originalSources": [
+            {
+              "archive": "impact",
+              "file": "Audio/impactGlass_light_000.ogg",
+              "sha256": "d750cf88097d0c3e69920e6e14496e1444e1a9da01aa4cca8f5ec8cb44c57b4f",
+              "level": 0.7,
+              "playbackRate": 0.86,
+              "lowpass": 8200,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "impact",
+              "file": "Audio/footstep_snow_000.ogg",
+              "sha256": "c05fa4a9dc9a7aabc04996466fb589537e49af76de9998d8f9e6270ec92dcef7",
+              "level": 0.45,
+              "playbackRate": 1.15,
+              "lowpass": 5500,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0.39,
+          "rate": 1.05,
+          "gain": 0.26,
+          "reverse": false,
+          "lowpass": 6200
+        },
+        {
+          "file": "assets/sound-effects/skills/wind_1.wav",
+          "sha256": "fb65f9c0271f4353f35f6ceaa7dc628e3769cbd9f13ab594efd1baa0388a5ad7",
+          "originalSources": [
+            {
+              "archive": "rpg",
+              "file": "OGG/cloth2.ogg",
+              "sha256": "8a7451193c38bc05483aec25dd193e163a15d44cf7fff04ac7912573231b0201",
+              "level": 0.8,
+              "playbackRate": 0.35,
+              "lowpass": 3800,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "rpg",
+              "file": "OGG/knifeSlice.ogg",
+              "sha256": "4cd96dc630bed9840c15f1dd2306da2cc56a4da26a5d3f1a03c5a7265ac5e54f",
+              "level": 0.3,
+              "playbackRate": 0.55,
+              "lowpass": 2500,
+              "offset": 0.08,
+              "reverse": true
+            }
+          ],
+          "offset": 0.13,
+          "rate": 0.9,
+          "gain": 0.16,
+          "reverse": false,
+          "lowpass": 2200
+        }
+      ]
+    },
+    "questProgress.wav": {
+      "duration": 0.38,
+      "peakDb": -6.375175252488256,
+      "rmsDb": -27.493744380776928,
+      "sha256": "f59e5bd5911f3307630356e2ee545ae43f8ea4b617f0aac364fb5c25d75710be",
+      "sources": [
+        {
+          "file": "assets/sound-effects/skills/cloth_1.wav",
+          "sha256": "1fb67cd4e905c67e71d9eaa86dea8e9604feb48d964c982dd03fdeecfaa54c8f",
+          "originalSources": [
+            {
+              "archive": "rpg",
+              "file": "OGG/cloth1.ogg",
+              "sha256": "ddb93a3671233f95da0e0b10367f082f7eb42fa6caaddcf776410aa8833c747d",
+              "level": 0.8,
+              "playbackRate": 0.9,
+              "lowpass": 4000,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0,
+          "rate": 1,
+          "gain": 0.4,
+          "reverse": false,
+          "lowpass": 3200
+        },
+        {
+          "file": "assets/sound-effects/skills/latch_1.wav",
+          "sha256": "5d68da9e10e92b92b019cc05dc48105a5917d85c10865e7bdb1c6e7f839a80ed",
+          "originalSources": [
+            {
+              "archive": "rpg",
+              "file": "OGG/metalLatch.ogg",
+              "sha256": "ba9ba60b172b3ebc131a940f25793cd2e207aca7af73dc80d637277f060f1708",
+              "level": 0.7,
+              "playbackRate": 0.85,
+              "lowpass": 5000,
+              "offset": 0,
+              "reverse": false
+            },
+            {
+              "archive": "rpg",
+              "file": "OGG/clothBelt.ogg",
+              "sha256": "f29560a2aea95bbfeb643e1e8f56ec2b6f7e32f32ce4e140645a36db81de3253",
+              "level": 0.2,
+              "playbackRate": 1,
+              "lowpass": 3300,
+              "offset": 0,
+              "reverse": false
+            }
+          ],
+          "offset": 0.05,
+          "rate": 1.2,
+          "gain": 0.2,
+          "reverse": false,
+          "lowpass": 4300
+        }
+      ]
+    }
+  }
+}

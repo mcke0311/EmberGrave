@@ -17,6 +17,7 @@ const SpriteAssets = (() => {
   const activePlayerSources = new Set();
   const activePlayerTintSpecs = new Set();
   const tintCache = new Map();
+  const act2TintKeys=[];
   const tintCacheSources = new Map();
   const isolatedFrameCache = new Map();
   const bossFlashCache = new Map();
@@ -177,13 +178,18 @@ const SpriteAssets = (() => {
     const unique = [];
     const seen = new Set();
     for (const pair of defs) if (!seen.has(pair[1].src)) { seen.add(pair[1].src); unique.push(pair); }
-    let done = 0;
-    await Promise.all(unique.map(([id, def]) => loadImage(id, def).then(() => {
-      done++; if (onProgress) onProgress(done, unique.length, id);
-    })));
+    let done = 0, next = 0;
+    // Large environment libraries must not exhaust Chromium's request buffers.
+    // Keep parallel decoding bounded while retaining source de-duplication.
+    await Promise.all(Array.from({length:Math.min(12,unique.length)},async()=>{
+      while(next<unique.length){
+        const [id,def]=unique[next++];await loadImage(id,def);
+        done++;if(onProgress)onProgress(done,unique.length,id);
+      }
+    }));
     for (const [, def] of unique) bundleOwnedSources.add(def.src);
     // Boss poses are cut out before combat, never on their first strike frame.
-    for(const [id,def] of defs)if(def.bossArt)for(let i=0;i<def.cols*def.rows;i++){
+    for(const [id,def] of defs)if(def.bossArt||def.act2Art||def.act3Art||def.act5Art||def.act4Art)for(let i=0;i<def.cols*def.rows;i++){
       const frame=getFrame(id,i);isolatedFrame(frame);if(def.hitShapes)bossFlashFrame(frame);
     }
     loadedBundles.add(bundleId);
@@ -224,7 +230,7 @@ const SpriteAssets = (() => {
       ctx.drawImage(source.image, source.sx, source.sy, source.sw, source.sh,
         -source.anchorX, -source.anchorY, source.sw, source.sh);
     } else {
-      ctx.drawImage(source, -frame.anchorX, -frame.anchorY);
+      ctx.drawImage(source, -frame.anchorX+(source.frameOffsetX||0), -frame.anchorY+(source.frameOffsetY||0));
     }
     ctx.restore();
   }
@@ -239,9 +245,11 @@ const SpriteAssets = (() => {
     const key = `${frame.id}|${frame.index}`;
     if (isolatedFrameCache.has(key)) return isolatedFrameCache.get(key);
     const c = document.createElement("canvas");
-    c.width = frame.sw; c.height = frame.sh;
-    c.getContext("2d").drawImage(frame.image, frame.sx, frame.sy, frame.sw, frame.sh, 0, 0, frame.sw, frame.sh);
-    const isolated = { ...frame, image: c, sx: 0, sy: 0 };
+    const bounds=(def.act2Art||def.act3Art||def.act5Art||def.act4Art)?def.hitShapes?.[frame.index]?.bounds:null;
+    const ox=bounds?Math.max(0,bounds[0]-2):0,oy=bounds?Math.max(0,bounds[1]-2):0;
+    c.width=bounds?Math.min(frame.sw,bounds[2]+2)-ox:frame.sw;c.height=bounds?Math.min(frame.sh,bounds[3]+2)-oy:frame.sh;
+    c.getContext("2d").drawImage(frame.image, frame.sx+ox, frame.sy+oy, c.width, c.height, 0, 0, c.width, c.height);
+    const isolated = { ...frame, image: c, sx: 0, sy: 0,sw:c.width,sh:c.height,anchorX:frame.anchorX-ox,anchorY:frame.anchorY-oy };
     isolatedFrameCache.set(key, isolated);
     return isolated;
   }
@@ -306,14 +314,17 @@ const SpriteAssets = (() => {
   function tinted(frame, color) {
     const key = `${frame.id}|${frame.index || 0}|${color}`;
     if (tintCache.has(key)) return tintCache.get(key);
-    const c = document.createElement("canvas"); c.width = frame.sw; c.height = frame.sh;
+    const def=definition(frame.id),act2=def.act2Art||def.act3Art||def.act5Art||def.act4Art,source=act2?isolatedFrame(frame):frame;
+    const c = document.createElement("canvas"); c.width = source.sw; c.height = source.sh;
+    c.frameOffsetX=frame.anchorX-source.anchorX;c.frameOffsetY=frame.anchorY-source.anchorY;
     const cx = c.getContext("2d");
-    cx.drawImage(frame.image, frame.sx, frame.sy, frame.sw, frame.sh, 0, 0, frame.sw, frame.sh);
-    cx.globalCompositeOperation = "color"; cx.globalAlpha = .46; cx.fillStyle = color; cx.fillRect(0, 0, c.width, c.height);
+    cx.drawImage(source.image, source.sx, source.sy, source.sw, source.sh, 0, 0, source.sw, source.sh);
+    cx.globalCompositeOperation = act2?"source-atop":"color"; cx.globalAlpha = act2?.3:.46; cx.fillStyle = color; cx.fillRect(0, 0, c.width, c.height);
     cx.globalAlpha = 1; cx.globalCompositeOperation = "destination-in";
-    cx.drawImage(frame.image, frame.sx, frame.sy, frame.sw, frame.sh, 0, 0, frame.sw, frame.sh);
+    cx.drawImage(source.image, source.sx, source.sy, source.sw, source.sh, 0, 0, source.sw, source.sh);
     tintCache.set(key, c);
     tintCacheSources.set(key, { src: definition(frame.id).src, spec: `${frame.id}|${color}` });
+    if(act2){act2TintKeys.push(key);if(act2TintKeys.length>96){const expired=act2TintKeys.shift();tintCache.delete(expired);tintCacheSources.delete(expired);}}
     return c;
   }
 
@@ -342,6 +353,7 @@ const SpriteAssets = (() => {
     // Resolve saved items from their identity first. Stale icon fields must never
     // turn a jewel into a cache or let a rolled item level change its base art.
     const iconOnly = !base && !supply && !glyph;
+    if (item.uniqueId === "uj_oak") return { assetId: "ui.items.oak", index: 0 };
     if (item.kind === "jewel" || item.baseId === "jewel" || (iconOnly && item.icon === "jewel")) return variant("jewel", item.jcol || "#b060d0");
     if (glyph || item.kind === "glyph" || (iconOnly && item.icon === "glyph")) return { assetId: "ui.items.misc", index: maps.miscIcons.glyph, tint: glyph?.color || "#7fd8c0" };
     if (item.kind === "charm" || item.charmSize || /^charm/.test(item.baseId || "")) {
@@ -993,8 +1005,10 @@ const SpriteAssets = (() => {
   }
 
   function actorGeometry(opts, pose, x = 0, y = 0, scale = 1) {
+    const animated=authoredFrame(pose);
+    if(animated)return frameGeometry(animated,x,y,scale,authoredTransform(pose,opts));
     if(opts.bossArt)return frameGeometry(bossFrame(opts),x,y,scale,bossTransform(pose,opts));
-    const id = opts.npcArt ? manifest.maps.npcs[opts.npcArt] : manifest.maps.monsters[opts.kind];
+    const id = actorAssetId(opts);
     return frameGeometry(getFrame(id, 0), x, y, scale, staticActorTransform(pose, opts));
   }
 
@@ -1028,6 +1042,14 @@ const SpriteAssets = (() => {
   }
 
   function drawActor(ctx, opts, pose) {
+    const animated=authoredFrame(pose);
+    if(animated){
+      const m=authoredTransform(pose,opts);ctx.save();ctx.transform(m.a,m.b,m.c,m.d,m.e,m.f);
+      ctx.globalAlpha*=(pose.ex.act4Animation||pose.ex.act5Animation||pose.ex.act3Animation||pose.ex.act2Animation).alpha;
+      if(opts.bossFlash){const flash=bossFlashFrame(animated);ctx.drawImage(flash,-animated.anchorX+(flash.frameOffsetX||0),-animated.anchorY+(flash.frameOffsetY||0));}
+      else drawFrame(ctx,animated,0,0,{tint:opts.act2Tint});
+      ctx.restore();return true;
+    }
     if(opts.bossArt){
       const m=bossTransform(pose,opts);ctx.save();ctx.transform(m.a,m.b,m.c,m.d,m.e,m.f);
       const frame=bossFrame(opts);ctx.globalAlpha*=(opts.bossDecoy?.38:1)*(pose.ex?.bossMotion?.alpha??1);
@@ -1041,17 +1063,38 @@ const SpriteAssets = (() => {
       if (!id) throw new SpriteAssetError(`No summon sprite: ${opts.summonArt}`, opts.summonArt, "");
       return drawSummon(ctx, id, opts, pose);
     }
-    const id = opts.npcArt ? manifest.maps.npcs[opts.npcArt] : manifest.maps.monsters[opts.kind];
+    const id = actorAssetId(opts);
     if (!id) throw new SpriteAssetError(`No actor sprite: ${opts.npcArt || opts.kind}`, opts.npcArt || opts.kind, "");
     return drawStaticActor(ctx, id, pose, opts);
   }
+  function actorAssetId(opts) {
+    // An optional identity atlas may arrive after its data registration. Keep
+    // the existing family silhouette usable until that atlas is in the manifest.
+    return opts.npcArt ? manifest.maps.npcs[opts.npcArt] :
+      manifest.maps.monsters[opts.monsterArtId] || manifest.maps.monsters[opts.kind];
+  }
 
   const BOSS_POSES={idle:0,movement:1,windup:2,impact:3,recovery:4,death:5};
+  function authoredFrame(pose){
+    const a=pose.ex?.act4Animation||pose.ex?.act5Animation||pose.ex?.act3Animation||pose.ex?.act2Animation;if(!a||!manifest.entries[a.asset])return null;
+    if(!images.has(manifest.entries[a.asset].src))return null;
+    const f=getFrame(a.asset,a.index),anchor=manifest.entries[a.asset].anchors?.[a.index];
+    return anchor?{...f,anchorX:anchor[0],anchorY:anchor[1]}:f;
+  }
+  function authoredTransform(pose,opts){
+    // Authored limbs supply the action. Do not apply the generic whole-body
+    // attack lean/death rotation a second time to an already collapsed frame.
+    const scale=(opts.scale??1)*(opts.bossArt?.42:.5)*(pose.ex?.spriteScale||1);
+    const flip=Math.cos(pose.ang||0)<-.15?-1:1;
+    return {a:scale*flip,b:0,c:0,d:scale,e:0,f:0};
+  }
   function bossFlashFrame(frame) {
     const key=frame.id+'|'+frame.index;
     if(bossFlashCache.has(key))return bossFlashCache.get(key);
-    const c=document.createElement('canvas');c.width=frame.sw;c.height=frame.sh;
-    const cx=c.getContext('2d');cx.drawImage(frame.image,frame.sx,frame.sy,frame.sw,frame.sh,0,0,frame.sw,frame.sh);
+    const def=definition(frame.id),source=(def.act2Art||def.act3Art||def.act5Art||def.act4Art)?isolatedFrame(frame):frame;
+    const c=document.createElement('canvas');c.width=source.sw;c.height=source.sh;
+    c.frameOffsetX=frame.anchorX-source.anchorX;c.frameOffsetY=frame.anchorY-source.anchorY;
+    const cx=c.getContext('2d');cx.drawImage(source.image,source.sx,source.sy,source.sw,source.sh,0,0,source.sw,source.sh);
     cx.globalCompositeOperation='source-atop';cx.globalAlpha=.62;cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);
     bossFlashCache.set(key,c);return c;
   }

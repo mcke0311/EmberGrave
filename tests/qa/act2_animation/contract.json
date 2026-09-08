@@ -1,0 +1,104 @@
+{
+  "status": "PASS",
+  "checks": 22694,
+  "samples": 17730,
+  "specialists": [
+    {
+      "id": "choirmaster",
+      "skill": "requiem",
+      "dt": 0.008333333333333333
+    },
+    {
+      "id": "choirmaster",
+      "skill": "requiem",
+      "dt": 0.03333333333333333
+    },
+    {
+      "id": "choirmaster",
+      "skill": "requiem",
+      "dt": 0.05
+    },
+    {
+      "id": "choirmaster",
+      "skill": "sacrifice",
+      "dt": 0.008333333333333333
+    },
+    {
+      "id": "choirmaster",
+      "skill": "sacrifice",
+      "dt": 0.03333333333333333
+    },
+    {
+      "id": "choirmaster",
+      "skill": "sacrifice",
+      "dt": 0.05
+    },
+    {
+      "id": "brood_mother",
+      "skill": "summon",
+      "dt": 0.008333333333333333
+    },
+    {
+      "id": "brood_mother",
+      "skill": "summon",
+      "dt": 0.03333333333333333
+    },
+    {
+      "id": "brood_mother",
+      "skill": "summon",
+      "dt": 0.05
+    },
+    {
+      "id": "sludge_horror",
+      "skill": "death",
+      "dt": 0.008333333333333333
+    },
+    {
+      "id": "sludge_horror",
+      "skill": "death",
+      "dt": 0.03333333333333333
+    },
+    {
+      "id": "sludge_horror",
+      "skill": "death",
+      "dt": 0.05
+    },
+    {
+      "id": "bog_bloat",
+      "skill": "death",
+      "dt": 0.008333333333333333
+    },
+    {
+      "id": "bog_bloat",
+      "skill": "death",
+      "dt": 0.03333333333333333
+    },
+    {
+      "id": "bog_bloat",
+      "skill": "death",
+      "dt": 0.05
+    },
+    {
+      "id": "choir_herald",
+      "skill": "cleanup",
+      "dt": 0.008333333333333333
+    },
+    {
+      "id": "choir_herald",
+      "skill": "cleanup",
+      "dt": 0.03333333333333333
+    },
+    {
+      "id": "choir_herald",
+      "skill": "cleanup",
+      "dt": 0.05
+    }
+  ],
+  "roster": 16,
+  "dt": [
+    0.008333333333333333,
+    0.03333333333333333,
+    0.05
+  ],
+  "combat": "Exact seeded state equality against pre-animation source, including loot, specialist release events and Mire Mother death"
+}

@@ -1,0 +1,28 @@
+{
+  "methodRevision": 5,
+  "width": 1920,
+  "zone": "spawn_pools",
+  "pair": 1,
+  "version": "before",
+  "mode": "moving",
+  "position": {
+    "x": 22.5,
+    "y": 8.5
+  },
+  "monsters": 99,
+  "distance": 18.173333333333233,
+  "attackFrames": 0,
+  "enemyAttackFrames": 0,
+  "cpuMs": {
+    "median": 7.5,
+    "p95": 10.7,
+    "max": 18.3
+  },
+  "frameIntervalMs": {
+    "median": 16.7,
+    "p95": 17,
+    "max": 40.3
+  },
+  "builds": 4,
+  "warmCacheStable": true
+}

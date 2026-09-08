@@ -1,0 +1,28 @@
+{
+  "methodRevision": 5,
+  "width": 1920,
+  "zone": "mines",
+  "pair": 2,
+  "version": "after",
+  "mode": "moving",
+  "position": {
+    "x": 18.5,
+    "y": 26.5
+  },
+  "monsters": 62,
+  "distance": 18.173333333333233,
+  "attackFrames": 0,
+  "enemyAttackFrames": 0,
+  "cpuMs": {
+    "median": 5.8,
+    "p95": 8.5,
+    "max": 23.5
+  },
+  "frameIntervalMs": {
+    "median": 16.7,
+    "p95": 17,
+    "max": 26.2
+  },
+  "builds": 3,
+  "warmCacheStable": true
+}

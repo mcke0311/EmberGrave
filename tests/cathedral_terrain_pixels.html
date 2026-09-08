@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="../"><title>Cathedral terrain pixels</title>
+<style>body{background:#171821;color:#ded8c9;font:14px system-ui}pre{white-space:pre-wrap}</style><h1>Cathedral floor cache</h1><pre id="result">Loading…</pre>
+<script src="js/utils.js"></script><script src="js/data.js"></script><script src="js/data_overrides.js"></script><script src="js/boss_encounters.js"></script><script src="js/sprite_manifest.js"></script><script src="js/sprite_assets.js"></script><script src="js/mapgen.js"></script><script src="js/level_terrain.js"></script>
+<script>
+(async()=>{const rows=[];try{
+ await SpriteAssets.loadBundle('world');
+ const make=()=>{const c=document.createElement('canvas');c.width=960;c.height=640;return c;};const full=make(),cached=make();
+ for(const zone of ['cathedral1','cathedral2','cathedral_cinderwatch','cathedral_bastion']){
+  const m=MapGen.generate(zone,12345),sp=m.spawns.default,origin={x:U.isoX(sp.x,sp.y)-480,y:U.isoY(sp.x,sp.y)-320};
+  function render(canvas,cam,cache){const g=canvas.getContext('2d');g.clearRect(0,0,960,640);LevelTerrain.beginFrame(m);try{LevelTerrain.drawFloor(g,m,cam,0,m.w-1,0,m.h-1,(x,y)=>x>-128&&x<1088&&y>-256&&y<896,cache);}finally{LevelTerrain.endFrame();}}
+  for(const [dx,dy]of [[0,0],[37,23],[-81,90],[260,190],[261.3,191.7],[-30,-42]]){
+   const cam={x:origin.x+dx,y:origin.y+dy};render(full,cam,false);render(cached,cam,true);
+   const a=full.getContext('2d').getImageData(0,0,960,640).data,b=cached.getContext('2d').getImageData(0,0,960,640).data;
+   let different=0,max=0,errorSum=0;for(let i=0;i<a.length;i+=4){let d=0;for(let k=0;k<4;k++){
+     // Compare premultiplied channels: RGB in transparent margins is invisible.
+     const aa=k===3?a[i+k]:a[i+k]*a[i+3]/255,bb=k===3?b[i+k]:b[i+k]*b[i+3]/255;
+     const error=Math.abs(aa-bb);d=Math.max(d,error);errorSum+=error;
+   }if(d>8)different++;max=Math.max(max,d);}
+   const meanError=errorSum/a.length,fractional=!!(dx%1||dy%1);
+   // The cached fractional image has an additional final resample; its mean
+   // error must stay below 2/255 while integer scrolling remains pixel-exact
+   // apart from fewer than 300 antialiased boundary pixels.
+   if(fractional?meanError>2:different>300)throw Error(zone+' cache differs at '+dx+','+dy+': '+different+' pixels, mean '+meanError);
+   rows.push({zone,dx,dy,different,max,meanError});
+  }
+  const warm=LevelTerrain.getDiagnostics();render(cached,origin,true);const moved=LevelTerrain.getDiagnostics();
+  const cell=m.cathedral.rooms[1],k=(cell.x|0)+(cell.y|0)*m.w;m.cathedralMaterials[k]=(m.cathedralMaterials[k]+1)%4;
+  render(cached,origin,true);if(LevelTerrain.getDiagnostics().surfaceViewBuilds<=moved.surfaceViewBuilds)throw Error('Material change did not invalidate cache');
+  m.void[k]=1;m.walls[k]=m.blocked[k]=1;const before=LevelTerrain.getDiagnostics();render(cached,origin,true);if(LevelTerrain.getDiagnostics().surfaceViewBuilds<=before.surfaceViewBuilds)throw Error('Void change did not invalidate cache');
+ }
+ window.cathedralPixelReport={status:'PASS',rows};document.body.dataset.testStatus='passed';
+}catch(e){window.cathedralPixelReport={status:'FAIL',error:e.stack,rows};document.body.dataset.testStatus='failed';}document.getElementById('result').textContent=JSON.stringify(window.cathedralPixelReport,null,2);})();
+</script></html>

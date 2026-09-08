@@ -1,0 +1,32 @@
+{
+  "status": "FAIL",
+  "frontierAssetStatus": "PASS",
+  "frontierAssets": 15,
+  "checks": 105,
+  "baseline": "b036a3bae9be7cd656ed76d8a472f6b212aacf42",
+  "strictGateExitCode": 1,
+  "strictGateMatchesBaseline": false,
+  "baselineDiagnostics": 287,
+  "currentDiagnostics": 301,
+  "addedDiagnostics": [
+    "gameplay art prop:cinders_ash_drifts: source/review provenance is not final",
+    "gameplay art prop:cinders_bastion_gate: source/review provenance is not final",
+    "gameplay art prop:cinders_bastion_return: source/review provenance is not final",
+    "gameplay art prop:cinders_breach_gate: source/review provenance is not final",
+    "gameplay art prop:cinders_ceremonial_paving: source/review provenance is not final",
+    "gameplay art prop:cinders_chain_rubble: source/review provenance is not final",
+    "gameplay art prop:cinders_fallen_statue: source/review provenance is not final",
+    "gameplay art prop:cinders_furnace_forge: source/review provenance is not final",
+    "gameplay art prop:cinders_impaled_monument: source/review provenance is not final",
+    "gameplay art prop:cinders_siege_engine: source/review provenance is not final",
+    "gameplay art prop:cinders_siege_tower: source/review provenance is not final",
+    "gameplay art prop:cinders_throne_backdrop: source/review provenance is not final",
+    "gameplay art prop:cinders_throne_gate: source/review provenance is not final",
+    "gameplay art prop:cinders_throne_return: source/review provenance is not final",
+    "gameplay art role coverage mismatch: expected {'backdrop': 8, 'cliff': 20, 'form': 4, 'ground': 32, 'hazard': 9, 'item-icons': 3, 'massif': 36, 'monster': 19, 'npc': 9, 'path': 20, 'prop': <count>, 'skill-icons': 1, 'summon': 8, 'trap': 3, 'wall': 18}, found {'backdrop': 8, 'cliff': 20, 'form': 4, 'ground': 32, 'hazard': 9, 'item-icons': 4, 'massif': 36, 'monster': 59, 'npc': 55, 'path': 20, 'prop': <count>, 'skill-icons': 1, 'summon': 8, 'trap': 3, 'wall': 18}"
+  ],
+  "removedDiagnostics": [
+    "gameplay art role coverage mismatch: expected {'backdrop': 8, 'cliff': 20, 'form': 4, 'ground': 32, 'hazard': 9, 'item-icons': 3, 'massif': 36, 'monster': 19, 'npc': 9, 'path': 20, 'prop': <count>, 'skill-icons': 1, 'summon': 8, 'trap': 3, 'wall': 18}, found {'backdrop': 8, 'cliff': 20, 'form': 4, 'ground': 32, 'hazard': 9, 'item-icons': 3, 'massif': 36, 'monster': 19, 'npc': 55, 'path': 20, 'prop': <count>, 'skill-icons': 1, 'summon': 8, 'trap': 3, 'wall': 18}"
+  ],
+  "note": "Frontier provenance, alpha, anchors and registration passed. The complete shared-workspace strict gate is compared separately with the pre-redesign baseline; any differences remain visible and fail this command."
+}

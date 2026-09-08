@@ -42,6 +42,31 @@ const Sfx = (() => {
     click: "Dark Fantasy Game Mouse Click Sound.mp3",
     death: "Player Dies In Dark Fantasy Game. Yelling Sound.mp3",
   });
+  const INTERACTIONS=Object.freeze(Object.fromEntries(['portalOpen','teleportTravel','questAccepted','questReady','questCompleted','questProgress'].map(id=>[id,'interactions/'+id+'.wav'])));
+  const interactionBuffers=new Map(), interactionLoads=new Map(), interactionVoices=new Set(), interactionLast=new Map();
+  function loadInteractionSounds() {
+    if(!ac)return Promise.resolve([]);
+    return Promise.all(Object.entries(INTERACTIONS).map(([id,path])=>{
+      if(!interactionLoads.has(id))interactionLoads.set(id,fetch(new URL('assets/sound-effects/'+path,document.baseURI))
+        .then(r=>{if(!r.ok)throw Error('Interaction sound HTTP '+r.status);return r.arrayBuffer();})
+        .then(bytes=>ac.decodeAudioData(bytes)).then(buffer=>{interactionBuffers.set(id,buffer);return buffer;})
+        .catch(err=>{console.warn('Could not load '+id,err);return null;}));
+      return interactionLoads.get(id);
+    }));
+  }
+  function playInteraction(id) {
+    const buffer=interactionBuffers.get(id);
+    if(!buffer || !ac || ac.state!=='running' || !vol.master || !vol.sfx)return;
+    const now=ac.currentTime;
+    if(now-(interactionLast.get(id)??-Infinity)<.12)return;
+    interactionLast.set(id,now);
+    const same=[...interactionVoices].filter(v=>v.id===id);
+    const oldest=same.length>=2?same[0]:interactionVoices.size>=6?interactionVoices.values().next().value:null;
+    if(oldest){oldest.source.stop();oldest.source.disconnect();oldest.gain.disconnect();interactionVoices.delete(oldest);}
+    const source=ac.createBufferSource(),gain=ac.createGain();source.buffer=buffer;gain.gain.value=.85;
+    source.connect(gain);gain.connect(sfxBus);const voice={id,source,gain};interactionVoices.add(voice);
+    source.onended=()=>{source.disconnect();gain.disconnect();interactionVoices.delete(voice);};source.start();
+  }
   let deathBytes = null, deathLoading = null, deathBuffer = null, deathVoice = null, deathRequest = 0;
   const DEATH_LEVEL = .4;
   function fetchDeath() {
@@ -129,7 +154,7 @@ const Sfx = (() => {
   const vol = { master: 0.8, sfx: 0.9, music: 0.55 };
 
   function init() {
-    if (ac) { loadSkills(); return Promise.all([ac.state === "suspended" ? ac.resume().catch(() => {}) : null, loadClick(), loadDeath()]); }
+    if (ac) { loadSkills(); loadInteractionSounds(); return Promise.all([ac.state === "suspended" ? ac.resume().catch(() => {}) : null, loadClick(), loadDeath()]); }
     ac = new (window.AudioContext || window.webkitAudioContext)();
     master = ac.createGain(); master.gain.value = vol.master; master.connect(ac.destination);
     sfxBus = ac.createGain(); sfxBus.gain.value = vol.sfx; sfxBus.connect(master);
@@ -140,6 +165,7 @@ const Sfx = (() => {
     let noiseSeed=0x29fd841;
     for (let i = 0; i < d.length; i++) { noiseSeed^=noiseSeed<<13;noiseSeed^=noiseSeed>>>17;noiseSeed^=noiseSeed<<5;d[i]=(noiseSeed>>>0)/2147483648-1; }
     loadSkills(); // Background preparation must not delay the supplied UI/death recordings.
+    loadInteractionSounds();
     return Promise.all([ac.state === "suspended" ? ac.resume().catch(() => {}) : null, loadClick(), loadDeath()]);
   }
   function loadSkills() { return typeof SkillAudio!=='undefined'?SkillAudio.init(ac,sfxBus,vol):null; }
@@ -226,7 +252,7 @@ const Sfx = (() => {
     quest()      { const t = ac.currentTime; [440, 554, 659].forEach((f, i) => osc("triangle", f, t + i * 0.13, 0.45, 0.12, sfxBus)); },
     death: playDeath,
   };
-  function play(name) { if(typeof SkillAudio!=='undefined'&&SkillAudio.legacy(name))return; if (name === 'click') { playClick(); return; } if (name === 'death') { playDeath(); return; } if (!ac || ac.state !== "running") return; try { (S[name] || (() => {}))(); } catch (e) {} }
+  function play(name) { if(INTERACTIONS[name]){playInteraction(name);return;} if(typeof SkillAudio!=='undefined'&&SkillAudio.legacy(name))return; if (name === 'click') { playClick(); return; } if (name === 'death') { playDeath(); return; } if (!ac || ac.state !== "running") return; try { (S[name] || (() => {}))(); } catch (e) {} }
 
   /* ---------- NPC voices: wordless per-character speech-babble ----------
      profile: { pitch (Hz), formant (Hz), rate (syl/sec), vol }            */
@@ -366,5 +392,6 @@ const Sfx = (() => {
 
   fetchClick(); // Fetch early; decoding and playback wait for a user gesture.
   fetchDeath();
-  return { init, play, playSkill, stopSkills, voice, music, chooseZoneMusic, stopMusic, stopDeath, setVol, vol, TRACKS, EFFECTS, get ctx() { return ac; } };
+  return { init, play, playSkill, stopSkills, voice, music, chooseZoneMusic, stopMusic, stopDeath, setVol, vol, TRACKS, EFFECTS, INTERACTIONS, loadInteractionSounds,
+    get interactionStats(){return {loaded:interactionBuffers.size,voices:interactionVoices.size};}, get ctx() { return ac; } };
 })();

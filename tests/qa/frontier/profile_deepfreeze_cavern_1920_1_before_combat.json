@@ -1,0 +1,28 @@
+{
+  "methodRevision": 4,
+  "width": 1920,
+  "zone": "deepfreeze_cavern",
+  "pair": 1,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 46.5,
+    "y": 36.5
+  },
+  "monsters": 53,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 800,
+  "cpuMs": {
+    "median": 7.8,
+    "p95": 10.4,
+    "max": 19.2
+  },
+  "frameIntervalMs": {
+    "median": 16.7,
+    "p95": 17.6,
+    "max": 100.8
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

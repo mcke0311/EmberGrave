@@ -4,7 +4,7 @@ let checks=0,powers=0;
 const ok=(v,m)=>{checks++;assert.ok(v,m);};
 const approx=(a,b,m)=>ok(Math.abs(a-b)<1e-6,`${m}: ${a} != ${b}`);
 const expected=[...D.UNIQUES,...D.UNIQUE_CHARMS,...D.UNIQUE_JEWELS,...Object.values(D.GLYPHS).filter(g=>g.unique)].map(d=>d.id).sort();
-assert.deepEqual(Object.keys(Q.catalog).sort(),expected);ok(expected.length===162,'entire catalogue');
+assert.deepEqual(Object.keys(Q.catalog).sort(),expected);ok(expected.length===163,'entire catalogue');
 const signatures=new Map();
 const mechanicSignature=p=>JSON.stringify({event:p.event,when:p.when,every:!!p.every,sameTarget:!!p.sameTarget,alternate:!!p.alternate,alternateElement:!!p.alternateElement,
  effects:p.effects.map(e=>({kind:e.kind,stats:e.stats?Object.keys(e.stats):null,attack:e.attack,skill:e.skill,path:e.path}))});
@@ -172,6 +172,7 @@ for(const id of expected){
 // Five class loadouts can recompute and use skills with Unique effects present.
 for(const cls of Object.keys(D.CLASSES)){
  const {p,state,target}=fresh(cls);equip(p,'uc_mystic');equip(p,'u_marrow');equip(p,'uj_rage');
+ if(cls==='veilranger'){p.equip.main=I.fromBase('huntbow');p.computeStats();}
  const sk=D.SKILLS[{vanguard:'vanguard_0_0',emberwitch:'emberwitch_0_0',gravebinder:'venom_spit',wildkeeper:'call_wolf',veilranger:'veilranger_0_0'}[cls]];
  p.mana=p.stats.maxMana;ok(p.performSkill(sk.id,target,{x:11,y:10}),`${cls}: skill cast with uniques`);G.__uniqueTest.flush(2);
  ok(Number.isFinite(p.hp)&&Number.isFinite(p.mana),`${cls}: finite resources`);

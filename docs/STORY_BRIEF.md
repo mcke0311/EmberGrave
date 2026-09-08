@@ -65,7 +65,7 @@ for checkpoints, reachability, skipping, old saves and failed-transition checks.
 | III | Explore shifting tombs, free an imprisoned scholar, and enter the undead king’s palace. | The tomb layout regenerates on entry. `q14` requires finding and freeing Scholar Ilyan; ordinary kills cannot substitute. The scholar’s rescue leads to the palace. |
 | III returning scholar | The town scholar recognizes links to the ancient antagonist’s forgotten experiments. | Edran connects the symbols to the Render’s forgotten Sunderstone experiments; Ilyan confirms the palace inscriptions. |
 | III boss and ending | Azram is an undead king fused to a fragment, with gold plates and chained souls. He summons enemies from earlier areas through portals. His map reveals Malthoron’s suspended cathedral. | Azram’s combat summons earlier enemies after a health threshold. `q15` requires the scholar quest, the boss kill and collecting the fortress map at the throne. |
-| IV | A dimensional gothic fortress changes every level and incorporates shard-touched memories. | Both cathedral levels regenerate on entry. Rescued souls identify memories of Cinderwatch, the Last Bastion and Karrhal; their locations have different reused grave, column and stone props. |
+| IV | A dimensional gothic fortress changes every level and incorporates shard-touched memories. | Both cathedral levels use seeded authored rooms and bridges over blocked void. Cinderwatch, Last Bastion and Karrhal chapels hold the original souls. The Heart pairs seals, priests and sword pieces around its procession ring. Dedicated gothic artwork and two optional memory zones accompany the layouts; detour returns preserve the parent instance, while normal visits regenerate it. See [Cathedral of Memories](CATHEDRAL_DESIGN.md). |
 | IV | Rescue souls, break Quieting seals, find the shattered sword and confront demonic Choir priests. | `q16` requires three soul rescues and the Empty Archangel. `q17` requires that quest, three separate seals, three sword pieces, three Choir priests and Malthoron. Progress survives regenerated maps. |
 | IV midpoint | A soulless false angel, made from discarded Warden armor and corrupted stone, uses the Warden’s voice. | The Empty Archangel’s briefing and combat dialogue establish this identity. Rescue the souls to break its ward. |
 | IV boss and ending | Malthoron sheds human armor, revealing darkness and screaming souls. His destruction collapses the shards into a portal into Hell; someone else guided him. | Health phases announce the armor shedding and change the final silhouette to a wraith. Complete the cathedral objectives and use the shard portal to enter the Breach; the turn-in establishes the hidden master. |
@@ -88,8 +88,6 @@ separate interactive story actions after the kill.
 
 These broader story visuals remain outside the boss encounter pass:
 
-- Full remembered cathedral architecture. The layout changes and distinct
-  props are implemented; complete recreations of the remembered places are not.
 - Dedicated rivers of ash and fields of impaled demons. Existing Hell terrain
   still uses its lava/scorch materials and shared ruins.
 - Authored cinematic depictions of villagers disappearing and Seraneth’s

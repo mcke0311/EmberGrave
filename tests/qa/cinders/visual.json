@@ -1,0 +1,150 @@
+{
+  "status": "PASS",
+  "fading": [
+    {
+      "zone": "ash_wastes",
+      "type": "breach_gate",
+      "alpha": 0.4
+    },
+    {
+      "zone": "ash_wastes",
+      "type": "throne_gate",
+      "alpha": 0.4
+    },
+    {
+      "zone": "ash_wastes",
+      "type": "bastion_gate",
+      "alpha": 0.4
+    },
+    {
+      "zone": "ash_wastes",
+      "type": "siege_engine",
+      "alpha": 0.4
+    },
+    {
+      "zone": "ash_wastes",
+      "type": "siege_tower",
+      "behind": "inaccessible terrain"
+    },
+    {
+      "zone": "ash_wastes",
+      "type": "fallen_statue",
+      "alpha": 0.4
+    },
+    {
+      "zone": "ash_wastes",
+      "type": "impaled_monument",
+      "alpha": 0.4
+    },
+    {
+      "zone": "ash_wastes",
+      "type": "siege_tower",
+      "behind": "inaccessible terrain"
+    },
+    {
+      "zone": "ash_wastes",
+      "type": "siege_engine",
+      "alpha": 0.4
+    },
+    {
+      "zone": "cinder_bastion",
+      "type": "bastion_return",
+      "alpha": 0.4
+    },
+    {
+      "zone": "cinder_bastion",
+      "type": "siege_tower",
+      "alpha": 0.4
+    },
+    {
+      "zone": "cinder_bastion",
+      "type": "furnace_forge",
+      "alpha": 0.4
+    },
+    {
+      "zone": "cinder_bastion",
+      "type": "siege_engine",
+      "alpha": 0.4
+    },
+    {
+      "zone": "cinder_bastion",
+      "type": "fallen_statue",
+      "alpha": 0.4
+    },
+    {
+      "zone": "cinder_bastion",
+      "type": "impaled_monument",
+      "alpha": 0.4
+    },
+    {
+      "zone": "cinder_bastion",
+      "type": "siege_tower",
+      "alpha": 0.4
+    },
+    {
+      "zone": "cinder_bastion",
+      "type": "furnace_forge",
+      "alpha": 0.4
+    },
+    {
+      "zone": "cinder_bastion",
+      "type": "fallen_statue",
+      "alpha": 0.4
+    },
+    {
+      "zone": "throne",
+      "type": "throne_return",
+      "alpha": 0.4
+    },
+    {
+      "zone": "throne",
+      "type": "fallen_statue",
+      "alpha": 0.4
+    },
+    {
+      "zone": "throne",
+      "type": "impaled_monument",
+      "alpha": 0.4
+    },
+    {
+      "zone": "throne",
+      "type": "fallen_statue",
+      "alpha": 0.4
+    },
+    {
+      "zone": "throne",
+      "type": "fallen_statue",
+      "alpha": 0.4
+    },
+    {
+      "zone": "throne",
+      "type": "throne_backdrop",
+      "alpha": 0.4
+    },
+    {
+      "zone": "hellgate",
+      "type": "cinders_breach_gate",
+      "alpha": 0.4
+    }
+  ],
+  "shots": [
+    "throne_1920_warning_phase1.webp",
+    "throne_1920_warning_phase2.webp",
+    "throne_1920_warning_phase3.webp",
+    "throne_3840_warning_phase1.webp",
+    "throne_3840_warning_phase2.webp",
+    "throne_3840_warning_phase3.webp",
+    "ash_wastes_breach_gate_hero_behind.webp",
+    "ash_wastes_throne_gate_hero_behind.webp",
+    "ash_wastes_bastion_gate_hero_behind.webp",
+    "cinder_bastion_bastion_return_hero_behind.webp",
+    "throne_throne_return_hero_behind.webp",
+    "hellgate_cinders_breach_gate_hero_behind.webp"
+  ],
+  "defeat": {
+    "bossDead": true,
+    "flag": true,
+    "q18": "reward"
+  },
+  "browser": "152.0.7977.76"
+}

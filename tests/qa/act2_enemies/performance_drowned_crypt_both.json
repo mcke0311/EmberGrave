@@ -1,0 +1,63 @@
+{
+  "status": "PASS",
+  "baseline": "working-tree-before-act2-enemies",
+  "method": "Three alternating before/after pairs, 90 warmup and 240 sampled frames per workload, full roster retained, nearest open combat pocket, twelve durable targets with a close melee target, verified attack exchange, real 3D Vanguard, cached production terrain.",
+  "results": [
+    {
+      "width": 1920,
+      "zone": "drowned_crypt",
+      "mode": "moving",
+      "before": {
+        "median": 3.8333333333333335,
+        "p95": 5.400000000000001
+      },
+      "after": {
+        "median": 4,
+        "p95": 5.900000000000001
+      },
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "drowned_crypt",
+      "mode": "combat",
+      "before": {
+        "median": 4.333333333333333,
+        "p95": 6
+      },
+      "after": {
+        "median": 5.133333333333334,
+        "p95": 7.8999999999999995
+      },
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "drowned_crypt",
+      "mode": "moving",
+      "before": {
+        "median": 5.366666666666667,
+        "p95": 7.3
+      },
+      "after": {
+        "median": 4.966666666666667,
+        "p95": 6.6000000000000005
+      },
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "drowned_crypt",
+      "mode": "combat",
+      "before": {
+        "median": 6.2,
+        "p95": 8.3
+      },
+      "after": {
+        "median": 6.8999999999999995,
+        "p95": 10.566666666666666
+      },
+      "passed": true
+    }
+  ]
+}

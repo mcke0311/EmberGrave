@@ -1,0 +1,72 @@
+{
+  "status": "PASS",
+  "legacyActors": false,
+  "baseline": "working-tree snapshot in tmp/cinders/before",
+  "method": "Three alternating before/after pairs, 90 warmup and 240 sampled frames per workload, full roster retained, nearest open combat pocket, twelve nearest durable targets with a close melee target, verified attack exchange, real 3D Vanguard, cached production terrain.",
+  "results": [
+    {
+      "width": 1920,
+      "zone": "cinder_bastion",
+      "mode": "moving",
+      "before": {
+        "median": 8,
+        "p95": 11.266666666666666
+      },
+      "after": {
+        "median": 5.866666666666667,
+        "p95": 8.600000000000001
+      },
+      "medianChangePct": -26.7,
+      "p95ChangePct": -23.7,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "cinder_bastion",
+      "mode": "combat",
+      "before": {
+        "median": 9.566666666666666,
+        "p95": 12.866666666666667
+      },
+      "after": {
+        "median": 6.633333333333333,
+        "p95": 10.566666666666668
+      },
+      "medianChangePct": -30.7,
+      "p95ChangePct": -17.9,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "cinder_bastion",
+      "mode": "moving",
+      "before": {
+        "median": 16.433333333333334,
+        "p95": 23.099999999999998
+      },
+      "after": {
+        "median": 7.833333333333333,
+        "p95": 10.200000000000001
+      },
+      "medianChangePct": -52.3,
+      "p95ChangePct": -55.8,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "cinder_bastion",
+      "mode": "combat",
+      "before": {
+        "median": 25.5,
+        "p95": 36.666666666666664
+      },
+      "after": {
+        "median": 8.200000000000001,
+        "p95": 10.666666666666666
+      },
+      "medianChangePct": -67.8,
+      "p95ChangePct": -70.9,
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "methodRevision": 2,
+  "width": 1920,
+  "zone": "north_wild",
+  "pair": 2,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 55.5,
+    "y": 79.5
+  },
+  "monsters": 107,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 1134,
+  "cpuMs": {
+    "median": 5.6,
+    "p95": 6.5,
+    "max": 39.2
+  },
+  "frameIntervalMs": {
+    "median": 16.7,
+    "p95": 18.2,
+    "max": 41.9
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

@@ -1,0 +1,36 @@
+{
+  "status": "INVESTIGATED",
+  "results": [
+    {
+      "zone": "desert_wastes",
+      "width": 3840,
+      "mode": "moving",
+      "beforeMs": 5.550000000000001,
+      "afterMs": 6.15,
+      "beforeUpdateMs": 0.8,
+      "afterUpdateMs": 0.8,
+      "beforeRenderMs": 4.75,
+      "afterRenderMs": 5.35,
+      "afterP95Ms": 8.85,
+      "repeatedPairs": 2,
+      "afterTerrainBuilds": 0,
+      "finding": "The remaining increase is in rendering. Simulation time is equal or lower, and warmed static terrain does not rebuild. The denser authored scene adds about 0.6\u20131.1 ms; measured p95 remains below the 16.67 ms frame budget. More visible scenery is a plausible contributor, not separately isolated here."
+    },
+    {
+      "zone": "desert_wastes",
+      "width": 3840,
+      "mode": "combat",
+      "beforeMs": 6.6,
+      "afterMs": 7.5,
+      "beforeUpdateMs": 1.0,
+      "afterUpdateMs": 0.9,
+      "beforeRenderMs": 5.6,
+      "afterRenderMs": 6.65,
+      "afterP95Ms": 9.85,
+      "repeatedPairs": 2,
+      "afterTerrainBuilds": 0,
+      "finding": "The remaining increase is in rendering. Simulation time is equal or lower, and warmed static terrain does not rebuild. The denser authored scene adds about 0.6\u20131.1 ms; measured p95 remains below the 16.67 ms frame budget. More visible scenery is a plausible contributor, not separately isolated here."
+    }
+  ],
+  "scope": "Repeatable 4K Shifting Wastes increase above 10%; raw samples and component timings retained. Other workloads are reported by performance_all_both.json."
+}

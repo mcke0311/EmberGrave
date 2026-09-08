@@ -4689,6 +4689,39 @@
       ],
       "sourceKind": "authored-final-aligned"
     },
+    "item-icons:oak": {
+      "anchor": [
+        627,
+        627
+      ],
+      "assetId": "ui.items.oak",
+      "bundle": "core",
+      "cell": [
+        1254,
+        1254
+      ],
+      "cols": 1,
+      "key": "oak",
+      "kind": "atlas",
+      "path": "assets/sprites_src/gameplay_art/ui/items_oak.png",
+      "provenance": {
+        "method": "built-in-imagegen",
+        "parameters": {
+          "description": "Polished brown oak knot surrounding a luminous amber heart; transparent dark-fantasy inventory artwork."
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/items/old_oaks_heart.png",
+        "sourceSha256": "3804fc418123952241fa689fa9a1cbaf6702e91314860ee93836e688ae3a10e6"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "item-icons",
+      "rows": 1,
+      "sha256": "3804fc418123952241fa689fa9a1cbaf6702e91314860ee93836e688ae3a10e6",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
     "item-icons:variants": {
       "anchor": [
         32,
@@ -6610,6 +6643,1406 @@
       "size": [
         132,
         132
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_ash_drake": {
+      "anchor": [
+        107,
+        152
+      ],
+      "assetId": "actor.monster.identity_ash_drake",
+      "bundle": "actors",
+      "key": "identity_ash_drake",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_ash_drake.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            40,
+            16,
+            1415,
+            1000
+          ],
+          "height": 74,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/ash_drake.png",
+        "sourceSha256": "bc32d8fb7f3f7824d5381c9560e05f487004e5af460d4b509d4e2fb6ab3ad877"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "5e9bd2563588fb6b41cf7d0f0a2d03043eb1a5fbc46ff02deeab9dc68a3a2db7",
+      "size": [
+        215,
+        156
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_barbarian_axe": {
+      "anchor": [
+        63,
+        148
+      ],
+      "assetId": "actor.monster.identity_barbarian_axe",
+      "bundle": "actors",
+      "key": "identity_barbarian_axe",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_barbarian_axe.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            51,
+            15,
+            1127,
+            1329
+          ],
+          "height": 72,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/barbarian_axe.png",
+        "sourceSha256": "a545a92a9f14e86d93ab0b2dba009af7f512a8e919f97a5b30e12f9ae8005aed"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "b09145262935a5813af6d6a211a0c16717c534a206c112d40f416c0c044c473b",
+      "size": [
+        126,
+        152
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_barbarian_spear": {
+      "anchor": [
+        55,
+        148
+      ],
+      "assetId": "actor.monster.identity_barbarian_spear",
+      "bundle": "actors",
+      "key": "identity_barbarian_spear",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_barbarian_spear.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            32,
+            72,
+            998,
+            1441
+          ],
+          "height": 72,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/barbarian_spear.png",
+        "sourceSha256": "df708446c04edb827deecd9104a3f618679951a6d114876dabdb65401c40de03"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "a13d06fcfe7865ea2d25cb33db27352940265a5aecee162a08e2761613b7d9e4",
+      "size": [
+        110,
+        152
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_barbarian_sword": {
+      "anchor": [
+        49,
+        148
+      ],
+      "assetId": "actor.monster.identity_barbarian_sword",
+      "bundle": "actors",
+      "key": "identity_barbarian_sword",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_barbarian_sword.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            64,
+            30,
+            998,
+            1505
+          ],
+          "height": 72,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/barbarian_sword.png",
+        "sourceSha256": "f41f5a918b4d64a8c639848421d1de4526db4533ef7e05de7e63ad5512dbd955"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "af37f81adef4d7a4b6ad836c03ff69ca1b7989bf1e92efacf64a6646b1150e41",
+      "size": [
+        99,
+        152
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_bone_archer": {
+      "anchor": [
+        48,
+        136
+      ],
+      "assetId": "actor.monster.identity_bone_archer",
+      "bundle": "actors",
+      "key": "identity_bone_archer",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_bone_archer.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            285,
+            16,
+            1098,
+            1224
+          ],
+          "height": 66,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/bone_archer.png",
+        "sourceSha256": "5ed19b7113756e239733adeacf4835baef1ad9bfce30e029f9fa0574da2f00d8"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "12e1be820c1129ba94c75cafe21d43f2f92c6b1cc62ef5a39d6254c49dd3b6f2",
+      "size": [
+        97,
+        140
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_bone_dragon": {
+      "anchor": [
+        76,
+        152
+      ],
+      "assetId": "actor.monster.identity_bone_dragon",
+      "bundle": "actors",
+      "key": "identity_bone_dragon",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_bone_dragon.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            26,
+            19,
+            1216,
+            1241
+          ],
+          "height": 74,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/bone_dragon.png",
+        "sourceSha256": "8322d7f8b5ca8c1b1385736b2cca8a2e28711c2b4d20bd548f62114c626c71b7"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "aa36ec8a0842a2844e58a27f4332b3aa5149b55cf39da91c76b2b3b8a5d6c107",
+      "size": [
+        152,
+        156
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_chained_soul": {
+      "anchor": [
+        48,
+        148
+      ],
+      "assetId": "actor.monster.identity_chained_soul",
+      "bundle": "actors",
+      "key": "identity_chained_soul",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_chained_soul.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            69,
+            25,
+            981,
+            1517
+          ],
+          "height": 72,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/chained_soul.png",
+        "sourceSha256": "18e2d3b0e7ec223e5b03aba259b13673f29fefc70d717370642e073bb0a68273"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "404d9204741047c2e1d7169b32cae929d3c59e0ab73e930330daf0a5112f2962",
+      "size": [
+        96,
+        152
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_cinder_hound": {
+      "anchor": [
+        73,
+        108
+      ],
+      "assetId": "actor.monster.identity_cinder_hound",
+      "bundle": "actors",
+      "key": "identity_cinder_hound",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_cinder_hound.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            94,
+            47,
+            1341,
+            980
+          ],
+          "height": 52,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/cinder_hound.png",
+        "sourceSha256": "90d74b8f342e6005f22c3f295d5cde1a02f409cab72dd348025c0035d2998b2c"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "47e053744aa02daf102bacc1e7c97887ba79a60ff52e51d52868e9fd43554bff",
+      "size": [
+        147,
+        112
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_crystal_golem": {
+      "anchor": [
+        51,
+        150
+      ],
+      "assetId": "actor.monster.identity_crystal_golem",
+      "bundle": "actors",
+      "key": "identity_crystal_golem",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_crystal_golem.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            23,
+            14,
+            1005,
+            1523
+          ],
+          "height": 73,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/crystal_golem.png",
+        "sourceSha256": "af5337cab2525f3f89fbfb8d73ef7182f104a75250d704133be39fbdd77547cd"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "1ce9ed58981d8ef662a7967c6f250a8b9dd6c85b967ae3bb52ab187c1432c9a4",
+      "size": [
+        103,
+        154
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_drowned": {
+      "anchor": [
+        38,
+        136
+      ],
+      "assetId": "actor.monster.identity_drowned",
+      "bundle": "actors",
+      "key": "identity_drowned",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_drowned.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            146,
+            20,
+            921,
+            1515
+          ],
+          "height": 66,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/drowned.png",
+        "sourceSha256": "22d141e07ef73a15be59d6bba07b0145004cd0f9ac9155c76ede266fb5a2bd67"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "21afe17c8e668994af15bf6626d982c42ffcc96344d9d3d47952b7f37f24abb2",
+      "size": [
+        76,
+        140
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_ember_brute": {
+      "anchor": [
+        61,
+        148
+      ],
+      "assetId": "actor.monster.identity_ember_brute",
+      "bundle": "actors",
+      "key": "identity_ember_brute",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_ember_brute.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            133,
+            12,
+            1119,
+            1254
+          ],
+          "height": 72,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/ember_brute.png",
+        "sourceSha256": "ac21b4c703f7bdfad665aa3717637e21829c24de3f146421ec3c1e67a4de63f5"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "d96f8d92a0c22524c8bb547cc8563231fcb79b7192fe5b8056a1eb77ff67d01e",
+      "size": [
+        122,
+        152
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_ember_knight": {
+      "anchor": [
+        52,
+        142
+      ],
+      "assetId": "actor.monster.identity_ember_knight",
+      "bundle": "actors",
+      "key": "identity_ember_knight",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_ember_knight.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            7,
+            17,
+            1013,
+            1461
+          ],
+          "height": 69,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/ember_knight.png",
+        "sourceSha256": "d4fc7aa90c1b73014f556a930d808659334f1fb9a49e2a86ab3077adac2d4fc9"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "314e85fda35f7896bca2c5644ca26a083d6ea02bcc8ff6e471f00e1d6cfaaef4",
+      "size": [
+        104,
+        146
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_ember_robed": {
+      "anchor": [
+        46,
+        144
+      ],
+      "assetId": "actor.monster.identity_ember_robed",
+      "bundle": "actors",
+      "key": "identity_ember_robed",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_ember_robed.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            55,
+            17,
+            951,
+            1506
+          ],
+          "height": 70,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/ember_robed.png",
+        "sourceSha256": "32245f366f9369629ca466c781dcc132c7d0443f0f759dc7ef33d44cfab1bc96"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "d15eceaeb29ff4d4f0f9bdeefb9a0309b77fd7362137547e98fea3d6a506294a",
+      "size": [
+        92,
+        148
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_ember_skeleton": {
+      "anchor": [
+        46,
+        136
+      ],
+      "assetId": "actor.monster.identity_ember_skeleton",
+      "bundle": "actors",
+      "key": "identity_ember_skeleton",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_ember_skeleton.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            35,
+            30,
+            973,
+            1499
+          ],
+          "height": 66,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/ember_skeleton.png",
+        "sourceSha256": "d3bbec1c4bd2fa52d52e3aeab786d74cb49c2bd6d5564795c84bd47fa7936a1d"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "8a55e37dba2077677d87ee614b8d9364b12837d8055b040680d11194b43f44b2",
+      "size": [
+        92,
+        140
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_ember_treant": {
+      "anchor": [
+        60,
+        160
+      ],
+      "assetId": "actor.monster.identity_ember_treant",
+      "bundle": "actors",
+      "key": "identity_ember_treant",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_ember_treant.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            170,
+            8,
+            1085,
+            1288
+          ],
+          "height": 78,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/ember_treant.png",
+        "sourceSha256": "53fb301c22abf9f09e10438cb380c22224564fe726111acbb43239a56abae6a0"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "2c009230ae890fe4f483bb05565c9bd7ec4fe31cdee3cc3a426e9244e5e0643d",
+      "size": [
+        120,
+        164
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_frost_archer": {
+      "anchor": [
+        59,
+        136
+      ],
+      "assetId": "actor.monster.identity_frost_archer",
+      "bundle": "actors",
+      "key": "identity_frost_archer",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_archer.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            113,
+            3,
+            1191,
+            1300
+          ],
+          "height": 66,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/frost_archer.png",
+        "sourceSha256": "7fdd459f2f87aaba9fc87cf3880222c8d9b1d4b2a0cb1df0abdb296e26e310b5"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "58708d1cb2f8a0e155c77a7e7cf6fc80bc5182e299192baa49067b2b11145319",
+      "size": [
+        118,
+        140
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_frost_brute": {
+      "anchor": [
+        60,
+        148
+      ],
+      "assetId": "actor.monster.identity_frost_brute",
+      "bundle": "actors",
+      "key": "identity_frost_brute",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_brute.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            145,
+            13,
+            1101,
+            1243
+          ],
+          "height": 72,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/frost_brute.png",
+        "sourceSha256": "991aae41b315228b56ce968eb285f291a8ee4b603c51b1f5c19c5538fa838f2f"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "143144c66704cc5f307b17ad7d080e15197cc5a1d6b27a0a1408e48c452652e8",
+      "size": [
+        120,
+        152
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_frost_imp": {
+      "anchor": [
+        49,
+        108
+      ],
+      "assetId": "actor.monster.identity_frost_imp",
+      "bundle": "actors",
+      "key": "identity_frost_imp",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_imp.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            19,
+            23,
+            1152,
+            1323
+          ],
+          "height": 52,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/frost_imp.png",
+        "sourceSha256": "a42b23c7a36c9806bb2f7b8328dfd66f25c53af0375c3e777a3df48adf452749"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "05cd8b2e2b995fd3f4418767a6a1145c1c8bc26e21aad5e04062ea2325c2cc10",
+      "size": [
+        99,
+        112
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_frost_ooze": {
+      "anchor": [
+        48,
+        98
+      ],
+      "assetId": "actor.monster.identity_frost_ooze",
+      "bundle": "actors",
+      "key": "identity_frost_ooze",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_ooze.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            10,
+            16,
+            1197,
+            1286
+          ],
+          "height": 47,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/frost_ooze.png",
+        "sourceSha256": "81a0caa80a0c1ed7dc7b56f54f5bf7c8f46f285c7ff87f55c0a964e8016b4616"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "378681434131e6cf0e2abb26c7a7fabbe7064d7af2e95c87e295c64349e508c0",
+      "size": [
+        96,
+        102
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_frost_robed": {
+      "anchor": [
+        49,
+        144
+      ],
+      "assetId": "actor.monster.identity_frost_robed",
+      "bundle": "actors",
+      "key": "identity_frost_robed",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_robed.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            30,
+            49,
+            952,
+            1483
+          ],
+          "height": 70,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/frost_robed.png",
+        "sourceSha256": "8875aafc9b91a6679ba482d8488fda42150bacc400853467edeeb2600077256c"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "a766ab12162a293c17a3d578dbadc53bccca190993f7b84cbdf6693be6dda73a",
+      "size": [
+        98,
+        148
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_frost_soldier": {
+      "anchor": [
+        44,
+        136
+      ],
+      "assetId": "actor.monster.identity_frost_soldier",
+      "bundle": "actors",
+      "key": "identity_frost_soldier",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_soldier.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            47,
+            12,
+            974,
+            1524
+          ],
+          "height": 66,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/frost_soldier.png",
+        "sourceSha256": "452d220cf1483d52fbdbcd261c989dd8a548b25bc8ed4d9d234af04d2dbbb240"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "975854c803082731fc62a0f05abb7cb2ab28dc9886d30a40863e565a2c9e9939",
+      "size": [
+        89,
+        140
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_frost_wraith": {
+      "anchor": [
+        49,
+        148
+      ],
+      "assetId": "actor.monster.identity_frost_wraith",
+      "bundle": "actors",
+      "key": "identity_frost_wraith",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_wraith.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            50,
+            33,
+            969,
+            1498
+          ],
+          "height": 72,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/frost_wraith.png",
+        "sourceSha256": "3829e735185b52b47b578c8a1a2f55a3fbe4ef4d981c9f4af256c3a43dd0d06f"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "5a12fe15a9824ef6eef492a68f859713ca655bbc6a7872c92e713611a97dc8e9",
+      "size": [
+        98,
+        152
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_frost_wyrm": {
+      "anchor": [
+        116,
+        152
+      ],
+      "assetId": "actor.monster.identity_frost_wyrm",
+      "bundle": "actors",
+      "key": "identity_frost_wyrm",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_frost_wyrm.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            19,
+            17,
+            1516,
+            1000
+          ],
+          "height": 74,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/frost_wyrm.png",
+        "sourceSha256": "1991c7ef74e7ac86c395c16d70d313f7eb804a960c00260bc9b189b542fd5fed"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "9ba0d3789598c7de92b1bceeaca8665456a4a8e8b7709dac93f065a2929457bc",
+      "size": [
+        233,
+        156
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_gilded_construct": {
+      "anchor": [
+        49,
+        148
+      ],
+      "assetId": "actor.monster.identity_gilded_construct",
+      "bundle": "actors",
+      "key": "identity_gilded_construct",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_gilded_construct.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            39,
+            14,
+            988,
+            1512
+          ],
+          "height": 72,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/gilded_construct.png",
+        "sourceSha256": "a53e20d8569d6d340db1c52eae504721b1b912f2822000d2294965ad310ccc3b"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "46f743ca11f1576b22290503668855693d41475a1946bfd1a6fa77dd88aeb2b2",
+      "size": [
+        99,
+        152
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_gilded_guard": {
+      "anchor": [
+        43,
+        142
+      ],
+      "assetId": "actor.monster.identity_gilded_guard",
+      "bundle": "actors",
+      "key": "identity_gilded_guard",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_gilded_guard.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            102,
+            4,
+            941,
+            1466
+          ],
+          "height": 69,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/gilded_guard.png",
+        "sourceSha256": "4de27fc12322801d8eee18b60a316e68eb4e96543261c950a2f20e820f0b0338"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "71dabef05caba449b4ad370762d2e34bb3bcf80d387111d201a8db99e6c759b7",
+      "size": [
+        87,
+        146
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_gilded_wraith": {
+      "anchor": [
+        46,
+        148
+      ],
+      "assetId": "actor.monster.identity_gilded_wraith",
+      "bundle": "actors",
+      "key": "identity_gilded_wraith",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_gilded_wraith.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            85,
+            26,
+            944,
+            1491
+          ],
+          "height": 72,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/gilded_wraith.png",
+        "sourceSha256": "c421cacd5fe61976549e01bbbd08ced056bbf20afdab0fe877035f25c8553f89"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "7256ae5903cbe8e022a48d2b78e18ea57347f9b6aede07e62e8c1bb99ef94a72",
+      "size": [
+        92,
+        152
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_glacial_crawler": {
+      "anchor": [
+        106,
+        148
+      ],
+      "assetId": "actor.monster.identity_glacial_crawler",
+      "bundle": "actors",
+      "key": "identity_glacial_crawler",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_glacial_crawler.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            33,
+            16,
+            1440,
+            1010
+          ],
+          "height": 72,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/glacial_crawler.png",
+        "sourceSha256": "1636cf301214a3cfeb264e796a7725247b45a296f80d64e90cf3bdacabc22232"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "8c21ea82f2044ed565707d7ed51a34b512f5d8cdd3b0010c2457d94116c570af",
+      "size": [
+        212,
+        152
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_hollow_child": {
+      "anchor": [
+        31,
+        114
+      ],
+      "assetId": "actor.monster.identity_hollow_child",
+      "bundle": "actors",
+      "key": "identity_hollow_child",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_hollow_child.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            198,
+            15,
+            937,
+            1492
+          ],
+          "height": 55,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/hollow_child.png",
+        "sourceSha256": "320db36fe44428c58cf1c978dedaf46ef6709b7b882bef16f1884ceabce2c5db"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "6bf403886a4833eea293845bc3084702763e180d00be4eff192ce1daf072cfc9",
+      "size": [
+        63,
+        118
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_ice_hound": {
+      "anchor": [
+        79,
+        108
+      ],
+      "assetId": "actor.monster.identity_ice_hound",
+      "bundle": "actors",
+      "key": "identity_ice_hound",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_ice_hound.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            31,
+            18,
+            1451,
+            1004
+          ],
+          "height": 52,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/ice_hound.png",
+        "sourceSha256": "0d01f3c130a696d321dcdaaed5fc58cc183016351e54ac2b4172d97dcef15061"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "27dacb2d09557681fda592109d2e4d729546a46a9af253591e066dc1f0922af1",
+      "size": [
+        158,
+        112
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_larva": {
+      "anchor": [
+        63,
+        90
+      ],
+      "assetId": "actor.monster.identity_larva",
+      "bundle": "actors",
+      "key": "identity_larva",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_larva.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            38,
+            211,
+            1198,
+            1052
+          ],
+          "height": 43,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/larva.png",
+        "sourceSha256": "36bd802f2150b1fc9900c0f368dcdb2fd31bd0956a71a46fe42af7ef55978b8e"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "a31ef000232012aa5e72beb3f8d4f7def40d86ac9acf8dff67d86ada42f81f97",
+      "size": [
+        127,
+        94
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_marauder_mace": {
+      "anchor": [
+        40,
+        136
+      ],
+      "assetId": "actor.monster.identity_marauder_mace",
+      "bundle": "actors",
+      "key": "identity_marauder_mace",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_marauder_mace.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            126,
+            53,
+            907,
+            1472
+          ],
+          "height": 66,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/marauder_mace.png",
+        "sourceSha256": "fa5d02b7292798c440df446fc90f6cbc83e14f089c3c81d0651a883ddf43f07d"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "71d7957d15b0d0600195dea4d686e40b2f17c93455e63b67964e68499872d6ef",
+      "size": [
+        81,
+        140
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_radiant_robed": {
+      "anchor": [
+        49,
+        144
+      ],
+      "assetId": "actor.monster.identity_radiant_robed",
+      "bundle": "actors",
+      "key": "identity_radiant_robed",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_radiant_robed.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            17,
+            16,
+            973,
+            1499
+          ],
+          "height": 70,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/radiant_robed.png",
+        "sourceSha256": "cec122c12460e946a5570e4bbfa03fccb416ce79562cc6aa2fbb00fe5ad1f8e2"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "4284a5543c3ecc91098e769705e1bfb56e667bccea332d90e4e25422de6524cd",
+      "size": [
+        98,
+        148
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_shard_thrall": {
+      "anchor": [
+        45,
+        144
+      ],
+      "assetId": "actor.monster.identity_shard_thrall",
+      "bundle": "actors",
+      "key": "identity_shard_thrall",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_shard_thrall.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            96,
+            59,
+            922,
+            1464
+          ],
+          "height": 70,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/shard_thrall.png",
+        "sourceSha256": "c3d3ea62c65bfab832a8482a2a3200579e05cd5a5d883701575e6da5faea06a9"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "b02a48d88b640c4edf5da5f8d8a989fab0aad25e57bef8c924f36835ff823b6e",
+      "size": [
+        90,
+        148
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_shatter_wasp": {
+      "anchor": [
+        45,
+        90
+      ],
+      "assetId": "actor.monster.identity_shatter_wasp",
+      "bundle": "actors",
+      "key": "identity_shatter_wasp",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_shatter_wasp.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            14,
+            11,
+            1210,
+            1271
+          ],
+          "height": 43,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/shatter_wasp.png",
+        "sourceSha256": "175b3879eb32c4e739c444e0ce47e15650db1c46d20d6cc6356582a7eec9abd1"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "2d7cdb6e493c4e27c2a7750ca9e4df2a9f739b034bf563e2ba18376b108355c8",
+      "size": [
+        90,
+        94
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_storm_brute": {
+      "anchor": [
+        61,
+        148
+      ],
+      "assetId": "actor.monster.identity_storm_brute",
+      "bundle": "actors",
+      "key": "identity_storm_brute",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_storm_brute.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            125,
+            20,
+            1139,
+            1301
+          ],
+          "height": 72,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/storm_brute.png",
+        "sourceSha256": "8fe26f3b77127bf66f702bfae6f276b531ae33c432243f6cd5c2e962b2c88260"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "8db31ff0380c1bd5b072eae7d88da62ae003fd41c8a6e7899e6425b188ec50f8",
+      "size": [
+        122,
+        152
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_storm_imp": {
+      "anchor": [
+        52,
+        108
+      ],
+      "assetId": "actor.monster.identity_storm_imp",
+      "bundle": "actors",
+      "key": "identity_storm_imp",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_storm_imp.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            3,
+            1,
+            1210,
+            1300
+          ],
+          "height": 52,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/storm_imp.png",
+        "sourceSha256": "5c0267eb5c3ce566969d75daf0b33ff377af5682ff6225f1d9a6f0ba0a225743"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "976ffb285d038c83cf6e670504d92273e0034e8949687bb8ee4aa1c9020626c7",
+      "size": [
+        105,
+        112
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_storm_knight": {
+      "anchor": [
+        46,
+        142
+      ],
+      "assetId": "actor.monster.identity_storm_knight",
+      "bundle": "actors",
+      "key": "identity_storm_knight",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_storm_knight.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            68,
+            13,
+            960,
+            1463
+          ],
+          "height": 69,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/storm_knight.png",
+        "sourceSha256": "c6138ecfb5f9dc23273a9965494e4ac7a1136071109436fd4dbf34093ca7a534"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "54ca1bc0dd1a52ddc2df018e3f62c3df535cc593be8af6b98d2646102d2abfe9",
+      "size": [
+        93,
+        146
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_storm_skeleton": {
+      "anchor": [
+        49,
+        136
+      ],
+      "assetId": "actor.monster.identity_storm_skeleton",
+      "bundle": "actors",
+      "key": "identity_storm_skeleton",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_storm_skeleton.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            56,
+            92,
+            983,
+            1441
+          ],
+          "height": 66,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/storm_skeleton.png",
+        "sourceSha256": "35b5524612ee5c3e1da03fd68b621a3239b52096a0f17d9e3758848a1b429ef6"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "b7e5d6afa7b60edc956459c3fa7e3a0ec3cbbb86342fa3d9c9120df0bbb3bfa5",
+      "size": [
+        99,
+        140
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_warlord_axe": {
+      "anchor": [
+        54,
+        156
+      ],
+      "assetId": "actor.monster.identity_warlord_axe",
+      "bundle": "actors",
+      "key": "identity_warlord_axe",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_warlord_axe.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            25,
+            14,
+            1014,
+            1520
+          ],
+          "height": 76,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/warlord_axe.png",
+        "sourceSha256": "b224455f046111952442a9a54041102a0ce6d89f82cd423f847a976c2d437d39"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "36f2e69b787bbe7d3b21f535b00302e1aa4181df93a797136b21ed75ba076962",
+      "size": [
+        108,
+        160
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "monster:identity_wasp": {
+      "anchor": [
+        40,
+        90
+      ],
+      "assetId": "actor.monster.identity_wasp",
+      "bundle": "actors",
+      "key": "identity_wasp",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/actors/monsters/identity_wasp.png",
+      "provenance": {
+        "method": "imagegen-enemy-registration-v1",
+        "parameters": {
+          "alpha": "native",
+          "alphaBounds": [
+            138,
+            31,
+            1159,
+            1233
+          ],
+          "height": 43,
+          "margin": 4
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/enemies/wasp.png",
+        "sourceSha256": "3b2f7930db5c06ae7e9d9758b818dfb7a271e47ee37a4249d3bdb62837ef8371"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "monster",
+      "sha256": "8d09c1b691c2e63eeee47cf79496688360eb79800b7a9e3f1205c6e2079061af",
+      "size": [
+        81,
+        94
       ],
       "sourceKind": "authored-final-aligned"
     },
@@ -12201,6 +13634,1791 @@
       ],
       "sourceKind": "authored-final-aligned"
     },
+    "prop:act2_bell_tower": {
+      "anchor": [
+        165,
+        626
+      ],
+      "assetId": "world.prop.act2_bell_tower",
+      "bundle": "world",
+      "key": "act2_bell_tower",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_bell_tower.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            525,
+            18,
+            996,
+            980
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 48,
+          "width": 330
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/bell_tower.png",
+        "sourceSha256": "7a1e7100f22cb8352d3705da3dda32512144aee15e3770ef550d92c9b92394e2"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "088e3a96d943f73a742b84cf98057cc8a0202c17a394e8c5bc6470e93c9ed1da",
+      "size": [
+        330,
+        674
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_black_water": {
+      "anchor": [
+        256,
+        256
+      ],
+      "assetId": "world.prop.act2_black_water",
+      "bundle": "world",
+      "key": "act2_black_water",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_black_water.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            0,
+            1254,
+            1254
+          ],
+          "alphaMethod": "opaque-material",
+          "baseInset": "material",
+          "width": 512
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/black_water.png",
+        "sourceSha256": "1061d027387e0620d4601284035c426c2aac62e5f1ecb12e4f4ba733dfae7209"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "705ba2c66fae0a78d0c7df5c6c63b6a49f5a9a776e06a6aa1e494290d345aa9f",
+      "size": [
+        512,
+        512
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_boardwalk_x": {
+      "anchor": [
+        128,
+        68
+      ],
+      "assetId": "world.prop.act2_boardwalk_x",
+      "bundle": "world",
+      "key": "act2_boardwalk_x",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_boardwalk_x.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            196,
+            221,
+            1352,
+            836
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": "center",
+          "width": 256
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/boardwalk_x.png",
+        "sourceSha256": "f4db05fefb71774ec950554309917388bb5d1646600b3f85c6ee31bb18a3e0c7"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "4636b4b3ffc5a8297f5181a6849635c363a30aded5944955f799a7b1f43a34f5",
+      "size": [
+        256,
+        136
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_boardwalk_y": {
+      "anchor": [
+        128,
+        68
+      ],
+      "assetId": "world.prop.act2_boardwalk_y",
+      "bundle": "world",
+      "key": "act2_boardwalk_y",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_boardwalk_y.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            219,
+            87,
+            1555,
+            795
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": "center",
+          "width": 256
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/boardwalk_y.png",
+        "sourceSha256": "0c5914f65491ca43dba77f63f9d916bf96ea4a171b11f779f61a8208f27314f0"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "66e13ac9ec686a497d8e522a25fdfb7386c33fb9dd9618a826ea612e95fd2710",
+      "size": [
+        256,
+        136
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_boat_wreck": {
+      "anchor": [
+        150,
+        158
+      ],
+      "assetId": "world.prop.act2_boat_wreck",
+      "bundle": "world",
+      "key": "act2_boat_wreck",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_boat_wreck.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            185,
+            129,
+            1367,
+            877
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 32,
+          "width": 300
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/boat_wreck.png",
+        "sourceSha256": "b87dca50a3b4db7f5d2c786b9259932b88260878d47a02b5e1701d86d648b17f"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "50cc6adf357771f856b5424600bd8b9637068fad59af6d19aaeebf890ec4ec36",
+      "size": [
+        300,
+        190
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_cloister": {
+      "anchor": [
+        190,
+        299
+      ],
+      "assetId": "world.prop.act2_cloister",
+      "bundle": "world",
+      "key": "act2_cloister",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_cloister.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            259,
+            33,
+            1294,
+            989
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 52,
+          "width": 380
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/cloister.png",
+        "sourceSha256": "37d644e308f022104457881dfafc46e02fec1f5c7985246aeb0e4ccdb41262b3"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "eef49ba29adcc972f8310cd8559bd25081f94ac83c7c13a2460c7cb8daab0951",
+      "size": [
+        380,
+        351
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_monastery_in": {
+      "anchor": [
+        170,
+        443
+      ],
+      "assetId": "world.prop.act2_monastery_in",
+      "bundle": "world",
+      "key": "act2_monastery_in",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_monastery_in.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            460,
+            34,
+            1121,
+            985
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 46,
+          "width": 340
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/monastery_in.png",
+        "sourceSha256": "903653913212e8957ee26cdad012cd86bd3b2f81be655dfa180139697ac344f1"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "8b85578148d5c9960cef8fab0efaa64d2d843de7faee4b2c0ff3384e013338c1",
+      "size": [
+        340,
+        489
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_monastery_out": {
+      "anchor": [
+        200,
+        346
+      ],
+      "assetId": "world.prop.act2_monastery_out",
+      "bundle": "world",
+      "key": "act2_monastery_out",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_monastery_out.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            309,
+            36,
+            1230,
+            956
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 54,
+          "width": 400
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/monastery_out_matte.png",
+        "sourceSha256": "47a99a03a04e6548a5cd016f61f983c58c68cf38808ee07f4f914b6f6bae2dff"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "f42111d23d7f6446b955af509c7e2a8fa2ec5cb342a7dc677270af0fd1207338",
+      "size": [
+        400,
+        400
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_nesting_roots": {
+      "anchor": [
+        160,
+        165
+      ],
+      "assetId": "world.prop.act2_nesting_roots",
+      "bundle": "world",
+      "key": "act2_nesting_roots",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_nesting_roots.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            129,
+            107,
+            1407,
+            910
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 36,
+          "width": 320
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/nesting_roots.png",
+        "sourceSha256": "4a0cec747c525daca1a5e4e182c977aa6c64bd7f8bfc3bd488b02d5ceea2f5ba"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "91a4baf2a16dab6375907f3aac0cbe4b22f1a486afead140075ede1f3dcefb8d",
+      "size": [
+        320,
+        201
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_ossuary": {
+      "anchor": [
+        165,
+        209
+      ],
+      "assetId": "world.prop.act2_ossuary",
+      "bundle": "world",
+      "key": "act2_ossuary",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_ossuary.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            227,
+            126,
+            1308,
+            942
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 40,
+          "width": 330
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/ossuary.png",
+        "sourceSha256": "467c2e2c6e7f84c0e9fefb7c025cc98c5bddcb6959e206413380847f9b78e684"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "038908ab20519fbdd58da831d86597eb15de781ec2f84a7f8f23877431882f7b",
+      "size": [
+        330,
+        249
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_paving": {
+      "anchor": [
+        160,
+        97
+      ],
+      "assetId": "world.prop.act2_paving",
+      "bundle": "world",
+      "key": "act2_paving",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_paving.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            128,
+            94,
+            1431,
+            890
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": "center",
+          "width": 320
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/paving.png",
+        "sourceSha256": "45a4c620f5063969801df7e74aa720b5266ba45b8195c13e8193893a6b0fbb4e"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "e9d5ecfd58efe6805ff7ab989700e53e2c32daae837bd7b236f464bef1b61ea5",
+      "size": [
+        320,
+        195
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_reed_clump": {
+      "anchor": [
+        80,
+        200
+      ],
+      "assetId": "world.prop.act2_reed_clump",
+      "bundle": "world",
+      "key": "act2_reed_clump",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_reed_clump.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            453,
+            75,
+            1083,
+            920
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 15,
+          "width": 160
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/reed_clump.png",
+        "sourceSha256": "3c987ad18f58ad4de6ca300af04742f096e66daf8c68fdb9b4959160e1433b2b"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "8f9717d4ac9d24795c017bc28255f3c0312a55b5e5b42c7c0d8fc72d9a824641",
+      "size": [
+        160,
+        215
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_reeds_in": {
+      "anchor": [
+        170,
+        285
+      ],
+      "assetId": "world.prop.act2_reeds_in",
+      "bundle": "world",
+      "key": "act2_reeds_in",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_reeds_in.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            355,
+            77,
+            1224,
+            918
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 44,
+          "width": 340
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/reeds_in.png",
+        "sourceSha256": "904a59b88bc0cbf737f443e2e3ea4b6984f58b8d2d7dfd0442cff0f7365b7f67"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "4b6186ec2feb0626e2e111ab5c348bf34ff3c0cd8d266f5938ccbd62ee0936b9",
+      "size": [
+        340,
+        329
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_reeds_out": {
+      "anchor": [
+        190,
+        237
+      ],
+      "assetId": "world.prop.act2_reeds_out",
+      "bundle": "world",
+      "key": "act2_reeds_out",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_reeds_out.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            173,
+            86,
+            1334,
+            956
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 48,
+          "width": 380
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/reeds_out.png",
+        "sourceSha256": "bdcea6ff3b7a28821c084fbdd5bc2851a4a65cf8aa9efecc897da1c159e78d01"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "40de8d89efaad64a548233a5f664cf25ab4320ce41b0ccc330af5cea41fa6f59",
+      "size": [
+        380,
+        285
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_ritual_in": {
+      "anchor": [
+        180,
+        300
+      ],
+      "assetId": "world.prop.act2_ritual_in",
+      "bundle": "world",
+      "key": "act2_ritual_in",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_ritual_in.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            258,
+            11,
+            1262,
+            982
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 48,
+          "width": 360
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/ritual_in.png",
+        "sourceSha256": "4131d4c03363075736fc3e8ad7f28bd5034691b5eb87000064e9680188680420"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "8797635b5425b8f9ace099759d2ba71a0828bcc96d61faa81fb12d2bf62b337b",
+      "size": [
+        360,
+        348
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_ritual_out": {
+      "anchor": [
+        210,
+        358
+      ],
+      "assetId": "world.prop.act2_ritual_out",
+      "bundle": "world",
+      "key": "act2_ritual_out",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_ritual_out.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            283,
+            32,
+            1245,
+            976
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 54,
+          "width": 420
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/ritual_out.png",
+        "sourceSha256": "9528553b8c909601aaba59ec25e3ddddfa5938c7c5508ba6ff9f85ac094c332a"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "98c77ec749f5eb0075c541bb18396c756e10a7694bebb6046d6593ae9f6777de",
+      "size": [
+        420,
+        412
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_root_crown": {
+      "anchor": [
+        275,
+        317
+      ],
+      "assetId": "world.prop.act2_root_crown",
+      "bundle": "world",
+      "key": "act2_root_crown",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_root_crown.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            84,
+            33,
+            1437,
+            974
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 66,
+          "width": 550
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/root_crown.png",
+        "sourceSha256": "25dbc9b156f2b63c4ad8dbf103358849a2d56cbf5f7bcbeb1a7ce39103332f85"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "0709976b4572e9cfdf21ca93fb5a77c7e8f3f96f5df71d16547dc4b93c957975",
+      "size": [
+        550,
+        383
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_root_mat": {
+      "anchor": [
+        150,
+        72
+      ],
+      "assetId": "world.prop.act2_root_mat",
+      "bundle": "world",
+      "key": "act2_root_mat",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_root_mat.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            79,
+            185,
+            1495,
+            869
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": "center",
+          "width": 300
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/root_mat.png",
+        "sourceSha256": "b9197e56d62f6c4cb85e738295ececa418841275979b773bdfcea74267fea7f6"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "9a951f000485c469eb2c52e952142defa5b58da4f25ae5e170a4aae5ef7a9c97",
+      "size": [
+        300,
+        145
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_sluice_in": {
+      "anchor": [
+        170,
+        303
+      ],
+      "assetId": "world.prop.act2_sluice_in",
+      "bundle": "world",
+      "key": "act2_sluice_in",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_sluice_in.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            349,
+            82,
+            1184,
+            940
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 46,
+          "width": 340
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/sluice_in.png",
+        "sourceSha256": "4a9087ab1951c09c28386669cb9044aa918af60d2b4c66930291dc26b74eea5a"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "7e368a72175df67f151ed316811ac375135b1185664bb63defd9417ed74aa2b1",
+      "size": [
+        340,
+        349
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_sluice_out": {
+      "anchor": [
+        195,
+        260
+      ],
+      "assetId": "world.prop.act2_sluice_out",
+      "bundle": "world",
+      "key": "act2_sluice_out",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_sluice_out.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            191,
+            32,
+            1355,
+            967
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 53,
+          "width": 390
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/sluice_out.png",
+        "sourceSha256": "913b5c146cf374befc546d439d6381f54be6ba1965bbf3240d0ef45a9cb873de"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "863894b558d0e9d1b04a456c837a49ab71b288bf1ef54cecaf9ef1fc7f82d251",
+      "size": [
+        390,
+        313
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_stilt_hut": {
+      "anchor": [
+        165,
+        269
+      ],
+      "assetId": "world.prop.act2_stilt_hut",
+      "bundle": "world",
+      "key": "act2_stilt_hut",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_stilt_hut.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            311,
+            85,
+            1226,
+            955
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 45,
+          "width": 330
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/stilt_hut.png",
+        "sourceSha256": "13e0c8453f575a74f58e21d9c3ab2f214ef9a528730e18d755dd8e098a4eef48"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "08779e129f6bd5356a331c13754516522579da340ea3c0008d89957348796f6e",
+      "size": [
+        330,
+        314
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_submerged_shrine": {
+      "anchor": [
+        175,
+        342
+      ],
+      "assetId": "world.prop.act2_submerged_shrine",
+      "bundle": "world",
+      "key": "act2_submerged_shrine",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_submerged_shrine.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            360,
+            26,
+            1200,
+            956
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 46,
+          "width": 350
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/submerged_shrine.png",
+        "sourceSha256": "0a8465472fe5091650d9f66d679f9047cfcd7d074840acc6268e12f8159f1bd6"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "f488dc7584e7cef32f4e33f6a4daa2e2d93a3edf9fed788072d48dedc31c3154",
+      "size": [
+        350,
+        388
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_votives": {
+      "anchor": [
+        75,
+        89
+      ],
+      "assetId": "world.prop.act2_votives",
+      "bundle": "world",
+      "key": "act2_votives",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_votives.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            257,
+            133,
+            1280,
+            861
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": 18,
+          "width": 150
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/votives.png",
+        "sourceSha256": "c4f571499d28cf67aa6e5ed631ae926f2091939e42e5a12dcbd6bd9073187fff"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "9a59b45fbb15397d4ffe29c8f195f134ffe1979172337cadcb9d20195a39e83b",
+      "size": [
+        150,
+        107
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act2_water_edge": {
+      "anchor": [
+        150,
+        64
+      ],
+      "assetId": "world.prop.act2_water_edge",
+      "bundle": "world",
+      "key": "act2_water_edge",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act2_water_edge.png",
+      "provenance": {
+        "method": "imagegen-act2-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            165,
+            282,
+            1437,
+            830
+          ],
+          "alphaMethod": "magenta-extraction-matte",
+          "baseInset": "center",
+          "width": 300
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act2/water_edge.png",
+        "sourceSha256": "9135a93a78443f15c0e3d627d3d71d1fbe2353673401042fdc8bf81406ce8f92"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "24bbdd78682fdc566dae3e4f92fbc01b4ef701f02334544a5c2ba59219f0e20d",
+      "size": [
+        300,
+        129
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_aqueduct": {
+      "anchor": [
+        185,
+        206
+      ],
+      "assetId": "world.prop.act3_aqueduct",
+      "bundle": "world",
+      "key": "act3_aqueduct",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_aqueduct.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            234,
+            14,
+            1540,
+            874
+          ],
+          "baseInset": 38,
+          "technicalMatte": "neutral-technical-matte",
+          "width": 370
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/aqueduct.png",
+        "sourceSha256": "fed2c43cddfff823d6c0ddd3a9fd71c24f489bfbba339869a685f320f8bca281"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "117addbb2434572c35c320ce875083b0531260154aecb539c2f21c45c6ebc3f6",
+      "size": [
+        370,
+        244
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_aqueduct_gate": {
+      "anchor": [
+        215,
+        342
+      ],
+      "assetId": "world.prop.act3_aqueduct_gate",
+      "bundle": "world",
+      "key": "act3_aqueduct_gate",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_aqueduct_gate.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            311,
+            90,
+            1215,
+            904
+          ],
+          "baseInset": 45,
+          "technicalMatte": "neutral-technical-matte",
+          "width": 430
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/aqueduct_gate.png",
+        "sourceSha256": "bce6d85e2bfb81ba8485fa45b04f4e274ad8ab92781f1a45af8a896865b1d805"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "19314a7644df22fe2fcefcbaacdb49c0e5cf11710d5490a31251d017abe2bc1d",
+      "size": [
+        430,
+        387
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_awning": {
+      "anchor": [
+        125,
+        212
+      ],
+      "assetId": "world.prop.act3_awning",
+      "bundle": "world",
+      "key": "act3_awning",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_awning.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            268,
+            16,
+            1270,
+            984
+          ],
+          "baseInset": 30,
+          "technicalMatte": "native-alpha",
+          "width": 250
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/awning.png",
+        "sourceSha256": "1a67f39189cd4d380ad5c608264f374627e32ccd67552941dd5d13289d4ed6ad"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "1eb2fb571f3626fb474080c51b3c3770c2aa543af7a8d74ccd579097f9fd20c6",
+      "size": [
+        250,
+        242
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_checkpoint": {
+      "anchor": [
+        180,
+        254
+      ],
+      "assetId": "world.prop.act3_checkpoint",
+      "bundle": "world",
+      "key": "act3_checkpoint",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_checkpoint.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            316,
+            81,
+            1305,
+            902
+          ],
+          "baseInset": 45,
+          "technicalMatte": "neutral-technical-matte",
+          "width": 360
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/checkpoint.png",
+        "sourceSha256": "916bba920a0e14378c3714d10275d66d61391e7fdbbb766b730ff88f3e3dae2c"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "cf86468c64788ffa02c523c80b89cda284bae72ffbe605d8741ca899d61ed285",
+      "size": [
+        360,
+        299
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_colossus": {
+      "anchor": [
+        175,
+        276
+      ],
+      "assetId": "world.prop.act3_colossus",
+      "bundle": "world",
+      "key": "act3_colossus",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_colossus.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            252,
+            54,
+            1275,
+            988
+          ],
+          "baseInset": 44,
+          "technicalMatte": "neutral-technical-matte",
+          "width": 350
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/colossus.png",
+        "sourceSha256": "e1eb08771dbefc9b79371ec962d7d17bd7af7a1b31106af50db59060b5d4589c"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "df1afe67842c9d7d9d63a156b06758ccb5b5881a87a9863700b8648afe81c8b9",
+      "size": [
+        350,
+        320
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_columns": {
+      "anchor": [
+        180,
+        350
+      ],
+      "assetId": "world.prop.act3_columns",
+      "bundle": "world",
+      "key": "act3_columns",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_columns.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            345,
+            57,
+            1198,
+            989
+          ],
+          "baseInset": 43,
+          "technicalMatte": "neutral-technical-matte",
+          "width": 360
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/columns.png",
+        "sourceSha256": "271aee8b976051f95233bf0318bbcf4b2e1c180bad5a877b71247b94a97fd069"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "7dc1398c6e03d251203e7052cd8329fda83a0f58e49ec54141494d6f021d9c05",
+      "size": [
+        360,
+        393
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_crane": {
+      "anchor": [
+        140,
+        281
+      ],
+      "assetId": "world.prop.act3_crane",
+      "bundle": "world",
+      "key": "act3_crane",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_crane.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            339,
+            15,
+            1200,
+            983
+          ],
+          "baseInset": 34,
+          "technicalMatte": "neutral-technical-matte",
+          "width": 280
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/crane.png",
+        "sourceSha256": "5e8e968b1b17e96b3249c8bd4996f82b436ec981a153e39a47e1e50c59d9541c"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "5f64afc30f2ea03293ef7a63f3fc88796ee5b9b155cc21cd32d6af2378d5f94d",
+      "size": [
+        280,
+        315
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_ground_market": {
+      "anchor": [
+        256,
+        256
+      ],
+      "assetId": "world.prop.act3_ground_market",
+      "bundle": "world",
+      "key": "act3_ground_market",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_ground_market.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            0,
+            1254,
+            1254
+          ],
+          "baseInset": "center",
+          "technicalMatte": "opaque-material",
+          "width": 512
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/ground_market.png",
+        "sourceSha256": "097f0fe6075b86890a63f28a65964495683c3068aded346b1b1a06aaa52caa20"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "c4283fc527d7bff6925ad92780ca465dcc79b56b3068aae9bc4a5119e4aff812",
+      "size": [
+        512,
+        512
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_ground_palace": {
+      "anchor": [
+        256,
+        256
+      ],
+      "assetId": "world.prop.act3_ground_palace",
+      "bundle": "world",
+      "key": "act3_ground_palace",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_ground_palace.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            0,
+            1254,
+            1254
+          ],
+          "baseInset": "center",
+          "technicalMatte": "opaque-material",
+          "width": 512
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/ground_palace.png",
+        "sourceSha256": "5f3ebac255f837315181da9fc11bbad5e05ef3bfd4a2d0d43a4a0a978fcc0a6b"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "a43d1e03a78bd9353107010d9b07fc84853722463427e349f36fdc6a5509682c",
+      "size": [
+        512,
+        512
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_ground_sand": {
+      "anchor": [
+        256,
+        256
+      ],
+      "assetId": "world.prop.act3_ground_sand",
+      "bundle": "world",
+      "key": "act3_ground_sand",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_ground_sand.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            0,
+            1254,
+            1254
+          ],
+          "baseInset": "center",
+          "technicalMatte": "opaque-material",
+          "width": 512
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/ground_sand.png",
+        "sourceSha256": "b45cefb54d1fad5e26f63a2f7a35da2f8d2dcce983860114a61e36e3c3296b8a"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "95fc2e8e6d5ecf4cb846428934bdc0969c152c916441286166d5b4591be558b4",
+      "size": [
+        512,
+        512
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_ground_tomb": {
+      "anchor": [
+        256,
+        256
+      ],
+      "assetId": "world.prop.act3_ground_tomb",
+      "bundle": "world",
+      "key": "act3_ground_tomb",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_ground_tomb.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            0,
+            1254,
+            1254
+          ],
+          "baseInset": "center",
+          "technicalMatte": "opaque-material",
+          "width": 512
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/ground_tomb.png",
+        "sourceSha256": "5c4900b819fa0adc168e25a5845645ebba69772134b30d5b4b5b0022cd30815e"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "81ca4cd6ea8f185acd2b63f727ca881277f49a1049361fa50ae324d909a6f629",
+      "size": [
+        512,
+        512
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_market_gate": {
+      "anchor": [
+        215,
+        261
+      ],
+      "assetId": "world.prop.act3_market_gate",
+      "bundle": "world",
+      "key": "act3_market_gate",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_market_gate.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            229,
+            93,
+            1315,
+            891
+          ],
+          "baseInset": 55,
+          "technicalMatte": "neutral-technical-matte",
+          "width": 430
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/market_gate.png",
+        "sourceSha256": "4bf056488f187055f875128bbc34edbeda5b9135281d6b3966b0d6f94267581d"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "e05b2f8653f669b68e0a450d89757ab07a772500d9c9a06f7ab3cef8965c142c",
+      "size": [
+        430,
+        316
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_mausoleum_gate": {
+      "anchor": [
+        230,
+        381
+      ],
+      "assetId": "world.prop.act3_mausoleum_gate",
+      "bundle": "world",
+      "key": "act3_mausoleum_gate",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_mausoleum_gate.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            244,
+            7,
+            1296,
+            1016
+          ],
+          "baseInset": 60,
+          "technicalMatte": "native-alpha",
+          "width": 460
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/mausoleum_gate.png",
+        "sourceSha256": "0d84517df91b2fcd1207dc1312cd93d29f97aac65c9cbe93d3cd82decb8c38d8"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "d53726c24bd4ed13e4bb6a17d5f9cafea7358e0dbc34a96dd2e09b2a971ea068",
+      "size": [
+        460,
+        441
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_mechanism": {
+      "anchor": [
+        165,
+        268
+      ],
+      "assetId": "world.prop.act3_mechanism",
+      "bundle": "world",
+      "key": "act3_mechanism",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_mechanism.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            252,
+            22,
+            1280,
+            987
+          ],
+          "baseInset": 42,
+          "technicalMatte": "neutral-technical-matte",
+          "width": 330
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/mechanism.png",
+        "sourceSha256": "aa081b4abcaf635b9149027d20eece0d033932385480a472f313b7c39e0a5655"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "6e86a7fe5462a54fadee3b1d28c05c9ce61befbfb7385c3956cd9b4d183e7b06",
+      "size": [
+        330,
+        310
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_mosaic": {
+      "anchor": [
+        190,
+        126
+      ],
+      "assetId": "world.prop.act3_mosaic",
+      "bundle": "world",
+      "key": "act3_mosaic",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_mosaic.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            59,
+            41,
+            1477,
+            980
+          ],
+          "baseInset": "center",
+          "technicalMatte": "native-alpha",
+          "width": 380
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/mosaic.png",
+        "sourceSha256": "90cd45dba9648002f4bcc93d80567c416ae360af71952a964b53a5785f7dbc87"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "98f284e717a0c9d826072d450e46efe20dcb06f46df2d75562a1f823521bfd54",
+      "size": [
+        380,
+        252
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_palace_gate": {
+      "anchor": [
+        255,
+        402
+      ],
+      "assetId": "world.prop.act3_palace_gate",
+      "bundle": "world",
+      "key": "act3_palace_gate",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_palace_gate.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            259,
+            35,
+            1276,
+            967
+          ],
+          "baseInset": 65,
+          "technicalMatte": "neutral-technical-matte",
+          "width": 510
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/palace_gate.png",
+        "sourceSha256": "dace27bf19e512bab75dd2eb380337acf4c16de0a33e83272b3acd6ff3b4db32"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "b880ef95a6b75a636ed0b2fe25b14db8c3570779f7cea1accdc6d8fc5f62358d",
+      "size": [
+        510,
+        467
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_paving": {
+      "anchor": [
+        175,
+        79
+      ],
+      "assetId": "world.prop.act3_paving",
+      "bundle": "world",
+      "key": "act3_paving",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_paving.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            57,
+            74,
+            1704,
+            824
+          ],
+          "baseInset": "center",
+          "technicalMatte": "neutral-technical-matte",
+          "width": 350
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/paving.png",
+        "sourceSha256": "282ae393003c35ad5380a61fce1dd75aac60e060e5805c27c203ebed03b85628"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "aeaf5ea7af21ad0089db79048597e9d326ed7ef79a4b0a23c3d4f6cb70787b44",
+      "size": [
+        350,
+        159
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_relay_active": {
+      "anchor": [
+        80,
+        210
+      ],
+      "assetId": "world.prop.act3_relay_active",
+      "bundle": "world",
+      "key": "act3_relay_active",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_relay_active.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            434,
+            12,
+            1100,
+            980
+          ],
+          "baseInset": 23,
+          "technicalMatte": "native-alpha",
+          "width": 160
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/relay_active.png",
+        "sourceSha256": "cbe4ad31a2caa25bf3d81737b48123e067eb48bb12b6d1067b8e191f272b9882"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "7d7f97a4df6dd6e7765062c044d5e2a21e68c4bc3d82eaa054ef9e2985e8672a",
+      "size": [
+        160,
+        233
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_relay_disabled": {
+      "anchor": [
+        80,
+        197
+      ],
+      "assetId": "world.prop.act3_relay_disabled",
+      "bundle": "world",
+      "key": "act3_relay_disabled",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_relay_disabled.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            400,
+            22,
+            1112,
+            1002
+          ],
+          "baseInset": 23,
+          "technicalMatte": "native-alpha",
+          "width": 160
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/relay_disabled.png",
+        "sourceSha256": "7829d4696edfa955dba295d6b6d5f62fef07274e79ccaec288ab812d3f2a45fb"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "99032a8ae1fb2969a22075b932435f923179f80099978c174445374a972f8256",
+      "size": [
+        160,
+        220
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_rubble": {
+      "anchor": [
+        145,
+        84
+      ],
+      "assetId": "world.prop.act3_rubble",
+      "bundle": "world",
+      "key": "act3_rubble",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_rubble.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            149,
+            145,
+            1388,
+            867
+          ],
+          "baseInset": "center",
+          "technicalMatte": "native-alpha",
+          "width": 290
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/rubble.png",
+        "sourceSha256": "f0552c633279dadb4ac4057b6c28b93003411ca5e2380199b50c4a7b023655d2"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "05a6e90c04f76ed993fe86ca859a4741e8bd4e8835ab3d744153eb64a34a88bf",
+      "size": [
+        290,
+        169
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_sand_drift": {
+      "anchor": [
+        180,
+        98
+      ],
+      "assetId": "world.prop.act3_sand_drift",
+      "bundle": "world",
+      "key": "act3_sand_drift",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_sand_drift.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            103,
+            139,
+            1426,
+            864
+          ],
+          "baseInset": "center",
+          "technicalMatte": "native-alpha",
+          "width": 360
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/sand_drift.png",
+        "sourceSha256": "b8d432faf414f8ac1737310a0cb4acdcfecc7c631723ed631b930bd702d49156"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "b4d75844f9a1595f3a78ba3c3758be1f0608de31832be184b858834e9c893b53",
+      "size": [
+        360,
+        197
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_sarcophagus": {
+      "anchor": [
+        130,
+        183
+      ],
+      "assetId": "world.prop.act3_sarcophagus",
+      "bundle": "world",
+      "key": "act3_sarcophagus",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_sarcophagus.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            207,
+            30,
+            1329,
+            948
+          ],
+          "baseInset": 30,
+          "technicalMatte": "native-alpha",
+          "width": 260
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/sarcophagus.png",
+        "sourceSha256": "dd5367d1c324df2f8291d8edc4e202e916a373ce227fbd9dd75fbb1dea2d3bdc"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "9fb70db4057aba75add9c87bd876ab6bc54ed0b9835582490e7dcf1ad850d761",
+      "size": [
+        260,
+        213
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_shards": {
+      "anchor": [
+        135,
+        110
+      ],
+      "assetId": "world.prop.act3_shards",
+      "bundle": "world",
+      "key": "act3_shards",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_shards.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            173,
+            55,
+            1612,
+            815
+          ],
+          "baseInset": 33,
+          "technicalMatte": "native-alpha",
+          "width": 270
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/shards_v2.png",
+        "sourceSha256": "0aa9b649adf3cdd3245e373a3d2920ea2d3f68ba6a6444138ed3cd8b12168a62"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "dbf4ee9685746a9935b992259034ccae4460da8173be91c8938a3a09b6f1d6f5",
+      "size": [
+        270,
+        143
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_stall": {
+      "anchor": [
+        135,
+        244
+      ],
+      "assetId": "world.prop.act3_stall",
+      "bundle": "world",
+      "key": "act3_stall",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_stall.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            382,
+            91,
+            1165,
+            893
+          ],
+          "baseInset": 33,
+          "technicalMatte": "neutral-technical-matte",
+          "width": 270
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/stall.png",
+        "sourceSha256": "7f19204fa0f81def29da96f23f5a8c10b1458fe5191efd5f3da11284b4e8e2ed"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "552da984dffa0c5bb3255a89c4bbc2bfafed3250cf0980eae67fc0e0fa1aa674",
+      "size": [
+        270,
+        277
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_throne": {
+      "anchor": [
+        205,
+        358
+      ],
+      "assetId": "world.prop.act3_throne",
+      "bundle": "world",
+      "key": "act3_throne",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_throne.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            369,
+            90,
+            1198,
+            924
+          ],
+          "baseInset": 54,
+          "technicalMatte": "neutral-technical-matte",
+          "width": 410
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/throne.png",
+        "sourceSha256": "5c5f08d85d8663fa281bd6c23179c4facaa9fa546e0b3456725c993cace93274"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "d0c346d6cfe14de6d2d8f54076a96907c2a4e6a653693910be12f2a9a9457210",
+      "size": [
+        410,
+        412
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_tomb_gate": {
+      "anchor": [
+        205,
+        364
+      ],
+      "assetId": "world.prop.act3_tomb_gate",
+      "bundle": "world",
+      "key": "act3_tomb_gate",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_tomb_gate.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            321,
+            33,
+            1214,
+            945
+          ],
+          "baseInset": 55,
+          "technicalMatte": "neutral-technical-matte",
+          "width": 410
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/tomb_gate.png",
+        "sourceSha256": "e22e4f1241e329bb514c6ff223ffb263d7c09df44e5990eba6049986559c98d9"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "09121bc96be5c696c6424eea56099b1af91d24eca60c0d93b8bdcb1c697038b8",
+      "size": [
+        410,
+        419
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_tracks": {
+      "anchor": [
+        165,
+        90
+      ],
+      "assetId": "world.prop.act3_tracks",
+      "bundle": "world",
+      "key": "act3_tracks",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_tracks.png",
+      "provenance": {
+        "method": "imagegen-act3-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            324,
+            136,
+            1460,
+            754
+          ],
+          "baseInset": "center",
+          "technicalMatte": "neutral-technical-matte",
+          "width": 330
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3/tracks.png",
+        "sourceSha256": "4836f7b1dc0ad8752dc48b288a5875ba2c87849a6131b23b4073fef2c567de83"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "97a1732f982a6bd1d83f38d8563e9470cf27dc1b9cf5fcad12145395992d37d2",
+      "size": [
+        330,
+        180
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
     "prop:adobehouse": {
       "anchor": [
         66,
@@ -12418,6 +15636,1326 @@
       ],
       "sourceKind": "authored-final-aligned"
     },
+    "prop:cathedral_arrival": {
+      "anchor": [
+        215,
+        473
+      ],
+      "assetId": "world.prop.cathedral_arrival",
+      "bundle": "world",
+      "key": "cathedral_arrival",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_arrival.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            146,
+            5,
+            1140,
+            1248
+          ],
+          "anchor": [
+            215,
+            473
+          ],
+          "cell": [
+            0,
+            0,
+            1254,
+            1254
+          ],
+          "nativeAlpha": true,
+          "width": 430
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/arrival.png",
+        "sourceSha256": "574698530873d8ca9e6627fb7d4fe77e47b3c66a759d30abe54deb049554f820"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "e91a69de3bacdf23bda046eec3ac4ee096a9c1f513d5ee94f3b7490dada58839",
+      "size": [
+        430,
+        538
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_bastion_gate": {
+      "anchor": [
+        219,
+        242
+      ],
+      "assetId": "world.prop.cathedral_bastion_gate",
+      "bundle": "world",
+      "key": "cathedral_bastion_gate",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_bastion_gate.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            50,
+            12,
+            1490,
+            1011
+          ],
+          "anchor": [
+            219,
+            242
+          ],
+          "cell": [
+            0,
+            0,
+            1536,
+            1024
+          ],
+          "nativeAlpha": true,
+          "width": 438
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/bastion_gate.png",
+        "sourceSha256": "8e1e0b0eff40542dd5f2e6871689258a1786351cab7ad8a7e0eef7eda5bb0c18"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "abf9e99a12145c5985ea74f40eb675b9dad1caa3bfc58363259edc92015e3d2a",
+      "size": [
+        438,
+        304
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_broken_arch": {
+      "anchor": [
+        120,
+        212
+      ],
+      "assetId": "world.prop.cathedral_broken_arch",
+      "bundle": "world",
+      "key": "cathedral_broken_arch",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_broken_arch.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            63,
+            36,
+            512,
+            497
+          ],
+          "anchor": [
+            120,
+            212
+          ],
+          "cell": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "nativeAlpha": true,
+          "width": 240
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/architecture.png",
+        "sourceSha256": "2feac3691274508b5a4793a51020b799ef5b0610171ea43a0b49a44dd6179cd4"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "9cc709af30d7367008f2d94035fd0978d2ad16143ac0ae77df67a4683577c498",
+      "size": [
+        240,
+        246
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_buttress": {
+      "anchor": [
+        115,
+        308
+      ],
+      "assetId": "world.prop.cathedral_buttress",
+      "bundle": "world",
+      "key": "cathedral_buttress",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_buttress.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            106,
+            5,
+            449,
+            512
+          ],
+          "anchor": [
+            115,
+            308
+          ],
+          "cell": [
+            512,
+            0,
+            1024,
+            512
+          ],
+          "nativeAlpha": true,
+          "width": 230
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/architecture.png",
+        "sourceSha256": "2feac3691274508b5a4793a51020b799ef5b0610171ea43a0b49a44dd6179cd4"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "8337ecc0fe70dba59af2702d4eb990736917aae20258e9612a9835ae6b1fea26",
+      "size": [
+        230,
+        340
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_cinder_gate": {
+      "anchor": [
+        195,
+        368
+      ],
+      "assetId": "world.prop.cathedral_cinder_gate",
+      "bundle": "world",
+      "key": "cathedral_cinder_gate",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_cinder_gate.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            80,
+            16,
+            1207,
+            1221
+          ],
+          "anchor": [
+            195,
+            368
+          ],
+          "cell": [
+            0,
+            0,
+            1254,
+            1254
+          ],
+          "nativeAlpha": true,
+          "width": 390
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/cinder_gate.png",
+        "sourceSha256": "b4b132a2b2a9a65da5c76c173a977464c2cd756e40288f216e99ba3d61fda412"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "d4e07a9466fb17dd1362c022edd63ac0b6485003fb88c1f746703c0bc6b325cb",
+      "size": [
+        390,
+        417
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_column": {
+      "anchor": [
+        65,
+        214
+      ],
+      "assetId": "world.prop.cathedral_column",
+      "bundle": "world",
+      "key": "cathedral_column",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_column.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            124,
+            14,
+            398,
+            507
+          ],
+          "anchor": [
+            65,
+            214
+          ],
+          "cell": [
+            1024,
+            0,
+            1536,
+            512
+          ],
+          "nativeAlpha": true,
+          "width": 130
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/architecture.png",
+        "sourceSha256": "2feac3691274508b5a4793a51020b799ef5b0610171ea43a0b49a44dd6179cd4"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "0b4b29192c5201c8e334e50997c0aaf8bed43ab576b089340f5f0b16ba8f8bb5",
+      "size": [
+        130,
+        234
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_defenses": {
+      "anchor": [
+        190,
+        361
+      ],
+      "assetId": "world.prop.cathedral_defenses",
+      "bundle": "world",
+      "key": "cathedral_defenses",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_defenses.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            29,
+            3,
+            500,
+            512
+          ],
+          "anchor": [
+            190,
+            361
+          ],
+          "cell": [
+            1024,
+            0,
+            1536,
+            512
+          ],
+          "nativeAlpha": true,
+          "width": 380
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/landmarks.png",
+        "sourceSha256": "24da8020227c7b09693b8119b35ddbaedabbdafccd8f0e3ed823fc60a9d59ad9"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "3d632bb76ddad67ecb7ac6c54b9430894207dd9e8574074af3d1bbe08d2db6a2",
+      "size": [
+        380,
+        411
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_floor_dark": {
+      "anchor": [
+        192,
+        192
+      ],
+      "assetId": "world.prop.cathedral_floor_dark",
+      "bundle": "world",
+      "key": "cathedral_floor_dark",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_floor_dark.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "anchor": [
+            192,
+            192
+          ],
+          "cell": [
+            512,
+            0,
+            1024,
+            512
+          ],
+          "nativeAlpha": true,
+          "width": 384
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/materials.png",
+        "sourceSha256": "461f1e66295f6fb7fe8a43cc02009b23c37a7366720fd215b02a9ca32698697d"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "7956c1a447191b91e77cd465990a62e6dd5b33482f86f36b0ffa8bd147984e6d",
+      "size": [
+        384,
+        384
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_floor_fortress": {
+      "anchor": [
+        192,
+        192
+      ],
+      "assetId": "world.prop.cathedral_floor_fortress",
+      "bundle": "world",
+      "key": "cathedral_floor_fortress",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_floor_fortress.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "anchor": [
+            192,
+            192
+          ],
+          "cell": [
+            0,
+            512,
+            512,
+            1024
+          ],
+          "nativeAlpha": true,
+          "width": 384
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/materials.png",
+        "sourceSha256": "461f1e66295f6fb7fe8a43cc02009b23c37a7366720fd215b02a9ca32698697d"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "0f3d47b711fdd4e836cd3c5b52dc8e38f77027d4345f902a62044a9c41b7a718",
+      "size": [
+        384,
+        384
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_floor_pale": {
+      "anchor": [
+        192,
+        192
+      ],
+      "assetId": "world.prop.cathedral_floor_pale",
+      "bundle": "world",
+      "key": "cathedral_floor_pale",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_floor_pale.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "anchor": [
+            192,
+            192
+          ],
+          "cell": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "nativeAlpha": true,
+          "width": 384
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/materials.png",
+        "sourceSha256": "461f1e66295f6fb7fe8a43cc02009b23c37a7366720fd215b02a9ca32698697d"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "6b14d8075b36b7d60bf468aadc7a09d79b441d19e36f642e0cf513f2d680c0c3",
+      "size": [
+        384,
+        384
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_floor_street": {
+      "anchor": [
+        192,
+        192
+      ],
+      "assetId": "world.prop.cathedral_floor_street",
+      "bundle": "world",
+      "key": "cathedral_floor_street",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_floor_street.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "anchor": [
+            192,
+            192
+          ],
+          "cell": [
+            1024,
+            0,
+            1536,
+            512
+          ],
+          "nativeAlpha": true,
+          "width": 384
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/materials.png",
+        "sourceSha256": "461f1e66295f6fb7fe8a43cc02009b23c37a7366720fd215b02a9ca32698697d"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "dc9820b9b3b05c4dd10db0294167540cfa2a35a50b953b08c28eb1d3e9ac0c25",
+      "size": [
+        384,
+        384
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_foundation": {
+      "anchor": [
+        33,
+        16
+      ],
+      "assetId": "world.prop.cathedral_foundation",
+      "bundle": "world",
+      "key": "cathedral_foundation",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_foundation.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            38,
+            17,
+            472,
+            478
+          ],
+          "anchor": [
+            33,
+            16
+          ],
+          "cell": [
+            1024,
+            512,
+            1536,
+            1024
+          ],
+          "nativeAlpha": true,
+          "width": 66
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/architecture.png",
+        "sourceSha256": "2feac3691274508b5a4793a51020b799ef5b0610171ea43a0b49a44dd6179cd4"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "4578e6fc11eae419ea8a4cbc57540d9e1a67e75291a605e68ef689025586677f",
+      "size": [
+        66,
+        70
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_glass": {
+      "anchor": [
+        100,
+        68
+      ],
+      "assetId": "world.prop.cathedral_glass",
+      "bundle": "world",
+      "key": "cathedral_glass",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_glass.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            32,
+            159,
+            848,
+            715
+          ],
+          "anchor": [
+            100,
+            68
+          ],
+          "cell": [
+            0,
+            0,
+            887,
+            887
+          ],
+          "nativeAlpha": true,
+          "width": 200
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/decals.png",
+        "sourceSha256": "4d0cbc744a7f30aea05897f334a75ffa0a9811e2f26abd0a4e1adffbf78cf4e3"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "cdf7456c7abd8021da2c32ae9ce542211740f68cea2c5768edb63c51dbe3124e",
+      "size": [
+        200,
+        136
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_heart_gate": {
+      "anchor": [
+        207,
+        395
+      ],
+      "assetId": "world.prop.cathedral_heart_gate",
+      "bundle": "world",
+      "key": "cathedral_heart_gate",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_heart_gate.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            76,
+            4,
+            1188,
+            1215
+          ],
+          "anchor": [
+            207,
+            395
+          ],
+          "cell": [
+            0,
+            0,
+            1254,
+            1254
+          ],
+          "nativeAlpha": true,
+          "width": 414
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/heart_gate.png",
+        "sourceSha256": "94f10264482b7e6764bbdb3831e2b1c636e7d958e774023fa996695f056d1260"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "c45aaa92aead6d9b44b5d3077f01f17c9083a6b073e2693e16be66acf3e86499",
+      "size": [
+        414,
+        451
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_hell_portal": {
+      "anchor": [
+        150,
+        415
+      ],
+      "assetId": "world.prop.cathedral_hell_portal",
+      "bundle": "world",
+      "key": "cathedral_hell_portal",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_hell_portal.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            221,
+            1,
+            1039,
+            1248
+          ],
+          "anchor": [
+            150,
+            415
+          ],
+          "cell": [
+            0,
+            0,
+            1254,
+            1254
+          ],
+          "nativeAlpha": true,
+          "width": 300
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/hell_portal.png",
+        "sourceSha256": "ac82a374c02a843f5c06582474d7330432cd1a8ad1540cbd639972225f68fd96"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "3ee5f80f5cb112760cc237551e38ec9f8ed2d4e9ce4a18e6bd0ab5f569d30e6f",
+      "size": [
+        300,
+        457
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_houses": {
+      "anchor": [
+        179,
+        327
+      ],
+      "assetId": "world.prop.cathedral_houses",
+      "bundle": "world",
+      "key": "cathedral_houses",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_houses.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            19,
+            17,
+            491,
+            512
+          ],
+          "anchor": [
+            179,
+            327
+          ],
+          "cell": [
+            512,
+            0,
+            1024,
+            512
+          ],
+          "nativeAlpha": true,
+          "width": 358
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/landmarks.png",
+        "sourceSha256": "24da8020227c7b09693b8119b35ddbaedabbdafccd8f0e3ed823fc60a9d59ad9"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "97936472302815dc38cbec39548d1580ef04ba11936f9acebb96928c520d9cc3",
+      "size": [
+        358,
+        375
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_memorial": {
+      "anchor": [
+        113,
+        205
+      ],
+      "assetId": "world.prop.cathedral_memorial",
+      "bundle": "world",
+      "key": "cathedral_memorial",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_memorial.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            27,
+            0,
+            504,
+            500
+          ],
+          "anchor": [
+            113,
+            205
+          ],
+          "cell": [
+            1024,
+            512,
+            1536,
+            1024
+          ],
+          "nativeAlpha": true,
+          "width": 226
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/landmarks.png",
+        "sourceSha256": "24da8020227c7b09693b8119b35ddbaedabbdafccd8f0e3ed823fc60a9d59ad9"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "997dad1817fd1e0d471f69144344b4c019b4735c65583ed2a2db110eb8a8b283",
+      "size": [
+        226,
+        237
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_mountain_shrine": {
+      "anchor": [
+        167,
+        277
+      ],
+      "assetId": "world.prop.cathedral_mountain_shrine",
+      "bundle": "world",
+      "key": "cathedral_mountain_shrine",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_mountain_shrine.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            4,
+            0,
+            512,
+            496
+          ],
+          "anchor": [
+            167,
+            277
+          ],
+          "cell": [
+            0,
+            512,
+            512,
+            1024
+          ],
+          "nativeAlpha": true,
+          "width": 334
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/landmarks.png",
+        "sourceSha256": "24da8020227c7b09693b8119b35ddbaedabbdafccd8f0e3ed823fc60a9d59ad9"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "f0b1f609e189b21d561c518c2fb610bed9d27e90a6945b4049b0cf02d7d1a53f",
+      "size": [
+        334,
+        326
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_parapet": {
+      "anchor": [
+        98,
+        165
+      ],
+      "assetId": "world.prop.cathedral_parapet",
+      "bundle": "world",
+      "key": "cathedral_parapet",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_parapet.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            35,
+            11,
+            499,
+            461
+          ],
+          "anchor": [
+            98,
+            165
+          ],
+          "cell": [
+            0,
+            512,
+            512,
+            1024
+          ],
+          "nativeAlpha": true,
+          "width": 196
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/architecture.png",
+        "sourceSha256": "2feac3691274508b5a4793a51020b799ef5b0610171ea43a0b49a44dd6179cd4"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "66af43fcf3533b70ed23d40775fd68d5ebc03fe563e335ac10cb3d729f95ca3a",
+      "size": [
+        196,
+        190
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_reliquary": {
+      "anchor": [
+        58,
+        116
+      ],
+      "assetId": "world.prop.cathedral_reliquary",
+      "bundle": "world",
+      "key": "cathedral_reliquary",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_reliquary.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            61,
+            0,
+            474,
+            476
+          ],
+          "anchor": [
+            58,
+            116
+          ],
+          "cell": [
+            512,
+            512,
+            1024,
+            1024
+          ],
+          "nativeAlpha": true,
+          "width": 116
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/story.png",
+        "sourceSha256": "d3201424369d591a5ac5b312adc34c1f280697768a53c54894beb7a11e49f712"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "c4dbad9a820b6fa02f1e4bace6aae7b8ae1300625c2eb0d5b3a1dc1cd2a26490",
+      "size": [
+        116,
+        134
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_reliquary_open": {
+      "anchor": [
+        58,
+        108
+      ],
+      "assetId": "world.prop.cathedral_reliquary_open",
+      "bundle": "world",
+      "key": "cathedral_reliquary_open",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_reliquary_open.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            13,
+            0,
+            470,
+            496
+          ],
+          "anchor": [
+            58,
+            108
+          ],
+          "cell": [
+            1024,
+            512,
+            1536,
+            1024
+          ],
+          "nativeAlpha": true,
+          "width": 116
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/story.png",
+        "sourceSha256": "d3201424369d591a5ac5b312adc34c1f280697768a53c54894beb7a11e49f712"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "92312e9889aa8b02fad132550ed5c16137f71a203715d3217918704ef3bcd8d4",
+      "size": [
+        116,
+        126
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_rose_window": {
+      "anchor": [
+        215,
+        400
+      ],
+      "assetId": "world.prop.cathedral_rose_window",
+      "bundle": "world",
+      "key": "cathedral_rose_window",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_rose_window.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            10,
+            3,
+            489,
+            512
+          ],
+          "anchor": [
+            215,
+            400
+          ],
+          "cell": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "nativeAlpha": true,
+          "width": 430
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/landmarks.png",
+        "sourceSha256": "24da8020227c7b09693b8119b35ddbaedabbdafccd8f0e3ed823fc60a9d59ad9"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "d50d23bd075dbd16bf7b52b35d15c6e5d667e036f13c60a3d952c5679768afe8",
+      "size": [
+        430,
+        457
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_rubble": {
+      "anchor": [
+        71,
+        107
+      ],
+      "assetId": "world.prop.cathedral_rubble",
+      "bundle": "world",
+      "key": "cathedral_rubble",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_rubble.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            6,
+            0,
+            507,
+            448
+          ],
+          "anchor": [
+            71,
+            107
+          ],
+          "cell": [
+            512,
+            512,
+            1024,
+            1024
+          ],
+          "nativeAlpha": true,
+          "width": 142
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/architecture.png",
+        "sourceSha256": "2feac3691274508b5a4793a51020b799ef5b0610171ea43a0b49a44dd6179cd4"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "8f11594507361523f9a9ed223d89c994ac88295a2908abb80002f41c975beb52",
+      "size": [
+        142,
+        127
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_rubble_decal": {
+      "anchor": [
+        109,
+        77
+      ],
+      "assetId": "world.prop.cathedral_rubble_decal",
+      "bundle": "world",
+      "key": "cathedral_rubble_decal",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_rubble_decal.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            49,
+            148,
+            857,
+            717
+          ],
+          "anchor": [
+            109,
+            77
+          ],
+          "cell": [
+            887,
+            0,
+            1774,
+            887
+          ],
+          "nativeAlpha": true,
+          "width": 218
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/decals.png",
+        "sourceSha256": "4d0cbc744a7f30aea05897f334a75ffa0a9811e2f26abd0a4e1adffbf78cf4e3"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "f26e0fa705c49e643faa16e960b9d5e8f4b81d80258c23099e51e1ef445b25e8",
+      "size": [
+        218,
+        154
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_seal": {
+      "anchor": [
+        72,
+        131
+      ],
+      "assetId": "world.prop.cathedral_seal",
+      "bundle": "world",
+      "key": "cathedral_seal",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_seal.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            42,
+            78,
+            450,
+            512
+          ],
+          "anchor": [
+            72,
+            131
+          ],
+          "cell": [
+            1024,
+            0,
+            1536,
+            512
+          ],
+          "nativeAlpha": true,
+          "width": 144
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/story.png",
+        "sourceSha256": "d3201424369d591a5ac5b312adc34c1f280697768a53c54894beb7a11e49f712"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "1f0ca8a04eb1463490702b871c9b1bfad5f99cbc93f56b6a5a48ccfb42e32789",
+      "size": [
+        144,
+        153
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_seal_broken": {
+      "anchor": [
+        72,
+        102
+      ],
+      "assetId": "world.prop.cathedral_seal_broken",
+      "bundle": "world",
+      "key": "cathedral_seal_broken",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_seal_broken.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            61,
+            66,
+            504,
+            446
+          ],
+          "anchor": [
+            72,
+            102
+          ],
+          "cell": [
+            0,
+            512,
+            512,
+            1024
+          ],
+          "nativeAlpha": true,
+          "width": 144
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/story.png",
+        "sourceSha256": "d3201424369d591a5ac5b312adc34c1f280697768a53c54894beb7a11e49f712"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "1db1c2d67dc862c8ab38e23c32fc771f1b0f663c3533f17444841bdbdf8a9a45",
+      "size": [
+        144,
+        124
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_soul_bound": {
+      "anchor": [
+        85,
+        225
+      ],
+      "assetId": "world.prop.cathedral_soul_bound",
+      "bundle": "world",
+      "key": "cathedral_soul_bound",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_soul_bound.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            107,
+            7,
+            446,
+            504
+          ],
+          "anchor": [
+            85,
+            225
+          ],
+          "cell": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "nativeAlpha": true,
+          "width": 170
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/story.png",
+        "sourceSha256": "d3201424369d591a5ac5b312adc34c1f280697768a53c54894beb7a11e49f712"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "9a6f389db3a3fe04ab51ab9a7969eeeb1b6ffb0e6e96a7b7b9332f6d8b9a5488",
+      "size": [
+        170,
+        249
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_soul_free": {
+      "anchor": [
+        85,
+        238
+      ],
+      "assetId": "world.prop.cathedral_soul_free",
+      "bundle": "world",
+      "key": "cathedral_soul_free",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_soul_free.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            105,
+            7,
+            433,
+            512
+          ],
+          "anchor": [
+            85,
+            238
+          ],
+          "cell": [
+            512,
+            0,
+            1024,
+            512
+          ],
+          "nativeAlpha": true,
+          "width": 170
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/story.png",
+        "sourceSha256": "d3201424369d591a5ac5b312adc34c1f280697768a53c54894beb7a11e49f712"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "73761646cd36b905dc4541f6cb606245403056267cea5281987f3ccf32856b39",
+      "size": [
+        170,
+        262
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_throne": {
+      "anchor": [
+        170,
+        300
+      ],
+      "assetId": "world.prop.cathedral_throne",
+      "bundle": "world",
+      "key": "cathedral_throne",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_throne.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            15,
+            0,
+            501,
+            499
+          ],
+          "anchor": [
+            170,
+            300
+          ],
+          "cell": [
+            512,
+            512,
+            1024,
+            1024
+          ],
+          "nativeAlpha": true,
+          "width": 340
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/landmarks.png",
+        "sourceSha256": "24da8020227c7b09693b8119b35ddbaedabbdafccd8f0e3ed823fc60a9d59ad9"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "e352569fc2c3ce8af83eb479f6610948f064dc16c224c6280320d2873708ba31",
+      "size": [
+        340,
+        349
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cathedral_void_backdrop": {
+      "anchor": [
+        836,
+        470
+      ],
+      "assetId": "world.prop.cathedral_void_backdrop",
+      "bundle": "world",
+      "key": "cathedral_void_backdrop",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cathedral_void_backdrop.png",
+      "provenance": {
+        "method": "imagegen-cathedral-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            0,
+            1672,
+            941
+          ],
+          "anchor": [
+            836,
+            470
+          ],
+          "cell": [
+            0,
+            0,
+            1672,
+            941
+          ],
+          "nativeAlpha": true,
+          "width": 1672
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cathedral/void_backdrop.png",
+        "sourceSha256": "12cec7c0c2531e06e6e841f5a6ac5e654d1f882de492036aa550da8418359fab"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "866417877b8e44b86be48d9b5c17fa5cb024c62389557a3286f6b4b18f8982c5",
+      "size": [
+        1672,
+        941
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
     "prop:chapelruin": {
       "anchor": [
         48,
@@ -12521,6 +17059,496 @@
       "size": [
         64,
         80
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_ash_drifts": {
+      "anchor": [
+        245,
+        164
+      ],
+      "assetId": "world.prop.cinders_ash_drifts",
+      "bundle": "world",
+      "key": "cinders_ash_drifts",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_ash_drifts.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            0,
+            1526,
+            1024
+          ],
+          "baseInset": "center",
+          "transparency": "native-alpha",
+          "width": 490
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/ash_drifts.png",
+        "sourceSha256": "af66fde97642acba7ff9aa8a3dacbe8f615bee0474c3de5862fa5993e31df166"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "4c15cf969b98caac67bc294f88399b9a5c29cd52aac06be08f5fc53512032fc4",
+      "size": [
+        490,
+        329
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_bastion_gate": {
+      "anchor": [
+        220,
+        377
+      ],
+      "assetId": "world.prop.cinders_bastion_gate",
+      "bundle": "world",
+      "key": "cinders_bastion_gate",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_bastion_gate.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            17,
+            1232,
+            1254
+          ],
+          "baseInset": 65,
+          "transparency": "native-alpha",
+          "width": 440
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/bastion_gate.png",
+        "sourceSha256": "13ea4ad11f5b76584858661b26cf435ceb335c7724a6851e45bf62ac2bcc9c5b"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "55732794833988f238a9b5ad57569a0528e2471b66c7acfbef0cb10c42f4dbfa",
+      "size": [
+        440,
+        442
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_bastion_return": {
+      "anchor": [
+        180,
+        298
+      ],
+      "assetId": "world.prop.cinders_bastion_return",
+      "bundle": "world",
+      "key": "cinders_bastion_return",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_bastion_return.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            21,
+            1224,
+            1254
+          ],
+          "baseInset": 65,
+          "transparency": "native-alpha",
+          "width": 360
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/bastion_return.png",
+        "sourceSha256": "f7049bc7c508c4aae1ec31afa5332dbda920dd0edb88a5abdae3d6720487ac87"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "dd16f76d10b852e0ca06932704b274d27c09e33a8eeba12ce5bc49f805f86f20",
+      "size": [
+        360,
+        363
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_breach_gate": {
+      "anchor": [
+        185,
+        305
+      ],
+      "assetId": "world.prop.cinders_breach_gate",
+      "bundle": "world",
+      "key": "cinders_breach_gate",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_breach_gate.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            21,
+            1236,
+            1254
+          ],
+          "baseInset": 64,
+          "transparency": "native-alpha",
+          "width": 370
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/breach_gate.png",
+        "sourceSha256": "4c504421e9b4f17adf2e41af081c4d9d99e504f3892bc0a335d8855566e46f7b"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "ee1c96bd6a5feeb5ddc1bbd0cdf90dfdf6be36763646032284c7828d65e40c7c",
+      "size": [
+        370,
+        369
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_ceremonial_paving": {
+      "anchor": [
+        220,
+        144
+      ],
+      "assetId": "world.prop.cinders_ceremonial_paving",
+      "bundle": "world",
+      "key": "cinders_ceremonial_paving",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_ceremonial_paving.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            21,
+            17,
+            1514,
+            998
+          ],
+          "baseInset": "center",
+          "transparency": "native-alpha",
+          "width": 440
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/ceremonial_paving.png",
+        "sourceSha256": "32bccb2cdfe9a7752f7fdcc3f24053f220e37c89bc4a9609f7518a1bb2546cc7"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "64f0acce9ca888bd42d8b8cc296d97184ec8bcf8f26c96de83afdd11d441024e",
+      "size": [
+        440,
+        289
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_chain_rubble": {
+      "anchor": [
+        142,
+        97
+      ],
+      "assetId": "world.prop.cinders_chain_rubble",
+      "bundle": "world",
+      "key": "cinders_chain_rubble",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_chain_rubble.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            33,
+            9,
+            1524,
+            1024
+          ],
+          "baseInset": "center",
+          "transparency": "native-alpha",
+          "width": 285
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/chain_rubble.png",
+        "sourceSha256": "e01eac980b7a3037f55deebb19a266e3f12b4e971449dfae7c48a0971d5c1b98"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "08dcc3aa4b82119b94cba3fa77c8b3af911dcf153fed4bf5ad8693f07e2748e6",
+      "size": [
+        285,
+        194
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_fallen_statue": {
+      "anchor": [
+        160,
+        281
+      ],
+      "assetId": "world.prop.cinders_fallen_statue",
+      "bundle": "world",
+      "key": "cinders_fallen_statue",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_fallen_statue.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            14,
+            1230,
+            1254
+          ],
+          "baseInset": 42,
+          "transparency": "native-alpha",
+          "width": 320
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/fallen_statue.png",
+        "sourceSha256": "98d6d49a12c918f135ed649a3da39664b57721e48e5ace49b6fa981a1fda8f0e"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "f7d0070ce3f5e3606f1791106a7045759d6a936ad5ce40117051a561cb33a3bc",
+      "size": [
+        320,
+        323
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_furnace_forge": {
+      "anchor": [
+        182,
+        320
+      ],
+      "assetId": "world.prop.cinders_furnace_forge",
+      "bundle": "world",
+      "key": "cinders_furnace_forge",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_furnace_forge.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            21,
+            1224,
+            1254
+          ],
+          "baseInset": 48,
+          "transparency": "native-alpha",
+          "width": 365
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/furnace_forge.png",
+        "sourceSha256": "8dc30bb56072e9b5f48af0125ea570911c3c9b7e4ee6bbbc03dacaebd7f62062"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "c489f275e9120b3295e7b9c22af4e0a1eeb68fc6e6c081276bcd6c44229bc6a2",
+      "size": [
+        365,
+        368
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_impaled_monument": {
+      "anchor": [
+        152,
+        277
+      ],
+      "assetId": "world.prop.cinders_impaled_monument",
+      "bundle": "world",
+      "key": "cinders_impaled_monument",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_impaled_monument.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            33,
+            8,
+            1226,
+            1254
+          ],
+          "baseInset": 42,
+          "transparency": "native-alpha",
+          "width": 305
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/impaled_monument.png",
+        "sourceSha256": "41287c9a2a760f11cf28052330c1056cb3e2cd70906b9ccb662f89d6a1f94bc7"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "b51a72e289fc6be5ae0788a0948c7ee92d7e1c0bc47f7c67075944845d821332",
+      "size": [
+        305,
+        319
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_siege_engine": {
+      "anchor": [
+        157,
+        274
+      ],
+      "assetId": "world.prop.cinders_siege_engine",
+      "bundle": "world",
+      "key": "cinders_siege_engine",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_siege_engine.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            19,
+            1228,
+            1254
+          ],
+          "baseInset": 43,
+          "transparency": "native-alpha",
+          "width": 315
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/siege_engine.png",
+        "sourceSha256": "53dc9ba511451c97d8f1d76cdc28ad7b55d684746d6b8a9f0df759bdf429ea84"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "0280b567dfdadea14d9ef4f3ee10b301f036f539979f399f76da56f888d1c645",
+      "size": [
+        315,
+        317
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_siege_tower": {
+      "anchor": [
+        147,
+        262
+      ],
+      "assetId": "world.prop.cinders_siege_tower",
+      "bundle": "world",
+      "key": "cinders_siege_tower",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_siege_tower.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            33,
+            7,
+            1236,
+            1254
+          ],
+          "baseInset": 44,
+          "transparency": "native-alpha",
+          "width": 295
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/siege_tower.png",
+        "sourceSha256": "e7818938ecbfb0e344e29c3127923bf2bfd7098c2a980ee7d13f9db464aeee21"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "dee6b7a8e12703f89e8584823b29e1a6b31cc6fcddba435252b52e7d1a8ce96d",
+      "size": [
+        295,
+        306
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_throne_backdrop": {
+      "anchor": [
+        235,
+        412
+      ],
+      "assetId": "world.prop.cinders_throne_backdrop",
+      "bundle": "world",
+      "key": "cinders_throne_backdrop",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_throne_backdrop.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            9,
+            1240,
+            1254
+          ],
+          "baseInset": 60,
+          "transparency": "native-alpha",
+          "width": 470
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/throne_backdrop.png",
+        "sourceSha256": "29cce63c7b3249164afd1b49796b33f54d7339340540f477cd0de5a90187985f"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "3bc6b71bade63fadf9ee5083016949fc5816f61657b43c1beada4a31ba176ddc",
+      "size": [
+        470,
+        472
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_throne_gate": {
+      "anchor": [
+        235,
+        413
+      ],
+      "assetId": "world.prop.cinders_throne_gate",
+      "bundle": "world",
+      "key": "cinders_throne_gate",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_throne_gate.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            0,
+            1240,
+            1240
+          ],
+          "baseInset": 57,
+          "transparency": "native-alpha",
+          "width": 470
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/throne_gate.png",
+        "sourceSha256": "3a76a1f6e183afd77b84531849a470b7122984ea42466742913e8444957c160e"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "3a4b65c4b00724e2efcce171c54a092b20e3ecb2f06ad145b0829243483ed823",
+      "size": [
+        470,
+        470
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:cinders_throne_return": {
+      "anchor": [
+        180,
+        304
+      ],
+      "assetId": "world.prop.cinders_throne_return",
+      "bundle": "world",
+      "key": "cinders_throne_return",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/cinders_throne_return.png",
+      "provenance": {
+        "method": "imagegen-cinders-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            10,
+            1253,
+            1254
+          ],
+          "baseInset": 53,
+          "transparency": "native-alpha",
+          "width": 360
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/cinders/throne_return.png",
+        "sourceSha256": "ebc751fb740f159214bfb263e49461f035e1f6cad61f5850eb62a4245700b944"
+      },
+      "review": "cinders-in-game-v1",
+      "role": "prop",
+      "sha256": "cbfd50ffee0f13af0265dc5989921598a2b8b8b5c2dd325aa8a716c616f0ed4e",
+      "size": [
+        360,
+        357
       ],
       "sourceKind": "authored-final-aligned"
     },
@@ -12769,6 +17797,621 @@
       "size": [
         56,
         64
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_ice_arch": {
+      "anchor": [
+        165,
+        185
+      ],
+      "assetId": "world.prop.frontier_ice_arch",
+      "bundle": "world",
+      "key": "frontier_ice_arch",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_ice_arch.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            18,
+            67,
+            512,
+            415
+          ],
+          "baseInset": 47,
+          "cell": [
+            512,
+            512,
+            1024,
+            1024
+          ],
+          "technicalMatte": "green",
+          "width": 330
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/pilgrimage.png",
+        "sourceSha256": "36f4269060c7a9b0f05e8d2e0ac77e8440f61923f4edef17acc4bd29b8c876de"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "cf9b0f16fcee522dd47da074fe0f986190fba180ef815d412dd5ace1429ac06c",
+      "size": [
+        330,
+        232
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_ice_ribs": {
+      "anchor": [
+        150,
+        194
+      ],
+      "assetId": "world.prop.frontier_ice_ribs",
+      "bundle": "world",
+      "key": "frontier_ice_ribs",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_ice_ribs.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            32,
+            53,
+            501,
+            419
+          ],
+          "baseInset": 40,
+          "cell": [
+            0,
+            512,
+            512,
+            1024
+          ],
+          "technicalMatte": "green",
+          "width": 300
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/pilgrimage.png",
+        "sourceSha256": "36f4269060c7a9b0f05e8d2e0ac77e8440f61923f4edef17acc4bd29b8c876de"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "72bec701c8d8cd249bd9e72125439e7a5967ea63e9eef34ef7072375b95d06bc",
+      "size": [
+        300,
+        234
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_memorial": {
+      "anchor": [
+        146,
+        222
+      ],
+      "assetId": "world.prop.frontier_memorial",
+      "bundle": "world",
+      "key": "frontier_memorial",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_memorial.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            16,
+            462,
+            435
+          ],
+          "baseInset": 43,
+          "cell": [
+            1024,
+            512,
+            1536,
+            1024
+          ],
+          "technicalMatte": "green",
+          "width": 292
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/architecture.png",
+        "sourceSha256": "6cc13cb265b7af7d4bbc07b703b8980b3b7f786d2daff35a9ae571c13411cba0"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "5d7597a129fe6c56dc6bdafa4c40b6d2a25de4757192adf4bc63143ad672e9c7",
+      "size": [
+        292,
+        265
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_minehead": {
+      "anchor": [
+        179,
+        250
+      ],
+      "assetId": "world.prop.frontier_minehead",
+      "bundle": "world",
+      "key": "frontier_minehead",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_minehead.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            1,
+            87,
+            466,
+            483
+          ],
+          "baseInset": 55,
+          "cell": [
+            1024,
+            0,
+            1536,
+            512
+          ],
+          "technicalMatte": "green",
+          "width": 358
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/architecture.png",
+        "sourceSha256": "6cc13cb265b7af7d4bbc07b703b8980b3b7f786d2daff35a9ae571c13411cba0"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "59632b2a8c042dec2fcca7accdd5c973f35e1d457cd1456e3250d0608adba598",
+      "size": [
+        358,
+        305
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_paving": {
+      "anchor": [
+        140,
+        117
+      ],
+      "assetId": "world.prop.frontier_paving",
+      "bundle": "world",
+      "key": "frontier_paving",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_paving.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            17,
+            66,
+            710,
+            648
+          ],
+          "baseInset": "center",
+          "cell": [
+            724,
+            0,
+            1448,
+            724
+          ],
+          "technicalMatte": "native-alpha",
+          "width": 280
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/ground.png",
+        "sourceSha256": "325b9ae4160dd75ffacc34ab237907f52d90ac09b5d381a18462f0f2f5987086"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "332eb0b20b1ee04f76d9ffc7269757ad8587dfee1ba99681f3df1de93bd0d8df",
+      "size": [
+        280,
+        235
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_pilgrim_stones": {
+      "anchor": [
+        120,
+        216
+      ],
+      "assetId": "world.prop.frontier_pilgrim_stones",
+      "bundle": "world",
+      "key": "frontier_pilgrim_stones",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_pilgrim_stones.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            94,
+            100,
+            439,
+            457
+          ],
+          "baseInset": 32,
+          "cell": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "technicalMatte": "green",
+          "width": 240
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/pilgrimage.png",
+        "sourceSha256": "36f4269060c7a9b0f05e8d2e0ac77e8440f61923f4edef17acc4bd29b8c876de"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "0ab5463a338e58ade61689b438d5a7dbad3ab3973f4e405abd4da2d558e42544",
+      "size": [
+        240,
+        248
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_rubble": {
+      "anchor": [
+        120,
+        85
+      ],
+      "assetId": "world.prop.frontier_rubble",
+      "bundle": "world",
+      "key": "frontier_rubble",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_rubble.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            27,
+            130,
+            689,
+            603
+          ],
+          "baseInset": "center",
+          "cell": [
+            1448,
+            0,
+            2172,
+            724
+          ],
+          "technicalMatte": "native-alpha",
+          "width": 240
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/ground.png",
+        "sourceSha256": "325b9ae4160dd75ffacc34ab237907f52d90ac09b5d381a18462f0f2f5987086"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "86959fac268550e2140b5713fa6f5524867b452aa2b524014ceb4cac9ea57cbd",
+      "size": [
+        240,
+        171
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_shelter": {
+      "anchor": [
+        144,
+        178
+      ],
+      "assetId": "world.prop.frontier_shelter",
+      "bundle": "world",
+      "key": "frontier_shelter",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_shelter.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            2,
+            123,
+            472,
+            478
+          ],
+          "baseInset": 40,
+          "cell": [
+            512,
+            0,
+            1024,
+            512
+          ],
+          "technicalMatte": "green",
+          "width": 288
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/pilgrimage.png",
+        "sourceSha256": "36f4269060c7a9b0f05e8d2e0ac77e8440f61923f4edef17acc4bd29b8c876de"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "20d815611c685b1ca3c6a463507e1730722f0abc2ad2bbbd35ef9b8252025cb0",
+      "size": [
+        288,
+        218
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_spring": {
+      "anchor": [
+        250,
+        123
+      ],
+      "assetId": "world.prop.frontier_spring",
+      "bundle": "world",
+      "key": "frontier_spring",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_spring.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            176,
+            468,
+            406
+          ],
+          "baseInset": "center",
+          "cell": [
+            1024,
+            512,
+            1536,
+            1024
+          ],
+          "technicalMatte": "green",
+          "width": 500
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/pilgrimage.png",
+        "sourceSha256": "36f4269060c7a9b0f05e8d2e0ac77e8440f61923f4edef17acc4bd29b8c876de"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "4c867b18ff3028a1cd4513da0e3d3255af0474668e6fc236328bb45f200e251c",
+      "size": [
+        500,
+        246
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_summit": {
+      "anchor": [
+        182,
+        328
+      ],
+      "assetId": "world.prop.frontier_summit",
+      "bundle": "world",
+      "key": "frontier_summit",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_summit.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            16,
+            67,
+            417,
+            488
+          ],
+          "baseInset": 54,
+          "cell": [
+            1024,
+            0,
+            1536,
+            512
+          ],
+          "technicalMatte": "green",
+          "width": 364
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/pilgrimage.png",
+        "sourceSha256": "36f4269060c7a9b0f05e8d2e0ac77e8440f61923f4edef17acc4bd29b8c876de"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "4113a5381b89e5d82d0dcd9e258e09d17d1619ab5b65f6845308a0332e733371",
+      "size": [
+        364,
+        382
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_supports": {
+      "anchor": [
+        145,
+        161
+      ],
+      "assetId": "world.prop.frontier_supports",
+      "bundle": "world",
+      "key": "frontier_supports",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_supports.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            35,
+            87,
+            486,
+            402
+          ],
+          "baseInset": 42,
+          "cell": [
+            0,
+            512,
+            512,
+            1024
+          ],
+          "technicalMatte": "green",
+          "width": 290
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/architecture.png",
+        "sourceSha256": "6cc13cb265b7af7d4bbc07b703b8980b3b7f786d2daff35a9ae571c13411cba0"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "e379670670c7a58787b30b78d90902a62c5bb81acb60ea796730ab4649a2b485",
+      "size": [
+        290,
+        203
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_temple": {
+      "anchor": [
+        205,
+        268
+      ],
+      "assetId": "world.prop.frontier_temple",
+      "bundle": "world",
+      "key": "frontier_temple",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_temple.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            7,
+            17,
+            512,
+            427
+          ],
+          "baseInset": 65,
+          "cell": [
+            512,
+            512,
+            1024,
+            1024
+          ],
+          "technicalMatte": "green",
+          "width": 410
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/architecture.png",
+        "sourceSha256": "6cc13cb265b7af7d4bbc07b703b8980b3b7f786d2daff35a9ae571c13411cba0"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "c9975076af8b187704800074f496bd8c4e10d0a08d69a22ac464124469dc576a",
+      "size": [
+        410,
+        333
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_tollhouse": {
+      "anchor": [
+        167,
+        155
+      ],
+      "assetId": "world.prop.frontier_tollhouse",
+      "bundle": "world",
+      "key": "frontier_tollhouse",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_tollhouse.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            9,
+            201,
+            483,
+            488
+          ],
+          "baseInset": 47,
+          "cell": [
+            512,
+            0,
+            1024,
+            512
+          ],
+          "technicalMatte": "green",
+          "width": 334
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/architecture.png",
+        "sourceSha256": "6cc13cb265b7af7d4bbc07b703b8980b3b7f786d2daff35a9ae571c13411cba0"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "d89345a2ab3721b0db315a2441c8daa04832e0043635323c99ef7064fcaacd9d",
+      "size": [
+        334,
+        202
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_tracks": {
+      "anchor": [
+        92,
+        69
+      ],
+      "assetId": "world.prop.frontier_tracks",
+      "bundle": "world",
+      "key": "frontier_tracks",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_tracks.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            27,
+            86,
+            702,
+            595
+          ],
+          "baseInset": "center",
+          "cell": [
+            0,
+            0,
+            724,
+            724
+          ],
+          "technicalMatte": "native-alpha",
+          "width": 184
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/ground.png",
+        "sourceSha256": "325b9ae4160dd75ffacc34ab237907f52d90ac09b5d381a18462f0f2f5987086"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "d9aa4f59d30baae45aef4dc2486a00a6cfa0fdc7cfd70589782cadd77e3b08cf",
+      "size": [
+        184,
+        139
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:frontier_watchtower": {
+      "anchor": [
+        156,
+        304
+      ],
+      "assetId": "world.prop.frontier_watchtower",
+      "bundle": "world",
+      "key": "frontier_watchtower",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/frontier_watchtower.png",
+      "provenance": {
+        "method": "imagegen-frontier-registration-v1",
+        "parameters": {
+          "alphaBounds": [
+            53,
+            27,
+            465,
+            491
+          ],
+          "baseInset": 47,
+          "cell": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "technicalMatte": "green",
+          "width": 312
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/frontier/architecture.png",
+        "sourceSha256": "6cc13cb265b7af7d4bbc07b703b8980b3b7f786d2daff35a9ae571c13411cba0"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "dd8b555759cb6d7bb0cdc3b4f3fb0b2b5a8556e7efcb7bf246f549a0723246d2",
+      "size": [
+        312,
+        351
       ],
       "sourceKind": "authored-final-aligned"
     },

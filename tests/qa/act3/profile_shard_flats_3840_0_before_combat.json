@@ -1,0 +1,39 @@
+{
+  "methodRevision": 2,
+  "layoutRevision": 3,
+  "width": 3840,
+  "zone": "shard_flats",
+  "pair": 0,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 41.5,
+    "y": 77.5
+  },
+  "monsters": 69,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 780,
+  "cpuMs": {
+    "median": 21.3,
+    "p95": 24.5,
+    "max": 31.3
+  },
+  "updateMs": {
+    "median": 0.6,
+    "p95": 0.9,
+    "max": 2.2
+  },
+  "renderMs": {
+    "median": 20.7,
+    "p95": 23.8,
+    "max": 29.1
+  },
+  "frameIntervalMs": {
+    "median": 26,
+    "p95": 30.2,
+    "max": 128.5
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

@@ -1,0 +1,304 @@
+{
+  "status": "PASS",
+  "enemyCount": 50,
+  "combatChecks": 966,
+  "balance": {
+    "status": "PASS",
+    "aggregate": {
+      "before": {
+        "encounters": 600,
+        "seconds": 5.5,
+        "incoming": 441.83500000000004,
+        "wins": 371,
+        "deaths": 226
+      },
+      "after": {
+        "encounters": 600,
+        "seconds": 5.975,
+        "incoming": 391.775,
+        "wins": 379,
+        "deaths": 221
+      }
+    },
+    "changePct": {
+      "seconds": 8.636363636363619,
+      "incoming": -11.330021388074751
+    },
+    "cohorts": {
+      "vanguard_single": {
+        "before": {
+          "encounters": 150,
+          "seconds": 6.75,
+          "incoming": 228.83999999999997,
+          "wins": 122,
+          "deaths": 28
+        },
+        "after": {
+          "encounters": 150,
+          "seconds": 5.45,
+          "incoming": 168.625,
+          "wins": 130,
+          "deaths": 20
+        }
+      },
+      "vanguard_pack": {
+        "before": {
+          "encounters": 150,
+          "seconds": 7.525,
+          "incoming": 574.975,
+          "wins": 48,
+          "deaths": 99
+        },
+        "after": {
+          "encounters": 150,
+          "seconds": 8.675,
+          "incoming": 574.14,
+          "wins": 53,
+          "deaths": 97
+        }
+      },
+      "emberwitch_single": {
+        "before": {
+          "encounters": 150,
+          "seconds": 4.324999999999999,
+          "incoming": 111.71000000000001,
+          "wins": 149,
+          "deaths": 1
+        },
+        "after": {
+          "encounters": 150,
+          "seconds": 4.324999999999999,
+          "incoming": 106.425,
+          "wins": 149,
+          "deaths": 1
+        }
+      },
+      "emberwitch_pack": {
+        "before": {
+          "encounters": 150,
+          "seconds": 5.75,
+          "incoming": 495.905,
+          "wins": 52,
+          "deaths": 98
+        },
+        "after": {
+          "encounters": 150,
+          "seconds": 6.225,
+          "incoming": 499.96500000000003,
+          "wins": 47,
+          "deaths": 103
+        }
+      }
+    }
+  },
+  "performance": [
+    {
+      "width": 1920,
+      "zone": "ash_wastes",
+      "mode": "moving",
+      "before": {
+        "median": 4.933333333333334,
+        "p95": 7.1000000000000005
+      },
+      "after": {
+        "median": 5.033333333333334,
+        "p95": 7.433333333333334
+      },
+      "medianChangePct": 2,
+      "p95ChangePct": 4.7,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "ash_wastes",
+      "mode": "combat",
+      "before": {
+        "median": 6.633333333333333,
+        "p95": 9
+      },
+      "after": {
+        "median": 6.966666666666666,
+        "p95": 9.833333333333334
+      },
+      "medianChangePct": 5,
+      "p95ChangePct": 9.3,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "ash_wastes",
+      "mode": "moving",
+      "before": {
+        "median": 6.666666666666667,
+        "p95": 9.333333333333334
+      },
+      "after": {
+        "median": 7.166666666666667,
+        "p95": 9.866666666666665
+      },
+      "medianChangePct": 7.5,
+      "p95ChangePct": 5.7,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "ash_wastes",
+      "mode": "combat",
+      "before": {
+        "median": 9.200000000000001,
+        "p95": 11.566666666666668
+      },
+      "after": {
+        "median": 8.166666666666666,
+        "p95": 10.266666666666666
+      },
+      "medianChangePct": -11.2,
+      "p95ChangePct": -11.2,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "cinder_bastion",
+      "mode": "moving",
+      "before": {
+        "median": 6.933333333333333,
+        "p95": 9.7
+      },
+      "after": {
+        "median": 6.900000000000001,
+        "p95": 9.966666666666667
+      },
+      "medianChangePct": -0.5,
+      "p95ChangePct": 2.7,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "cinder_bastion",
+      "mode": "combat",
+      "before": {
+        "median": 7.966666666666666,
+        "p95": 11.5
+      },
+      "after": {
+        "median": 7.6000000000000005,
+        "p95": 11
+      },
+      "medianChangePct": -4.6,
+      "p95ChangePct": -4.3,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "cinder_bastion",
+      "mode": "moving",
+      "before": {
+        "median": 9.666666666666666,
+        "p95": 13.833333333333334
+      },
+      "after": {
+        "median": 9.200000000000001,
+        "p95": 12.466666666666669
+      },
+      "medianChangePct": -4.8,
+      "p95ChangePct": -9.9,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "cinder_bastion",
+      "mode": "combat",
+      "before": {
+        "median": 11,
+        "p95": 15.5
+      },
+      "after": {
+        "median": 9.766666666666666,
+        "p95": 12.333333333333334
+      },
+      "medianChangePct": -11.2,
+      "p95ChangePct": -20.4,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "throne",
+      "mode": "moving",
+      "before": {
+        "median": 5.366666666666667,
+        "p95": 7.3999999999999995
+      },
+      "after": {
+        "median": 5.133333333333333,
+        "p95": 7.433333333333334
+      },
+      "medianChangePct": -4.3,
+      "p95ChangePct": 0.5,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "throne",
+      "mode": "combat",
+      "before": {
+        "median": 6.866666666666667,
+        "p95": 9.1
+      },
+      "after": {
+        "median": 5.566666666666666,
+        "p95": 7.166666666666667
+      },
+      "medianChangePct": -18.9,
+      "p95ChangePct": -21.2,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "throne",
+      "mode": "moving",
+      "before": {
+        "median": 5.2,
+        "p95": 7
+      },
+      "after": {
+        "median": 5.1000000000000005,
+        "p95": 6.599999999999999
+      },
+      "medianChangePct": -1.9,
+      "p95ChangePct": -5.7,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "throne",
+      "mode": "combat",
+      "before": {
+        "median": 6.2,
+        "p95": 7.833333333333333
+      },
+      "after": {
+        "median": 6.033333333333334,
+        "p95": 7.7
+      },
+      "medianChangePct": -2.7,
+      "p95ChangePct": -1.7,
+      "passed": true
+    }
+  ],
+  "captures": 40,
+  "regressionFailures": [],
+  "unrelatedIsolation": {
+    "status": "PASS",
+    "comparison": "All 30 Act III Shard Flats spawn lists are byte-identical with the Act 5 profile table removed. No Act III production files were edited for this diagnostic.",
+    "sameWithoutAct5Profiles": true,
+    "failures": [],
+    "mapgenSha256": "a1d75a3364e75c64cbcda22c6cd9405afbe37192f538b594ccd8092d7da5a588"
+  },
+  "sourceHashes": {
+    "js/data.js": "0e16183850207c76cbb7894e41a766e85d94abceee4cc0c974b4662a197d77e6",
+    "js/entities.js": "0f6f1104135142cd92bcedfcfed9a6cfbb491e7c48fdf5712037605030be3046",
+    "js/game.js": "0695816ca3ce8f9339b222c3f97fe734af50744932f35e1425eb77dee127c0b4",
+    "js/mapgen.js": "a1d75a3364e75c64cbcda22c6cd9405afbe37192f538b594ccd8092d7da5a588",
+    "tests/cinders_review.html": "41a691b24a0a46f88fbd4855e7d2b86e65525fa5ee33db5f703308ef52ad4f46"
+  }
+}

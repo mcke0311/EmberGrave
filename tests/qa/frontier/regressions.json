@@ -1,0 +1,75 @@
+{
+  "status": "PASS",
+  "results": [
+    {
+      "name": "frontier_layout_contract",
+      "exitCode": 0,
+      "seconds": 16.45,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 118293,\n  \"seedCount\": 30,\n  \"areas\": [\n    {\n      \"zone\": \"north_wild\",\n      \"minMonsters\": 79,\n      \"minBuildings\": 9,\n      \"maxBuildings\": 9\n    },\n    {\n      \"zone\": \"mines\",\n      \"minMonsters\": 60,\n      \"minBuildings\": 7,\n      \"maxBuildings\": 7\n    },\n    {\n      \"zone\": \"shattered_temple\",\n      \"minMonsters\": 52,\n      \"minBuildings\": 5,\n      \"maxBuildings\": 5\n    },\n    {\n      \"zone\": \"shardpeak_shrine\",\n      \"minMonsters\": 52,\n      \"minBuildings\": 6,\n      \"maxBuildings\": 6\n    },\n    {\n      \"zone\": \"deepfreeze_cavern\",\n      \"minMonsters\": 57,\n      \"minBuildings\": 6,\n      \"maxBuildings\": 6\n    }\n  ]\n}",
+      "stderr": ""
+    },
+    {
+      "name": "frontier_quest_contract",
+      "exitCode": 0,
+      "seconds": 7.77,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 153,\n  \"scenarios\": [\n    \"beacon orders and duplicate deaths\",\n    \"reload/re-entry\",\n    \"legacy counts and invalid trio coordinates\",\n    \"main quest chain\",\n    \"three survivor IDs\",\n    \"both optional quests\",\n    \"seeded reserved events\"\n  ]\n}",
+      "stderr": ""
+    },
+    {
+      "name": "frontier_navigation_contract",
+      "exitCode": 0,
+      "seconds": 20.67,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 94772,\n  \"seeds\": 30,\n  \"areas\": 3,\n  \"radii\": 7,\n  \"scope\": \"Optimized sweeps equal ramp-aware sweeps; blockers, height edits and outdoor ascents retain their rules.\"\n}",
+      "stderr": ""
+    },
+    {
+      "name": "terrain_surface_contract",
+      "exitCode": 0,
+      "seconds": 1.36,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 10734,\n  \"maxWalkHeightDelta\": 0.07500000000000018,\n  \"seedResults\": [\n    {\n      \"seed\": 0,\n      \"ramps\": 2,\n      \"raisedTiles\": 19058,\n      \"targets\": 16,\n      \"ms\": 273\n    },\n    {\n      \"seed\": 1,\n      \"ramps\": 2,\n      \"raisedTiles\": 19284,\n      \"targets\": 16,\n      \"ms\": 165\n    },\n    {\n      \"seed\": 123,\n      \"ramps\": 2,\n      \"raisedTiles\": 19169,\n      \"targets\": 16,\n      \"ms\": 137\n    },\n    {\n      \"seed\": 12345,\n      \"ramps\": 2,\n      \"raisedTiles\": 19445,\n      \"targets\": 16,\n      \"ms\": 122\n    },\n    {\n      \"seed\": 4294967295,\n      \"ramps\": 2,\n      \"raisedTiles\": 19359,\n      \"targets\": 16,\n      \"ms\": 127\n    }\n  ]\n}",
+      "stderr": ""
+    },
+    {
+      "name": "navigation_edge_contract",
+      "exitCode": 0,
+      "seconds": 0.42,
+      "output": "PASS 75272 navigation checks: optimized edges match swept collision for ramps, walls, cliffs, diagonals, hopping and six body radii.",
+      "stderr": ""
+    },
+    {
+      "name": "terrain_view_cache_contract",
+      "exitCode": 0,
+      "seconds": 3.06,
+      "output": "PASS 3970 projected terrain cache checks: raised and legacy floors, movement, resizing, grid/geometry changes, map identity, and released backing stores.",
+      "stderr": ""
+    },
+    {
+      "name": "terrain_cache_contract",
+      "exitCode": 0,
+      "seconds": 7.2,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 16407,\n  \"stationary\": [\n    {\n      \"viewport\": \"1920x1080\",\n      \"where\": \"entry\",\n      \"visibleChunks\": 19,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"1920x1080\",\n      \"where\": \"center\",\n      \"visibleChunks\": 31,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"2560x1440\",\n      \"where\": \"entry\",\n      \"visibleChunks\": 29,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"2560x1440\",\n      \"where\": \"center\",\n      \"visibleChunks\": 49,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"3840x2160\",\n      \"where\": \"entry\",\n      \"visibleChunks\": 46,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"3840x2160\",\n      \"where\": \"center\",\n      \"visibleChunks\": 97,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    }\n  ],\n  \"coverage\": \"Three seeds; walking, retracing, resizing, map identity, memory budget, materials retained, late wall caps, read-only diagnostics.\"\n}",
+      "stderr": ""
+    },
+    {
+      "name": "boss_encounter_contract",
+      "exitCode": 0,
+      "seconds": 15.42,
+      "output": "PASS 85616 boss checks: warning geometry, dodge routes, recovery, phases, ownership, retreat, death, signatures and 192 seeded arenas.",
+      "stderr": ""
+    },
+    {
+      "name": "opening_contract",
+      "exitCode": 0,
+      "seconds": 13.36,
+      "output": "PASS 886 opening checks: five classes, rescue, captain phases, finite reinforcements, attack warnings, every checkpoint, migration, rewards, skip, death and failed-load retry.",
+      "stderr": "Could not load town sprites: Error: Expected test load failure\n    at Object.loadBundle (file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:14:65)\n    at requireSpriteBundle (evalmachine.<anonymous>:151:26)\n    at enterMap (evalmachine.<anonymous>:613:16)\n    at evalmachine.<anonymous>:537:95\n    at Object.skip (evalmachine.<anonymous>:539:9)\n    at Object.skipOpening (evalmachine.<anonymous>:549:43)\n    at file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:116:13"
+    },
+    {
+      "name": "story_campaign_contract",
+      "exitCode": 0,
+      "seconds": 13.22,
+      "output": "PASS 214 story checks: dialogue, objectives, old saves, boss wards, seeded routes, factions, phases, quest chest states and all endings.",
+      "stderr": ""
+    }
+  ]
+}

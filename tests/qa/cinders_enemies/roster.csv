@@ -1,0 +1,51 @@
+﻿id,name,artwork,weapon,role,element,basic,range,attackRate,specials
+ash_fiend,Ash Fiend,brute,none,melee,phys,melee,1,1,{}
+blight_treant,Blight Treant,treant,none,heavy,phys,melee,1.5,0.6,"{""slam"":{""cd"":6,""radius"":3,""mult"":1.6},""deathBurst"":{""radius"":2.8,""dmg"":22,""elem"":""poison""}}"
+bone_dragon,Bone Dragon,identity_bone_dragon,none,caster,shadow,projectile,9,0.75,"{""slam"":{""cd"":7,""radius"":3,""mult"":1.5},""deathBurst"":{""radius"":3,""dmg"":30,""elem"":""shadow""}}"
+cinder_hound,Cinder Hound,identity_cinder_hound,none,skirmisher,fire,melee,0.9,1.6,{}
+flesh_engine,Flesh Engine Abomination,abom,none,heavy,phys,melee,1.8,0.55,"{""slam"":{""cd"":8,""radius"":2.8,""mult"":1.4},""throwUndead"":{""cd"":6,""range"":13,""count"":1,""mult"":1.3,""radius"":2,""pool"":[""risen"",""tomb_husk"",""drowned_dead"",""frost_risen""]}}"
+impaler,Cinder Impaler,identity_ember_robed,wand,caster,fire,projectile,10,0.6,{}
+infernal_warlord,Infernal Warlord,demon,axe,heavy,phys,melee,1.9,0.8,"{""slam"":{""cd"":5,""radius"":3.2,""mult"":1.8},""charge"":{""cd"":7,""range"":10,""mult"":2,""speed"":10}}"
+pit_brute,Pit Brute,brute,none,heavy,phys,melee,1.4,0.5,"{""slam"":{""cd"":9,""radius"":2.8,""mult"":1.3}}"
+r41_brute,Hollow Brute,brute,none,heavy,phys,melee,0.9,1.18,"{""lifeOnHit"":true}"
+r44_imp,Rime Needler,identity_frost_imp,none,caster,cold,projectile,9,0.6,"{""chillOnHit"":2}"
+r46_brute,Gilded Horror,identity_storm_brute,none,heavy,light,melee,1.5,0.7,"{""slam"":{""cd"":7,""radius"":2.8,""mult"":1.4,""elem"":""light""}}"
+r47_skeleton,Sunken Rattler,skeleton,sword,melee,phys,melee,0.9,1.21,"{""slam"":{""cd"":7,""radius"":2.8,""mult"":1.4}}"
+r48_robed,Gloom Acolyte,robed,wand,caster,shadow,projectile,9,0.7,"{""splitOnDeath"":{""count"":2}}"
+r49_imp,Blighted Spite,imp,none,skirmisher,phys,melee,0.9,0.89,{}
+r50_knight,Ashen Marshal,identity_ember_knight,sword and shield,melee,fire,melee,1.5,0.6,{}
+r51_wraith,Gilded Shade,identity_gilded_wraith,none,spectral,light,melee,0.9,1.46,{}
+r52_brute,Frozen Render,identity_frost_brute,none,heavy,cold,melee,1.5,0.6,"{""slam"":{""cd"":7,""radius"":2.8,""mult"":1.4,""elem"":""cold""},""chillOnHit"":2}"
+r53_imp,Howling Imp,imp,none,skirmisher,phys,melee,0.9,1.05,"{""leap"":{""cd"":6,""range"":6,""radius"":1.5,""mult"":1.7}}"
+r54_robed,Radiant Cultist,identity_radiant_robed,wand,caster,light,projectile,10,0.7,{}
+r55_knight,Ashen Defiler,identity_ember_knight,sword and shield,melee,fire,melee,1.5,0.86,"{""charge"":{""cd"":6,""range"":9,""speed"":10,""mult"":1.7,""elem"":""fire""}}"
+r56_wraith,Gloom Wraith,wraith,none,spectral,shadow,melee,0.9,0.95,"{""slam"":{""cd"":7,""radius"":2.8,""mult"":1.4,""elem"":""shadow""}}"
+r57_brute,Dread Render,brute,none,heavy,phys,melee,1.5,1.14,"{""charge"":{""cd"":6,""range"":9,""speed"":10,""mult"":1.7}}"
+r58_imp,Putrid Stinger,imp,none,skirmisher,phys,melee,0.9,0.85,"{""deathBurst"":{""radius"":2.6,""dmg"":45.4,""elem"":""poison""}}"
+r59_robed,Charred Zealot,identity_ember_robed,wand,caster,fire,projectile,8,0.6,{}
+r60_knight,Storm Templar,identity_storm_knight,sword and shield,melee,light,melee,0.9,1.37,{}
+r61_wraith,Pale Mourner,identity_frost_wraith,none,caster,cold,projectile,9,0.6,"{""chillOnHit"":2}"
+r62_brute,Howling Horror,brute,none,heavy,phys,melee,1.5,0.64,"{""slam"":{""cd"":7,""radius"":2.8,""mult"":1.4}}"
+r63_imp,Arcing Scamp,identity_storm_imp,none,caster,light,projectile,10,0.7,{}
+r64_robed,Charred Acolyte,identity_ember_robed,wand,caster,fire,projectile,9,0.81,"{""volley"":{""cd"":6,""count"":3,""spread"":0.5}}"
+r65_knight,Hollow Vanguard,knight,sword,melee,phys,melee,0.9,0.99,"{""whirl"":{""cd"":7,""dur"":2.2,""tick"":0.3,""mult"":0.7,""radius"":2.2}}"
+r66_wraith,Dread Banshee,wraith,none,spectral,shadow,melee,0.9,1.12,"{""teleports"":{""cd"":5,""minDist"":4}}"
+r67_brute,Vile Devil,brute,none,heavy,phys,melee,0.9,1.23,"{""deathBurst"":{""radius"":2.6,""dmg"":49.599999999999994,""elem"":""poison""}}"
+r68_imp,Smouldering Needler,imp,none,caster,fire,projectile,8,0.6,{}
+r69_robed,Radiant Whisperer,identity_radiant_robed,wand,caster,light,projectile,9,0.7,{}
+r70_knight,Frost Warden,identity_frost_soldier,sword and shield,melee,cold,melee,1.5,0.6,"{""chillOnHit"":2}"
+r71_wraith,Sunken Haunt,wraith,none,spectral,shadow,melee,0.9,1.06,"{""teleports"":{""cd"":5,""minDist"":4}}"
+r72_brute,Galvanic Fiend,identity_storm_brute,none,heavy,light,melee,1.5,0.7,"{""slam"":{""cd"":7,""radius"":2.8,""mult"":1.4,""elem"":""light""}}"
+r73_imp,Smouldering Spite,imp,none,caster,fire,projectile,9,1.05,"{""volley"":{""cd"":6,""count"":3,""spread"":0.5}}"
+r74_robed,Dread Hierophant,robed,wand,caster,shadow,projectile,9,0.7,"{""volley"":{""cd"":6,""count"":3,""spread"":0.5}}"
+r75_wraith,Grave Shade,wraith,none,spectral,shadow,melee,0.9,1.04,"{""slam"":{""cd"":7,""radius"":2.8,""mult"":1.4,""elem"":""shadow""}}"
+r76_knight,Wretched Templar,knight,sword,commander,phys,melee,0.9,0.99,"{""summons"":{""id"":""risen"",""count"":2,""cd"":11}}"
+r77_treant,Ember Witherwood,identity_ember_treant,none,caster,fire,projectile,9,0.94,"{""volley"":{""cd"":6,""count"":3,""spread"":0.5}}"
+r78_brute,Putrid Horror,brute,none,heavy,phys,melee,0.9,1.24,"{""deathBurst"":{""radius"":2.6,""dmg"":53.8,""elem"":""poison""}}"
+r79_warlord,Radiant Tyrant,identity_warlord_axe,axe,commander,light,melee,1.8,0.76,"{""heals"":{""cd"":7,""amount"":40,""radius"":7}}"
+r81_knight,Dread Templar,knight,sword,defender,phys,melee,0.9,0.9,"{""shield"":true}"
+r82_treant,Dread Rootmaw,treant,none,heavy,phys,melee,0.9,0.66,"{""slam"":{""cd"":7,""radius"":2.8,""mult"":1.4}}"
+r84_warlord,Charred Slaughterer,identity_warlord_axe,axe,melee,fire,melee,1.8,0.92,"{""whirl"":{""cd"":7,""dur"":2.2,""tick"":0.3,""mult"":0.7,""radius"":2.2,""elem"":""fire""}}"
+void_gargoyle,Void Gargoyle,gargoyle,none,skirmisher,phys,melee,1.1,1,"{""leap"":{""cd"":5,""range"":10,""radius"":2.6,""mult"":2},""deathBurst"":{""radius"":2.6,""dmg"":24,""elem"":""shadow""}}"
+void_wraith,Void Wraith,wraith,none,caster,shadow,projectile,9,0.8,"{""teleports"":{""cd"":4,""minDist"":5},""deathBurst"":{""radius"":2.6,""dmg"":26,""elem"":""shadow""}}"
+wretch_lord,Wretch Lord,identity_ember_robed,wand,caller,fire,projectile,9,0.6,"{""summons"":{""id"":[""ash_fiend"",""cinder_hound""],""count"":2,""cd"":11}}"

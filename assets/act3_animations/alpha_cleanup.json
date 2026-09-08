@@ -1,0 +1,126 @@
+{
+  "authorization": "User explicitly approved local Python cleanup of separate copies",
+  "images": [
+    {
+      "id": "sand_raider",
+      "input": "assets/act3_animations/source/sand_raider_v2.png",
+      "inputHash": "eb35313c1bf33645f15560dbaf53b867e0bce23e4dfa12c921670c1928bd61a2",
+      "output": "assets/act3_animations/alpha/sand_raider.png",
+      "outputHash": "726e2c0e3623ef07e1c8fc4e91c47f9571d3df1b96358413b63912464d900d98",
+      "method": "neutral-matte",
+      "neutralMinChannel": 230,
+      "neutralChromaMax": 24,
+      "transparentFraction": 0.9145
+    },
+    {
+      "id": "tomb_guard",
+      "input": "assets/act3_animations/source/tomb_guard.png",
+      "inputHash": "cca7c00d0ce82b3e5b380c99923d32346d5cf3cf38eb21e8668f81cab36cb880",
+      "output": "assets/act3_animations/alpha/tomb_guard.png",
+      "outputHash": "e8e56fae995eb7f9d7976b6794219c8b0b54813a757249dc03a457d57f2acdf3",
+      "method": "neutral-matte",
+      "neutralMinChannel": 185,
+      "neutralChromaMax": 24,
+      "transparentFraction": 0.7219
+    },
+    {
+      "id": "dune_shade",
+      "input": "assets/act3_animations/source/dune_shade_white.png",
+      "inputHash": "99966f706dc5ba95814cc5442daea15406ed238794ecf2e31e9ad30403e410d8",
+      "output": "assets/act3_animations/alpha/dune_shade.png",
+      "outputHash": "8dfc354b3cf489fc22c3c7ae1cd9481be3228131e22edcf6fa9c6f50b1bc58fd",
+      "method": "neutral-matte",
+      "neutralMinChannel": 230,
+      "neutralChromaMax": 24,
+      "transparentFraction": 0.6882
+    },
+    {
+      "id": "soul_chained",
+      "input": "assets/act3_animations/source/soul_chained_v2.png",
+      "inputHash": "fbfc31c6c036a34b39d7ce965c5f4b91033e3c352215a5e2fbf025510c13b3d2",
+      "output": "assets/act3_animations/alpha/soul_chained.png",
+      "outputHash": "7b81302e5622e1a7390942c79e48672bde7b99ddbad5f8d7787987fffe206fd0",
+      "method": "neutral-matte",
+      "neutralMinChannel": 230,
+      "neutralChromaMax": 24,
+      "transparentFraction": 0.8618
+    },
+    {
+      "id": "gilt_construct",
+      "input": "assets/act3_animations/source/gilt_construct.png",
+      "inputHash": "5d674fda3d39a11d2a3570caea82deec548009c1aa6cec58bb8415e8eb807cac",
+      "output": "assets/act3_animations/alpha/gilt_construct.png",
+      "outputHash": "49fd9ce7dc5d6216469cce702f2b4a26589f1ffb8fe3ac0f3d904ef193b2d4c9",
+      "method": "neutral-matte",
+      "neutralMinChannel": 230,
+      "neutralChromaMax": 24,
+      "transparentFraction": 0.6545
+    },
+    {
+      "id": "shard_construct",
+      "input": "assets/act3_animations/source/shard_construct_v2.png",
+      "inputHash": "50a23923a6591b668666258c758e1e698c160d6ed363eb4f79a8c39e482a7262",
+      "output": "assets/act3_animations/alpha/shard_construct.png",
+      "outputHash": "112a3d4d22342932bfcb42b3d5e5f3e18ca7b82f5dd314b9470d2289835372d2",
+      "method": "neutral-matte",
+      "neutralMinChannel": 230,
+      "neutralChromaMax": 24,
+      "transparentFraction": 0.8416
+    },
+    {
+      "id": "crystal_marauder",
+      "input": "assets/act3_animations/source/crystal_marauder.png",
+      "inputHash": "da3471d5c79e9c9fbe5b72c5dbf26e73371e932bbfbccae1ee2170715106b000",
+      "output": "assets/act3_animations/alpha/crystal_marauder.png",
+      "outputHash": "1bbdd93570c2b5f18d34344cc10f76d5b51b70d99a126810f8b57ea227a59e0a",
+      "method": "neutral-matte",
+      "neutralMinChannel": 180,
+      "neutralChromaMax": 24,
+      "transparentFraction": 0.7082
+    },
+    {
+      "id": "gilded_thrall",
+      "input": "assets/act3_animations/source/gilded_thrall_white.png",
+      "inputHash": "858fbb58c7aee5d0519cac288c29c8cddb217125438272791090562274567ed4",
+      "output": "assets/act3_animations/alpha/gilded_thrall.png",
+      "outputHash": "04adb05b34e6be5e625a472f9562f28a0891322e8ca43e4d5dad1c6cd749ae9a",
+      "method": "neutral-matte",
+      "neutralMinChannel": 230,
+      "neutralChromaMax": 24,
+      "transparentFraction": 0.7178
+    },
+    {
+      "id": "prisoned_shade",
+      "input": "assets/act3_animations/source/prisoned_shade.png",
+      "inputHash": "43885a3f05ce8d1387d52866806013c4fb52f90d145d863915c0f3ca23ad5ded",
+      "output": "assets/act3_animations/alpha/prisoned_shade.png",
+      "outputHash": "0b6e285935ec176e4974afa03aa14ec82d10ba192427e375217dff12a79f3bb4",
+      "method": "neutral-matte",
+      "neutralMinChannel": 230,
+      "neutralChromaMax": 24,
+      "transparentFraction": 0.696
+    },
+    {
+      "id": "dune_serpent",
+      "input": "assets/act3_animations/source/dune_serpent.png",
+      "inputHash": "34763b31087512c11d9d2b3e238068390afbc4f9e1b7090efe1d34da2e556697",
+      "output": "assets/act3_animations/alpha/dune_serpent.png",
+      "outputHash": "c512711994c31585247f6fad51b7c61453dc7372945620f179a289f5759d4d93",
+      "method": "neutral-matte",
+      "neutralMinChannel": 180,
+      "neutralChromaMax": 24,
+      "transparentFraction": 0.6189
+    },
+    {
+      "id": "stone_gargoyle",
+      "input": "assets/act3_animations/source/stone_gargoyle.png",
+      "inputHash": "38f8989a4dfc1695b336804639e857b60cbbfce2efe3d500061d73c496042e46",
+      "output": "assets/act3_animations/alpha/stone_gargoyle.png",
+      "outputHash": "06c7596157e9a9ccbd9dc79c3dbefd75fa2bb09eede2e7aa15a9ac6f84dbc2a5",
+      "method": "neutral-matte",
+      "neutralMinChannel": 138,
+      "neutralChromaMax": 24,
+      "transparentFraction": 0.6755
+    }
+  ]
+}

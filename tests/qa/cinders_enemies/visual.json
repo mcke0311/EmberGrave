@@ -1,0 +1,481 @@
+{
+  "status": "PASS",
+  "browser": "152.0.7977.76",
+  "captures": [
+    {
+      "width": 1920,
+      "version": "before",
+      "file": "1920_before_r46_brute_slam.png",
+      "id": "r46_brute",
+      "kind": "slam",
+      "warning": null,
+      "element": "light"
+    },
+    {
+      "width": 1920,
+      "version": "before",
+      "file": "1920_before_r55_knight_charge.png",
+      "id": "r55_knight",
+      "kind": "charge",
+      "warning": null,
+      "element": "fire"
+    },
+    {
+      "width": 1920,
+      "version": "before",
+      "file": "1920_before_r53_imp_leap.png",
+      "id": "r53_imp",
+      "kind": "leap",
+      "warning": null,
+      "element": "physical"
+    },
+    {
+      "width": 1920,
+      "version": "before",
+      "file": "1920_before_r84_warlord_whirl.png",
+      "id": "r84_warlord",
+      "kind": "whirl",
+      "warning": null,
+      "element": "fire"
+    },
+    {
+      "width": 1920,
+      "version": "before",
+      "file": "1920_before_r56_wraith_slam.png",
+      "id": "r56_wraith",
+      "kind": "slam",
+      "warning": null,
+      "element": "physical"
+    },
+    {
+      "width": 1920,
+      "version": "before",
+      "file": "1920_before_r70_knight_melee.png",
+      "id": "r70_knight",
+      "kind": "melee",
+      "warning": null,
+      "element": "cold"
+    },
+    {
+      "width": 1920,
+      "version": "before",
+      "file": "1920_before_r74_robed_volley.png",
+      "id": "r74_robed",
+      "kind": "volley",
+      "warning": null,
+      "element": "physical"
+    },
+    {
+      "width": 1920,
+      "version": "before",
+      "file": "1920_before_bone_dragon_ranged.png",
+      "id": "bone_dragon",
+      "kind": "ranged",
+      "warning": null,
+      "element": "shadow"
+    },
+    {
+      "width": 1920,
+      "version": "before",
+      "file": "1920_before_r58_imp_deathBurst.png",
+      "id": "r58_imp",
+      "kind": "deathBurst",
+      "warning": null,
+      "element": "physical"
+    },
+    {
+      "width": 1920,
+      "version": "before",
+      "file": "1920_before_cinder_hound_pack.png",
+      "id": "cinder_hound",
+      "kind": "pack",
+      "count": 4
+    },
+    {
+      "width": 1920,
+      "version": "after",
+      "file": "1920_after_r46_brute_slam.png",
+      "id": "r46_brute",
+      "kind": "slam",
+      "warning": {
+        "shape": {
+          "kind": "circle",
+          "x": 49.5,
+          "y": 34.5,
+          "radius": 2.8
+        },
+        "duration": 0.8
+      },
+      "role": "heavy",
+      "element": "light"
+    },
+    {
+      "width": 1920,
+      "version": "after",
+      "file": "1920_after_r55_knight_charge.png",
+      "id": "r55_knight",
+      "kind": "charge",
+      "warning": {
+        "shape": {
+          "kind": "line",
+          "x": 49.5,
+          "y": 34.5,
+          "angle": 0,
+          "length": 6.999999999999991,
+          "width": 1.8240000000000003
+        },
+        "duration": 0.6
+      },
+      "role": "melee",
+      "element": "fire"
+    },
+    {
+      "width": 1920,
+      "version": "after",
+      "file": "1920_after_r53_imp_leap.png",
+      "id": "r53_imp",
+      "kind": "leap",
+      "warning": {
+        "shape": {
+          "kind": "circle",
+          "x": 53.5,
+          "y": 34.5,
+          "radius": 1.5
+        },
+        "duration": 0.6
+      },
+      "role": "skirmisher",
+      "element": "physical"
+    },
+    {
+      "width": 1920,
+      "version": "after",
+      "file": "1920_after_r84_warlord_whirl.png",
+      "id": "r84_warlord",
+      "kind": "whirl",
+      "warning": {
+        "shape": {
+          "kind": "circle",
+          "x": 49.5,
+          "y": 34.5,
+          "radius": 2.2
+        },
+        "duration": 0.6
+      },
+      "role": "melee",
+      "element": "fire"
+    },
+    {
+      "width": 1920,
+      "version": "after",
+      "file": "1920_after_r56_wraith_slam.png",
+      "id": "r56_wraith",
+      "kind": "slam",
+      "warning": {
+        "shape": {
+          "kind": "circle",
+          "x": 49.5,
+          "y": 34.5,
+          "radius": 2.8
+        },
+        "duration": 0.8
+      },
+      "role": "spectral",
+      "element": "shadow"
+    },
+    {
+      "width": 1920,
+      "version": "after",
+      "file": "1920_after_r70_knight_melee.png",
+      "id": "r70_knight",
+      "kind": "melee",
+      "warning": null,
+      "role": "melee",
+      "element": "cold"
+    },
+    {
+      "width": 1920,
+      "version": "after",
+      "file": "1920_after_r74_robed_volley.png",
+      "id": "r74_robed",
+      "kind": "volley",
+      "warning": null,
+      "role": "caster",
+      "element": "shadow"
+    },
+    {
+      "width": 1920,
+      "version": "after",
+      "file": "1920_after_bone_dragon_ranged.png",
+      "id": "bone_dragon",
+      "kind": "ranged",
+      "warning": null,
+      "role": "caster",
+      "element": "shadow"
+    },
+    {
+      "width": 1920,
+      "version": "after",
+      "file": "1920_after_r58_imp_deathBurst.png",
+      "id": "r58_imp",
+      "kind": "deathBurst",
+      "warning": {
+        "shape": {
+          "kind": "circle",
+          "x": 49.5,
+          "y": 34.5,
+          "radius": 2.6
+        },
+        "duration": 0.6
+      },
+      "role": "skirmisher",
+      "element": "physical"
+    },
+    {
+      "width": 1920,
+      "version": "after",
+      "file": "1920_after_cinder_hound_pack.png",
+      "id": "cinder_hound",
+      "kind": "pack",
+      "count": 4
+    },
+    {
+      "width": 3840,
+      "version": "before",
+      "file": "3840_before_r46_brute_slam.png",
+      "id": "r46_brute",
+      "kind": "slam",
+      "warning": null,
+      "element": "light"
+    },
+    {
+      "width": 3840,
+      "version": "before",
+      "file": "3840_before_r55_knight_charge.png",
+      "id": "r55_knight",
+      "kind": "charge",
+      "warning": null,
+      "element": "fire"
+    },
+    {
+      "width": 3840,
+      "version": "before",
+      "file": "3840_before_r53_imp_leap.png",
+      "id": "r53_imp",
+      "kind": "leap",
+      "warning": null,
+      "element": "physical"
+    },
+    {
+      "width": 3840,
+      "version": "before",
+      "file": "3840_before_r84_warlord_whirl.png",
+      "id": "r84_warlord",
+      "kind": "whirl",
+      "warning": null,
+      "element": "fire"
+    },
+    {
+      "width": 3840,
+      "version": "before",
+      "file": "3840_before_r56_wraith_slam.png",
+      "id": "r56_wraith",
+      "kind": "slam",
+      "warning": null,
+      "element": "physical"
+    },
+    {
+      "width": 3840,
+      "version": "before",
+      "file": "3840_before_r70_knight_melee.png",
+      "id": "r70_knight",
+      "kind": "melee",
+      "warning": null,
+      "element": "cold"
+    },
+    {
+      "width": 3840,
+      "version": "before",
+      "file": "3840_before_r74_robed_volley.png",
+      "id": "r74_robed",
+      "kind": "volley",
+      "warning": null,
+      "element": "physical"
+    },
+    {
+      "width": 3840,
+      "version": "before",
+      "file": "3840_before_bone_dragon_ranged.png",
+      "id": "bone_dragon",
+      "kind": "ranged",
+      "warning": null,
+      "element": "shadow"
+    },
+    {
+      "width": 3840,
+      "version": "before",
+      "file": "3840_before_r58_imp_deathBurst.png",
+      "id": "r58_imp",
+      "kind": "deathBurst",
+      "warning": null,
+      "element": "physical"
+    },
+    {
+      "width": 3840,
+      "version": "before",
+      "file": "3840_before_cinder_hound_pack.png",
+      "id": "cinder_hound",
+      "kind": "pack",
+      "count": 4
+    },
+    {
+      "width": 3840,
+      "version": "after",
+      "file": "3840_after_r46_brute_slam.png",
+      "id": "r46_brute",
+      "kind": "slam",
+      "warning": {
+        "shape": {
+          "kind": "circle",
+          "x": 49.5,
+          "y": 34.5,
+          "radius": 2.8
+        },
+        "duration": 0.8
+      },
+      "role": "heavy",
+      "element": "light"
+    },
+    {
+      "width": 3840,
+      "version": "after",
+      "file": "3840_after_r55_knight_charge.png",
+      "id": "r55_knight",
+      "kind": "charge",
+      "warning": {
+        "shape": {
+          "kind": "line",
+          "x": 49.5,
+          "y": 34.5,
+          "angle": 0,
+          "length": 6.999999999999991,
+          "width": 1.8240000000000003
+        },
+        "duration": 0.6
+      },
+      "role": "melee",
+      "element": "fire"
+    },
+    {
+      "width": 3840,
+      "version": "after",
+      "file": "3840_after_r53_imp_leap.png",
+      "id": "r53_imp",
+      "kind": "leap",
+      "warning": {
+        "shape": {
+          "kind": "circle",
+          "x": 53.5,
+          "y": 34.5,
+          "radius": 1.5
+        },
+        "duration": 0.6
+      },
+      "role": "skirmisher",
+      "element": "physical"
+    },
+    {
+      "width": 3840,
+      "version": "after",
+      "file": "3840_after_r84_warlord_whirl.png",
+      "id": "r84_warlord",
+      "kind": "whirl",
+      "warning": {
+        "shape": {
+          "kind": "circle",
+          "x": 49.5,
+          "y": 34.5,
+          "radius": 2.2
+        },
+        "duration": 0.6
+      },
+      "role": "melee",
+      "element": "fire"
+    },
+    {
+      "width": 3840,
+      "version": "after",
+      "file": "3840_after_r56_wraith_slam.png",
+      "id": "r56_wraith",
+      "kind": "slam",
+      "warning": {
+        "shape": {
+          "kind": "circle",
+          "x": 49.5,
+          "y": 34.5,
+          "radius": 2.8
+        },
+        "duration": 0.8
+      },
+      "role": "spectral",
+      "element": "shadow"
+    },
+    {
+      "width": 3840,
+      "version": "after",
+      "file": "3840_after_r70_knight_melee.png",
+      "id": "r70_knight",
+      "kind": "melee",
+      "warning": null,
+      "role": "melee",
+      "element": "cold"
+    },
+    {
+      "width": 3840,
+      "version": "after",
+      "file": "3840_after_r74_robed_volley.png",
+      "id": "r74_robed",
+      "kind": "volley",
+      "warning": null,
+      "role": "caster",
+      "element": "shadow"
+    },
+    {
+      "width": 3840,
+      "version": "after",
+      "file": "3840_after_bone_dragon_ranged.png",
+      "id": "bone_dragon",
+      "kind": "ranged",
+      "warning": null,
+      "role": "caster",
+      "element": "shadow"
+    },
+    {
+      "width": 3840,
+      "version": "after",
+      "file": "3840_after_r58_imp_deathBurst.png",
+      "id": "r58_imp",
+      "kind": "deathBurst",
+      "warning": {
+        "shape": {
+          "kind": "circle",
+          "x": 49.5,
+          "y": 34.5,
+          "radius": 2.6
+        },
+        "duration": 0.6
+      },
+      "role": "skirmisher",
+      "element": "physical"
+    },
+    {
+      "width": 3840,
+      "version": "after",
+      "file": "3840_after_cinder_hound_pack.png",
+      "id": "cinder_hound",
+      "kind": "pack",
+      "count": 4
+    }
+  ],
+  "errors": []
+}

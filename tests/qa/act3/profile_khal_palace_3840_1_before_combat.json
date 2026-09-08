@@ -1,0 +1,39 @@
+{
+  "methodRevision": 2,
+  "layoutRevision": 3,
+  "width": 3840,
+  "zone": "khal_palace",
+  "pair": 1,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 28.5,
+    "y": 94.5
+  },
+  "monsters": 40,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 757,
+  "cpuMs": {
+    "median": 23.7,
+    "p95": 33.8,
+    "max": 177.7
+  },
+  "updateMs": {
+    "median": 0.4,
+    "p95": 0.7,
+    "max": 2.4
+  },
+  "renderMs": {
+    "median": 23.3,
+    "p95": 33.1,
+    "max": 175.3
+  },
+  "frameIntervalMs": {
+    "median": 25.5,
+    "p95": 35.9,
+    "max": 180.6
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

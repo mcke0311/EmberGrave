@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "browser": "152.0.7977.76",
+  "connections": [
+    {
+      "from": "hellgate",
+      "to": "ash_wastes",
+      "status": "PASS"
+    },
+    {
+      "from": "ash_wastes",
+      "to": "cinder_bastion",
+      "status": "PASS"
+    },
+    {
+      "from": "cinder_bastion",
+      "to": "ash_wastes",
+      "status": "PASS"
+    },
+    {
+      "from": "ash_wastes",
+      "to": "throne",
+      "status": "PASS"
+    },
+    {
+      "from": "throne",
+      "to": "ash_wastes",
+      "status": "PASS"
+    },
+    {
+      "from": "ash_wastes",
+      "to": "hellgate",
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "authorization": "User explicitly approved local Python image editing",
+  "method": "neutral-checker-matte-v1",
+  "images": [
+    {
+      "id": "drowned_dead",
+      "source": "assets/act2_animations/source/drowned_dead.png",
+      "sourceHash": "ce5298e231a400733e2393c2a68c71d41643cc446ae9422075e90e900a86a779",
+      "output": "assets/act2_animations/alpha/drowned_dead.png",
+      "outputHash": "e2712662c3bcc37139188ca66df8914916baffb08ecc64c0349d5ab4b08aa62a",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 182,
+      "transparentFraction": 0.73575
+    },
+    {
+      "id": "marsh_wretch",
+      "source": "assets/act2_animations/source/marsh_wretch.png",
+      "sourceHash": "b50f52f1653f8587b6e18901de2789da24fb1d486d751df1b95fcb8e3fa9f7d9",
+      "output": "assets/act2_animations/alpha/marsh_wretch.png",
+      "outputHash": "548bd8a05f7e376f3a61cae49c4e68cfcb8e07a7bc57da9a7451c52712bb9382",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 182,
+      "transparentFraction": 0.75352
+    },
+    {
+      "id": "silent_cultist",
+      "source": "assets/act2_animations/source/silent_cultist.png",
+      "sourceHash": "b9cff968473bbdba02651b15a907bc1d5b941b6adaa2d1449a1a6170bde30dcb",
+      "output": "assets/act2_animations/alpha/silent_cultist.png",
+      "outputHash": "e852bc98122bd286709dc62b496f88da958060d745ba5a34f9a5a7f0ad3ef65f",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 112,
+      "transparentFraction": 0.79077
+    },
+    {
+      "id": "bog_bloat",
+      "source": "assets/act2_animations/source/bog_bloat.png",
+      "sourceHash": "98cf108db31989758636c1544832579587f1610a72eb626a3d99645f463cbde6",
+      "output": "assets/act2_animations/alpha/bog_bloat.png",
+      "outputHash": "1cbb97ad6db7b4ae560457fa94473c197a75181d04af7dc2ca8bf91bea42ec0f",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 182,
+      "transparentFraction": 0.69291
+    },
+    {
+      "id": "marsh_serpent",
+      "source": "assets/act2_animations/source/marsh_serpent.png",
+      "sourceHash": "08c44e11ec8c29274330acc069caceaad689c48925e942618d0b6aa3f39436db",
+      "output": "assets/act2_animations/alpha/marsh_serpent.png",
+      "outputHash": "d802f75bd49668c06f09acd6e1ec3a4934d49970ba06bcb01f4b51d3b64db7a4",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 182,
+      "transparentFraction": 0.62672
+    },
+    {
+      "id": "gnarl_treant",
+      "source": "assets/act2_animations/source/gnarl_treant.png",
+      "sourceHash": "ae713d2816192e7b8f5676b8bbdf1dfa86391ca023d42bf6a41e387c50e7c116",
+      "output": "assets/act2_animations/alpha/gnarl_treant.png",
+      "outputHash": "700abe773f5dbe5f8031da89966b3a99020dddb1f91c17b295b6e5fe04cfcc66",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 182,
+      "transparentFraction": 0.71331
+    },
+    {
+      "id": "stone_gargoyle",
+      "source": "assets/act2_animations/source/stone_gargoyle.png",
+      "sourceHash": "0b297d91c1ca6362952b381070242997a59fe0d938bf72acc3d61e6e71edc161",
+      "output": "assets/act2_animations/alpha/stone_gargoyle.png",
+      "outputHash": "9d3ec6cebc2ae9bef8228f5ab653aecb412a86a5d1b21f5f9070da52c6664d7f",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 182,
+      "transparentFraction": 0.66081
+    },
+    {
+      "id": "song_thrall",
+      "source": "assets/act2_animations/source/song_thrall.png",
+      "sourceHash": "d9d617e2c9c32da6ab519cc62a834cf0400be3094a14fdda07001a176a33b8c9",
+      "output": "assets/act2_animations/alpha/song_thrall.png",
+      "outputHash": "65c7543d032b3c9ba9dd78de3dfb07581edb4d440bf9c5f398973e191b7b0475",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 112,
+      "transparentFraction": 0.81293
+    },
+    {
+      "id": "marsh_larvae",
+      "source": "assets/act2_animations/source/marsh_larvae.png",
+      "sourceHash": "2e5bb7c993f878d35d11c4dfcfe16282eaab8744d962f57c8dd68c21aa2db4f7",
+      "output": "assets/act2_animations/alpha/marsh_larvae.png",
+      "outputHash": "0777b3ed3a5978ce4b58a0a50c9b4ca7cf0eac8d851b415ea0dcbd801caebf6e",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 112,
+      "transparentFraction": 0.71766
+    },
+    {
+      "id": "sludge_horror",
+      "source": "assets/act2_animations/source/sludge_horror.png",
+      "sourceHash": "6b65a91adb33f525124e4e95bdd592cc8c3c74c8679146e0df82267cc8714377",
+      "output": "assets/act2_animations/alpha/sludge_horror.png",
+      "outputHash": "949adf16f85136a107f0cfd084e339d4f93dda84c804113f347670a82c3014ae",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 182,
+      "transparentFraction": 0.64063
+    },
+    {
+      "id": "blight_treant",
+      "source": "assets/act2_animations/source/blight_treant.png",
+      "sourceHash": "f9e424d0d61597907b1b9a43f12cfc91afa3acfa6905cf708859a409a1f2cc57",
+      "output": "assets/act2_animations/alpha/blight_treant.png",
+      "outputHash": "93b4a2e55c3ead5fbe7545f0e85ab683ffb54972138d53d3378323ef24c113e6",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 182,
+      "transparentFraction": 0.7117
+    },
+    {
+      "id": "brood_mother",
+      "source": "assets/act2_animations/source/brood_mother.png",
+      "sourceHash": "0eddffef9348221e7b9e8647150fa2b72ec19dab300ac015ad1e9172a4436208",
+      "output": "assets/act2_animations/alpha/brood_mother.png",
+      "outputHash": "0afad6a608f853e5c8b2350e8d5b2497c2916fa964b21484dfe6a0be9091e9ca",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 182,
+      "transparentFraction": 0.70623
+    },
+    {
+      "id": "choirmaster",
+      "source": "assets/act2_animations/source/choirmaster.png",
+      "sourceHash": "6c1b84e901dc9149ced84bda369a83ad1f10e2a396f458c9caea061f1b2c3f58",
+      "output": "assets/act2_animations/alpha/choirmaster.png",
+      "outputHash": "55a6a8409190401700238322e1d10ea6df3d3f5b952be81858c1120f4e5821b7",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 182,
+      "transparentFraction": 0.66258
+    },
+    {
+      "id": "mire_mother_0",
+      "source": "assets/act2_animations/source/mire_mother_0.png",
+      "sourceHash": "cf2775204cb925f302ab7af09bcd660875be880b3c1a191f87994580d73aac7c",
+      "output": "assets/act2_animations/alpha/mire_mother_0.png",
+      "outputHash": "a3094950e7852dfb1dd6521f8f805461cdeec6e29289fab5c1e3dde4a432d2da",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 182,
+      "transparentFraction": 0.64283
+    },
+    {
+      "id": "mire_mother_1",
+      "source": "assets/act2_animations/source/mire_mother_1.png",
+      "sourceHash": "f38438ffff092ce365e64214fcc3a686ae89b56c3b7400cc0d931d0c7f3be1e2",
+      "output": "assets/act2_animations/alpha/mire_mother_1.png",
+      "outputHash": "b2cbf288d633023e7b86ffda9d9d45ca6fb43ced0c61865dc1b1901b01b653dd",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 166,
+      "transparentFraction": 0.62794
+    },
+    {
+      "id": "mire_mother_2",
+      "source": "assets/act2_animations/source/mire_mother_2.png",
+      "sourceHash": "ba31864abf9f99ca6e2b8eb58609455fd2dcc324f5dbb35814e68bca5beeaa35",
+      "output": "assets/act2_animations/alpha/mire_mother_2.png",
+      "outputHash": "89652e49bd9b9c0f5963a779741bc3585c7b9120338938dd6b620be4b0e1d361",
+      "neutralChromaMax": 24,
+      "neutralMinChannel": 182,
+      "transparentFraction": 0.6427
+    }
+  ]
+}

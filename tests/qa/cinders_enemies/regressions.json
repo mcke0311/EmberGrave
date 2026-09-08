@@ -1,0 +1,131 @@
+{
+  "status": "PASS",
+  "tests": [
+    {
+      "test": "cinders_enemy_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "PASS 966 Act 5 enemy checks",
+      "stderr": ""
+    },
+    {
+      "test": "cinders_layout_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 81366,\n  \"seedCount\": 30,\n  \"zones\": [\n    \"ash_wastes\",\n    \"cinder_bastion\",\n    \"throne\"\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "cinders_gameplay_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 241,\n  \"seeds\": 3,\n  \"scenarios\": [\n    \"all bidirectional exits\",\n    \"safe arrivals outside triggers\",\n    \"shrine attunement and travel\",\n    \"town portal return coordinates\",\n    \"death and revival\",\n    \"serialized boss and shrine progress\",\n    \"three endings\",\n    \"seeded event anchors\"\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "story_campaign_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "PASS 214 story checks: dialogue, objectives, old saves, boss wards, seeded routes, factions, phases, quest chest states and all endings.\n",
+      "stderr": ""
+    },
+    {
+      "test": "boss_encounter_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "PASS 85616 boss checks: warning geometry, dodge routes, recovery, phases, ownership, retreat, death, signatures and 192 seeded arenas.\n",
+      "stderr": ""
+    },
+    {
+      "test": "boss_refinement_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "PASS 267 refinement checks, 228 sequence steps and 170 collision-aware walking escapes.\n",
+      "stderr": ""
+    },
+    {
+      "test": "opening_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "PASS 886 opening checks: five classes, rescue, captain phases, finite reinforcements, attack warnings, every checkpoint, migration, rewards, skip, death and failed-load retry.\n",
+      "stderr": "Could not load town sprites: Error: Expected test load failure\n    at Object.loadBundle (file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:14:65)\n    at requireSpriteBundle (evalmachine.<anonymous>:151:26)\n    at enterMap (evalmachine.<anonymous>:613:16)\n    at evalmachine.<anonymous>:537:95\n    at Object.skip (evalmachine.<anonymous>:539:9)\n    at Object.skipOpening (evalmachine.<anonymous>:549:43)\n    at file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:116:13\n"
+    },
+    {
+      "test": "navigation_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "PASS 216 navigation checks; longest seeded query 27.2 ms.\n",
+      "stderr": ""
+    },
+    {
+      "test": "navigation_edge_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "PASS 75272 navigation checks: optimized edges match swept collision for ramps, walls, cliffs, diagonals, hopping and six body radii.\n",
+      "stderr": ""
+    },
+    {
+      "test": "terrain_surface_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 10734,\n  \"maxWalkHeightDelta\": 0.07500000000000018,\n  \"seedResults\": [\n    {\n      \"seed\": 0,\n      \"ramps\": 2,\n      \"raisedTiles\": 19058,\n      \"targets\": 16,\n      \"ms\": 198\n    },\n    {\n      \"seed\": 1,\n      \"ramps\": 2,\n      \"raisedTiles\": 19284,\n      \"targets\": 16,\n      \"ms\": 133\n    },\n    {\n      \"seed\": 123,\n      \"ramps\": 2,\n      \"raisedTiles\": 19169,\n      \"targets\": 16,\n      \"ms\": 123\n    },\n    {\n      \"seed\": 12345,\n      \"ramps\": 2,\n      \"raisedTiles\": 19445,\n      \"targets\": 16,\n      \"ms\": 106\n    },\n    {\n      \"seed\": 4294967295,\n      \"ramps\": 2,\n      \"raisedTiles\": 19359,\n      \"targets\": 16,\n      \"ms\": 100\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "terrain_view_cache_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "PASS 3980 projected terrain cache checks: raised and legacy floors, movement, resizing, grid/geometry changes, map identity, and released backing stores.\n",
+      "stderr": ""
+    },
+    {
+      "test": "frontier_navigation_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 94772,\n  \"seeds\": 30,\n  \"areas\": 3,\n  \"radii\": 7,\n  \"scope\": \"Optimized sweeps equal ramp-aware sweeps; blockers, height edits and outdoor ascents retain their rules.\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "act2_enemy_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "{ status: 'PASS', checks: 154 }\n",
+      "stderr": ""
+    },
+    {
+      "test": "act3_combat_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "{\"status\": \"PASS\", \"checks\": 33074, \"enemies\": [{\"id\": \"sand_raider\", \"hits\": 15, \"attacks\": \"melee\"}, {\"id\": \"tomb_guard\", \"hits\": 9, \"attacks\": \"bash\"}, {\"id\": \"dune_shade\", \"hits\": 13, \"attacks\": \"melee\"}, {\"id\": \"soul_chained\", \"hits\": 7, \"attacks\": \"bolt\"}, {\"id\": \"gilt_construct\", \"hits\": 7, \"attacks\": \"pulse\"}, {\"id\": \"shard_construct\", \"hits\": 8, \"attacks\": \"fan\"}, {\"id\": \"crystal_marauder\", \"hits\": 12, \"attacks\": \"melee\"}, {\"id\": \"gilded_thrall\", \"hits\": 9, \"attacks\": \"sweep\"}, {\"id\": \"prisoned_shade\", \"hits\": 13, \"attacks\": \"bolt\"}, {\"id\": \"dune_serpent\", \"hits\": 28, \"attacks\": \"melee\"}, {\"id\": \"stone_gargoyle\", \"hits\": 11, \"attacks\": \"melee\"}, {\"id\": \"chained_sovereign\", \"hits\": 8, \"attacks\": \"pulse\"}], \"seedCount\": 30}",
+      "stderr": "",
+      "previousAttempt": {
+        "status": "FAIL",
+        "exitCode": 1,
+        "output": "",
+        "stderr": "node:internal/modules/run_main:122\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: shard_flats/quarry mixed court roles\n    at ok (file:///C:/Users/this_/Downloads/Claudediablo/tests/act3_combat_contract.mjs:6:55)\n    at file:///C:/Users/this_/Downloads/Claudediablo/tests/act3_combat_contract.mjs:121:122\n    at ModuleJob.run (node:internal/modules/esm/module_job:268:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:543:26)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: '=='\n}\n\nNode.js v22.11.0\n"
+      },
+      "recheckedAfterConcurrentWorkspaceUpdate": true
+    },
+    {
+      "test": "cathedral_enemy_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "{\n  status: 'PASS',\n  checks: 3520897,\n  seedsPerZone: 100,\n  zones: [\n    'cathedral1',\n    'cathedral2',\n    'cathedral_cinderwatch',\n    'cathedral_bastion'\n  ],\n  rushes: 129883,\n  blinks: 121491\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "cinders_sprite_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "{\n  \"status\": \"PASS\",\n  \"assets\": 14,\n  \"checks\": 126,\n  \"method\": \"built-in ImageGen, native alpha preserved, uniform resize, final-aligned compiler encoding\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "enemy_art_contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "output": "PASS 842 enemy import checks, 40 sources, 436,768 packed bytes.\n",
+      "stderr": ""
+    }
+  ]
+}

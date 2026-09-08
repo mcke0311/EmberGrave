@@ -1,0 +1,28 @@
+{
+  "methodRevision": 2,
+  "width": 3840,
+  "zone": "drowned_crypt",
+  "pair": 2,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 65.5,
+    "y": 31.5
+  },
+  "monsters": 100,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 586,
+  "cpuMs": {
+    "median": 36.4,
+    "p95": 56.1,
+    "max": 377.2
+  },
+  "frameIntervalMs": {
+    "median": 39,
+    "p95": 63.7,
+    "max": 456.1
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

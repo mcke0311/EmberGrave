@@ -1,0 +1,225 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Act V — cinders review</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#111a1f;color:#d8dcd9;font:14px/1.5 system-ui}header{padding:18px 24px;border-bottom:1px solid #33434a}h1{font:28px Georgia;margin:0;color:#e4d3af}p{margin:8px 0}label{display:inline-block;margin:6px 14px 6px 0}select,input,button{background:#233039;color:#e5ded0;border:1px solid #53636b;border-radius:3px;padding:7px;font:inherit}button{cursor:pointer;margin:4px 6px 4px 0}input{width:125px}button:disabled{opacity:.4}#status{color:#a7c9b4}#error{color:#ff9f90}#host{margin:16px 0;overflow:hidden}iframe{border:0;display:block;transform-origin:top left}#report{max-height:180px;overflow:auto;padding:12px 24px;font-size:12px}#topology{max-width:360px;width:100%;image-rendering:pixelated;display:none}details{margin:12px 24px}details[open] #topology{display:block}
+</style>
+<header><h1>Act V · Fallen Demon Kingdoms</h1><p>Three authored combat gauntlets and the Breach gate, with seeded routes. Explore with a temporary, invulnerable hero. This review uses its own temporary saves.</p>
+<label>Area <select id="zone"><option value="ash_wastes">The Cinderfields</option><option value="cinder_bastion">The Cinder Bastion</option><option value="throne">The Throne of Cinders</option><option value="hellgate">The Breach</option></select></label>
+<label>Seed <input id="seed" type="number" min="0" max="4294967295" value="12345"></label>
+<label>Version <select id="version"><option value="after">Redesigned</option><option value="before">Before redesign</option></select></label>
+<label>Canvas <select id="width"><option value="1920">1080p</option><option value="3840">4K</option></select></label>
+<label>View <select id="view"><option value="arrival">Arrival</option></select></label>
+<div><label>Enemy <select id="enemy"></select></label><label>Encounter <select id="pack"><option value="single">Single enemy</option><option value="pack">Native pack</option></select></label><button id="spawnEnemy">Stage enemy</button><button id="readySkill">Ready specials</button><label><input id="cooldowns" type="checkbox" checked> Show abilities and cooldowns</label></div>
+<div><button id="load">Load area</button><button id="play" disabled>Play encounter</button><button id="walk" disabled>Walk to next landmark</button><button id="capture" disabled>Save scene image</button><button id="captureAll" disabled>Capture all areas</button><button id="profile" disabled>Compare performance</button></div>
+<div><label>Animation <select id="animation"></select></label><label>Frame <input id="animationFrame" type="range" min="0" max="5" value="0"></label><button id="previewAnimation">Preview frame</button></div>
+<p id="status">Preparing the isolated game…</p><pre id="error"></pre></header>
+<div id="host"></div><details><summary>Route and landmark overview</summary><canvas id="topology"></canvas></details><pre id="report"></pre>
+<script src="../js/utils.js?v=cinders1"></script><script src="../js/data.js?v=cinders1"></script><script src="../js/data_overrides.js?v=cinders1"></script><script src="../js/boss_encounters.js?v=cinders1"></script><script src="../js/mapgen.js?v=cinders1"></script><script src="../js/navigation.js?v=cinders1"></script>
+<script type="module">
+const el=id=>document.getElementById(id),params=new URLSearchParams(location.search),zones=[...el('zone').options].map(o=>o.value),
+ root=new URL('../',location.href),raf=()=>new Promise(resolve=>requestAnimationFrame(resolve));
+const enemyMode=params.has('enemies'),artifactPrefix=enemyMode?'enemy_':'';
+if(enemyMode){el('version').options[0].text='Corrected attacks';el('version').options[1].text='Before attack corrections';}
+for(const [id,p]of Object.entries(DATA.ACT5_COMBAT_PROFILES||{}))el('enemy').add(new Option(DATA.ENEMIES[id].name,id));
+for(const id of ['risen','tomb_husk','drowned_dead','frost_risen'])el('enemy').add(new Option(DATA.ENEMIES[id].name+' (summon)',id));
+for(const id of ['zone','seed','version','width'])if(params.has(id))el(id).value=params.get(id);
+window.cindersStore=new Map();const frames=new Map();let frame,win,api,game,map,reference,playing=false,busy=false,request=0;
+const error=e=>{el('error').textContent=e.stack||e.message||String(e);el('status').textContent='FAIL';document.body.dataset.testStatus='failed';};
+function controls(enabled){for(const id of ['play','walk','capture','captureAll','profile','spawnEnemy','readySkill'])el(id).disabled=!enabled;}
+function resize(){if(!frame)return;const width=+el('width').value,height=Math.round(width*9/16),scale=Math.min(1,innerWidth/width);frame.style.width=width+'px';frame.style.height=height+'px';frame.style.transform=`scale(${scale})`;el('host').style.height=height*scale+'px';}
+window.addEventListener('resize',resize);
+async function load(version=el('version').value,zone=el('zone').value){
+ playing=false;controls(false);el('error').textContent='';const ticket=++request;el('status').textContent=`Loading ${version==='before'?'original':'redesigned'} ${zone}…`;
+ el('version').value=version;el('zone').value=zone;
+ for(const saved of frames.values())saved.style.display='none';
+ if(frames.has(version)){frame=frames.get(version);frame.style.display='block';resize();win=frame.contentWindow;win.dispatchEvent(new Event('resize'));}
+ else {
+ const prefix=version==='before'?(enemyMode?'tmp/cinders_enemies/before/':'tmp/cinders/before/'):'',paths=[prefix+'index.html',prefix+'js/game.js'];
+ const [html,original]=await Promise.all(paths.map(async p=>{const response=await fetch(new URL(p,root));if(!response.ok)throw Error('Missing baseline; run node tests/cinders_baseline.cjs first.');return response.text();}));
+ const source=original.replace('Game.init().catch','Game.init().then(()=>window.__ready=true).catch').replace('    init, newGame, loadGame,',
+ `    __cinders:{render,update,updateCamera,camera,surfaceLift,setupBeaconQuest,placeEvents,place(x,y){state.player.x=x;state.player.y=y;state.player.path=null;state.player.command=null;state.player.jumping=null;state.player.jumpZ=0;state.player._animationController?.reset();camPos={x:U.isoX(x,y)-canvas.width/2,y:U.isoY(x,y)-surfaceLift(x,y)-canvas.height/2-20};shakeOx=shakeOy=0;}},\n    init, newGame, loadGame,`);
+ if(!source.includes('__cinders:'))throw Error('Review hooks missing');
+ const injection=`<base href="${root}"><script>const store=parent.cindersStore;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});window.requestAnimationFrame=()=>0;window.__errors=[];window.addEventListener('error',e=>window.__errors.push(e.message));<\/script>`;
+ frame=document.createElement('iframe');frame.title='Playable cinders review';frames.set(version,frame);
+ let page=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>'+source+'<\/script>');
+ if(enemyMode)page=page.replace(/(<script src="js\/data.js)/, '<script>Math.random=U.rng(518);<\/script>$1');
+ if(prefix)page=page.replaceAll('src="js/','src="'+prefix+'js/').replaceAll('href="css/','href="'+prefix+'css/');
+ frame.srcdoc=page;el('host').append(frame);resize();await new Promise(resolve=>frame.onload=resolve);win=frame.contentWindow;
+ for(let i=0;i<900&&!win.__ready;i++){if(win.document.querySelector('#appFatal'))throw Error(win.document.querySelector('#appFatalDetail').textContent);await new Promise(r=>setTimeout(r,25));}
+ if(win.document.querySelector('#appFatal'))throw Error(win.document.querySelector('#appFatalDetail').textContent);
+ if(!win.__ready)throw Error('Game startup timed out');
+ }
+ const objects=win.eval('({Game,UI,Sfx,TerrainNavigation,TerrainSurface,U,LevelTerrain,Monster,Minion,DATA})');api=objects;game=objects.Game;
+ if(!game.__cinders.rawRender){game.__cinders.rawRender=game.__cinders.render;game.__cinders.render=()=>{game.__cinders.rawRender();drawEnemyLabels();};}
+ if(params.has('legacyActors'))win.eval('for(const d of Object.values(DATA.ENEMIES))d.artId=d.sprite');
+ game.__reviewEnemies=null;objects.Sfx.setVol('master',0);await game.newGame('Cinders review','vanguard',false);await game.skipOpening();objects.UI.closeAll();objects.UI.hideTitle();
+ game.state.seed=+el('seed').value>>>0;win.Math.random=objects.U.rng(game.state.seed^7331);game.debugFlags.god=true;game.options.screenShake=false;
+ if(!await game.enterMap(zone,'default'))throw Error('Map entry failed');if(ticket!==request)return;
+ map=game.state.map;map.explored.fill(1);reference=MapGen.generate(zone,game.state.seed);objects.UI.closeAll();
+ if(!reference.composition)throw Error('Review composition missing for '+zone+'; reload current mapgen.js');
+ // Hold all existing enemies in place for readable screenshots; Play restores AI.
+ el('view').replaceChildren(new Option('Arrival','arrival'),new Option('Map center','center'));
+ for(const n of reference.composition.landmarks)el('view').add(new Option(n.label,n.id));
+ if(map.bossArena)el('view').add(new Option('Boss arena','boss'));
+ if(params.get('view')&&[...el('view').options].some(o=>o.value===params.get('view')))el('view').value=params.get('view');
+ 
+ showView();drawTopology();controls(true);el('play').textContent='Play encounter';el('status').textContent=`Ready · ${map.monsterSpawns.length} enemies · ${map.ramps?.length||0} ramps · ${version==='after'?map.composition.landmarks.length+' authored places':'original seeded layout'}`;
+ if(params.has('legacyActors'))el('status').textContent+=' · original actor art (isolated level review)';
+ document.body.dataset.testStatus='passed';window.cindersReview={load,showView,sample,profile,captureAll,stageEnemy,readySpecials,sampleAnimation,drawEnemyLabels,get api(){return api},get game(){return game},get map(){return map},get win(){return win},get frame(){return frame}};
+}
+function drawEnemyLabels(){
+ if(!game?.__reviewEnemies||!el('cooldowns').checked)return;
+ const canvas=win.document.getElementById('view'),ctx=canvas.getContext('2d'),scale=canvas.width/1920;
+ ctx.save();ctx.scale(scale,scale);ctx.font='17px system-ui';ctx.fillStyle='#10141bef';ctx.fillRect(22,22,600,42+game.__reviewEnemies.length*64);ctx.fillStyle='#ead6b1';ctx.fillText('ACT V · ENEMY ATTACK REVIEW',36,50);
+ game.__reviewEnemies.forEach((m,i)=>{
+  const elem=m.def.meleeElem||m.def.projectile?.elem||'physical';ctx.fillStyle='#f0e7d7';ctx.fillText(`${m.name} · ${m.def.role||'original kit'} · ${elem}`,36,80+i*64);
+  const values=[`basic ${Math.max(0,m.attackCd||0).toFixed(1)}s`,...['slam','charge','leap','whirl','volley','summon','heal','tele','throw'].filter(k=>m.def[{summon:'summons',heal:'heals',tele:'teleports',throw:'throwUndead'}[k]||k]).map(k=>`${k} ${Math.max(0,m[k+'Cd']||0).toFixed(1)}s`)];
+  if(m.def.chillOnHit)values.push('chill');if(m.def.lifeOnHit)values.push('lifesteal');if(m.def.splitOnDeath)values.push('splits on death');
+  const warning=m.attackWarning||game.state.fx.find(f=>f.owner===m&&f.death&&f.ttl>0);
+  ctx.fillStyle=warning?'#ffc779':'#acc7da';ctx.fillText(warning?`${warning.phase==='active'?'ACTIVE':'WARNING'} · ${warning.kind} · ${Math.max(0,warning.ttl).toFixed(2)}s`:m.dead?'Defeated':values.join('   '),36,105+i*64);
+ });ctx.restore();
+}
+async function stageEnemy(id=el('enemy').value,pack=el('pack').value){
+ el('enemy').value=id;el('animation').replaceChildren();
+ const d5=api.DATA.ENEMIES[id],atlas=api.DATA.SPRITE_MANIFEST.entries['actor.act5.'+(d5.artId||d5.sprite)];
+ for(const kind of atlas?.sequences||[])el('animation').add(new Option(kind,kind));
+ playing=false;const s=game.state,p=s.player,d=api.DATA.ENEMIES[id],count=pack==='pack'?Math.round(((d.pack||[2,4])[0]+(d.pack||[2,4])[1])/2):1;
+ const preferred=reference.composition.landmarks.find(n=>n.id===reference.composition.encounters?.[0]?.landmarkId)||reference.composition.landmarks[1]||map.spawns.default;
+ const pockets=[];for(let y=5;y<map.h-5;y++)for(let x=5;x<map.w-5;x++)if(api.TerrainSurface.supported(map,x+.5,y+.5,4.5)&&(!map.bossArena||Math.hypot(x-map.bossArena.cx,y-map.bossArena.cy)>18))pockets.push({x:x+.5,y:y+.5});
+ const at=pockets.sort((a,b)=>Math.hypot(a.x-preferred.x,a.y-preferred.y)-Math.hypot(b.x-preferred.x,b.y-preferred.y))[0]||nearest(preferred);
+ s.monsters.forEach(m=>m.cancelAttacks?.());s.monsters=[];s.minions=[];s.projectiles=[];s.fx=[];p.dead=false;p.hp=p.stats.maxHp;game.__cinders.place(at.x+3,at.y);win.Math.random=api.U.rng((+el('seed').value)^518);
+ for(let i=0;i<count;i++){const pos=nearest({x:at.x-1+(i%2),y:at.y+(i-(count-1)/2)*1.4}),m=new api.Monster(id,pos.x,pos.y);m.aggro=true;s.monsters.push(m);}
+ game.__reviewEnemies=s.monsters.slice();game.__cinders.render();el('status').textContent=`Staged ${count} × ${d.name}. Play to fight; Ready specials makes each skill available.`;
+ return game.__reviewEnemies;
+}
+function sampleAnimation(kind=el('animation').value,frame=+el('animationFrame').value){
+ playing=false;const m=game.__reviewEnemies?.[0];if(!m)throw Error('Stage an enemy first');
+ const A=win.eval('Act5EnemyAnimation'),t=game.state.time;
+ m.cancelAttacks();m.dead=false;m.hp=m.maxHp;m.corpseT=0;m.stunT=0;m.frozen=0;m.feared=0;m.action=null;
+ if(kind==='death'){
+   m.dead=true;const burst=m.def.deathBurst?Math.max(.6,m.def.deathBurst.windup||0):0;
+   const age=burst?(frame<3?frame/3*burst:burst+(frame-3)/3*.3):frame/6*.6;
+   m.corpseT=12-age-.0001;
+ }else{
+   m.startAction('attack',1.2,{act5Kind:kind});A.deferred(m,.6);
+   const age=frame<3?frame*.2+.01:.6+(frame-3)*.2+.01;m.act5Visual.start=t-age;
+   if(frame>=3){m.act5Visual.released=true;m.act5Visual.release=t-(age-.6);}
+ }
+ game.__cinders.render();return m.pose().ex.act5Animation;
+}
+function readySpecials(){for(const m of game.__reviewEnemies||[])for(const key of ['slam','charge','leap','whirl','volley','summon','heal','tele','throw'])m[key+'Cd']=0;game.__cinders.render();}
+function nearest(p,m=map){
+ const points=[];for(let y=1;y<m.h-1;y++)for(let x=1;x<m.w-1;x++)if(api.TerrainSurface.supported(m,x+.5,y+.5,.4))points.push({x:x+.5,y:y+.5});
+ return points.sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
+}
+function pointFor(view){
+ if(view==='arrival')return map.spawns.default;
+ if(view==='boss'&&map.bossArena)return{x:map.bossArena.cx+2,y:map.bossArena.cy+2};
+ if(view==='center')return nearest({x:map.w/2,y:map.h/2});
+ const n=reference.composition.landmarks.find(n=>n.id===view);
+ if(n?.exit){const e=map.exits.find(e=>e.target===n.exit.target);if(e)return nearest({x:(e.x0+e.x1)/2+(map.id==='hellgate'?-3:3),y:(e.y0+e.y1)/2+3});}
+ if(map.composition&&n?.artPosition)return nearest({x:n.artPosition.x+3,y:n.artPosition.y+4});
+ return nearest(n||map.spawns.default);
+}
+function showView(){playing=false;el('play').textContent='Play encounter';const p=pointFor(el('view').value);game.__cinders.place(p.x,p.y);game.__cinders.render();api.UI.refreshHUD();if(win.__errors.length)throw Error(win.__errors.join('\n'));}
+function drawTopology(){const c=el('topology');c.width=map.w*3;c.height=map.h*3;const g=c.getContext('2d');g.drawImage(map.minimapBase,0,0,c.width,c.height);for(const ro of map.composition?.routes||[]){g.strokeStyle=ro.optional?'#ddaf62':'#8daeb6';g.lineWidth=2;g.beginPath();ro.points.forEach((p,i)=>i?g.lineTo(p.x*3,p.y*3):g.moveTo(p.x*3,p.y*3));g.stroke();}for(const n of map.composition?.landmarks||[]){g.fillStyle='#e8cf9f';g.beginPath();g.arc(n.x*3,n.y*3,4,0,Math.PI*2);g.fill();}}
+async function record(name,body){for(let attempt=0;attempt<3;attempt++)try{const r=await fetch('/api/cinders-review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:artifactPrefix+name,...body})});if(!r.ok)throw Error('Artifact recording requires python tests/cinders_server.py');return;}catch(e){if(attempt===2)throw e;await new Promise(resolve=>setTimeout(resolve,1000));}}
+async function capture(name){game.__cinders.render();const view=win.document.getElementById('view');await record(name||`${el('zone').value}_${el('width').value}_${el('version').value}_${el('view').value}.webp`,{png:view.toDataURL('image/webp',.94)});}
+async function captureAll(){
+ const captures=[];
+ for(const width of [1920,3840])for(const version of ['before','after'])for(const zone of zones){
+  el('width').value=width;await load(version,zone);
+  for(const view of ['arrival',...reference.composition.landmarks.filter(n=>n.id!=='entry').map(n=>n.id)]){
+   el('view').value=view;showView();await raf();await capture();captures.push({width,version,zone,view});
+  }
+ }
+ await record('captures.json',{report:{status:'PASS',legacyActors:params.has('legacyActors'),captures}});el('status').textContent=`Saved ${captures.length} matched scene images.`;
+}
+const summary=values=>{const a=values.toSorted((a,b)=>a-b);return{median:+a[Math.floor(a.length*.5)].toFixed(3),p95:+a[Math.floor(a.length*.95)].toFixed(3),max:+a.at(-1).toFixed(3)};};
+async function sample(mode){
+ const state=game.state,p=state.player,N=api.TerrainNavigation;
+ let start=nearest(reference.composition.landmarks[1]||reference.composition.landmarks[0]),travel=null,pocketRadius=3.5;
+ if(mode==='moving'){
+  const origins=[];for(let y=2;y<map.h-2;y+=2)for(let x=2;x<map.w-2;x+=2)if(api.TerrainSurface.supported(map,x+.5,y+.5,.4))origins.push({x:x+.5,y:y+.5});
+  origins.sort((a,b)=>Math.hypot(a.x-map.spawns.default.x,a.y-map.spawns.default.y)-Math.hypot(b.x-map.spawns.default.x,b.y-map.spawns.default.y));
+  outer:for(const a of origins)for(const length of [12,8])for(const [dx,dy] of [[1,0],[0,1],[-1,0],[0,-1],[.707,.707],[-.707,.707],[.707,-.707],[-.707,-.707]]){
+   const b={x:a.x+dx*length,y:a.y+dy*length};
+   if(state.monsters.some(m=>{const t=Math.max(0,Math.min(1,((m.x-a.x)*(b.x-a.x)+(m.y-a.y)*(b.y-a.y))/(length*length)));return Math.hypot(m.x-a.x-(b.x-a.x)*t,m.y-a.y-(b.y-a.y)*t)<8;}))continue;
+   if(map.exits.some(e=>Math.min(a.x,b.x)<e.x1+1&&Math.max(a.x,b.x)>e.x0-1&&Math.min(a.y,b.y)<e.y1+1&&Math.max(a.y,b.y)>e.y0-1))continue;
+   if(!N.segment(map,a.x,a.y,b.x,b.y,.36))continue;
+   start=a;travel={...b,path:[{cx:b.x,cy:b.y,kind:'walk'}]};break outer;
+  }
+  if(!travel)throw Error('No clear travel profile in '+map.id);
+ }
+ if(mode==='combat'){
+  const pockets=[];
+  for(const radius of [3.5,2.5,1.5]){
+   for(let y=4;y<map.h-4;y++)for(let x=4;x<map.w-4;x++){
+    const a=map.bossArena;if(a&&x>=a.x0-3&&x<=a.x1+3&&y>=a.y0-3&&y<=a.y1+3)continue;
+    if(api.TerrainSurface.supported(map,x+.5,y+.5,radius))pockets.push({x:x+.5,y:y+.5});
+   }
+   if(pockets.length){pocketRadius=radius;break;}
+  }
+  start=pockets.sort((a,b)=>Math.hypot(a.x-start.x,a.y-start.y)-Math.hypot(b.x-start.x,b.y-start.y))[0];
+  if(!start)throw Error('No spacious combat pocket');
+ }
+ game.__cinders.place(start.x,start.y);p.hp=p.stats.maxHp;state.time=10;
+ const routes=[];if(!travel)for(let y=2;y<map.h-2;y+=2)for(let x=2;x<map.w-2;x+=2){const d=Math.hypot(x+.5-start.x,y+.5-start.y);if(d<18||d>30||!api.TerrainSurface.supported(map,x+.5,y+.5,.4))continue;const path=N.findPath(map,p,{x:x+.5,y:y+.5},{radius:.36,speed:4.5});if(path)routes.push({x:x+.5,y:y+.5,path});}
+ const destination=travel||routes.sort((a,b)=>a.path.length-b.path.length)[0];if(!destination)throw Error('No representative movement route');
+ if(mode==='moving'){p.path=destination.path;p.command={type:'move'};}
+ if(mode==='combat'){
+  // Exercise this court's actual pack instead of importing distant packs on top of it.
+  const nearby=state.monsters.filter(m=>!m.beacon&&!m.encounter&&!m.dead).sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y)).slice(0,12);
+  nearby.sort((a,b)=>Number(!!a.def.projectile)-Number(!!b.def.projectile));
+  for(const [i,m] of nearby.entries()){const a=i*Math.PI/6,radius=i===0?1.5:Math.min(3,pocketRadius),pos=nearest({x:p.x+Math.cos(a)*radius,y:p.y+Math.sin(a)*radius});m.x=pos.x;m.y=pos.y;m.aggro=true;m.hp=m.maxHp=Math.max(m.maxHp,100000);}
+  if(nearby.length)p.command={type:'attack',target:nearby[0],skill:'basic',hold:true};
+ }
+ for(let i=0;i<90;i++){game.__cinders.update(1/60);game.__cinders.updateCamera(1/60);game.__cinders.render();if(i%15===0)await raf();}
+ const times=[],updateTimes=[],renderTimes=[],intervals=[];let last=performance.now(),distance=0,attackFrames=0,enemyAttackFrames=0,at={x:p.x,y:p.y};
+ const before=api.LevelTerrain.getDiagnostics();
+ for(let i=0;i<240;i++){
+  await raf();const now=performance.now();intervals.push(now-last);last=now;
+  if(mode==='moving'&&(!p.path||!p.path.length)){const target=Math.hypot(p.x-start.x,p.y-start.y)<3?destination:start;p.path=N.findPath(map,p,target,{radius:.36,speed:4.5});p.command={type:'move'};}
+  const t=performance.now();game.__cinders.update(1/60);game.__cinders.updateCamera(1/60);const u=performance.now();game.__cinders.render();const end=performance.now();times.push(end-t);updateTimes.push(u-t);renderTimes.push(end-u);
+  distance+=Math.hypot(p.x-at.x,p.y-at.y);at={x:p.x,y:p.y};
+  if(p.action?.state==='attack')attackFrames++;
+  enemyAttackFrames+=state.monsters.filter(m=>m.action?.state==='attack').length;
+ }
+ const after=api.LevelTerrain.getDiagnostics();
+ if(mode==='moving'&&distance<4)throw Error('Movement sample stalled in '+map.id+' ('+distance+' tiles)');
+ if(mode==='combat'&&(!attackFrames||!enemyAttackFrames))throw Error(`Combat sample did not exchange attacks: ${map.id}, hero ${attackFrames}, enemies ${enemyAttackFrames}`);
+ if(win.__errors.length)throw Error(win.__errors.join('\n'));
+ // Check a warmed stationary view separately from timed samples.
+ p.path=null;p.command=null;game.__cinders.render();const warm=api.LevelTerrain.getDiagnostics();
+ for(let i=0;i<30;i++)game.__cinders.render();const stable=api.LevelTerrain.getDiagnostics();
+ if(stable.totalBuilds!==warm.totalBuilds||stable.surfaceViewBuilds!==warm.surfaceViewBuilds)throw Error('Warmed terrain cache rebuilt');
+ return{mode,position:start,pocketRadius:mode==='combat'?pocketRadius:null,monsters:state.monsters.length,distance,attackFrames,enemyAttackFrames,cpuMs:summary(times),updateMs:summary(updateTimes),renderMs:summary(renderTimes),frameIntervalMs:summary(intervals),builds:after.totalBuilds-before.totalBuilds,warmCacheStable:true};
+}
+async function profile(){
+ const selected=params.has('all')?zones.filter(z=>z!=='hellgate'):[el('zone').value],widths=params.has('bothWidths')?[1920,3840]:[+el('width').value],runs=[],results=[];
+ for(const width of widths)for(const zone of selected)for(let pair=0;pair<3;pair++)for(const version of pair%2?['after','before']:['before','after'])for(const mode of ['moving','combat']){
+  const methodRevision=enemyMode?11:zone==='ash_wastes'?7:8;
+  if(params.has('resume')){
+   const response=await fetch(`qa/cinders/${artifactPrefix}profile_${zone}_${width}_${pair}_${version}_${mode}.json`);
+   if(response.ok){const row=await response.json();if(row.methodRevision===methodRevision&&row.legacyActors===params.has('legacyActors')){runs.push(row);continue;}}
+  }
+  el('width').value=width;await load(version,zone);controls(false);el('status').textContent=`Profiling ${zone} · ${width}px · ${version} · ${mode} · pair ${pair+1}/3`;
+  const row={methodRevision,legacyActors:params.has('legacyActors'),width,zone,pair,version,...await sample(mode)};runs.push(row);el('report').textContent=JSON.stringify(runs,null,2);await record(`profile_${zone}_${width}_${pair}_${version}_${mode}.json`,{report:row});
+ }
+ for(const width of widths)for(const zone of selected)for(const mode of ['moving','combat']){
+  const mean=(version,stat)=>{const a=runs.filter(r=>r.width===width&&r.zone===zone&&r.mode===mode&&r.version===version);return a.reduce((s,r)=>s+r.cpuMs[stat],0)/a.length;};
+  const before={median:mean('before','median'),p95:mean('before','p95')},after={median:mean('after','median'),p95:mean('after','p95')};
+  results.push({width,zone,mode,before,after,medianChangePct:+(100*(after.median/before.median-1)).toFixed(1),p95ChangePct:+(100*(after.p95/before.p95-1)).toFixed(1),passed:after.median<=before.median*1.1&&after.p95<=before.p95*1.1});
+ }
+ const report={status:results.every(r=>r.passed)?'PASS':'FAIL',legacyActors:params.has('legacyActors'),baseline:enemyMode?'working-tree snapshot in tmp/cinders_enemies/before':'working-tree snapshot in tmp/cinders/before',method:'Three alternating before/after pairs, 90 warmup and 240 sampled frames per workload, full roster retained, nearest open combat pocket, twelve nearest durable targets with a close melee target, verified attack exchange, real 3D Vanguard, cached production terrain.',results};
+ await record(`performance_${selected.length===1?selected[0]:'all'}_${widths.length===1?widths[0]:'both'}.json`,{report});el('report').textContent=JSON.stringify(report,null,2);el('status').textContent=report.status+' · performance comparison complete';document.body.dataset.testStatus=report.status==='PASS'?'passed':'failed';controls(true);
+}
+async function action(fn){if(busy)return;busy=true;try{await fn();}catch(e){error(e);}finally{busy=false;}}
+el('load').onclick=()=>action(()=>load());el('view').onchange=()=>{try{showView();}catch(e){error(e);}};
+el('previewAnimation').onclick=()=>action(()=>sampleAnimation());el('animationFrame').oninput=()=>{try{sampleAnimation();}catch(e){error(e);}};
+el('spawnEnemy').onclick=()=>action(()=>stageEnemy());el('readySkill').onclick=readySpecials;
+el('play').onclick=()=>{playing=!playing;el('play').textContent=playing?'Pause encounter':'Play encounter';};
+el('walk').onclick=()=>{const index=reference.composition.landmarks.findIndex(n=>n.id===el('view').value),target=nearest(reference.composition.landmarks[(index+1)%reference.composition.landmarks.length]);game.repath(game.state.player,target.x,target.y);game.state.player.command={type:'move'};playing=true;el('play').textContent='Pause encounter';};
+el('capture').onclick=()=>action(async()=>{await capture();el('status').textContent='Scene image saved in tests/qa/cinders.';});el('captureAll').onclick=()=>action(captureAll);el('profile').onclick=()=>action(profile);
+let previous=performance.now();function tick(now){const dt=Math.min(.05,(now-previous)/1000);previous=now;if(playing&&!busy&&game){try{game.__cinders.update(dt);game.__cinders.updateCamera(dt);game.__cinders.render();}catch(e){playing=false;error(e);}}requestAnimationFrame(tick);}requestAnimationFrame(tick);
+try{await load();if(DATA.ACT5_COMBAT_PROFILES?.[params.get('enemy')]){el('enemy').value=params.get('enemy');await stageEnemy();}if(params.has('qa'))await action(async()=>{await captureAll();await profile();});else if(params.has('captureAll'))await action(captureAll);else if(params.has('profile'))await action(profile);}catch(e){error(e);}
+</script></html>

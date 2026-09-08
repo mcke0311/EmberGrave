@@ -1,0 +1,28 @@
+{
+  "methodRevision": 2,
+  "width": 1920,
+  "zone": "desert_wastes",
+  "pair": 1,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 48.5,
+    "y": 69.5
+  },
+  "monsters": 133,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 961,
+  "cpuMs": {
+    "median": 6.2,
+    "p95": 10,
+    "max": 12.9
+  },
+  "frameIntervalMs": {
+    "median": 16.7,
+    "p95": 17.6,
+    "max": 37.8
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import path from 'node:path';
 import {ensureSnapshot} from './boss_animation_baseline.cjs';
 
-export function fixture({bossSource,sourceDirectory,reducedMotion=false}={}) {
+export function fixture({bossSource,sourceDirectory,reducedMotion=false,gameExports=[],dataSeed}={}) {
   if(sourceDirectory&&path.resolve(sourceDirectory)===path.resolve('tmp/boss_animation/before/js'))ensureSnapshot();
   const read=name=>fs.readFileSync(sourceDirectory?path.join(sourceDirectory,name+'.js'):new URL('../js/'+name+'.js',import.meta.url),'utf8');
   const motionMedia={matches:reducedMotion};
@@ -17,11 +17,20 @@ export function fixture({bossSource,sourceDirectory,reducedMotion=false}={}) {
     SpriteAssets:{loadBundle:async()=>{}},LootFilter:{evaluate:()=>({show:true})},
   });
   const files=['utils','data','data_overrides','boss_encounters','skill_perks','sprite_manifest','mapgen','navigation','items','entities'];
+  if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'act2_enemy_combat.js')))files.splice(files.indexOf('entities'),0,'act2_enemy_combat');
+  if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'act2_enemy_animation.js')))files.splice(files.indexOf('entities'),0,'act2_enemy_animation');
+  if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'act3_enemy_animation.js')))files.splice(files.indexOf('entities'),0,'act3_enemy_animation');
+  if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'act4_enemy_animation.js')))files.splice(files.indexOf('entities'),0,'act4_enemy_animation');
   if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'boss_vfx.js')))files.splice(3,0,'boss_vfx');
-  for(const f of files)vm.runInContext(f==='boss_encounters'&&bossSource!==undefined?bossSource:read(f),ctx);
+  if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'enemy_skills.js')))files.splice(files.indexOf('entities'),0,'enemy_skills');
+  if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'act5_enemy_animation.js')))files.splice(files.indexOf('entities'),0,'act5_enemy_animation');
+  for(const f of files){
+    if(f==='data'&&dataSeed!==undefined)vm.runInContext('Math.random=U.rng('+JSON.stringify(dataSeed)+')',ctx);
+    vm.runInContext(f==='boss_encounters'&&bossSource!==undefined?bossSource:read(f),ctx);
+  }
   const src=read('game').replace('    init, newGame, loadGame,','    __bossTest:{freshState,updateFx,setState:s=>{state=s;delayed=[];},questKillEvent,updateBossEncounter,flush:seconds=>{state.time+=seconds;for(let i=delayed.length-1;i>=0;i--)if(state.time>=delayed[i].t){const fn=delayed[i].fn;delayed.splice(i,1);fn();}}},\n    init, newGame, loadGame,');
-  vm.runInContext(src,ctx);
-  const api=vm.runInContext('({DATA,Game,MapGen,Monster,Player,Minion,Projectile,BossEncounters,TerrainNavigation,Items,U,BossVFX:typeof BossVFX===\'undefined\'?null:BossVFX})',ctx);
+  vm.runInContext(src.replace('__bossTest:{','__bossTest:{'+(gameExports.length?gameExports.join(',')+',':'')),ctx);
+  const api=vm.runInContext('({DATA,Game,MapGen,Monster,Player,Minion,Projectile,BossEncounters,TerrainNavigation,Items,U,BossVFX:typeof BossVFX===\'undefined\'?null:BossVFX,EnemySkills:typeof EnemySkills===\'undefined\'?null:EnemySkills})',ctx);
   const {Game:G,MapGen:M,DATA:D,Player,Monster}=api;
   function fresh(id='korvath',seed=123,classId='vanguard',difficulty=0) {
     ctx.Math.random=api.U.rng(seed+7331);

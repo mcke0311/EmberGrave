@@ -1,0 +1,258 @@
+{
+  "seed": 123,
+  "step": 0.05,
+  "baseline": null,
+  "results": [
+    {
+      "boss": "mire_mother",
+      "class": "vanguard",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 194.8,
+      "bossRemaining": 0,
+      "playerHp": 283,
+      "maxHp": 330,
+      "damage": 83,
+      "hits": 3,
+      "healingLeft": 6,
+      "manaLeft": 0,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 81.9
+        },
+        {
+          "phase": 1,
+          "seconds": 61.2
+        },
+        {
+          "phase": 2,
+          "seconds": 51.8
+        }
+      ],
+      "attacks": [
+        "bile",
+        "grasp"
+      ],
+      "loadout": {
+        "main": "vanguard_0_0",
+        "secondarySummon": null,
+        "level": 14,
+        "equipment": {
+          "main": "sword_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "vanguard_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "mire_mother",
+      "class": "emberwitch",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 234.8,
+      "bossRemaining": 0,
+      "playerHp": 194,
+      "maxHp": 294,
+      "damage": 1114,
+      "hits": 71,
+      "healingLeft": 0,
+      "manaLeft": 0,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 53.5
+        },
+        {
+          "phase": 1,
+          "seconds": 35.1
+        },
+        {
+          "phase": 2,
+          "seconds": 146.1
+        }
+      ],
+      "attacks": [
+        "bile",
+        "grasp"
+      ],
+      "loadout": {
+        "main": "emberwitch_0_0",
+        "secondarySummon": null,
+        "level": 14,
+        "equipment": {
+          "main": "wand_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "emberwitch_0_0": 10
+        }
+      }
+    },
+    {
+      "boss": "mire_mother",
+      "class": "gravebinder",
+      "mode": "ordinary playthrough",
+      "won": false,
+      "dead": false,
+      "seconds": 480,
+      "bossRemaining": 0,
+      "playerHp": 230,
+      "maxHp": 316,
+      "damage": 724,
+      "hits": 39,
+      "healingLeft": 3,
+      "manaLeft": 0,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 98.9
+        },
+        {
+          "phase": 1,
+          "seconds": 84
+        },
+        {
+          "phase": 2,
+          "seconds": 297.2
+        }
+      ],
+      "attacks": [
+        "bile",
+        "grasp"
+      ],
+      "loadout": {
+        "main": "venom_spit",
+        "summon": "raise_dead",
+        "secondarySummon": "raise_plaguemage",
+        "level": 14,
+        "equipment": {
+          "main": "wand_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "venom_spit": 1,
+          "mark_of_frailty": 1,
+          "raise_dead": 10,
+          "raise_plaguemage": 1
+        }
+      }
+    },
+    {
+      "boss": "mire_mother",
+      "class": "wildkeeper",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 139,
+      "bossRemaining": 0,
+      "playerHp": 227,
+      "maxHp": 328,
+      "damage": 1146,
+      "hits": 68,
+      "healingLeft": 0,
+      "manaLeft": 0,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 56.8
+        },
+        {
+          "phase": 1,
+          "seconds": 40.4
+        },
+        {
+          "phase": 2,
+          "seconds": 41.8
+        }
+      ],
+      "attacks": [
+        "bile",
+        "grasp"
+      ],
+      "loadout": {
+        "main": "wildkeeper_1_0",
+        "summon": "call_wolf",
+        "secondarySummon": null,
+        "level": 14,
+        "equipment": {
+          "main": "staff2h_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "wildkeeper_1_0": 7,
+          "call_wolf": 6
+        }
+      }
+    },
+    {
+      "boss": "mire_mother",
+      "class": "veilranger",
+      "mode": "ordinary playthrough",
+      "won": true,
+      "dead": false,
+      "seconds": 190,
+      "bossRemaining": -1,
+      "playerHp": 259,
+      "maxHp": 308,
+      "damage": 53,
+      "hits": 2,
+      "healingLeft": 6,
+      "manaLeft": 0,
+      "phases": [
+        {
+          "phase": 0,
+          "seconds": 74.8
+        },
+        {
+          "phase": 1,
+          "seconds": 62.6
+        },
+        {
+          "phase": 2,
+          "seconds": 52.6
+        }
+      ],
+      "attacks": [
+        "bile",
+        "grasp"
+      ],
+      "loadout": {
+        "main": "veilranger_0_0",
+        "secondarySummon": null,
+        "level": 14,
+        "equipment": {
+          "main": "bow2h_t3",
+          "chest": "chest_t3",
+          "head": "helm_t3",
+          "gloves": "gloves_t3",
+          "boots": "boots_t3",
+          "belt": "belt_t3"
+        },
+        "skills": {
+          "veilranger_0_0": 10
+        }
+      }
+    }
+  ]
+}

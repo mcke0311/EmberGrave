@@ -242,6 +242,7 @@ const UniquePowers = (() => {
   add("uc_warlord", P("Last One Standing", "kill", "alone", [W(8), B({ ias: 15 })]));
   add("uc_wyrm", P("Ancient Molt", "hurt", "elemental", [W(10), B({ ccReduce: 25 })], { cd: 8 }));
   add("uj_rainbow", P("Prismatic Turn", "spell", "any", B({ resAll: 12 }), { alternateElement: true }));
+  add("uj_oak", P("Barkskin", "hurt", "melee", W(8, 4), { cd: 8 }));
   add("uj_rage", P("Rising Rage", "strike", "any", B({ ias: 20, critDmg: 20 }), { every: 5 }));
   add("uj_frost", P("Heart of Winter", "hit", "slowed", W(6)));
   add("uj_ward", P("Stubborn Stone", "hurt", "eliteSource", B({ dmgReducePct: 15 }, 3)));

@@ -1,0 +1,34 @@
+{
+  "initialDispatch": [
+    {
+      "zone": "ash_wastes",
+      "exitCode": 0
+    },
+    {
+      "zone": "cinder_bastion",
+      "exitCode": 1
+    },
+    {
+      "zone": "throne",
+      "exitCode": 0
+    }
+  ],
+  "finalReports": [
+    {
+      "zone": "ash_wastes",
+      "status": "PASS",
+      "report": "performance_ash_wastes_both.json"
+    },
+    {
+      "zone": "cinder_bastion",
+      "status": "PASS",
+      "report": "performance_cinder_bastion_both.json"
+    },
+    {
+      "zone": "throne",
+      "status": "PASS",
+      "report": "performance_throne_both.json"
+    }
+  ],
+  "note": "Bastion was rerun after allowing its original tighter combat pockets. No production data was changed for that retry."
+}

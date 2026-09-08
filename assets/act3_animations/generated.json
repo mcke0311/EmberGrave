@@ -1,0 +1,182 @@
+{
+  "version": 1,
+  "tool": "built-in image_gen",
+  "enemies": [
+    {
+      "id": "sand_raider",
+      "reference": "assets/sprites/packed/actors/monsters/identity_marauder_mace.webp",
+      "sequences": [
+        "melee",
+        "death"
+      ],
+      "description": "Mace: lift the mace back, swing forward, contact, follow through, recover. Death: knees buckle, fall sideways, finish a complete prone body with mace.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. Match the reference character's exact identity, anatomy, materials, colors, equipment and painted dark fantasy isometric RPG style. 2 equal rows and SIX equal columns. Rows from top to bottom: melee, death. Each row shows SIX DISTINCT SEQUENTIAL poses of the SAME full-body character, facing screen-right, elevated three-quarter isometric perspective. Columns 1 anticipation, 2 windup, 3 strongest anticipation, 4 release/contact, 5 follow-through, 6 recovery; death row progresses from standing to permanent collapsed remains. Mace: lift the mace back, swing forward, contact, follow through, recover. Death: knees buckle, fall sideways, finish a complete prone body with mace. Keep body scale consistent across all frames, including small fallen remains; do not enlarge collapsed poses. Root/feet near bottom center of each cell. Large transparent gutters, all limbs/weapons/effects stay within each cell. No floor, ground shadows, UI, text, grid, borders, background haze, scenery or extra characters. Small attached magical accents only. Clear substantial changes of limb/body pose between frames. Revision: pure white background, center 65 percent of cells with large gutters, short contained mace swings or small attached hand glows, no launched beams.",
+      "source": "assets/act3_animations/source/sand_raider_v2.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08224-16ee-7a53-a81b-fd35ff8f7802\\exec-e0afcd46-abc9-4db0-9a93-7d720113ac1a.png",
+      "sourceHash": "eb35313c1bf33645f15560dbaf53b867e0bce23e4dfa12c921670c1928bd61a2",
+      "alphaSource": "assets/act3_animations/alpha/sand_raider.png",
+      "rejectedSource": "assets/act3_animations/source/sand_raider.png",
+      "rejectedSourceHash": "09220e9bb6caaf5abad4ffe7012faca1b2333d8cb263e327a69dc66e4264a4c7",
+      "neutralMinChannel": 230
+    },
+    {
+      "id": "tomb_guard",
+      "reference": "assets/sprites/packed/actors/monsters/knight.webp",
+      "sequences": [
+        "melee",
+        "bash",
+        "death"
+      ],
+      "description": "Sword melee: sword drawn back then thrust/slash and recover. Shield bash: crouch behind shield, pull shield back, forceful forward shield impact, recoil. Death: armored knees buckle, fall sideways, finish prone with shield and sword.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. Match the reference character's exact identity, anatomy, materials, colors, equipment and painted dark fantasy isometric RPG style. 3 equal rows and SIX equal columns. Rows from top to bottom: melee, bash, death. Each row shows SIX DISTINCT SEQUENTIAL poses of the SAME full-body character, facing screen-right, elevated three-quarter isometric perspective. Columns 1 anticipation, 2 windup, 3 strongest anticipation, 4 release/contact, 5 follow-through, 6 recovery; death row progresses from standing to permanent collapsed remains. Sword melee: sword drawn back then thrust/slash and recover. Shield bash: crouch behind shield, pull shield back, forceful forward shield impact, recoil. Death: armored knees buckle, fall sideways, finish prone with shield and sword. Keep body scale consistent across all frames, including small fallen remains; do not enlarge collapsed poses. Root/feet near bottom center of each cell. Large transparent gutters, all limbs/weapons/effects stay within each cell. No floor, ground shadows, UI, text, grid, borders, background haze, scenery or extra characters. Small attached magical accents only. Clear substantial changes of limb/body pose between frames.",
+      "source": "assets/act3_animations/source/tomb_guard.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08224-16ee-7a53-a81b-fd35ff8f7802\\exec-0041b43f-98af-4a80-b1dc-63ea8aee197f.png",
+      "sourceHash": "cca7c00d0ce82b3e5b380c99923d32346d5cf3cf38eb21e8668f81cab36cb880",
+      "alphaSource": "assets/act3_animations/alpha/tomb_guard.png"
+    },
+    {
+      "id": "dune_shade",
+      "reference": "assets/sprites/packed/actors/monsters/wraith.webp",
+      "sequences": [
+        "melee",
+        "blink",
+        "death"
+      ],
+      "description": "Shadow touch: sleeve and claw reach forward to release violet shadow, retract. Blink: hunched anticipation, silhouette frays, dissolve, faint displaced silhouette, reform, recover. Death: robed figure sinks and dissolves into a compact dark cloth and shadow remnant.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. Match the reference character's exact identity, anatomy, materials, colors, equipment and painted dark fantasy isometric RPG style. 3 equal rows and SIX equal columns. Rows from top to bottom: melee, blink, death. Each row shows SIX DISTINCT SEQUENTIAL poses of the SAME full-body character, facing screen-right, elevated three-quarter isometric perspective. Columns 1 anticipation, 2 windup, 3 strongest anticipation, 4 release/contact, 5 follow-through, 6 recovery; death row progresses from standing to permanent collapsed remains. Shadow touch: sleeve and claw reach forward to release violet shadow, retract. Blink: hunched anticipation, silhouette frays, dissolve, faint displaced silhouette, reform, recover. Death: robed figure sinks and dissolves into a compact dark cloth and shadow remnant. Keep body scale consistent across all frames, including small fallen remains; do not enlarge collapsed poses. Root/feet near bottom center of each cell. Large transparent gutters, all limbs/weapons/effects stay within each cell. No floor, ground shadows, UI, text, grid, borders, background haze, scenery or extra characters. Small attached magical accents only. Clear substantial changes of limb/body pose between frames.",
+      "source": "assets/act3_animations/source/dune_shade.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08224-16ee-7a53-a81b-fd35ff8f7802\\exec-d767178d-5b34-4285-8a36-06fce78539de.png",
+      "sourceHash": "9163905882f019dcef1724b4201b05db7b9f72b30990c8cadc8ce8df60175eb6",
+      "matteSource": "assets/act3_animations/source/dune_shade_white.png",
+      "mattePrompt": "Replace only the colored background with flat pure white; preserve all 18 poses, equipment, scale, frame order and small attached effects.",
+      "alphaSource": "assets/act3_animations/alpha/dune_shade.png"
+    },
+    {
+      "id": "soul_chained",
+      "reference": "assets/sprites/packed/actors/monsters/identity_chained_soul.webp",
+      "sequences": [
+        "bolt",
+        "death"
+      ],
+      "description": "Bolt: arms gather warm golden light through hanging chains, raise hands, release a small luminous chain bolt forward, recoil. Death: chains slump as ghostly body sinks and dissipates, ending fallen chain remnants.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. Match the reference character's exact identity, anatomy, materials, colors, equipment and painted dark fantasy isometric RPG style. 2 equal rows and SIX equal columns. Rows from top to bottom: bolt, death. Each row shows SIX DISTINCT SEQUENTIAL poses of the SAME full-body character, facing screen-right, elevated three-quarter isometric perspective. Columns 1 anticipation, 2 windup, 3 strongest anticipation, 4 release/contact, 5 follow-through, 6 recovery; death row progresses from standing to permanent collapsed remains. Bolt: arms gather warm golden light through hanging chains, raise hands, release a small luminous chain bolt forward, recoil. Death: chains slump as ghostly body sinks and dissipates, ending fallen chain remnants. Keep body scale consistent across all frames, including small fallen remains; do not enlarge collapsed poses. Root/feet near bottom center of each cell. Large transparent gutters, all limbs/weapons/effects stay within each cell. No floor, ground shadows, UI, text, grid, borders, background haze, scenery or extra characters. Small attached magical accents only. Clear substantial changes of limb/body pose between frames. Revision: pure white background, center 65 percent of cells with large gutters, short contained mace swings or small attached hand glows, no launched beams.",
+      "source": "assets/act3_animations/source/soul_chained_v2.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08224-16ee-7a53-a81b-fd35ff8f7802\\exec-9076770f-1eec-45a3-8a29-84ca271796d3.png",
+      "sourceHash": "fbfc31c6c036a34b39d7ce965c5f4b91033e3c352215a5e2fbf025510c13b3d2",
+      "alphaSource": "assets/act3_animations/alpha/soul_chained.png",
+      "rejectedSource": "assets/act3_animations/source/soul_chained.png",
+      "rejectedSourceHash": "8a7f4358572498de7fb42e261446843f31efd2e17386a54b2aeacc54ade014d4",
+      "neutralMinChannel": 230
+    },
+    {
+      "id": "gilt_construct",
+      "reference": "assets/sprites/packed/actors/monsters/identity_gilded_construct.webp",
+      "sequences": [
+        "melee",
+        "pulse",
+        "death"
+      ],
+      "description": "Melee: heavy metal fist draws back, punches forward, recoil. Pulse: hunch and gather warm gold light in chest, brace fists, release chest energy burst, recover. Death: gold armored body fractures, drops to knees, crumbles into a compact gilded rubble heap.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. Match the reference character's exact identity, anatomy, materials, colors, equipment and painted dark fantasy isometric RPG style. 3 equal rows and SIX equal columns. Rows from top to bottom: melee, pulse, death. Each row shows SIX DISTINCT SEQUENTIAL poses of the SAME full-body character, facing screen-right, elevated three-quarter isometric perspective. Columns 1 anticipation, 2 windup, 3 strongest anticipation, 4 release/contact, 5 follow-through, 6 recovery; death row progresses from standing to permanent collapsed remains. Melee: heavy metal fist draws back, punches forward, recoil. Pulse: hunch and gather warm gold light in chest, brace fists, release chest energy burst, recover. Death: gold armored body fractures, drops to knees, crumbles into a compact gilded rubble heap. Keep body scale consistent across all frames, including small fallen remains; do not enlarge collapsed poses. Root/feet near bottom center of each cell. Large transparent gutters, all limbs/weapons/effects stay within each cell. No floor, ground shadows, UI, text, grid, borders, background haze, scenery or extra characters. Small attached magical accents only. Clear substantial changes of limb/body pose between frames.",
+      "source": "assets/act3_animations/source/gilt_construct.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08224-16ee-7a53-a81b-fd35ff8f7802\\exec-cd47cb2e-cea7-4cf4-b2ae-5db1d816592a.png",
+      "sourceHash": "5d674fda3d39a11d2a3570caea82deec548009c1aa6cec58bb8415e8eb807cac",
+      "alphaSource": "assets/act3_animations/alpha/gilt_construct.png"
+    },
+    {
+      "id": "shard_construct",
+      "reference": "assets/sprites/packed/actors/monsters/identity_crystal_golem.webp",
+      "sequences": [
+        "bolt",
+        "fan",
+        "death"
+      ],
+      "description": "Bolt: crystalline arm draws back and thrusts to release a small blue crystal shard. Fan: both arms open, crystals charge, release three distinct blue shards in a fan, recoil. Death: fractured crystal body crumples progressively into a compact blue crystal rubble pile.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. Match the reference character's exact identity, anatomy, materials, colors, equipment and painted dark fantasy isometric RPG style. 3 equal rows and SIX equal columns. Rows from top to bottom: bolt, fan, death. Each row shows SIX DISTINCT SEQUENTIAL poses of the SAME full-body character, facing screen-right, elevated three-quarter isometric perspective. Columns 1 anticipation, 2 windup, 3 strongest anticipation, 4 release/contact, 5 follow-through, 6 recovery; death row progresses from standing to permanent collapsed remains. Bolt: crystalline arm draws back and thrusts to release a small blue crystal shard. Fan: both arms open, crystals charge, release three distinct blue shards in a fan, recoil. Death: fractured crystal body crumples progressively into a compact blue crystal rubble pile. Keep body scale consistent across all frames, including small fallen remains; do not enlarge collapsed poses. Root/feet near bottom center of each cell. Large transparent gutters, all limbs/weapons/effects stay within each cell. No floor, ground shadows, UI, text, grid, borders, background haze, scenery or extra characters. Small attached magical accents only. Clear substantial changes of limb/body pose between frames. Revision: pure white background, center 65 percent of cells with large gutters, short contained mace swings or small attached hand glows, no launched beams.",
+      "source": "assets/act3_animations/source/shard_construct_v2.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08224-16ee-7a53-a81b-fd35ff8f7802\\exec-ed411094-77a7-4d19-8f40-bad0b1e59d2d.png",
+      "sourceHash": "50a23923a6591b668666258c758e1e698c160d6ed363eb4f79a8c39e482a7262",
+      "alphaSource": "assets/act3_animations/alpha/shard_construct.png",
+      "rejectedSource": "assets/act3_animations/source/shard_construct.png",
+      "rejectedSourceHash": "37122a5d9f516a5d72ef53f43770527f66718cfd6ef8ee3c32703274bcc76c0b",
+      "neutralMinChannel": 230
+    },
+    {
+      "id": "crystal_marauder",
+      "reference": "assets/sprites/packed/actors/monsters/identity_crystal_golem.webp",
+      "sequences": [
+        "melee",
+        "charge",
+        "death"
+      ],
+      "description": "Melee: bulky crystal fist draws back then a powerful forward punch, recoil. Charge: lowers body, braces shoulder, deep lean, running shoulder tackle at frame four, brake and recover. Death: heavy crystalline body staggers, drops, collapses sideways into broken blue crystals.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. Match the reference character's exact identity, anatomy, materials, colors, equipment and painted dark fantasy isometric RPG style. 3 equal rows and SIX equal columns. Rows from top to bottom: melee, charge, death. Each row shows SIX DISTINCT SEQUENTIAL poses of the SAME full-body character, facing screen-right, elevated three-quarter isometric perspective. Columns 1 anticipation, 2 windup, 3 strongest anticipation, 4 release/contact, 5 follow-through, 6 recovery; death row progresses from standing to permanent collapsed remains. Melee: bulky crystal fist draws back then a powerful forward punch, recoil. Charge: lowers body, braces shoulder, deep lean, running shoulder tackle at frame four, brake and recover. Death: heavy crystalline body staggers, drops, collapses sideways into broken blue crystals. Keep body scale consistent across all frames, including small fallen remains; do not enlarge collapsed poses. Root/feet near bottom center of each cell. Large transparent gutters, all limbs/weapons/effects stay within each cell. No floor, ground shadows, UI, text, grid, borders, background haze, scenery or extra characters. Small attached magical accents only. Clear substantial changes of limb/body pose between frames.",
+      "source": "assets/act3_animations/source/crystal_marauder.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08224-16ee-7a53-a81b-fd35ff8f7802\\exec-925d4b45-1826-4e64-8b9b-3c4479a147ec.png",
+      "sourceHash": "da3471d5c79e9c9fbe5b72c5dbf26e73371e932bbfbccae1ee2170715106b000",
+      "alphaSource": "assets/act3_animations/alpha/crystal_marauder.png"
+    },
+    {
+      "id": "gilded_thrall",
+      "reference": "assets/sprites/packed/actors/monsters/identity_gilded_guard.webp",
+      "sequences": [
+        "melee",
+        "sweep",
+        "death"
+      ],
+      "description": "Melee: sword draw back, direct strike, recoil. Sweep: deep torso turn and sword backswing, broad golden sword arc at frame four, follow through, recover behind shield. Death: knees buckle, falls sideways with sword and round shield, prone final body.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. Match the reference character's exact identity, anatomy, materials, colors, equipment and painted dark fantasy isometric RPG style. 3 equal rows and SIX equal columns. Rows from top to bottom: melee, sweep, death. Each row shows SIX DISTINCT SEQUENTIAL poses of the SAME full-body character, facing screen-right, elevated three-quarter isometric perspective. Columns 1 anticipation, 2 windup, 3 strongest anticipation, 4 release/contact, 5 follow-through, 6 recovery; death row progresses from standing to permanent collapsed remains. Melee: sword draw back, direct strike, recoil. Sweep: deep torso turn and sword backswing, broad golden sword arc at frame four, follow through, recover behind shield. Death: knees buckle, falls sideways with sword and round shield, prone final body. Keep body scale consistent across all frames, including small fallen remains; do not enlarge collapsed poses. Root/feet near bottom center of each cell. Large transparent gutters, all limbs/weapons/effects stay within each cell. No floor, ground shadows, UI, text, grid, borders, background haze, scenery or extra characters. Small attached magical accents only. Clear substantial changes of limb/body pose between frames.",
+      "source": "assets/act3_animations/source/gilded_thrall.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08224-16ee-7a53-a81b-fd35ff8f7802\\exec-049183f0-c128-4c27-a97c-995dde87e45f.png",
+      "sourceHash": "757f955c2a53bcb5d2abe3f51cc5e0ea490dbf7253591e364fe28b8c2901d318",
+      "matteSource": "assets/act3_animations/source/gilded_thrall_white.png",
+      "mattePrompt": "Replace only the colored background with flat pure white; preserve all 18 poses, equipment, scale, frame order and small attached effects.",
+      "alphaSource": "assets/act3_animations/alpha/gilded_thrall.png"
+    },
+    {
+      "id": "prisoned_shade",
+      "reference": "assets/sprites/packed/actors/monsters/identity_chained_soul.webp",
+      "sequences": [
+        "bolt",
+        "blink",
+        "death"
+      ],
+      "description": "Bolt: chains gather restrained violet shadow in hands, forward cast releases violet bolt, recoil. Blink: pulls arms inward defensively, contracts and dissolves, faint ghost silhouette, reforms, recovers. Death: spirit sinks and dissipates into violet shadow with fallen chain remnants.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. Match the reference character's exact identity, anatomy, materials, colors, equipment and painted dark fantasy isometric RPG style. 3 equal rows and SIX equal columns. Rows from top to bottom: bolt, blink, death. Each row shows SIX DISTINCT SEQUENTIAL poses of the SAME full-body character, facing screen-right, elevated three-quarter isometric perspective. Columns 1 anticipation, 2 windup, 3 strongest anticipation, 4 release/contact, 5 follow-through, 6 recovery; death row progresses from standing to permanent collapsed remains. Bolt: chains gather restrained violet shadow in hands, forward cast releases violet bolt, recoil. Blink: pulls arms inward defensively, contracts and dissolves, faint ghost silhouette, reforms, recovers. Death: spirit sinks and dissipates into violet shadow with fallen chain remnants. Keep body scale consistent across all frames, including small fallen remains; do not enlarge collapsed poses. Root/feet near bottom center of each cell. Large transparent gutters, all limbs/weapons/effects stay within each cell. No floor, ground shadows, UI, text, grid, borders, background haze, scenery or extra characters. Small attached magical accents only. Clear substantial changes of limb/body pose between frames.",
+      "source": "assets/act3_animations/source/prisoned_shade.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08224-16ee-7a53-a81b-fd35ff8f7802\\exec-52b81f9a-bf55-428b-9fdc-3fdec7d63bf9.png",
+      "sourceHash": "43885a3f05ce8d1387d52866806013c4fb52f90d145d863915c0f3ca23ad5ded",
+      "alphaSource": "assets/act3_animations/alpha/prisoned_shade.png"
+    },
+    {
+      "id": "dune_serpent",
+      "reference": "assets/sprites/packed/actors/monsters/serpent.webp",
+      "sequences": [
+        "melee",
+        "charge",
+        "death"
+      ],
+      "description": "Bite: neck draws back and jaws open, snapping forward bite with tiny green venom at frame four, retract. Charge: serpent coils tightly, neck draws back, spring loaded coil, stretched lunging body at frame four, recoil and settle. Death: head falters and drops, coils loosen and collapse into a motionless flattened coil.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. Match the reference character's exact identity, anatomy, materials, colors, equipment and painted dark fantasy isometric RPG style. 3 equal rows and SIX equal columns. Rows from top to bottom: melee, charge, death. Each row shows SIX DISTINCT SEQUENTIAL poses of the SAME full-body character, facing screen-right, elevated three-quarter isometric perspective. Columns 1 anticipation, 2 windup, 3 strongest anticipation, 4 release/contact, 5 follow-through, 6 recovery; death row progresses from standing to permanent collapsed remains. Bite: neck draws back and jaws open, snapping forward bite with tiny green venom at frame four, retract. Charge: serpent coils tightly, neck draws back, spring loaded coil, stretched lunging body at frame four, recoil and settle. Death: head falters and drops, coils loosen and collapse into a motionless flattened coil. Keep body scale consistent across all frames, including small fallen remains; do not enlarge collapsed poses. Root/feet near bottom center of each cell. Large transparent gutters, all limbs/weapons/effects stay within each cell. No floor, ground shadows, UI, text, grid, borders, background haze, scenery or extra characters. Small attached magical accents only. Clear substantial changes of limb/body pose between frames.",
+      "source": "assets/act3_animations/source/dune_serpent.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08224-16ee-7a53-a81b-fd35ff8f7802\\exec-59cc3f8a-af82-4ce3-a725-41901dad8fff.png",
+      "sourceHash": "34763b31087512c11d9d2b3e238068390afbc4f9e1b7090efe1d34da2e556697",
+      "alphaSource": "assets/act3_animations/alpha/dune_serpent.png"
+    },
+    {
+      "id": "stone_gargoyle",
+      "reference": "assets/sprites/packed/actors/monsters/gargoyle.webp",
+      "sequences": [
+        "melee",
+        "leap",
+        "death"
+      ],
+      "description": "Claw: crouches and draws claw back then sweeping forward claw strike and recoil. Stonefall: crouch, wings spread, launch anticipation, wings extended airborne flight at frame four, heavy crouched landing at frame five, stand recovery at frame six. Death: stone wings crack and buckle, body drops and fractures into a compact stone rubble pile.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. Match the reference character's exact identity, anatomy, materials, colors, equipment and painted dark fantasy isometric RPG style. 3 equal rows and SIX equal columns. Rows from top to bottom: melee, leap, death. Each row shows SIX DISTINCT SEQUENTIAL poses of the SAME full-body character, facing screen-right, elevated three-quarter isometric perspective. Columns 1 anticipation, 2 windup, 3 strongest anticipation, 4 release/contact, 5 follow-through, 6 recovery; death row progresses from standing to permanent collapsed remains. Claw: crouches and draws claw back then sweeping forward claw strike and recoil. Stonefall: crouch, wings spread, launch anticipation, wings extended airborne flight at frame four, heavy crouched landing at frame five, stand recovery at frame six. Death: stone wings crack and buckle, body drops and fractures into a compact stone rubble pile. Keep body scale consistent across all frames, including small fallen remains; do not enlarge collapsed poses. Root/feet near bottom center of each cell. Large transparent gutters, all limbs/weapons/effects stay within each cell. No floor, ground shadows, UI, text, grid, borders, background haze, scenery or extra characters. Small attached magical accents only. Clear substantial changes of limb/body pose between frames.",
+      "source": "assets/act3_animations/source/stone_gargoyle.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a08224-16ee-7a53-a81b-fd35ff8f7802\\exec-774c3024-5dcd-4acf-9059-d4077e00d5d6.png",
+      "sourceHash": "38f8989a4dfc1695b336804639e857b60cbbfce2efe3d500061d73c496042e46",
+      "alphaSource": "assets/act3_animations/alpha/stone_gargoyle.png"
+    }
+  ]
+}

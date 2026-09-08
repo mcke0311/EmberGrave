@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "assets": 27,
+  "checks": 162,
+  "baselineExitCode": 1,
+  "currentExitCode": 1,
+  "newAct3Diagnostics": [],
+  "otherConcurrentDiagnostics": [
+    "gameplay art prop:cinders_ash_drifts: source/review provenance is not final",
+    "gameplay art prop:cinders_bastion_gate: source/review provenance is not final",
+    "gameplay art prop:cinders_bastion_return: source/review provenance is not final",
+    "gameplay art prop:cinders_breach_gate: source/review provenance is not final",
+    "gameplay art prop:cinders_ceremonial_paving: source/review provenance is not final",
+    "gameplay art prop:cinders_chain_rubble: source/review provenance is not final",
+    "gameplay art prop:cinders_fallen_statue: source/review provenance is not final",
+    "gameplay art prop:cinders_furnace_forge: source/review provenance is not final",
+    "gameplay art prop:cinders_impaled_monument: source/review provenance is not final",
+    "gameplay art prop:cinders_siege_engine: source/review provenance is not final",
+    "gameplay art prop:cinders_siege_tower: source/review provenance is not final",
+    "gameplay art prop:cinders_throne_backdrop: source/review provenance is not final",
+    "gameplay art prop:cinders_throne_gate: source/review provenance is not final",
+    "gameplay art prop:cinders_throne_return: source/review provenance is not final",
+    "world.prop.cathedral_floor_dark: no alpha channel",
+    "world.prop.cathedral_floor_fortress: no alpha channel",
+    "world.prop.cathedral_floor_pale: no alpha channel",
+    "world.prop.cathedral_floor_street: no alpha channel",
+    "world.prop.cathedral_void_backdrop: no alpha channel"
+  ],
+  "note": "Global validator has existing frozen coverage and retired rig diagnostics; before is the captured working tree. Other concurrent changes are listed separately."
+}

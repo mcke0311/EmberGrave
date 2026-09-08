@@ -1,0 +1,32 @@
+{
+  "zone": "cathedral1",
+  "width": 1920,
+  "status": "PASS",
+  "method": "Three alternating pairs; 60 warm-up and 180 measured frames; production movement and combat, verified attack exchanges and warm cache stability.",
+  "results": [
+    {
+      "mode": "moving",
+      "before": {
+        "median": 9.899999999999999,
+        "p95": 13.166666666666666
+      },
+      "after": {
+        "median": 4.033333333333333,
+        "p95": 5.533333333333334
+      },
+      "passed": true
+    },
+    {
+      "mode": "combat",
+      "before": {
+        "median": 8.9,
+        "p95": 12.433333333333332
+      },
+      "after": {
+        "median": 4.566666666666666,
+        "p95": 6.3
+      },
+      "passed": true
+    }
+  ]
+}

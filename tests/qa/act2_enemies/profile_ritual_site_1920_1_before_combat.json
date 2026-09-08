@@ -1,0 +1,28 @@
+{
+  "methodRevision": 101,
+  "width": 1920,
+  "zone": "ritual_site",
+  "pair": 1,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 48.5,
+    "y": 27.5
+  },
+  "monsters": 95,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 1459,
+  "cpuMs": {
+    "median": 5.8,
+    "p95": 8,
+    "max": 11.2
+  },
+  "frameIntervalMs": {
+    "median": 16.7,
+    "p95": 29.5,
+    "max": 75.5
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

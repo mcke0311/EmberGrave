@@ -15,7 +15,7 @@ const BossVFX=(()=>{
   const particleGroups=new WeakMap();
   const reduced=()=>!!motionPreference?.matches;
   const noise=(seed,n)=>{const x=Math.sin(seed*19.13+n*73.31)*43758.5453;return x-Math.floor(x);};
-  const palette=a=>a?.remembered?['#dcf3e9','#8fa9b8']:colors[recipes[a?.id]||'shadow'];
+  const palette=a=>a?.remembered?['#dcf3e9','#8fa9b8']:a?.quieting?colors.light:colors[recipes[a?.id]||'shadow'];
   const visual=e=>e.visual||(e.visual={time:0,serial:0,events:[],particles:[],peakEvents:0,peakParticles:0,trailAt:0});
   function cancel(e){
     if(e.visual){e.visual.events.length=0;e.visual.particles.length=0;e.visual.trailAt=0;}

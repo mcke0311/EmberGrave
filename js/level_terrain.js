@@ -4,7 +4,7 @@
 "use strict";
 const LevelTerrain = (() => {
   const TILE=32, CHUNK=12, PAD=2, SIDE=(CHUNK+PAD*2)*TILE;
-  const materials=new Map(),chunks=new Map(),visible=new Set();
+  const materials=new Map(),decalFrames=new Map(),chunks=new Map(),visible=new Set();
   const MIN_CAPACITY=40, RECENT_CHUNKS=12;
   let currentMap=null,chunkColumns=0,frameOpen=false,frame=0;
   let tileDraws=0,cacheHits=0,chunkBuilds=0,buildMs=0,evictions=0,capacity=MIN_CAPACITY;
@@ -16,7 +16,9 @@ const LevelTerrain = (() => {
   // Overscan lets the camera move normally without rebuilding the image.
   const VIEW_PAD=192;
   const MASSIF_THEMES=new Set(['snowwild','marsh','desert','hellwild','fields','forest']);
-  const TERRAIN_GRIDS=['floor','walls','elev','hazard'];
+  const TERRAIN_GRIDS=['floor','walls','elev','hazard','scenicWater','void','cathedralMaterials'];
+  const terrainGrid=(m,k)=>k==='scenicWater'?m.act2?.water:m[k];
+  const terrainDecals=m=>m.cathedral?.decals||m.composition?.decals||m.act2?.decals||m.frontier?.decals||[];
   let terrainSnapshot=null;
   let surfaceView=null,surfaceViewBuilds=0,surfaceViewHits=0;
   let surfacePatch=null;
@@ -36,8 +38,8 @@ const LevelTerrain = (() => {
       releaseSurfaceView();
       chunkColumns=Math.ceil(m.w/CHUNK);
       terrainSnapshot={map:m,id:m.id,w:m.w,h:m.h,theme:m.zone?.theme,art:m.zone?.artZone,
-        surfaceVersion:m.surfaceVersion,geometry:m._surfaceGeometry,outdoor:m.outdoor,
-        grids:TERRAIN_GRIDS.map(k=>m[k]?.slice())};
+        surfaceVersion:m.surfaceVersion,geometry:m._surfaceGeometry,outdoor:m.outdoor,decals:JSON.stringify(terrainDecals(m)),
+        grids:TERRAIN_GRIDS.map(k=>terrainGrid(m,k)?.slice())};
     }
     visible.clear();surfacePolygons=[];surfaceIndex=null;frameOpen=true;frame++;
     tileDraws=cacheHits=chunkBuilds=buildMs=evictions=0;capacity=MIN_CAPACITY;
@@ -45,9 +47,9 @@ const LevelTerrain = (() => {
   function sameTerrain(m){
     const s=terrainSnapshot;
     if(!s||s.map!==m||s.id!==m.id||s.w!==m.w||s.h!==m.h||s.theme!==m.zone?.theme||s.art!==m.zone?.artZone||
-       s.surfaceVersion!==m.surfaceVersion||s.geometry!==m._surfaceGeometry||s.outdoor!==m.outdoor)return false;
+       s.surfaceVersion!==m.surfaceVersion||s.geometry!==m._surfaceGeometry||s.outdoor!==m.outdoor||s.decals!==JSON.stringify(terrainDecals(m)))return false;
     for(let k=0;k<TERRAIN_GRIDS.length;k++){
-      const a=s.grids[k],b=m[TERRAIN_GRIDS[k]];
+      const a=s.grids[k],b=terrainGrid(m,TERRAIN_GRIDS[k]);
       if(a?.length!==b?.length)return false;
       if(a)for(let i=0;i<a.length;i++)if(a[i]!==b[i])return false;
     }
@@ -129,7 +131,7 @@ const LevelTerrain = (() => {
   }
   function build(m,cx,cy){
     const surface=canvas(SIDE),g=surface.getContext('2d');
-    const ox=(cx*CHUNK-PAD)*TILE,oy=(cy*CHUNK-PAD)*TILE,ground=SpriteAssets.maps.props['level_ground_'+(m.zone.artZone||m.id)];
+    const ox=(cx*CHUNK-PAD)*TILE,oy=(cy*CHUNK-PAD)*TILE,ground=SpriteAssets.maps.props[m.cathedral?m.cathedral.materials[m.cathedral.baseMaterial]:m.act3?.ground?'act3_ground_'+m.act3.ground:'level_ground_'+(m.zone.artZone||m.id)];
     fill(g,material(ground,0,false,true),ox,oy);
     // Overlapping soft patches break repetition without drawing a tile grid.
     for(let variant=1;variant<4;variant++){
@@ -142,12 +144,42 @@ const LevelTerrain = (() => {
       }
       masked(g,material(ground,variant,false,true),mask,ox,oy,1);
     }
-    const path=SpriteAssets.maps.paths[m.zone.theme];
-    if(path){const mask=cellsMask(m,cx,cy,i=>m.floor[i]>=4&&!m.walls[i],9);masked(g,material(path,15,true),mask,ox,oy,.86);}
+    if(m.cathedral)for(let mat=0;mat<4;mat++){
+      if(mat===m.cathedral.baseMaterial)continue;
+      const mask=cellsMask(m,cx,cy,i=>m.cathedralMaterials[i]===mat&&!m.void[i],12);
+      masked(g,material(SpriteAssets.maps.props[m.cathedral.materials[mat]],0,false,true),mask,ox,oy,1);
+    }
+    const path=!m.cathedral&&SpriteAssets.maps.paths[m.zone.theme];
+    if(path){
+      const mask=cellsMask(m,cx,cy,i=>m.floor[i]>=4&&!m.walls[i]&&!m.act2?.water[i],m.composition||m.frontier||m.act2?18:9);
+      const road=m.frontier&&m.id==='north_wild'?SpriteAssets.maps.props.frosthaven_street:null;
+      masked(g,road?material(road,0,false,true):material(path,15,true),mask,ox,oy,m.composition||m.frontier||m.act2?.48:.86);
+    }
+    if(m.act3&&!m.outdoor&&!m.settlement){
+      // Buried masonry reads as solid surrounding mass, distinct from streets.
+      const cap=canvas(SIDE),p=cap.getContext('2d');
+      fill(p,material(SpriteAssets.maps.props.act3_ground_tomb,0,false,true),ox,oy);
+      p.fillStyle='rgba(12,16,19,.62)';p.fillRect(0,0,SIDE,SIDE);
+      p.globalCompositeOperation='destination-in';p.drawImage(cellsMask(m,cx,cy,i=>!!m.walls[i],1),0,0);
+      g.drawImage(cap,0,0);
+    }
+    if(m.act2){
+      const water=SpriteAssets.maps.props.act2_black_water;
+      masked(g,material(water,0,false,true),cellsMask(m,cx,cy,i=>!!m.act2.water[i],5),ox,oy,1);
+    }
     const hazards=new Set();
     for(let y=Math.max(0,cy*CHUNK-PAD);y<Math.min(m.h,(cy+1)*CHUNK+PAD);y++)for(let x=Math.max(0,cx*CHUNK-PAD);x<Math.min(m.w,(cx+1)*CHUNK+PAD);x++)if(m.hazard?.[x+y*m.w])hazards.add(m.hazard[x+y*m.w]);
     for(const code of hazards){const def=DATA.HAZARDS[code],id=def&&SpriteAssets.maps.props['level_hazard_'+def.id];if(!id)continue;
       masked(g,material(id,0,false,true),cellsMask(m,cx,cy,i=>!m.walls[i]&&m.hazard[i]===code,6),ox,oy,.92);
+    }
+    for(const d of terrainDecals(m)){
+      const x=d.x*TILE-ox,y=d.y*TILE-oy;
+      if(x<-384||y<-384||x>SIDE+384||y>SIDE+384)continue;
+      const id=SpriteAssets.maps.props[d.type];
+      if(!decalFrames.has(id))decalFrames.set(id,SpriteAssets.getFrame(id,0));
+      const f=decalFrames.get(id),s=d.scale||1;
+      g.save();g.setTransform(.5,-.5,1,1,x,y);g.scale(d.turn?-s:s,s);g.globalAlpha=d.alpha??1;
+      g.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,-f.anchorX,-f.anchorY,f.sw,f.sh);g.restore();
     }
     return surface;
   }
@@ -265,6 +297,19 @@ const LevelTerrain = (() => {
       const visible=inView;
       inView=(sx,sy)=>visible(sx,sy)&&damage.some(r=>sx+34>r.x&&sx-34<r.x+r.w&&sy+EH*6+18>r.y&&sy-EH*6-18<r.y+r.h);
     }
+    if(m.cathedral){
+      const f=SpriteAssets.getFrame(SpriteAssets.maps.props.cathedral_foundation,0);
+      // Clip authored foundations to the actual exposed faces. Back corners of
+      // a complete block must not protrude through a neighboring floor tile.
+      for(let y=ty0;y<=ty1;y++)for(let x=tx0;x<=tx1;x++){
+        const i=x+y*m.w;if(m.void[i]||!(m.void[i+1]||m.void[i+m.w]))continue;
+        const sx=U.isoX(x+.5,y+.5)-cam.x,sy=U.isoY(x+.5,y+.5)-cam.y;if(!inView(sx,sy))continue;
+        ctx.save();ctx.beginPath();
+        if(m.void[i+m.w]){ctx.moveTo(sx-32,sy);ctx.lineTo(sx,sy+16);ctx.lineTo(sx,sy+52);ctx.lineTo(sx-32,sy+36);ctx.closePath();}
+        if(m.void[i+1]){ctx.moveTo(sx,sy+16);ctx.lineTo(sx+32,sy);ctx.lineTo(sx+32,sy+36);ctx.lineTo(sx,sy+52);ctx.closePath();}
+        ctx.clip();SpriteAssets.drawFrame(ctx,f,sx,sy);ctx.restore();
+      }
+    }
     /* Solid ground must continue underneath walls and raised terrain. Wall
        and cliff sprites have transparent edges; without this foundation those
        edges expose the screen-space backdrop instead of the level's floor.
@@ -273,7 +318,7 @@ const LevelTerrain = (() => {
       for (let x = tx0; x <= tx1; x++) {
         const i = x + y * m.w;
         // Flat open ground and outdoor wall caps already get a floor below.
-        if (!(ev && ev[i]) && (!m.walls[i] || massifTerrain)) continue;
+        if (m.void?.[i] || (!(ev && ev[i]) && (!m.walls[i] || massifTerrain))) continue;
         const sx = U.isoX(x + 0.5, y + 0.5) - cam.x;
         const sy = U.isoY(x + 0.5, y + 0.5) - cam.y;
         if (inView(sx, sy)) drawTile(ctx,m,x,y,sx,sy);

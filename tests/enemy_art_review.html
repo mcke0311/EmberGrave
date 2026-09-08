@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Embergrave enemy artwork review</title>
+<style>
+body{margin:30px;background:#131b20;color:#c9d0d2;font:14px/1.5 system-ui}h1{font:32px Georgia;color:#dfcea8;margin-bottom:8px}p{max-width:850px;color:#94a5b0}nav{display:flex;gap:12px;margin:22px 0;align-items:center;flex-wrap:wrap}button,input,select{background:#25323b;color:#e9d8b5;border:1px solid #637079;padding:9px 12px}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #dfbd72}#gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}article{border:1px solid #46545c;background:#1b252b;padding:16px;min-width:0}canvas{display:block;max-width:100%;margin:auto}h2{font:18px Georgia;color:#e9d6a9;margin:12px 0 8px}small{color:#97aab5}dl{font-size:12px;display:grid;grid-template-columns:76px 1fr;gap:4px}dt{color:#8999a5}dd{margin:0;overflow-wrap:anywhere}iframe{display:none}#status{color:#d8bd80}
+</style>
+<h1>Creature identities</h1><p>Every campaign and optional enemy, generated roster entry, summoned enemy, companion, and dedicated boss form. Sprites use their actual gameplay scale and drawing transforms. This review has its own empty save store.</p>
+<nav><input id="search" aria-label="Search enemies" placeholder="Name, anatomy, material or weapon"><select id="scope" aria-label="Roster"><option value="">All artwork</option><option value="authored">New artwork</option><option value="boss">Boss forms</option><option value="summon">Companions</option></select><button id="prev">Previous</button><span id="page"></span><button id="next">Next</button></nav>
+<div id="status">Loading the authored sprites…</div><main id="gallery"></main><div id="host"></div>
+<script type="module">
+window.enemyArtStore=new Map();
+try {
+ const html=await fetch('../index.html').then(r=>r.text());
+ const injection=`<base href="${new URL('../index.html',location.href)}"><script>const testStore=parent.enemyArtStore;Object.defineProperty(window,'localStorage',{value:{get length(){return testStore.size},key:i=>[...testStore.keys()][i]??null,getItem:k=>testStore.get(k)??null,setItem:(k,v)=>testStore.set(String(k),String(v)),removeItem:k=>testStore.delete(k)}});window.requestAnimationFrame=()=>0;<\/script>`;
+ const iframe=document.createElement('iframe');iframe.title='Isolated artwork runtime';iframe.srcdoc=html.replace('<head>','<head>'+injection);document.querySelector('#host').append(iframe);await new Promise(r=>iframe.onload=r);
+ const win=iframe.contentWindow;for(let i=0;i<300&&!win.document.querySelector('#titleMenu button');i++)await new Promise(r=>setTimeout(r,30));
+ const game=win.eval('Game'),sprites=win.eval('SpriteAssets'),data=win.eval('DATA'),Monster=win.eval('Monster'),Minion=win.eval('Minion');
+ win.eval('Sfx').setVol('master',0);await game.newGame('Artwork Review','vanguard',false);
+ for(const id of Object.keys(data.BOSS_ENCOUNTERS))await sprites.loadBundle('boss:'+id);
+ const records=[];const pose={state:'idle',t:.8,ang:Math.PI/4};
+ for(const [id,base] of Object.entries(data.ENEMIES)){
+  const act3=Object.keys(data.ACT3_ROSTERS||{}).find(z=>data.ACT3_ROSTERS[z].includes(id)),d=act3?data.resolveEnemy(id,act3):base;
+  const mon=new Monster(id,10,10),boss=data.BOSS_ENCOUNTERS[id],forms=boss?boss.phases.length:1;
+  if(act3&&!boss)Object.assign(mon.spriteOpts,{kind:d.sprite,weapon:d.weapon||mon.spriteOpts.weapon,shield:!!d.shield,monsterArtId:d.artId});
+  for(let phase=0;phase<forms;phase++){
+   const opts={...mon.spriteOpts,bossPhase:phase};
+   if(id==='boss_decoy')Object.assign(opts,{bossArt:'vethriss',bossPhase:1,bossDecoy:true});
+   const structure=!!mon.beacon||id==='boss_portal';
+   const artId=structure?sprites.maps.props.beacon:opts.bossArt?sprites.maps.bosses[opts.bossArt]:opts.npcArt?sprites.maps.npcs[opts.npcArt]:sprites.maps.monsters[opts.monsterArtId];
+   const regions=Object.values(data.ZONES).filter(z=>(z.spawns||[]).includes(id)||z.boss===id).map(z=>z.name);
+   const bossReview={korvath:{anatomy:'armored undead warlord',weapon:'axe',element:phase?'oathfire':'physical'},mire_mother:{anatomy:'woody marsh matron',weapon:'root claws',element:'poison'},azram:{anatomy:'gilded undead sovereign',weapon:'scepter',element:phase===2?'molten gold':'light'},empty_archangel:{anatomy:'winged hollow angel',weapon:'spear',element:'shadow'},malthoron:{anatomy:phase===2?'spectral armored king':'armored undead king',weapon:'greatsword',element:'shadow'},vethriss:{anatomy:['wounded angelic humanoid','serpentine demon','spectral form'][phase],weapon:phase?'none':'broken blade',element:phase?'shadow':'light'}}[id];
+   records.push({id:id+(phase?'@'+phase:''),enemyId:id,name:d.name+(boss?' · '+boss.phases[phase]:''),
+    kind:d.sprite,artId,opts,structure,boss:!!boss,authored:d.artId.startsWith('identity_')&&!boss,scale:mon.scale,radius:mon.radius,
+    ...d.artReview,...bossReview,regions:regions.join(', ')||'Encounter summons / world-event pool',
+    note:boss?'Dedicated boss animation preserved'+(id==='vethriss'&&phase===0?'; Seraneth story disguise preserved.':'.'):d.artReview.note});
+  }
+ }
+ for(const [id,source] of Object.entries(data.SUMMON_SPRITE_SOURCES)){
+  if(source.alias)continue;
+  const details={skel_warrior:['Skeletal Warrior','skeletal humanoid','sword'],skel_mage:['Skeletal Plague Mage','skeletal humanoid','wand'],bone_golem:['Bone Golem','bone construct','none'],wolf:['Grey Companion','canine quadruped','none'],boar:['Thornback Boar','boar quadruped','none'],hawk:['Spirit Hawk','spectral bird','none'],bear:['Guardian Bear','bear quadruped','none'],decoy:['Decoy','illusory humanoid','none']}[id]||[id,id,'none'];
+  const mi=new Minion(id,{hp:100,dmg:[1,2],speed:3,atkRate:1,range:1,sprite:id==='bone_golem'?'golem':id,projectile:id==='skel_mage'?'venom':null},game.state.player);
+  records.push({id:'summon:'+id,name:details[0],anatomy:details[1],weapon:details[2],element:id==='skel_mage'?'poison':id==='hawk'?'spirit':'physical',regions:'Player companions',kind:mi.spriteOpts.kind,opts:mi.spriteOpts,artId:sprites.maps.summons[id],summon:true,scale:mi.spriteOpts.scale,note:'Dedicated companion animation preserved.'});
+ }
+ let page=0;const perPage=16;const selected=()=>records.filter(r=>(!scope.value||r[scope.value])&&JSON.stringify(r).toLowerCase().includes(search.value.toLowerCase()));
+ function drawRecord(ctx,r,x=180,y=190,p=pose){ctx.save();ctx.translate(x,y);if(r.structure)sprites.drawFrame(ctx,sprites.getFrame(r.artId,0),0,0);else sprites.drawActor(ctx,r.opts,p);ctx.restore();}
+ function render(){const rows=selected();page=Math.max(0,Math.min(page,Math.ceil(rows.length/perPage)-1));document.querySelector('#gallery').replaceChildren();
+  for(const r of rows.slice(page*perPage,(page+1)*perPage)){
+   const card=document.createElement('article'),canvas=document.createElement('canvas');canvas.width=360;canvas.height=210;drawRecord(canvas.getContext('2d'),r);card.append(canvas);
+   const h=document.createElement('h2');h.textContent=r.name;card.append(h);const dl=document.createElement('dl');
+   for(const [k,v] of [['Anatomy',r.anatomy],['Weapon',r.weapon],['Identity',r.element],['Region',r.regions],['Artwork',r.artId]]){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=k;dd.textContent=v;dl.append(dt,dd);}card.append(dl);const note=document.createElement('small');note.textContent=r.note;card.append(note);gallery.append(card);
+  }
+  document.querySelector('#page').textContent=`${page+1} / ${Math.max(1,Math.ceil(rows.length/perPage))} · ${rows.length} records`;prev.disabled=page===0;next.disabled=(page+1)*perPage>=rows.length;
+ }
+ search.oninput=scope.onchange=()=>{page=0;render();};prev.onclick=()=>{page--;render();};next.onclick=()=>{page++;render();};
+ window.artReview={records,drawRecord,sprites,renderPage:n=>{page=n;render();},game,
+  benchmark(){const c=document.createElement('canvas');c.width=1200;c.height=800;const ctx=c.getContext('2d'),units=records.filter(r=>!r.boss&&!r.summon&&!r.structure).slice(0,160);const run=legacy=>{let start=performance.now();for(let frame=0;frame<60;frame++){ctx.clearRect(0,0,1200,800);for(let i=0;i<units.length;i++){const r=units[i],opts=legacy?{...r.opts,monsterArtId:r.kind}:r.opts;ctx.save();ctx.translate(50+i%20*58,110+Math.floor(i/20)*83);sprites.drawActor(ctx,opts,{state:'walk',t:frame/60,ang:.7});ctx.restore();}}return (performance.now()-start)/60;};run(false);run(true);return {actors:units.length,frames:60,legacyMs:run(true),updatedMs:run(false)};}};
+ render();document.querySelector('#status').textContent=records.length+' review records loaded';window.artReady=true;
+}catch(error){document.querySelector('#status').textContent=error.stack;window.artError=String(error);console.error(error);}
+</script></html>

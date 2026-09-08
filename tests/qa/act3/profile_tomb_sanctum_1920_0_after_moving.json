@@ -1,0 +1,39 @@
+{
+  "methodRevision": 2,
+  "layoutRevision": 3,
+  "width": 1920,
+  "zone": "tomb_sanctum",
+  "pair": 0,
+  "version": "after",
+  "mode": "moving",
+  "position": {
+    "x": 24.5,
+    "y": 76.5
+  },
+  "monsters": 125,
+  "distance": 18.019999999999897,
+  "attackFrames": 0,
+  "enemyAttackFrames": 0,
+  "cpuMs": {
+    "median": 4.1,
+    "p95": 6,
+    "max": 37
+  },
+  "updateMs": {
+    "median": 1,
+    "p95": 1.5,
+    "max": 1.7
+  },
+  "renderMs": {
+    "median": 3.2,
+    "p95": 4.6,
+    "max": 35.9
+  },
+  "frameIntervalMs": {
+    "median": 18,
+    "p95": 18.2,
+    "max": 41.8
+  },
+  "builds": 10,
+  "warmCacheStable": true
+}

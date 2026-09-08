@@ -29,7 +29,7 @@ for(const seed of [0,1,123,4294967295])for(const id of towns){
    const end=path.at(-1)||{x:start.x|0,y:start.y|0};ok(Math.hypot(end.x+.5-p.x,end.y+.5-p.y)<1.6,id+' interaction out of reach '+(p.id||p.interact));
  }
  for(const ex of m.exits){ok(U.astar(walk,m.w,m.h,start.x,start.y,(ex.x0+ex.x1)/2,(ex.y0+ex.y1)/2)!==null,id+' gate blocked');const dest=MapGen.generate(ex.target,seed);ok(dest.spawns[ex.spawnKey],id+' exit arrival key missing');ok(dest.exits.some(e=>e.target===id&&m.spawns[e.spawnKey]),id+' return connection missing');}
- for(const p of m.props){const key=DATA.SPRITE_MANIFEST.maps.props[id+'_'+p.type]||DATA.SPRITE_MANIFEST.maps.props[p.type];ok(key&&DATA.SPRITE_MANIFEST.entries[key],id+' missing art '+p.type);}
+ for(const p of m.props){const key=DATA.SPRITE_MANIFEST.maps.props[(p.artZone||id)+'_'+p.type]||DATA.SPRITE_MANIFEST.maps.props[p.type];ok(key&&DATA.SPRITE_MANIFEST.entries[key],id+' missing art '+p.type);}
  for(const n of m.npcs)ok(DATA.NPCS[n.id],id+' missing NPC '+n.id);
 }
 console.log(`PASS ${checks} checks across five towns and four world seeds: paths, collisions, interactions, arrivals, return links and art.`);

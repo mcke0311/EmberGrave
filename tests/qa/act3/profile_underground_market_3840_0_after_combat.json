@@ -1,0 +1,39 @@
+{
+  "methodRevision": 2,
+  "layoutRevision": 3,
+  "width": 3840,
+  "zone": "underground_market",
+  "pair": 0,
+  "version": "after",
+  "mode": "combat",
+  "position": {
+    "x": 47.5,
+    "y": 65.5
+  },
+  "monsters": 47,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 909,
+  "cpuMs": {
+    "median": 6.7,
+    "p95": 8.7,
+    "max": 10.5
+  },
+  "updateMs": {
+    "median": 0.5,
+    "p95": 0.8,
+    "max": 0.9
+  },
+  "renderMs": {
+    "median": 6.2,
+    "p95": 8,
+    "max": 10
+  },
+  "frameIntervalMs": {
+    "median": 18,
+    "p95": 18.1,
+    "max": 92.1
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

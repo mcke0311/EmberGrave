@@ -1,0 +1,79 @@
+[
+  {
+    "test": "navigation_contract",
+    "status": "PASS",
+    "seconds": 0.68,
+    "output": "PASS 216 navigation checks; longest seeded query 27.3 ms.\n"
+  },
+  {
+    "test": "navigation_edge_contract",
+    "status": "PASS",
+    "seconds": 0.27,
+    "output": "PASS 75272 navigation checks: optimized edges match swept collision for ramps, walls, cliffs, diagonals, hopping and six body radii.\n"
+  },
+  {
+    "test": "terrain_surface_contract",
+    "status": "PASS",
+    "seconds": 1.28,
+    "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 10734,\n  \"maxWalkHeightDelta\": 0.07500000000000018,\n  \"seedResults\": [\n    {\n      \"seed\": 0,\n      \"ramps\": 2,\n      \"raisedTiles\": 19058,\n      \"targets\": 16,\n      \"ms\": 259\n    },\n    {\n      \"seed\": 1,\n      \"ramps\": 2,\n      \"raisedTiles\": 19284,\n      \"targets\": 16,\n      \"ms\": 160\n    },\n    {\n      \"seed\": 123,\n      \"ramps\": 2,\n      \"raisedTiles\": 19169,\n      \"targets\": 16,\n      \"ms\": 141\n    },\n    {\n      \"seed\": 12345,\n      \"ramps\": 2,\n      \"raisedTiles\": 19445,\n      \"targets\": 16,\n      \"ms\": 154\n    },\n    {\n      \"seed\": 4294967295,\n      \"ramps\": 2,\n      \"raisedTiles\": 19359,\n      \"targets\": 16,\n      \"ms\": 109\n    }\n  ]\n}\n"
+  },
+  {
+    "test": "terrain_cache_contract",
+    "status": "PASS",
+    "seconds": 5.84,
+    "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 16407,\n  \"stationary\": [\n    {\n      \"viewport\": \"1920x1080\",\n      \"where\": \"entry\",\n      \"visibleChunks\": 19,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"1920x1080\",\n      \"where\": \"center\",\n      \"visibleChunks\": 31,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"2560x1440\",\n      \"where\": \"entry\",\n      \"visibleChunks\": 29,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"2560x1440\",\n      \"where\": \"center\",\n      \"visibleChunks\": 49,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"3840x2160\",\n      \"where\": \"entry\",\n      \"visibleChunks\": 46,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"3840x2160\",\n      \"where\": \"center\",\n      \"visibleChunks\": 97,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    }\n  ],\n  \"coverage\": \"Three seeds; walking, retracing, resizing, map identity, memory budget, materials retained, late wall caps, read-only diagnostics.\"\n}\n"
+  },
+  {
+    "test": "terrain_view_cache_contract",
+    "status": "PASS",
+    "seconds": 2.03,
+    "output": "PASS 3980 projected terrain cache checks: raised and legacy floors, movement, resizing, grid/geometry changes, map identity, and released backing stores.\n"
+  },
+  {
+    "test": "frontier_navigation_contract",
+    "status": "PASS",
+    "seconds": 17.36,
+    "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 94772,\n  \"seeds\": 30,\n  \"areas\": 3,\n  \"radii\": 7,\n  \"scope\": \"Optimized sweeps equal ramp-aware sweeps; blockers, height edits and outdoor ascents retain their rules.\"\n}\n"
+  },
+  {
+    "test": "story_campaign_contract",
+    "status": "PASS",
+    "seconds": 9.55,
+    "output": "PASS 214 story checks: dialogue, objectives, old saves, boss wards, seeded routes, factions, phases, quest chest states and all endings.\n"
+  },
+  {
+    "test": "boss_encounter_contract",
+    "status": "PASS",
+    "seconds": 10.75,
+    "output": "PASS 85616 boss checks: warning geometry, dodge routes, recovery, phases, ownership, retreat, death, signatures and 192 seeded arenas.\n"
+  },
+  {
+    "test": "boss_refinement_contract",
+    "status": "PASS",
+    "seconds": 9.48,
+    "output": "PASS 267 refinement checks, 228 sequence steps and 170 collision-aware walking escapes.\n"
+  },
+  {
+    "test": "town_layout_contract",
+    "status": "PASS",
+    "seconds": 1.34,
+    "output": "PASS 54280 checks across five towns and four world seeds: paths, collisions, interactions, arrivals, return links and art.\n"
+  },
+  {
+    "test": "cinders_layout_contract",
+    "status": "PASS",
+    "seconds": 17.03,
+    "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 76659,\n  \"seedCount\": 30,\n  \"zones\": [\n    \"ash_wastes\",\n    \"cinder_bastion\",\n    \"throne\"\n  ]\n}\n"
+  },
+  {
+    "test": "cinders_gameplay_contract",
+    "status": "PASS",
+    "seconds": 6.96,
+    "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 241,\n  \"seeds\": 3,\n  \"scenarios\": [\n    \"all bidirectional exits\",\n    \"safe arrivals outside triggers\",\n    \"shrine attunement and travel\",\n    \"town portal return coordinates\",\n    \"death and revival\",\n    \"serialized boss and shrine progress\",\n    \"three endings\",\n    \"seeded event anchors\"\n  ]\n}\n"
+  },
+  {
+    "test": "cinders_sprite_contract",
+    "status": "PASS",
+    "output": "{\n  \"status\": \"PASS\",\n  \"assets\": 14,\n  \"checks\": 126,\n  \"method\": \"built-in ImageGen, native alpha preserved, uniform resize, final-aligned compiler encoding\"\n}\n"
+  }
+]

@@ -1,0 +1,449 @@
+{
+  "status": "MEASURED",
+  "browser": "152.0.7977.76",
+  "method": "Headless Chrome on this machine; full production canvas update/render; three alternating pairs; 90 warmup and 240 samples; 24-enemy crowded combat and Mire Mother plus six legacy-AI reinforcements. Main-thread CPU time, not GPU frame latency.",
+  "results": [
+    {
+      "width": 1920,
+      "mode": "crowd",
+      "before": {
+        "median": 2.866666634877523,
+        "p95": 3.699999968210856
+      },
+      "after": {
+        "median": 2.6666666666666665,
+        "p95": 3.5666666825612388
+      },
+      "incrementalMedianMs": -0.19999996821085642,
+      "incrementalP95Ms": -0.13333328564961722
+    },
+    {
+      "width": 1920,
+      "mode": "boss",
+      "before": {
+        "median": 1.3000000317891438,
+        "p95": 1.9666666587193806
+      },
+      "after": {
+        "median": 1.6333333253860474,
+        "p95": 2.2333333094914756
+      },
+      "incrementalMedianMs": 0.33333329359690356,
+      "incrementalP95Ms": 0.26666665077209495
+    },
+    {
+      "width": 3840,
+      "mode": "crowd",
+      "before": {
+        "median": 3.1000000635782876,
+        "p95": 3.9333333174387612
+      },
+      "after": {
+        "median": 3.3666667143503823,
+        "p95": 4.166666746139526
+      },
+      "incrementalMedianMs": 0.2666666507720947,
+      "incrementalP95Ms": 0.23333342870076512
+    },
+    {
+      "width": 3840,
+      "mode": "boss",
+      "before": {
+        "median": 1.5333333015441895,
+        "p95": 2.0666666825612388
+      },
+      "after": {
+        "median": 1.600000023841858,
+        "p95": 2.100000023841858
+      },
+      "incrementalMedianMs": 0.06666672229766846,
+      "incrementalP95Ms": 0.033333341280619155
+    }
+  ],
+  "runs": [
+    {
+      "width": 1920,
+      "mode": "crowd",
+      "pair": 0,
+      "version": "before",
+      "median": 2.899999976158142,
+      "p95": 3.899999976158142,
+      "actionFrames": 2441,
+      "monsters": 27,
+      "canvas": [
+        1920,
+        1080
+      ],
+      "layoutWarnings": 1,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "mode": "crowd",
+      "pair": 0,
+      "version": "after",
+      "median": 2.799999952316284,
+      "p95": 4,
+      "actionFrames": 2441,
+      "monsters": 27,
+      "canvas": [
+        1920,
+        1080
+      ],
+      "layoutWarnings": 0,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "mode": "crowd",
+      "pair": 1,
+      "version": "after",
+      "median": 2.700000047683716,
+      "p95": 3.700000047683716,
+      "actionFrames": 2441,
+      "monsters": 27,
+      "canvas": [
+        1920,
+        1080
+      ],
+      "layoutWarnings": 0,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "mode": "crowd",
+      "pair": 1,
+      "version": "before",
+      "median": 2.899999976158142,
+      "p95": 3.799999952316284,
+      "actionFrames": 2441,
+      "monsters": 27,
+      "canvas": [
+        1920,
+        1080
+      ],
+      "layoutWarnings": 1,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "mode": "crowd",
+      "pair": 2,
+      "version": "before",
+      "median": 2.799999952316284,
+      "p95": 3.399999976158142,
+      "actionFrames": 2441,
+      "monsters": 27,
+      "canvas": [
+        1920,
+        1080
+      ],
+      "layoutWarnings": 1,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "mode": "crowd",
+      "pair": 2,
+      "version": "after",
+      "median": 2.5,
+      "p95": 3,
+      "actionFrames": 2441,
+      "monsters": 27,
+      "canvas": [
+        1920,
+        1080
+      ],
+      "layoutWarnings": 0,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "mode": "boss",
+      "pair": 0,
+      "version": "before",
+      "median": 1.399999976158142,
+      "p95": 2.1999999284744263,
+      "actionFrames": 673,
+      "monsters": 7,
+      "canvas": [
+        1920,
+        1080
+      ],
+      "layoutWarnings": 1,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "mode": "boss",
+      "pair": 0,
+      "version": "after",
+      "median": 1.399999976158142,
+      "p95": 2.1999999284744263,
+      "actionFrames": 673,
+      "monsters": 7,
+      "canvas": [
+        1920,
+        1080
+      ],
+      "layoutWarnings": 0,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "mode": "boss",
+      "pair": 1,
+      "version": "after",
+      "median": 1.7999999523162842,
+      "p95": 2.399999976158142,
+      "actionFrames": 673,
+      "monsters": 7,
+      "canvas": [
+        1920,
+        1080
+      ],
+      "layoutWarnings": 0,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "mode": "boss",
+      "pair": 1,
+      "version": "before",
+      "median": 1.3000000715255737,
+      "p95": 2,
+      "actionFrames": 673,
+      "monsters": 7,
+      "canvas": [
+        1920,
+        1080
+      ],
+      "layoutWarnings": 1,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "mode": "boss",
+      "pair": 2,
+      "version": "before",
+      "median": 1.2000000476837158,
+      "p95": 1.7000000476837158,
+      "actionFrames": 673,
+      "monsters": 7,
+      "canvas": [
+        1920,
+        1080
+      ],
+      "layoutWarnings": 1,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "mode": "boss",
+      "pair": 2,
+      "version": "after",
+      "median": 1.7000000476837158,
+      "p95": 2.100000023841858,
+      "actionFrames": 673,
+      "monsters": 7,
+      "canvas": [
+        1920,
+        1080
+      ],
+      "layoutWarnings": 0,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "mode": "crowd",
+      "pair": 0,
+      "version": "before",
+      "median": 3,
+      "p95": 3.600000023841858,
+      "actionFrames": 2441,
+      "monsters": 27,
+      "canvas": [
+        3840,
+        2160
+      ],
+      "layoutWarnings": 1,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "mode": "crowd",
+      "pair": 0,
+      "version": "after",
+      "median": 4.300000071525574,
+      "p95": 5.400000095367432,
+      "actionFrames": 2441,
+      "monsters": 27,
+      "canvas": [
+        3840,
+        2160
+      ],
+      "layoutWarnings": 0,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "mode": "crowd",
+      "pair": 1,
+      "version": "after",
+      "median": 3,
+      "p95": 3.700000047683716,
+      "actionFrames": 2441,
+      "monsters": 27,
+      "canvas": [
+        3840,
+        2160
+      ],
+      "layoutWarnings": 0,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "mode": "crowd",
+      "pair": 1,
+      "version": "before",
+      "median": 2.9000000953674316,
+      "p95": 4.099999904632568,
+      "actionFrames": 2441,
+      "monsters": 27,
+      "canvas": [
+        3840,
+        2160
+      ],
+      "layoutWarnings": 1,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "mode": "crowd",
+      "pair": 2,
+      "version": "before",
+      "median": 3.4000000953674316,
+      "p95": 4.100000023841858,
+      "actionFrames": 2441,
+      "monsters": 27,
+      "canvas": [
+        3840,
+        2160
+      ],
+      "layoutWarnings": 1,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "mode": "crowd",
+      "pair": 2,
+      "version": "after",
+      "median": 2.8000000715255737,
+      "p95": 3.4000000953674316,
+      "actionFrames": 2441,
+      "monsters": 27,
+      "canvas": [
+        3840,
+        2160
+      ],
+      "layoutWarnings": 0,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "mode": "boss",
+      "pair": 0,
+      "version": "before",
+      "median": 1.5,
+      "p95": 2,
+      "actionFrames": 673,
+      "monsters": 7,
+      "canvas": [
+        3840,
+        2160
+      ],
+      "layoutWarnings": 1,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "mode": "boss",
+      "pair": 0,
+      "version": "after",
+      "median": 1.600000023841858,
+      "p95": 2.200000047683716,
+      "actionFrames": 673,
+      "monsters": 7,
+      "canvas": [
+        3840,
+        2160
+      ],
+      "layoutWarnings": 0,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "mode": "boss",
+      "pair": 1,
+      "version": "after",
+      "median": 1.600000023841858,
+      "p95": 2.100000023841858,
+      "actionFrames": 673,
+      "monsters": 7,
+      "canvas": [
+        3840,
+        2160
+      ],
+      "layoutWarnings": 0,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "mode": "boss",
+      "pair": 1,
+      "version": "before",
+      "median": 1.5,
+      "p95": 2.100000023841858,
+      "actionFrames": 673,
+      "monsters": 7,
+      "canvas": [
+        3840,
+        2160
+      ],
+      "layoutWarnings": 1,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "mode": "boss",
+      "pair": 2,
+      "version": "before",
+      "median": 1.5999999046325684,
+      "p95": 2.100000023841858,
+      "actionFrames": 673,
+      "monsters": 7,
+      "canvas": [
+        3840,
+        2160
+      ],
+      "layoutWarnings": 1,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "mode": "boss",
+      "pair": 2,
+      "version": "after",
+      "median": 1.600000023841858,
+      "p95": 2,
+      "actionFrames": 673,
+      "monsters": 7,
+      "canvas": [
+        3840,
+        2160
+      ],
+      "layoutWarnings": 0,
+      "errors": []
+    }
+  ]
+}

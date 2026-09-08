@@ -1,0 +1,39 @@
+{
+  "methodRevision": 7,
+  "legacyActors": false,
+  "width": 1920,
+  "zone": "ash_wastes",
+  "pair": 0,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 29.5,
+    "y": 19.5
+  },
+  "monsters": 83,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 738,
+  "cpuMs": {
+    "median": 6.3,
+    "p95": 10,
+    "max": 14.8
+  },
+  "updateMs": {
+    "median": 1.5,
+    "p95": 2.4,
+    "max": 4.1
+  },
+  "renderMs": {
+    "median": 4.7,
+    "p95": 8.3,
+    "max": 12.8
+  },
+  "frameIntervalMs": {
+    "median": 16.7,
+    "p95": 17,
+    "max": 42.8
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

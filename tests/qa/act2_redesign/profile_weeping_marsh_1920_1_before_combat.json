@@ -1,0 +1,28 @@
+{
+  "methodRevision": 2,
+  "width": 1920,
+  "zone": "weeping_marsh",
+  "pair": 1,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 41.5,
+    "y": 81.5
+  },
+  "monsters": 130,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 1222,
+  "cpuMs": {
+    "median": 6.3,
+    "p95": 10.2,
+    "max": 14
+  },
+  "frameIntervalMs": {
+    "median": 16.7,
+    "p95": 17.3,
+    "max": 46.4
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

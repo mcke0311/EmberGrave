@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "contracts": [
+    {"test":"act3_combat_contract.mjs","checks":33074},
+    {"test":"act3_layout_contract.mjs","checks":113873},
+    {"test":"act3_navigation_contract.mjs","checks":122093},
+    {"test":"act3_quest_contract.mjs","checks":51},
+    {"test":"story_campaign_contract.mjs","checks":214},
+    {"test":"boss_encounter_contract.mjs","checks":85616},
+    {"test":"boss_refinement_contract.mjs","checks":267},
+    {"test":"navigation_contract.mjs","checks":216},
+    {"test":"terrain_surface_contract.mjs","checks":10734},
+    {"test":"terrain_view_cache_contract.mjs","checks":3980},
+    {"test":"town_layout_contract.mjs","checks":54280},
+    {"test":"frontier_layout_contract.mjs","checks":118293},
+    {"test":"frontier_quest_contract.mjs","checks":153},
+    {"test":"enemy_art_contract.py","checks":842},
+    {"test":"skill_perks_contract.mjs","checks":14698},
+    {"test":"gameplay_improvements_contract.mjs","checks":763},
+    {"test":"weapon_projectile_origin_contract.mjs","checks":15368}
+  ],
+  "note":"Executed during the enemy pass against the shared working tree. The final combat contract follows the fan/landing fixes; layout and navigation follow the final encounter role rotation. Browser captures and performance results are recorded separately."
+}

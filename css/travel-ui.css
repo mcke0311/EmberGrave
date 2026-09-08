@@ -1,0 +1,31 @@
+#panelCenter.waypoint-panel { width:min(850px,calc(100vw - 40px)); max-height:calc(100vh - 180px); padding:25px; background:linear-gradient(135deg,#202934,#131a23 70%); border:1px solid #776344; box-shadow:0 22px 90px #000b,inset 0 0 45px #0003; }
+.waypoint-panel .ptitle { text-align:left; letter-spacing:3px; font-size:24px; padding-bottom:12px; border-bottom:1px solid #b69c6240; }
+.wp-intro { color:#9eabb9; font:13px/1.6 Georgia,serif; margin:12px 0 20px; }
+.wp-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:18px; }
+.wp-tab { flex:1; min-width:74px; padding:11px 9px; border:1px solid #62708155; color:#9aa9b7; background:#101821; cursor:pointer; font:12px Georgia,serif; }
+.wp-tab[aria-selected=true] { color:#f1d8a0; background:#b5954420; border-color:#b39962; }
+.wp-body { display:grid; grid-template-columns:1fr 1fr; gap:25px; min-height:300px; }
+.wp-region { color:#c9b889; font:12px/1.5 Georgia,serif; text-transform:uppercase; letter-spacing:1.5px; margin:0 0 12px; }
+.wp-destinations { min-width:0; max-height:47vh; overflow-y:auto; padding:2px 8px 5px 2px; }
+.wp-destination { display:flex; width:100%; gap:12px; align-items:center; border:1px solid transparent; border-bottom-color:#52637335; background:transparent; color:#cfdae3; text-align:left; padding:12px 10px; cursor:pointer; font:14px Georgia,serif; }
+.wp-destination:hover { background:#95bddd0d; }
+.wp-destination.selected { background:#78adc716; border-color:#7ea5ba80; }
+.wp-destination.locked { color:#86929c; }
+.wp-symbol { color:#8bb8d0; font-size:22px; }
+.locked .wp-symbol { color:#75818b; }
+.wp-destination-label small { display:block; margin-top:5px; font:10px system-ui,sans-serif; color:#8d9ba7; }
+.wp-detail { padding:18px 15px 10px; border-left:1px solid #8697a530; text-align:center; display:flex; flex-direction:column; align-items:center; }
+.wp-sigil { color:#a9d8e3; font:90px/1 Georgia,serif; text-shadow:0 0 30px #579bbb77; }
+.wp-eyebrow { color:#b69d69; font:10px/1.5 system-ui,sans-serif; letter-spacing:1.5px; text-transform:uppercase; margin:18px 0 4px; }
+.wp-detail h2 { font:26px/1.2 Georgia,serif; color:#ebdfc4; margin:8px 0 12px; }
+.wp-facts { color:#99acbb; font:11px/1.5 system-ui,sans-serif; margin:0; }
+.wp-description { color:#b4bec6; font:13px/1.6 Georgia,serif; margin:18px 0 24px; }
+.wp-travel { width:100%; margin-top:auto; padding:13px 15px; border:1px solid #b39a64; background:linear-gradient(#544729,#2b271c); color:#f1dba7; font:13px/1.4 Georgia,serif; cursor:pointer; }
+.wp-travel:disabled,.wp-tab:disabled { opacity:.45; cursor:default; }
+.wp-status { min-height:16px; color:#e3bf83; font:12px/1.5 system-ui,sans-serif; margin:16px 0 0; }
+.waypoint-panel button:focus-visible { outline:2px solid #eed294; outline-offset:2px; }
+#companionUpkeep { position:absolute; width:100%; left:0; bottom:14px; text-align:center; font:10px/1.2 system-ui,sans-serif; color:#d0dbf8; text-shadow:0 1px 3px #000,0 0 4px #000; pointer-events:none; }
+.weapon-blocked canvas { filter:grayscale(1); opacity:.4; }
+.weapon-blocked::after { content:'×'; position:absolute; right:3px; top:0; color:#eaaa87; font:18px Georgia,serif; pointer-events:none; }
+@media(max-width:700px) { #panelCenter.waypoint-panel { padding:18px; max-height:calc(100vh - 100px); overflow:auto; }.wp-body { grid-template-columns:1fr; gap:12px; }.wp-destinations { max-height:25vh; }.wp-detail { border-left:0; border-top:1px solid #8697a530; padding:12px 0 0; }.wp-sigil { display:none; }.wp-detail h2 { font-size:22px; }.wp-description { margin:10px 0 15px; }.wp-tab { padding:9px 5px; min-width:65px; } }
+

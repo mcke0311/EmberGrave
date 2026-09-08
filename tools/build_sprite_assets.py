@@ -1758,6 +1758,8 @@ def _expected_gameplay_descriptors(art: dict, monsters: dict, npcs: dict, summon
           (448, 64), (64, 64), 7, 1, (32, 32), "core", "ui.items.misc")
     atlas("item-icons", "variants", "assets/sprites_src/gameplay_art/ui/items_variants.png",
           (384, 320), (64, 64), 6, 5, (32, 32), "core", "ui.items.variants")
+    atlas("item-icons", "oak", "assets/sprites_src/gameplay_art/ui/items_oak.png",
+          (1254, 1254), (1254, 1254), 1, 1, (627, 627), "core", "ui.items.oak")
     atlas("skill-icons", "skills", "assets/sprites_src/gameplay_art/ui/skills.png",
           (528, 396), (44, 44), 12, 9, (22, 22), "core", "ui.skills")
     return descriptors
@@ -2561,6 +2563,14 @@ def main() -> None:
     build_ui_scenes(ui_scene_descriptors, entries, maps)
     from import_boss_art import install as install_boss_art
     install_boss_art(entries, maps)
+    from import_act2_animations import install as install_act2_animations
+    install_act2_animations(entries, maps)
+    from import_act3_animations import install as install_act3_animations
+    install_act3_animations(entries, maps)
+    from import_act4_animations import install as install_act4_animations
+    install_act4_animations(entries, maps)
+    from import_act5_animations import install as install_act5_animations
+    install_act5_animations(entries, maps)
     emit_manifest(entries, maps, player_rig_report)
     print(f"Built {len(entries)} sprite assets and {len(maps)} lookup maps")
 

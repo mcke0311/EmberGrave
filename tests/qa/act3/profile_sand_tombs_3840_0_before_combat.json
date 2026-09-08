@@ -1,0 +1,39 @@
+{
+  "methodRevision": 2,
+  "layoutRevision": 3,
+  "width": 3840,
+  "zone": "sand_tombs",
+  "pair": 0,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 22.5,
+    "y": 61.5
+  },
+  "monsters": 107,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 1113,
+  "cpuMs": {
+    "median": 26.8,
+    "p95": 34.2,
+    "max": 122.3
+  },
+  "updateMs": {
+    "median": 0.8,
+    "p95": 1.2,
+    "max": 85.9
+  },
+  "renderMs": {
+    "median": 26,
+    "p95": 33.5,
+    "max": 103.2
+  },
+  "frameIntervalMs": {
+    "median": 29.4,
+    "p95": 38.5,
+    "max": 124.6
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

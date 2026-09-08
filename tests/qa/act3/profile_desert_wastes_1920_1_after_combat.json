@@ -1,0 +1,39 @@
+{
+  "methodRevision": 2,
+  "layoutRevision": 3,
+  "width": 1920,
+  "zone": "desert_wastes",
+  "pair": 1,
+  "version": "after",
+  "mode": "combat",
+  "position": {
+    "x": 45.5,
+    "y": 70.5
+  },
+  "monsters": 126,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 1539,
+  "cpuMs": {
+    "median": 5.1,
+    "p95": 6.3,
+    "max": 11.7
+  },
+  "updateMs": {
+    "median": 1,
+    "p95": 1.4,
+    "max": 3.3
+  },
+  "renderMs": {
+    "median": 4,
+    "p95": 5.1,
+    "max": 10.2
+  },
+  "frameIntervalMs": {
+    "median": 18,
+    "p95": 18.1,
+    "max": 18.3
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

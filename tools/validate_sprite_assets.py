@@ -863,11 +863,18 @@ def validate_files(manifest: dict[str, Any], errors: list[str]) -> dict[str, dic
                 # WebP legitimately decodes fully opaque scenic plates as RGB
                 # after the encoder drops a redundant all-255 alpha plane. The
                 # reviewed canonical title/backdrop PNGs remain strict RGBA in
-                # their source-authorship validators; no actor/tile/prop asset
-                # receives this narrow packed-output exemption.
+                # their source-authorship validators. Water, floor materials
+                # and the cathedral void plate are also intentionally opaque;
+                # ordinary props stay strict.
                 opaque_scenic = (
                     entry.get("kind") == "static"
-                    and (asset_id == "ui.scene.titleCamp" or asset_id.startswith("world.backdrop."))
+                    and (asset_id in {"ui.scene.titleCamp", "world.prop.act2_black_water",
+                         "world.prop.act3_ground_sand", "world.prop.act3_ground_market",
+                         "world.prop.act3_ground_tomb", "world.prop.act3_ground_palace",
+                         "world.prop.cathedral_floor_pale", "world.prop.cathedral_floor_dark",
+                         "world.prop.cathedral_floor_street", "world.prop.cathedral_floor_fortress",
+                         "world.prop.cathedral_void_backdrop"}
+                         or asset_id.startswith("world.backdrop."))
                 )
                 if "A" not in source.getbands() and not opaque_scenic:
                     add(errors, f"{asset_id}: no alpha channel")

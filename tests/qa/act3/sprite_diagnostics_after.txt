@@ -1,0 +1,122 @@
+SPRITE VALIDATION FAILED
+- world.prop.cathedral_floor_dark: no alpha channel
+- world.prop.cathedral_floor_fortress: no alpha channel
+- world.prop.cathedral_floor_pale: no alpha channel
+- world.prop.cathedral_floor_street: no alpha channel
+- world.prop.cathedral_void_backdrop: no alpha channel
+- world.prop.frosthaven_soil: no alpha channel
+- world.prop.frosthaven_street: no alpha channel
+- world.prop.hellgate_soil: no alpha channel
+- world.prop.hellgate_street: no alpha channel
+- world.prop.khalcamp_soil: no alpha channel
+- world.prop.khalcamp_street: no alpha channel
+- world.prop.level_ground_ash_wastes: no alpha channel
+- world.prop.level_ground_cathedral1: no alpha channel
+- world.prop.level_ground_cathedral2: no alpha channel
+- world.prop.level_ground_chapel: no alpha channel
+- world.prop.level_ground_cinder_bastion: no alpha channel
+- world.prop.level_ground_crypt1: no alpha channel
+- world.prop.level_ground_crypt2: no alpha channel
+- world.prop.level_ground_deepfreeze_cavern: no alpha channel
+- world.prop.level_ground_desert_wastes: no alpha channel
+- world.prop.level_ground_drowned_crypt: no alpha channel
+- world.prop.level_ground_fields: no alpha channel
+- world.prop.level_ground_forest: no alpha channel
+- world.prop.level_ground_hollow_reeds: no alpha channel
+- world.prop.level_ground_khal_palace: no alpha channel
+- world.prop.level_ground_mines: no alpha channel
+- world.prop.level_ground_monastery1: no alpha channel
+- world.prop.level_ground_monastery2: no alpha channel
+- world.prop.level_ground_north_wild: no alpha channel
+- world.prop.level_ground_ritual_site: no alpha channel
+- world.prop.level_ground_sand_tombs: no alpha channel
+- world.prop.level_ground_shard_flats: no alpha channel
+- world.prop.level_ground_shardpeak_shrine: no alpha channel
+- world.prop.level_ground_shattered_temple: no alpha channel
+- world.prop.level_ground_spawn_pools: no alpha channel
+- world.prop.level_ground_throne: no alpha channel
+- world.prop.level_ground_tomb_sanctum: no alpha channel
+- world.prop.level_ground_weeping_marsh: no alpha channel
+- world.prop.level_hazard_blood: no alpha channel
+- world.prop.level_hazard_bog: no alpha channel
+- world.prop.level_hazard_ice: no alpha channel
+- world.prop.level_hazard_lava: no alpha channel
+- world.prop.level_hazard_quicksand: no alpha channel
+- world.prop.level_hazard_scorch: no alpha channel
+- world.prop.level_hazard_spore: no alpha channel
+- world.prop.level_hazard_spring: no alpha channel
+- world.prop.level_hazard_static: no alpha channel
+- world.prop.marshcamp_soil: no alpha channel
+- world.prop.marshcamp_street: no alpha channel
+- world.prop.town_marshwater: no alpha channel
+- world.prop.town_soil: no alpha channel
+- world.prop.town_street: no alpha channel
+- placed props missing sprites: ['firebowl', 'tower']
+- gameplay art prop:cinders_ash_drifts: source/review provenance is not final
+- gameplay art prop:cinders_bastion_gate: source/review provenance is not final
+- gameplay art prop:cinders_bastion_return: source/review provenance is not final
+- gameplay art prop:cinders_breach_gate: source/review provenance is not final
+- gameplay art prop:cinders_ceremonial_paving: source/review provenance is not final
+- gameplay art prop:cinders_chain_rubble: source/review provenance is not final
+- gameplay art prop:cinders_fallen_statue: source/review provenance is not final
+- gameplay art prop:cinders_furnace_forge: source/review provenance is not final
+- gameplay art prop:cinders_impaled_monument: source/review provenance is not final
+- gameplay art prop:cinders_siege_engine: source/review provenance is not final
+- gameplay art prop:cinders_siege_tower: source/review provenance is not final
+- gameplay art prop:cinders_throne_backdrop: source/review provenance is not final
+- gameplay art prop:cinders_throne_gate: source/review provenance is not final
+- gameplay art prop:cinders_throne_return: source/review provenance is not final
+- gameplay art role coverage mismatch: expected {'backdrop': 8, 'cliff': 20, 'form': 4, 'ground': 32, 'hazard': 9, 'item-icons': 3, 'massif': 36, 'monster': 19, 'npc': 9, 'path': 20, 'prop': 51, 'skill-icons': 1, 'summon': 8, 'trap': 3, 'wall': 18}, found {'backdrop': 8, 'cliff': 20, 'form': 4, 'ground': 32, 'hazard': 9, 'item-icons': 4, 'massif': 36, 'monster': 19, 'npc': 55, 'path': 20, 'prop': 254, 'skill-icons': 1, 'summon': 8, 'trap': 3, 'wall': 18}
+- gameplay art authorship must contain exactly 241 descriptors
+- gameplay art coverage report is not fully green for the reviewed descriptor set
+- gameplay art coverage report role counts do not match the frozen source contract
+- player rig vanguard: missing unarmed grip family
+- player rig vanguard/main: expected ['sword_1h', 'sword_2h', 'axe_1h', 'axe_2h', 'mace_1h', 'mace_2h', 'dagger_1h', 'spear_2h', 'bow_2h', 'crossbow_2h', 'wand_1h', 'staff_2h'], found []
+- player rig vanguard/main: missing family sword_1h
+- player rig vanguard/main: missing family sword_2h
+- player rig vanguard/main: missing family axe_1h
+- player rig vanguard/main: missing family axe_2h
+- player rig vanguard/main: missing family mace_1h
+- player rig vanguard/main: missing family mace_2h
+- player rig vanguard/main: missing family dagger_1h
+- player rig vanguard/main: missing family spear_2h
+- player rig vanguard/main: missing family bow_2h
+- player rig vanguard/main: missing family crossbow_2h
+- player rig vanguard/main: missing family wand_1h
+- player rig vanguard/main: missing family staff_2h
+- player rig vanguard/shield: expected ['shield'], found []
+- player rig vanguard/shield: missing family shield
+- player rig vanguard/head: expected ['light', 'mail', 'plate', 'mythic'], found []
+- player rig vanguard/head: missing family light
+- player rig vanguard/head: missing family mail
+- player rig vanguard/head: missing family plate
+- player rig vanguard/head: missing family mythic
+- player rig vanguard/chest: expected ['light', 'mail', 'plate', 'mythic'], found []
+- player rig vanguard/chest: missing family light
+- player rig vanguard/chest: missing family mail
+- player rig vanguard/chest: missing family plate
+- player rig vanguard/chest: missing family mythic
+- player rig emberwitch: missing unarmed grip family
+- player rig emberwitch/main: expected ['sword_1h', 'sword_2h', 'axe_1h', 'axe_2h', 'mace_1h', 'mace_2h', 'dagger_1h', 'spear_2h', 'bow_2h', 'crossbow_2h', 'wand_1h', 'staff_2h'], found ['wand_1h']
+- player rig emberwitch/main: missing family sword_1h
+- player rig emberwitch/main: missing family sword_2h
+- player rig emberwitch/main: missing family axe_1h
+- player rig emberwitch/main: missing family axe_2h
+- player rig emberwitch/main: missing family mace_1h
+- player rig emberwitch/main: missing family mace_2h
+- player rig emberwitch/main: missing family dagger_1h
+- player rig emberwitch/main: missing family spear_2h
+- player rig emberwitch/main: missing family bow_2h
+- player rig emberwitch/main: missing family crossbow_2h
+- player rig emberwitch/main: missing family staff_2h
+- player rig emberwitch/shield: expected ['shield'], found []
+- player rig emberwitch/shield: missing family shield
+- player rig emberwitch/head: expected ['light', 'mail', 'plate', 'mythic'], found ['light', 'mail']
+- player rig emberwitch/head: missing family plate
+- player rig emberwitch/head: missing family mythic
+- player rig gravebinder: missing unarmed grip family
+- player rig gravebinder/main: expected ['sword_1h', 'sword_2h', 'axe_1h', 'axe_2h', 'mace_1h', 'mace_2h', 'dagger_1h', 'spear_2h', 'bow_2h', 'crossbow_2h', 'wand_1h', 'staff_2h'], found []
+- player rig gravebinder/main: missing family sword_1h
+- player rig gravebinder/main: missing family sword_2h
+- player rig gravebinder/main: missing family axe_1h
+- ... 187 additional validation errors suppressed

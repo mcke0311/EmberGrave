@@ -1,0 +1,982 @@
+{
+  "status": "PASS",
+  "checks": 966,
+  "enemies": [
+    {
+      "id": "ash_fiend",
+      "name": "Ash Fiend",
+      "artwork": "brute",
+      "weapon": "none",
+      "role": "melee",
+      "element": "phys",
+      "basic": "melee",
+      "range": 1,
+      "attackRate": 1,
+      "specials": {}
+    },
+    {
+      "id": "blight_treant",
+      "name": "Blight Treant",
+      "artwork": "treant",
+      "weapon": "none",
+      "role": "heavy",
+      "element": "phys",
+      "basic": "melee",
+      "range": 1.5,
+      "attackRate": 0.6,
+      "specials": {
+        "slam": {
+          "cd": 6,
+          "radius": 3,
+          "mult": 1.6
+        },
+        "deathBurst": {
+          "radius": 2.8,
+          "dmg": 22,
+          "elem": "poison"
+        }
+      }
+    },
+    {
+      "id": "bone_dragon",
+      "name": "Bone Dragon",
+      "artwork": "identity_bone_dragon",
+      "weapon": "none",
+      "role": "caster",
+      "element": "shadow",
+      "basic": "projectile",
+      "projectile": {
+        "speed": 9,
+        "kind": "soulbolt",
+        "elem": "shadow"
+      },
+      "range": 9,
+      "keepDist": 6,
+      "attackRate": 0.75,
+      "specials": {
+        "slam": {
+          "cd": 7,
+          "radius": 3,
+          "mult": 1.5
+        },
+        "deathBurst": {
+          "radius": 3,
+          "dmg": 30,
+          "elem": "shadow"
+        }
+      }
+    },
+    {
+      "id": "cinder_hound",
+      "name": "Cinder Hound",
+      "artwork": "identity_cinder_hound",
+      "weapon": "none",
+      "role": "skirmisher",
+      "element": "fire",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 1.6,
+      "specials": {}
+    },
+    {
+      "id": "flesh_engine",
+      "name": "Flesh Engine Abomination",
+      "artwork": "abom",
+      "weapon": "none",
+      "role": "heavy",
+      "element": "phys",
+      "basic": "melee",
+      "range": 1.8,
+      "attackRate": 0.55,
+      "specials": {
+        "slam": {
+          "cd": 8,
+          "radius": 2.8,
+          "mult": 1.4
+        },
+        "throwUndead": {
+          "cd": 6,
+          "range": 13,
+          "count": 1,
+          "mult": 1.3,
+          "radius": 2,
+          "pool": [
+            "risen",
+            "tomb_husk",
+            "drowned_dead",
+            "frost_risen"
+          ]
+        }
+      }
+    },
+    {
+      "id": "impaler",
+      "name": "Cinder Impaler",
+      "artwork": "identity_ember_robed",
+      "weapon": "wand",
+      "role": "caster",
+      "element": "fire",
+      "basic": "projectile",
+      "projectile": {
+        "speed": 11,
+        "kind": "shardbolt",
+        "elem": "fire"
+      },
+      "range": 10,
+      "keepDist": 7,
+      "attackRate": 0.6,
+      "specials": {}
+    },
+    {
+      "id": "infernal_warlord",
+      "name": "Infernal Warlord",
+      "artwork": "demon",
+      "weapon": "axe",
+      "role": "heavy",
+      "element": "phys",
+      "basic": "melee",
+      "range": 1.9,
+      "attackRate": 0.8,
+      "specials": {
+        "slam": {
+          "cd": 5,
+          "radius": 3.2,
+          "mult": 1.8
+        },
+        "charge": {
+          "cd": 7,
+          "range": 10,
+          "mult": 2,
+          "speed": 10
+        }
+      }
+    },
+    {
+      "id": "pit_brute",
+      "name": "Pit Brute",
+      "artwork": "brute",
+      "weapon": "none",
+      "role": "heavy",
+      "element": "phys",
+      "basic": "melee",
+      "range": 1.4,
+      "attackRate": 0.5,
+      "specials": {
+        "slam": {
+          "cd": 9,
+          "radius": 2.8,
+          "mult": 1.3
+        }
+      }
+    },
+    {
+      "id": "r41_brute",
+      "name": "Hollow Brute",
+      "artwork": "brute",
+      "weapon": "none",
+      "role": "heavy",
+      "element": "phys",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 1.18,
+      "specials": {
+        "lifeOnHit": true
+      }
+    },
+    {
+      "id": "r44_imp",
+      "name": "Rime Needler",
+      "artwork": "identity_frost_imp",
+      "weapon": "none",
+      "role": "caster",
+      "element": "cold",
+      "basic": "projectile",
+      "projectile": {
+        "speed": 9,
+        "kind": "shardbolt",
+        "elem": "cold"
+      },
+      "range": 9,
+      "keepDist": 6,
+      "attackRate": 0.6,
+      "specials": {
+        "chillOnHit": 2
+      }
+    },
+    {
+      "id": "r46_brute",
+      "name": "Gilded Horror",
+      "artwork": "identity_storm_brute",
+      "weapon": "none",
+      "role": "heavy",
+      "element": "light",
+      "basic": "melee",
+      "range": 1.5,
+      "attackRate": 0.7,
+      "specials": {
+        "slam": {
+          "cd": 7,
+          "radius": 2.8,
+          "mult": 1.4,
+          "elem": "light"
+        }
+      }
+    },
+    {
+      "id": "r47_skeleton",
+      "name": "Sunken Rattler",
+      "artwork": "skeleton",
+      "weapon": "sword",
+      "role": "melee",
+      "element": "phys",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 1.21,
+      "specials": {
+        "slam": {
+          "cd": 7,
+          "radius": 2.8,
+          "mult": 1.4
+        }
+      }
+    },
+    {
+      "id": "r48_robed",
+      "name": "Gloom Acolyte",
+      "artwork": "robed",
+      "weapon": "wand",
+      "role": "caster",
+      "element": "shadow",
+      "basic": "projectile",
+      "projectile": {
+        "kind": "soulbolt",
+        "speed": 9,
+        "elem": "shadow"
+      },
+      "range": 9,
+      "keepDist": 6,
+      "attackRate": 0.7,
+      "specials": {
+        "splitOnDeath": {
+          "count": 2
+        }
+      }
+    },
+    {
+      "id": "r49_imp",
+      "name": "Blighted Spite",
+      "artwork": "imp",
+      "weapon": "none",
+      "role": "skirmisher",
+      "element": "phys",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 0.89,
+      "specials": {}
+    },
+    {
+      "id": "r50_knight",
+      "name": "Ashen Marshal",
+      "artwork": "identity_ember_knight",
+      "weapon": "sword and shield",
+      "role": "melee",
+      "element": "fire",
+      "basic": "melee",
+      "range": 1.5,
+      "attackRate": 0.6,
+      "specials": {}
+    },
+    {
+      "id": "r51_wraith",
+      "name": "Gilded Shade",
+      "artwork": "identity_gilded_wraith",
+      "weapon": "none",
+      "role": "spectral",
+      "element": "light",
+      "basic": "melee",
+      "bonusElements": {
+        "light": 23
+      },
+      "range": 0.9,
+      "attackRate": 1.46,
+      "specials": {}
+    },
+    {
+      "id": "r52_brute",
+      "name": "Frozen Render",
+      "artwork": "identity_frost_brute",
+      "weapon": "none",
+      "role": "heavy",
+      "element": "cold",
+      "basic": "melee",
+      "range": 1.5,
+      "attackRate": 0.6,
+      "specials": {
+        "slam": {
+          "cd": 7,
+          "radius": 2.8,
+          "mult": 1.4,
+          "elem": "cold"
+        },
+        "chillOnHit": 2
+      }
+    },
+    {
+      "id": "r53_imp",
+      "name": "Howling Imp",
+      "artwork": "imp",
+      "weapon": "none",
+      "role": "skirmisher",
+      "element": "phys",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 1.05,
+      "specials": {
+        "leap": {
+          "cd": 6,
+          "range": 6,
+          "radius": 1.5,
+          "mult": 1.7
+        }
+      }
+    },
+    {
+      "id": "r54_robed",
+      "name": "Radiant Cultist",
+      "artwork": "identity_radiant_robed",
+      "weapon": "wand",
+      "role": "caster",
+      "element": "light",
+      "basic": "projectile",
+      "projectile": {
+        "speed": 11,
+        "kind": "shardbolt",
+        "elem": "light"
+      },
+      "range": 10,
+      "keepDist": 5,
+      "attackRate": 0.7,
+      "specials": {}
+    },
+    {
+      "id": "r55_knight",
+      "name": "Ashen Defiler",
+      "artwork": "identity_ember_knight",
+      "weapon": "sword and shield",
+      "role": "melee",
+      "element": "fire",
+      "basic": "melee",
+      "range": 1.5,
+      "attackRate": 0.86,
+      "specials": {
+        "charge": {
+          "cd": 6,
+          "range": 9,
+          "speed": 10,
+          "mult": 1.7,
+          "elem": "fire"
+        }
+      }
+    },
+    {
+      "id": "r56_wraith",
+      "name": "Gloom Wraith",
+      "artwork": "wraith",
+      "weapon": "none",
+      "role": "spectral",
+      "element": "shadow",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 0.95,
+      "specials": {
+        "slam": {
+          "cd": 7,
+          "radius": 2.8,
+          "mult": 1.4,
+          "elem": "shadow"
+        }
+      }
+    },
+    {
+      "id": "r57_brute",
+      "name": "Dread Render",
+      "artwork": "brute",
+      "weapon": "none",
+      "role": "heavy",
+      "element": "phys",
+      "basic": "melee",
+      "range": 1.5,
+      "attackRate": 1.14,
+      "specials": {
+        "charge": {
+          "cd": 6,
+          "range": 9,
+          "speed": 10,
+          "mult": 1.7
+        }
+      }
+    },
+    {
+      "id": "r58_imp",
+      "name": "Putrid Stinger",
+      "artwork": "imp",
+      "weapon": "none",
+      "role": "skirmisher",
+      "element": "phys",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 0.85,
+      "specials": {
+        "deathBurst": {
+          "radius": 2.6,
+          "dmg": 45.4,
+          "elem": "poison"
+        }
+      }
+    },
+    {
+      "id": "r59_robed",
+      "name": "Charred Zealot",
+      "artwork": "identity_ember_robed",
+      "weapon": "wand",
+      "role": "caster",
+      "element": "fire",
+      "basic": "projectile",
+      "projectile": {
+        "speed": 9.15,
+        "kind": "shardbolt",
+        "elem": "fire"
+      },
+      "range": 8,
+      "keepDist": 5,
+      "attackRate": 0.6,
+      "specials": {}
+    },
+    {
+      "id": "r60_knight",
+      "name": "Storm Templar",
+      "artwork": "identity_storm_knight",
+      "weapon": "sword and shield",
+      "role": "melee",
+      "element": "light",
+      "basic": "melee",
+      "bonusElements": {
+        "light": 26
+      },
+      "range": 0.9,
+      "attackRate": 1.37,
+      "specials": {}
+    },
+    {
+      "id": "r61_wraith",
+      "name": "Pale Mourner",
+      "artwork": "identity_frost_wraith",
+      "weapon": "none",
+      "role": "caster",
+      "element": "cold",
+      "basic": "projectile",
+      "projectile": {
+        "speed": 9,
+        "kind": "shardbolt",
+        "elem": "cold"
+      },
+      "range": 9,
+      "keepDist": 6,
+      "attackRate": 0.6,
+      "specials": {
+        "chillOnHit": 2
+      }
+    },
+    {
+      "id": "r62_brute",
+      "name": "Howling Horror",
+      "artwork": "brute",
+      "weapon": "none",
+      "role": "heavy",
+      "element": "phys",
+      "basic": "melee",
+      "range": 1.5,
+      "attackRate": 0.64,
+      "specials": {
+        "slam": {
+          "cd": 7,
+          "radius": 2.8,
+          "mult": 1.4
+        }
+      }
+    },
+    {
+      "id": "r63_imp",
+      "name": "Arcing Scamp",
+      "artwork": "identity_storm_imp",
+      "weapon": "none",
+      "role": "caster",
+      "element": "light",
+      "basic": "projectile",
+      "projectile": {
+        "speed": 11,
+        "kind": "shardbolt",
+        "elem": "light"
+      },
+      "range": 10,
+      "keepDist": 5,
+      "attackRate": 0.7,
+      "specials": {}
+    },
+    {
+      "id": "r64_robed",
+      "name": "Charred Acolyte",
+      "artwork": "identity_ember_robed",
+      "weapon": "wand",
+      "role": "caster",
+      "element": "fire",
+      "basic": "projectile",
+      "projectile": {
+        "speed": 9,
+        "kind": "shardbolt",
+        "elem": "fire"
+      },
+      "range": 9,
+      "keepDist": 5,
+      "attackRate": 0.81,
+      "specials": {
+        "volley": {
+          "cd": 6,
+          "count": 3,
+          "spread": 0.5
+        }
+      }
+    },
+    {
+      "id": "r65_knight",
+      "name": "Hollow Vanguard",
+      "artwork": "knight",
+      "weapon": "sword",
+      "role": "melee",
+      "element": "phys",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 0.99,
+      "specials": {
+        "whirl": {
+          "cd": 7,
+          "dur": 2.2,
+          "tick": 0.3,
+          "mult": 0.7,
+          "radius": 2.2
+        }
+      }
+    },
+    {
+      "id": "r66_wraith",
+      "name": "Dread Banshee",
+      "artwork": "wraith",
+      "weapon": "none",
+      "role": "spectral",
+      "element": "shadow",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 1.12,
+      "specials": {
+        "teleports": {
+          "cd": 5,
+          "minDist": 4
+        }
+      }
+    },
+    {
+      "id": "r67_brute",
+      "name": "Vile Devil",
+      "artwork": "brute",
+      "weapon": "none",
+      "role": "heavy",
+      "element": "phys",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 1.23,
+      "specials": {
+        "deathBurst": {
+          "radius": 2.6,
+          "dmg": 49.599999999999994,
+          "elem": "poison"
+        }
+      }
+    },
+    {
+      "id": "r68_imp",
+      "name": "Smouldering Needler",
+      "artwork": "imp",
+      "weapon": "none",
+      "role": "caster",
+      "element": "fire",
+      "basic": "projectile",
+      "projectile": {
+        "speed": 9.3,
+        "kind": "shardbolt",
+        "elem": "fire"
+      },
+      "range": 8,
+      "keepDist": 5,
+      "attackRate": 0.6,
+      "specials": {}
+    },
+    {
+      "id": "r69_robed",
+      "name": "Radiant Whisperer",
+      "artwork": "identity_radiant_robed",
+      "weapon": "wand",
+      "role": "caster",
+      "element": "light",
+      "basic": "projectile",
+      "projectile": {
+        "kind": "shardbolt",
+        "speed": 9,
+        "elem": "light"
+      },
+      "bonusElements": {
+        "light": 29
+      },
+      "range": 9,
+      "keepDist": 6,
+      "attackRate": 0.7,
+      "specials": {}
+    },
+    {
+      "id": "r70_knight",
+      "name": "Frost Warden",
+      "artwork": "identity_frost_soldier",
+      "weapon": "sword and shield",
+      "role": "melee",
+      "element": "cold",
+      "basic": "melee",
+      "range": 1.5,
+      "attackRate": 0.6,
+      "specials": {
+        "chillOnHit": 2
+      }
+    },
+    {
+      "id": "r71_wraith",
+      "name": "Sunken Haunt",
+      "artwork": "wraith",
+      "weapon": "none",
+      "role": "spectral",
+      "element": "shadow",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 1.06,
+      "specials": {
+        "teleports": {
+          "cd": 5,
+          "minDist": 4
+        }
+      }
+    },
+    {
+      "id": "r72_brute",
+      "name": "Galvanic Fiend",
+      "artwork": "identity_storm_brute",
+      "weapon": "none",
+      "role": "heavy",
+      "element": "light",
+      "basic": "melee",
+      "range": 1.5,
+      "attackRate": 0.7,
+      "specials": {
+        "slam": {
+          "cd": 7,
+          "radius": 2.8,
+          "mult": 1.4,
+          "elem": "light"
+        }
+      }
+    },
+    {
+      "id": "r73_imp",
+      "name": "Smouldering Spite",
+      "artwork": "imp",
+      "weapon": "none",
+      "role": "caster",
+      "element": "fire",
+      "basic": "projectile",
+      "projectile": {
+        "speed": 9,
+        "kind": "shardbolt",
+        "elem": "fire"
+      },
+      "range": 9,
+      "keepDist": 5,
+      "attackRate": 1.05,
+      "specials": {
+        "volley": {
+          "cd": 6,
+          "count": 3,
+          "spread": 0.5
+        }
+      }
+    },
+    {
+      "id": "r74_robed",
+      "name": "Dread Hierophant",
+      "artwork": "robed",
+      "weapon": "wand",
+      "role": "caster",
+      "element": "shadow",
+      "basic": "projectile",
+      "projectile": {
+        "kind": "soulbolt",
+        "speed": 9,
+        "elem": "shadow"
+      },
+      "range": 9,
+      "keepDist": 6,
+      "attackRate": 0.7,
+      "specials": {
+        "volley": {
+          "cd": 6,
+          "count": 3,
+          "spread": 0.5
+        }
+      }
+    },
+    {
+      "id": "r75_wraith",
+      "name": "Grave Shade",
+      "artwork": "wraith",
+      "weapon": "none",
+      "role": "spectral",
+      "element": "shadow",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 1.04,
+      "specials": {
+        "slam": {
+          "cd": 7,
+          "radius": 2.8,
+          "mult": 1.4,
+          "elem": "shadow"
+        }
+      }
+    },
+    {
+      "id": "r76_knight",
+      "name": "Wretched Templar",
+      "artwork": "knight",
+      "weapon": "sword",
+      "role": "commander",
+      "element": "phys",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 0.99,
+      "specials": {
+        "summons": {
+          "id": "risen",
+          "count": 2,
+          "cd": 11
+        }
+      }
+    },
+    {
+      "id": "r77_treant",
+      "name": "Ember Witherwood",
+      "artwork": "identity_ember_treant",
+      "weapon": "none",
+      "role": "caster",
+      "element": "fire",
+      "basic": "projectile",
+      "projectile": {
+        "speed": 9,
+        "kind": "shardbolt",
+        "elem": "fire"
+      },
+      "range": 9,
+      "keepDist": 5,
+      "attackRate": 0.94,
+      "specials": {
+        "volley": {
+          "cd": 6,
+          "count": 3,
+          "spread": 0.5
+        }
+      }
+    },
+    {
+      "id": "r78_brute",
+      "name": "Putrid Horror",
+      "artwork": "brute",
+      "weapon": "none",
+      "role": "heavy",
+      "element": "phys",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 1.24,
+      "specials": {
+        "deathBurst": {
+          "radius": 2.6,
+          "dmg": 53.8,
+          "elem": "poison"
+        }
+      }
+    },
+    {
+      "id": "r79_warlord",
+      "name": "Radiant Tyrant",
+      "artwork": "identity_warlord_axe",
+      "weapon": "axe",
+      "role": "commander",
+      "element": "light",
+      "basic": "melee",
+      "range": 1.8,
+      "attackRate": 0.76,
+      "specials": {
+        "heals": {
+          "cd": 7,
+          "amount": 40,
+          "radius": 7
+        }
+      }
+    },
+    {
+      "id": "r81_knight",
+      "name": "Dread Templar",
+      "artwork": "knight",
+      "weapon": "sword",
+      "role": "defender",
+      "element": "phys",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 0.9,
+      "specials": {
+        "shield": true
+      }
+    },
+    {
+      "id": "r82_treant",
+      "name": "Dread Rootmaw",
+      "artwork": "treant",
+      "weapon": "none",
+      "role": "heavy",
+      "element": "phys",
+      "basic": "melee",
+      "range": 0.9,
+      "attackRate": 0.66,
+      "specials": {
+        "slam": {
+          "cd": 7,
+          "radius": 2.8,
+          "mult": 1.4
+        }
+      }
+    },
+    {
+      "id": "r84_warlord",
+      "name": "Charred Slaughterer",
+      "artwork": "identity_warlord_axe",
+      "weapon": "axe",
+      "role": "melee",
+      "element": "fire",
+      "basic": "melee",
+      "range": 1.8,
+      "attackRate": 0.92,
+      "specials": {
+        "whirl": {
+          "cd": 7,
+          "dur": 2.2,
+          "tick": 0.3,
+          "mult": 0.7,
+          "radius": 2.2,
+          "elem": "fire"
+        }
+      }
+    },
+    {
+      "id": "void_gargoyle",
+      "name": "Void Gargoyle",
+      "artwork": "gargoyle",
+      "weapon": "none",
+      "role": "skirmisher",
+      "element": "phys",
+      "basic": "melee",
+      "range": 1.1,
+      "attackRate": 1,
+      "specials": {
+        "leap": {
+          "cd": 5,
+          "range": 10,
+          "radius": 2.6,
+          "mult": 2
+        },
+        "deathBurst": {
+          "radius": 2.6,
+          "dmg": 24,
+          "elem": "shadow"
+        }
+      }
+    },
+    {
+      "id": "void_wraith",
+      "name": "Void Wraith",
+      "artwork": "wraith",
+      "weapon": "none",
+      "role": "caster",
+      "element": "shadow",
+      "basic": "projectile",
+      "projectile": {
+        "speed": 10,
+        "kind": "soulbolt",
+        "elem": "shadow"
+      },
+      "range": 9,
+      "keepDist": 6,
+      "attackRate": 0.8,
+      "specials": {
+        "teleports": {
+          "cd": 4,
+          "minDist": 5
+        },
+        "deathBurst": {
+          "radius": 2.6,
+          "dmg": 26,
+          "elem": "shadow"
+        }
+      }
+    },
+    {
+      "id": "wretch_lord",
+      "name": "Wretch Lord",
+      "artwork": "identity_ember_robed",
+      "weapon": "wand",
+      "role": "caller",
+      "element": "fire",
+      "basic": "projectile",
+      "projectile": {
+        "speed": 9,
+        "kind": "shardbolt",
+        "elem": "fire"
+      },
+      "range": 9,
+      "keepDist": 6,
+      "attackRate": 0.6,
+      "specials": {
+        "summons": {
+          "id": [
+            "ash_fiend",
+            "cinder_hound"
+          ],
+          "count": 2,
+          "cd": 11
+        }
+      }
+    }
+  ],
+  "baselineBugs": {
+    "rivalHeal": {
+      "before": 50,
+      "after": 10
+    },
+    "chargePetHits": {
+      "before": 0,
+      "after": 1
+    }
+  }
+}

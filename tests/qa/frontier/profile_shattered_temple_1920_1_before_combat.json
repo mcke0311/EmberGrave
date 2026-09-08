@@ -1,0 +1,28 @@
+{
+  "methodRevision": 4,
+  "width": 1920,
+  "zone": "shattered_temple",
+  "pair": 1,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 46.5,
+    "y": 23.5
+  },
+  "monsters": 35,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 805,
+  "cpuMs": {
+    "median": 8,
+    "p95": 13.7,
+    "max": 85.5
+  },
+  "frameIntervalMs": {
+    "median": 16.7,
+    "p95": 19.5,
+    "max": 91.3
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

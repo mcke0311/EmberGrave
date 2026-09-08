@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "tool": "built-in image_gen",
+  "enemies": [
+    {
+      "id": "hollow_knight",
+      "reference": "assets/sprites/packed/actors/monsters/knight.webp",
+      "sequences": [
+        "basic",
+        "cleave",
+        "return_sweep",
+        "death"
+      ],
+      "description": "Row 1 sword strike: draw sword back, wind up, high anticipation, forward slash contact, follow-through, recover. Row 2 guarded cleave: crouch behind shield and brace, raise sword, strongest overhead windup, broad powerful slash with short ivory sword trail, follow-through, recover. Row 3 reverse return sweep: sword starts across body after first cleave, pull to opposite side, counter-windup, distinct backhand slash contact, follow-through, recover. Row 4 death: knees buckle, sink, fall sideways, land, settle, prone complete armored remains with sword and shield.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. The attached reference is the exact existing character to animate. Match its identity, equipment, proportions, materials and painted dark fantasy isometric RPG style. Exactly 4 equally spaced rows by SIX equally spaced columns, 24 separate complete poses. Row order: basic, cleave, return_sweep, death. All full bodies face screen-right in the same elevated three-quarter view as the reference. Row 1 sword strike: draw sword back, wind up, high anticipation, forward slash contact, follow-through, recover. Row 2 guarded cleave: crouch behind shield and brace, raise sword, strongest overhead windup, broad powerful slash with short ivory sword trail, follow-through, recover. Row 3 reverse return sweep: sword starts across body after first cleave, pull to opposite side, counter-windup, distinct backhand slash contact, follow-through, recover. Row 4 death: knees buckle, sink, fall sideways, land, settle, prone complete armored remains with sword and shield. Six DISTINCT sequential body and limb poses per row, not repeated static silhouettes. Consistent body scale across every frame, even fallen remains. Feet or root centered at bottom of each cell, generous empty transparent gutters, no touching neighbors. No clipped limbs or weapons. No ground shadows, floor, circles, area indicators, UI, text, grid lines, scenery or background haze. Small attached effects only.",
+      "source": "assets/act4_animations/source/hollow_knight.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a0823b-7a16-70c2-9d72-6c90562395d3\\exec-ee29b6ee-b1cb-4b46-9198-9dd2a0310092.png",
+      "sourceHash": "55dbec5a3c6a4986b0adb950f3cadef0cd50c3b25d675c120c877d9d17e9cad5",
+      "alphaSource": "assets/act4_animations/alpha/hollow_knight.png",
+      "alphaOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a0823b-7a16-70c2-9d72-6c90562395d3\\exec-c5f3f178-8f27-4021-b95c-ecf48b23100b.png",
+      "alphaPrompt": "Remove the checkerboard background. Transparent background. Clean PNG alpha cutout of all 24 characters in this sprite sheet. Keep the same 4 rows and 6 columns and exactly the same poses. Empty space must have alpha 0. This is a transparent game asset, use transparent output."
+    },
+    {
+      "id": "choir_priest",
+      "reference": "assets/sprites/packed/actors/monsters/identity_ember_robed.webp",
+      "sequences": [
+        "bolt",
+        "heal",
+        "chorus",
+        "death"
+      ],
+      "description": "Preserve hood, robes, ornate trims and anatomy but replace fire with small violet magic in actions. Row 1 Soul Bolt: cupped hand gathers violet orb, raise arm, arm drawn back, push palm to release small violet bolt, recoil, recover. Row 2 Mending Litany: lift both arms slowly, raise arms overhead, teal healing light gathers, open arms releasing tiny teal wisps, lower arms, recover. Row 3 Quieting Chorus: hands at chest, spread both arms wide, lean back and lift hood, thrust both arms outward with short violet wisps, follow through, recover. Row 4 death: knees give, hood bows, body falls, robes slump on floor, settle, final crumpled cloth corpse.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. The attached reference is the exact existing character to animate. Match its identity, equipment, proportions, materials and painted dark fantasy isometric RPG style. Exactly 4 equally spaced rows by SIX equally spaced columns, 24 separate complete poses. Row order: bolt, heal, chorus, death. All full bodies face screen-right in the same elevated three-quarter view as the reference. Preserve hood, robes, ornate trims and anatomy but replace fire with small violet magic in actions. Row 1 Soul Bolt: cupped hand gathers violet orb, raise arm, arm drawn back, push palm to release small violet bolt, recoil, recover. Row 2 Mending Litany: lift both arms slowly, raise arms overhead, teal healing light gathers, open arms releasing tiny teal wisps, lower arms, recover. Row 3 Quieting Chorus: hands at chest, spread both arms wide, lean back and lift hood, thrust both arms outward with short violet wisps, follow through, recover. Row 4 death: knees give, hood bows, body falls, robes slump on floor, settle, final crumpled cloth corpse. Six DISTINCT sequential body and limb poses per row, not repeated static silhouettes. Consistent body scale across every frame, even fallen remains. Feet or root centered at bottom of each cell, generous empty transparent gutters, no touching neighbors. No clipped limbs or weapons. No ground shadows, floor, circles, area indicators, UI, text, grid lines, scenery or background haze. Small attached effects only.",
+      "source": "assets/act4_animations/source/choir_priest.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a0823b-7a16-70c2-9d72-6c90562395d3\\exec-b7a4bdd4-ec76-4390-866c-f270b14130d3.png",
+      "sourceHash": "1c1fc624f08b6cb389b05f7d1e7b1dced80dcc973ee81da49d7e8d9610401349",
+      "alphaSource": "assets/act4_animations/alpha/choir_priest.png",
+      "alphaOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a0823b-7a16-70c2-9d72-6c90562395d3\\exec-8cbd83b5-add0-4e27-bf4f-e3d92148c4ee.png",
+      "alphaPrompt": "Remove the checkerboard background. Transparent background. Clean PNG alpha cutout of all 24 characters in this sprite sheet. Keep the same 4 rows and 6 columns and exactly the same poses. Empty space must have alpha 0. This is a transparent game asset, use transparent output."
+    },
+    {
+      "id": "soul_eater",
+      "reference": "assets/sprites/packed/actors/monsters/hound.webp",
+      "sequences": [
+        "basic",
+        "rush",
+        "death"
+      ],
+      "description": "Row 1 bite: snarling crouch, jaw opens and neck draws back, claws brace, forceful forward jaw snap and claw swipe, recoil, recover. Row 2 hunting rush: deep crouch, haunches compress, jaws raised poised to spring, full forward airborne bounding lunge with subtle violet attached trail, paws land low, recover. Row 3 death: stagger, legs buckle, shoulder sinks, topple onto side, twitch settles, prone curled dead hound. Keep the original lean four-legged canine anatomy and dark blue-black skin.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. The attached reference is the exact existing character to animate. Match its identity, equipment, proportions, materials and painted dark fantasy isometric RPG style. Exactly 3 equally spaced rows by SIX equally spaced columns, 18 separate complete poses. Row order: basic, rush, death. All full bodies face screen-right in the same elevated three-quarter view as the reference. Row 1 bite: snarling crouch, jaw opens and neck draws back, claws brace, forceful forward jaw snap and claw swipe, recoil, recover. Row 2 hunting rush: deep crouch, haunches compress, jaws raised poised to spring, full forward airborne bounding lunge with subtle violet attached trail, paws land low, recover. Row 3 death: stagger, legs buckle, shoulder sinks, topple onto side, twitch settles, prone curled dead hound. Keep the original lean four-legged canine anatomy and dark blue-black skin. Six DISTINCT sequential body and limb poses per row, not repeated static silhouettes. Consistent body scale across every frame, even fallen remains. Feet or root centered at bottom of each cell, generous empty transparent gutters, no touching neighbors. No clipped limbs or weapons. No ground shadows, floor, circles, area indicators, UI, text, grid lines, scenery or background haze. Small attached effects only.",
+      "source": "assets/act4_animations/source/soul_eater.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a0823b-7a16-70c2-9d72-6c90562395d3\\exec-2ae1c689-31c4-4551-879d-6985f45f9ddd.png",
+      "sourceHash": "4d38645f49d2c5155ce7c7b54df6bd87e0c6b9a2cd98e8d63652b9ef1e1771ed",
+      "alphaSource": "assets/act4_animations/alpha/soul_eater.png",
+      "alphaOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a0823b-7a16-70c2-9d72-6c90562395d3\\exec-9384d87e-14c1-4da4-9d47-f17984afe370.png",
+      "alphaPrompt": "Background extraction edit ONLY. Preserve all 18 exact character poses, positions, proportions, colors and the 3 by 6 layout in this supplied sprite sheet. Remove the ENTIRE background including all checkerboard squares, white backdrop, gray backdrop, black backdrop, purple haze between characters, and background shadows. Return a PNG cutout with a REAL TRANSPARENT alpha channel, alpha exactly zero in all empty space, not a picture of checkerboard or a solid color background. Antialiased character edges and small hand/weapon-attached magical accents only. No scene or colored backdrop. Do not repaint the characters."
+    },
+    {
+      "id": "memory_wraith",
+      "reference": "assets/sprites/packed/actors/monsters/wraith.webp",
+      "sequences": [
+        "basic",
+        "blink",
+        "strike",
+        "death"
+      ],
+      "description": "Do not add weapons. Row 1 spectral swipe: hand retracts, sleeve rises, claw winds back, forward violet spectral slash, follow-through, recover. Row 2 Remembered Step: crouched hood, robes fray, silhouette partially dissolves, very faint but discernible whole silhouette, robes reform, full reappeared figure. Row 3 follow-up strike: reformed crouched pose, draw both spectral claws back, forward lean anticipation, both hands strike outward with small violet trails, recoil, recover. Row 4 death: stoop, sink, collapse into robes, upper body dissolves, cloth sinks with tiny wisps, final small dark robe remnant. Death remains must not be scaled up.",
+      "prompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. The attached reference is the exact existing character to animate. Match its identity, equipment, proportions, materials and painted dark fantasy isometric RPG style. Exactly 4 equally spaced rows by SIX equally spaced columns, 24 separate complete poses. Row order: basic, blink, strike, death. All full bodies face screen-right in the same elevated three-quarter view as the reference. Do not add weapons. Row 1 spectral swipe: hand retracts, sleeve rises, claw winds back, forward violet spectral slash, follow-through, recover. Row 2 Remembered Step: crouched hood, robes fray, silhouette partially dissolves, very faint but discernible whole silhouette, robes reform, full reappeared figure. Row 3 follow-up strike: reformed crouched pose, draw both spectral claws back, forward lean anticipation, both hands strike outward with small violet trails, recoil, recover. Row 4 death: stoop, sink, collapse into robes, upper body dissolves, cloth sinks with tiny wisps, final small dark robe remnant. Death remains must not be scaled up. Six DISTINCT sequential body and limb poses per row, not repeated static silhouettes. Consistent body scale across every frame, even fallen remains. Feet or root centered at bottom of each cell, generous empty transparent gutters, no touching neighbors. No clipped limbs or weapons. No ground shadows, floor, circles, area indicators, UI, text, grid lines, scenery or background haze. Small attached effects only.",
+      "source": "assets/act4_animations/source/memory_wraith.png",
+      "generatedOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a0823b-7a16-70c2-9d72-6c90562395d3\\exec-5e6b7a12-e1f8-4d0e-8c5e-2cbfa4a11753.png",
+      "sourceHash": "f52a8cd5fa893ea0a909f158e83516bcd13a7cae79bd371b3dc0a7bd4825e580",
+      "alphaSource": "assets/act4_animations/alpha/memory_wraith.png",
+      "alphaOriginal": "C:\\Users\\this_\\.codex\\generated_images\\01a0823b-7a16-70c2-9d72-6c90562395d3\\exec-5e6b7a12-e1f8-4d0e-8c5e-2cbfa4a11753.png",
+      "alphaPrompt": "Create a production animation sprite sheet with TRUE TRANSPARENT ALPHA background, no checkerboard. The attached reference is the exact existing character to animate. Match its identity, equipment, proportions, materials and painted dark fantasy isometric RPG style. Exactly 4 equally spaced rows by SIX equally spaced columns, 24 separate complete poses. Row order: basic, blink, strike, death. All full bodies face screen-right in the same elevated three-quarter view as the reference. Do not add weapons. Row 1 spectral swipe: hand retracts, sleeve rises, claw winds back, forward violet spectral slash, follow-through, recover. Row 2 Remembered Step: crouched hood, robes fray, silhouette partially dissolves, very faint but discernible whole silhouette, robes reform, full reappeared figure. Row 3 follow-up strike: reformed crouched pose, draw both spectral claws back, forward lean anticipation, both hands strike outward with small violet trails, recoil, recover. Row 4 death: stoop, sink, collapse into robes, upper body dissolves, cloth sinks with tiny wisps, final small dark robe remnant. Death remains must not be scaled up. Six DISTINCT sequential body and limb poses per row, not repeated static silhouettes. Consistent body scale across every frame, even fallen remains. Feet or root centered at bottom of each cell, generous empty transparent gutters, no touching neighbors. No clipped limbs or weapons. No ground shadows, floor, circles, area indicators, UI, text, grid lines, scenery or background haze. Small attached effects only."
+    }
+  ]
+}

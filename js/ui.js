@@ -167,6 +167,10 @@ const UI = (() => {
     drawOrb(els.orbMp, U.clamp(p.mana / p.stats.maxMana, 0, 1), ["#3858c0", "#101c54"], "#060a1a");
     els.hpText.textContent = `${Math.ceil(p.hp)} / ${p.stats.maxHp}`;
     els.mpText.textContent = `${Math.ceil(p.mana)} / ${p.stats.maxMana}`;
+    let upkeep=document.getElementById("companionUpkeep");
+    if(!upkeep){upkeep=document.createElement("span");upkeep.id="companionUpkeep";els.mpText.parentElement.appendChild(upkeep);}
+    const drain=p.companionUpkeep();upkeep.hidden=!drain;upkeep.textContent=`−${drain}/s companions`;
+    upkeep.title="Companion upkeep before regeneration. Companions die when aether reaches zero.";
     const need = DATA.xpForLevel(p.lvl);
     const xpPct = p.lvl >= DATA.MAX_LEVEL ? 100 : U.clamp(p.xp / need * 100, 0, 100);
     els.xpfill.style.width = xpPct + "%";
@@ -255,6 +259,10 @@ const UI = (() => {
     for (const el of [els.skillL, els.skillR, ...els.quickbar.children]) {
       const remaining = Math.max(0, (p.skillCd[el.dataset.skill] || 0) - Game.state.time);
       el.classList.toggle("cooling", remaining > 0);
+      const blocked=!p.canUseSkillWeapon(el.dataset.skill);
+      el.classList.toggle("weapon-blocked",blocked);
+      if(blocked)el.title="Requires a bow or crossbow. Click to assign a skill.";
+      else if(el.title.startsWith("Requires a bow"))el.removeAttribute("title");
       const label = el.querySelector(".skill-cooldown");
       if (label) label.textContent = remaining > 0 ? (remaining < 10 ? remaining.toFixed(1) : Math.ceil(remaining)) : "";
     }
@@ -476,6 +484,8 @@ const UI = (() => {
     if (rk > 0 && rk < (sk.maxRank || 1) && id !== "basic")
       html += `<div class="tt-base">Next: ${sk.desc(eff + 1)}</div>`;
     if (sk.mana && id !== "basic") html += `<div class="tt-req">Aether cost: ${sk.mana(Math.max(1, eff))}</div>`;
+    if (["summon","summon_golem"].includes(sk.type)) html += `<div class="tt-req">Upkeep: ${Math.max(1,eff)} aether/sec per companion. All companions die at zero aether.</div>`;
+    if (sk.requiredWeapons) html += `<div class="tt-${p.canUseSkillWeapon(id)?"req":"reqbad"}">Requires a bow or crossbow</div>`;
     if (sk.reqLvl > 1) html += `<div class="tt-${p.lvl >= sk.reqLvl ? "req" : "reqbad"}">Requires character level ${sk.reqLvl}</div>`;
     if (sk.prereq && DATA.SKILLS[sk.prereq]) html += `<div class="tt-${(p.skills[sk.prereq] || 0) > 0 ? "req" : "reqbad"}">Requires ${DATA.SKILLS[sk.prereq].name}</div>`;
     if (sk.synergy && Object.keys(sk.synergy).length) {
@@ -495,7 +505,7 @@ const UI = (() => {
     if (side === "center" && openPanels.center === "forge") { returnForgeItems(); renderIfOpen("inv"); }
     const el = panelEl(side);
     el.classList.add("hidden"); el.innerHTML = "";
-    el.classList.remove("talent-panel");
+    el.classList.remove("talent-panel", "waypoint-panel");
     openPanels[side] = null;
     el.classList.remove("management-panel"); delete el.dataset.kind;
     if (side === "left") vendorCtx = null;
@@ -531,6 +541,7 @@ const UI = (() => {
   function header(el, title, side) {
     el.classList.remove("talent-panel");
     const kind = openPanels[side]; el.dataset.kind = kind || "dialog";
+    el.classList.toggle("waypoint-panel", kind === "shrine");
     el.classList.toggle("management-panel", ["inv","char","quest","vendor","forge","storage"].includes(kind));
     el.innerHTML = "";
     const head = textNode("div", "ptitle", title); el.appendChild(head);
@@ -1074,6 +1085,8 @@ const UI = (() => {
     heading.appendChild(title); el.appendChild(heading);
     const stats = document.createElement("div"); stats.className = "skill-facts";
     if (sk.mana) stats.innerHTML += `<span><b>${Number(sk.mana(eff)).toFixed(1).replace(/\.0$/, "")}</b> aether</span>`;
+    if (["summon","summon_golem"].includes(sk.type)) stats.innerHTML += `<span><b>${eff}/s</b> per companion · dies at zero aether</span>`;
+    if (sk.requiredWeapons) stats.innerHTML += `<span class="${p.canUseSkillWeapon(sk.id)?"":"unmet"}">Bow or crossbow required</span>`;
     if (sk.cd) stats.innerHTML += `<span><b>${Number(sk.cd(eff)).toFixed(1).replace(/\.0$/, "")}s</b> cooldown</span>`;
     stats.innerHTML += `<span><b>${sk.reqLvl}</b> level required</span>`; el.appendChild(stats);
     const desc = document.createElement("div"); desc.className = "skill-description";
@@ -1487,7 +1500,7 @@ const UI = (() => {
       for (const topic of def.talk || []) {
         opts.push({ label: topic.q, fn: () => renderDialog(npc, { type: "topic", topic }) });
       }
-      if (def.role === "vendor") opts.push({ label: "Trade", fn: () => { closePanel("center"); openVendor(npc.id); } });
+      if (Game.canTradeWith(npc)) opts.push({ label: "Trade", fn: () => { closePanel("center"); openVendor(npc.id); } });
       opts.push({ label: "Farewell", fn: () => closePanel("center") });
     }
     dialogOptions(el, opts);
@@ -1529,43 +1542,51 @@ const UI = (() => {
     if (vendorCtx) closePanel("left");
     openPanels.center = "shrine";
     el.classList.remove("hidden");
-    header(el, asCaravan ? "THE CARAVAN — CHOOSE YOUR DESTINATION" : "CHOOSE YOUR DESTINATION", "center");
-    const sub = document.createElement("div"); sub.className = "dlgtext"; sub.style.cssText = "color:#9aa6b4;font-size:12px;margin:-2px 0 8px;text-align:center";
-    sub.textContent = asCaravan ? "The caravan ferries you to any waypoint you have attuned." : "Travel instantly to any waypoint shrine you have attuned across the world.";
-    el.appendChild(sub);
-    const attuned = Game.state.shrines || [];
+    el.classList.add("waypoint-panel");
+    header(el, asCaravan ? "THE CARAVAN" : "THE WAYSTONES", "center");
     const here = Game.state.map.id;
-
-    const wrap = document.createElement("div"); wrap.id = "wpwrap";
     const groups = DATA.ACTS.concat([DATA.OPTIONAL_ACT]);
-    let any = false;
-    for (const g of groups) {
-      const zones = (g.zones || []).filter(z => attuned.includes(z));
-      if (!zones.length) continue;
-      any = true;
-      const sect = document.createElement("div"); sect.className = "wpact";
-      const head = document.createElement("div"); head.className = "wpacthead";
-      head.innerHTML = `<span class="wprn">${g.rn}</span><span>${g.name}</span>`;
-      sect.appendChild(head);
-      for (const zid of zones) {
-        const z = DATA.ZONES[zid];
-        const d = document.createElement("div");
-        d.className = "wprow" + (zid === here ? " wphere" : "");
-        d.innerHTML = `<span class="wpgem"></span><span>${z.name}${zid === here ? "  — here" : ""}</span>`;
-        if (zid !== here) d.addEventListener("click", () => { Sfx.play("shrine"); closePanel("center"); Game.travelToShrine(zid); });
-        sect.appendChild(d);
+    let currentAct=Math.max(0,groups.findIndex(g=>(g.zones || []).includes(here))), selected=here, pending=false;
+    const intro=textNode("p","wp-intro",asCaravan?"Choose an attuned waystone. The caravan will take you there.":"Across the sundered world, the stones remember your passage.");el.appendChild(intro);
+    const tabs=textNode("div","wp-tabs");tabs.setAttribute("role","tablist");tabs.setAttribute("aria-label","Travel region");el.appendChild(tabs);
+    const body=textNode("div","wp-body");el.appendChild(body);
+    const status=textNode("p","wp-status");status.setAttribute("role","status");el.appendChild(status);
+    const attuned=id=>(Game.state.shrines || []).includes(id);
+    const render=()=>{
+      tabs.replaceChildren();body.replaceChildren();
+      groups.forEach((g,i)=>{
+        const tab=textNode("button","wp-tab",g===DATA.OPTIONAL_ACT?"Ashen Marches":"Act "+g.rn);tab.type="button";tab.id="wp-tab-"+i;
+        tab.setAttribute("role","tab");tab.setAttribute("aria-selected",String(i===currentAct));tab.setAttribute("aria-controls","wp-destinations");tab.tabIndex=i===currentAct?0:-1;tab.disabled=pending;
+        tab.title=g.name;tab.addEventListener("click",()=>{currentAct=i;selected=(g.zones || []).find(id=>id===here)||(g.zones || []).find(attuned)||(g.zones || [])[0];render();document.getElementById(tab.id)?.focus();});
+        tab.addEventListener("keydown",e=>{const next=e.key==="ArrowRight"?(i+1)%groups.length:e.key==="ArrowLeft"?(i+groups.length-1)%groups.length:e.key==="Home"?0:e.key==="End"?groups.length-1:null;if(next!==null){e.preventDefault();tabs.children[next].click();}});
+        tabs.appendChild(tab);
+      });
+      const group=groups[currentAct],list=textNode("div","wp-destinations");list.id="wp-destinations";list.setAttribute("role","tabpanel");list.setAttribute("aria-labelledby","wp-tab-"+currentAct);body.appendChild(list);
+      list.appendChild(textNode("h3","wp-region",group.name));
+      for(const id of group.zones || []){
+        const z=DATA.ZONES[id];if(!z || id==='frosthaven_approach')continue;
+        const state=id===here?"Current location":attuned(id)?"Attuned":"Not attuned";
+        const row=textNode("button","wp-destination"+(selected===id?" selected":"")+(!attuned(id)&&id!==here?" locked":""));row.type="button";row.disabled=pending;
+        row.setAttribute("aria-pressed",String(selected===id));row.setAttribute("aria-label",z.name+", "+state);
+        row.appendChild(textNode("span","wp-symbol",id===here?"◆":attuned(id)?"◇":"·"));
+        const label=textNode("span","wp-destination-label",z.name);label.appendChild(textNode("small","",state));row.appendChild(label);
+        row.addEventListener("click",()=>{selected=id;render();body.querySelector('.wp-destination.selected')?.focus();});
+        row.addEventListener("keydown",e=>{if(!["ArrowUp","ArrowDown"].includes(e.key))return;e.preventDefault();const rows=[...list.querySelectorAll("button")],i=rows.indexOf(row);rows[(i+(e.key==="ArrowDown"?1:rows.length-1))%rows.length].click();});list.appendChild(row);
       }
-      wrap.appendChild(sect);
-    }
-    if (!any) {
-      const p = document.createElement("div"); p.className = "dlgtext";
-      p.textContent = "This is the only shrine you have attuned. Attune more across the world and they will answer each other here.";
-      wrap.appendChild(p);
-    }
-    el.appendChild(wrap);
-    const d = document.createElement("div"); d.className = "dlgopt"; d.style.marginTop = "8px"; d.textContent = "Step away";
-    d.addEventListener("click", () => closePanel("center"));
-    el.appendChild(d);
+      const z=DATA.ZONES[selected] || DATA.ZONES[group.zones[0]],detail=textNode("section","wp-detail");body.appendChild(detail);
+      detail.appendChild(textNode("div","wp-sigil","◇"));detail.appendChild(textNode("p","wp-eyebrow",group.name));detail.appendChild(textNode("h2","",z.name));
+      const types={camp:"Safe haven",town:"Safe haven",wild:"Wilderness",dungeon:"Dungeon"};
+      detail.appendChild(textNode("p","wp-facts",`${types[z.kind]||"Frontier"} · Recommended level ${z.lvl || 1}`));
+      detail.appendChild(textNode("p","wp-description",selected===here?"You stand beside this waystone.":attuned(selected)?"This stone knows your touch. The road is open.":"Find and attune this waystone in the world to unlock travel."));
+      const travel=textNode("button","wp-travel",pending?"Opening the road…":"Travel to "+z.name);travel.type="button";travel.disabled=pending||selected===here||!attuned(selected);detail.appendChild(travel);
+      travel.addEventListener("click",async()=>{
+        if(pending)return;const destination=selected;pending=true;status.textContent="Opening the road…";render();
+        let ok=false;try{ok=await Game.travelToShrine(destination);}catch(err){console.warn("Waystone travel failed",err);}
+        if(!el.contains(status))return;
+        pending=false;if(ok){closePanel("center");return;}status.textContent="The road could not be opened. Your location is unchanged. Try again.";render();body.querySelector('.wp-travel')?.focus();
+      });
+    };
+    render();tabs.children[currentAct]?.focus();
   }
 
   /* ---------- skill picker ---------- */

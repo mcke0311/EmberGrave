@@ -224,7 +224,7 @@ const TerrainSurface = (() => {
   }
   function rebuild(m) {
     m._rampTiles=new Int32Array(m.w*m.h).fill(-1);
-    for (const [i,r] of (m.ramps||[]).entries()) for(let k=0;k<r.length;k++) for(let w=-1;w<=1;w++) {
+    for (const [i,r] of (m.ramps||[]).entries()) for(let k=0;k<r.length;k++) for(let w=-Math.floor((r.width||3)/2);w<=Math.floor((r.width||3)/2);w++) {
       const x=r.x+r.dx*k+(r.dy?w:0),y=r.y+r.dy*k+(r.dx?w:0);
       if (!inside(m,x,y) || m._rampTiles[x+y*m.w]>=0) throw Error('Overlapping or out-of-bounds terrain ramp');
       m._rampTiles[x+y*m.w]=i;
@@ -235,14 +235,26 @@ const TerrainSurface = (() => {
       if(edgeMatches(m,x,y,x+dx,y+dy))m._surfaceEdges[x+y*m.w]|=1<<d;
     }
     m._surfaceGeometry=new Map();
+    // The authored cave floors are continuous planes; their raised wall caps
+    // are never traversable. Prove this on rebuild so sweeps can omit slope
+    // checks, while still testing every occupied cell of the actor's body.
+    m._surfaceFlatHeight=null;
+    if((m.frontier||m.act3)&&!(m.ramps||[]).length){
+      let flat;
+      for(let i=0;i<m.w*m.h;i++)if(!m.walls[i]){
+        const h=m.elev[i];if(flat===undefined)flat=h;else if(flat!==h){flat=null;break;}
+      }
+      m._surfaceFlatHeight=flat??null;
+    }
     m._navMaxHeight=0;
     for(const h of m.elev||[])m._navMaxHeight=Math.max(m._navMaxHeight,h);
     for(const r of m.ramps||[])m._navMaxHeight=Math.max(m._navMaxHeight,r.high);
   }
   function addRamp(m,r) {
+    m._surfaceFlatHeight=null;
     const i=m.ramps.length;m.ramps.push(r);
     const changed=new Set();
-    for(let k=0;k<r.length;k++)for(let w=-1;w<=1;w++) {
+    for(let k=0;k<r.length;k++)for(let w=-Math.floor((r.width||3)/2);w<=Math.floor((r.width||3)/2);w++) {
       const x=r.x+r.dx*k+(r.dy?w:0),y=r.y+r.dy*k+(r.dx?w:0);
       m._rampTiles[x+y*m.w]=i;changed.add(x+y*m.w);
       for(const [dx,dy] of directions)if(inside(m,x+dx,y+dy))changed.add(x+dx+(y+dy)*m.w);
@@ -269,8 +281,10 @@ const TerrainSurface = (() => {
     if(!inside(m,x0,y0)||!inside(m,x1,y1))return false;
     for(let ty=y0;ty<=y1;ty++)for(let tx=x0;tx<=x1;tx++) {
       if(m.blocked?.[tx+ty*m.w])return false;
-      if(tx<x1&&!connected(m,tx,ty,tx+1,ty))return false;
-      if(ty<y1&&!connected(m,tx,ty,tx,ty+1))return false;
+      if(m._surfaceFlatHeight==null){
+        if(tx<x1&&!connected(m,tx,ty,tx+1,ty))return false;
+        if(ty<y1&&!connected(m,tx,ty,tx,ty+1))return false;
+      }
     }
     return true;
   }

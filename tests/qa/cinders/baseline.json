@@ -1,0 +1,216 @@
+{
+  "capturedAt": "2026-09-08T02:01:35.247Z",
+  "source": "working tree before Act 5 implementation",
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "d0f1c1d24ae3b4d3ee90a1072fb5f2f3a7e8963610532a3e1edcc3bfe9ca7dce"
+    },
+    {
+      "path": "js/audio.js",
+      "sha256": "12bf16825c2eabd15d7be738a867c447068a6d292bb3f48375cad1dbd96565d9"
+    },
+    {
+      "path": "js/bootstrap.js",
+      "sha256": "1068b2e639b7e262c57df742ee656f897fc9634f14ada0e7ee01218b66514bd1"
+    },
+    {
+      "path": "js/boss_encounters.js",
+      "sha256": "71e1d2950d62b28cd3def0b852d36936b594df3e8a7561635c6cdfd206731ed0"
+    },
+    {
+      "path": "js/boss_vfx.js",
+      "sha256": "c224e201285ce9b00933fdfc95a58d7b20d2283505a6936a676c9f9c8596858b"
+    },
+    {
+      "path": "js/character3d.mjs",
+      "sha256": "6a303bd003b0bec659e32f9e3307b0c60616db579a8a7a510f015f55b39e56b9"
+    },
+    {
+      "path": "js/character_animation3d.mjs",
+      "sha256": "5fb59b4e96a88b53fdd8997684cfba49c13dc8da3cde1f978557c6c13a9fba53"
+    },
+    {
+      "path": "js/character_armor3d.mjs",
+      "sha256": "372086e5650359a74d42e4cbc75cd3e0125b5dcecec834f12e8ee1bb1d0e6b45"
+    },
+    {
+      "path": "js/character_catalog3d.mjs",
+      "sha256": "2f84f3af3c09fc473eb9ad2b68f30016af6814f84e618ffff61ece6ddf7392fb"
+    },
+    {
+      "path": "js/character_equipment3d.mjs",
+      "sha256": "b95eaa1735647753f9a6062cf5454acb423e7682d5b61e18d8fd1b8f9c1e31b6"
+    },
+    {
+      "path": "js/character_forms3d.mjs",
+      "sha256": "2d3f1b3a5336377b2c8922143483e87bacf0383e68167739edba8ef612fedf05"
+    },
+    {
+      "path": "js/character_materials3d.mjs",
+      "sha256": "2008f32a0c6f8978b79774306642d50ca08a115a5e7aac4ba5d2751b20cb109f"
+    },
+    {
+      "path": "js/character_mesh3d.mjs",
+      "sha256": "739e3012ad509d4f2e6d2b35107eb30c30ad15560266652d38f6af2ddcbe4c26"
+    },
+    {
+      "path": "js/character_motion3d.mjs",
+      "sha256": "8e53eeadbad621454f69605afd8fcb61f40c9a94d05a278726a1edea3dede179"
+    },
+    {
+      "path": "js/character_wildshape3d.mjs",
+      "sha256": "16badc4df97cf1c0a68ec541df6e9cc0d2cf20e48cfcf4ac09ac7e84c9ceccf9"
+    },
+    {
+      "path": "js/data.js",
+      "sha256": "d10b66217eb418cf68e80a30e53f7a9dc680ac9301f0f4d45dc1ae71b283ff77"
+    },
+    {
+      "path": "js/dataedit.js",
+      "sha256": "cf10c346f7316ea9c0d2100baea67c7aba973ec90fa0fb4db2f426742106a2c4"
+    },
+    {
+      "path": "js/data_overrides.js",
+      "sha256": "0f84cfc61334d5721dcc1df1c221b3de170881873db5ebe41b94428c2bdd460d"
+    },
+    {
+      "path": "js/emberwitch3d.mjs",
+      "sha256": "02e6267a391c181ea23d5cde7eea8ae860fd01b93788df65d76a368e1c3f8e8a"
+    },
+    {
+      "path": "js/entities.js",
+      "sha256": "609313c026753d12606281d9ce4c3b4ee2667c113ac5eb8075f6333f32a0a113"
+    },
+    {
+      "path": "js/game.js",
+      "sha256": "95135a981e7c1f16135db05f9d3f51b33fe08f482ca269d770aafef35541039a"
+    },
+    {
+      "path": "js/items.js",
+      "sha256": "6b5dcc90983ab401b8e1d063f0212b0ceffdd515813c0f0e20622ef713c71ae1"
+    },
+    {
+      "path": "js/level_terrain.js",
+      "sha256": "37ff0f0357215253467d376615f1502212f39e94698418237ce3444611dfa285"
+    },
+    {
+      "path": "js/lootfilter.js",
+      "sha256": "80681b7e127d39a29c5084d67d0d7428fd8c2a047e926f68d9b3650d237f776a"
+    },
+    {
+      "path": "js/management.js",
+      "sha256": "6a0ee345fbdb58de13d19ac30715c4eaa6d4d087800cb9be11d06eaea2b576d6"
+    },
+    {
+      "path": "js/mapgen.js",
+      "sha256": "6ae948c459b8aeba5429f6504b5e18bddc4b2f23dc2d4e0a3e1ce1be112e5b3f"
+    },
+    {
+      "path": "js/navigation.js",
+      "sha256": "cda075690904f7058a568a54af4c9203c1f6062a17acbe64eb34c41ea1bc79fe"
+    },
+    {
+      "path": "js/player3d.js",
+      "sha256": "6136f708d34f8a1cd0e846c775dba6c906bc94a419549801b1b5225af6a04ab8"
+    },
+    {
+      "path": "js/skill_audio.js",
+      "sha256": "eaaead3d1e730bfbe014d1f2be879200f254c4079a8a3093eae8f15ea44cad0a"
+    },
+    {
+      "path": "js/skill_audio_catalog.js",
+      "sha256": "d58f14a0cb28127c885d5c770948d7bfc2470cd25b66186b60397f09c38b5b61"
+    },
+    {
+      "path": "js/skill_icons.js",
+      "sha256": "91cf21aec050ea226be382dc2300bdbb12a74795740f167077fa9a3b5640e316"
+    },
+    {
+      "path": "js/skill_perks.js",
+      "sha256": "b2f61ac9e963f124a2da1fd6b9304007965acb1a29db58af234a6136f762e917"
+    },
+    {
+      "path": "js/skill_vfx.js",
+      "sha256": "bd37784a76f97cdd1ffeb0365cabf9d9a585a89d21277513d3bbc9ee39dd8ce3"
+    },
+    {
+      "path": "js/sprite_assets.js",
+      "sha256": "59350603538a221d69b758b9fb1ac9754fe9d88e810601e9755f80453dab1036"
+    },
+    {
+      "path": "js/sprite_manifest.js",
+      "sha256": "c97132c15a923b99ab120532d38f7ff9d9d7f7f4f043b7e9fde8a39b69cd1e6f"
+    },
+    {
+      "path": "js/title_screen.js",
+      "sha256": "2008d10ee376bd219dfd33dd6d9a330af8118e64b4aeab830025644e7ec44475"
+    },
+    {
+      "path": "js/town_terrain.js",
+      "sha256": "8fd58f2153f2ed12a6bb8f5913529d020f773b13361e09b2407faeea8850f598"
+    },
+    {
+      "path": "js/ui.js",
+      "sha256": "f53b3c265c9edc3987a6ff5d2bd8735896f4b11b2ec09f2efde9e3433daa16e1"
+    },
+    {
+      "path": "js/unique_powers.js",
+      "sha256": "3bda086f38807194e84658e789af5ae57ce452cb7f32b6df8f63c8ce51078826"
+    },
+    {
+      "path": "js/utils.js",
+      "sha256": "321ce4f71f4011634707c07d41b804a935beb81c580c53e19cc17c2ba77c4661"
+    },
+    {
+      "path": "js/vendor/three/LICENSE",
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "js/vendor/three/README.md",
+      "sha256": "c4543b58be6480d268866d02146784d762ef8fe13072aa225c7d3551b703d432"
+    },
+    {
+      "path": "js/vendor/three/three.core.min.js",
+      "sha256": "05b2609338c76cd65daf74f3ac515bc9a5045e1b3b33edc07d8c9bd55250fa90"
+    },
+    {
+      "path": "js/vendor/three/three.module.min.js",
+      "sha256": "86bcee248b64f44bcfc23c331ae74619061957d59cab040171dcb6fb5900beb6"
+    },
+    {
+      "path": "css/combat-ui.css",
+      "sha256": "5e96eaf8f8b480bd0b64048d740472d18254fc290bbfe833926f006f71adb3cd"
+    },
+    {
+      "path": "css/management-ui.css",
+      "sha256": "b83fa98cf56f8010cd08a95c0a02f739f33dfbea7eb95c34c069c6f7daabc947"
+    },
+    {
+      "path": "css/opening.css",
+      "sha256": "5f6024eb88c98f6167872bd5177aea821505f5f8ce91e93861a0e1350c3eee2d"
+    },
+    {
+      "path": "css/style.css",
+      "sha256": "e43e7041cd0028840ebe5310ac7c8f4220c722a6449a47f21b495eef66bcb54d"
+    },
+    {
+      "path": "css/title-ui.css",
+      "sha256": "092914153b2128d8dad66a1ca3aaa592088029ba4c78e2bb745977bf732040ea"
+    },
+    {
+      "path": "css/travel-ui.css",
+      "sha256": "703583add2288ed5a0e3201020e0824b4bc3eb08ce373de8facb9863d55795ab"
+    },
+    {
+      "path": "assets/sprites_src/gameplay_art/gameplay_art_v1.json",
+      "sha256": "60a471931ac7c2012a54951e99b51e0fc2c56191326aaeb40cb758c9ff449b3f"
+    },
+    {
+      "path": "assets/sprites/coverage.json",
+      "sha256": "4a6e3565db72a22f81055dc49638ed64ac849985684e4995f6ddb7548db0579d"
+    }
+  ],
+  "archive": "tests/fixtures/cinders_before.zip",
+  "archiveSha256": "7744a143c3da8572fb6732533d315adc90dbbd09621b7b748954706e56e514cd"
+}

@@ -56,6 +56,15 @@ work, so narrative text is not mistaken for finished visuals. Review the campaig
 with `tests/story_campaign.html`; run `node tests/story_campaign_contract.mjs`
 for progression and save-compatibility checks.
 
+Act IV now uses authored gothic islands above a void: memory chapels, a broken
+arrival bridge, a procession ring and two reserved boss platforms. Optional
+**Cinderwatch Remembered** and **The Last Bastion’s Echo** add looped detours,
+elite encounters and guarded caches. Returning from a memory preserves the
+parent map; normal cathedral visits reshuffle it. Thirty dedicated raster assets
+cover gateways, architecture, materials and completed story-object states.
+See the [Cathedral of Memories design and validation guide](docs/CATHEDRAL_DESIGN.md)
+and the isolated review at `tests/cathedral_review.html`.
+
 ## Raised terrain
 
 Outside Frosthaven, terraces connect through visible, three-tile-wide ramps.
@@ -101,6 +110,13 @@ mask without reading pixels back from the rendered canvas. Profile a specific
 area with `tests/game_performance.html?zone=weeping_marsh` (`&uncached=1` for
 the uncached floor, `&wide=1` for 4K). Measurements and regression checks are in
 [the Act 2 performance review](tests/act2_performance_results.md).
+
+Act 2's five adventure areas now have authored routes, distinct paired entrance
+assets, drowned monastery courts, reed boardwalks, and organic ritual basins.
+Twenty-four new environment assets match Greywater Landing's painted style.
+Seeds vary the connecting routes and encounters; existing quests and travel
+links remain compatible. See [the Act 2 design](docs/ACT2_DESIGN.md) and play the
+isolated comparison at `tests/act2_review.html` using `python tests/act2_server.py`.
 
 Enemy overhead health bars appear on hover or for three seconds after damage;
 the large encounter boss bar stays visible. Map hazards affect heroes and
@@ -596,3 +612,19 @@ traps, companions, transformations and conditional passive effects. Audition the
 in `tests/skill_audio_review.html`, including music and previous-sound comparisons.
 See [skill sound design and verification](docs/SKILL_AUDIO.md) for sources,
 controls and regression checks. The game still has no build step.
+
+### Act II: Enemy attacks and skills
+
+Act II's five adventure areas also have a curated enemy pass with warned attacks,
+local encounter pools and bounded summons. See [the combat guide](docs/ACT2_ENEMIES.md)
+and [validation results](tests/act2_enemy_results.md). Its isolated playable review
+runs at `http://127.0.0.1:8748/tests/act2_review.html?enemyReview` after starting
+`python tests/act2_enemy_server.py`.
+
+### Act III: The Buried Imperial City
+
+The six existing Act III adventure areas now use authored imperial ruins, distinct
+entrances and seeded reconnecting routes. The Dig Camp gains an excavation
+departure while retaining its services. See [the design and QA guide](docs/ACT3_DESIGN.md).
+Run `python tests/act3_baseline.py` and `python tests/act3_server.py`, then open
+`http://127.0.0.1:8743/tests/act3_review.html` for the isolated playable review.

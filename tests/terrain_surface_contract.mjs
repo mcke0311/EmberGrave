@@ -107,8 +107,8 @@ for(const seed of [0,1,123,12345,4294967295]){
  const t=performance.now(),map=MapGen.generate('north_wild',seed),from=map.spawns.default;
  ok(map.surfaceVersion===1&&map.ramps.length>0&&map.terrainDiagnostics.raisedTiles>1000,'terraces flattened away');
  for(const r of map.ramps){
-  ok(r.width===3&&r.length===2*(r.high-r.low),'bad ramp dimensions');
-  for(let w=-1;w<=1;w++){
+  ok(r.width>=3&&r.width%2===1&&r.length===2*(r.high-r.low),'bad ramp dimensions');
+  for(let w=-Math.floor(r.width/2);w<=Math.floor(r.width/2);w++){
    const ax=r.x-r.dx+.5+(r.dy?w:0),ay=r.y-r.dy+.5+(r.dx?w:0),bx=r.x+r.dx*r.length+.5+(r.dy?w:0),by=r.y+r.dy*r.length+.5+(r.dx?w:0);
    ok(N.segment(map,ax,ay,bx,by),'generated ramp or landing is broken');
   }
@@ -122,5 +122,6 @@ for(const seed of [0,1,123,12345,4294967295]){
  ok(JSON.stringify(map.ramps)===JSON.stringify(replay.ramps)&&map.elev.every((h,i)=>h===replay.elev[i]),'terrain regeneration differs');
  seedResults.push({seed,ramps:map.ramps.length,raisedTiles:map.terrainDiagnostics.raisedTiles,targets:targets.length,ms:Math.round(performance.now()-t)});
 }
-for(const id of ['frosthaven','mines','fields'])ok(!MapGen.generate(id,123).surfaceVersion,'new model leaked into '+id);
+for(const id of ['frosthaven','fields'])ok(!MapGen.generate(id,123).surfaceVersion,'new model leaked into '+id);
+for(const id of ['mines','shattered_temple','shardpeak_shrine','deepfreeze_cavern'])ok(MapGen.generate(id,123).surfaceVersion===1,'frontier surface missing in '+id);
 console.log(JSON.stringify({status:'PASS',checks,maxWalkHeightDelta,seedResults},null,2));

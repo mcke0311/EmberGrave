@@ -67,9 +67,9 @@ const MapGen = (() => {
         const tx = (sp.x | 0) + ox, ty = (sp.y | 0) + oy;
         if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) continue;
         m.hazard[idx(m, tx, ty)] = 0;                     // never strand an arrival tile on a hazard
-        m.elev[idx(m, tx, ty)] = 0;                       // keep arrival tiles flat & reachable
+        if(!m.frontier&&!m.composition)m.elev[idx(m, tx, ty)] = 0; // authored arrivals retain their connected terrace height
         if (m.walls[idx(m, tx, ty)]) continue;            // never carve actual walls open
-        if (m.buildings?.some(b => tx >= b.footprint.x0 && tx < b.footprint.x1 && ty >= b.footprint.y0 && ty < b.footprint.y1)) continue;
+        if (m.buildings?.some(b => (b.footprints||[b.footprint]).some(a=>a&&tx>=a.x0&&tx<a.x1&&ty>=a.y0&&ty<a.y1))) continue;
         let interactable = false;
         for (let i = m.props.length - 1; i >= 0; i--) {
           const pr = m.props[i];
@@ -90,8 +90,12 @@ const MapGen = (() => {
     const img = ctx.createImageData(m.w, m.h);
     for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) {
       const i = idx(m, x, y) * 4;
-      if (m.walls[idx(m, x, y)]) { img.data[i] = 120; img.data[i + 1] = 110; img.data[i + 2] = 96; img.data[i + 3] = 255; }
-      else if (m.settlement) {
+      if (m.void?.[x+y*m.w]) { img.data.set([13,12,23,255],i); }
+      else if (m.walls[idx(m, x, y)]) { img.data[i] = 120; img.data[i + 1] = 110; img.data[i + 2] = 96; img.data[i + 3] = 255; }
+      else if (m.act2) {
+        const tile=x+y*m.w,color=m.act2.water[tile]?[20,43,48]:m.blocked[tile]?[98,103,94]:m.floor[tile]>=4?[105,101,79]:[57,65,55];
+        img.data.set([...color,255],i);
+      } else if (m.settlement) {
         const tile=x+y*m.w, color=m.blocked[tile]?[112,101,84]:m.floor[tile]===5?[116,110,91]:m.settlementWater?.[tile]?[33,67,66]:[47,50,43];
         img.data.set([...color,255],i);
       } else {
@@ -721,6 +725,18 @@ const MapGen = (() => {
       for(let i=0;i<m.floor.length;i++)if(m.floor[i]===5&&!m.blocked[i]&&!connected.has(i)){gap=i;break;}
       if(gap<0)break;
       connectApproach({x:gap%m.w+.5,y:Math.floor(gap/m.w)+.5},connected);
+    }
+    if(zoneId==='hellgate'){
+      const e=m.exits[0],x=(e.x0+e.x1)/2,y=(e.y0+e.y1)/2;
+      const gate=addProp(m,'cinders_breach_gate',x,y,{blocks:false,building:true,gate:true,label:e.label,footprints:[]});
+      for(const [px,py] of [[36,18],[39,11]]){
+        const footprint={x0:px,y0:py,x1:px+1,y1:py+1};block(m,px,py);m.floor[idx(m,px,py)]=1;
+        gate.footprints.push(footprint);m.buildings.push({type:'breach_gate',x:px,y:py,footprint,gate:true});
+      }
+      m.composition={revision:1,identity:'fallen-demon-kingdoms',terrainWalls:false,
+        landmarks:[{id:'entry',label:'The last redoubt',...m.spawns.default},{id:'gate',label:'The battlefield gate',x:x-3,y:y+.5,exit:{x,y,target:e.target}}],
+        routes:[],reserved:[],decals:[],encounters:[],anchors:{events:[]},scenery:[]};
+      addLight(m,x-2,y,5,'#ff9c50');
     }
     // Recessed shallow-water scenery is separate from combat hazards.
     if(c.water){
@@ -1537,7 +1553,1029 @@ const MapGen = (() => {
   /* =====================================================================
      public API
      ===================================================================== */
+  /* Act I: authored places joined by seeded routes. World geometry, quest
+     anchors and art all come from this composition, before incidental dressing.
+     Other acts continue to use the original generators above. */
+  const FRONTIER = {
+    north_wild: {size:160, outdoor:true, dark:.38, packs:29,
+      nodes:[
+        ['entry','The broken watch road',12,80,9,8],
+        ['watch','Last Watch crossroads',42,76,13,11,'watchtower'],
+        ['mine','Abandoned minehead',43,113,11,10,'minehead'],
+        ['watch_beacon','The fallen watch-post',73,49,12,11,'tollhouse'],
+        ['burial_beacon','The oath burial ground',94,86,13,12,'memorial'],
+        ['quarry_beacon','The silent quarry',124,48,13,12,'supports'],
+        ['forecourt','The temple forecourt',138,85,12,12,'temple'],
+        ['caravan','The lost caravan',71,117,10,8],
+        ['overlook','The northern overlook',108,18,9,8,'pilgrim_stones'],
+        ['shardpeak','The pilgrim trail',73,18,9,8,'shelter'],
+        ['deepfreeze','The spring road',121,119,10,9,'ice_ribs']],
+      edges:[['entry','watch'],['watch','mine'],['watch','watch_beacon'],['watch_beacon','quarry_beacon'],
+        ['quarry_beacon','forecourt'],['forecourt','burial_beacon'],['burial_beacon','watch'],
+        ['watch_beacon','shardpeak'],['quarry_beacon','overlook'],['burial_beacon','deepfreeze']],
+      branches:[['caravan',['mine','burial_beacon']]],rewards:['caravan','overlook'],
+      gates:[['mine','mines','from_mines','The Abandoned Mines'],['forecourt','shattered_temple','from_temple','The Shattered Temple'],
+        ['shardpeak','shardpeak_shrine','from_shardpeak','The Shardpeak Shrine'],['deepfreeze','deepfreeze_cavern','from_deepfreeze','The Deepfreeze Caverns']]},
+    mines: {size:128,dark:.66,packs:22,
+      nodes:[['entry','The old haul entrance',18,24,9,8,'supports'],['haul','The winding works',43,38,12,10,'minehead'],
+        ['refuge_0','The lamp refuge',36,75,10,9,'shelter'],['ore','The ore staging floor',72,68,13,11,'supports'],
+        ['refuge_1','The barricaded works',78,103,11,9,'tollhouse'],['deep','The deep cut',103,58,12,11,'ice_ribs'],
+        ['refuge_2','The last refuge',103,94,10,10,'shelter'],['cache','The sealed pay store',65,24,8,8]],
+      edges:[['entry','haul'],['haul','refuge_0'],['refuge_0','ore'],['ore','refuge_1'],['refuge_1','refuge_2'],
+        ['refuge_2','deep'],['deep','ore'],['ore','haul']],branches:[['cache',['haul','ore']]],rewards:['cache'],returnKey:'from_mines'},
+    shattered_temple: {size:128,dark:.58,packs:20,
+      nodes:[['entry','The shattered entrance',18,25,10,9,'temple'],['procession','The processional hall',47,35,13,10,'memorial'],
+        ['court','The broken memorial court',71,69,14,13,'memorial'],['vigil','The final vigil',99,62,10,9,'pilgrim_stones'],
+        ['sanctuary','Korvath’s sanctuary',104,101,14,14],['reliquary','The forgotten reliquary',42,92,10,9,'temple']],
+      edges:[['entry','procession'],['procession','court'],['court','vigil'],['vigil','sanctuary'],['court','sanctuary'],
+        ['court','reliquary',true],['reliquary','procession',true]],branches:[],rewards:['reliquary'],returnKey:'from_temple',boss:'korvath',bossNode:'sanctuary'},
+    shardpeak_shrine: {size:128,outdoor:true,dark:.34,packs:20,
+      nodes:[['entry','The pilgrim steps',17,64,9,10,'pilgrim_stones'],['shelter','The last pilgrim shelter',37,65,11,10,'shelter'],
+        ['windward','The windward ascent',66,32,11,10,'pilgrim_stones'],['lee','The sheltered ascent',66,91,11,10,'tollhouse'],
+        ['summit','The Shardpeak Vigil',105,61,14,13,'summit'],['cache','The votive overlook',106,100,8,9,'memorial']],
+      edges:[['entry','shelter'],['shelter','windward'],['shelter','lee'],['windward','summit'],['lee','summit']],
+      branches:[['cache',['summit','lee']]],rewards:['cache'],returnKey:'from_shardpeak'},
+    deepfreeze_cavern: {size:128,dark:.44,packs:21,
+      nodes:[['entry','The frozen descent',19,24,9,9,'ice_ribs'],['gallery','The blue gallery',47,38,12,10,'ice_arch'],
+        ['narrows','The ice narrows',39,77,9,10,'ice_ribs'],['basin','The lower ice basin',75,75,13,12,'ice_arch'],
+        ['spring','Hoarfang’s frozen spring',103,100,14,14,'spring'],['shelf','The frost shelf',101,50,11,10,'ice_ribs'],
+        ['cache','The abandoned spring stores',72,21,8,8,'shelter']],
+      edges:[['entry','gallery'],['gallery','narrows'],['narrows','basin'],['basin','spring'],['spring','shelf'],['shelf','gallery']],
+      branches:[['cache',['gallery','shelf']]],rewards:['cache'],returnKey:'from_deepfreeze',boss:'hoarfang',bossNode:'spring'}
+  };
+  function genFrontier(zoneId,seed) {
+    const c=FRONTIER[zoneId],m=blank(zoneId,c.size,c.size),r=U.rng(seed^U.hash(zoneId)^0x61a17);
+    m.zone={...m.zone,dark:c.dark};m.outdoor=!!c.outdoor;m.surfaceVersion=1;m.ramps=[];m.buildings=[];
+    m.walls.fill(1);m.blocked.fill(1);scatterFloor(m,U.rng(seed^13));
+    const f=m.frontier={revision:1,seed,identity:zoneId,terrainWalls:true,landmarks:[],routes:[],reserved:[],
+      anchors:{beacons:[],events:[],survivors:[]},decals:[],scenery:[],encounters:[],arenaReserved:false};
+    const nodes={};
+    for(const [id,label,x,y,rx,ry,art] of c.nodes){
+      const n={id,label,x:x+(id==='entry'?0:U.riR(r,-2,2))+.5,y:y+(id==='entry'?0:U.riR(r,-2,2))+.5,rx,ry,art,entrances:[]};
+      n.combatSpace={x0:n.x-3,y0:n.y-3,x1:n.x+3,y1:n.y+3};
+      nodes[id]=n;f.landmarks.push(n);
+    }
+    const inside=(x,y)=>x>=1&&y>=1&&x<m.w-1&&y<m.h-1;
+    const open=(x,y,path=false)=>{if(!inside(x,y))return;const i=idx(m,x,y);setWall(m,x,y,0);if(path)m.floor[i]=4;};
+    const ellipse=(n,rx=n.rx,ry=n.ry)=>{
+      for(let y=Math.floor(n.y-ry-1);y<=n.y+ry+1;y++)for(let x=Math.floor(n.x-rx-1);x<=n.x+rx+1;x++){
+        const a=Math.atan2((y+.5-n.y)/ry,(x+.5-n.x)/rx),edge=1+.045*Math.sin(a*5+n.x)+.035*Math.cos(a*3+n.y);
+        if(((x+.5-n.x)/rx)**2+((y+.5-n.y)/ry)**2<=edge)open(x,y);
+      }
+    };
+    for(const n of f.landmarks)ellipse(n);
+    function connect(aId,bId,optional=false){
+      const a=nodes[aId],b=nodes[bId],horizontalFirst=r()<.5;
+      // Midpoint doglegs vary by seed but always enter the authored room centers.
+      const bend=Math.round((horizontalFirst?a.x+b.x:a.y+b.y)/2)+U.riR(r,-4,4)+.5;
+      const points=horizontalFirst?[{x:a.x,y:a.y},{x:bend,y:a.y},{x:bend,y:b.y},{x:b.x,y:b.y}]:
+        [{x:a.x,y:a.y},{x:a.x,y:bend},{x:b.x,y:bend},{x:b.x,y:b.y}];
+      const width=c.outdoor?9:7,route={from:aId,to:bId,optional,width,points};f.routes.push(route);
+      for(const [n,ordered,to] of [[a,points,bId],[b,points.slice().reverse(),aId]]){
+        const p=ordered.find(p=>p.x!==n.x||p.y!==n.y),dx=p.x-n.x,dy=p.y-n.y;
+        const t=Math.min(1,1/Math.sqrt((dx/(n.rx-2))**2+(dy/(n.ry-2))**2));
+        n.entrances.push({to,x:n.x+dx*t,y:n.y+dy*t,width});
+      }
+      for(let k=1;k<points.length;k++){
+        const a=points[k-1],b=points[k],steps=Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y));
+        for(let t=0;t<=steps;t++){
+          const x=Math.round(U.lerp(a.x,b.x,t/(steps||1))-.5),y=Math.round(U.lerp(a.y,b.y,t/(steps||1))-.5);
+          const shoulder=width/2+(c.outdoor?1.5:1)*(1+Math.sin((x+y)*.23+a.x*.1));
+          for(let oy=-Math.ceil(shoulder);oy<=shoulder;oy++)for(let ox=-Math.ceil(shoulder);ox<=shoulder;ox++)
+            if(ox*ox+oy*oy<=shoulder**2)open(x+ox,y+oy,ox*ox+oy*oy<=6.25);
+        }
+      }
+    }
+    for(const [a,b,optional] of c.edges)connect(a,b,!!optional);
+    for(const [a,choices] of c.branches)connect(U.pickR(r,choices),a,true);
+    const distanceToRoutes=(x,y)=>Math.min(...f.routes.flatMap(ro=>ro.points.slice(1).map((b,i)=>{
+      const a=ro.points[i],dx=b.x-a.x,dy=b.y-a.y,t=U.clamp(((x-a.x)*dx+(y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);
+      return Math.hypot(x-a.x-dx*t,y-a.y-dy*t);
+    })));
+    const entry=nodes.entry;
+    if(zoneId==='north_wild'){
+      for(let x=0;x<entry.x;x++)for(let y=entry.y-3|0;y<=entry.y+3;y++){
+        setWall(m,x,y,0);m.floor[idx(m,x,y)]=4;
+      }
+      m.exits.push({x0:0,y0:entry.y-2.5,x1:1.4,y1:entry.y+2.5,target:'frosthaven',spawnKey:'from_wild',label:'Frosthaven'});
+      m.spawns.from_camp={x:3.5,y:entry.y};
+    }else{
+      addProp(m,'stairs',entry.x-3,entry.y-1,{blocks:false});
+      m.exits.push({x0:entry.x-4.4,y0:entry.y-2.6,x1:entry.x-1.6,y1:entry.y+.4,target:'north_wild',spawnKey:c.returnKey,label:'The Fallen North'});
+      m.spawns.from_wild={x:entry.x,y:entry.y+1.5};
+    }
+    m.spawns.default={...(m.spawns.from_camp||m.spawns.from_wild)};m.spawns.portal={x:entry.x+1,y:entry.y+2};
+    const shrine=zoneId==='north_wild'?nodes.watch:entry;
+    addProp(m,'shrine',shrine.x+3,shrine.y+3,{blocks:false,interact:'shrine',label:'Travel Shrine'});
+    addLight(m,shrine.x+3,shrine.y+3,4,'#abd5df',false);
+    m.shrine={x:shrine.x+3,y:shrine.y+4.5};m.spawns.shrine={...m.shrine};
+    for(const [id,target,key,label] of c.gates||[]){
+      const n=nodes[id],x=n.x+3,y=n.y+2;
+      m.exits.push({x0:x-1.4,y0:y-.8,x1:x+1.4,y1:y+1.2,target,spawnKey:'from_wild',label});
+      m.spawns[key]={x,y:y+2.5};n.exit={x,y,target};
+      addProp(m,target==='shattered_temple'?'monasterygate':'cryptdoor',x,y-1,{blocks:false});
+      addLight(m,x,y,4.5,target==='shattered_temple'?'#a6cee5':'#b4becc',false);
+    }
+    if(c.boss){
+      const n=nodes[c.bossNode];m.monsterSpawns.push({id:c.boss,x:n.x,y:n.y,boss:true});
+      const a={bossId:c.boss,x0:Math.floor(n.x)-10,y0:Math.floor(n.y)-10,x1:Math.floor(n.x)+11,y1:Math.floor(n.y)+11,cx:n.x,cy:n.y};
+      for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++)open(x,y);
+      if(c.boss==='korvath'){m.bossArena=a;a.approach={x:n.x,y:a.y0-1.5};}
+      f.reserved.push({...a,kind:'boss'});f.arenaReserved=true;
+      addProp(m,'chest',n.x+6,n.y+6,{blocks:false,lootable:true,rich:true});
+    }
+    // Broad geological shelves replace a mountain billboard on every wall tile.
+    // The two outdoor ascents have explicit five-wide continuous ramps.
+    const bands=zoneId==='north_wild'?[{axis:'y',at:32,highSide:-1,low:0,high:2}]:
+      zoneId==='shardpeak_shrine'?[{axis:'x',at:49,highSide:1,low:0,high:2},{axis:'x',at:87,highSide:1,low:2,high:4}]:[];
+    const baseAt=(x,y)=>{
+      let h=0;for(const b of bands)if(((b.axis==='x'?x:y)-b.at)*b.highSide>=0)h=b.high;return h;
+    };
+    for(let y=0;y<m.h;y++)for(let x=0;x<m.w;x++){
+      const boundary=c.outdoor&&[[0,-1],[1,0],[0,1],[-1,0]].some(([dx,dy])=>inside(x+dx,y+dy)&&!m.walls[idx(m,x+dx,y+dy)]);
+      m.elev[idx(m,x,y)]=baseAt(x,y)+(m.walls[idx(m,x,y)]?(c.outdoor?(boundary?1:3):4):0);
+    }
+    for(const b of bands)for(const ro of f.routes)for(let k=1;k<ro.points.length;k++){
+      const a=ro.points[k-1],z=ro.points[k],axis=b.axis,other=axis==='x'?'y':'x';
+      if(a[axis]===z[axis]||Math.min(a[axis],z[axis])>b.at||Math.max(a[axis],z[axis])<b.at)continue;
+      const cross=Math.floor(a[other]),start=b.highSide>0?b.at-2:b.at+1;
+      const ramp={x:axis==='x'?start:cross,y:axis==='y'?start:cross,dx:axis==='x'?b.highSide:0,dy:axis==='y'?b.highSide:0,width:5,length:4,low:b.low,high:b.high};
+      if(m.ramps.some(r=>Math.hypot(r.x-ramp.x,r.y-ramp.y)<6))continue;
+      for(let t=-1;t<=4;t++)for(let w=-2;w<=2;w++){
+        const x=ramp.x+ramp.dx*t+(ramp.dy?w:0),y=ramp.y+ramp.dy*t+(ramp.dx?w:0);
+        open(x,y,true);m.elev[idx(m,x,y)]=t===-1?ramp.low:t===4?ramp.high:baseAt(x,y);
+      }
+      m.ramps.push(ramp);
+    }
+    for(const a of f.reserved)for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++)m.elev[idx(m,x,y)]=0;
+    if(zoneId==='deepfreeze_cavern'){
+      const n=nodes.spring,code=DATA.HAZARD_BY_ID.spring;
+      for(let y=n.y-4|0;y<=n.y+4;y++)for(let x=n.x-4|0;x<=n.x+4;x++)
+        if(Math.hypot(x+.5-n.x,y+.5-n.y)<=3.6)setHaz(m,x,y,code);
+      addLight(m,n.x,n.y,7,'#9fe8ff',false);
+    }
+    TerrainSurface.rebuild(m);
+    const protectedPoint=(x,y,pad=0)=>Object.values(m.spawns).some(p=>Math.hypot(p.x-x,p.y-y)<3+pad)||
+      f.reserved.some(a=>x>=a.x0-pad&&x<a.x1+pad&&y>=a.y0-pad&&y<a.y1+pad)||
+      m.ramps.some(a=>Math.hypot(x-a.x-a.dx*2,y-a.y-a.dy*2)<6+pad);
+    function architecture(n){
+      if(!n.art)return;
+      // Large art is behind the playable court, with a real multi-tile footprint.
+      const span=['temple','minehead','spring','summit'].includes(n.art)?5:4;
+      if(n.art==='spring'){
+        // The spring's low rim belongs to the ground plane, not a solid object.
+        f.decals.push({type:'frontier_spring',x:n.x,y:n.y,scale:1,alpha:.9});return;
+      }
+      let placement=null;
+      for(const radius of [6,9,12])for(const [dx,dy] of [[-1,-1],[0,-1],[-1,0],[1,-1],[-1,1],[1,0],[0,1],[1,1]]){
+        if(placement)break;
+        const x=n.x+dx*radius,y=n.y+dy*radius,footprint={x0:Math.floor(x-span/2),y0:Math.floor(y-span/2),x1:Math.floor(x-span/2)+span,y1:Math.floor(y-span/2)+span};
+        const cells=[];for(let yy=footprint.y0;yy<footprint.y1;yy++)for(let xx=footprint.x0;xx<footprint.x1;xx++)cells.push([xx,yy]);
+        if(cells.every(([xx,yy])=>inside(xx,yy)&&!protectedPoint(xx+.5,yy+.5)&&distanceToRoutes(xx+.5,yy+.5)>=3&&baseAt(xx,yy)===baseAt(n.x,n.y)))placement={x,y,footprint,cells};
+      }
+      if(!placement)throw Error('No safe landmark footprint: '+zoneId+'/'+n.id);
+      const {x,y,footprint,cells}=placement;
+      for(const [xx,yy] of cells){setWall(m,xx,yy,0);block(m,xx,yy);m.elev[idx(m,xx,yy)]=baseAt(xx,yy);}
+      const pr=addProp(m,n.art,x,y,{artZone:'frontier',blocks:true,footprint,building:true,landmarkId:n.id});
+      m.buildings.push(pr);f.reserved.push({...footprint,kind:'architecture',landmarkId:n.id});
+      n.footprint=footprint;addLight(m,x+1,y+2,c.outdoor?5:6,'#ffb775');
+    }
+    for(const n of f.landmarks)architecture(n);
+    // A few composed rear silhouettes occupy solid scenery, away from the road.
+    // Their entire bases are blocked; the courts retain clear sight lines.
+    if(c.outdoor)for(const n of f.landmarks)for(const [dx,dy] of [[-14,-12],[12,-16]]){
+      const x=Math.floor(n.x+dx)+.5,y=Math.floor(n.y+dy)+.5;
+      const footprint={x0:Math.floor(x)-3,y0:Math.floor(y)-3,x1:Math.floor(x)+4,y1:Math.floor(y)+4};
+      let solid=true;
+      for(let yy=footprint.y0;yy<footprint.y1;yy++)for(let xx=footprint.x0;xx<footprint.x1;xx++)if(!inside(xx,yy)||!m.walls[idx(m,xx,yy)])solid=false;
+      if(solid){f.scenery.push({x,y,variant:U.riR(r,0,5),scale:1.7,footprint});f.reserved.push({...footprint,kind:'scenery',landmarkId:n.id});}
+    }
+    const safe=(x,y)=>TerrainSurface.supported(m,x,y,.4)&&!protectedPoint(x,y)&&!m.props.some(p=>Math.hypot(x-p.x,y-p.y)<1.4);
+    if(zoneId==='north_wild')for(const id of ['watch_beacon','burial_beacon','quarry_beacon']){
+      const n=nodes[id];f.anchors.beacons.push({id,x:n.x,y:n.y});
+    }
+    if(zoneId==='mines')for(let i=0;i<3;i++){
+      const n=nodes['refuge_'+i],p={x:n.x+3,y:n.y+2};
+      m.npcs.push({id:DATA.SURVIVOR_IDS[i],...p,survivor:true,sid:'mines_surv_'+i});
+      f.anchors.survivors.push({id:'mines_surv_'+i,...p});addLight(m,p.x,p.y,6,'#ffcb8a');
+      addProp(m,'brazier',p.x-1,p.y+1,{blocks:false});
+    }
+    for(const id of c.rewards){
+      const n=nodes[id];addProp(m,'chest',n.x+2,n.y+2,{blocks:false,lootable:true,rich:true,landmarkId:id});
+      addLight(m,n.x+2,n.y+2,3,'#d6bc8b',false);
+    }
+    if(nodes.caravan){const n=nodes.caravan;addProp(m,'cart',n.x-5,n.y-4,{blocks:true});addProp(m,'crate',n.x+5,n.y-3,{breakable:true});}
+    // Floor marks use authored pixels and are composed once into terrain chunks.
+    for(const n of f.landmarks){
+      n.elevation=baseAt(n.x,n.y);
+      if(n.id!==c.bossNode)f.decals.push({type:zoneId==='mines'?'frontier_tracks':zoneId==='shattered_temple'?'frontier_paving':'frontier_rubble',x:n.x,y:n.y,scale:1.5,alpha:.72});
+      if(n.id!=='entry'&&n.id!==c.bossNode&&!n.id.includes('beacon')&&safe(n.x+3,n.y-2))f.anchors.events.push({id:n.id,x:n.x+3,y:n.y-2});
+      for(let j=0;j<7;j++){
+        const a=r()*Math.PI*2,x=Math.floor(n.x+Math.cos(a)*(n.rx-2))+.5,y=Math.floor(n.y+Math.sin(a)*(n.ry-2))+.5;
+        if(!safe(x,y)||distanceToRoutes(x,y)<3.2)continue;
+        const type=zoneId==='mines'?U.pickR(r,['crate','barrel','rock']):zoneId==='shattered_temple'?U.pickR(r,['pillar','urn','grave']):U.pickR(r,['rock','deadtree','grave']);
+        addProp(m,type,x,y,{blocks:false,breakable:['crate','barrel','urn'].includes(type),seed:U.riR(r,1,9999)});
+      }
+    }
+    if(zoneId==='mines')for(const ro of f.routes)for(let k=1;k<ro.points.length;k++){
+      const a=ro.points[k-1],b=ro.points[k],len=Math.hypot(b.x-a.x,b.y-a.y);
+      for(let d=4;d<len;d+=4)f.decals.push({type:'frontier_tracks',x:U.lerp(a.x,b.x,d/len),y:U.lerp(a.y,b.y,d/len),scale:1,alpha:.82,turn:a.x===b.x});
+    }
+    const combat=f.landmarks.filter(n=>n.id!=='entry'&&n.id!==c.bossNode),ranged=m.zone.spawns.filter(id=>DATA.ENEMIES[id].projectile),melee=m.zone.spawns.filter(id=>!DATA.ENEMIES[id].projectile);
+    for(let k=0;k<c.packs;k++){
+      const n=combat[k%combat.length],elite=c.rewards.includes(n.id)&&k<combat.length;
+      const type=U.pickR(r,k%3===1&&ranged.length?ranged:melee.length?melee:m.zone.spawns);
+      const def=DATA.ENEMIES[type],count=def.pack?U.riR(r,def.pack[0],def.pack[1]):U.riR(r,2,4),anchor={x:n.x+(k%2?4:-1),y:n.y+(k%3?2:5)};
+      const group={landmarkId:n.id,role:k%3===1?'ranged':'melee',elite,spawns:[]};
+      for(let i=0;i<count;i++){
+        let pos=null;for(let attempt=0;attempt<50&&!pos;attempt++){
+          const x=Math.floor(anchor.x+U.riR(r,-3,3))+.5,y=Math.floor(anchor.y+U.riR(r,-3,3))+.5;
+          if(safe(x,y)&&!f.anchors.beacons.some(b=>Math.hypot(x-b.x,y-b.y)<2)&&!f.anchors.survivors.some(b=>Math.hypot(x-b.x,y-b.y)<3))pos={x,y};
+        }
+        if(pos){const sp={id:type,...pos,elite:elite&&i===0,minion:elite&&i>0,landmarkId:n.id};m.monsterSpawns.push(sp);group.spawns.push(sp);}
+      }
+      f.encounters.push(group);
+    }
+    // Finalize surface after every footprint is known. Placement never relies on
+    // a later nearest-walkable teleport to rescue a disconnected objective.
+    bakeMinimap(m);TerrainSurface.rebuild(m);m.hasElev=m.elev.some(v=>v>0);
+    m.terrainDiagnostics={ramps:m.ramps.length,raisedTiles:m.elev.reduce((n,h)=>n+(h>0),0)};
+    return m;
+  }
+  /* Act II: stable places, seeded connective routes, and flooded negative space.
+     Navigation remains in the ordinary grids; scenic water is never a hazard. */
+  const ACT2 = {
+    weeping_marsh:{size:164,dark:.40,outdoor:true,population:136,entryKey:'from_camp',shrine:'bell',
+      nodes:[['entry','The broken landing causeway',12,86,9,9],['hamlet','The abandoned stilt hamlet',39,85,14,12,'stilt_hut'],
+        ['bell','The leaning bell crossroads',67,72,14,13,'bell_tower'],['graveyard','The flooded graveyard',80,113,15,12,'ossuary'],
+        ['monastery','The monastery forecourt',128,81,15,14,'cloister'],['procession','The last procession',136,128,13,13,'root_crown'],
+        ['reeds','The northern reed passage',70,22,13,12,'submerged_shrine'],['pools','The drowned sluice',119,34,13,12,'nesting_roots'],
+        ['wreck','The lost ferry',31,124,11,9,'boat_wreck']],
+      edges:[['entry','hamlet'],['hamlet','bell'],['bell','graveyard'],['graveyard','monastery'],['monastery','bell'],
+        ['monastery','procession'],['bell','reeds'],['monastery','pools'],['hamlet','wreck',true],['wreck','graveyard',true]],
+      gates:[['monastery','drowned_crypt','from_drowned','monastery_out'],['reeds','hollow_reeds','from_reeds','reeds_out'],
+        ['pools','spawn_pools','from_pools','sluice_out'],['procession','ritual_site','from_ritual','ritual_out']],rewards:['wreck','graveyard']},
+    drowned_crypt:{size:128,dark:.52,population:96,entryKey:'from_wild',returnKey:'from_drowned',threshold:'monastery_in',shrine:'entry',stone:true,
+      nodes:[['entry','The monastery descent',18,20,12,10],['cloister','The flooded cloister',52,26,15,12,'cloister'],
+        ['ossuary','The drowned ossuary',39,70,14,12,'ossuary'],['aisle','The dry processional aisle',78,73,12,11,'cloister'],
+        ['nave','The Choir nave',104,105,15,15,'cloister'],['reliquary','The lost reliquary',99,31,12,11,'submerged_shrine'],
+        ['stores','The votive chamber',27,105,11,10,'ossuary']],
+      edges:[['entry','cloister'],['cloister','ossuary'],['ossuary','aisle'],['aisle','nave'],['aisle','reliquary',true],['reliquary','cloister',true],['ossuary','stores',true]],rewards:['reliquary','stores'],ritual:'nave'},
+    hollow_reeds:{size:128,dark:.43,outdoor:true,population:96,entryKey:'from_wild',returnKey:'from_reeds',threshold:'reeds_in',shrine:'entry',boards:true,
+      nodes:[['entry','Beneath the reed arch',17,23,12,10],['fork','The split boardwalk',46,31,12,11,'reed_clump'],
+        ['boats','The boat graveyard',30,76,15,12,'boat_wreck'],['grove','The silent grove',82,52,15,14,'nesting_roots'],
+        ['island','The drowned willow island',72,99,12,12,'stilt_hut'],['shrine','The submerged shrine',106,99,14,13,'submerged_shrine'],
+        ['skiff','The sunken ferryman cache',27,107,10,9,'boat_wreck']],
+      edges:[['entry','fork'],['fork','boats'],['fork','grove'],['boats','island'],['island','shrine'],['grove','shrine'],['boats','skiff',true]],rewards:['skiff'],herald:'shrine'},
+    spawn_pools:{size:128,dark:.49,population:99,entryKey:'from_wild',returnKey:'from_pools',threshold:'sluice_in',shrine:'entry',
+      nodes:[['entry','Inside the drowned sluice',18,20,12,10],['nursery','The pale nursery',49,28,14,11,'nesting_roots'],
+        ['cistern','The collapsed cistern',57,66,16,15,'cloister'],['west','The western egg banks',27,92,12,13,'nesting_roots'],
+        ['east','The root sluice',100,62,13,14,'ossuary'],['brood','The Brood Mother basin',95,106,15,15,'nesting_roots'],
+        ['nest','The abandoned nest',101,24,11,10,'boat_wreck']],
+      edges:[['entry','nursery'],['nursery','cistern'],['cistern','west'],['west','brood'],['cistern','east'],['east','brood'],['nursery','nest',true]],rewards:['nest'],boss:'brood_mother',bossNode:'brood'},
+    ritual_site:{size:128,dark:.48,population:96,entryKey:'from_wild',returnKey:'from_ritual',threshold:'ritual_in',shrine:'entry',stone:true,
+      nodes:[['entry','The broken processional gate',17,20,12,10],['stalls','The drowned choir stalls',47,29,15,12,'ossuary'],
+        ['gallery','The root galleries',42,74,14,13,'cloister'],['side','The silent side gallery',89,57,12,12,'nesting_roots'],
+        ['threshold','The last dry threshold',78,90,12,11,'submerged_shrine'],['basin','The Mire Mother basin',107,109,15,15,'root_crown'],
+        ['offering','The forgotten offerings',22,108,10,10,'submerged_shrine']],
+      edges:[['entry','stalls'],['stalls','gallery'],['gallery','threshold'],['gallery','side'],['side','threshold'],['threshold','basin'],['gallery','offering',true]],rewards:['offering'],boss:'mire_mother',bossNode:'basin'}
+  };
+  function genAct2(zoneId,seed){
+    const c=ACT2[zoneId],m=blank(zoneId,c.size,c.size),r=U.rng(seed^U.hash(zoneId)^0x2ac720);
+    m.zone={...m.zone,dark:c.dark};m.outdoor=!!c.outdoor;m.rain=!!c.outdoor&&r()<.6;
+    m.surfaceVersion=1;m.ramps=[];m.buildings=[];m.blocked.fill(1);
+    scatterFloor(m,U.rng(seed^27));
+    const f=m.act2={revision:1,seed,identity:zoneId,landmarks:[],routes:[],reserved:[],
+      anchors:{events:[],story:{},ritual:null},decals:[],encounters:[],water:new Uint8Array(m.w*m.h).fill(1),arenaReserved:false};
+    const nodes={},inside=(x,y)=>x>=1&&y>=1&&x<m.w-1&&y<m.h-1;
+    const open=(x,y,path=false)=>{if(!inside(x,y))return;const i=idx(m,x,y);m.walls[i]=m.blocked[i]=f.water[i]=0;if(path)m.floor[i]=4;};
+    for(const [id,label,x,y,rx,ry,art] of c.nodes){
+      const n={id,label,x:x+(id==='entry'?0:U.riR(r,-2,2))+.5,y:y+(id==='entry'?0:U.riR(r,-2,2))+.5,rx,ry,art,entrances:[]};
+      n.combatSpace={x0:n.x-4,y0:n.y-4,x1:n.x+4,y1:n.y+4};nodes[id]=n;f.landmarks.push(n);
+      for(let yy=Math.floor(n.y-ry);yy<=n.y+ry;yy++)for(let xx=Math.floor(n.x-rx);xx<=n.x+rx;xx++){
+        const dx=(xx+.5-n.x)/rx,dy=(yy+.5-n.y)/ry,angle=Math.atan2(dy,dx);
+        const shape=c.stone?Math.max(Math.abs(dx),Math.abs(dy)):dx*dx+dy*dy;
+        if(shape< (c.stone?.94:1+.08*Math.sin(angle*3+x)+.045*Math.sin(angle*7+y)))open(xx,yy);
+      }
+    }
+    const distSeg=(x,y,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,t=U.clamp(((x-a.x)*dx+(y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(x-a.x-dx*t,y-a.y-dy*t);};
+    for(const [from,to,optional=false] of c.edges){
+      const a=nodes[from],b=nodes[to],mid={x:Math.round((a.x+b.x)/2)+.5+U.riR(r,-3,3),y:Math.round((a.y+b.y)/2)+.5+U.riR(r,-3,3)};
+      // Two short diagonals avoid the repeated right-angle hallway silhouette.
+      // Architectural aisles still approach each court along its axis.
+      const points=c.stone||c.boards?[{x:a.x,y:a.y},{x:a.x,y:mid.y},{x:b.x,y:mid.y},{x:b.x,y:b.y}]:[{x:a.x,y:a.y},mid,{x:b.x,y:b.y}];
+      const width=optional?5:7,ro={from,to,optional,width,points};f.routes.push(ro);
+      for(const [n,p,other] of [[a,points[1],to],[b,points.at(-2),from]]){
+        const dx=p.x-n.x,dy=p.y-n.y,t=Math.min(1,1/Math.sqrt((dx/(n.rx-3))**2+(dy/(n.ry-3))**2||1));
+        n.entrances.push({to:other,x:n.x+dx*t,y:n.y+dy*t,width});
+      }
+      for(let k=1;k<points.length;k++){
+        const p=points[k-1],q=points[k],length=Math.hypot(q.x-p.x,q.y-p.y);
+        for(let step=0;step<=Math.ceil(length*2);step++){
+          const t=step/Math.max(1,Math.ceil(length*2)),x=U.lerp(p.x,q.x,t),y=U.lerp(p.y,q.y,t);
+          for(let oy=-5;oy<=5;oy++)for(let ox=-5;ox<=5;ox++){
+            const xx=Math.floor(x)+ox,yy=Math.floor(y)+oy,d=Math.hypot(xx+.5-x,yy+.5-y);
+            if(d<=width/2+.6)open(xx,yy,d<=2.6);
+          }
+        }
+        if(c.boards)for(let d=1;d<length;d+=3.8)f.decals.push({type:Math.abs(q.x-p.x)>Math.abs(q.y-p.y)?'act2_boardwalk_y':'act2_boardwalk_x',x:U.lerp(p.x,q.x,d/length),y:U.lerp(p.y,q.y,d/length),scale:1,alpha:1});
+      }
+    }
+    const routeDistance=(x,y)=>Math.min(...f.routes.flatMap(ro=>ro.points.slice(1).map((b,k)=>distSeg(x,y,ro.points[k],b))));
+    const reserve=(kind,p,radius=3)=>f.reserved.push({kind,x0:p.x-radius,y0:p.y-radius,x1:p.x+radius,y1:p.y+radius});
+    const entry=nodes.entry;
+    m.spawns[c.entryKey]={x:entry.x,y:entry.y+2};m.spawns.default={...m.spawns[c.entryKey]};m.spawns.portal={x:entry.x+2,y:entry.y+3};
+    if(zoneId==='weeping_marsh'){
+      for(let x=0;x<=entry.x;x++)for(let y=entry.y-3|0;y<=entry.y+3;y++){const i=idx(m,x,y);m.blocked[i]=f.water[i]=0;m.floor[i]=4;}
+      m.exits.push({x0:0,y0:entry.y-2.5,x1:1.4,y1:entry.y+2.5,target:'marshcamp',spawnKey:'from_wild',label:'Greywater Landing'});
+      m.spawns.from_camp={x:3.5,y:entry.y};m.spawns.default={...m.spawns.from_camp};
+    }
+    const shrine=nodes[c.shrine];
+    addProp(m,'shrine',shrine.x+4,shrine.y+2,{blocks:false,interact:'shrine',label:'Travel Shrine'});
+    m.shrine={x:shrine.x+4,y:shrine.y+3.5};m.spawns.shrine={...m.shrine};addLight(m,shrine.x+4,shrine.y+2,5,'#a7d0d5',false);
+    for(const p of Object.values(m.spawns))reserve('arrival',p);
+    for(const n of f.landmarks)f.reserved.push({...n.combatSpace,kind:'combat',landmarkId:n.id});
+    // Boss and quest spaces are laid out before architecture. Never clear them afterwards.
+    const arenaNode=nodes[c.bossNode||c.ritual];
+    if(arenaNode){
+      const n=arenaNode,a={bossId:c.boss||'choirmaster',x0:Math.floor(n.x)-10,y0:Math.floor(n.y)-10,x1:Math.floor(n.x)+11,y1:Math.floor(n.y)+11,cx:n.x,cy:n.y};
+      for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++)open(x,y);
+      f.reserved.push({...a,kind:'arena',landmarkId:n.id});f.arenaReserved=true;f.arena=a;
+      if(c.boss){m.monsterSpawns.push({id:c.boss,x:n.x,y:n.y,boss:true});addProp(m,'chest',n.x+7,n.y+7,{blocks:false,lootable:true,rich:true});}
+      if(c.boss==='mire_mother'){m.bossArena={...a,approach:{x:n.x-10.5,y:n.y}};f.anchors.story.mire_shard={x:n.x+2,y:n.y+2};}
+      if(c.ritual)f.anchors.ritual={id:'drowned_ritual',x:n.x,y:n.y};
+    }
+    const protectedPoint=(x,y,pad=0)=>f.reserved.some(a=>x>=a.x0-pad&&x<a.x1+pad&&y>=a.y0-pad&&y<a.y1+pad);
+    function solidArt(type,x,y,landmarkId,span=4){
+      const footprint={x0:Math.floor(x-span/2),y0:Math.floor(y-span/2),x1:Math.floor(x-span/2)+span,y1:Math.floor(y-span/2)+span};
+      for(let yy=footprint.y0;yy<footprint.y1;yy++)for(let xx=footprint.x0;xx<footprint.x1;xx++){
+        if(!inside(xx,yy))throw Error('Act 2 architecture outside map: '+type);
+        const i=idx(m,xx,yy);m.blocked[i]=1;m.walls[i]=f.water[i]=0;
+      }
+      const p=addProp(m,type,x,y,{artZone:'act2',blocks:true,building:true,footprint,landmarkId});m.buildings.push(p);
+      f.reserved.push({...footprint,kind:'architecture',landmarkId});return p;
+    }
+    function threshold(n,type,target,key,returnKey){
+      // The sprite's solid rear is behind the clickable front approach.
+      const x=n.x-6,y=n.y-5;
+      solidArt(type,x,y,n.id,4);
+      const point={x:x+3,y:y+3};reserve('threshold',point,3);
+      m.exits.push({x0:point.x-1.4,y0:point.y-.8,x1:point.x+1.4,y1:point.y+1.5,target,spawnKey:key,label:DATA.ZONES[target].name});
+      if(returnKey){m.spawns[returnKey]={x:point.x+1.5,y:point.y+2.5};reserve('arrival',m.spawns[returnKey]);}
+      n.exit={...point,target};addLight(m,point.x,point.y,6,type.includes('monastery')?'#9db9cd':'#9fbda0',false);
+    }
+    if(c.threshold)threshold(entry,c.threshold,'weeping_marsh',c.returnKey);
+    for(const [id,target,key,type] of c.gates||[])threshold(nodes[id],type,target,'from_wild',key);
+    for(const n of f.landmarks){
+      if(!n.art||n.art==='reed_clump')continue;
+      let spot=null;
+      const span=n.art==='root_crown'?6:4;
+      const offsets=[...(n===arenaNode||n.art==='root_crown'?[[-14,4],[4,-14]]:[]),...[9,12,15].flatMap(radius=>[[-1,-1],[0,-1],[-1,0],[1,-1],[-1,1],[1,0],[0,1]].map(([x,y])=>[x*radius,y*radius]))];
+      for(const [dx,dy] of offsets){
+        if(spot)break;const x=n.x+dx,y=n.y+dy;
+        const cells=[];for(let yy=Math.floor(y-span/2);yy<Math.floor(y-span/2)+span;yy++)for(let xx=Math.floor(x-span/2);xx<Math.floor(x-span/2)+span;xx++)cells.push([xx,yy]);
+        if(cells.every(([x,y])=>inside(x,y)&&!protectedPoint(x+.5,y+.5,1)&&routeDistance(x+.5,y+.5)>4))spot={x,y};
+      }
+      if(!spot)throw Error('No Act 2 landmark seat: '+zoneId+'/'+n.id);
+      const p=solidArt(n.art,spot.x,spot.y,n.id,span);n.footprint=p.footprint;n.artPosition=spot;
+      addLight(m,spot.x+2,spot.y+3,7,n.id==='hamlet'||n.id==='bell'?'#d6b185':c.stone?'#a0bac8':'#9fb79e',false);
+    }
+    // Paving/root mats are irregular authored decals. Basin centers remain clear.
+    for(const n of f.landmarks){
+      if(n!==arenaNode)f.decals.push({type:c.stone?'act2_paving':'act2_root_mat',x:n.x,y:n.y,scale:1.3,alpha:.7});
+      if(c.rewards.includes(n.id))addProp(m,'chest',n.x+2,n.y+3,{blocks:false,lootable:true,rich:true,landmarkId:n.id});
+      if(n.id!=='entry'&&n!==arenaNode&&!n.exit){const p={id:n.id,x:n.x+3,y:n.y-2};f.anchors.events.push(p);}
+      for(let j=0;j<10;j++){
+        const a=j*Math.PI/5+r()*.25,x=Math.floor(n.x+Math.cos(a)*(n.rx-1))+.5,y=Math.floor(n.y+Math.sin(a)*(n.ry-1))+.5;
+        if(!inside(x|0,y|0)||protectedPoint(x,y,1)||routeDistance(x,y)<4)continue;
+        const type=j%4===0?'votives':j%3===0?'water_edge':'reed_clump';
+        if(type==='water_edge')f.decals.push({type:'act2_water_edge',x,y,alpha:.9,scale:1});
+        else addProp(m,type,x,y,{artZone:'act2',blocks:false,landmarkId:n.id});
+      }
+      for(let j=0;j<3;j++){
+        const x=n.x+U.riR(r,-7,7),y=n.y+U.riR(r,-7,7);
+        if(!walkable(m,x,y)||protectedPoint(x,y)||routeDistance(x,y)<3.5)continue;
+        addProp(m,c.stone?'urn':'barrel',x,y,{blocks:false,breakable:true});
+      }
+    }
+    // Small existing bog hazards occupy optional bank pockets, never bridges or arenas.
+    for(const n of f.landmarks)for(let j=0;j<2;j++){
+      const x=Math.floor(n.x+(j?-1:1)*(n.rx-4)),y=Math.floor(n.y+n.ry-4);
+      for(let oy=-1;oy<=1;oy++)for(let ox=-1;ox<=1;ox++)if(walkable(m,x+ox,y+oy)&&!protectedPoint(x+ox+.5,y+oy+.5,1)&&routeDistance(x+ox+.5,y+oy+.5)>4)setHaz(m,x+ox,y+oy,DATA.HAZARD_BY_ID.bog);
+    }
+    // Exact individual quotas, then mixed groups with bounded specialist pressure.
+    const combat=f.landmarks.filter(n=>n.id!=='entry'&&n!==arenaNode),target=c.population+U.riR(r,-5,5),occupied=[];
+    const quotas=DATA.ACT2_COMBAT.quotas(zoneId,target-m.monsterSpawns.length),groups=[];
+    f.combatRevision=DATA.ACT2_COMBAT.revision;f.quotas=Object.fromEntries(quotas.map(q=>[q.id,q.count]));
+    const take=role=>{const pool=quotas.filter(q=>q.count>0&&DATA.ACT2_COMBAT.role(q.id)===role);if(!pool.length)return null;const q=U.pickR(r,pool);q.count--;return q.id;};
+    while(quotas.some(q=>q.count)){
+      const ids=[];let id=take('specialist');if(id)ids.push(id);
+      for(let i=0;i<2;i++){id=take('ranged');if(id)ids.push(id);}
+      while(ids.length<5){id=take('melee');if(!id)break;ids.push(id);}groups.push(ids);
+    }
+    const fits=(x,y,radius)=>{
+      for(let yy=Math.floor(y-radius);yy<=Math.floor(y+radius);yy++)for(let xx=Math.floor(x-radius);xx<=Math.floor(x+radius);xx++)if(!walkable(m,xx,yy)||m.hazard[idx(m,xx,yy)])return false;
+      return !Object.values(m.spawns).some(s=>Math.hypot(s.x-x,s.y-y)<8+radius)&&
+        !f.reserved.some(a=>['arena','threshold'].includes(a.kind)&&x>=a.x0-2-radius&&x<a.x1+2+radius&&y>=a.y0-2-radius&&y<a.y1+2+radius)&&
+        !m.props.some(p=>Math.hypot(p.x-x,p.y-y)<radius+.8)&&!occupied.some(p=>Math.hypot(p.x-x,p.y-y)<p.radius+radius+.25);
+    };
+    for(let group=0;group<groups.length;group++){
+      const n=combat[group%combat.length],entry=n.entrances[0]||nodes.entry,angle=Math.atan2(n.y-entry.y,n.x-entry.x),forward={x:Math.cos(angle),y:Math.sin(angle)};
+      const ring=Math.floor(group/combat.length),a=ring*2.4+n.x,anchor={x:n.x+Math.cos(a)*5,y:n.y+Math.sin(a)*5};
+      const encounter={id:'act2_'+group,landmarkId:n.id,role:'mixed',forward,spawns:[]};
+      const ids=groups[group].sort((a,b)=>({specialist:0,ranged:1,melee:2}[DATA.ACT2_COMBAT.role(a)]-({specialist:0,ranged:1,melee:2}[DATA.ACT2_COMBAT.role(b)])));
+      for(let j=0;j<ids.length;j++){
+        const id=ids[j],role=DATA.ACT2_COMBAT.role(id),elite=j===0&&group===combat.findIndex(n=>c.rewards.includes(n.id)),radius=.34*(DATA.ENEMIES[id].big||1)*(elite?1.18:1),side=role==='ranged'?2:role==='melee'?-2:0;
+        const ideal={x:anchor.x+forward.x*side,y:anchor.y+forward.y*side};let point=null;
+        // Search the court, with support and full body clearance even for elites.
+        const candidates=[];
+        for(let y=Math.floor(n.y-n.ry+2);y<n.y+n.ry-2;y++)for(let x=Math.floor(n.x-n.rx+2);x<n.x+n.rx-2;x++){
+          const px=x+.5,py=y+.5,depth=(px-anchor.x)*forward.x+(py-anchor.y)*forward.y;
+          if(role==='ranged'&&depth<.5||role==='melee'&&depth>-.5)continue;
+          if(fits(px,py,radius))candidates.push({x:px,y:py,score:Math.hypot(px-ideal.x,py-ideal.y)+r()*.35});
+        }
+        candidates.sort((a,b)=>a.score-b.score);point=candidates[0];
+        if(!point)throw Error('Act 2 encounter has no supported seat: '+zoneId+'/'+n.id+'/'+id);
+        const sp={id,x:point.x,y:point.y,landmarkId:n.id,encounterId:encounter.id,role,elite};
+        m.monsterSpawns.push(sp);encounter.spawns.push(sp);occupied.push({...sp,radius});
+      }
+      f.encounters.push(encounter);
+    }
+    if(c.herald){const n=nodes[c.herald];m.monsterSpawns.push({id:'choir_herald',x:n.x,y:n.y,landmarkId:n.id});}
+    bakeMinimap(m);TerrainSurface.rebuild(m);m.hasElev=false;
+    return m;
+  }
+  /* Act III: composed imperial ruins. All coordinates use the existing map
+     bounds; authored rooms reserve their circulation before any solid art. */
+  const ACT3 = {
+    desert_wastes:{size:164,outdoor:true,dark:.28,packs:40,ground:'sand',decal:'paving',
+      nodes:[['entry','The excavation checkpoint',24,83,10,9,'checkpoint','court'],['caravan','The caravan court',43,72,12,10,'colossus','court'],
+        ['crossroads','The unearthed crossroads',68,70,12,12,'crane','court'],['market','The buried arcade',62,42,11,10,'market_gate','court'],
+        ['tombs','The split pylons',89,43,11,10,'tomb_gate','court'],['palace','The imperial forecourt',119,69,14,12,'palace_gate','court'],
+        ['flats','The fractured aqueduct',98,99,12,10,'aqueduct_gate','basin'],['sanctum','The chained mausoleum',63,105,12,10,'mausoleum_gate','court'],
+        ['overlook','The colossus overlook',36,108,10,9,'colossus','basin']],
+      edges:[['entry','caravan'],['caravan','crossroads'],['crossroads','market'],['market','tombs'],['tombs','palace'],['palace','flats'],['flats','sanctum'],['sanctum','crossroads']],
+      branches:[['overlook',['caravan','sanctum']]],rewards:['overlook'],
+      gates:[['market','underground_market','from_market'],['tombs','sand_tombs','from_tombs'],['palace','khal_palace','from_palace'],['flats','shard_flats','from_flats'],['sanctum','tomb_sanctum','from_sanctum']]},
+    underground_market:{size:128,dark:.42,packs:14,ground:'market',decal:'paving',gate:'market_gate',returnKey:'from_market',
+      nodes:[['entry','The merchant descent',25,71,10,9,'market_gate','court'],['bazaar','The buried bazaar',48,67,11,11,'awning','court'],
+        ['relay_0','The scales court',45,40,10,9,'stall','court'],['relay_1','The bronze exchange',78,38,11,9,'columns','court'],
+        ['relay_2','The caravan arcade',84,73,11,10,'stall','court'],['stores','The sealed storeroom',58,97,10,9,'awning','court']],
+      edges:[['entry','bazaar'],['bazaar','relay_0'],['relay_0','relay_1'],['relay_1','relay_2'],['relay_2','bazaar']],branches:[['stores',['bazaar','relay_2']]],rewards:['stores'],
+      story:{market_relay_0:'relay_0',market_relay_1:'relay_1',market_relay_2:'relay_2'}},
+    sand_tombs:{size:128,dark:.52,packs:39,ground:'tomb',decal:'rubble',gate:'tomb_gate',returnKey:'from_tombs',
+      nodes:[['entry','The split pylon descent',25,70,10,9,'tomb_gate','court'],['burial','The burial galleries',47,47,10,11,'sarcophagus','gallery'],
+        ['engine','The turning chamber',72,67,13,13,'mechanism','round'],['prison','Ilyan’s prison',91,38,11,10,'sarcophagus','court'],
+        ['vault','The sand-filled vault',98,91,10,10,'mechanism','round'],['reliquary','The forgotten reliquary',43,95,10,9,'sarcophagus','gallery']],
+      edges:[['entry','burial'],['burial','engine'],['engine','prison'],['prison','vault'],['vault','engine'],['engine','entry']],
+      branches:[['reliquary',['entry','vault','burial']]],rewards:['reliquary'],story:{imprisoned_scholar:'prison'}},
+    khal_palace:{size:128,dark:.40,packs:13,ground:'palace',decal:'mosaic',gate:'palace_gate',returnKey:'from_palace',boss:'azram',bossNode:'throne',
+      nodes:[['entry','The imperial gate',24,73,10,10,'palace_gate','court'],['avenue','The processional avenue',46,72,12,9,'columns','gallery'],
+        ['audience','The audience court',66,59,12,12,'colossus','court'],['west','The western gallery',45,36,11,9,'columns','gallery'],
+        ['east','The treasury gallery',79,89,11,9,'columns','gallery'],['approach','The gilded threshold',88,58,9,10,'columns','court'],
+        ['throne','Azram’s throne',100,28,14,14,'throne','court']],
+      edges:[['entry','avenue'],['avenue','audience'],['audience','approach'],['approach','throne'],['avenue','west'],['west','approach'],['audience','east'],['east','approach']],
+      branches:[],rewards:['east'],story:{fortress_map:'throne'}},
+    shard_flats:{size:128,outdoor:true,dark:.26,packs:22,ground:'sand',decal:'sand_drift',gate:'aqueduct_gate',returnKey:'from_flats',
+      nodes:[['entry','The broken aqueduct',24,68,11,10,'aqueduct_gate','basin'],['basin','The exposed shard basin',49,71,13,13,'shards','basin'],
+        ['causeway','The imperial causeway',75,47,12,11,'aqueduct','basin'],['quarry','The crystal quarry',97,76,12,13,'shards','basin'],
+        ['lowroad','The low sand road',68,98,12,10,'crane','basin'],['overlook','The shard overlook',92,23,10,9,'colossus','basin']],
+      edges:[['entry','basin'],['basin','causeway'],['causeway','quarry'],['quarry','lowroad'],['lowroad','basin']],branches:[['overlook',['causeway','quarry']]],rewards:['overlook']},
+    tomb_sanctum:{size:128,dark:.50,packs:38,ground:'tomb',decal:'mosaic',gate:'mausoleum_gate',returnKey:'from_sanctum',boss:'chained_sovereign',bossNode:'sovereign',
+      nodes:[['entry','The chained descent',25,73,10,9,'mausoleum_gate','court'],['procession','The funerary procession',48,65,12,9,'sarcophagus','gallery'],
+        ['ossuary','The circular ossuary',73,68,13,13,'sarcophagus','round'],['vigil','The last vigil',77,40,11,10,'columns','court'],
+        ['sovereign','The sovereign’s chamber',101,26,14,14,'mausoleum_gate','round'],['reliquary','The chain reliquary',100,95,10,9,'sarcophagus','gallery']],
+      edges:[['entry','procession'],['procession','ossuary'],['ossuary','vigil'],['vigil','sovereign']],branches:[['reliquary',['ossuary','vigil']]],rewards:['reliquary']}
+  };
+  function genAct3(zoneId,seed) {
+    const c=ACT3[zoneId],m=blank(zoneId,c.size,c.size),r=U.rng(seed^U.hash(zoneId)^0x3ab17);
+    m.zone={...m.zone,dark:c.dark};m.outdoor=!!c.outdoor;m.surfaceVersion=1;m.ramps=[];m.buildings=[];
+    m.walls.fill(1);m.blocked.fill(1);scatterFloor(m,U.rng(seed^13));
+    const f=m.composition=m.act3={revision:2,seed,identity:zoneId,terrainWalls:true,landmarks:[],routes:[],reserved:[],
+      anchors:{story:{},guards:{},events:[]},decals:[],scenery:[],encounters:[],arenaReserved:true,ground:c.ground};
+    const nodes={},inside=(x,y)=>x>1&&y>1&&x<m.w-2&&y<m.h-2;
+    const open=(x,y,path=false)=>{if(!inside(x,y))return;setWall(m,x,y,0);if(path)m.floor[idx(m,x,y)]=4;};
+    for(const [id,label,x,y,rx,ry,art,shape] of c.nodes){
+      const n={id,label,x:x+(id==='entry'?0:U.riR(r,-2,2))+.5,y:y+(id==='entry'?0:U.riR(r,-2,2))+.5,rx,ry,art,shape};nodes[id]=n;f.landmarks.push(n);
+      n.combatSpace={x0:n.x-3,y0:n.y-3,x1:n.x+3,y1:n.y+3};
+      for(let yy=Math.floor(n.y-ry);yy<=n.y+ry;yy++)for(let xx=Math.floor(n.x-rx);xx<=n.x+rx;xx++){
+        const dx=Math.abs(xx+.5-n.x)/rx,dy=Math.abs(yy+.5-n.y)/ry;
+        const valid=shape==='round'?dx*dx+dy*dy<1:shape==='basin'?dx*dx+dy*dy<1+.07*Math.sin(xx*.7+yy*.3):Math.max(dx,dy)<1&&dx+dy<1.7;
+        if(valid)open(xx,yy,shape==='gallery');
+      }
+    }
+    function connect(from,to,optional=false){
+      const a=nodes[from],b=nodes[to],horizontal=r()<.5;
+      let bend=Math.round((horizontal?a.x+b.x:a.y+b.y)/2)+U.riR(r,-3,3)+.5;
+      const crossingBand=zoneId==='shard_flats'&&!horizontal?58:zoneId==='tomb_sanctum'&&horizontal?60:null;
+      // A route must finish its ramp before turning across the upper landing.
+      if(crossingBand!==null&&Math.abs(bend-crossingBand)<6)bend=crossingBand+(bend<crossingBand?-6:6)+.5;
+      const points=horizontal?[a,{x:bend,y:a.y},{x:bend,y:b.y},b]:[a,{x:a.x,y:bend},{x:b.x,y:bend},b];
+      f.routes.push({from,to,optional,width:5,points:points.map(p=>({x:p.x,y:p.y}))});
+      for(let k=1;k<points.length;k++){
+        const a=points[k-1],b=points[k],steps=Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y));
+        for(let t=0;t<=steps;t++){const x=Math.floor(U.lerp(a.x,b.x,t/(steps||1))),y=Math.floor(U.lerp(a.y,b.y,t/(steps||1)));
+          for(let oy=-3;oy<=3;oy++)for(let ox=-3;ox<=3;ox++)if(ox*ox+oy*oy<=12)open(x+ox,y+oy,Math.abs(ox)<=2&&Math.abs(oy)<=2);
+        }
+      }
+    }
+    for(const [a,b] of c.edges)connect(a,b);
+    for(const [id,choices] of c.branches){const shuffled=choices.slice();const first=U.riR(r,0,shuffled.length-1),second=(first+1)%shuffled.length;connect(shuffled[first],id,true);connect(id,shuffled[second],true);}
+    const entry=nodes.entry;
+    if(zoneId==='desert_wastes'){
+      for(let x=0;x<entry.x;x++)for(let y=Math.floor(entry.y)-2;y<=entry.y+2;y++){setWall(m,x,y,0);m.floor[idx(m,x,y)]=4;}
+      m.exits.push({x0:0,y0:entry.y-2.5,x1:1.5,y1:entry.y+2.5,target:'khalcamp',spawnKey:'from_wild',label:'The Dig Camp'});
+      m.spawns.from_camp={x:entry.x,y:entry.y+3};
+    }else m.spawns.from_wild={x:entry.x,y:entry.y+3};
+    m.spawns.default={...(m.spawns.from_camp||m.spawns.from_wild)};m.spawns.portal={x:entry.x+2,y:entry.y+3};
+    const shrine=zoneId==='desert_wastes'?nodes.crossroads:entry;
+    addProp(m,'shrine',shrine.x+5,shrine.y+4,{blocks:false,interact:'shrine',label:'Travel Shrine'});
+    m.shrine={x:shrine.x+5,y:shrine.y+5.5};m.spawns.shrine={...m.shrine};addLight(m,shrine.x+5,shrine.y+4,4,'#a9d4ca',false);
+    // Elevation uses the same connected surface as walking, picking and shadows.
+    const band=zoneId==='shard_flats'?{axis:'y',at:58,side:-1}:zoneId==='tomb_sanctum'?{axis:'x',at:60,side:-1}:null;
+    const height=(x,y)=>band&&((band.axis==='x'?x:y)-band.at)*band.side>=0?2:0;
+    for(let y=0;y<m.h;y++)for(let x=0;x<m.w;x++)m.elev[idx(m,x,y)]=height(x,y)+(m.walls[idx(m,x,y)]?(c.outdoor?2:4):0);
+    if(band)for(const ro of f.routes)for(let k=1;k<ro.points.length;k++){
+      const a=ro.points[k-1],b=ro.points[k],axis=band.axis,other=axis==='x'?'y':'x';
+      if(a[axis]===b[axis]||Math.min(a[axis],b[axis])>band.at||Math.max(a[axis],b[axis])<band.at)continue;
+      const cross=Math.floor(a[other]),start=band.side>0?band.at-2:band.at+1;
+      const ramp={x:axis==='x'?start:cross,y:axis==='y'?start:cross,dx:axis==='x'?band.side:0,dy:axis==='y'?band.side:0,width:5,length:4,low:0,high:2};
+      if(m.ramps.some(a=>a.x===ramp.x&&a.y===ramp.y))continue;
+      for(let t=-1;t<=4;t++)for(let w=-2;w<=2;w++){const x=ramp.x+ramp.dx*t+(ramp.dy?w:0),y=ramp.y+ramp.dy*t+(ramp.dx?w:0);open(x,y,true);m.elev[idx(m,x,y)]=t===-1?0:t===4?2:height(x,y);}
+      m.ramps.push(ramp);
+    }
+    if(band){
+      // Join neighboring crossings into one wider landing instead of dropping
+      // a route's outer lanes or giving a surface tile two ramp owners.
+      const perpendicular=band.axis==='x'?'y':'x',merged=[];
+      for(const ramp of m.ramps.sort((a,b)=>a[perpendicular]-b[perpendicular])){
+        const last=merged.at(-1),lo=ramp[perpendicular]-2,hi=ramp[perpendicular]+2;
+        if(last&&lo<=last[perpendicular]+(last.width-1)/2+1){
+          const start=last[perpendicular]-(last.width-1)/2,end=Math.max(hi,last[perpendicular]+(last.width-1)/2),center=Math.floor((start+end)/2);
+          last[perpendicular]=center;last.width=2*Math.max(center-start,end-center)+1;
+        }else merged.push({...ramp});
+      }
+      m.ramps=merged;
+      for(const ramp of merged)for(let t=-1;t<=4;t++)for(let w=-(ramp.width-1)/2;w<=(ramp.width-1)/2;w++){
+        const x=ramp.x+ramp.dx*t+(ramp.dy?w:0),y=ramp.y+ramp.dy*t+(ramp.dx?w:0);open(x,y,true);m.elev[idx(m,x,y)]=t===-1?0:t===4?2:height(x,y);
+      }
+    }
+    if(c.boss){const n=nodes[c.bossNode],a={bossId:c.boss,x0:Math.floor(n.x)-10,y0:Math.floor(n.y)-10,x1:Math.floor(n.x)+11,y1:Math.floor(n.y)+11,cx:n.x,cy:n.y,approach:{x:n.x,y:n.y+12}};
+      for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++){open(x,y);m.elev[idx(m,x,y)]=m.hazard[idx(m,x,y)]=0;}
+      m.bossArena=a;f.reserved.push({...a,kind:'boss'});m.monsterSpawns.push({id:c.boss,x:n.x,y:n.y,boss:true});
+    }
+    const story=f.anchors.story;
+    for(const [id,node] of Object.entries(c.story||{})){const n=nodes[node];story[id]={x:n.x,y:n.y+(id==='fortress_map'?-7:0),landmarkId:node};}
+    for(const obj of DATA.STORY_OBJECTS[zoneId]||[])if(obj.guards?.length){const a=story[obj.id];f.anchors.guards[obj.id]=obj.guards.map((id,j)=>({id,x:a.x+(j%2?2:-2),y:a.y+1,storyId:obj.id}));}
+    const distanceToRoutes=(x,y)=>Math.min(...f.routes.flatMap(ro=>ro.points.slice(1).map((b,i)=>{const a=ro.points[i],dx=b.x-a.x,dy=b.y-a.y,t=U.clamp(((x-a.x)*dx+(y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(x-a.x-dx*t,y-a.y-dy*t);} )));
+    const protectedPoint=(x,y,pad=0)=>Object.values(m.spawns).some(p=>U.dist(x,y,p.x,p.y)<3+pad)||Object.values(story).some(p=>U.dist(x,y,p.x,p.y)<4+pad)||
+      f.reserved.some(a=>x>=a.x0-pad&&x<a.x1+pad&&y>=a.y0-pad&&y<a.y1+pad)||m.ramps.some(a=>U.dist(x,y,a.x+a.dx*2,a.y+a.dy*2)<6+pad);
+    function building(type,x,y,footprints,landmarkId){
+      for(const a of footprints)for(let yy=a.y0;yy<a.y1;yy++)for(let xx=a.x0;xx<a.x1;xx++){setWall(m,xx,yy,0);block(m,xx,yy);m.elev[idx(m,xx,yy)]=height(x,y);}
+      const p=addProp(m,type,x,y,{blocks:false,artZone:'act3',building:true,footprints,landmarkId});m.buildings.push(p);
+      for(const footprint of footprints)f.reserved.push({...footprint,kind:'architecture',landmarkId});return p;
+    }
+    function gate(n,type,target,key){
+      const candidates=[{x:n.x,y:n.y-5},...Array.from({length:169},(_,i)=>({x:n.x+(i%13-6)*2,y:n.y+(Math.floor(i/13)-6)*2})).sort((a,b)=>U.dist2(a.x,a.y,n.x,n.y-5)-U.dist2(b.x,b.y,n.x,n.y-5))];
+      let placement;
+      for(const p of candidates){
+        if(!inside(p.x,p.y)||m.walls[idx(m,p.x|0,p.y|0)]||distanceToRoutes(p.x,p.y)<2.5||protectedPoint(p.x,p.y)||height(p.x,p.y)!==height(n.x,n.y))continue;
+        const x=Math.floor(p.x),y=Math.floor(p.y),footprints=[{x0:x-4,y0:y+2,x1:x-2,y1:y+4},{x0:x+2,y0:y-4,x1:x+4,y1:y-2}];
+        if(footprints.some(a=>{for(let yy=a.y0;yy<a.y1;yy++)for(let xx=a.x0;xx<a.x1;xx++)if(!inside(xx,yy)||distanceToRoutes(xx+.5,yy+.5)<3.3||protectedPoint(xx+.5,yy+.5)||height(xx,yy)!==height(p.x,p.y))return true;return false;}))continue;
+        placement={...p,footprints};break;
+      }
+      if(!placement)throw Error('Act III entrance conflicts with reserved routes: '+zoneId+'/'+n.id);
+      const {x,y,footprints}=placement;
+      for(let yy=(y|0)-2;yy<=(y|0)+2;yy++)for(let xx=(x|0)-2;xx<=(x|0)+2;xx++){open(xx,yy,true);m.elev[idx(m,xx,yy)]=height(x,y);}
+      f.reserved.push({x0:x-1.5,y0:y-1.5,x1:x+1.5,y1:y+1.5,kind:'threshold',landmarkId:n.id});
+      // Separate piers keep the open throat traversable, never a solid billboard.
+      building(type,x,y,footprints,n.id);n.entrance={x,y,target};
+      if(target){m.exits.push({x0:x-1.3,y0:y-1,x1:x+1.3,y1:y+1.3,target,spawnKey:key,label:DATA.ZONES[target].name});}
+      addLight(m,x,y,5,'#d6b576',false);
+    }
+    if(zoneId==='desert_wastes')gate(entry,'checkpoint',null,null);else gate(entry,c.gate,'desert_wastes',c.returnKey);
+    for(const [id,target,key] of c.gates||[]){const n=nodes[id];gate(n,n.art,target,'from_wild');m.spawns[key]={x:n.x,y:n.y-.5};}
+    for(const n of f.landmarks){
+      if(n.id==='entry'||n.entrance)continue;
+      let pos=null;const span=n.art==='throne'?6:n.art==='colossus'?5:4;
+      for(const [dx,dy] of [[-3,-9],[5,-9],[-9,0],[9,0],[0,10],[-10,-8],[10,-10],[0,-15],...Array.from({length:48},(_,i)=>{const radius=12+Math.floor(i/16)*4,angle=-Math.PI/2+(i%16)*Math.PI/8;return [Math.round(Math.cos(angle)*radius),Math.round(Math.sin(angle)*radius)];})]){
+        const x=Math.floor(n.x+dx)+.5,y=Math.floor(n.y+dy)+.5,a={x0:Math.floor(x)-span/2|0,y0:Math.floor(y)-span/2|0,x1:(Math.floor(x)-span/2|0)+span,y1:(Math.floor(y)-span/2|0)+span};
+        let safe=true;for(let yy=a.y0;yy<a.y1;yy++)for(let xx=a.x0;xx<a.x1;xx++)if(!inside(xx,yy)||protectedPoint(xx+.5,yy+.5)||distanceToRoutes(xx+.5,yy+.5)<3.3||height(xx,yy)!==height(x,y))safe=false;
+        if(safe){pos={x,y,a};break;}
+      }
+      if(!pos)throw Error('Act III architecture has no footprint: '+zoneId+'/'+n.id);
+      building(n.art,pos.x,pos.y,[pos.a],n.id);n.artPosition={x:pos.x,y:pos.y};addLight(m,pos.x,pos.y,5,'#d0aa74',false);
+    }
+    if(c.outdoor)for(const n of f.landmarks)for(const [dx,dy] of [[-14,-13],[14,-12]]){
+      const x=Math.floor(n.x+dx)+.5,y=Math.floor(n.y+dy)+.5,a={x0:(x|0)-3,y0:(y|0)-3,x1:(x|0)+4,y1:(y|0)+4};
+      let solid=true;for(let yy=a.y0;yy<a.y1;yy++)for(let xx=a.x0;xx<a.x1;xx++)if(!inside(xx,yy)||!m.walls[idx(m,xx,yy)]||protectedPoint(xx+.5,yy+.5))solid=false;
+      if(solid){f.scenery.push({x,y,variant:U.riR(r,0,5),scale:1.5,footprint:a});f.reserved.push({...a,kind:'scenery'});}
+    }
+    // Market courts have actual shop clusters along their edges, leaving
+    // five-wide streets and the central relay combat spaces unobstructed.
+    if(zoneId==='underground_market')for(const n of f.landmarks.filter(n=>n.id!=='entry'))for(const [dx,dy] of [[-8,-7],[8,6],[-7,8]]){
+      const x=n.x+dx,y=n.y+dy,a={x0:(x|0)-1,y0:(y|0)-1,x1:(x|0)+2,y1:(y|0)+2};
+      let valid=true;for(let yy=a.y0;yy<a.y1;yy++)for(let xx=a.x0;xx<a.x1;xx++)if(!inside(xx,yy)||protectedPoint(xx+.5,yy+.5)||distanceToRoutes(xx+.5,yy+.5)<3.3)valid=false;
+      if(valid)building(dx>0?'awning':'stall',x,y,[a],n.id);
+    }
+    TerrainSurface.rebuild(m);
+    const safe=(x,y)=>TerrainSurface.supported(m,x,y,.4)&&!protectedPoint(x,y)&&!m.props.some(p=>U.dist(x,y,p.x,p.y)<1.5);
+    if(zoneId==='shard_flats')for(const n of [nodes.basin,nodes.lowroad])for(let y=Math.floor(n.y)-6;y<n.y+7;y++)for(let x=Math.floor(n.x)-9;x<n.x+10;x++){
+      if(safe(x+.5,y+.5)&&distanceToRoutes(x+.5,y+.5)>4&&U.dist(x+.5,y+.5,n.x+6,n.y+3)<4)setHaz(m,x,y,DATA.HAZARD_BY_ID.quicksand);
+    }
+    for(const id of c.rewards){const n=nodes[id];addProp(m,'chest',n.x+1,n.y+1,{blocks:false,lootable:true,rich:true,landmarkId:id});}
+    for(const n of f.landmarks){
+      n.elevation=height(n.x,n.y);f.decals.push({type:'act3_'+c.decal,x:n.x,y:n.y,scale:1.6,alpha:.9});
+      if(n.id!=='entry'&&n.id!==c.bossNode&&!Object.values(story).some(p=>p.landmarkId===n.id)){
+        const p={id:n.id,x:n.x-2,y:n.y+3};if(safe(p.x,p.y))f.anchors.events.push(p);
+      }
+      for(let k=0;k<6;k++){const angle=r()*Math.PI*2,x=Math.floor(n.x+Math.cos(angle)*(n.rx-2))+.5,y=Math.floor(n.y+Math.sin(angle)*(n.ry-2))+.5;
+        if(!safe(x,y)||distanceToRoutes(x,y)<3.3)continue;
+        addProp(m,k%2?'urn':'crate',x,y,{blocks:false,breakable:true,seed:U.riR(r,1,9999)});
+        f.decals.push({type:'act3_'+(k%2?'sand_drift':'rubble'),x,y,scale:.8,alpha:.85});
+      }
+    }
+    for(const ro of f.routes)for(let k=1;k<ro.points.length;k++){
+      const a=ro.points[k-1],b=ro.points[k],len=U.dist(a.x,a.y,b.x,b.y);
+      for(let d=5;d<len;d+=9)f.decals.push({type:'act3_'+(zoneId==='desert_wastes'&&ro.from==='entry'?'tracks':c.decal==='mosaic'?'paving':c.decal),x:U.lerp(a.x,b.x,d/len),y:U.lerp(a.y,b.y,d/len),scale:1,alpha:.7,turn:a.x===b.x});
+    }
+    const combat=f.landmarks.filter(n=>n.id!=='entry'&&n.id!==c.bossNode),defs=Object.fromEntries(m.zone.spawns.map(id=>[id,DATA.resolveEnemy(id,zoneId)]));
+    const pools=role=>m.zone.spawns.filter(id=>defs[id].act3Combat?.role===role);
+    const roles=['defender','ranged','flanker','heavy'].filter(role=>pools(role).length);
+    for(let k=0;k<c.packs;k++){
+      const n=combat[k%combat.length],elite=c.rewards.includes(n.id)&&k<combat.length;
+      const round=Math.floor(k/combat.length);
+      const preferred=pools('heavy').length&&(elite||/engine|relay|quarry/.test(n.id))&&round%3===0?'heavy':roles[(round+k%combat.length)%roles.length];
+      const pool=pools(preferred),type=U.pickR(r,pool.length?pool:m.zone.spawns),def=defs[type],role=def.act3Combat?.role||'melee';
+      const count=def.pack?U.riR(r,def.pack[0],def.pack[1]):U.riR(r,2,4),group={landmarkId:n.id,role,elite,spawns:[]};
+      const incoming=f.routes.find(ro=>ro.to===n.id),previous=f.landmarks.find(p=>p.id===incoming?.from)||f.landmarks[0];
+      const angle=Math.atan2(n.y-previous.y,n.x-previous.x),forward=role==='ranged'?3.5:role==='defender'?-2:0,side=role==='flanker'?(k%2?3.5:-3.5):0;
+      const center={x:n.x+Math.cos(angle)*forward-Math.sin(angle)*side,y:n.y+Math.sin(angle)*forward+Math.cos(angle)*side};
+      for(let i=0;i<count;i++){
+        const radius=.34*(def.big||1)*(elite&&i===0?1.18:1);
+        let p=null;for(let attempt=0;attempt<120&&!p;attempt++){const base=attempt<40?center:n,spread=attempt<40?3:6,x=Math.floor(base.x+U.riR(r,-spread,spread))+.5,y=Math.floor(base.y+U.riR(r,-spread,spread))+.5;
+          if(safe(x,y)&&TerrainSurface.supported(m,x,y,radius)&&!m.hazard[idx(m,x|0,y|0)]&&U.los((xx,yy)=>walkable(m,xx,yy),x,y,n.x,n.y)&&
+            m.monsterSpawns.every(o=>U.dist(x,y,o.x,o.y)>=radius+.34*(DATA.ENEMIES[o.id].big||1)*(o.elite?1.18:1)+.15))p={x,y};
+        }
+        if(!p)throw Error('Act III encounter placement failed: '+zoneId+'/'+n.id);
+        const spawn={id:type,...p,elite:elite&&i===0,minion:elite&&i>0,landmarkId:n.id};m.monsterSpawns.push(spawn);group.spawns.push(spawn);
+      }f.encounters.push(group);
+    }
+    bakeMinimap(m);TerrainSurface.rebuild(m);m.hasElev=m.elev.some(v=>v>0);return m;
+  }
+  function dressAct3Camp(m){
+    const e=m.exits.find(e=>e.target==='desert_wastes'),x=(e.x0+e.x1)/2-3,y=(e.y0+e.y1)/2;
+    m.composition=m.act3={revision:1,identity:m.id,landmarks:[{id:'checkpoint',label:'The excavation departure',x,y,art:'checkpoint'}],routes:[],reserved:[],anchors:{story:{},events:[]},decals:[]};
+    // Town services and its existing street/collision geometry stay authoritative.
+    const footprints=[{x0:30,y0:23,x1:32,y1:25},{x0:34,y0:17,x1:36,y1:19}];
+    const checkpoint=addProp(m,'checkpoint',33,21,{blocks:false,artZone:'act3',building:true,footprints,landmarkId:'checkpoint'});
+    for(const footprint of footprints)m.buildings.push({...checkpoint,footprints:undefined,footprint});
+    for(const a of footprints)for(let yy=a.y0;yy<a.y1;yy++)for(let xx=a.x0;xx<a.x1;xx++)block(m,xx,yy);
+    const tower=m.buildings.find(p=>p.type==='tower'&&p.y<20);
+    if(tower){tower.type='crane';tower.artZone='act3';}
+    m.act3.decals.push({type:'act3_paving',x:31,y:21,scale:1.2,alpha:.9},{type:'act3_tracks',x:34,y:21,scale:.7,alpha:.8});
+    bakeMinimap(m);
+    return m;
+  }
+  /* Act V: reserve the journey before dressing the battlefield. */
+  const CINDERS = {
+    ash_wastes:{size:164,outdoor:true,dark:.46,budget:96,band:65,
+      nodes:[['entry','The Breach arrival',22,27,12,11,null],['siege','The broken siege line',48,35,15,12,'siege_engine'],
+        ['crossing','The river of ash',70,52,13,12,'siege_tower'],['crossroads','The battlefield crossroads',91,79,15,13,'fallen_statue'],
+        ['monument','The impaled court',117,104,15,14,'impaled_monument'],['forecourt','The Crown Gate',137,135,16,14,null],
+        ['bastion','The Bastion gatehouse',124,48,14,13,null]],
+      edges:[['entry','siege'],['siege','crossing'],['crossing','crossroads'],['crossroads','monument'],['monument','forecourt'],['crossroads','bastion']],
+      gates:[['entry','breach_gate','hellgate','from_wild','from_camp','The Breach'],
+        ['forecourt','throne_gate','throne','from_wild','from_throne','The Throne of Cinders'],
+        ['bastion','bastion_gate','cinder_bastion','from_wild','from_bastion','The Cinder Bastion']]},
+    cinder_bastion:{size:128,dark:.53,budget:120,band:58,
+      nodes:[['entry','The broken gatehouse',23,29,12,11,null],['muster','The mustering court',54,25,15,12,'siege_tower'],
+        ['furnace','The furnace gallery',91,33,15,12,'furnace_forge'],['battlement','The broken battlement',100,73,13,13,'siege_engine'],
+        ['command','The fallen command court',78,100,16,13,'fallen_statue'],['treasury','The guarded treasury',40,86,13,13,'impaled_monument']],
+      edges:[['entry','muster'],['muster','furnace'],['furnace','battlement'],['battlement','command'],['command','treasury'],['treasury','entry']],
+      gates:[['entry','bastion_return','ash_wastes','from_bastion','from_wild','The Cinderfields']]},
+    throne:{size:128,dark:.52,budget:36,
+      nodes:[['entry','The Crown vestibule',22,23,12,11,null],['kings','The fallen kings gallery',47,40,14,12,'fallen_statue'],
+        ['guard','The divided guard court',79,53,16,13,'impaled_monument'],['causeway','The ceremonial causeway',89,80,11,10,null],
+        ['boss','The last throne',94,106,15,15,null]],
+      edges:[['entry','kings'],['kings','guard'],['guard','causeway'],['causeway','boss']],
+      gates:[['entry','throne_return','ash_wastes','from_throne','from_wild','The Cinderfields']]}
+  };
+  function genCinders(zoneId,seed) {
+    const c=CINDERS[zoneId],m=blank(zoneId,c.size,c.size),r=U.rng(seed^U.hash(zoneId)^0xc1ade5);
+    m.zone={...m.zone,dark:c.dark};m.outdoor=!!c.outdoor;m.surfaceVersion=1;m.ramps=[];m.buildings=[];
+    m.walls.fill(1);m.blocked.fill(1);scatterFloor(m,U.rng(seed^13));
+    const f=m.composition={revision:1,identity:'fallen-demon-kingdoms',seed,terrainWalls:true,
+      landmarks:[],routes:[],reserved:[],decals:[],encounters:[],anchors:{events:[]},scenery:[],arenaReserved:false};
+    const nodes={},inside=(x,y)=>x>=1&&y>=1&&x<m.w-1&&y<m.h-1;
+    const open=(x,y,path=false)=>{if(!inside(x,y))return;setWall(m,x,y,0);if(path)m.floor[idx(m,x,y)]=4;};
+    const baseAt=(x,y)=>c.band&&y>=c.band?2:0;
+    for(const [id,label,x,y,rx,ry,art] of c.nodes){
+      const n={id,label,x:x+(id==='entry'||id==='boss'?0:U.riR(r,-2,2))+.5,
+        y:y+(id==='entry'||id==='boss'?0:U.riR(r,-2,2))+.5,rx,ry,art,entrances:[]};
+      n.combatSpace={x0:n.x-4,y0:n.y-4,x1:n.x+4,y1:n.y+4};nodes[id]=n;f.landmarks.push(n);
+      for(let yy=n.y-ry-1|0;yy<=n.y+ry+1;yy++)for(let xx=n.x-rx-1|0;xx<=n.x+rx+1;xx++){
+        const dx=(xx+.5-n.x)/rx,dy=(yy+.5-n.y)/ry;
+        if((c.outdoor?dx*dx+dy*dy:Math.max(Math.abs(dx),Math.abs(dy)))<=1+(c.outdoor?.05*Math.sin(xx*.5+yy*.3):0))open(xx,yy);
+      }
+    }
+    for(const [from,to] of c.edges){
+      const a=nodes[from],b=nodes[to],horizontal=Math.abs(b.x-a.x)>Math.abs(b.y-a.y);
+      let bend=Math.round((horizontal?a.x+b.x:a.y+b.y)/2)+U.riR(r,-3,3)+.5;
+      // A corner needs a full five-lane landing beyond the ramp's side faces.
+      if(!horizontal&&c.band&&Math.abs(bend-c.band)<8)bend=c.band+(bend<c.band?-8:8)+.5;
+      const points=horizontal?[a,{x:bend,y:a.y},{x:bend,y:b.y},b]:[a,{x:a.x,y:bend},{x:b.x,y:bend},b];
+      f.routes.push({from,to,width:7,optional:to==='bastion'||from==='treasury',points:points.map(p=>({x:p.x,y:p.y}))});
+      for(let k=1;k<points.length;k++){
+        const p=points[k-1],q=points[k],steps=Math.max(Math.abs(p.x-q.x),Math.abs(p.y-q.y));
+        for(let t=0;t<=steps;t++){
+          const x=Math.round(U.lerp(p.x,q.x,t/(steps||1))-.5),y=Math.round(U.lerp(p.y,q.y,t/(steps||1))-.5);
+          for(let oy=-4;oy<=4;oy++)for(let ox=-4;ox<=4;ox++)if(ox*ox+oy*oy<=20)open(x+ox,y+oy,ox*ox+oy*oy<=6.25);
+        }
+      }
+      for(const [n,ps,target] of [[a,points,to],[b,points.slice().reverse(),from]]){
+        const p=ps.find(p=>p.x!==n.x||p.y!==n.y),dx=p.x-n.x,dy=p.y-n.y;
+        const t=Math.min(1,1/Math.sqrt((dx/(n.rx-2))**2+(dy/(n.ry-2))**2));
+        n.entrances.push({to:target,x:n.x+dx*t,y:n.y+dy*t,width:7});
+      }
+    }
+    const routeDistance=(x,y)=>Math.min(...f.routes.flatMap(ro=>ro.points.slice(1).map((b,i)=>{
+      const a=ro.points[i],dx=b.x-a.x,dy=b.y-a.y,t=U.clamp(((x-a.x)*dx+(y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);
+      return Math.hypot(x-a.x-dx*t,y-a.y-dy*t);
+    })));
+    if(nodes.boss){
+      const n=nodes.boss,a=m.bossArena={bossId:'vethriss',x0:n.x-10.5,y0:n.y-10.5,x1:n.x+10.5,y1:n.y+10.5,cx:n.x,cy:n.y,
+        approach:{x:n.x,y:n.y-12}};
+      for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++)open(x,y);
+      f.reserved.push({...a,kind:'boss'});f.arenaReserved=true;
+      m.monsterSpawns.push({id:'vethriss',x:n.x,y:n.y,boss:true});
+    }
+    for(let y=0;y<m.h;y++)for(let x=0;x<m.w;x++)m.elev[idx(m,x,y)]=baseAt(x,y)+(m.walls[idx(m,x,y)]?(c.outdoor?2:4):0);
+    if(c.band)for(const ro of f.routes)for(let k=1;k<ro.points.length;k++){
+      const a=ro.points[k-1],b=ro.points[k];if(a.y===b.y||Math.min(a.y,b.y)>c.band||Math.max(a.y,b.y)<c.band)continue;
+      const ramp={x:a.x|0,y:c.band-2,dx:0,dy:1,width:7,length:4,low:0,high:2};
+      if(m.ramps.some(p=>Math.abs(p.x-ramp.x)<8))continue;
+      for(let t=-1;t<=4;t++)for(let w=-3;w<=3;w++){
+        const x=ramp.x+w,y=ramp.y+t;open(x,y,true);m.elev[idx(m,x,y)]=t===-1?0:t===4?2:baseAt(x,y);
+      }m.ramps.push(ramp);
+    }
+    const reserve=(x,y,radius,kind)=>f.reserved.push({x0:x-radius,y0:y-radius,x1:x+radius,y1:y+radius,kind});
+    const protectedPoint=(x,y,pad=0)=>f.reserved.some(a=>x>=a.x0-pad&&x<a.x1+pad&&y>=a.y0-pad&&y<a.y1+pad)||
+      m.ramps.some(a=>Math.abs(x-a.x)<5+pad&&y>a.y-2-pad&&y<a.y+6+pad);
+    // Separate jamb footprints keep the visible opening and travel trigger clear.
+    for(const [id,art,target,spawnKey,returnKey,label] of c.gates){
+      const n=nodes[id];
+      const offset=[[-7,-7],[7,-7],[-7,7],[7,7]].find(([dx,dy])=>[-1,1].every(side=>{
+        const px=n.x+dx+side*3,py=n.y+dy-side*3;
+        for(let yy=py-1.5;yy<py+.5;yy++)for(let xx=px-1.5;xx<px+.5;xx++)
+          if(!inside(xx,yy)||routeDistance(xx+.5,yy+.5)<3.5)return false;
+        return true;
+      }));
+      if(!offset)throw Error('No safe cinder doorway: '+zoneId+'/'+id);
+      const x=n.x+offset[0],y=n.y+offset[1];
+      for(let yy=y-5|0;yy<=y+5;yy++)for(let xx=x-5|0;xx<=x+5;xx++){open(xx,yy);m.elev[idx(m,xx,yy)]=baseAt(x,y);}
+      const pr=addProp(m,art,x,y,{artZone:'cinders',blocks:false,building:true,landmarkId:id,label,gate:true});pr.footprints=[];
+      for(const side of [-1,1]){
+        const px=x+side*3,py=y-side*3,fp={x0:px-1.5,y0:py-1.5,x1:px+.5,y1:py+.5};
+        for(let yy=fp.y0;yy<fp.y1;yy++)for(let xx=fp.x0;xx<fp.x1;xx++)block(m,xx,yy);
+        pr.footprints.push(fp);m.buildings.push({type:art,x:px,y:py,footprint:fp,gate:true});
+      }
+      m.exits.push({x0:x-1.2,y0:y-1.2,x1:x+1.2,y1:y+1.2,target,spawnKey,label});
+      m.spawns[returnKey]={x:x+3,y:y+3};n.exit={x,y,target};
+      reserve(x,y,6,'gate');reserve(x+3,y+3,3,'arrival');addLight(m,x+1,y+1,6,'#ff9c50');
+    }
+    const entry=nodes.entry;m.spawns.default={...(m.spawns.from_camp||m.spawns.from_wild)};
+    m.spawns.portal={x:entry.x+1,y:entry.y+2};reserve(m.spawns.portal.x,m.spawns.portal.y,3,'arrival');
+    const shrine={x:entry.x+4,y:entry.y+3};
+    addProp(m,'shrine',shrine.x,shrine.y,{blocks:false,interact:'shrine',label:'Travel Shrine'});
+    m.shrine={x:shrine.x,y:shrine.y+1.5};m.spawns.shrine={...m.shrine};reserve(shrine.x,shrine.y,3,'shrine');
+    addLight(m,shrine.x,shrine.y,5,'#adc3cf',false);
+    function architecture(n,art=n.art,forced=null,optional=false){
+      if(!art)return;let pos=forced;const span=art==='throne_backdrop'?6:4;
+      for(const [dx,dy] of [[-8,-8],[9,-8],[-9,7],[8,8],[-11,-6],[6,-11]]){
+        if(pos)break;const x=n.x+dx,y=n.y+dy,rad=span/2;
+        if(!inside(x-rad,y-rad)||!inside(x+rad,y+rad))continue;
+        let safe=true;for(let yy=y-rad|0;yy<y+rad;yy++)for(let xx=x-rad|0;xx<x+rad;xx++)
+          if(protectedPoint(xx+.5,yy+.5,1)||routeDistance(xx+.5,yy+.5)<3.8||baseAt(xx,yy)!==baseAt(x,y)||
+            Math.abs(xx+.5-n.x)<5&&Math.abs(yy+.5-n.y)<5)safe=false;
+        if(safe)pos={x,y};
+      }
+      if(!pos){if(optional)return;throw Error('No safe cinder landmark: '+zoneId+'/'+n.id);}
+      const {x,y}=pos,fp={x0:Math.floor(x-span/2),y0:Math.floor(y-span/2),x1:Math.floor(x-span/2)+span,y1:Math.floor(y-span/2)+span};
+      for(let yy=fp.y0;yy<fp.y1;yy++)for(let xx=fp.x0;xx<fp.x1;xx++){open(xx,yy);block(m,xx,yy);m.elev[idx(m,xx,yy)]=baseAt(x,y);}
+      const pr=addProp(m,art,x,y,{artZone:'cinders',blocks:true,building:true,footprint:fp,landmarkId:n.id});
+      m.buildings.push(pr);f.reserved.push({...fp,kind:'architecture'});n.art=art;n.artPosition={x,y};addLight(m,x+1,y+2,6,'#ff9c50');
+    }
+    for(const n of f.landmarks)architecture(n);
+    for(const n of f.landmarks){
+      const secondary={siege:'siege_tower',crossing:'siege_engine',muster:'siege_tower',furnace:'furnace_forge',command:'fallen_statue',kings:'fallen_statue',guard:'fallen_statue'}[n.id];
+      if(secondary)architecture({...n},secondary,null,true);
+    }
+    if(nodes.boss)architecture(nodes.boss,'throne_backdrop',{x:nodes.boss.x+7,y:nodes.boss.y-14});
+    if(c.outdoor)for(const n of f.landmarks)for(const [dx,dy] of [[-16,-14],[16,-18]]){
+      const x=n.x+dx,y=n.y+dy,footprint={x0:Math.floor(x)-3,y0:Math.floor(y)-3,x1:Math.floor(x)+4,y1:Math.floor(y)+4};
+      let solid=true;for(let yy=footprint.y0;yy<footprint.y1;yy++)for(let xx=footprint.x0;xx<footprint.x1;xx++)
+        if(!inside(xx,yy)||!m.walls[idx(m,xx,yy)])solid=false;
+      if(solid)f.scenery.push({x,y,variant:U.riR(r,0,5),scale:1.5,footprint});
+    }
+    for(const n of f.landmarks){
+      n.elevation=baseAt(n.x,n.y);
+      if(n.id!=='boss')f.decals.push({type:'cinders_'+(c.outdoor?'ash_drifts':'ceremonial_paving'),x:n.x,y:n.y,scale:c.outdoor?2:1.4,alpha:c.outdoor?.8:.85});
+      if(n.id!=='boss')for(let k=0;k<3;k++)f.decals.push({type:'cinders_chain_rubble',x:n.x+U.riR(r,-9,9),y:n.y+U.riR(r,-8,8),scale:.8,alpha:.72});
+      // Lava is beside the fighting floor, never across the mandatory lanes.
+      if(n.id!=='entry'&&n.id!=='boss'&&(c.outdoor||n.id==='furnace')){
+        for(const side of [-1,1])for(let yy=n.y-9|0;yy<=n.y+9;yy++)for(let xx=n.x-12|0;xx<=n.x+12;xx++){
+          const d=Math.hypot((xx+.5-n.x-side*9)/2,(yy+.5-n.y)/6);
+          if(d<1&&!m.blocked[idx(m,xx,yy)]&&!protectedPoint(xx+.5,yy+.5,1)&&routeDistance(xx+.5,yy+.5)>5)setHaz(m,xx,yy,DATA.HAZARD_BY_ID.lava);
+        }
+      }
+      addLight(m,n.x,n.y,c.outdoor?8:7,c.outdoor?'#b6a994':'#ba9b83',false);
+    }
+    for(const n of f.landmarks)if(n.id!=='entry'&&n.id!=='boss')for(let k=0;k<5;k++){
+      const x=n.x+U.riR(r,-10,10),y=n.y+U.riR(r,-8,8),i=idx(m,x|0,y|0);
+      if(m.blocked[i]||m.hazard[i]||protectedPoint(x,y,1)||routeDistance(x,y)<4||Math.hypot(x-n.x,y-n.y)<6)continue;
+      addProp(m,U.pickR(r,['urn','crate','barrel']),x,y,{blocks:false,breakable:true});
+    }
+    TerrainSurface.rebuild(m);
+    const safe=(x,y)=>inside(x,y)&&TerrainSurface.supported(m,x,y,.5)&&!m.hazard[idx(m,x|0,y|0)]&&!protectedPoint(x,y,1);
+    const combat=f.landmarks.filter(n=>n.id!=='entry'&&n.id!=='boss');
+    for(const n of combat){
+      const candidate=[{x:n.x+4,y:n.y+2},{x:n.x-4,y:n.y+3},{x:n.x+2,y:n.y-4}].find(p=>safe(p.x,p.y));
+      if(candidate)f.anchors.events.push({id:n.id,...candidate});
+    }
+    const reward=nodes.treasury||nodes.forecourt||nodes.causeway;
+    const rewardPos=[{x:reward.x+3,y:reward.y+3},{x:reward.x-3,y:reward.y+3}].find(p=>safe(p.x,p.y));
+    if(!rewardPos)throw Error('No cinder reward floor');
+    addProp(m,'chest',rewardPos.x,rewardPos.y,{blocks:false,lootable:true,rich:true,landmarkId:reward.id});
+    let total=0,groupIndex=0;
+    while(total<c.budget){
+      const n=combat[groupIndex%combat.length],role=groupIndex%3===1?'ranged':'melee';
+      const roster=m.zone.spawns.filter(id=>!!DATA.ENEMIES[id].projectile===(role==='ranged'));
+      const id=U.pickR(r,roster.length?roster:m.zone.spawns),def=DATA.ENEMIES[id];
+      const count=def.pack?U.riR(r,...def.pack):U.riR(r,2,4),elite=n.id==='treasury'&&groupIndex<combat.length||r()<.12;
+      const candidates=[];for(let y=n.y-7;y<=n.y+7;y++)for(let x=n.x-8;x<=n.x+8;x++)
+        if(safe(x,y)&&!m.monsterSpawns.some(p=>Math.hypot(x-p.x,y-p.y)<.9)&&
+          !m.props.some(p=>(p.interact||p.lootable)&&Math.hypot(x-p.x,y-p.y)<2))candidates.push({x,y});
+      const ax=n.x+(groupIndex%2?4:-4),ay=n.y+(role==='ranged'?-3:3);
+      candidates.sort((a,b)=>U.dist2(a.x,a.y,ax,ay)-U.dist2(b.x,b.y,ax,ay));
+      if(candidates.length<count)throw Error('Cinder encounter space exhausted: '+zoneId+'/'+n.id);
+      const group={landmarkId:n.id,role,elite,spawns:[]};
+      for(let k=0;k<count;k++){const p=candidates[k],sp={id,...p,elite:elite&&k===0,minion:elite&&k>0,landmarkId:n.id};m.monsterSpawns.push(sp);group.spawns.push(sp);total++;}
+      f.encounters.push(group);groupIndex++;
+    }
+    bakeMinimap(m);TerrainSurface.rebuild(m);m.hasElev=m.elev.some(v=>v>0);
+    return m;
+  }
+  /* Act IV: authored memory islands with seeded room assignments and links. */
+  function genCathedral(zoneId,seed) {
+    const side=!!DATA.ZONES[zoneId].memoryParent,heart=zoneId==='cathedral2',bastion=zoneId==='cathedral_bastion';
+    const m=blank(zoneId,side?72:112,side?72:112),r=U.rng(seed^U.hash(zoneId));
+    const variant=U.riR(r,0,side?1:2),baseMaterial=side?(bastion?3:2):(heart?1:0);
+    m.zone={...m.zone,dark:side?(bastion?.61:.57):(heart?.65:.57)};
+    m.walls.fill(1);m.blocked.fill(1);m.void=new Uint8Array(m.w*m.h).fill(1);
+    m.cathedralMaterials=new Uint8Array(m.w*m.h).fill(baseMaterial);
+    const c=m.cathedral={version:1,seed,variant,rooms:[],connections:[],anchors:{},reserved:[],decals:[],
+      void:m.void,baseMaterial,materials:['cathedral_floor_pale','cathedral_floor_dark','cathedral_floor_street','cathedral_floor_fortress'],arenaReserved:true};
+    const nodes={},routeClearance=new Uint8Array(m.w*m.h);
+    function open(x,y,mat=baseMaterial){if(x<2||y<2||x>=m.w-2||y>=m.h-2)return;const i=idx(m,x,y);m.walls[i]=m.blocked[i]=m.void[i]=0;m.floor[i]=2;m.cathedralMaterials[i]=mat;}
+    function room(id,label,x,y,w,h,mat=baseMaterial){
+      if(side&&variant)x=m.w-x;
+      if(id!=='entry'&&id!=='sanctuary'){w+=U.riR(r,-1,1)*2;h+=U.riR(r,-1,1)*2;}
+      const n={id,label,x:x+.5,y:y+.5,w,h,material:mat};nodes[id]=n;c.rooms.push(n);
+      const x0=x-Math.floor(w/2),y0=y-Math.floor(h/2);
+      for(let yy=0;yy<h;yy++)for(let xx=0;xx<w;xx++){
+        if(Math.min(xx,w-1-xx)+Math.min(yy,h-1-yy)<3)continue;open(x0+xx,y0+yy,mat);
+      }
+      return n;
+    }
+    function route(a,b,width=5,via=[]){
+      a=typeof a==='string'?nodes[a]:a;b=typeof b==='string'?nodes[b]:b;
+      const points=[a,...via,b].map(p=>({x:Math.floor(p.x),y:Math.floor(p.y)}));
+      c.connections.push({from:a.id,to:b.id,width,points});const rad=Math.floor(width/2);
+      for(let j=1;j<points.length;j++){
+        const {x,y}=points[j-1],t=points[j],dx=t.x-x,dy=t.y-y,steps=Math.max(Math.abs(dx),Math.abs(dy));
+        for(let k=0;k<=steps;k++){const xx=Math.round(x+dx*k/Math.max(1,steps)),yy=Math.round(y+dy*k/Math.max(1,steps));
+          for(let oy=-rad;oy<=rad;oy++)for(let ox=-rad;ox<=rad;ox++){
+            open(xx+ox,yy+oy);if(Math.abs(ox)<=1&&Math.abs(oy)<=1)routeClearance[idx(m,xx+ox,yy+oy)]=1;
+          }
+        }
+      }
+    }
+    if(!side&&!heart){
+      room('entry','The broken arrival bridge',15,94,13,13);
+      room('nave','The nave of borrowed memories',38+variant*3,68,27,25);
+      const slots=[[22,33],[60+variant*3,22],[89,53+variant*3]];
+      const memories=[['cinderwatch','Cinderwatch chapel',2],['bastion','Last Bastion chapel',3],['karrhal','Mount Karrhal chapel',0]];
+      for(let i=0;i<3;i++){const [id,label,mat]=memories[i],p=slots[(i+variant)%3];room(id,label,p[0],p[1],23,23,mat);}
+      room('sanctuary','Sanctuary of the Empty Archangel',85,91,29,29);
+      const ordered=slots.map(p=>c.rooms.find(n=>Math.floor(n.x)===p[0]&&Math.floor(n.y)===p[1]));
+      route('entry','nave',7);route('nave',ordered[0],7);route(ordered[0],ordered[1]);route(ordered[1],ordered[2]);
+      route(ordered[2],'nave');route('nave','sanctuary',7);route(ordered[1],'nave',5);
+      for(const [i,id] of ['cinderwatch','bastion','karrhal'].entries())c.anchors['trapped_soul_'+i]={x:nodes[id].x,y:nodes[id].y-2};
+    }else if(heart){
+      room('entry','The reliquary threshold',17,92,15,15);
+      const slots=[[23,54],[35+variant*3,21],[84,23+variant*3]];
+      for(let i=0;i<3;i++){const p=slots[(i+variant)%3];room('ritual_'+i,['The choir of silence','The sundered armory','The chamber of names'][i],p[0],p[1],23,23);}
+      room('bastion','The breached procession',91,70,21,23,3);room('sanctuary','The Hollow King’s throne',60,59,29,29);
+      const ordered=slots.map(p=>c.rooms.find(n=>Math.floor(n.x)===p[0]&&Math.floor(n.y)===p[1]));
+      route('entry',ordered[0],7);route(ordered[0],ordered[1],7);route(ordered[1],ordered[2],7);
+      route(ordered[2],'bastion',7);route('bastion','entry',5,[{x:85,y:96},{x:39,y:98}]);
+      route('bastion','sanctuary',7);route(ordered[variant%2],'sanctuary',5);
+      for(let i=0;i<3;i++){const n=nodes['ritual_'+i];c.anchors['quieting_seal_'+i]={x:n.x-3,y:n.y-2};c.anchors['sword_piece_'+i]={x:n.x+3,y:n.y+2};c.anchors['guard_'+i]={x:n.x-3,y:n.y+2};}
+      c.anchors.hell_portal={x:nodes.sanctuary.x,y:nodes.sanctuary.y-12};
+    }else{
+      room('entry',bastion?'The shattered portcullis':'The ember gate',12,59,15,15);
+      room('approach',bastion?'The broken defense walk':'Ashen street',15,35,19,21);
+      room('memory',bastion?'The abandoned muster':'Houses without names',29,14,23,19);
+      room('flank',bastion?'The barracks flank':'The remembered memorial',55,22,21,21);
+      room('sanctuary',bastion?'The last defense':'The watch captain’s square',53,51,25,25);
+      room('shortcut',bastion?'The fallen banner court':'The courtyard passage',30,50,13,13);
+      route('entry','approach',7);route('approach','memory');route('memory','flank');route('flank','sanctuary',7);
+      route('sanctuary','shortcut');route('shortcut','entry');c.encounter={id:'memory_guard',members:5};
+    }
+    if(!side){
+      const n=nodes.sanctuary,x0=Math.floor(n.x)-10,y0=Math.floor(n.y)-10;
+      const a=m.bossArena={bossId:m.zone.boss,x0,y0,x1:x0+21,y1:y0+21,cx:x0+10.5,cy:y0+10.5,approach:{x:n.x+12,y:n.y}};
+      for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++)open(x,y);
+      c.reserved.push({...a,kind:'boss'});m.monsterSpawns.push({id:m.zone.boss,x:a.cx,y:a.cy,boss:true});
+    }
+    const inArena=(x,y,pad=1)=>m.bossArena&&x>=m.bossArena.x0-pad&&x<m.bossArena.x1+pad&&y>=m.bossArena.y0-pad&&y<m.bossArena.y1+pad;
+    function prop(type,x,y,options={}){return addProp(m,type,x,y,{blocks:false,...options});}
+    function architecture(type,n,dx,dy,width=3,height=2){
+      const x=n.x+dx,y=n.y+dy,footprint={x0:Math.floor(x-width/2),y0:Math.floor(y-height/2),x1:Math.floor(x-width/2)+width,y1:Math.floor(y-height/2)+height};
+      if(c.reserved.some(a=>a.kind==='gate'&&x>=a.x0-2&&x<a.x1+2&&y>=a.y0-2&&y<a.y1+2))return;
+      for(let yy=footprint.y0;yy<footprint.y1;yy++)for(let xx=footprint.x0;xx<footprint.x1;xx++)if(inArena(xx+.5,yy+.5,0)||routeClearance[idx(m,xx,yy)])return;
+      for(let yy=footprint.y0;yy<footprint.y1;yy++)for(let xx=footprint.x0;xx<footprint.x1;xx++)if(xx>=0&&yy>=0&&xx<m.w&&yy<m.h)m.blocked[idx(m,xx,yy)]=1;
+      const pr=prop('cathedral_'+type,x,y,{blocks:true,building:true,footprint});(m.buildings||(m.buildings=[])).push(pr);c.reserved.push({...footprint,kind:'architecture'});return pr;
+    }
+    function gate(n,type,target,spawnKey,returnKey,label,dx=0,dy=-4,preserve=false){
+      const x=n.x+dx,y=n.y+dy;
+      for(let yy=-2;yy<=4;yy++)for(let xx=-3;xx<=3;xx++)open(Math.floor(x)+xx,Math.floor(y)+yy,n.material);
+      prop('cathedral_'+type,x,y,{building:true,gate:true});
+      m.exits.push({x0:x-1.3,y0:y-.7,x1:x+1.3,y1:y+.7,target,spawnKey,label,reuseCachedMap:preserve});
+      if(returnKey)m.spawns[returnKey]={x,y:y+3};
+      c.reserved.push({x0:x-4,y0:y-3,x1:x+4,y1:y+5,kind:'gate'});
+      addLight(m,x,y,7,type==='cinder_gate'?'#dea461':'#b8b5e0',false);
+    }
+    const entry=nodes.entry;
+    if(side){gate(entry,bastion?'bastion_gate':'cinder_gate',m.zone.memoryParent,'from_'+zoneId,'default',DATA.ZONES[m.zone.memoryParent].name,0,-4,true);m.spawns.from_parent=m.spawns.default;}
+    else if(heart)gate(entry,'heart_gate','cathedral1','from_cathedral2','from_cathedral1','The Shattered Cathedral');
+    else gate(entry,'arrival','khalcamp','shrine','default','The Dig Camp');
+    m.spawns.default=m.spawns.default||m.spawns.from_cathedral1;m.spawns.portal={x:m.spawns.default.x+1,y:m.spawns.default.y};
+    if(!side){
+      const n=heart?nodes.bastion:nodes.cinderwatch,child=heart?'cathedral_bastion':'cathedral_cinderwatch';
+      gate(n,heart?'bastion_gate':'cinder_gate',child,'from_parent','from_'+child,DATA.ZONES[child].name,6,-5);
+      if(!heart)gate(nodes.sanctuary,'heart_gate','cathedral2','from_cathedral1','from_cathedral2','The Cathedral Heart',0,-12);
+      const x=entry.x-4,y=entry.y+2;prop('shrine',x,y,{interact:'shrine',label:'Travel Shrine'});m.shrine={x,y:y+1.5};m.spawns.shrine=m.shrine;addLight(m,x,y,6,'#cad7df',false);
+    }
+    const landmarks=side?{approach:bastion?'defenses':'houses',memory:bastion?'defenses':'houses',flank:bastion?'buttress':'memorial',sanctuary:bastion?'defenses':'memorial'}:
+      heart?{ritual_0:'rose_window',ritual_1:'buttress',ritual_2:'mountain_shrine',bastion:'defenses',sanctuary:'throne'}:
+      {nave:'rose_window',cinderwatch:'houses',bastion:'defenses',karrhal:'mountain_shrine',sanctuary:'rose_window'};
+    for(const [id,type] of Object.entries(landmarks)){
+      const n=nodes[id],left=-Math.floor(n.w/2)+3,right=Math.floor(n.w/2)-3,back=-Math.floor(n.h/2)+1;
+      // Landmarks are required. Try authored perimeter sockets when a seeded
+      // bridge or gateway occupies the preferred position.
+      for(const [dx,dy] of [[-6,back],[left,back+1],[right,back+1],[left,-3],[right,3],[left,Math.floor(n.h/2)-2]]){
+        const piece=architecture(type,n,dx,dy,4,2);if(piece){n.landmark={type:piece.type,x:piece.x,y:piece.y};break;}
+      }
+      if(!n.landmark)throw new Error('No cathedral landmark socket: '+zoneId+'/'+seed+'/'+id);
+      if(id!=='sanctuary')architecture('column',n,-Math.floor(n.w/2)+2,2,2,2);
+      addLight(m,n.x,n.y,side?10:12,n.material===2?'#d8a066':heart?'#aaa1c8':'#d4cbb4',false);
+    }
+    const protectedPoint=(x,y)=>inArena(x,y)||c.reserved.some(a=>x>=a.x0-1&&x<a.x1+1&&y>=a.y0-1&&y<a.y1+1)||Object.values(c.anchors).some(a=>U.dist(x,y,a.x,a.y)<4)||Object.values(m.spawns).some(a=>U.dist(x,y,a.x,a.y)<5);
+    for(const n of c.rooms){
+      if(n.id==='entry'||n.id==='sanctuary')continue;
+      architecture('broken_arch',n,Math.floor(n.w/2)-2,-4,2,2);
+      architecture('parapet',n,4,Math.floor(n.h/2)-1,3,1);
+      for(let i=0;i<4;i++){const x=n.x+U.riR(r,-8,8),y=n.y+U.riR(r,-8,8);if(walkable(m,x,y)&&!protectedPoint(x,y))c.decals.push({type:'cathedral_'+(i%2?'glass':'rubble_decal'),x,y,scale:.8+r()*.5,alpha:.7});}
+      for(const [dx,dy] of [[-7,6],[6,7]]){const x=n.x+dx,y=n.y+dy;if(walkable(m,x,y)&&!protectedPoint(x,y))prop('cathedral_rubble',x,y);}
+    }
+    function pack(n,ids,count,elite=false,encounter=null,skillProfile=null){
+      for(let i=0;i<count;i++){const x=n.x+(i%3-1)*2,y=n.y+Math.floor(i/3)*2;
+        const id=Array.isArray(ids)?ids[i]:ids;
+        if(walkable(m,x,y)&&!inArena(x,y))m.monsterSpawns.push({id,x,y,elite:elite&&i===0,minion:elite&&i>0,cathedralEncounter:encounter,skillProfile:i===0?skillProfile:null});
+      }
+    }
+    const K='hollow_knight',P='choir_priest',S='soul_eater',W='memory_wraith';
+    if(side){
+      const approaches=bastion?[[K,K,K,P,W],[K,K,P,W,W],[K,K,K,W,W]]:[[K,K,K,S,S],[K,K,S,W,W],[K,K,S,S,W]];
+      for(const [i,id] of ['approach','memory','flank'].entries())pack(nodes[id],approaches[i],5);
+      pack(nodes.sanctuary,bastion?[P,K,K,K,W]:[K,K,K,S,S],5,true,'memory_guard',bastion?'cathedral_priest_guardian':'cathedral_knight_guardian');
+      prop('chest',nodes.sanctuary.x+4,nodes.sanctuary.y+4,{lootable:true,rich:true,encounterLock:'memory_guard',label:'The remembered cache',visual:'cathedral_reliquary',visualDone:'cathedral_reliquary_open'});
+      prop('cathedral_memorial',nodes.memory.x+5,nodes.memory.y+4,{interact:'memory_lore',label:bastion?'The last watch':'A name in the ashes',lore:bastion?'The stone remembers a final defense. The banners still turn toward an enemy that no longer exists. Here, the Quieting could not erase the oath.':'A doorframe remembers the height of a child. Warmth lingers in a hearth that has been cold for years. The cathedral has kept the streets, but stolen their names.'});
+    }else{
+      for(const n of c.rooms){if(['entry','sanctuary'].includes(n.id))continue;pack(n,n.id.startsWith('ritual')?[K,K,K,S,W]:[K,K,P,S,W],5);if(n.id==='nave')pack({...n,x:n.x+6,y:n.y+3},K,4);}
+      prop('chest',nodes.sanctuary.x+12,nodes.sanctuary.y+7,{lootable:true,rich:true,visual:'cathedral_reliquary',visualDone:'cathedral_reliquary_open'});
+    }
+    bakeMinimap(m);return m;
+  }
+
   function generateLayout(zoneId, worldSeed) {
+    if(['cathedral1','cathedral2','cathedral_cinderwatch','cathedral_bastion'].includes(zoneId))return genCathedral(zoneId,worldSeed);
+    if (CINDERS[zoneId]) return genCinders(zoneId, worldSeed);
+    if (ACT3[zoneId]) return genAct3(zoneId, worldSeed);
+    if (ACT2[zoneId]) return genAct2(zoneId, worldSeed);
+    if (FRONTIER[zoneId]) return genFrontier(zoneId, worldSeed);
     switch (zoneId) {
       case "frosthaven_approach": return genOpening(worldSeed);
       case "town": return genTown(worldSeed);
@@ -1638,34 +2676,11 @@ const MapGen = (() => {
         upTarget: "desert_wastes", upSpawnKey: "from_palace", upLabel: "The Shifting Wastes", entryKey: "from_wild",
         bossId: "azram", entryShrine: true });
 
-      /* ===== ACT IV — The Shattered Cathedral (shifting) ===== */
-      case "cathedral1": return genCrypt("cathedral1", worldSeed, {
-        arch: "halls",
-        upTarget: "khalcamp", upSpawnKey: "shrine", upLabel: "The Dig Camp", entryKey: "default",
-        downTarget: "cathedral2", downSpawnKey: "from_cathedral1", downLabel: "The Cathedral Heart",
-        bossId: "empty_archangel", entryShrine: true });
-      case "cathedral2": return genCrypt("cathedral2", worldSeed, {
-        arch: "halls",
-        upTarget: "cathedral1", upSpawnKey: "from_cathedral2", upLabel: "The Shattered Cathedral", entryKey: "from_cathedral1",
-        bossId: "malthoron", entryShrine: true });
-
       /* ===== ACT V — The Throne of Cinders ===== */
       case "hellgate": return genCamp("hellgate", worldSeed, {
         npcs: [{ id: "vael", x: 10, y: 9 }], shard: true, forge: true,
         vendors: [{ id: "sutler_smith", x: 18, y: 11 }, { id: "sutler_quarter", x: 7, y: 11 }],
         exit: { target: "ash_wastes", spawnKey: "from_camp", returnKey: "from_wild", label: "The Cinderfields" } });
-      case "ash_wastes": return genWilds("ash_wastes", worldSeed, { size: 82, rainCh: 0, arch: "cinder_rifts",
-        decor: ["deadtree", "rock"], shards: 5, camps: 18,
-        entryKey: "from_camp", back: { target: "hellgate", spawnKey: "from_wild", label: "The Breach" },
-        gate: { prop: "monasterygate", target: "throne", spawnKey: "from_wild", returnKey: "from_throne", label: "The Throne of Cinders", glow: "#ff6030" },
-        side: { prop: "cryptdoor", target: "cinder_bastion", spawnKey: "from_wild", returnKey: "from_bastion", label: "The Cinder Bastion" } });
-      case "cinder_bastion": return genCrypt("cinder_bastion", worldSeed, {
-        arch: "catacombs",
-        upTarget: "ash_wastes", upSpawnKey: "from_bastion", upLabel: "The Cinderfields", entryKey: "from_wild", entryShrine: true });
-      case "throne": return genCrypt("throne", worldSeed, {
-        arch: "halls",
-        upTarget: "ash_wastes", upSpawnKey: "from_throne", upLabel: "The Cinderfields", entryKey: "from_wild",
-        bossId: "vethriss", entryShrine: true });
 
       /* ===== OPTIONAL SIDE-QUEST SUB-ZONES (Acts I–III) ===== */
       case "shardpeak_shrine": return genCrypt("shardpeak_shrine", worldSeed, {
@@ -1692,6 +2707,7 @@ const MapGen = (() => {
   }
 
   function reserveBossArena(m) {
+    if (m.frontier?.arenaReserved || m.act2?.arenaReserved || m.composition?.arenaReserved || m.cathedral?.arenaReserved) return;
     const id=m.zone.boss;
     if(typeof BossEncounters==="undefined"||!BossEncounters.definitions[id])return;
     const boss=m.monsterSpawns.find(s=>s.id===id);if(!boss)return;
@@ -1724,6 +2740,7 @@ const MapGen = (() => {
   }
   function generate(zoneId, worldSeed) {
     const m = generateLayout(zoneId, worldSeed);
+    if(zoneId==='khalcamp')dressAct3Camp(m);
     reserveBossArena(m);
     const objects = DATA.STORY_OBJECTS[zoneId] || [];
     if (!objects.length) return m;
@@ -1746,27 +2763,26 @@ const MapGen = (() => {
     for (const [i,obj] of objects.entries()) {
       const boss = obj.requireKill && m.monsterSpawns.find(sp=>sp.id===obj.requireKill);
       const frac=(i+1)/(objects.length+1), target={x:start.x+(m.w-2-start.x)*frac,y:start.y+(m.h-2-start.y)*frac};
-      const point = candidates.filter(p=>chosen.every(c=>U.dist(c.x,c.y,p.x,p.y)>3)&&
+      const authored=m.cathedral?.anchors[obj.id] || (m.act3||m.act2)?.anchors.story[obj.id];
+      const point = authored || candidates.filter(p=>chosen.every(c=>U.dist(c.x,c.y,p.x,p.y)>3)&&
         (obj.requireKill||!m.bossArena||!BossEncounters.insideArena(m.bossArena,p.x,p.y)))
         .sort((a,b)=>U.dist2(a.x,a.y,(boss||target).x,(boss||target).y)-U.dist2(b.x,b.y,(boss||target).x,(boss||target).y))[0];
       if (!point) throw new Error('No reachable story placement: '+zoneId+'/'+obj.id);
       chosen.push(point);
       if (obj.npc) m.npcs.push({id:obj.npc,...point,npcArt:obj.art,displayName:obj.label,storyId:obj.id});
-      else addProp(m,obj.type,point.x,point.y,{blocks:false,interact:"story",storyId:obj.id,label:obj.label});
+      else addProp(m,obj.type,point.x,point.y,{blocks:false,interact:"story",storyId:obj.id,label:obj.label,...(m.act3&&zoneId==='underground_market'?{artZone:'act3',visualType:'relay_active'}:{}),
+        ...(m.cathedral?{visual:obj.id==='hell_portal'?'cathedral_hell_portal':obj.type==='shrine'?'cathedral_seal':'cathedral_reliquary',visualDone:obj.type==='shrine'?'cathedral_seal_broken':'cathedral_reliquary_open',building:obj.id==='hell_portal'}:{})});
       addLight(m,point.x,point.y,3,obj.npc?'#c0dcff':'#d8b880',false);
       for (const [j,id] of (obj.guards||[]).entries()) {
-        const guard = candidates.filter(p=>U.dist(p.x,p.y,point.x,point.y)>1.5&&(!m.bossArena||!BossEncounters.insideArena(m.bossArena,p.x,p.y))).sort((a,b)=>U.dist2(a.x,a.y,point.x,point.y)-U.dist2(b.x,b.y,point.x,point.y))[j];
-        if (guard) m.monsterSpawns.push({id,x:guard.x,y:guard.y});
+        const guard = m.act3?.anchors.guards?.[obj.id]?.[j] || m.cathedral?.anchors['guard_'+obj.id.slice(-1)] || candidates.filter(p=>U.dist(p.x,p.y,point.x,point.y)>1.5&&(!m.bossArena||!BossEncounters.insideArena(m.bossArena,p.x,p.y))).sort((a,b)=>U.dist2(a.x,a.y,point.x,point.y)-U.dist2(b.x,b.y,point.x,point.y))[j];
+        if (guard) m.monsterSpawns.push({id,x:guard.x,y:guard.y,...(m.act3?{storyGuardId:obj.id+'_'+j}:{})});
       }
-      if (zoneId==='underground_market') {
+      if (zoneId==='underground_market' && !m.act3) {
         addProp(m,'cart',point.x+1,point.y,{blocks:false});
         addProp(m,'crate',point.x,point.y+1,{blocks:false});
       }
-      if (zoneId.startsWith('cathedral') && i<3) {
-        // Remembered village graves, fortress columns and mountain stone.
-        const types=['grave','pillar','rock'];
-        addProp(m,types[i],point.x+1,point.y,{blocks:false});
-        addProp(m,types[i],point.x,point.y+1,{blocks:false});
+      if (m.cathedral && obj.npc) {
+        addProp(m,'cathedral_soul_bound',point.x,point.y,{blocks:false,building:true,soulBinding:obj.id,visualDone:'cathedral_soul_free'});
       }
     }
     return m;

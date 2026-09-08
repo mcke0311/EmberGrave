@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "browser": "152.0.7977.76",
+  "legacyActors": false,
+  "reports": [
+    {
+      "zone": "ash_wastes",
+      "props": 24,
+      "enemies": 97,
+      "landmarks": 7,
+      "cacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "props": 19,
+      "enemies": 120,
+      "landmarks": 6,
+      "cacheStable": true
+    },
+    {
+      "zone": "throne",
+      "props": 15,
+      "enemies": 37,
+      "landmarks": 5,
+      "cacheStable": true
+    },
+    {
+      "zone": "hellgate",
+      "props": 30,
+      "enemies": 0,
+      "landmarks": 2,
+      "cacheStable": true
+    }
+  ],
+  "save": {
+    "status": "PASS",
+    "bossRemainsDead": true,
+    "questRetained": true,
+    "shrinesRetained": true
+  },
+  "errors": []
+}

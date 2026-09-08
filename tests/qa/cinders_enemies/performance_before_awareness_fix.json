@@ -1,0 +1,72 @@
+{
+  "status": "FAIL",
+  "legacyActors": false,
+  "baseline": "working-tree snapshot in tmp/cinders/before",
+  "method": "Three alternating before/after pairs, 90 warmup and 240 sampled frames per workload, full roster retained, nearest open combat pocket, twelve nearest durable targets with a close melee target, verified attack exchange, real 3D Vanguard, cached production terrain.",
+  "results": [
+    {
+      "width": 1920,
+      "zone": "ash_wastes",
+      "mode": "moving",
+      "before": {
+        "median": 4.5,
+        "p95": 6.8999999999999995
+      },
+      "after": {
+        "median": 6.3,
+        "p95": 9.666666666666668
+      },
+      "medianChangePct": 40,
+      "p95ChangePct": 40.1,
+      "passed": false
+    },
+    {
+      "width": 1920,
+      "zone": "ash_wastes",
+      "mode": "combat",
+      "before": {
+        "median": 6.133333333333333,
+        "p95": 11.299999999999999
+      },
+      "after": {
+        "median": 7.133333333333333,
+        "p95": 10.633333333333335
+      },
+      "medianChangePct": 16.3,
+      "p95ChangePct": -5.9,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "ash_wastes",
+      "mode": "moving",
+      "before": {
+        "median": 6.533333333333334,
+        "p95": 9.533333333333333
+      },
+      "after": {
+        "median": 8.033333333333333,
+        "p95": 11.666666666666666
+      },
+      "medianChangePct": 23,
+      "p95ChangePct": 22.4,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "ash_wastes",
+      "mode": "combat",
+      "before": {
+        "median": 8.066666666666668,
+        "p95": 10.833333333333334
+      },
+      "after": {
+        "median": 9.766666666666666,
+        "p95": 13.299999999999999
+      },
+      "medianChangePct": 21.1,
+      "p95ChangePct": 22.8,
+      "passed": false
+    }
+  ]
+}

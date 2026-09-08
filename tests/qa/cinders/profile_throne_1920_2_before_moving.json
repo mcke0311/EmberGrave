@@ -1,0 +1,39 @@
+{
+  "methodRevision": 7,
+  "legacyActors": false,
+  "width": 1920,
+  "zone": "throne",
+  "pair": 2,
+  "version": "before",
+  "mode": "moving",
+  "position": {
+    "x": 54.5,
+    "y": 22.5
+  },
+  "monsters": 39,
+  "distance": 18.173333333333233,
+  "attackFrames": 0,
+  "enemyAttackFrames": 0,
+  "cpuMs": {
+    "median": 6.4,
+    "p95": 8.4,
+    "max": 10.1
+  },
+  "updateMs": {
+    "median": 0.4,
+    "p95": 0.6,
+    "max": 0.7
+  },
+  "renderMs": {
+    "median": 6,
+    "p95": 7.9,
+    "max": 9.5
+  },
+  "frameIntervalMs": {
+    "median": 16.7,
+    "p95": 16.9,
+    "max": 38.9
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

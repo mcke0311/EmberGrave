@@ -511,7 +511,7 @@ const Game = (() => {
         return true;
       }
       if(onRoad()&&travelers.includes(npc.id)) {
-        if(o.stage==="rescueTalk"){o.rescued=true;stage("escort");Sfx.play("quest");}
+        if(o.stage==="rescueTalk"){o.rescued=true;stage("escort");Sfx.play("questProgress");}
         else caption(npc.name,o.rescued?"We’re right behind you.":"Please, clear them away from the wagon!");
         return true;
       }
@@ -594,7 +594,7 @@ const Game = (() => {
   }
 
   /* ---------------- map transitions ---------------- */
-  async function enterMap(zoneId, spawnKey, { revive = false, openingMode = null } = {}) {
+  async function enterMap(zoneId, spawnKey, { revive = false, openingMode = null, arrivalPosition = null, reuseCachedMap = false, recoverable: recoverableTravel = false, quietQuestAudio = false } = {}) {
     if(openingMode === "gate" && !opening.ready) {
       const s=state.flags.opening?.stage;
       UI.openingCaption("Bryn",["provision","bossIntro","boss"].includes(s)?"The captain still holds the gate. We have to end his watch.":["rescue","rescueTalk","road"].includes(s)?"There are people stranded on the road. We can’t leave them here.":"The risen are still on the road. Clear them first."); return false;
@@ -605,7 +605,7 @@ const Game = (() => {
     const resumeRunning = running;
     running = false;
     const zoneName = DATA.ZONES[zoneId] ? DATA.ZONES[zoneId].name.toUpperCase() : zoneId.toUpperCase();
-    const recoverable = revive || opening.active();
+    const recoverable = recoverableTravel || revive || opening.active();
     if (zoneId === "frosthaven_approach" && !await requireSpriteBundle("zone:frosthaven", "PREPARING FROSTHAVEN", {recoverable})) {
       if(state===enteringState && transition===mapTransitionSeq)running=resumeRunning;
       return false;
@@ -613,12 +613,32 @@ const Game = (() => {
     if (!await requireSpriteBundle(`zone:${DATA.ZONES[zoneId]?.artZone || zoneId}`, `LOADING ${zoneName} SPRITES`, { recoverable })) {
       if (state===enteringState && transition===mapTransitionSeq && recoverable) {
         running = resumeRunning;
-        UI.openingCaption?.("", "The road could not be loaded. Try the gate or Skip opening again.");
+        if (!recoverableTravel) UI.openingCaption?.("", "The road could not be loaded. Try the gate or Skip opening again.");
       }
       return false;
     }
     if(state!==enteringState || transition!==mapTransitionSeq)return false;
+    if(DATA.ACT2_COMBAT?.pools[zoneId]&&!await requireSpriteBundle('actors:act2',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
+      if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
+      return false;
+    }
+    if(state!==enteringState || transition!==mapTransitionSeq)return false;
+    if(typeof Act4EnemyAnimation!=='undefined'&&Act4EnemyAnimation.hasZone(zoneId)&&!await requireSpriteBundle('actors:act4',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
+      if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
+      return false;
+    }
+    if(state!==enteringState || transition!==mapTransitionSeq)return false;
+    if(typeof Act5EnemyAnimation!=='undefined'&&Act5EnemyAnimation.hasZone(zoneId)&&Act5EnemyAnimation.hasAssets()&&!await requireSpriteBundle('actors:act5',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
+      if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
+      return false;
+    }
+    if(state!==enteringState || transition!==mapTransitionSeq)return false;
     const encounterBoss=DATA.ZONES[zoneId]?.boss;
+    if(DATA.ACT3_ROSTERS[zoneId]&&!await requireSpriteBundle('actors:act3',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
+      if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
+      return false;
+    }
+    if(state!==enteringState || transition!==mapTransitionSeq)return false;
     if(typeof BossEncounters!=="undefined"&&BossEncounters.definitions[encounterBoss]) {
       if(!await requireSpriteBundle(`boss:${encounterBoss}`,`PREPARING ${zoneName} ENCOUNTER`,{recoverable})) {
         if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
@@ -627,20 +647,39 @@ const Game = (() => {
       if(state!==enteringState||transition!==mapTransitionSeq)return false;
     }
     /* stash current map entities for session persistence */
+    for(const mon of state.monsters||[])mon.cancelAttacks?.();
     if(typeof BossEncounters!=="undefined")BossEncounters.cancelAll();
+    if(typeof EnemySkills!=="undefined")EnemySkills.cancelAll();
+    if(typeof Act2EnemyCombat!=="undefined")Act2EnemyCombat.cancelAll();
     if (state.map) {
       state.monstersByMap[state.map.id] = state.monsters;
       state.groundByMap[state.map.id] = state.ground;
+      if (state.portal?.instance?.map === state.map) Object.assign(state.portal.instance,{monsters:state.monsters,ground:state.ground});
+    }
+    // A portal owns its original session instance, even if another entrance has
+    // since generated a different cathedral with the same zone ID.
+    const remembered = typeof reuseCachedMap === "object" ? reuseCachedMap : null;
+    if (remembered?.map?.id === zoneId) {
+      state.mapsCache[zoneId] = remembered.map;
+      state.monstersByMap[zoneId] = remembered.monsters;
+      state.groundByMap[zoneId] = remembered.ground;
     }
     let map = state.mapsCache[zoneId];
-    const shifting = DATA.ZONES[zoneId] && DATA.ZONES[zoneId].shifting;
+    const shifting = DATA.ZONES[zoneId] && DATA.ZONES[zoneId].shifting && !reuseCachedMap;
     if (!map || shifting) {
       /* the cathedral reassembles itself from memory every time you enter */
-      const seed = shifting ? ((state.seed ^ (state.cathedralVisits = (state.cathedralVisits || 0) + 1) * 0x9e3779b1) >>> 0) : state.seed;
+      const parentSeed=state.mapsCache[DATA.ZONES[zoneId]?.memoryParent]?.cathedral?.seed;
+      const seed = shifting ? ((state.seed ^ (state.cathedralVisits = (state.cathedralVisits || 0) + 1) * 0x9e3779b1) >>> 0) : (parentSeed ?? state.seed);
       map = MapGen.generate(zoneId, seed);
+      if (map.cathedral && !map.zone.memoryParent) {
+        for (const child of Object.values(DATA.ZONES).filter(z=>z.memoryParent===zoneId)) {
+          delete state.mapsCache[child.id]; delete state.monstersByMap[child.id]; delete state.groundByMap[child.id];
+        }
+      }
       state.mapsCache[zoneId] = map;
       if (shifting) { state.monstersByMap[zoneId] = null; state.groundByMap[zoneId] = null; }
     }
+    for(const mon of state.monsters)mon.imperialCombat?.cancel();
     state.map = map;
     /* monsters: restore session set or spawn fresh */
     if (state.monstersByMap[zoneId]) {
@@ -650,7 +689,7 @@ const Game = (() => {
       const diff = DATA.DIFFICULTIES[state.difficulty];
       /* pull any spawn that landed in a wall or on cliff-isolated ground onto a tile the
          player can actually foot-reach from their arrival point — fixes "enemies I can't reach" */
-      const arrival = map.spawns[spawnKey] || map.spawns.default || { x: map.w / 2, y: map.h / 2 };
+      const arrival = safeArrival(map, arrivalPosition || map.spawns[spawnKey] || map.spawns.default);
       const reach = computeReach(map, arrival.x, arrival.y);
       for (const sp of map.monsterSpawns) {
         /* bosses stay dead per difficulty tier (legacy flags count as Normal) */
@@ -658,7 +697,8 @@ const Game = (() => {
         if (sp.boss && (state.flags[deadKey] || (state.difficulty === 0 && state.flags["dead_" + sp.id]))) continue;
         const extraElite = !sp.boss && !sp.elite && !sp.minion && Math.random() < diff.eliteBoost;
         const pos = sp.boss ? { x: sp.x, y: sp.y } : nearestReach(map, reach, sp.x, sp.y);   // keep hand-placed bosses put
-        const mon = new Monster(sp.id, pos.x, pos.y, { elite: sp.elite || extraElite, minion: sp.minion });
+        const mon = new Monster(sp.id, pos.x, pos.y, { elite: sp.elite || extraElite, minion: sp.minion, skillProfile:sp.skillProfile });
+        if (sp.cathedralEncounter) mon.cathedralEncounter=sp.cathedralEncounter;
         state.monsters.push(mon);
       }
     }
@@ -669,7 +709,7 @@ const Game = (() => {
     state.npcs = map.npcs
       .filter(n => !(n.survivor && rescuedSurvivors().includes(n.sid)))   // already saved -> gone
       .map(n => new Npc(n.id, n.x, n.y, { survivor: n.survivor, sid: n.sid, npcArt: n.npcArt, displayName: n.displayName, storyId: n.storyId }));
-    campaignEvent({kind:"enter",zone:zoneId,target:zoneId});
+    campaignEvent({kind:"enter",zone:zoneId,target:zoneId}, {silent:quietQuestAudio});
     syncStoryObjects();
     syncConditionalNpcs();   // story NPCs that come and go with quest state (Halvar, etc.)
     setupBeaconQuest(map);   // beacons / Oathsworn trio for the Fallen North
@@ -682,7 +722,7 @@ const Game = (() => {
     if(typeof SkillAudio!=='undefined')SkillAudio.reset();
     heldTarget = null; cancelGroundHold();
     /* place player */
-    const sp = map.spawns[spawnKey] || map.spawns.default;
+    const sp = safeArrival(map, arrivalPosition || map.spawns[spawnKey] || map.spawns.default);
     const p = state.player;
     if (revive) {
       p.dead = false; p.action = null;
@@ -873,7 +913,7 @@ const Game = (() => {
     running = true;
     const start = DATA.ZONES[state.home] ? state.home : "frosthaven";
     const arrival=opening.active()?opening.checkpoint():[start,"default"];
-    if(!await enterMap(...arrival)) {
+    if(!await enterMap(arrival[0],arrival[1],{...arrival[2],quietQuestAudio:true})) {
       if(state?.player===p){running=false;opening.reset();UI.showTitle();}
       return;
     }
@@ -903,17 +943,17 @@ const Game = (() => {
     if (!q || state.quests[qid]?.state !== "offered") return;
     state.quests[qid] = { ...state.quests[qid], state: "active", count: 0 };
     msg("Quest accepted: " + q.name, "#d8c79a");
-    Sfx.play("quest");
+    Sfx.play("questAccepted");
     syncConditionalNpcs();
     campaignEvent();
     if (q.type === "ritual") setupRitualQuest(state.map);
     saveGame();
   }
-  function campaignEvent(event) {
+  function campaignEvent(event, {silent=false}={}) {
     const ready = event ? DATA.CAMPAIGN.record(state,event) : DATA.CAMPAIGN.sync(state);
     for (const q of ready) {
       msg(`${q.name}: objectives complete. Return to ${DATA.NPCS[q.giver].name}.`, "#7fd87f");
-      Sfx.play("quest");
+      if(!silent) Sfx.play("questReady");
     }
     UI.renderIfOpen("quest");
   }
@@ -927,10 +967,16 @@ const Game = (() => {
     const zone = state.map.id;
     state.npcs = state.npcs.filter(n=>!n.storyId || !DATA.CAMPAIGN.found(state,zone,n.storyId));
     for (const prop of state.map.props) {
+      if (prop.soulBinding) prop.completed=DATA.CAMPAIGN.found(state,zone,prop.soulBinding);
       if (!prop.storyId) continue;
       const obj = DATA.STORY_OBJECTS[zone].find(o=>o.id===prop.storyId);
       prop.interact = !obj.travel && DATA.CAMPAIGN.found(state,zone,obj.id) ? null : "story";
       if (prop.type === "chest") prop.opened = !prop.interact;
+      if (state.map.cathedral) {
+        prop.completed=!obj.travel && DATA.CAMPAIGN.found(state,zone,obj.id);
+        if (obj.travel) prop.hidden=!DATA.CAMPAIGN.bossDead(state,obj.requireKill);
+      }
+      if(state.map.act3 && zone==='underground_market')prop.visualType=prop.interact?'relay_active':'relay_disabled';
       // Keep the reward marker visible; interaction explains any unmet condition.
     }
   }
@@ -953,7 +999,7 @@ const Game = (() => {
     }
     campaignEvent({kind:"interact",zone,target:obj.id});
     msg(obj.text,"#d8c79a"); centerMsg(obj.label,"Recovered in your quest journal");
-    Sfx.play("quest"); addNova(prop.x,prop.y,1.5,"#c0dcff");
+    Sfx.play("questProgress"); addNova(prop.x,prop.y,1.5,"#c0dcff");
     syncStoryObjects(); saveGame();
   }
   function bossWard(mon) {
@@ -977,7 +1023,7 @@ const Game = (() => {
     const line = U.pick(npc.def.rescue || ["Thank you!"]);
     msg(`${npc.name}: “${line}”`, "#cfe0a0");
     if (npc.def.voice) Sfx.voice(npc.def.voice, line);
-    Sfx.play("quest");
+    Sfx.play("questProgress");
     addNova(npc.x, npc.y, 1.4, "#ffe0a0");
     for (let i = 0; i < 10; i++) addParticle(npc.x, npc.y, "#ffe6b0");
     /* they flee up and out of the world */
@@ -1013,8 +1059,8 @@ const Game = (() => {
         }
         if (st.state !== "done" && st.state !== "reward") {
           st.state = "reward";
-          msg(`${q.name}: done. Return to ${DATA.NPCS[q.giver].name}.`, "#7fd87f");
-          Sfx.play("quest");
+            msg(`${q.name}: done. Return to ${DATA.NPCS[q.giver].name}.`, "#7fd87f");
+            Sfx.play("questReady");
           UI.renderIfOpen("quest");
         }
         continue;
@@ -1024,8 +1070,8 @@ const Game = (() => {
         st.count = (st.count || 0) + 1;
         if (st.count === q.target) {
           st.state = "reward";
-          msg(`${q.name}: done. Return to ${DATA.NPCS[q.giver].name}.`, "#7fd87f");
-          Sfx.play("quest");
+            msg(`${q.name}: done. Return to ${DATA.NPCS[q.giver].name}.`, "#7fd87f");
+            Sfx.play("questReady");
         } else if (st.count % 3 === 0 || st.count === 1) {
           msg(`${q.name}: ${st.count}/${q.target}`, "#9b8a60");
         }
@@ -1071,7 +1117,7 @@ const Game = (() => {
       if (!Items.autoPlace(p.inv, it)) dropAtFeet(it);
       msg(`Received: ${it.name}`, "#7fd8c0");
     }
-    Sfx.play("quest");
+    Sfx.play("questCompleted");
     /* turning in an act-boss quest opens the caravan road to the next act's camp */
     if (q.type === "killBoss") {
       const act = DATA.ACTS.find(a => a.boss === q.target);
@@ -1175,7 +1221,12 @@ const Game = (() => {
   function dustPuff(x, y) {
     if (Math.random() < 0.5) particles.push({ x, y, vx: U.rf(-0.6, 0.6), vy: U.rf(-0.6, 0.6), z: 4, color: "#6a6055", t: 0.4, grav: -4 });
   }
-  function addNova(x, y, radius, color) { novas.push({ x, y, radius, color, t: 0, dur: 0.35, styled:typeof SkillVFX!=='undefined'&&SkillVFX.area(x,y,radius,state.player) }); if (radius >= 1.2) breakPropsNear(x, y, radius * 0.9); }   // AoE skills shatter breakables
+  function addNova(x, y, radius, color, presentation) {
+    novas.push({ x, y, radius, color, t: 0, dur: 0.35, hideRadius:!!presentation?.hideRadius,
+      styled:typeof SkillVFX!=='undefined'&&SkillVFX.area(x,y,radius,state.player,presentation) });
+    // Radius visibility is cosmetic; retain prop destruction and its rewards.
+    if (radius >= 1.2) breakPropsNear(x, y, radius * 0.9);
+  }
   /* a jagged lightning arc between two world points (Arc Lattice, Thunderstorm) */
   function lightningBolt(x0, y0, x1, y1, color) {
     bolts.push({ x0, y0, x1, y1, color: color || "#fff080", t: 0, dur: 0.22, seed: (Math.random() * 1000) | 0, styled:typeof SkillVFX!=='undefined'&&SkillVFX.beam(x0,y0,x1,y1) });
@@ -1290,6 +1341,7 @@ const Game = (() => {
     }
     if (mon.isBoss) {
       state.flags["dead_" + mon.defId + "@" + state.difficulty] = true;
+      if (state.map.cathedral) syncStoryObjects();
       const bossMsgs = {
         morthul: ["MORTHUL HAS FALLEN", "the Sunken Vigil is silent"],
         gravecaller: ["GRAVECALLER HESH IS SILENCED", ""],
@@ -1360,8 +1412,24 @@ const Game = (() => {
     return { x, y };
   }
   function beaconAnchors(map) {
+    if(map.frontier)return map.frontier.anchors.beacons;
     return [{ x: map.w * 0.30, y: map.h * 0.30 }, { x: map.w * 0.70, y: map.h * 0.42 }, { x: map.w * 0.45, y: map.h * 0.72 }]
-      .map(p => nearWalkable(map, p.x, p.y));
+      .map((p,i) => ({id:['watch_beacon','burial_beacon','quarry_beacon'][i],...nearWalkable(map, p.x, p.y)}));
+  }
+  function beaconProgress(q,map) {
+    const ids=beaconAnchors(map).map(p=>p.id);
+    if(!Array.isArray(q.destroyedBeaconIds))q.destroyedBeaconIds=ids.slice(0,U.clamp(Math.floor(q.beacons||0),0,3));
+    q.destroyedBeaconIds=[...new Set(q.destroyedBeaconIds.filter(id=>ids.includes(id)))];
+    q.beacons=q.destroyedBeaconIds.length;
+  }
+  function trioAnchor(q,map) {
+    const anchors=beaconAnchors(map),named=anchors.find(a=>a.id===q.trioLandmarkId);
+    if(named){q.trioAnchor={x:named.x,y:named.y};return q.trioAnchor;}
+    const c=q.trioAnchor,sp=map.spawns.default,reach=computeReach(map,sp.x,sp.y);
+    if(c&&Number.isFinite(c.x+c.y)&&TerrainNavigation.clear(map,c.x,c.y,.4)&&reach[(c.x|0)+(c.y|0)*map.w]&&
+      (!map.surfaceVersion||TerrainSurface.supported(map,c.x,c.y,.4)))return c;
+    const target=anchors.slice().sort((a,b)=>c&&Number.isFinite(c.x+c.y)?U.dist2(a.x,a.y,c.x,c.y)-U.dist2(b.x,b.y,c.x,c.y):0)[0]||sp;
+    q.trioLandmarkId=target.id;q.trioAnchor={x:target.x,y:target.y};return q.trioAnchor;
   }
   /* story NPCs that appear/leave based on quest state, in the current map —
      called on map entry AND whenever quest state changes (so they pop in live) */
@@ -1389,31 +1457,35 @@ const Game = (() => {
     state.monsters = state.monsters.filter(m => !(m.beacon || TRIO.includes(m.defId)));
     const q = state.quests.q8b;
     if (!q || (q.state !== "active" && q.state !== "reward") || state.flags.fn_temple_open) return;
+    beaconProgress(q,map);
+    if(q.beacons===3)q.trioSpawned=true; // count-only legacy records can omit the encounter flag
     if (!q.trioSpawned) {
       const anchors = beaconAnchors(map);
-      for (let i = (q.beacons || 0); i < 3; i++) state.monsters.push(new Monster("beacon", anchors[i].x, anchors[i].y, {}));
+      for (const a of anchors)if(!q.destroyedBeaconIds.includes(a.id)){
+        const mon=new Monster('beacon',a.x,a.y,{});mon.beaconId=a.id;state.monsters.push(mon);
+      }
     } else {
       const killed = q.trioKilled || [];
       /* the Oathsworn hold the ground where they first rose — not the entrance */
-      const c = q.trioAnchor || map.spawns.default || { x: map.w / 2, y: map.h / 2 };
+      const c = trioAnchor(q,map),reach=computeReach(map,c.x,c.y);
       let n = 0;
       for (const id of TRIO) {
         if (killed.includes(id)) continue;
-        const a = (n++) * 2.1, pos = nearWalkable(map, c.x + Math.cos(a) * 4, c.y + Math.sin(a) * 4);
+        const a = (n++) * 2.1, pos = nearestReach(map,reach,c.x + Math.cos(a) * 4, c.y + Math.sin(a) * 4);
         const m = new Monster(id, pos.x, pos.y, {}); state.monsters.push(m);
         /* they wait, un-aggroed, until you come back into their sight */
       }
     }
   }
   function spawnTrio() {
-    const p = state.player, q = state.quests.q8b, killed = q.trioKilled || [];
-    const c = q.trioAnchor || { x: p.x, y: p.y };
+    const q = state.quests.q8b, killed = q.trioKilled || [];
+    const c = trioAnchor(q,state.map),reach=computeReach(state.map,c.x,c.y);
     centerMsg("THE OATHSWORN COME", "Korvath's honor-guard rise to the dark");
     Sfx.play("vox_boss"); fx.shake = 6;
     let n = 0;
     for (const id of TRIO) {
       if (killed.includes(id)) continue;
-      const a = (n++) * 2.1, pos = nearWalkable(state.map, c.x + Math.cos(a) * 5, c.y + Math.sin(a) * 5);
+      const a = (n++) * 2.1, pos = nearestReach(state.map,reach,c.x + Math.cos(a) * 5, c.y + Math.sin(a) * 5);
       const m = new Monster(id, pos.x, pos.y, {}); m.aggro = true;
       state.monsters.push(m); addNova(pos.x, pos.y, 1.6, "#9fe0ff");
     }
@@ -1423,12 +1495,15 @@ const Game = (() => {
     const q = state.quests.q8b;
     if (!q || q.state !== "active") return;
     if (mon.defId === "beacon") {
-      q.beacons = (q.beacons || 0) + 1;
+      beaconProgress(q,state.map);
+      const anchor=beaconAnchors(state.map).find(a=>a.id===mon.beaconId)||beaconAnchors(state.map).slice().sort((a,b)=>U.dist2(a.x,a.y,mon.x,mon.y)-U.dist2(b.x,b.y,mon.x,mon.y))[0];
+      if(!anchor||q.destroyedBeaconIds.includes(anchor.id))return;
+      q.destroyedBeaconIds.push(anchor.id);q.beacons=q.destroyedBeaconIds.length;
       Sfx.play("shrine");
       addNova(mon.x, mon.y, 2.2, "#7fffe0");
       if (q.beacons >= 3 && !q.trioSpawned) {
         q.trioSpawned = true;
-        q.trioAnchor = { x: state.player.x, y: state.player.y };   // they rise here, and wait here if you fall
+        q.trioLandmarkId=anchor.id;q.trioAnchor = { x: anchor.x, y: anchor.y };
         msg("The last beacon shatters — the sky tears open.", "#9fe0ff");
         /* beat for the beacon's death-burst to read, then roll the cinematic;
            the trio rises when it ends (or immediately if the video can't load) */
@@ -1449,7 +1524,7 @@ const Game = (() => {
     }
   }
   /* ---------------- Choir ritual sites (q10 destroy site; q11 destroy site → boss) ---------------- */
-  function ritualAnchor(map) { return nearWalkable(map, map.w * 0.5, map.h * 0.42); }
+  function ritualAnchor(map) { return map.act2?.anchors.ritual || nearWalkable(map, map.w * 0.5, map.h * 0.42); }
   function setupRitualQuest(map) {
     /* one source of truth on map entry: rebuild the active quest's site/boss to match state */
     state.monsters = state.monsters.filter(m => !/^(quieting_ritual|drowned_ritual|choirmaster)$/.test(m.defId));
@@ -1461,7 +1536,10 @@ const Game = (() => {
         const a = ritualAnchor(map);
         state.monsters.push(new Monster(q.target, a.x, a.y, {}));
       } else if (q.boss && !st.bossDead) {
-        const a = st.bossAnchor || ritualAnchor(map);
+        // Legacy saves store coordinates from the old crypt generator. The
+        // authored nave is the stable location for every Act 2 quest state.
+        const a = map.act2 ? ritualAnchor(map) : st.bossAnchor || ritualAnchor(map);
+        if(map.act2)st.bossAnchor={x:a.x,y:a.y};
         const b = new Monster(q.boss, a.x, a.y, {}); state.monsters.push(b);
       }
     }
@@ -1493,20 +1571,25 @@ const Game = (() => {
         UI.renderIfOpen("quest");
       } else if (q.boss && mon.defId === q.boss && st.siteDestroyed && !st.bossDead) {
         st.bossDead = true; st.state = "reward";
-        msg(`${q.name}: done. Return to ${DATA.NPCS[q.giver].name}.`, "#7fd87f");
-        Sfx.play("quest");
+          msg(`${q.name}: done. Return to ${DATA.NPCS[q.giver].name}.`, "#7fd87f");
+          Sfx.play("questReady");
         UI.renderIfOpen("quest");
       }
     }
   }
   /* ---------------- random world events ---------------- */
   function enemiesByFamily(fam, lvl) {
+    const marsh=DATA.ACT2_COMBAT.pools[state.map?.id];
+    if(marsh){const pool=Object.keys(marsh),family=pool.filter(id=>DATA.ENEMIES[id].family===fam);return family.length?family:pool;}
+    const authored=DATA.ACT3_ROSTERS[state.map?.id];
+    if(authored){const family=authored.filter(id=>DATA.ENEMIES[id].family===fam);return (family.length?family:authored).slice();}
     let ids = Object.values(DATA.ENEMIES).filter(d => !d.boss && d.family === fam && Math.abs(d.lvl - lvl) <= 7).map(d => d.id);
     if (!ids.length) ids = Object.values(DATA.ENEMIES).filter(d => !d.boss && Math.abs(d.lvl - lvl) <= 7).map(d => d.id);
     if (!ids.length) ids = ["risen"];
     return ids;
   }
   function placeEvents(map) {
+    if (map.cathedral) return; // encounters and rewards have reserved places in these compositions
     if (map.eventsPlaced) return;                   // events are one-time per map instance — don't re-roll (or re-spawn used shrines) on re-entry
     map.eventsPlaced = true;
     map.props = map.props.filter(p => !p.event);
@@ -1515,12 +1598,17 @@ const Game = (() => {
     const lvl = (z.lvl || 1) + DATA.DIFFICULTIES[state.difficulty].lvlAdd;
     const pool = DATA.EVENTS.filter(e => (e.minLvl || 1) <= lvl + 2);
     if (!pool.length) return;
-    const count = 1 + (Math.random() < 0.6 ? 1 : 0) + (Math.random() < 0.3 ? 1 : 0);
+    const composition=map.composition||map.act2||map.frontier;
+    const random=composition?U.rng(state.seed^U.hash(map.id)^0x77e17):Math.random;
+    const anchors=(composition?.anchors.events||[]).slice();
+    for(let i=anchors.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[anchors[i],anchors[j]]=[anchors[j],anchors[i]];}
+    const count = 1 + (random() < 0.6 ? 1 : 0) + (random() < 0.3 ? 1 : 0);
     const sp = map.spawns.default || { x: 0, y: 0 };
     for (let n = 0; n < count; n++) {
-      const ev = U.wpick(pool.map(e => [e, e.weight || 1]));
+      const ev = U.wpick(pool.map(e => [e, e.weight || 1]),random);
       let x = 0, y = 0, ok = false;
-      for (let tries = 0; tries < 70 && !ok; tries++) {
+      if(composition){const a=anchors[n];if(!a)continue;x=a.x;y=a.y;ok=TerrainNavigation.clear(map,x,y,.4);}
+      for (let tries = 0; !composition && tries < 70 && !ok; tries++) {
         x = 3 + Math.random() * (map.w - 6); y = 3 + Math.random() * (map.h - 6);
         if (MapGen.walkable(map, x, y) && U.dist(x, y, sp.x, sp.y) > 9 &&
             (!map.bossArena || !BossEncounters.insideArena(map.bossArena,x,y,-3))) ok = true;
@@ -1528,7 +1616,8 @@ const Game = (() => {
       if (!ok) continue;
       if (ev.kind === "goblin") {
         const ids = enemiesByFamily("beast", lvl);
-        const m = new Monster(U.pick(ids), x, y, {});
+        const m = map.act2?Act2EnemyCombat.eventSpawn(ids,x,y,{},[],random):new Monster(U.pickR(random,ids), x, y, {});
+        if(!m)continue;
         m.flee = true; m.eventDrops = ev.drops || 4; m.name = ev.name; m.tint = ev.color;
         m.def.speed = Math.max(m.def.speed, 3.6) + 1; m.scale *= 0.9; m.spriteOpts.scale = m.scale;
         state.monsters.push(m);
@@ -1581,11 +1670,14 @@ const Game = (() => {
       }
       case "ambush": case "curse": {
         const ids = enemiesByFamily(ev.fam || U.pick(["undead", "demon", "beast"]), lvl);
+        const group=[];
         for (let k = 0; k < (ev.count || 4); k++) {
           const a = Math.random() * Math.PI * 2, r = 1.5 + Math.random() * 2.5;
           const x = prop.x + Math.cos(a) * r, y = prop.y + Math.sin(a) * r;
-          if (!MapGen.walkable(state.map, x, y)) continue;
-          const m = new Monster(U.pick(ids), x, y, { elite: ev.kind === "curse" && k === 0 });
+          if (!state.map.act2 && !MapGen.walkable(state.map, x, y)) continue;
+          const options={elite:ev.kind==='curse'&&k===0};
+          const m = state.map.act2?Act2EnemyCombat.eventSpawn(ids,prop.x,prop.y,options,group):new Monster(U.pick(ids),x,y,options);
+          if(!m)continue;group.push(m);
           m.aggro = true; state.monsters.push(m);
         }
         Sfx.play("vox_boss"); fx.shake = 4;
@@ -1717,6 +1809,8 @@ const Game = (() => {
     UI.playVideo(src, () => {});   // pauses the game; resumes when the clip ends/skips
   }
   function onPlayerDeath(source) {
+    if(typeof EnemySkills!=="undefined")EnemySkills.cancelAll();
+    if(typeof Act2EnemyCombat!=="undefined")Act2EnemyCombat.cancelAll();
     if(typeof SkillVFX!=='undefined')SkillVFX.reset();
     if(typeof SkillAudio!=='undefined')SkillAudio.reset();
     const p = state.player;
@@ -1738,6 +1832,7 @@ const Game = (() => {
     fx.shake = 6;
     /* the dead are no threat — every enemy disengages and drifts back to idle */
     for (const mon of state.monsters) {
+      mon.cancelAttacks?.();
       if (mon.dead) continue;
       mon.aggro = false; mon.path = null;
       mon.leaping = null; mon.whirling = null; mon.dashing = null;
@@ -1791,6 +1886,7 @@ const Game = (() => {
     if (prop.interact === "board") { Sfx.play("click"); UI.openBoard(); return; }
     if (prop.interact === "caravan") { Sfx.play("click"); UI.openShrine(true); return; }   // the war-caravan: fast travel between attuned places
     if (prop.interact === "event") { triggerEvent(prop); return; }   // random world event
+    if (prop.interact === "memory_lore") { msg(prop.lore,"#d8c79a"); centerMsg(prop.label,"A fragment the cathedral could not erase"); return; }
     if (prop.interact === "shrine") {
       const zid = state.map.id;
       if (!state.shrines.includes(zid)) {
@@ -1805,6 +1901,9 @@ const Game = (() => {
     }
     if (prop.breakable) { kickProp(prop); return; }
     if (prop.lootable) {
+      if (prop.encounterLock && state.monsters.some(mon=>!mon.dead && mon.cathedralEncounter===prop.encounterLock)) {
+        msg("Defeat the guardians of this memory to open its cache.","#d8b880"); return;
+      }
       prop.lootable = false;
       prop.opened = true;
       Sfx.play("chest");
@@ -1813,28 +1912,48 @@ const Game = (() => {
     }
   }
   function isHub(id) { return id === "town" || (DATA.ZONES[id] && DATA.ZONES[id].kind === "camp"); }
+  function safeArrival(map, point) {
+    const p=point || map.spawns.default || {x:map.w/2,y:map.h/2};
+    const supported=(x,y)=>MapGen.walkable(map,x,y) && (!map.surfaceVersion || TerrainSurface.supported(map,x,y,state.player.radius));
+    if (Number.isFinite(p.x) && Number.isFinite(p.y) && supported(p.x,p.y)) return p;
+    let best=null, distance=Infinity;
+    for(let y=0;y<map.h;y++)for(let x=0;x<map.w;x++) {
+      const d=(x+.5-p.x)**2+(y+.5-p.y)**2;
+      if(d<distance && supported(x+.5,y+.5)){distance=d;best={x:x+.5,y:y+.5};}
+    }
+    return best || map.spawns.default;
+  }
+  function canTradeWith(npc) { return !npc.survivor && (npc.def || DATA.NPCS[npc.id])?.role === "vendor"; }
+  let travelPending=false;
   function castPortal() {
     if (isHub(state.map.id)) { msg("You are already home.", "#9b8a60"); return false; }
-    state.portal = { mapId: state.map.id, x: state.player.x, y: state.player.y + 0.4, home: state.home || "frosthaven" };
-    Sfx.play("portal");
+    state.portal = { mapId: state.map.id, x: state.player.x, y: state.player.y + 0.4, returnPosition:{x:state.player.x,y:state.player.y}, home: state.home || "frosthaven",
+      instance:{map:state.map,monsters:state.monsters,ground:state.ground} };
+    Sfx.play("portalOpen");
     msg("A doorway home tears open.", "#8fd8ff");
     return true;
   }
-  function usePortal() {
-    if (!state.portal) return;
-    Sfx.play("portal");
-    if (isHub(state.map.id)) {
-      const t = state.portal;
-      enterMap(t.mapId, "default");
-      state.player.x = t.x; state.player.y = t.y;
-    } else {
-      enterMap(state.portal.home || state.home || "frosthaven", "portal");
-    }
+  async function usePortal() {
+    const t=state.portal, origin=state;
+    if (!t || travelPending || ![t.home,t.mapId].includes(state.map.id) || (state.map.id!==t.home && t.instance && state.map!==t.instance.map)) return false;
+    travelPending=true;
+    try {
+      const returning=state.map.id===t.home;
+      const ok=await enterMap(returning?t.mapId:t.home,returning?"default":"portal",{
+        arrivalPosition:returning?(t.returnPosition || {x:t.x,y:t.y}):null,reuseCachedMap:returning?(t.instance||true):false,recoverable:true});
+      if(ok && state===origin) Sfx.play("teleportTravel");
+      else if(state===origin) msg("The portal could not open the road. Try again.","#d8b880");
+      return !!ok && state===origin;
+    } finally {travelPending=false;}
   }
-  function travelToShrine(zid) {
-    Sfx.play("shrine");
-    enterMap(zid, "shrine");
-    if (isHub(zid)) saveGame();
+  async function travelToShrine(zid) {
+    if(travelPending || zid===state.map.id || !state.shrines.includes(zid) || !DATA.ZONES[zid])return false;
+    const origin=state;travelPending=true;
+    try {
+      const ok=await enterMap(zid,"shrine",{recoverable:true});
+      if(ok && state===origin)Sfx.play("teleportTravel");
+      return !!ok && state===origin;
+    } finally {travelPending=false;}
   }
 
   /* =====================================================================
@@ -1993,7 +2112,7 @@ const Game = (() => {
               : "A barrier of light seals the temple. The survivors of the mines may know how to lower it.", "#9fe0ff");
             return;
           }
-          enterMap(ex.target, ex.spawnKey, ex.openingGate?{openingMode:"gate"}:{});
+          enterMap(ex.target, ex.spawnKey, ex.openingGate?{openingMode:"gate"}:{reuseCachedMap:!!ex.reuseCachedMap});
         };
         const inside = p.x >= ex.x0 && p.x <= ex.x1 && p.y >= ex.y0 && p.y <= ex.y1;
         if (inside || U.dist(p.x, p.y, cx, cy) < 1.8) { p.command = null; go(); }
@@ -2012,6 +2131,7 @@ const Game = (() => {
     /* left-click-move-only: a plain left-click never auto-attacks (right-click / shift still do) */
     const forceMove = options.leftClickMove && !rightBtn && !mouse.shift;
     if (hoverMon && !hoverMon.dead && !forceMove) {
+      if(p.rejectSkillWeapon(skill))return;
       heldTarget = hoverMon;
       p.command = { type: "attack", target: hoverMon, skill, hold: repeatSkill(skill) };
       return;
@@ -2020,6 +2140,7 @@ const Game = (() => {
     if(!w)return; // An exposed cliff face is not a destination behind that cliff.
     const sk = p.resolveSkill(skill);
     if (mouse.shift || rightBtn) {
+      if(p.rejectSkillWeapon(skill))return;
       /* stand and use skill toward point */
       if (sk.type === "melee") {
         if (p.action) return;                                  // still mid-swing — respect attack speed (no spam-firing)
@@ -2125,11 +2246,11 @@ const Game = (() => {
     const portalSpots = portalPositions();
     for (const ps of portalSpots) if (test(ps.x, ps.y, 70, 30)) { hoverPortal = ps; return; }
     for (const pr of state.map.props) {
-      if (!(pr.interact || pr.breakable || pr.lootable)) continue;
+      if (pr.hidden || !(pr.interact || pr.breakable || pr.lootable)) continue;
       /* tall interactables (shrines, forge, strongbox, board) need a generous box so
          clicking the VISIBLE sprite — not just its base — registers */
       if (pr.building) {
-        const frame = SpriteAssets.getFrame(SpriteAssets.maps.props[`${state.map.id}_${pr.type}`],0);
+        const frame = propSpriteFrame(pr);
         const sx=U.isoX(pr.x,pr.y)-cam.x,sy=U.isoY(pr.x,pr.y)-cam.y-elevLift(pr.x,pr.y);
         if (mouse.x>=sx-frame.anchorX && mouse.x<=sx-frame.anchorX+frame.sw && mouse.y>=sy-frame.anchorY && mouse.y<=sy-frame.anchorY+frame.sh) { hoverProp=pr;return; }
         continue;
@@ -2148,10 +2269,10 @@ const Game = (() => {
   function portalPositions() {
     const out = [];
     if (state.portal) {
-      if (isHub(state.map.id)) {
+      if (state.map.id === state.portal.home) {
         const sp = state.map.spawns.portal;
         if (sp) out.push({ x: sp.x, y: sp.y });
-      } else if (state.map.id === state.portal.mapId) {
+      } else if (state.map.id === state.portal.mapId && (!state.portal.instance || state.map === state.portal.instance.map)) {
         out.push({ x: state.portal.x, y: state.portal.y });
       }
     }
@@ -2322,6 +2443,7 @@ const Game = (() => {
   }
   function knockMonster(mon, fromX, fromY, dist) {
     if (!mon || mon.dead || mon.isBoss) return;
+    mon.imperialCombat?.cancel();
     const dx = mon.x - fromX, dy = mon.y - fromY, dd = Math.hypot(dx, dy) || 1;
     const nx = mon.x + dx / dd * dist, ny = mon.y + dy / dd * dist;
     if (MapGen.walkable(state.map, nx, mon.y)) mon.x = nx;
@@ -2393,12 +2515,17 @@ const Game = (() => {
     Sfx.play("slam"); addNova(x, y, r, "#90ff70"); fx.shake = Math.max(fx.shake, 3);
     bloodBurst(x, y, 8); for (let i = 0; i < 8; i++) addParticle(x + U.rf(-0.6, 0.6), y + U.rf(-0.6, 0.6), "#7a8a4a");
     const p = state.player;
-    if (!p.dead && U.dist(x, y, p.x, p.y) <= r + p.radius) p.takeDamage(info.dmg, null, "phys");
-    for (const mi of state.minions) if (!mi.dead && U.dist(x, y, mi.x, mi.y) <= r + mi.radius) mi.takeDamage(info.dmg, null);
+    if(info.owner)info.owner.areaAttack({kind:'circle',x,y,radius:r},info.dmg,'phys');
+    else {
+      if (!p.dead && U.dist(x, y, p.x, p.y) <= r + p.radius) p.takeDamage(info.dmg, null, "phys");
+      for (const mi of state.minions) if (!mi.dead && U.dist(x, y, mi.x, mi.y) <= r + mi.radius) mi.takeDamage(info.dmg, null);
+    }
     for (let i = 0; i < (info.count || 1); i++) {
+      if(info.owner&&!info.owner.isBoss&&info.owner.livingChildren()>=6)break;
       const a = Math.random() * Math.PI * 2, sx = x + Math.cos(a) * 1.0, sy = y + Math.sin(a) * 1.0;
       if (!MapGen.walkable(state.map, sx, sy)) continue;
       const m = new Monster(U.pick(info.pool || ["risen"]), sx, sy, {}); m.aggro = true;
+      if(info.owner){if(!info.owner.supportedPoint(sx,sy,m.radius))continue;info.owner.ownSummon(m);}
       state.monsters.push(m); addNova(sx, sy, 0.7, "#9fe0ff");
     }
   }
@@ -2477,8 +2604,9 @@ const Game = (() => {
   function updateFx(dt) {
     const p = state.player; if (!p) return;
     for (let i = state.fx.length - 1; i >= 0; i--) {
-      const f = state.fx[i]; f.ttl -= dt;
+      const f = state.fx[i]; if(f.type!=='act2warning')f.ttl -= dt;
       if(f.type==="slamwarning"&&(f.owner.dead||p.dead||f.owner.slamWarning!==f))f.ttl=0;
+      if(f.type==='enemywarning'&&(p.dead||(f.projectile?f.projectile.dead:!f.death&&(f.owner.dead||f.owner.attackWarning!==f))))f.ttl=0;
       if (f.ttl <= 0) { state.fx.splice(i, 1); continue; }
       const o = f.owner || p;
       const tick = () => { f.tickT = (f.tickT || 0) - dt; if (f.tickT <= 0) { f.tickT = f.tickEvery || 0.4; return true; } return false; };
@@ -2631,8 +2759,26 @@ const Game = (() => {
       ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.7 * fade;
       ctx.shadowColor = "#ff5a10"; ctx.shadowBlur = 10; stroke("#ff7a20", 3.2);    // molten glow
       ctx.shadowBlur = 0;
+    } else if (f.type === 'enemywarning') {
+      if(f.ttl<=0||state.player.dead||((typeof Act2EnemyAnimation!=='undefined'&&!Act2EnemyAnimation.showsAttackRadius(f.owner))||(typeof Act5EnemyAnimation!=='undefined'&&!Act5EnemyAnimation.showsAttackRadius(f.owner||f.projectile?.lob?.owner)))){ctx.restore();return;}
+      const s=f.shape,count=s.kind==='line'?4:48;
+      // Static warnings reuse their projected vertices. Camera motion changes
+      // only the draw offset; moving whirlwinds refresh the same small buffer.
+      if(!f.vertices||f.vertexX!==s.x||f.vertexY!==s.y){
+        const points=f.vertices||(f.vertices=new Float32Array(count*2));f.vertexX=s.x;f.vertexY=s.y;
+        const c=Math.cos(s.angle||0),n=Math.sin(s.angle||0),w=(s.width||0)/2;
+        for(let i=0;i<count;i++){
+          let x,y;
+          if(s.kind==='line'){const along=i===1||i===2?s.length:0,side=i<2?1:-1;x=s.x+c*along-n*w*side;y=s.y+n*along+c*w*side;}
+          else {const a=i*Math.PI/24;x=s.x+Math.cos(a)*s.radius;y=s.y+Math.sin(a)*s.radius;}
+          points[i*2]=U.isoX(x,y);points[i*2+1]=U.isoY(x,y)-surfaceLift(x,y);
+        }
+      }
+      ctx.beginPath();for(let i=0;i<f.vertices.length;i+=2){const x=f.vertices[i]-cam.x,y=f.vertices[i+1]-cam.y;if(i)ctx.lineTo(x,y);else ctx.moveTo(x,y);}ctx.closePath();
+      ctx.globalAlpha=.20;ctx.fillStyle=f.col;ctx.fill();
+      ctx.globalAlpha=.96;ctx.lineWidth=3;ctx.strokeStyle=f.col;ctx.stroke();
     } else if (f.type === "slamwarning") {
-      if(f.owner.dead||state.player.dead||f.owner.slamWarning!==f){ctx.restore();return;}
+      if(f.owner.dead||state.player.dead||f.owner.slamWarning!==f||((typeof Act2EnemyAnimation!=='undefined'&&!Act2EnemyAnimation.showsAttackRadius(f.owner))||(typeof Act5EnemyAnimation!=='undefined'&&!Act5EnemyAnimation.showsAttackRadius(f.owner||f.projectile?.lob?.owner)))){ctx.restore();return;}
       // A world-space circle projects to radii sqrt(2)*32 and sqrt(2)*16.
       const rr=f.radius*32*Math.SQRT2,ry=rr*.5,k=1-U.clamp(f.ttl/f.maxTtl,0,1);
       ctx.globalAlpha=.22;ctx.fillStyle="#142939";
@@ -2642,6 +2788,7 @@ const Game = (() => {
       ctx.globalAlpha=.16+k*.25;ctx.fillStyle=f.col;
       ctx.beginPath();ctx.ellipse(sx,sy,rr*k,ry*k,0,0,Math.PI*2);ctx.fill();
     } else if (f.type === "meteorfall") {
+      if((typeof Act2EnemyAnimation!=='undefined'&&!Act2EnemyAnimation.showsAttackRadius(f.owner))||(typeof Act5EnemyAnimation!=='undefined'&&!Act5EnemyAnimation.showsAttackRadius(f.owner||f.projectile?.lob?.owner))){ctx.restore();return;}
       /* GROUND CUE only (the impact zone); the falling rock is drawn over the actors below */
       const rr = f.radius * 32, ry = rr * 0.5, k = 1 - U.clamp(f.ttl / f.maxTtl, 0, 1);   // 0 → 1 at impact
       ctx.globalAlpha = 0.5 + Math.sin(state.time * 18) * 0.2;
@@ -2686,7 +2833,7 @@ const Game = (() => {
   function drawBackdrop(theme, m, W, H, cam) {
     const direct = SpriteAssets.maps.backdrops && SpriteAssets.maps.backdrops[theme];
     const key = direct ? theme : (BACKDROP_ALIAS[theme] || "default");
-    const assetId = SpriteAssets.maps.backdrops && (
+    const assetId = m.cathedral ? SpriteAssets.maps.props.cathedral_void_backdrop : SpriteAssets.maps.backdrops && (
       SpriteAssets.maps.backdrops[key] || SpriteAssets.maps.backdrops.default
     );
     if (!assetId) throw new Error(`Missing required authored backdrop mapping: ${key}`);
@@ -2806,7 +2953,8 @@ const Game = (() => {
     /* walls: only facades (wall tiles with a floor neighbor) — culled to the visible box */
     for (let y = ty0; y <= ty1; y++) for (let x = tx0; x <= tx1; x++) {
       const i = x + y * m.w;
-      if (!m.walls[i]) continue;
+      if (!m.walls[i] || m.void?.[i]) continue;
+      if ((m.composition||m.frontier)?.terrainWalls) continue; // cached surface cliffs define these solid landforms
       /* Outdoor massifs are facades on cardinal collision boundaries. A tile
          touching floor only at a corner is still interior terrain and must not
          grow another full mountain. Masonry keeps its historical corner reveal. */
@@ -2832,11 +2980,17 @@ const Game = (() => {
       if (!inView(sx, sy)) continue;
       draws.push({ d: x + y, kind: vis ? "wall" : "wallcap", sx, sy, x, y, wallMask });
     }
+    for(const sc of (m.composition||m.frontier)?.scenery||[]){
+      const sx=U.isoX(sc.x,sc.y)-cam.x,sy=U.isoY(sc.x,sc.y)-cam.y-elevLift(sc.x,sc.y);
+      if(sx>-400&&sx<W+400&&sy>-100&&sy<H+500)draws.push({d:sc.x+sc.y,kind:'scenery',sx,sy,sc});
+    }
     for (const pr of state.map.props) {
+      if (pr.hidden) continue;
       const sx = U.isoX(pr.x, pr.y) - cam.x, sy = U.isoY(pr.x, pr.y) - cam.y;
       if (pr.building) {
-        const f=SpriteAssets.getFrame(SpriteAssets.maps.props[m.id+'_'+pr.type],0);
-        if(sx-f.anchorX>W || sx-f.anchorX+f.sw<0 || sy-f.anchorY>H || sy-f.anchorY+f.sh<0)continue;
+        const f=propSpriteFrame(pr);
+        const seated=sy-elevLift(pr.x,pr.y);
+        if(sx-f.anchorX>W || sx-f.anchorX+f.sw<0 || seated-f.anchorY>H || seated-f.anchorY+f.sh<0)continue;
       } else if (!inView(sx, sy)) continue;
       draws.push({ d: pr.x + pr.y, kind: "prop", sx, sy, pr });
     }
@@ -2874,17 +3028,25 @@ const Game = (() => {
       draws.push({ d: ps.x + ps.y, kind: "portal", sx, sy, ps });
     }
     /* transient fields/banners/totems/weather, beneath the actors */
-    for (const f of state.fx) if(f.type!=="slamwarning"&&!(typeof SkillVFX!=='undefined'&&SkillVFX.isStyled(f)))drawFx(f, cam);
+    for (const f of state.fx) if(f.type!=="slamwarning"&&f.type!=='enemywarning'&&!(typeof SkillVFX!=='undefined'&&SkillVFX.isStyled(f)))drawFx(f, cam);
     if(typeof SkillVFX!=='undefined'){
       SkillVFX.drawGround(ctx,state,cam);
       SkillVFX.appendDraws(draws,state,cam,W,H);
     }
 
     if(typeof BossVFX!=='undefined'){BossVFX.drawGround(ctx,state,cam);BossVFX.appendDraws(draws,state,cam,W,H);}
+    if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.drawGround(ctx,state,cam);
+    if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.drawGround(ctx,state,cam);
     draws.sort((a, b) => a.d - b.d);
 
     for (const d of draws) {
       switch (d.kind) {
+        case 'scenery': {
+          const id=SpriteAssets.maps.massifs[`${theme}_${d.sc.variant}`];
+          if(id){const f=SpriteAssets.getFrame(id,0),s=d.sc.scale;ctx.save();
+            ctx.translate(d.sx,d.sy);ctx.scale(s,s);SpriteAssets.drawFrame(ctx,f,0,0);ctx.restore();}
+          break;
+        }
         case "bossvfx":
           ctx.save();LevelTerrain.clipBehind(ctx,m,cam,d.x,d.y);BossVFX.drawItem(ctx,d,cam);ctx.restore();break;
         case "skillvfx":
@@ -3021,11 +3183,17 @@ const Game = (() => {
           break;
         }
         case "npc": {
-          drawEntity(d.n, d.sx, d.sy);
+          // Soul bindings supply their own figure; retain the NPC's interaction and marker.
+          if (!(m.cathedral && d.n.storyId?.startsWith('trapped_soul_'))) drawEntity(d.n, d.sx, d.sy);
           d.sy-=surfaceLift(d.n.x,d.n.y);
-          if (d.n === hoverNpc) nameplate(d.n.name + (d.n.survivor ? " — click to rescue" : ""), d.sx, d.sy - 58, d.n.survivor ? "#ffe6a0" : "#9fdf9f");
+          const trade=canTradeWith(d.n);
+          if (d.n === hoverNpc) nameplate(d.n.name + (d.n.survivor ? " — click to rescue" : trade ? " — Trade available" : ""), d.sx, d.sy - 58, d.n.survivor ? "#ffe6a0" : "#9fdf9f");
           if (d.n.survivor || (d.n.openingTraveler && state.flags.opening?.stage==="rescueTalk")) drawQuestMarker(d.sx, d.sy - 66, "save");
-          else { const qm = state.flags.opening?.stage==="hearth" && d.n.id==="sera" ? "!" : d.n.storyId ? "save" : questMarkerFor(d.n.id,d.n.spriteOpts.npcArt); if (qm) drawQuestMarker(d.sx, d.sy - 68, qm); }
+          else {
+            const qm = state.flags.opening?.stage==="hearth" && d.n.id==="sera" ? "!" : d.n.storyId ? "save" : questMarkerFor(d.n.id,d.n.spriteOpts.npcArt);
+            if (qm) drawQuestMarker(d.sx+(trade?12:0), d.sy - 76, qm);
+            if (trade) drawTradeMarker(d.sx-(qm?12:0),d.sy-82);
+          }
           break;
         }
         case "player": {
@@ -3035,6 +3203,15 @@ const Game = (() => {
         }
         case "proj": {
           const pr = d.pr;
+          if(pr.imperialVisual){
+            const col=pr.imperialVisual.color||'#a5cce0',a=Math.atan2(U.isoY(pr.vx,pr.vy),U.isoX(pr.vx,pr.vy));
+            ctx.save();LevelTerrain.clipBehind(ctx,m,cam,pr.x,pr.y);ctx.translate(d.sx,d.sy-(pr.imperialVisual.lift||34));ctx.rotate(a);ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=1.8;
+            if(pr.imperialVisual.kind==='chain'){
+              for(let i=0;i<4;i++){ctx.globalAlpha=1-i*.18;ctx.beginPath();ctx.ellipse(-i*6,0,4,i%2?1.6:3,0,0,Math.PI*2);ctx.stroke();}
+              ctx.globalAlpha=1;ctx.beginPath();ctx.arc(3,0,3,0,Math.PI*2);ctx.fill();
+            }else{ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(-5,4);ctx.lineTo(-2,0);ctx.lineTo(-5,-4);ctx.closePath();ctx.fill();ctx.stroke();}
+            ctx.restore();break;
+          }
           if(typeof BossVFX!=='undefined'&&BossVFX.enabled&&pr.bossVisual){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,pr.x,pr.y);BossVFX.drawProjectile(ctx,pr,cam);ctx.restore();break;}
           if(typeof SkillVFX!=='undefined'&&SkillVFX.enabled&&SkillVFX.recipes[pr.sourceSkill]){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,pr.x,pr.y);SkillVFX.drawProjectile(ctx,pr,cam);ctx.restore();break;}
           const a = pr.kind==='arrow'?Math.atan2(U.isoY(pr.vx,pr.vy),U.isoX(pr.vx,pr.vy)):Math.atan2(pr.vy * 0.5, pr.vx);
@@ -3160,7 +3337,7 @@ const Game = (() => {
     ctx.globalAlpha = 1;
     /* novas */
     for (const nv of novas) {
-      if(nv.styled&&typeof SkillVFX!=='undefined'&&SkillVFX.enabled)continue;
+      if(nv.hideRadius||(nv.styled&&typeof SkillVFX!=='undefined'&&SkillVFX.enabled))continue;
       const sx = U.isoX(nv.x, nv.y) - cam.x, sy = U.isoY(nv.x, nv.y) - cam.y - surfaceLift(nv.x,nv.y);
       const k = nv.t / nv.dur;
       ctx.strokeStyle = nv.color;
@@ -3307,8 +3484,11 @@ const Game = (() => {
 
     /* ---- cast ground effects: bright pulsing rim drawn OVER the darkness so they're easy to spot ---- */
     if(typeof BossEncounters!=="undefined")BossEncounters.draw(ctx,cam);
+    if(typeof EnemySkills!=="undefined")EnemySkills.draw(ctx,cam);
+    if(typeof Act2EnemyCombat!=="undefined")Act2EnemyCombat.draw(ctx,cam);
+    for(const mon of state.monsters)if(mon.imperialCombat)mon.imperialCombat.draw(ctx,cam,!!Game.debugFlags.act3Combat);
     for (const f of state.fx) {
-      if(f.type==="slamwarning"){drawFx(f,cam);continue;}
+      if(f.type==="slamwarning"||f.type==='enemywarning'){drawFx(f,cam);continue;}
       if(typeof SkillVFX!=='undefined'&&SkillVFX.isStyled(f))continue;
       if (f.type !== "groundfield") continue;
       const col = GF_COL[f.fieldKind] || "#ffffff";
@@ -3428,14 +3608,16 @@ const Game = (() => {
     /* fast path (the common case): no flash/tint composite needed, so draw the actor
        straight onto the screen — skips a scratch-canvas clear and blit per actor.
        SpriteAssets draw calls save/restore their own state, so this is isolated. */
-    if (opts.bossArt || (!flash && !tint)) {
+    const animation=pose.ex?.act5Animation||pose.ex?.act4Animation||pose.ex?.act3Animation||pose.ex?.act2Animation;
+    const animated=animation&&DATA.SPRITE_MANIFEST.entries[animation.asset];
+    if (opts.bossArt || animated || (!flash && !tint)) {
       ctx.save();
       if (alpha < 1) ctx.globalAlpha = alpha;
       ctx.translate(sx, sy);
       ctx.scale(bodyScale, bodyScale);
       // Prewarmed atlas-sized hit flashes preserve tall bosses beyond the
       // ordinary 320px actor scratch and avoid a per-hit compositing pass.
-      drawActorVisual(ctx, opts.bossArt&&flash?{...opts,bossFlash:true}:opts, pose);
+      drawActorVisual(ctx, (opts.bossArt||animated)&&flash?{...opts,bossFlash:true}:animated&&tint?{...opts,act2Tint:tint}:opts, pose);
       ctx.restore();
       ctx.restore();
       return;
@@ -3466,6 +3648,7 @@ const Game = (() => {
     if (e.dead && e.corpseT !== undefined && e.corpseT < 3) alpha = Math.max(0, e.corpseT / 3);
     /* beacons are obelisks, not figures — draw the rune-stone with a barrier glow */
     if (e.beacon || e.defId==="boss_portal") {
+      if(typeof Act2EnemyAnimation!=='undefined'&&Act2EnemyAnimation.drawRitualRemains(ctx,e,sx,sy,alpha))return;
       const frame = SpriteAssets.getFrame(SpriteAssets.maps.props.beacon, 0);
       const pulse = 0.5 + Math.sin(state.time * 4 + e.x) * 0.5;
       ctx.fillStyle = `rgba(127,255,224,${0.10 + 0.10 * pulse})`;
@@ -3474,6 +3657,7 @@ const Game = (() => {
       SpriteAssets.drawFrame(ctx, frame, sx, sy);
       ctx.globalAlpha = 1;
       if (e.flashT > 0) { ctx.save(); ctx.globalAlpha = 0.5; ctx.globalCompositeOperation = "lighter"; SpriteAssets.drawFrame(ctx, frame, sx, sy); ctx.restore(); }
+      if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.drawRitual(ctx,e,sx,sy);
       return;
     }
     /* elite ground glow */
@@ -3510,6 +3694,16 @@ const Game = (() => {
     ctx.fillText(glyph, sx, sy + bob);
     ctx.shadowBlur = 0;
     ctx.textAlign = "left";
+  }
+  function drawTradeMarker(x,y) {
+    y+=Math.sin(state.time*2.6)*2.5;
+    ctx.save();ctx.translate(x,y);ctx.lineWidth=1.5;
+    ctx.fillStyle="#1b140d";ctx.strokeStyle="#d9b96d";ctx.shadowColor="#000";ctx.shadowBlur=5;
+    ctx.beginPath();ctx.moveTo(-4,-5);ctx.lineTo(-6,-10);ctx.lineTo(6,-10);ctx.lineTo(4,-5);
+    ctx.bezierCurveTo(13,4,9,10,0,10);ctx.bezierCurveTo(-9,10,-13,4,-4,-5);ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.shadowBlur=0;ctx.beginPath();ctx.moveTo(-5,-5);ctx.lineTo(5,-5);ctx.stroke();
+    ctx.fillStyle="#dfbd70";ctx.beginPath();ctx.ellipse(0,2,3.2,4,0,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="#73502a";ctx.beginPath();ctx.moveTo(0,-.5);ctx.lineTo(0,4.5);ctx.stroke();ctx.restore();
   }
 
   function nameplate(text, sx, sy, color, hpFrac, typeInfo, subLine, above = false) {
@@ -3609,17 +3803,40 @@ const Game = (() => {
     }
   }
 
+  const architectureMasks = new Map();
+  function architectureCovers(frame,x,y) {
+    let alpha=architectureMasks.get(frame.id);
+    if(!alpha){
+      const c=document.createElement('canvas');c.width=frame.sw;c.height=frame.sh;
+      const g=c.getContext('2d',{willReadFrequently:true});
+      g.drawImage(frame.image,frame.sx,frame.sy,frame.sw,frame.sh,0,0,frame.sw,frame.sh);
+      alpha=g.getImageData(0,0,c.width,c.height).data;architectureMasks.set(frame.id,alpha);
+    }
+    // A gate's open passage must stay visible. Fade only painted pixels over
+    // the hero's head and shoulders; the sprite bounds include empty air.
+    return [[0,0],[-9,12],[9,12],[0,22]].some(([dx,dy])=>{
+      const px=Math.floor(x+dx+frame.anchorX),py=Math.floor(y+dy+frame.anchorY);
+      return px>=0&&py>=0&&px<frame.sw&&py<frame.sh&&alpha[(px+py*frame.sw)*4+3]>64;
+    });
+  }
+  function propVisualType(pr) {
+    return ((pr.completed||pr.opened)&&pr.visualDone) || pr.visual || pr.visualType || (pr.type==='chest'&&pr.opened?'chest_open':pr.type);
+  }
+  function propSpriteFrame(pr) {
+    const type=propVisualType(pr);
+    return SpriteAssets.getFrame(SpriteAssets.maps.props[(pr.artZone||state.map.id)+'_'+type]||SpriteAssets.maps.props[type],0);
+  }
   function drawProp(d) {
     const pr = d.pr;
     d.sy -= elevLift(pr.x, pr.y);   // props sit on raised terrain (d is a per-frame entry)
-    const visualType = pr.type === "chest" && pr.opened ? "chest_open" : pr.type;
+    const visualType = propVisualType(pr);
     const propId = SpriteAssets.maps.props[`${pr.artZone || state.map.id}_${visualType}`] || SpriteAssets.maps.props[visualType];
     if (!propId) throw new Error(`Missing required prop sprite: ${state.map.id}/${pr.type}`);
     const propFrame = SpriteAssets.getFrame(propId, 0);
     const mirror = pr.type === "longhouse" && (((pr.seed || (pr.x * 17 + pr.y * 31)) | 0) & 1);
     // Fade tall architecture only while it covers the hero behind it.
     const p=state.player, dx=U.isoX(p.x,p.y)-U.isoX(pr.x,pr.y), dy=U.isoY(p.x,p.y)-U.isoY(pr.x,pr.y)-24;
-    const coversHero=pr.building && !pr.interact && p.x+p.y<pr.x+pr.y && Math.abs(dx)<propFrame.sw*.42 && dy>-propFrame.anchorY && dy<0;
+    const coversHero=pr.building && !pr.interact && p.x+p.y<pr.x+pr.y && Math.abs(dx)<propFrame.sw*.42 && dy>-propFrame.anchorY && dy<0 && (pr.artZone!=='act3'||architectureCovers(propFrame,dx,dy-24-elevLift(p.x,p.y)+elevLift(pr.x,pr.y)));
     ctx.save();LevelTerrain.clipBehind(ctx,state.map,camera(),pr.x,pr.y);
     SpriteAssets.drawFrame(ctx, propFrame, d.sx, d.sy, { flip: mirror, alpha:coversHero?.4:1 });
     ctx.restore();
@@ -3866,7 +4083,7 @@ const Game = (() => {
     init, newGame, loadGame, saveGame, listSaves, deleteSave, saveAndQuit,
     skipOpening,
     preparePlayerEquipment, commitPlayerEquipment, discardPlayerEquipment,
-    enterMap, interact, castPortal, usePortal, travelToShrine, setDifficulty,
+    enterMap, interact, castPortal, usePortal, travelToShrine, canTradeWith, setDifficulty,
     acceptQuest, completeQuest, doRespec, storyTopic, bossWard,
     afterDelay, addFloat, minionFloat, playerHurtFloat, addParticle, bloodBurst, dustPuff, addNova, lightningBolt, beamFx,
     knockMonster, detonateMark, detonateDoom, spawnCorpse, corpseFromGrave, throwUndeadLand,

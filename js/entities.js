@@ -32,6 +32,7 @@ class Entity {
   }
   startAction(state, dur, data) {
     this.action = Object.assign({ state, t: 0, dur }, data || {});
+    if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.action(this);
   }
   /* generic walk along this.path with collision against walls & entities */
   moveAlong(dt, speed, map, others) {
@@ -171,6 +172,17 @@ class Entity {
       o.state = "idle"; o.t = this.animT;
       ex.castColor = undefined; ex.walkPh = undefined; ex.speed = undefined;
     }
+    this.enemySkills?.renderPose(o);
+    const imperial=this.imperialCombat?.active;
+    if(imperial){
+      o.state=['blink','bolt','fan'].includes(imperial.kind)?'cast':'attack';
+      o.t=imperial.stage==='windup'?.5*(1-imperial.remaining/imperial.windup):imperial.stage==='travel'?.5:.5+.5*(1-imperial.remaining/imperial.recovery);
+      ex.castColor=this.imperialCombat.profile.projectileColor;ex.walkPh=undefined;
+    }
+    if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.sample(this,o);
+    if(typeof Act3EnemyAnimation!=='undefined')Act3EnemyAnimation.sample(this,o);
+    if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.sample(this,o);
+    if(typeof Act4EnemyAnimation!=='undefined')Act4EnemyAnimation.sample(this,o);
     return o;
   }
 }
@@ -222,7 +234,7 @@ class Player extends Entity {
   startAction(state,dur,data) {
     super.startAction(state,dur,data);
     if(!Object.hasOwn(this,'_visualActionSequence'))Object.defineProperty(this,'_visualActionSequence',{value:0,writable:true});
-    this.action.visual={id:++this._visualActionSequence,style:this._visualSkill||null,startedAt:typeof Game!=='undefined'?Game.state?.time:undefined,releases:[]};
+    this.action.visual={id:++this._visualActionSequence,style:this._visualSkill||null,skillId:this._castingSkillId||null,startedAt:typeof Game!=='undefined'?Game.state?.time:undefined,releases:[]};
     if(state==='kick')this.action.visual.releases=[.5];
   }
   markActionRelease(seconds=0) {
@@ -237,10 +249,15 @@ class Player extends Entity {
     if(this._visualSkill)this.markActionRelease(seconds);
     if(typeof SkillAudio!=='undefined')SkillAudio.markRelease(this);
     const visualSource=this._castingSkillId;
+    const weaponEpoch=this._weaponSkillEpoch || 0;
     this.afterSkillDelay(seconds,()=>{
+      if (DATA.SKILLS[visualSource]?.requiredWeapons &&
+          (weaponEpoch !== (this._weaponSkillEpoch || 0) || !this.canUseSkillWeapon(visualSource))) return;
       if(typeof SkillAudio!=='undefined')SkillAudio.release(this,visualSource);
       if(!this.dead&&typeof SkillVFX!=='undefined')SkillVFX.release(this,visualSource);
-      return callback();
+      const result=callback();
+      if (["summon","summon_golem"].includes(DATA.SKILLS[visualSource]?.type)) this.checkAetherDepletion();
+      return result;
     });
   }
   afterSkillDelay(seconds,callback) {
@@ -261,6 +278,35 @@ class Player extends Entity {
   resolveSkill(id) {
     const skill = typeof SkillPerks!=="undefined" ? SkillPerks.resolve(this,id) : id==="basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[id];
     return typeof UniquePowers !== "undefined" ? UniquePowers.modifySkill(this,skill) : skill;
+  }
+  canUseSkillWeapon(id) {
+    const required=DATA.SKILLS[id]?.requiredWeapons;
+    return !required || required.includes(this.equip.main?.cat);
+  }
+  rejectSkillWeapon(id) {
+    if (this.canUseSkillWeapon(id)) return false;
+    this.command=null; this.path=null; this.moving=false;
+    if ((this._weaponErrorUntil || 0) <= Game.state.time) {
+      Game.msg("Requires a bow or crossbow.", "#d8b880"); Sfx.play("error");
+      this._weaponErrorUntil=Game.state.time+1;
+    }
+    return true;
+  }
+  maintainedCompanions() {
+    return (typeof Game !== "undefined" && Game.state?.minions || []).filter(m =>
+      !m.dead && m.owner === this && ["summon", "summon_golem"].includes(DATA.SKILLS[m.sourceSkill]?.type));
+  }
+  companionUpkeep() {
+    return this.maintainedCompanions().reduce((sum,m) => sum + Math.max(1,this.effRank(m.sourceSkill)),0);
+  }
+  checkAetherDepletion() {
+    if (this.mana > 0) return;
+    this.mana=0;
+    for (const m of this.maintainedCompanions()) m.die();
+  }
+  spendAether(amount) {
+    this.mana=Math.max(0,this.mana-amount);
+    this.checkAetherDepletion();
   }
   skillSound(phase,context={}) {
     const id=(typeof SkillAudio!=='undefined'?SkillAudio.current?.id:null)||this._castingSkillId||'basic';
@@ -463,6 +509,15 @@ class Player extends Entity {
     this.stats = st;
     this.hp = Math.min(this.hp ?? st.maxHp, st.maxHp);
     this.mana = Math.min(this.mana ?? st.maxMana, st.maxMana);
+    this.checkAetherDepletion();
+    const weaponAllowed=["bow","crossbow"].includes(this.equip.main?.cat);
+    if (!weaponAllowed && this._hadArrowWeapon) {
+      this._weaponSkillEpoch=(this._weaponSkillEpoch || 0)+1;
+      if (this.drawing || DATA.SKILLS[this.action?.visual?.skillId]?.requiredWeapons) this.action=null;
+      this.drawing=null;
+      if (this.command?.skill && !this.canUseSkillWeapon(this.command.skill)) { this.command=null; this.path=null; }
+    }
+    this._hadArrowWeapon=weaponAllowed;
   }
   effRank(id) {
     const rk = this.skills[id] || 0;
@@ -589,6 +644,9 @@ class Player extends Entity {
       Game.addFloat(mon.x, mon.y, "miss", "#9a9a9a");
       return 0;
     }
+    const sourceSkill=this._castingSkillId||(typeof SkillAudio!=='undefined'?SkillAudio.current?.id:null);
+    const groundAttack=['nova','shockwave','leap'].includes(DATA.SKILLS[sourceSkill]?.type);
+    if (!opts.guardChecked && !groundAttack && mon.imperialCombat?.block(this)) return 0;
     const d = this.rollDamage(mult, mon);
     let total = d.phys + d.fire + d.cold + d.light + (this.tempo || 0) * (this.stats.dmgPerTempo || 0);
     const fireMode = this.stats.dmgToFire > 0;                       // Fire Claw: all damage becomes fire
@@ -662,7 +720,7 @@ class Player extends Entity {
     /* a share of the blow is drained from Aether instead of Life */
     if (this.stats.dmgToMana > 0 && this.mana > 0 && dmg > 0) {
       const toMana = Math.min(this.mana, dmg * this.stats.dmgToMana / 100);
-      this.mana -= toMana; dmg -= toMana;
+      this.spendAether(toMana); dmg -= toMana;
     }
     /* Bone Armor absorb pool soaks before real HP, and gores melee attackers */
     if (this.boneWard && this.boneWard.hp > 0 && Game.state.time < this.boneWard.until) {
@@ -701,7 +759,7 @@ class Player extends Entity {
   /* ---------------- skills ---------------- */
   canPay(sk, rk) { return this.mana >= sk.mana(rk); }
   pay(sk, rk) {
-    const amount = sk.mana(rk); this.mana -= amount;
+    const amount = sk.mana(rk); this.spendAether(amount);
     if (typeof UniquePowers !== "undefined") UniquePowers.emit(this,"spend",{ amount, skill: sk });
   }
   healLife(amount) {
@@ -713,6 +771,7 @@ class Player extends Entity {
 
   /* execute a skill *now* (caller has verified range etc.) */
   performSkill(skillId,target,point) {
+    if (this.rejectSkillWeapon(skillId)) return false;
     const run=()=>this.performSkillPresentation(skillId,target,point);
     return typeof SkillAudio!=='undefined'?SkillAudio.cast(this,skillId,run):run();
   }
@@ -724,6 +783,7 @@ class Player extends Entity {
       const result=this.withSkillSource(skillId,()=>{
         const sk=this.resolveSkill(skillId), result=this.performSkillAction(skillId,target,point);
         if(result) {
+          this.checkAetherDepletion();
           this.applySkillPerkBuff(sk,this.effRank(skillId));
           if(skillId !== "basic" && typeof UniquePowers !== "undefined") UniquePowers.emit(this,"cast",{ skill: sk, target, elem: sk?.elem });
         }
@@ -739,7 +799,11 @@ class Player extends Entity {
     const sk = this.resolveSkill(skillId);
     const rk = isBasic ? 1 : this.effRank(skillId);
     if (!isBasic && rk <= 0) return false;
-    if (!isBasic && !this.canPay(sk, rk)) { Sfx.play("error"); Game.msg("Not enough aether.", "#8090d0"); return false; }
+    if (this.rejectSkillWeapon(skillId)) return false;
+    const turningOff = sk.type === "form" ? this.buffs.some(b=>b.id === "form_"+sk.form)
+      : ["combat_stance","parry_stance"].includes(sk.type) && this.stance === sk.stanceId;
+    const alreadyDrawing=sk.type === "charge_shot" && this.drawing;
+    if (!isBasic && !turningOff && !alreadyDrawing && !this.canPay(sk, rk)) { Sfx.play("error"); Game.msg("Not enough aether.", "#8090d0"); return false; }
     const dur = 1 / this.stats.attackRate;
     const syn = isBasic ? 1 : this.synergyMult(sk);
 
@@ -1333,7 +1397,7 @@ class Player extends Entity {
         const a0 = Math.atan2(aim.y - this.y, aim.x - this.x), arc = sk.arc(rk) * (1 + 0.25 * t), mult = sk.dmgMult(rk) * (0.6 + 0.35 * t) * syn, range = sk.range(rk);
         this.afterActionDelay(dur * 0.5, () => {
           if (this.dead) return;
-          for (const mon of Game.state.monsters) { if (mon.dead) continue; if (U.dist(this.x, this.y, mon.x, mon.y) > range + mon.radius) continue; let da = Math.abs(Math.atan2(mon.y - this.y, mon.x - this.x) - a0); if (da > Math.PI) da = Math.PI * 2 - da; if (da <= arc / 2) { this.strike(mon, mult); mon.sunder = { until: Game.state.time + sk.shredDur(rk), stacks: Math.min(3, ((mon.sunder && mon.sunder.stacks) || 0) + t) }; } }
+          for (const mon of Game.state.monsters) { if (mon.dead) continue; if (U.dist(this.x, this.y, mon.x, mon.y) > range + mon.radius) continue; let da = Math.abs(Math.atan2(mon.y - this.y, mon.x - this.x) - a0); if (da > Math.PI) da = Math.PI * 2 - da; if (da <= arc / 2) { const dealt=this.strike(mon, mult); if(mon.imperialCombat&&!dealt)continue; mon.sunder = { until: Game.state.time + sk.shredDur(rk), stacks: Math.min(3, ((mon.sunder && mon.sunder.stacks) || 0) + t) }; } }
           Game.addNova(this.x, this.y, range, "#e6e6e6");
         });
         this.tempo = Math.min(t,sk.tempoRetain?.(rk)??0);
@@ -1434,7 +1498,7 @@ class Player extends Entity {
         const a0 = Math.atan2(aim.y - this.y, aim.x - this.x), arc = sk.arc(rk), range = sk.range(rk), mult = sk.dmgMult(rk) * syn, kb = sk.knockback(rk);
         this.afterActionDelay(dur * 0.5, () => {
           if (this.dead) return;
-          for (const mon of Game.state.monsters) { if (mon.dead) continue; if (U.dist(this.x, this.y, mon.x, mon.y) > range + mon.radius) continue; let da = Math.abs(Math.atan2(mon.y - this.y, mon.x - this.x) - a0); if (da > Math.PI) da = Math.PI * 2 - da; if (da <= arc / 2) { this.strike(mon, mult); const bx = mon.x, by = mon.y; Game.knockMonster(mon, this.x, this.y, kb); const moved = U.dist(bx, by, mon.x, mon.y); mon.stunT = Math.max(mon.stunT, moved < kb * 0.5 ? 1.4 : 0.6); } }
+          for (const mon of Game.state.monsters) { if (mon.dead) continue; if (U.dist(this.x, this.y, mon.x, mon.y) > range + mon.radius) continue; let da = Math.abs(Math.atan2(mon.y - this.y, mon.x - this.x) - a0); if (da > Math.PI) da = Math.PI * 2 - da; if (da <= arc / 2) { const dealt=this.strike(mon, mult); if(mon.imperialCombat&&!dealt)continue; const bx = mon.x, by = mon.y; Game.knockMonster(mon, this.x, this.y, kb); const moved = U.dist(bx, by, mon.x, mon.y); mon.stunT = Math.max(mon.stunT, moved < kb * 0.5 ? 1.4 : 0.6); } }
           Game.fx.shake = Math.max(Game.fx.shake, 3);
         });
         return true;
@@ -1835,6 +1899,8 @@ class Player extends Entity {
     this.updateAnim(dt);
     /* the dead do not walk, drink, or whirl — they wait to rise */
     if (this.dead) { this.moving = false; return; }
+    this.checkAetherDepletion();
+    if (this.drawing && !this.canUseSkillWeapon('veilranger_0_2')) { this.drawing=null; this.action=null; }
     const st = this.stats;
     /* buffs expiry */
     const n = this.buffs.length;
@@ -1863,11 +1929,14 @@ class Player extends Entity {
       }
     } else this.thunderT = 0;
     /* regen + potion pools */
-    this.mana = Math.min(st.maxMana, this.mana + st.manaRegen * dt);
-    if (st.pManaPerBeast > 0) { const beasts = Game.state.minions.filter(m => !m.dead && m.beast).length; if (beasts) this.mana = Math.min(st.maxMana, this.mana + beasts * st.pManaPerBeast * dt); }
+    const beasts=Game.state.minions.filter(m=>!m.dead && m.owner===this && m.beast).length;
+    const potionMana=Math.min(this.manaPool || 0,22*dt);
+    const manaFlow=(st.manaRegen + beasts*(st.pManaPerBeast || 0)-this.companionUpkeep())*dt+potionMana;
+    this.mana=Math.min(st.maxMana,Math.max(0,this.mana+manaFlow));
+    this.manaPool=(this.manaPool || 0)-potionMana;
+    this.checkAetherDepletion();
     this.healLife((0.25 + (st.lifeRegen || 0)) * dt);
     if (this.healPool > 0) { const t = Math.min(this.healPool, 28 * dt); this.healLife(t); this.healPool -= t; }
-    if (this.manaPool > 0) { const t = Math.min(this.manaPool, 22 * dt); this.mana = Math.min(st.maxMana, this.mana + t); this.manaPool -= t; }
     this.tileHazardTick(dt, Game.state.map, true);   // ice/lava/bog under the player
 
     /* ---- bespoke resource & channel upkeep ---- */
@@ -1877,7 +1946,7 @@ class Player extends Entity {
       this.rootT = this.moving ? 0 : Math.min(3, this.rootT + dt);
       if(this.rootT!==previous)this.computeStats();
     }
-    if (this.stance === "riposte") { this.mana -= (this.riposteData ? this.riposteData.drain : 3) * dt; if (this.mana <= 0) { this.mana = 0; this.clearStance(); } }
+    if (this.stance === "riposte") { this.spendAether((this.riposteData ? this.riposteData.drain : 3) * dt); if (this.mana <= 0) this.clearStance(); }
     if (this.siphon) {
       const SI = this.siphon;
       if (SI.target && SI.target.dead && !this.moving && Game.state.time <= SI.until) {   // re-acquire on kill
@@ -1885,7 +1954,7 @@ class Player extends Entity {
       }
       if (!SI.target || SI.target.dead || this.moving || Game.state.time > SI.until || U.dist(this.x, this.y, SI.target.x, SI.target.y) > 9) this.siphon = null;
       else {
-        SI.tickT -= dt; this.mana -= SI.manaPerSec * dt;
+        SI.tickT -= dt; this.spendAether(SI.manaPerSec * dt);
         if (this.mana <= 0) { this.mana = 0; this.siphon = null; }
         else if (SI.tickT <= 0) { SI.tickT = SI.tickRate; SI.ramp = Math.min(0.6, SI.ramp + 0.08 * SI.tickRate); Game.beamFx(this.x, this.y, SI.target.x, SI.target.y, "#c080e0"); this.spellHit(SI.target, SI.tickDmg * (1 + SI.ramp), "shadow", { drain: SI.drain }); }
       }
@@ -1909,7 +1978,8 @@ class Player extends Entity {
         const t = U.clamp((mon.x - this.x) * Math.cos(ang) + (mon.y - this.y) * Math.sin(ang), -0.6, C.width);
         const px = this.x + Math.cos(ang) * t, py = this.y + Math.sin(ang) * t;
         if (U.dist(px, py, mon.x, mon.y) <= C.width + mon.radius) {
-          C.hit.add(mon); this.strike(mon, C.mult, { auto: true });
+          C.hit.add(mon); const dealt=this.strike(mon, C.mult, { auto: true });
+          if(mon.imperialCombat&&!dealt)continue;
           if (C.first) { mon.stunT = Math.max(mon.stunT, C.stunDur); C.first = false; Game.fx.shake = Math.max(Game.fx.shake, 4); }
           Game.knockMonster(mon, this.x, this.y, C.kb);
         }
@@ -1996,6 +2066,7 @@ class Player extends Entity {
     /* execute current command */
     const cmd = this.command;
     if (!cmd) { this.moving = false; return; }
+    if (cmd.skill && this.rejectSkillWeapon(cmd.skill)) return;
     if (cmd.type === "move") {
       this.moveAlong(dt, st.moveSpeed, Game.state.map, Game.state.monsters);
       if ((!this.path || !this.path.length) && !this.jumping) this.command = null;
@@ -2071,7 +2142,7 @@ class Player extends Entity {
   /* Drawn Shot: release the held bow into one piercing arrow scaled by draw */
   releaseDraw() {
     const dr = this.drawing; this.drawing = null;
-    if (!dr || this.dead) return;
+    if (!dr || this.dead || !this.canUseSkillWeapon('veilranger_0_2')) return;
     const aim = dr.aim || { x: this.x + Math.cos(this.visAng) * 5, y: this.y + Math.sin(this.visAng) * 5 };
     const chargeK = U.clamp(dr.t / dr.maxDraw, 0.15, 1);
     this.face(aim.x, aim.y);
@@ -2234,6 +2305,7 @@ class Minion extends Entity {
               this.playSound('release',this.projKind === 'venom' ? 'firebolt' : 'bow');
               Game.spawnProjectile({ x: this.x, y: this.y, tx: tref.x, ty: tref.y, speed: 9, kind: this.projKind, minionDmg: this.dmgRoll(), minionPdot: pdot, minionSource:this, sourceSkill:this.sourceSkill,visualOwner:this.owner });
             } else if (U.dist(this.x, this.y, tref.x, tref.y) <= reach + 0.4) {
+              if(tref.imperialCombat?.block(this))return;
               this.playSound('impact','hit',{target:tref,elem:pdot?'poison':'phys'});
               const dmg = this.dmgRoll(); tref.takeDamage(dmg, this); Game.minionFloat(tref.x, tref.y, dmg);
               if(typeof SkillVFX!=='undefined')SkillVFX.scope(this.owner,this.sourceSkill,()=>{SkillVFX.hit(this.owner,tref,'phys');SkillVFX.passive(this.owner,'minion',{x:tref.x,y:tref.y});});
@@ -2264,14 +2336,203 @@ Minion.PAL_BASE = { bone: "#d8d2c4", trim: "#4a463a", eye: "#9fd0ff" };
 Minion.PAL_POISON = { bone: "#a8c89a", trim: "#2a4a2a", eye: "#80ff60" };
 
 /* ------------------------------------------------------------------ */
+// Authored Act III attacks share one simulation-owned lifecycle. No delayed
+// callback can outlive a warning, interrupt, monster, or map instance.
+class ImperialCombat {
+  constructor(mon) {
+    this.mon=mon;this.profile=mon.def.act3Combat;this.world=Game.state;this.map=Game.state.map;
+    const phase=((Math.floor(mon.x*31+mon.y*17)+U.hash(mon.defId))>>>0)%17/17;
+    this.cooldown=(this.profile.special?.cd||0)*(.35+phase*.3);this.active=null;this.lastAttack=null;this.epoch=0;
+  }
+  valid(){return Game.state===this.world&&Game.state.map===this.map&&!this.mon.dead&&!this.world.player.dead;}
+  disabled(){const m=this.mon;return m.stunT>0||m.frozen>this.world.time||m.feared>this.world.time||m.beckon?.until>this.world.time||m.fleeUntil>this.world.time||!!m.pulled;}
+  cancel(){this.epoch++;this.active=null;if(['attack','cast'].includes(this.mon.action?.state))this.mon.action=null;this.mon.jumpZ=0;}
+  tick(dt){this.cooldown=Math.max(0,this.cooldown-dt);if(this.profile.role!=='boss')this.mon.attackCd=Math.max(0,this.mon.attackCd-dt);if(!this.valid()||this.disabled())this.cancel();}
+  targets(){return [this.world.player,...this.world.minions].filter(t=>!t.dead&&!t.untargetable);}
+  los(t){return U.los((x,y)=>MapGen.walkable(this.map,x,y),this.mon.x,this.mon.y,t.x,t.y);}
+  clear(p){return TerrainSurface.supported(this.map,p.x,p.y,this.mon.radius);}
+  landing(p){return this.clear(p)&&this.world.monsters.every(t=>t===this.mon||t.dead||Math.hypot(t.x-p.x,t.y-p.y)>t.radius+this.mon.radius+.15);}
+  free(p){return this.clear(p)&&[...this.targets(),...this.world.monsters].every(t=>t===this.mon||t.dead||Math.hypot(t.x-p.x,t.y-p.y)>t.radius+this.mon.radius+.15);}
+  block(source){
+    const m=this.mon, chance=this.profile.guard;
+    if(!chance||!source||!this.valid()||this.disabled()||this.active||m.action?.state==='attack')return false;
+    const angle=Math.atan2(source.y-m.y,source.x-m.x);
+    if(Math.cos(angle-m.visAng)<.5||Math.random()*100>=chance)return false;
+    m.aggro=true;this.blockUntil=this.world.time+.22;Sfx.play('block');Game.addFloat(m.x,m.y,'block','#e6ce82');return true;
+  }
+  begin(kind,spec,target,shape=null,point=null){
+    const m=this.mon,windup=spec.windup??.75,recovery=spec.recovery??.85;
+    this.active={kind,spec,target,shape,point,origin:{x:m.x,y:m.y},stage:'windup',remaining:windup,windup,recovery,hit:new Set()};
+    this.lastAttack=kind;m.path=null;m.moving=false;m.face(target.x,target.y);
+    m.startAction(['blink','bolt','fan'].includes(kind)?'cast':'attack',windup+recovery+(kind==='charge'?2:kind==='leap'?.55:0));
+    if(kind!=='melee'&&kind!=='bolt')Sfx.play(kind==='blink'?'portal':'shrine');
+  }
+  destination(target,mode){
+    const m=this.mon,base=Math.atan2(m.y-target.y,m.x-target.x),radius=mode==='retreat'?6:1.6;
+    for(const offset of [0,.65,-.65,1.3,-1.3,Math.PI]){
+      const p={x:target.x+Math.cos(base+offset)*radius,y:target.y+Math.sin(base+offset)*radius};
+      if(this.free(p)&&U.los((x,y)=>MapGen.walkable(this.map,x,y),p.x,p.y,target.x,target.y)&&TerrainNavigation.findPath(this.map,m,p,{radius:m.radius,hop:false}))return p;
+    }
+    return null;
+  }
+  trySpecial(force=false){
+    const m=this.mon,s=this.profile.special,t=m.pickTarget(this.world.player);
+    if(!s||this.active||(!force&&this.cooldown>0)||!t||!this.valid()||this.disabled()||!this.los(t))return false;
+    const distance=U.dist(m.x,m.y,t.x,t.y),angle=Math.atan2(t.y-m.y,t.x-m.x);
+    let shape,point;
+    if(s.kind==='blink'){
+      if(s.mode==='retreat'?distance>=s.range:distance<=4||distance>s.range)return false;
+      point=this.destination(t,s.mode);if(!point)return false;
+      shape={kind:'circle',...point,radius:m.radius+.4};
+    }else if(s.kind==='charge'||s.kind==='leap'){
+      if(distance<=2.6||distance>s.range)return false;
+      const travel=s.kind==='charge'?distance+.9:Math.max(1,distance-t.radius-m.radius-.25);
+      point={x:m.x+Math.cos(angle)*travel,y:m.y+Math.sin(angle)*travel};
+      if(!this.clear(point)||!TerrainNavigation.segment(this.map,m.x,m.y,point.x,point.y,m.radius))return false;
+      if(s.kind==='leap'&&!this.landing(point))return false;
+      shape=s.kind==='charge'?{kind:'line',x:m.x,y:m.y,angle,length:travel,width:2*(m.radius+.55)}:{kind:'circle',...point,radius:s.radius};
+    }else if(s.kind==='fan'){
+      if(distance>=s.range)return false;
+      shape={kind:'fan',x:m.x,y:m.y,angle,length:s.range,width:.65,count:s.count,spread:s.spread};
+    }else{
+      if(distance>s.radius)return false;
+      shape={kind:s.arc?'cone':'circle',x:m.x,y:m.y,angle,radius:s.radius,arc:s.arc};
+    }
+    this.cooldown=s.cd;this.begin(s.kind,s,t,shape,point);return true;
+  }
+  damage(target,mult,elem='phys'){
+    if(target.dead)return;
+    const m=this.mon;
+    target.takeDamage(U.rf(...m.def.dmg)*(m.def.dmgMult||1)*2.2*m.witherMult()*mult,m,elem);
+  }
+  area(a){
+    for(const t of this.targets())if(!t.groundImmune&&!a.hit.has(t)&&BossEncounters.contains(a.shape,t.x,t.y)&&this.los(t)){
+      a.hit.add(t);this.damage(t,a.spec.mult,a.spec.elem);
+    }
+  }
+  fire(target,mult=1,angle=null,lane=null){
+    const m=this.mon,p=m.def.projectile,d=angle??Math.atan2(target.y-m.y,target.x-m.x),reach=m.def.range;
+    // A short forward origin aligns the bolt with the hands/chest, while never
+    // moving its collision origin through an adjacent wall.
+    const origin={x:m.x+Math.cos(d)*.28,y:m.y+Math.sin(d)*.28};
+    if(!MapGen.walkable(this.map,origin.x,origin.y)){origin.x=m.x;origin.y=m.y;}
+    Game.spawnProjectile({...origin,tx:origin.x+Math.cos(d)*reach,ty:origin.y+Math.sin(d)*reach,speed:p.speed,ttl:reach/p.speed,kind:p.kind,elem:p.elem,fromPlayer:false,mon:m,bossMult:mult,bossLane:lane,
+      imperialOwner:this,imperialVisual:{kind:this.profile.projectileVisual,color:this.profile.projectileColor,lift:TerrainSurface.heightAt(this.map,m.x,m.y)*TerrainSurface.LIFT+(this.profile.projectileVisual==='crystal'?42:34)*m.scale}});
+    Sfx.play(this.profile.sound);
+  }
+  release(a){
+    const m=this.mon,t=a.target;
+    if(a.kind==='blink'){
+      if(this.free(a.point)&&TerrainNavigation.findPath(this.map,m,a.point,{radius:m.radius,hop:false})){
+        Game.addNova(m.x,m.y,.6,'#b598d9');m.x=a.point.x;m.y=a.point.y;m.path=null;Game.addNova(m.x,m.y,.6,'#b598d9');
+      }
+    }else if(a.kind==='charge'||a.kind==='leap'){
+      if(!this.clear(a.point)||!TerrainNavigation.segment(this.map,m.x,m.y,a.point.x,a.point.y,m.radius))return;
+      if(a.kind==='leap'&&!this.landing(a.point))return;
+      a.stage='travel';a.duration=a.kind==='leap'?.55:U.dist(m.x,m.y,a.point.x,a.point.y)/a.spec.speed;a.remaining=a.duration;return;
+    }else if(a.kind==='fan'){
+      for(let i=0;i<a.spec.count;i++){
+        const angle=a.shape.angle+(i-(a.spec.count-1)/2)*a.spec.spread;
+        this.fire(t,a.spec.mult,angle,{...a.shape,kind:'line',angle});
+      }
+    }else if(a.kind==='bolt'){
+      if(!t.dead&&this.los(t))this.fire(a.point);
+    }else if(a.kind==='melee'){
+      if(t.dead||!this.los(t)||U.dist(m.x,m.y,t.x,t.y)>m.def.range+t.radius+m.radius+.4)return;
+      if(Math.random()>U.clamp(.62+(m.lvl-(t.lvl||this.world.player.lvl))*.03,.35,.92)){Game.addFloat(t.x,t.y,'miss','#9a9a9a');return;}
+      if(t.stats?.dodge>0&&Math.random()*100<t.stats.dodge){Game.addFloat(t.x,t.y,'evade','#b0a0d0');return;}
+      if(t.tryBlock?.(m)){Sfx.play('block');return;}
+      this.damage(t,1,this.profile.meleeElem||'phys');Sfx.play(this.profile.sound);
+      if(t.stats?.thorns&&!m.dead)m.takeDamage(t.stats.thorns,t);
+      for(const [elem,value] of Object.entries(m.def.elemDmg||{}))t.takeDamage(value*2,m,elem);
+      if(m.def.poison)t.takeDamage(m.def.poison,m,'poison');
+    }else{this.area(a);Sfx.play('slam');Game.addNova(m.x,m.y,a.spec.radius,a.spec.elem==='light'?'#e6ce82':'#92bed5');}
+  }
+  advance(dt){
+    if(!this.active)return false;
+    if(!this.valid()||this.disabled()){this.cancel();return true;}
+    const m=this.mon;let left=dt;
+    for(let i=0;i<4&&this.active&&left>1e-9;i++){
+      const a=this.active,step=Math.min(left,a.remaining);a.remaining-=step;left-=step;
+      if(a.stage==='travel'){
+        const k=1-a.remaining/a.duration,nx=U.lerp(a.origin.x,a.point.x,k),ny=U.lerp(a.origin.y,a.point.y,k);
+        if(!TerrainNavigation.segment(this.map,m.x,m.y,nx,ny,m.radius)){a.remaining=0;}
+        else{m.x=nx;m.y=ny;m.moving=true;}
+        if(a.kind==='leap')m.jumpZ=Math.sin(k*Math.PI)*32;
+        else for(const t of this.targets())if(!t.groundImmune&&!a.hit.has(t)&&BossEncounters.contains(a.shape,t.x,t.y)&&U.dist(m.x,m.y,t.x,t.y)<=a.shape.width/2){a.hit.add(t);if(!t.tryBlock?.(m))this.damage(t,a.spec.mult,a.spec.elem);}
+      }
+      if(a.remaining>1e-8)break;
+      if(a.stage==='windup'){
+        if(m.blindUntil>this.world.time&&Math.random()<.7){a.stage='recovery';a.remaining=a.recovery;continue;}
+        this.release(a);if(!this.valid()){this.cancel();break;}
+        if(a.stage==='travel')continue;
+      }else if(a.stage==='travel'&&a.kind==='leap'){
+        m.jumpZ=0;
+        // Landing damage is tied to the marked destination, never a blocked mid-flight point.
+        if(U.dist(m.x,m.y,a.point.x,a.point.y)<.05){this.area(a);Sfx.play('slam');Game.addNova(m.x,m.y,a.spec.radius,'#92bed5');}
+      }else if(a.stage==='recovery'){this.active=null;m.action=null;m.moving=false;break;}
+      a.stage='recovery';a.remaining=a.recovery;m.jumpZ=0;m.moving=false;
+    }
+    return true;
+  }
+  update(dt){
+    if(!this.valid()||this.disabled())return true;
+    const m=this.mon,t=m.pickTarget(this.world.player);if(!t)return true;
+    if(this.trySpecial())return true;
+    if(this.profile.role==='boss')return false;
+    const d=U.dist(m.x,m.y,t.x,t.y),ranged=!!m.def.projectile,los=this.los(t);
+    if(ranged&&d<m.def.keepDist-1&&los&&d>.01){
+      const p={x:m.x+(m.x-t.x)/d*1.5,y:m.y+(m.y-t.y)/d*1.5};
+      if(TerrainNavigation.segment(this.map,m.x,m.y,p.x,p.y,m.radius)){m.path=[{cx:p.x,cy:p.y}];m.moveAlong(dt,m.def.speed,this.map,this.world.monsters);return true;}
+    }
+    const reach=ranged?m.def.range:m.def.range+t.radius+m.radius-.2;
+    if(los&&d<reach){
+      m.path=null;m.moving=false;m.face(t.x,t.y);
+      if(m.attackCd<=0){const duration=ranged?.55:Math.min(.6,.9/m.def.atkRate);m.attackCd=1/m.def.atkRate;this.begin(ranged?'bolt':'melee',{windup:duration*.55,recovery:duration*.45},t,null,{x:t.x,y:t.y});}
+    }else{
+      let aim=t;
+      if(this.profile.role==='flanker'&&d>3&&d<8){const a=Math.atan2(m.y-t.y,m.x-t.x)+(Math.floor(m.x+m.y)%2?.65:-.65),p={x:t.x+Math.cos(a)*2,y:t.y+Math.sin(a)*2};if(this.clear(p))aim=p;}
+      m.chase(dt,aim,this.map,(x,y)=>MapGen.walkable(this.map,x,y));
+    }
+    return true;
+  }
+  draw(ctx,cam,debug=false){
+    const a=this.active,m=this.mon;if(!this.valid())return;
+    const showWarnings=debug||this.profile.role==='boss';
+    if(!debug&&!(showWarnings&&a?.shape&&a.stage!=='recovery')&&!(this.blockUntil>this.world.time))return;
+    const project=(x,y)=>({x:U.isoX(x,y)-cam.x,y:U.isoY(x,y)-cam.y-TerrainSurface.heightAt(this.map,x,y)*TerrainSurface.LIFT});
+    const trace=s=>{
+      const points=[];
+      if(s.kind==='line'){const dx=Math.cos(s.angle),dy=Math.sin(s.angle),r=s.width/2;points.push([s.x-dy*r,s.y+dx*r],[s.x+dx*s.length-dy*r,s.y+dy*s.length+dx*r],[s.x+dx*s.length+dy*r,s.y+dy*s.length-dx*r],[s.x+dy*r,s.y-dx*r]);}
+      else{const arc=s.kind==='cone'?s.arc:Math.PI*2,start=s.kind==='cone'?s.angle-arc/2:0;if(s.kind==='cone')points.push([s.x,s.y]);for(let i=0;i<=40;i++){const ang=start+arc*i/40;points.push([s.x+Math.cos(ang)*s.radius,s.y+Math.sin(ang)*s.radius]);}}
+      ctx.beginPath();points.forEach(([x,y],i)=>{const p=project(x,y);i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.closePath();
+    };
+    ctx.save();
+    if(debug){ctx.strokeStyle='#a6c6cc';ctx.globalAlpha=.5;ctx.setLineDash([5,5]);trace({kind:'circle',x:m.x,y:m.y,radius:m.def.range});ctx.stroke();if(m.def.keepDist){trace({kind:'circle',x:m.x,y:m.y,radius:m.def.keepDist});ctx.stroke();}ctx.setLineDash([]);}
+    if(showWarnings&&a?.shape&&a.stage!=='recovery'){
+      const col=a.kind==='blink'?'#b598d9':a.spec.elem==='light'?'#f0ce78':'#a3d1e5';ctx.fillStyle=col;ctx.strokeStyle=col;ctx.lineWidth=2;
+      const shapes=a.shape.kind==='fan'?Array.from({length:a.shape.count},(_,i)=>({...a.shape,kind:'line',angle:a.shape.angle+(i-(a.shape.count-1)/2)*a.shape.spread})): [a.shape];
+      if(a.kind==='blink')shapes.push({kind:'circle',x:a.origin.x,y:a.origin.y,radius:m.radius+.4});
+      for(const s of shapes){trace(s);ctx.globalAlpha=.14;ctx.fill();ctx.globalAlpha=.9;ctx.stroke();}
+      const names={bash:'Shield Bash',sweep:'Gilded Sweep',pulse:m.defId==='chained_sovereign'?'Sovereign’s Slam':'Sunderstone Pulse',charge:'Charge',leap:'Stonefall',blink:'Shadow Step',fan:'Crystal Fan'};
+      const p=project(m.x,m.y);ctx.globalAlpha=1;ctx.font='12px sans-serif';ctx.textAlign='center';ctx.fillStyle=col;ctx.fillText(names[a.kind]+(a.stage==='windup'?' · '+a.remaining.toFixed(1):''),p.x,p.y-65*m.scale);
+    }
+    if(debug){const p=project(m.x,m.y);ctx.globalAlpha=1;ctx.fillStyle='#f0deaf';ctx.font='12px sans-serif';ctx.textAlign='center';ctx.fillText(this.profile.role+' · '+(a?.stage||'ready')+' · '+this.cooldown.toFixed(1)+'s',p.x,p.y+22);}
+    if(this.blockUntil>this.world.time){ctx.strokeStyle='#f0ce78';ctx.lineWidth=3;ctx.globalAlpha=1;trace({kind:'cone',x:m.x,y:m.y,angle:m.visAng,arc:Math.PI*2/3,radius:1});ctx.stroke();}
+    ctx.restore();
+  }
+}
+
 class Monster extends Entity {
   constructor(defId, x, y, opts) {
     super(x, y);
     opts = opts || {};
-    const base = DATA.ENEMIES[defId];
+    const base = DATA.resolveEnemy(defId,Game.state?.map?.id);
     /* clone def so elite modifiers can mutate */
     const def = JSON.parse(JSON.stringify(base));
+    const act2Profile=typeof Act2EnemyCombat!=='undefined'&&Act2EnemyCombat.profile(def,opts);
     this.defId = defId; this.def = def;
+    this.combatWorld=Game.state;this.combatMap=Game.state.map;this.castEpoch=0;
     /* difficulty tier scaling (applied before elite modifiers) */
     const diff = (Game.state && DATA.DIFFICULTIES[Game.state.difficulty]) || DATA.DIFFICULTIES[0];
     if (diff.id > 0) {
@@ -2292,13 +2553,14 @@ class Monster extends Entity {
     this.name = def.name;
     this.elite = !!opts.elite;
     this.minion = !!opts.minion;
+    this.summonOwner=opts.summonOwner||null;
     this.isBoss = !!def.boss;
     this.type = DATA.enemyType(def);    // humanoid | undead | beast | demon
     this.scale = def.big || 1;
     this.radius = 0.34 * this.scale;
     this.mods = [];
     if (this.elite) {
-      const mod = U.pick(DATA.ELITE_MODS);
+      const mod = (typeof EnemySkills!=='undefined'&&EnemySkills.eliteModifier(defId,opts)) || U.pick(DATA.ELITE_MODS);
       this.mods.push(mod);
       mod.apply(def);
       this.name = `${mod.name} ${def.name}`;
@@ -2329,7 +2591,7 @@ class Monster extends Entity {
     this.spriteKey = `${defId}|${this.elite ? this.mods[0].id : ""}`;
     this.spriteOpts = { kind: ["skeleton", "robed", "hound", "spider", "brute", "knight", "boss", "warlord", "beacon", "dragon", "serpent", "gargoyle", "demon", "golem", "ironlord", "abom", "wraith", "ooze", "imp", "treant", "grizzly", "wolf"].includes(def.sprite) ? def.sprite : "human",
       pal: def.pal, weapon: def.weapon || (def.bow ? "bow" : (def.sprite === "knight" ? "sword" : def.sprite === "boss" ? "sword" : def.sprite === "skeleton" ? "sword" : def.sprite === "robed" ? "wand" : "none")),
-      shield: !!def.shield, scale: this.scale, monsterArt: true };
+      shield: !!def.shield, scale: this.scale, monsterArt: true, monsterArtId: def.artId || def.sprite };
     if (defId === "vethriss") {
       this.name="Seraneth, Wounded";
       this.spriteOpts.npcArt="resident_frosthaven_0";
@@ -2337,6 +2599,10 @@ class Monster extends Entity {
       this.def.atkRate=.4;
     }
     this.encounter = typeof BossEncounters !== "undefined" ? BossEncounters.create(this) : null;
+    this.enemySkills = typeof EnemySkills !== 'undefined' ? EnemySkills.create(this,opts) : null;
+    this.imperialCombat=def.act3Combat?new ImperialCombat(this):null;
+    this.act2Combat=act2Profile?new Act2EnemyCombat(this):null;
+    if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.attach(this);
   }
 
   applySlow(dur, pct) {
@@ -2403,7 +2669,7 @@ class Monster extends Entity {
       if (!this.wardMessageAt || Game.state.time>=this.wardMessageAt) { Game.msg("The ritual shields this foe. "+ward+".","#d8b880"); this.wardMessageAt=Game.state.time+3; }
       return 0;
     }
-    let dmg = amount;
+    let dmg = amount * (this.enemySkills?.physicalMult(source,elem,detail) ?? 1);
     const hpBefore = this.hp;
     if (typeof UniquePowers !== "undefined") dmg *= 1 + UniquePowers.exposed(this) / 100;
     if(this.encounter && this.defId==="mire_mother" && this.encounter.phase>0 && this.encounter.stage==="recovery")dmg*=1.25;
@@ -2436,19 +2702,123 @@ class Monster extends Entity {
     if (typeof UniquePowers !== "undefined" && source === Game.state.player) UniquePowers.hit(source,this,actual,detail,hpBefore);
     return actual;
   }
+  attackNova(x,y,radius,color){
+    Game.addNova(x,y,radius,color,(typeof Act5EnemyAnimation!=='undefined'?Act5EnemyAnimation.novaPresentation(this):undefined)||(typeof Act2EnemyAnimation!=='undefined'?Act2EnemyAnimation.novaPresentation(this):undefined));
+  }
+  deferAttack(delay,fn){
+    if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.deferred(this,delay);
+    if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.deferred(this,delay);
+    const act5Visual=this.act5Visual;
+    const combat=this.imperialCombat,epoch=combat?.epoch;
+    const world=Game.state,map=world.map,castEpoch=this.castEpoch;
+    Game.afterDelay(delay,()=>{
+      if(this.dead||Game.state!==world||world.map!==map||world!==this.combatWorld||map!==this.combatMap||!world.monsters.includes(this)||this.castEpoch!==castEpoch||this.castInterrupted())return;
+      if(combat&&(!combat.valid()||combat.disabled()||combat.epoch!==epoch))return;
+      if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.emit(this,this.def.projectile?'bolt':'melee');
+      if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.release(this,act5Visual);
+      fn();
+    });
+  }
+  castInterrupted(){const t=Game.state.time;return Game.state.player.dead||this.stunT>0||this.frozen>t||this.feared>t||this.pulled||this.beckon?.until>t||this.fleeUntil>t;}
+  cancelAttacks(){
+    if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.cancel(this);
+    if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.cancel(this);
+    this.castEpoch++;
+    if(this.attackWarning)this.attackWarning.ttl=0;
+    if(this.slamWarning)this.slamWarning.ttl=0;
+    this.attackWarning=this.slamWarning=null;
+    // A canceled leap returns to its last supported launch point.
+    if(this.leaping){this.x=this.leaping.fx;this.y=this.leaping.fy;}
+    this.charging=this.leaping=this.whirling=null;this.jumpZ=0;
+    if(this.action?.state==='attack'||this.action?.state==='cast')this.action=null;
+  }
+  allied(other){return !!other&&other!==this&&(other.def.faction||other.def.family)===(this.def.faction||this.def.family);}
+  eligibleTarget(target){
+    if(!target||target.dead||target.untargetable)return false;
+    const world=Game.state;
+    if(target===world.player||world.minions.includes(target))return true;
+    return !!world.map.zone.infight&&!this.def.projectile&&!this.isBoss&&target!==this&&!target.isBoss&&world.monsters.includes(target)&&!this.allied(target);
+  }
+  hostileTargets(){
+    const world=Game.state,targets=[world.player,...world.minions];
+    if(world.map.zone.infight&&!this.def.projectile&&!this.isBoss)for(const other of world.monsters)if(this.eligibleTarget(other))targets.push(other);
+    return targets.filter(t=>!t.dead&&!t.untargetable);
+  }
+  combatLos(target,origin=this){return U.los((x,y)=>MapGen.walkable(Game.state.map,x,y),origin.x,origin.y,target.x,target.y);}
+  supportedPoint(x,y,radius=this.radius,map=Game.state.map){
+    if(!TerrainNavigation.clear(map,x,y,radius))return false;
+    if(map.surfaceVersion)return TerrainSurface.supported(map,x,y,radius);
+    // Large bodies can cover a legacy tile between the four corner samples.
+    if(radius>.5)for(let cy=Math.floor(y-radius);cy<=Math.floor(y+radius);cy++)for(let cx=Math.floor(x-radius);cx<=Math.floor(x+radius);cx++)if(map.blocked[cx+cy*map.w])return false;
+    return true;
+  }
+  chargePath(map,ax,ay,bx,by){
+    if(!TerrainNavigation.segment(map,ax,ay,bx,by,this.radius))return false;
+    if(!map.surfaceVersion&&this.radius>.5){const n=Math.max(1,Math.ceil(Math.hypot(bx-ax,by-ay)/.12));for(let i=1;i<=n;i++)if(!this.supportedPoint(U.lerp(ax,bx,i/n),U.lerp(ay,by,i/n),this.radius,map))return false;}
+    return true;
+  }
+  combatColor(elem){return {fire:'#ff905c',cold:'#a8e5ff',light:'#ffe58e',shadow:'#c9a3ef',poison:'#a8df79'}[elem]||'#e4d1b0';}
+  combatSound(elem,kind,melee=false){
+    if(melee)return kind==='sword'||kind==='axe'?'swing':elem==='shadow'?'curse':'hit';
+    return kind==='arrow'?'bow':kind==='axe'?'swing':{fire:'firebolt',cold:'frost',light:'zap',shadow:'curse',poison:'curse'}[elem]||'hit';
+  }
+  dealAttack(target,damage,elem='phys',onHit=false){
+    if(!target||target.dead)return 0;
+    const before=Math.max(0,target.hp);
+    // Monsters take elemental damage in argument four; heroes and pets use three.
+    if(target instanceof Monster)target.takeDamage(damage,this,null,elem);else target.takeDamage(damage,this,elem);
+    if(onHit===true&&!target.dead){
+      for(const [kind,value]of Object.entries(this.def.elemDmg||{}))this.dealAttack(target,value*2,kind);
+      if(this.def.poison)this.dealAttack(target,this.def.poison,'poison');
+    }
+    const actual=Math.max(0,before-Math.max(0,target.hp));
+    if(onHit&&actual>0){
+      if(this.def.chillOnHit&&!target.dead){
+        target.slowPct=Math.max(target.slowT>0?target.slowPct||0:0,30);
+        target.slowT=Math.max(target.slowT||0,this.def.chillOnHit*(1-(target.stats?.ccReduce||0)/100));
+      }
+      if(this.def.lifeOnHit&&!this.dead&&!this.noHeal)this.hp=Math.min(this.maxHp,this.hp+actual*.1);
+    }
+    return actual;
+  }
+  areaAttack(shape,damage,elem='phys'){
+    for(const target of this.hostileTargets())if(!target.groundImmune&&BossEncounters.contains(shape,target.x,target.y)&&this.combatLos(target,shape))this.dealAttack(target,damage,elem);
+  }
+  warnAttack(kind,shape,ability,resolve){
+    const duration=Math.max(ability.windup||0,this.def.warnings?.[kind]||({slam:.8,charge:.6,leap:.6,whirl:.6}[kind]||.6));
+    const warning={type:'enemywarning',owner:this,shape,kind,col:this.combatColor(ability.elem||this.def.meleeElem),x:shape.x,y:shape.y,ttl:duration,maxTtl:duration};
+    this.attackWarning=warning;Game.state.fx.push(warning);this.path=null;this.moving=false;
+    this.startAction('attack',duration+(ability.recovery??.25),{act5Kind:kind});
+    this.deferAttack(duration,()=>{if(this.attackWarning!==warning)return;warning.ttl=0;this.attackWarning=null;resolve(warning);});
+    return warning;
+  }
+  sustainWarning(warning,duration){warning.ttl=warning.maxTtl=duration;warning.phase='active';this.attackWarning=warning;}
+  finishWarning(){if(this.attackWarning)this.attackWarning.ttl=0;this.attackWarning=null;if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.finish(this);}
+  ownSummon(child){
+    child.summonOwner=this;child.fromSummon=true;child.def.faction=this.def.faction||this.def.family;
+    this.children.push(child);return child;
+  }
+  livingChildren(){this.children=this.children.filter(c=>!c.dead&&Game.state.monsters.includes(c));return this.children.length;}
 
   die(source, uniqueContext) {
     if (this.dead) return;
+    if(Game.state!==this.combatWorld||Game.state.map!==this.combatMap){this.dead=true;this.hp=0;this.cancelAttacks();return;}
     if(this.encounter&&!this.encounter.canDamage())return;
     if (Game.bossWard?.(this)) { this.hp=Math.max(1,this.hp); return; }
+    this.imperialCombat?.cancel();
     const nextForm=this.defId==="vethriss" && this.def.phases?.[this.phaseIdx||0];
     if (nextForm) { this.hp=Math.max(this.hp,this.maxHp*nextForm.at); return; }
     this.dead = true;
+    this.cancelAttacks();
+    this.enemySkills?.cancel();
     if (typeof UniquePowers !== "undefined") UniquePowers.killed(this,source,uniqueContext);
     if(this.encounter)this.encounter.finish();
     if(this.bossOwner?.encounter)this.bossOwner.encounter.onOwnedDeath(this);
     this.startAction("death", 0.6);
+    this.act2Combat?.onDeath();
     this.corpseT = 12;
+    if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.emit(this,'death');
+    if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.emit(this,'death');
     Sfx.play(this.def.sounds === "bone" ? "die_bone" : "die_flesh");
     /* affliction payoffs that fire when the host dies */
     if (this.killMark) Game.detonateMark(this);
@@ -2495,31 +2865,36 @@ class Monster extends Entity {
       pl.computeStats();
     }
     /* bloated things go out loudly */
-    if (this.def.deathBurst) {
+    if (this.def.deathBurst && !this.act2Combat) {
       const b = this.def.deathBurst, bx = this.x, by = this.y;
-      Game.afterDelay(0.35, () => {
-        const col = b.elem === "fire" ? "#ff6050" : "#90ff70";
+      const world=Game.state,map=world.map,epoch=this.castEpoch,windup=Math.max(.6,b.windup||0),col=this.combatColor(b.elem||'poison');
+      const shape={kind:'circle',x:bx,y:by,radius:b.radius};
+      const warning={type:'enemywarning',owner:this,death:true,shape,kind:'deathBurst',col,x:bx,y:by,ttl:windup,maxTtl:windup};
+      world.fx.push(warning);
+      Game.afterDelay(windup, () => {
+        warning.ttl=0;
+        if(Game.state!==world||world.map!==map||this.castEpoch!==epoch||this.combatMap!==map)return;
         Sfx.play("blast");
-        Game.addNova(bx, by, b.radius, col);
+        this.attackNova(bx, by, b.radius, col);
         for (let i = 0; i < 12; i++) Game.addParticle(bx + U.rf(-0.5, 0.5), by + U.rf(-0.5, 0.5), col);
-        const p = Game.state.player;
-        if (!p.dead && U.dist(bx, by, p.x, p.y) <= b.radius + p.radius) p.takeDamage(b.dmg, this, b.elem || "poison");
-        for (const mi of Game.state.minions) {
-          if (!mi.dead && U.dist(bx, by, mi.x, mi.y) <= b.radius + mi.radius) mi.takeDamage(b.dmg, this);
-        }
+        this.areaAttack(shape,b.dmg,b.elem||'poison');
       });
     }
     /* split into lesser copies on death (gated to non-minions so it can't cascade) */
-    if (this.def.splitOnDeath && !this.minion) {
+    if (this.def.splitOnDeath && !this.minion && !this.act2Combat) {
       const sp = this.def.splitOnDeath, bx = this.x, by = this.y, base = this;
+      const world=Game.state,map=world.map,epoch=this.castEpoch;
       Game.afterDelay(0.2, () => {
+        if(Game.state!==world||world.map!==map||this.castEpoch!==epoch||this.combatMap!==map)return;
         for (let i = 0; i < sp.count; i++) {
           const a = Math.random() * Math.PI * 2, sx = bx + Math.cos(a) * 1.2, sy = by + Math.sin(a) * 1.2;
           if (!MapGen.walkable(Game.state.map, sx, sy)) continue;
           const m = new Monster(sp.id || base.defId, sx, sy, { minion: true });
           m.aggro = true; m.scale *= 0.62; m.spriteOpts.scale = m.scale; m.radius *= 0.62;
           m.maxHp = Math.max(1, Math.round(m.maxHp * 0.35)); m.hp = m.maxHp;
-          Game.state.monsters.push(m); Game.addNova(sx, sy, 0.6, this.tint || "#c0a0a0");
+          if(!this.supportedPoint(sx,sy,m.radius,map))continue;
+          this.ownSummon(m);
+          Game.state.monsters.push(m); this.attackNova(sx, sy, 0.6, this.tint || "#c0a0a0");
         }
       });
     }
@@ -2531,25 +2906,29 @@ class Monster extends Entity {
     const warning={type:"slamwarning",owner:this,x:this.x,y:this.y,radius:s.radius,
       ttl:s.windup,maxTtl:s.windup,col:s.color||"#a8e5ff"};
     this.slamWarning=warning;this.slamCd=s.cd;this.path=null;this.moving=false;
-    this.startAction("attack",s.windup+(s.recovery??1));
+    this.startAction("attack",s.windup+(s.recovery??1),{act5Kind:"slam"});
     Game.state.fx.push(warning);Sfx.play("shrine");
-    Game.afterDelay(s.windup,()=>{
+    this.deferAttack(s.windup,()=>{
       if(this.slamWarning!==warning)return;
       this.slamWarning=null;warning.ttl=0;
       if(this.dead||hero.dead||Game.state!==world||Game.state.map!==map||!world.monsters.includes(this))return;
       if(this.openingId&&!["bossIntro","boss"].includes(world.flags.opening?.stage))return;
-      Game.addNova(warning.x,warning.y,s.radius,warning.col);Sfx.play("slam");
+      this.attackNova(warning.x,warning.y,s.radius,warning.col);Sfx.play("slam");
       if(!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)Game.fx.shake=Math.max(Game.fx.shake,3);
       // Match the visible boundary exactly: the actor's ground anchor must be inside.
-      const targets=[hero,...world.minions];
-      for(const target of targets)if(!target.dead&&U.dist(warning.x,warning.y,target.x,target.y)<=warning.radius)
-        target.takeDamage(U.rf(...this.def.dmg)*s.mult*(this.def.dmgMult||1)*2.2*this.witherMult(),this,s.elem);
+      this.areaAttack({kind:'circle',x:warning.x,y:warning.y,radius:s.radius},U.rf(...this.def.dmg)*s.mult*(this.def.dmgMult||1)*2.2*this.witherMult(),s.elem||this.def.meleeElem);
     });
   }
 
   update(dt, player, map) {
+    if(Game.state!==this.combatWorld||map!==this.combatMap){this.cancelAttacks();return;}
+    if(!this.dead&&this.castInterrupted())this.cancelAttacks();
+    if(this.enemySkills&&(this.dead||player.dead||this.stunT>0||this.frozen>Game.state.time||this.feared>Game.state.time))this.enemySkills.cancel();
+    this.imperialCombat?.tick(dt);
     this.updateAnim(dt);
-    if (this.dead) { this.corpseT -= dt; return; }
+    if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.tick(this);
+    if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.tick(this);
+    if (this.dead) { this.act2Combat?.updateDead(dt); this.corpseT -= dt; return; }
     if (Game.bossWard?.(this)) { this.path=null; this.moving=false; return; }
     if (this.encounter && !this.encounter.prepare(player,map)) return;
     if (this.bossOwner) {
@@ -2564,14 +2943,15 @@ class Monster extends Entity {
       const bs = this.def.beaconSpawn;
       if (this.beaconCd <= 0 && this.children.length < bs.max && U.dist(this.x, this.y, player.x, player.y) < 22) {
         this.beaconCd = bs.cd;
+        if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.emit(this,'summon');
         for (let i = 0; i < bs.count; i++) {
           const a = Math.random() * Math.PI * 2, r = 1.2 + Math.random() * 1.4;
           const sx = this.x + Math.cos(a) * r, sy = this.y + Math.sin(a) * r;
           if (!MapGen.walkable(map, sx, sy)) continue;
           const mm = new Monster(U.pick(bs.pool), sx, sy, {});
-          mm.aggro = true; this.children.push(mm);
+          mm.aggro = true; this.ownSummon(mm);
           Game.state.monsters.push(mm);
-          Game.addNova(sx, sy, 0.7, "#9fe0ff");
+          this.attackNova(sx, sy, 0.7, "#9fe0ff");
           for (let k = 0; k < 5; k++) Game.addParticle(sx, sy, "#9fe0ff");
         }
         Sfx.play("shrine");
@@ -2618,6 +2998,10 @@ class Monster extends Entity {
     if (this.killMark && Game.state.time >= this.killMark.until) Game.detonateMark(this);
     if (this.def.regen && !this.noHeal) this.hp = Math.min(this.maxHp, this.hp + this.maxHp * this.def.regen * dt);
     if(this.encounter){this.encounter.update(dt,player,map);return;}
+    if(this.act2Held){this.path=null;this.moving=false;return;}
+    if(this.act2Grace>0){this.act2Grace-=dt;this.moving=false;return;}
+    if(this.act2Combat?.update(dt))return;
+    if(this.enemySkills?.tick(dt,player,map))return;
     if(this.encounterKind==="portal"||this.encounterKind==="decoy"){this.moving=false;return;}
     /* boss phase transitions: shed armor, change shape, gain new weapons */
     if (this.def.phases) {
@@ -2636,13 +3020,13 @@ class Monster extends Entity {
         if (s.tint !== undefined) this.tint = s.tint;
         if (s.pal) Object.assign(this.spriteOpts.pal, s.pal);
         if (s.weapon !== undefined) this.spriteOpts.weapon = s.weapon;
-        if (s.sprite) { this.spriteOpts.kind=s.sprite; delete this.spriteOpts.npcArt; this.spriteKey=this.defId+"|phase"+this.phaseIdx; }
+        if (s.sprite) { this.spriteOpts.kind=s.sprite; this.spriteOpts.monsterArtId=s.artId||s.sprite; delete this.spriteOpts.npcArt; this.spriteKey=this.defId+"|phase"+this.phaseIdx; }
         if (s.name) this.name=s.name;
         if (s.copyBosses) { this.def.copyBosses=true; this.copyBossCd=0; this.copyBossIndex=0; }
         if (s.scale) { this.scale *= s.scale; this.spriteOpts.scale = this.scale; this.radius *= s.scale; }
         if (ph.msg) Game.centerMsg(ph.msg[0], ph.msg[1] || "");
         Sfx.play("vox_boss");
-        Game.addNova(this.x, this.y, 2.4, s.tint || "#c080ff");
+        this.attackNova(this.x, this.y, 2.4, s.tint || "#c080ff");
         Game.fx.shake = Math.max(Game.fx.shake, 5);
       }
     }
@@ -2656,55 +3040,60 @@ class Monster extends Entity {
     /* a flat-out charge: barrel toward a point, trampling whatever it reaches */
     if (this.charging) {
       const C = this.charging; C.t += dt;
-      const dx = C.tx - this.x, dy = C.ty - this.y, dd = Math.hypot(dx, dy) || 1;
-      const step = (this.def.charge.speed || 9) * dt;
-      if (dd > 0.3) { const nx = this.x + dx / dd * step, ny = this.y + dy / dd * step; if (MapGen.walkable(map, nx, this.y)) this.x = nx; if (MapGen.walkable(map, this.x, ny)) this.y = ny; }
+      const dx = C.tx - this.x, dy = C.ty - this.y, dd = Math.hypot(dx, dy) || .001;
+      const step = Math.min(dd,(this.def.charge.speed || 9) * dt),ox=this.x,oy=this.y;
+      const nx=this.x+dx/dd*step,ny=this.y+dy/dd*step;
+      if(!this.chargePath(map,ox,oy,nx,ny)){this.charging=null;this.finishWarning();return;}
+      this.x=nx;this.y=ny;
       this.face(C.tx, C.ty); this.moving = true;
-      if (!C.hit && !player.dead && U.dist(this.x, this.y, player.x, player.y) < player.radius + this.radius + 0.3) {
-        if (!player.tryBlock(this)) player.takeDamage(U.rf(...this.def.dmg) * (this.def.charge.mult || 1.6) * (this.def.dmgMult || 1) * 2.2 * this.witherMult(), this);
-        C.hit = true; Game.fx.shake = Math.max(Game.fx.shake, 4);
+      const swept={kind:'line',x:ox,y:oy,angle:C.shape.angle,length:step+.01,width:C.shape.width};
+      for(const target of this.hostileTargets())if(!C.hit.has(target)&&BossEncounters.contains(C.shape,target.x,target.y)&&BossEncounters.contains(swept,target.x,target.y)&&this.combatLos(target)){
+        C.hit.add(target);
+        if(!target.tryBlock?.(this))this.dealAttack(target,U.rf(...this.def.dmg)*(this.def.charge.mult||1.6)*(this.def.dmgMult||1)*2.2*this.witherMult(),this.def.charge.elem||this.def.meleeElem);
+        Game.fx.shake=Math.max(Game.fx.shake,4);
       }
-      if (C.t >= C.dur || dd <= 0.3) this.charging = null;
+      if (C.t >= C.dur || dd <= 0.3) {this.charging = null;this.finishWarning();}
       return;
     }
-    /* an in-flight leap continues regardless of stun/attack state */
+    /* Land on the supported point advertised by the warning. */
     if (this.leaping) {
       const L = this.leaping; L.t += dt;
       const k = Math.min(1, L.t / L.dur);
       this.x = U.lerp(L.fx, L.tx, k); this.y = U.lerp(L.fy, L.ty, k);
       this.jumpZ = Math.sin(k * Math.PI) * 32; this.moving = true;
       if (k >= 1) {
-        this.jumpZ = 0; this.leaping = null;
+        this.jumpZ = 0; this.leaping = null;this.finishWarning();
         Sfx.play("slam"); Game.fx.shake = Math.max(Game.fx.shake, 5);
-        Game.addNova(this.x, this.y, this.def.leap.radius, "#9fe0ff");
+        this.attackNova(this.x, this.y, this.def.leap.radius, this.combatColor(this.def.leap.elem||this.def.meleeElem));
         const dmg = U.rf(...this.def.dmg) * this.def.leap.mult * (this.def.dmgMult || 1) * 2.2 * this.witherMult();
-        if (!player.dead && U.dist(this.x, this.y, player.x, player.y) <= this.def.leap.radius + player.radius) player.takeDamage(dmg, this);
-        for (const mi of Game.state.minions) if (!mi.dead && U.dist(this.x, this.y, mi.x, mi.y) <= this.def.leap.radius + mi.radius) mi.takeDamage(dmg, this);
+        if(this.supportedPoint(this.x,this.y))this.areaAttack(L.shape,dmg,this.def.leap.elem||this.def.meleeElem);
+        else {this.x=L.fx;this.y=L.fy;}
       }
       return;
     }
     /* a whirlwind drives the spinner toward its prey, carving everything it passes */
     if (this.whirling) {
       const W = this.whirling; W.t += dt; W.tick -= dt;
-      const tgt = this.pickTarget(player);
+      const tgt = this.eligibleTarget(W.target)?W.target:null;
       if (tgt) {
         const dd = U.dist(this.x, this.y, tgt.x, tgt.y);
         if (dd > 0.4) { const step = this.def.speed * dt; const nx = this.x + (tgt.x - this.x) / dd * step, ny = this.y + (tgt.y - this.y) / dd * step;
-          if (MapGen.walkable(map, nx, this.y)) this.x = nx; if (MapGen.walkable(map, this.x, ny)) this.y = ny; }
+          if (TerrainNavigation.segment(map,this.x,this.y,nx,ny,this.radius)){this.x=nx;this.y=ny;} }
       }
       this.visAng += dt * 16; this.angT = this.visAng; this.dir = U.dirFrom(Math.cos(this.visAng), Math.sin(this.visAng)); this.moving = false;
+      if(this.attackWarning){this.attackWarning.x=this.attackWarning.shape.x=this.x;this.attackWarning.y=this.attackWarning.shape.y=this.y;}
       if (W.tick <= 0) {
         W.tick = this.def.whirl.tick || 0.3;
         const dmg = U.rf(...this.def.dmg) * this.def.whirl.mult * (this.def.dmgMult || 1) * 2.2 * this.witherMult();
-        if (!player.dead && U.dist(this.x, this.y, player.x, player.y) <= this.def.whirl.radius + player.radius) player.takeDamage(dmg, this);
-        for (const mi of Game.state.minions) if (!mi.dead && U.dist(this.x, this.y, mi.x, mi.y) <= this.def.whirl.radius + mi.radius) mi.takeDamage(dmg, this);
-        Game.addNova(this.x, this.y, this.def.whirl.radius, "#ccd8e0"); Sfx.play("swing");
+        this.areaAttack({kind:'circle',x:this.x,y:this.y,radius:this.def.whirl.radius},dmg,this.def.whirl.elem||this.def.meleeElem);
+        this.attackNova(this.x, this.y, this.def.whirl.radius, this.combatColor(this.def.whirl.elem||this.def.meleeElem)); Sfx.play("swing");
       }
-      if (W.t >= W.dur) this.whirling = null;
+      if (W.t >= W.dur) {this.whirling = null;this.finishWarning();}
       return;
     }
     if (this.frozen && Game.state.time < this.frozen) { this.moving = false; return; }   // hard freeze
     if (this.stunT > 0) { this.moving = false; return; }
+    if(this.imperialCombat?.active&&this.imperialCombat.advance(dt))return;
     if (this.action && this.action.state === "attack") { this.moving = false; return; }
     /* Hex of Beckoning: drop everything and stampede to the marked point */
     if (this.beckon && Game.state.time < this.beckon.until) {
@@ -2723,7 +3112,7 @@ class Monster extends Entity {
     }
     if (player.dead) { this.aggro = false; }
 
-    const d = U.dist(this.x, this.y, player.x, player.y);
+    const heroDistance=U.dist(this.x,this.y,player.x,player.y);
     const walk = (x, y) => MapGen.walkable(map, x, y);
     // The final shadow cycles actual earlier boss attacks.
     if (this.def.copyBosses && this.aggro) {
@@ -2744,7 +3133,7 @@ class Monster extends Entity {
 
     /* A corpse cannot trigger an alert. Reacquiring it after the death reset
        above would replay the monster's voice on every update. */
-    if (!player.dead && !this.aggro && d < this.def.sight && U.los(walk, this.x, this.y, player.x, player.y)) {
+    if (!player.dead && !this.aggro && heroDistance < this.def.sight && U.los(walk, this.x, this.y, player.x, player.y)) {
       this.aggro = true;
       Sfx.play("vox_" + (this.def.sounds || "bone"));
       /* a boss with a first-sight cutscene plays it once, ever */
@@ -2784,6 +3173,12 @@ class Monster extends Entity {
       return;
     }
 
+    if(this.imperialCombat?.update(dt))return;
+
+    if(this.enemySkills){this.enemySkills.fight(player,map);return;}
+    const selected=this.pickTarget(player);
+    const d=selected?U.dist(this.x,this.y,selected.x,selected.y):Infinity;
+    if(this.act2Combat){this.act2Combat.act(dt,player,map);return;}
     /* boss specials */
     if (this.def.enrage && !this.enraged && this.hp < this.maxHp * this.def.enrage) {
       this.enraged = true;
@@ -2794,22 +3189,25 @@ class Monster extends Entity {
     }
     if (this.def.summons) {
       this.summonCd -= dt;
-      if (this.summonCd <= 0 && d < 12) {
+      if (this.summonCd <= 0 && d < 12 && selected && this.combatLos(selected) && (this.isBoss||this.livingChildren()<6)) {
         this.summonCd = this.def.summons.cd;
-        this.startAction("attack", 0.7);
+        this.startAction("attack", 0.7, {act5Kind:"summon"});
         Sfx.play("vox_" + (this.def.sounds || "human"));
-        Game.afterDelay(0.5, () => {
-          if (this.dead) return;
+        this.deferAttack(0.5, () => {
+          if (this.dead || (this.imperialCombat&&(!this.imperialCombat.valid()||this.imperialCombat.disabled()))) return;
           for (let i = 0; i < this.def.summons.count; i++) {
+            if(!this.isBoss&&this.livingChildren()>=6)break;
             const a = Math.random() * Math.PI * 2;
             const sx = this.x + Math.cos(a) * 1.5, sy = this.y + Math.sin(a) * 1.5;
             if (MapGen.walkable(map, sx, sy)) {
               /* a summon pool tears open portals to earlier battlefields */
               const sid = Array.isArray(this.def.summons.id) ? U.pick(this.def.summons.id) : this.def.summons.id;
               const mm = new Monster(sid, sx, sy, { minion: true });
+              if(!this.supportedPoint(sx,sy,mm.radius))continue;
+              this.ownSummon(mm);
               mm.aggro = true;
               Game.state.monsters.push(mm);
-              Game.addNova(sx, sy, 0.8, "#8060c0");
+              this.attackNova(sx, sy, 0.8, "#8060c0");
             }
           }
         });
@@ -2828,15 +3226,15 @@ class Monster extends Entity {
           this.detonateCd = da.cd;
           this.face(player.x, player.y); this.startAction("attack", 0.6);
           Sfx.play("vox_" + (this.def.sounds || "human"));
-          for (const al of allies) Game.addNova(al.x, al.y, 0.7, "#c89ae0");   // mark the doomed
-          Game.afterDelay(0.5, () => {
+          for (const al of allies) this.attackNova(al.x, al.y, 0.7, "#c89ae0");   // mark the doomed
+          this.deferAttack(0.5, () => {
             if (this.dead) return;
             const pl = Game.state.player;
             for (const al of allies) {
               if (al.dead) continue;
               const ex = al.x, ey = al.y;
               al.dead = true; al.hp = 0; al.corpseT = 0;                       // consumed — no loot/xp
-              Game.addNova(ex, ey, da.radius, "#ff7a30");
+              this.attackNova(ex, ey, da.radius, "#ff7a30");
               for (let i = 0; i < 12; i++) Game.addParticle(ex, ey, "#ff9040");
               const dmg = U.rf(...this.def.dmg) * (da.mult || 1.5) * (this.def.dmgMult || 1) * 2.2 * this.witherMult();
               if (!pl.dead && U.dist(ex, ey, pl.x, pl.y) <= da.radius + pl.radius) pl.takeDamage(dmg, this, "fire");
@@ -2864,11 +3262,11 @@ class Monster extends Entity {
           spots.push({ x: player.x + Math.cos(a) * rr, y: player.y + Math.sin(a) * rr });
         }
         spots.forEach((s, i) => {
-          Game.afterDelay(i * 0.18, () => { if (!this.dead) Game.state.fx.push({ type: "meteorfall", x: s.x, y: s.y, radius, col: "#ff7a30", ttl: warn, maxTtl: warn }); });
-          Game.afterDelay(warn + i * 0.18, () => {
+          this.deferAttack(i * 0.18, () => { if (!this.dead) Game.state.fx.push({ type: "meteorfall", owner: this, x: s.x, y: s.y, radius, col: "#ff7a30", ttl: warn, maxTtl: warn }); });
+          this.deferAttack(warn + i * 0.18, () => {
             if (this.dead) return;
             const pl = Game.state.player;
-            Game.addNova(s.x, s.y, radius, "#ff7a30"); Game.fx.shake = Math.max(Game.fx.shake, 4);
+            this.attackNova(s.x, s.y, radius, "#ff7a30"); Game.fx.shake = Math.max(Game.fx.shake, 4);
             for (let k = 0; k < 16; k++) Game.addParticle(s.x + U.rf(-radius, radius) * 0.6, s.y + U.rf(-radius, radius) * 0.6, "#ff9040");
             const dmg = U.rf(...this.def.dmg) * (mr.mult || 1.4) * (this.def.dmgMult || 1) * 2.2 * this.witherMult();
             if (!pl.dead && U.dist(s.x, s.y, pl.x, pl.y) <= radius + pl.radius) pl.takeDamage(dmg, this, "fire");
@@ -2884,17 +3282,17 @@ class Monster extends Entity {
     if (this.def.throwUndead) {
       const tu = this.def.throwUndead;
       this.throwCd = (this.throwCd || 0) - dt;
-      if (this.throwCd <= 0 && d < (tu.range || 13) && d > 2.5 && U.los(walk, this.x, this.y, player.x, player.y)) {
+      if (this.throwCd <= 0 && selected && d < (tu.range || 13) && d > 2.5 && this.combatLos(selected) && (this.isBoss||this.livingChildren()<6)) {
         this.throwCd = tu.cd || 6;
-        this.face(player.x, player.y); this.startAction("attack", 0.7);
+        this.face(player.x, player.y); this.startAction("attack", 0.7, {act5Kind:"throw"});
         Sfx.play("vox_" + (this.def.sounds || "brute"));
-        const tx = player.x, ty = player.y, self = this;
-        Game.afterDelay(0.45, () => {
+        const tx = selected.x, ty = selected.y, self = this;
+        this.deferAttack(0.45, () => {
           if (self.dead) return;
           Sfx.play("swing");
           const dist = U.dist(self.x, self.y, tx, ty);
           Game.spawnProjectile({ x: self.x, y: self.y, tx, ty, speed: 9, kind: "undeadbody", fromPlayer: false, mon: self,
-            lob: { sx: self.x, sy: self.y, tx, ty, dur: U.clamp(dist / 9, 0.45, 1.4), pool: tu.pool || ["risen"], count: tu.count || 1, radius: tu.radius || 1.9, dmg: U.rf(...self.def.dmg) * (tu.mult || 1.3) * (self.def.dmgMult || 1) * 2.2 * self.witherMult() } });
+            lob: { owner:self, sx: self.x, sy: self.y, tx, ty, dur: U.clamp(dist / 9, 0.6, 1.4), pool: tu.pool || ["risen"], count: tu.count || 1, radius: tu.radius || 1.9, dmg: U.rf(...self.def.dmg) * (tu.mult || 1.3) * (self.def.dmgMult || 1) * 2.2 * self.witherMult() } });
         });
         return;
       }
@@ -2905,18 +3303,18 @@ class Monster extends Entity {
       if (this.healCd <= 0) {
         let patient = null, mostMissing = 8;
         for (const o of Game.state.monsters) {
-          if (o.dead || o === this) continue;
+          if (o.dead || o.noHeal || !this.allied(o) || !this.combatLos(o)) continue;
           if (U.dist(this.x, this.y, o.x, o.y) > this.def.heals.radius) continue;
           const missing = o.maxHp - o.hp;
           if (missing > mostMissing) { mostMissing = missing; patient = o; }
         }
         if (patient) {
           this.healCd = this.def.heals.cd;
-          this.startAction("attack", 0.6);
-          Game.afterDelay(0.4, () => {
-            if (this.dead || patient.dead) return;
+          this.startAction("attack", 0.6, {act5Kind:"heal"});
+          this.deferAttack(0.4, () => {
+            if (this.dead || patient.dead || patient.noHeal || !this.allied(patient) || !Game.state.monsters.includes(patient) || U.dist(this.x,this.y,patient.x,patient.y)>this.def.heals.radius || !this.combatLos(patient)) return;
             patient.hp = Math.min(patient.maxHp, patient.hp + this.def.heals.amount);
-            Game.addNova(patient.x, patient.y, 0.8, "#90ff90");
+            Game.addNova(patient.x, patient.y, 0.8, "#90ff90",typeof Act5EnemyAnimation!=='undefined'?Act5EnemyAnimation.novaPresentation(this):undefined);
             Game.addFloat(patient.x, patient.y, "+" + this.def.heals.amount, "#90ff90");
             Sfx.play("shrine");
           });
@@ -2928,14 +3326,16 @@ class Monster extends Entity {
     if (this.def.teleports) {
       this.teleCd -= dt;
       if (this.teleCd <= 0) {
-        const prey = this.pickTarget(player);
-        if (prey && U.dist(this.x, this.y, prey.x, prey.y) > this.def.teleports.minDist) {
+        const prey = selected;
+        if (prey && U.dist(this.x, this.y, prey.x, prey.y) > this.def.teleports.minDist && U.dist(this.x,this.y,prey.x,prey.y)<=(this.def.teleports.range||9) && this.combatLos(prey)) {
           this.teleCd = this.def.teleports.cd;
           const a = Math.random() * Math.PI * 2;
           const nx = prey.x + Math.cos(a) * 1.6, ny = prey.y + Math.sin(a) * 1.6;
-          if (MapGen.walkable(map, nx, ny)) {
+          if (this.supportedPoint(nx,ny) && this.combatLos({x:nx,y:ny})) {
             for (let i = 0; i < 6; i++) Game.addParticle(this.x, this.y, "#c080ff");
+            const act5Origin={x:this.x,y:this.y};
             this.x = nx; this.y = ny; this.path = null;
+            if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.blink(this,act5Origin.x,act5Origin.y);
             for (let i = 0; i < 6; i++) Game.addParticle(this.x, this.y, "#c080ff");
             Sfx.play("portal");
           }
@@ -2945,16 +3345,16 @@ class Monster extends Entity {
     /* bolt volleys (the Unshepherd's benediction) */
     if (this.def.volley) {
       this.volleyCd -= dt;
-      if (this.volleyCd <= 0 && d < 12) {
+      if (this.volleyCd <= 0 && selected && d <= (this.def.range||9) && this.combatLos(selected)) {
         this.volleyCd = this.def.volley.cd;
-        const aim = this.pickTarget(player);
+        const aim = selected;
         if (aim) {
           this.face(aim.x, aim.y);
-          this.startAction("attack", 0.7);
+          this.startAction("attack", 0.7, {act5Kind:"volley"});
           const pk = this.def.projectile || { kind: "soulbolt", speed: 8 };
-          Game.afterDelay(0.45, () => {
-            if (this.dead) return;
-            Sfx.play(pk.kind === "axe" ? "swing" : "firebolt");
+          this.deferAttack(0.45, () => {
+            if (!this.eligibleTarget(aim) || !this.combatLos(aim) || U.dist(this.x,this.y,aim.x,aim.y)>(this.def.range||9)) return;
+            Sfx.play(this.combatSound(pk.elem,pk.kind));
             const a0 = Math.atan2(aim.y - this.y, aim.x - this.x);
             const n = this.def.volley.count;
             for (let i = 0; i < n; i++) {
@@ -2966,24 +3366,16 @@ class Monster extends Entity {
         }
       }
     }
-    if (this.def.slam) {
+    if (this.def.slam && !this.imperialCombat) {
       this.slamCd -= dt;
-      if (this.slamCd <= 0 && d < this.def.slam.radius + 0.4) {
-        if(this.def.slam.windup){this.startTelegraphedSlam(player,map);return;}
+      if (this.slamCd <= 0 && selected && d < this.def.slam.radius + 0.4 && this.combatLos(selected) && this.supportedPoint(this.x,this.y)) {
+        if(this.openingId&&this.def.slam.windup){this.startTelegraphedSlam(player,map);return;}
         this.slamCd = this.def.slam.cd;
-        this.startAction("attack", 0.8);
-        Sfx.play("slam");
-        Game.afterDelay(0.55, () => {
-          if (this.dead) return;
-          Game.fx.shake = 8;
-          Game.addNova(this.x, this.y, this.def.slam.radius, "#c05040");
-          if (U.dist(this.x, this.y, player.x, player.y) <= this.def.slam.radius + player.radius && !player.dead) {
-            player.takeDamage(U.rf(...this.def.dmg) * this.def.slam.mult * (this.def.dmgMult || 1) * 2.2 * this.witherMult(), this);
-          }
-          for (const mi of Game.state.minions) {
-            if (!mi.dead && U.dist(this.x, this.y, mi.x, mi.y) <= this.def.slam.radius + mi.radius)
-              mi.takeDamage(U.rf(...this.def.dmg) * this.def.slam.mult * (this.def.dmgMult || 1) * 2.2 * this.witherMult(), this);
-          }
+        const s=this.def.slam,shape={kind:'circle',x:this.x,y:this.y,radius:s.radius};
+        this.warnAttack('slam',shape,s,()=>{
+          Game.fx.shake=Math.max(Game.fx.shake,4);Sfx.play(s.elem==='shadow'?'curse':'slam');
+          this.attackNova(shape.x,shape.y,s.radius,this.combatColor(s.elem||this.def.meleeElem));
+          this.areaAttack(shape,U.rf(...this.def.dmg)*s.mult*(this.def.dmgMult||1)*2.2*this.witherMult(),s.elem||this.def.meleeElem);
         });
         return;
       }
@@ -2992,14 +3384,23 @@ class Monster extends Entity {
     /* a goring charge across open ground */
     if (this.def.charge) {
       this.chargeCd = (this.chargeCd || 0) - dt;
-      const ct = this.pickTarget(player);
+      const ct = selected;
       if (this.chargeCd <= 0 && ct) {
         const cdd = U.dist(this.x, this.y, ct.x, ct.y);
         if (cdd > 3 && cdd < this.def.charge.range && U.los(walk, this.x, this.y, ct.x, ct.y)) {
-          this.chargeCd = this.def.charge.cd;
           /* aim a bit past the target so it ploughs through */
           const ux = (ct.x - this.x) / cdd, uy = (ct.y - this.y) / cdd;
-          this.charging = { tx: ct.x + ux * 2, ty: ct.y + uy * 2, t: 0, dur: 0.6, hit: false };
+          let length=0;
+          for(let r=.1;r<=Math.min(cdd+2,this.def.charge.range)+.001;r+=.1){
+            if(!this.chargePath(map,this.x+ux*length,this.y+uy*length,this.x+ux*r,this.y+uy*r))break;length=r;
+          }
+          if(length<cdd-this.radius){this.chase(dt,ct,map,walk);return;}
+          this.chargeCd = this.def.charge.cd;
+          const shape={kind:'line',x:this.x,y:this.y,angle:Math.atan2(uy,ux),length,width:this.radius*2+.6};
+          this.warnAttack('charge',shape,this.def.charge,warning=>{
+            this.charging={tx:shape.x+ux*length,ty:shape.y+uy*length,t:0,dur:length/(this.def.charge.speed||9),hit:new Set(),shape,target:ct};
+            this.sustainWarning(warning,this.charging.dur);
+          });
           this.face(ct.x, ct.y); Sfx.play("vox_" + (this.def.sounds || "beast"));
           return;
         }
@@ -3008,12 +3409,15 @@ class Monster extends Entity {
     /* Vandil drops from the sky with his polearm */
     if (this.def.leap) {
       this.leapCd -= dt;
-      const lt = this.pickTarget(player);
+      const lt = selected;
       if (this.leapCd <= 0 && lt) {
         const dd = U.dist(this.x, this.y, lt.x, lt.y);
-        if (dd > 2.6 && dd < this.def.leap.range && U.los(walk, this.x, this.y, lt.x, lt.y)) {
+        if (dd > 2.6 && dd < this.def.leap.range && U.los(walk, this.x, this.y, lt.x, lt.y) && this.supportedPoint(lt.x,lt.y)) {
           this.leapCd = this.def.leap.cd;
-          this.leaping = { fx: this.x, fy: this.y, tx: lt.x, ty: lt.y, t: 0, dur: 0.55 };
+          const shape={kind:'circle',x:lt.x,y:lt.y,radius:this.def.leap.radius};
+          this.warnAttack('leap',shape,this.def.leap,warning=>{
+            if(this.supportedPoint(shape.x,shape.y)){this.leaping={fx:this.x,fy:this.y,tx:shape.x,ty:shape.y,t:0,dur:.55,shape,target:lt};this.sustainWarning(warning,.55);}
+          });
           this.face(lt.x, lt.y); Sfx.play("swing");
           return;
         }
@@ -3022,10 +3426,13 @@ class Monster extends Entity {
     /* Sigrun opens into a moving whirlwind */
     if (this.def.whirl) {
       this.whirlCd -= dt;
-      const wt = this.pickTarget(player);
-      if (this.whirlCd <= 0 && wt && U.dist(this.x, this.y, wt.x, wt.y) < 7) {
+      const wt = selected;
+      if (this.whirlCd <= 0 && wt && U.dist(this.x, this.y, wt.x, wt.y) < 7 && this.combatLos(wt) && this.supportedPoint(this.x,this.y)) {
         this.whirlCd = this.def.whirl.cd;
-        this.whirling = { t: 0, dur: this.def.whirl.dur, tick: 0 };
+        this.warnAttack('whirl',{kind:'circle',x:this.x,y:this.y,radius:this.def.whirl.radius},this.def.whirl,warning=>{
+          this.whirling = { t: 0, dur: this.def.whirl.dur, tick: 0,target:wt };
+          this.sustainWarning(warning,this.whirling.dur);
+        });
         Sfx.play("swing");
         return;
       }
@@ -3033,7 +3440,7 @@ class Monster extends Entity {
 
     this.attackCd -= dt;
     /* fight whichever hostile is closest: the player or a raised minion */
-    const tgt = this.pickTarget(player);
+    const tgt = selected;
     if (!tgt) { this.moving = false; return; }
     const dT = U.dist(this.x, this.y, tgt.x, tgt.y);
     const inRange = dT <= this.def.range + tgt.radius + this.radius - 0.2;
@@ -3047,15 +3454,15 @@ class Monster extends Entity {
         this.face(tgt.x, tgt.y);
         this.startAction("attack", 0.55);
         const px = tgt.x, py = tgt.y;
-        Game.afterDelay(0.35, () => {
-          if (this.dead) return;
+        this.deferAttack(0.35, () => {
+          if (!this.eligibleTarget(tgt) || !this.combatLos({x:px,y:py}) || U.dist(this.x,this.y,px,py)>this.def.range) return;
           if (this.blindUntil && Game.state.time < this.blindUntil && Math.random() < 0.7) { Game.addFloat(this.x, this.y, "blind", "#9aa0a8"); return; }
-          Sfx.play(this.def.projectile.kind === "firebolt" ? "firebolt" : "bow");
+          Sfx.play(this.combatSound(this.def.projectile.elem,this.def.projectile.kind));
           Game.spawnProjectile({ x: this.x, y: this.y, tx: px, ty: py, speed: this.def.projectile.speed, kind: this.def.projectile.kind, elem: this.def.projectile.elem, fromPlayer: false, mon: this });
         });
         return;
       }
-      if (dT < this.def.keepDist - 1 && hasLos) {
+      if (dT > .001 && dT < this.def.keepDist - 1 && hasLos) {
         /* back away */
         const ax = this.x + (this.x - tgt.x) / dT * 1.5, ay = this.y + (this.y - tgt.y) / dT * 1.5;
         if (walk(ax, ay)) { this.path = [{ cx: ax, cy: ay }]; this.moveAlong(dt, this.def.speed, map, Game.state.monsters); return; }
@@ -3066,15 +3473,15 @@ class Monster extends Entity {
       return;
     }
 
-    if (inRange && !tgt.dead) {
+    if (inRange && !tgt.dead && this.combatLos(tgt)) {
       this.path = null; this.moving = false;
       this.face(tgt.x, tgt.y);
       if (this.attackCd <= 0) {
         this.attackCd = 1 / this.def.atkRate;
         const dur = Math.min(0.6, 0.9 / this.def.atkRate);
         this.startAction("attack", dur);
-        Game.afterDelay(dur * 0.55, () => {
-          if (this.dead || tgt.dead) return;
+        this.deferAttack(dur * 0.55, () => {
+          if (!this.eligibleTarget(tgt) || !this.combatLos(tgt)) return;
           if (this.blindUntil && Game.state.time < this.blindUntil && Math.random() < 0.7) { Game.addFloat(this.x, this.y, "blind", "#9aa0a8"); return; }
           if (U.dist(this.x, this.y, tgt.x, tgt.y) > this.def.range + tgt.radius + this.radius + 0.4) return;
           /* monster hit roll */
@@ -3084,17 +3491,10 @@ class Monster extends Entity {
           if (tgt.stats && tgt.stats.dodge > 0 && Math.random() * 100 < tgt.stats.dodge) { Game.addFloat(tgt.x, tgt.y, "evade", "#b0a0d0"); Game.dustPuff(tgt.x, tgt.y); return; }
           if (tgt.tryBlock && tgt.tryBlock(this)) { Sfx.play("block"); Game.addFloat(tgt.x, tgt.y, "block", "#80a0ff"); return; }
           let dmg = U.rf(...this.def.dmg) * (this.def.dmgMult || 1) * 2.2 * this.witherMult();
-          tgt.takeDamage(dmg, this);
+          this.dealAttack(tgt,dmg,this.def.meleeElem||'phys',true);
+          Sfx.play(this.combatSound(this.def.meleeElem,this.spriteOpts.weapon,true));
+          if(this.def.meleeElem)Game.addParticle(tgt.x,tgt.y,this.combatColor(this.def.meleeElem));
           if (tgt.stats && tgt.stats.thorns > 0 && !this.dead) this.takeDamage(tgt.stats.thorns, tgt);
-          if (this.def.elemDmg) {
-            for (const [kind, v] of Object.entries(this.def.elemDmg)) tgt.takeDamage(v * 2, this, kind);
-            if (this.def.chillOnHit) {
-              const ccR = tgt.stats ? tgt.stats.ccReduce : 0;
-              tgt.slowT = Math.max(tgt.slowT, this.def.chillOnHit * (1 - ccR / 100));
-              tgt.slowPct = 30;
-            }
-          }
-          if (this.def.poison) tgt.takeDamage(this.def.poison, this, "poison");
         });
       }
     } else {
@@ -3156,6 +3556,7 @@ class Npc extends Entity {
 /* ------------------------------------------------------------------ */
 class Projectile {
   constructor(o) {
+    this.enemySlow=o.enemySlow||null;
     this.sourceSkill=o.sourceSkill||null;this.visualOwner=o.visualOwner||null;
     this.x = o.x; this.y = o.y;
     this.lift = o.lift ?? 14;       // fixed world height captured at weapon release
@@ -3164,16 +3565,20 @@ class Projectile {
     this.vy = (o.ty - o.y) / d * o.speed;
     this.speed = o.speed;
     this.kind = o.kind; this.elem = o.elem || null; this.fromPlayer = o.fromPlayer;
+    this.arrowWeapon=!!o.fromPlayer && o.kind==="arrow" && ["bow","crossbow"].includes((o.visualOwner || Game.state.player)?.equip.main?.cat);
     this.mon = o.mon; this.mult = o.mult || 1;
+    this.originWorld=Game.state;this.originMap=Game.state.map;
     this.bossOwner=o.bossOwner||null;this.bossMult=o.bossMult??1;
     this.bossLane=o.bossLane||null;
     this.bossVisual=o.bossVisual||null;
+    this.imperialOwner=o.imperialOwner||null;this.imperialVisual=o.imperialVisual||null;
     this.spell = o.spell || null;       // {dmg, crit, elem, burn, chill, pdot, drain, pierce, chains, scorch, knockback, sprayRadius}
     this.minionDmg = o.minionDmg;       // bolts fired by raised skeletons
     this.minionPdot = o.minionPdot || 0;
     this.minionSource = o.minionSource || (o.visualOwner ? { owner:o.visualOwner } : null);
     this.pierce = !!o.pierce;           // weapon-based piercing arrows
     this.lob = o.lob || null;               // {sx,sy,tx,ty,dur,pool,count,radius,dmg}  (thrown undead body)
+    if(this.lob?.owner){const l=this.lob;Game.state.fx.push({type:'enemywarning',projectile:this,shape:{kind:'circle',x:l.tx,y:l.ty,radius:l.radius},kind:'throw',col:'#e4d1b0',x:l.tx,y:l.ty,ttl:l.dur,maxTtl:l.dur});}
     this.boomerang = o.boomerang || null;   // {maxRange, returning}  (Returning Axe)
     this.ricochet = o.ricochet || null;     // {bounces}              (Ricochet Shard)
     this.maxPierce = o.maxPierce || 0;      // charge_shot pierce cap
@@ -3188,6 +3593,8 @@ class Projectile {
     this.dead = false;
   }
   update(dt, map, player, monsters) {
+    if(!this.fromPlayer&&this.mon&&(Game.state!==this.originWorld||map!==this.originMap)){this.dead=true;return;}
+    if(this.imperialOwner&&!this.imperialOwner.valid()){this.dead=true;return;}
     if(this.bossOwner&&(!this.bossOwner.encounter?.active||this.bossOwner.dead||this.bossOwner.encounter.map!==map)){this.dead=true;return;}
     const run=()=>typeof SkillVFX!=='undefined'&&this.sourceSkill?SkillVFX.scope(this.visualOwner||player,this.sourceSkill,()=>this.updateMotion(dt,map,player,monsters)):this.updateMotion(dt,map,player,monsters);
     return typeof SkillAudio!=='undefined'?SkillAudio.scope(this.sourceSkill,{owner:this.visualOwner||player,emitter:this},run):run();
@@ -3274,11 +3681,12 @@ class Projectile {
               this.dead = true; return;
             }
             /* weapon-damage arrows: Quarry payoff, Serrated coat, ricochet/boomerang/charge-pierce */
+            if(m.imperialCombat?.block(player)){this.dead=true;return;}
             let mult = this.mult;
             if (this.quarryBonus && m.quarry && Game.state.time < m.quarry.until) { mult *= 1 + this.quarryBonus / 100 * m.quarry.stacks; m.quarry = null; }
-            player.strike(m, mult, { auto: !!this.boomerang });
+            player.strike(m, mult, { auto: !!this.boomerang, guardChecked:!!m.imperialCombat });
             if (this.quarryOnHit) m.quarry = { until: Game.state.time + 6, stacks: Math.min(5, ((m.quarry && m.quarry.stacks) || 0) + this.quarryStacks) };
-            if (player.coat && player.buffs.some(b => b.id === "serrated")) m.poisonDot = { dps: Math.max((m.poisonDot && m.poisonDot.dps) || 0, player.coat.pdot / 3), t: player.coat.woundDuration??4 };
+            if (this.arrowWeapon && player.coat && player.buffs.some(b => b.id === "serrated")) m.poisonDot = { dps: Math.max((m.poisonDot && m.poisonDot.dps) || 0, player.coat.pdot / 3), t: player.coat.woundDuration??4 };
             if (this.hitSet) this.hitSet.add(m);
             if (this.knockFirst) { Game.knockMonster(m, this.x, this.y, 1.5); this.knockFirst = false; }
             if (this.boomerang) continue;                        // pierces all on both legs
@@ -3301,6 +3709,7 @@ class Projectile {
         for (const m of monsters) {
           if (m.dead) continue;
           if (U.dist(this.x, this.y, m.x, m.y) < m.radius + 0.25) {
+            if(this.kind==='arrow'&&m.imperialCombat?.block(this.minionSource)){this.dead=true;return;}
             Sfx.playSkill?.(this.sourceSkill,'impact',{owner:this.visualOwner||player,emitter:this,target:m,elem:this.minionPdot?'poison':'phys'});
             m.takeDamage(this.minionDmg, this.minionSource); Game.minionFloat(m.x, m.y, this.minionDmg);
             if(typeof SkillVFX!=='undefined')SkillVFX.hit(this.visualOwner||player,m,this.minionPdot?'poison':'phys');
@@ -3318,16 +3727,18 @@ class Projectile {
           if (player.stats.dodge > 0 && Math.random() * 100 < player.stats.dodge) { Game.addFloat(player.x, player.y, "evade", "#b0a0d0"); }
           else if (player.tryBlock(this)) { Sfx.play("block"); Game.addFloat(player.x, player.y, "block", "#80a0ff"); }
           else if (mon) {
-            player.takeDamage(hitDmg, mon, elem || "phys");
+            mon.dealAttack(player,hitDmg,elem||'phys','projectile');
+            if(this.enemySlow)Act2EnemyCombat.slow(player,this.enemySlow);
             if (elem === "fire") Sfx.play("fireHit");
           }
           this.dead = true; return;
         }
         for (const mi of Game.state.minions) {
-          if (mi.dead) continue;
+          if (mi.dead || mi.untargetable) continue;
           if (U.dist(this.x, this.y, mi.x, mi.y) < mi.radius + 0.25 &&
               (!this.bossLane||BossEncounters.contains(this.bossLane,mi.x,mi.y))) {
-            if (mon) mi.takeDamage(hitDmg * (this.bossOwner ? .45 : 1), mon);
+            if (mon) mon.dealAttack(mi,hitDmg*(this.bossOwner?.45:1),elem||'phys','projectile');
+            if(this.enemySlow)Act2EnemyCombat.slow(mi,this.enemySlow);
             this.dead = true; return;
           }
         }

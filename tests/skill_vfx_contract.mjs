@@ -2,6 +2,10 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const root=new URL('../',import.meta.url),read=p=>fs.readFileSync(new URL(p,root),'utf8');
+// The frozen baseline predates intentional cost/upkeep/weapon rules (and the
+// armorPct correction). Keep it unchanged; this mode tests current gameplay
+// with VFX enabled/disabled, plus every drawing and lifecycle invariant.
+const currentGameplay=process.argv.includes('--current-gameplay');
 let checks=0;const ok=(v,m)=>{checks++;assert.ok(v,m);};
 const clean=v=>JSON.parse(JSON.stringify(v,(k,val)=>['owner','visualOwner','sourceSkill','_castingSkillId','action','_animationController','path','command','_navCache','_perkCache','visual','lastTarget'].includes(k)?undefined:val));
 function harness({before=false,enabled=true}={}){
@@ -10,7 +14,7 @@ function harness({before=false,enabled=true}={}){
   const ctx=vm.createContext({console,Math:math,Date,performance,Uint8Array,Uint16Array,Uint32Array,Float32Array,Uint8ClampedArray,Set,Map,JSON,setTimeout,clearTimeout,
     document:{createElement:()=>canvas},window:{addEventListener:noop,matchMedia:()=>({matches:false})},localStorage:{getItem:()=>null,setItem:noop},
     Sfx:new Proxy({vol:{}},{get:(t,k)=>t[k]||noop}),Player3D:{assets:{},projectileOrigin:()=>null,update:noop},UI:new Proxy({},{get:()=>noop}),LevelTerrain:{clipBehind:noop}});
-  for(const f of ['utils','data','data_overrides','skill_perks','sprite_manifest','mapgen','navigation','items','lootfilter','skill_vfx'])vm.runInContext(read('js/'+f+'.js'),ctx,{filename:f});
+  for(const f of ['utils','data','data_overrides','boss_encounters','skill_perks','sprite_manifest','mapgen','navigation','items','lootfilter','skill_vfx'])vm.runInContext(read('js/'+f+'.js'),ctx,{filename:f});
   vm.runInContext(read((before?'tests/fixtures/skill_vfx_before/':'')+'js/entities.js'),ctx,{filename:'entities'});
   let source=read((before?'tests/fixtures/skill_vfx_before/':'')+'js/game.js');
   source=source.replace('    init, newGame, loadGame,',`    __test:{freshState,setState:s=>{state=s;delayed=[];particles=[];novas=[];bolts=[];},updateTraps,updateFx,flush:()=>{let guard=0;while(guard++<100){const i=delayed.findIndex(d=>d.t<=state.time);if(i<0)break;const job=delayed.splice(i,1)[0];job.fn();}}},\n    init, newGame, loadGame,`);
@@ -20,6 +24,7 @@ function harness({before=false,enabled=true}={}){
   function fresh(sk,rank=10,perk=-1){
     seed=42;rngCalls=0;V.reset();
     const p=new api.Player('VFX contract',sk.cls);p.lvl=100;p.x=10;p.y=10;
+    if(currentGameplay&&sk.cls==='veilranger')p.equip.main={kind:'gear',cat:'bow',dmg:[1,3],speed:1,ranged:true,twoHand:true,affixes:[]};
     const s=G.__test.freshState(p,123);s.map={id:'test',w:40,h:40,tiles:new Uint8Array(1600),walls:new Uint8Array(1600),blocked:new Uint8Array(1600),props:[],hazard:new Uint8Array(1600),zone:{lvl:1}};
     G.__test.setState(s);s.monsters=[];s.minions=[];s.fx=[];s.traps=[];s.projectiles=[];s.time=0;
     for(const skill of Object.values(api.DATA.SKILLS))if(skill.cls===sk.cls)p.skills[skill.id]=rank;
@@ -73,7 +78,7 @@ for(const sk of skills)for(const rank of [1,5,10])for(const perk of rank===1?[-1
   // Compact deterministic snapshots cover health, resources, statuses, paths, props and RNG consumption.
   const digest=await import('node:crypto').then(({createHash})=>createHash('sha256').update(JSON.stringify(actual)).digest('hex'));
   if(capture){const before=old.run(sk,rank,perk);assert.deepEqual(actual,before,key+' differs from original combat');baseline[key]=digest;}
-  else ok(digest===baseline[key],key+' differs from original combat');
+  else if(!currentGameplay)ok(digest===baseline[key],key+' differs from original combat');
   scenarios++;
 }
 if(capture){fs.mkdirSync(new URL('fixtures/',import.meta.url),{recursive:true});fs.writeFileSync(baselinePath,JSON.stringify(baseline,null,2)+'\n');}
@@ -112,9 +117,10 @@ ok(drawCalls>10000,'drawing coverage was empty');
 const original=harness({before:true});
 for(const [id,mode]of [['gravebinder_2_1','death'],['rabies','death'],['gravebinder_0_4','expire'],['rimeguard','expire'],['veilranger_2_4','death'],['gravebinder_1_2','expire'],['gravebinder_1_5','cancel'],['veilranger_0_2','cancel'],['raise_plaguemage','expire'],['ground_slam','expire'],['emberwitch_0_4','cancel'],['veilranger_1_2','expire']]){
   const before=original.lifecycle(id,mode),after=active.lifecycle(id,mode),off=disabled.lifecycle(id,mode);
-  assert.deepEqual(after,before,id+' lifecycle changed original combat');assert.deepEqual(after,off,id+' lifecycle changed with VFX toggle');checks+=2;
+  if(!currentGameplay){assert.deepEqual(after,before,id+' lifecycle changed original combat');checks++;}
+  assert.deepEqual(after,off,id+' lifecycle changed with VFX toggle');checks++;
 }
 const cosmetic=active.fresh(sk);cosmetic.s.map.props.push({x:10,y:10,type:'barrel',breakable:true});
 active.SkillVFX.scope(cosmetic.p,sk.id,()=>active.SkillVFX.area(10,10,5,cosmetic.p));ok(cosmetic.s.map.props.length===1,'cosmetic area destroyed a prop');
 active.Game.addNova(10,10,5,'#fff');ok(cosmetic.s.map.props.length===0,'gameplay nova stopped destroying props');
-console.log(`PASS ${checks} checks, ${scenarios} skill/rank/perk scenarios: original combat preserved, VFX toggle equivalent, coverage, rejection, respec, bounds and cleanup.`);
+console.log(`PASS ${checks} checks, ${scenarios} skill/rank/perk scenarios: ${currentGameplay?'current gameplay':'original combat preserved'}, VFX toggle equivalent, coverage, rejection, respec, bounds and cleanup.`);
