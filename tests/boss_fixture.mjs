@@ -17,6 +17,7 @@ export function fixture({bossSource,sourceDirectory,reducedMotion=false,gameExpo
     SpriteAssets:{loadBundle:async()=>{}},LootFilter:{evaluate:()=>({show:true})},
   });
   const files=['utils','data','data_overrides','boss_encounters','skill_perks','sprite_manifest','mapgen','navigation','items','entities'];
+  if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'prop_interactions.js')))files.splice(files.indexOf('mapgen'),0,'prop_interactions');
   if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'act2_enemy_combat.js')))files.splice(files.indexOf('entities'),0,'act2_enemy_combat');
   if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'act2_enemy_animation.js')))files.splice(files.indexOf('entities'),0,'act2_enemy_animation');
   if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'act3_enemy_animation.js')))files.splice(files.indexOf('entities'),0,'act3_enemy_animation');

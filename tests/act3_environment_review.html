@@ -1,0 +1,212 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Act III — imperial city review</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#111a1f;color:#d8dcd9;font:14px/1.5 system-ui}header{padding:18px 24px;border-bottom:1px solid #33434a}h1{font:28px Georgia;margin:0;color:#e4d3af}p{margin:8px 0}label{display:inline-block;margin:6px 14px 6px 0}select,input,button{background:#233039;color:#e5ded0;border:1px solid #53636b;border-radius:3px;padding:7px;font:inherit}button{cursor:pointer;margin:4px 6px 4px 0}input{width:125px}button:disabled{opacity:.4}#status{color:#a7c9b4}#error{color:#ff9f90}#host{margin:16px 0;overflow:hidden}iframe{border:0;display:block;transform-origin:top left}#report{max-height:180px;overflow:auto;padding:12px 24px;font-size:12px}#topology{max-width:360px;width:100%;image-rendering:pixelated;display:none}details{margin:12px 24px}details[open] #topology{display:block}
+</style>
+<header><h1>Act III · Painted environments and passages</h1><p>Six authored adventure areas and the Dig Camp with seeded routes. This review uses temporary heroes and an in-memory save store.</p>
+<label>Area <select id="zone"><option value="desert_wastes">The Shifting Wastes</option><option value="underground_market">Underground Market</option><option value="sand_tombs">The Shifting Tombs</option><option value="khal_palace">Palace of Khal-Zahir</option><option value="shard_flats">The Shard Flats</option><option value="tomb_sanctum">Tomb of the Chained Sovereign</option><option value="khalcamp">The Dig Camp</option></select></label>
+<label>Seed <input id="seed" type="number" min="0" max="4294967295" value="12345"></label>
+<label>Version <select id="version"><option value="after">Redesigned</option><option value="environment_before">Before environment (fresh snapshot)</option></select></label>
+<label>Canvas <select id="width"><option value="1920">1080p</option><option value="3840">4K</option></select></label>
+<label>View <select id="view"><option value="arrival">Arrival</option></select></label>
+<div><label>Enemy <select id="enemy"></select></label><button id="previewEnemy" disabled>Preview enemy</button><button id="forceSkill" disabled>Preview signature skill</button><button id="mixed" disabled>Restore mixed encounters</button><label><input id="combatOverlay" type="checkbox" style="width:auto"> Attack ranges and cooldowns</label></div>
+<div><button id="previewAttack" disabled>Preview attack</button><button id="previewDeath" disabled>Preview death</button><button id="stepFrame" disabled>Step 1/60 second</button></div>
+<div><button id="load">Load area</button><button id="play" disabled>Play encounter</button><button id="walk" disabled>Walk to next landmark</button><button id="capture" disabled>Save scene image</button><button id="captureAll" disabled>Capture all areas</button><button id="profile" disabled>Compare performance</button></div>
+<p id="status">Preparing the isolated game…</p><pre id="error"></pre></header>
+<div id="host"></div><details><summary>Route and landmark overview</summary><canvas id="topology"></canvas></details><pre id="report"></pre>
+<script src="../js/utils.js?v=act31"></script><script src="../js/data.js?v=act31"></script><script src="../js/data_overrides.js?v=act31"></script><script src="../js/boss_encounters.js?v=act31"></script><script src="../js/mapgen.js?v=act31"></script><script src="../js/navigation.js?v=act31"></script>
+<script type="module">
+const el=id=>document.getElementById(id),params=new URLSearchParams(location.search),zones=[...el('zone').options].map(o=>o.value),
+ root=new URL('../',location.href),raf=()=>new Promise(resolve=>requestAnimationFrame(resolve));
+for(const id of ['zone','seed','version','width'])if(params.has(id))el(id).value=params.get(id);
+window.act3Store=new Map();const frames=new Map();let frame,win,api,game,map,reference,playing=false,busy=false,request=0;
+const error=e=>{el('error').textContent=e.stack||e.message||String(e);el('status').textContent='FAIL';document.body.dataset.testStatus='failed';};
+function enemyControls(){const available=el('version').value==='after'&&map?.id!=='khalcamp'&&!!api?.DATA.ACT3_ENEMY_PROFILES;
+ el('previewEnemy').disabled=!available;el('forceSkill').disabled=!available||!api?.DATA.ACT3_ENEMY_PROFILES?.[el('enemy').value]?.act3Combat.special;
+ const regular=available&&api.DATA.ACT3_ENEMY_PROFILES[el('enemy').value]?.act3Combat.role!=='boss';
+ for(const id of ['previewAttack','previewDeath','stepFrame'])el(id).disabled=!regular;
+}
+function controls(enabled){for(const id of ['play','walk','capture','captureAll','profile','previewEnemy','forceSkill','mixed','previewAttack','previewDeath','stepFrame'])el(id).disabled=!enabled;if(enabled)enemyControls();}
+function resize(){if(!frame)return;const width=+el('width').value,height=Math.round(width*9/16),scale=Math.min(1,innerWidth/width);frame.style.width=width+'px';frame.style.height=height+'px';frame.style.transform=`scale(${scale})`;el('host').style.height=height*scale+'px';}
+window.addEventListener('resize',resize);
+async function load(version=el('version').value,zone=el('zone').value){
+ playing=false;controls(false);el('error').textContent='';const ticket=++request;el('status').textContent=`Loading ${version==='before'?'original':'redesigned'} ${zone}…`;
+ el('version').value=version;el('zone').value=zone;
+ for(const saved of frames.values())saved.style.display='none';
+ if(frames.has(version)){frame=frames.get(version);frame.style.display='block';resize();win=frame.contentWindow;win.dispatchEvent(new Event('resize'));}
+ else {
+ const prefix=version==='environment_before'?'tmp/act3_environment/before/':version==='combat_before'?'tmp/act3_combat/before/':version==='before'&&!params.has('profile')?'tmp/act3/before/':'',paths=[prefix+'index.html',prefix+'js/game.js'];
+ const [html,original]=await Promise.all(paths.map(async p=>{const response=await fetch(new URL(p,root));if(!response.ok)throw Error('Missing baseline; run python tests/act3_baseline.py first.');return response.text();}));
+ let source=original.replace('Game.init().catch','Game.init().then(()=>window.__ready=true).catch').replace('    init, newGame, loadGame,',
+ `    __act3:{render,update,updateCamera,setupBeaconQuest,placeEvents,clickWorld(x,y,surfaceId=0){const c=camera();mouse.x=U.isoX(x,y)-c.x;mouse.y=U.isoY(x,y)-surfaceLift(x,y,surfaceId)-c.y;updateHover();handleClick(false);},place(x,y,surfaceId=0){state.player.surfaceId=surfaceId;state.player.x=x;state.player.y=y;state.player.path=null;state.player.command=null;state.player.jumping=null;state.player.jumpZ=0;state.player._animationController?.reset();camPos={x:U.isoX(x,y)-canvas.width/2,y:U.isoY(x,y)-surfaceLift(x,y,surfaceId)-canvas.height/2-20};shakeOx=shakeOy=0;}},\n    init, newGame, loadGame,`);
+ if(!source.includes('__act3:'))throw Error('Review hooks missing');
+ if(params.has('investigate'))source=source.replace('if(m.act3?.environment)ImperialEnvironment.append', 'if(m.act3?.environment&&!window.__omitEnvironmentUprights)ImperialEnvironment.append');
+ const injection=`<base href="${root}"><script>const store=parent.act3Store;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});window.requestAnimationFrame=()=>0;window.__errors=[];window.addEventListener('error',e=>window.__errors.push(e.message));<\/script>`;
+ frame=document.createElement('iframe');frame.title='Playable act3 review';frames.set(version,frame);
+ let page=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>'+source+'<\/script>');
+ if(version==='before'&&params.has('profile'))page=page.replace('src="js/mapgen.js','src="tmp/act3/before/js/mapgen.js');
+ if(version==='engine_before')page=page.replace('src="js/mapgen.js','src="tmp/act3_environment/before/js/mapgen.js');
+ if(prefix)page=page.replaceAll('src="js/','src="'+prefix+'js/').replaceAll('href="css/','href="'+prefix+'css/');
+ frame.srcdoc=page;el('host').append(frame);resize();await new Promise(resolve=>frame.onload=resolve);win=frame.contentWindow;
+ for(let i=0;i<900&&!win.__ready;i++){if(win.document.querySelector('#appFatal'))throw Error(win.document.querySelector('#appFatalDetail').textContent);await new Promise(r=>setTimeout(r,25));}
+ if(win.document.querySelector('#appFatal'))throw Error(win.document.querySelector('#appFatalDetail').textContent);
+ if(!win.__ready)throw Error('Game startup timed out');
+ }
+ const objects=win.eval('({Game,DATA,UI,Sfx,TerrainNavigation,TerrainSurface,U,LevelTerrain,Monster,Minion})');api=objects;game=objects.Game;
+ objects.Sfx.setVol('master',0);await game.newGame('Act III review','vanguard',false);await game.skipOpening();objects.UI.closeAll();objects.UI.hideTitle();
+ game.state.seed=+el('seed').value>>>0;win.Math.random=objects.U.rng(game.state.seed^7331);game.debugFlags.god=true;game.options.screenShake=false;
+ if(!await game.enterMap(zone,'default'))throw Error('Map entry failed');if(ticket!==request)return;
+ map=game.state.map;map.explored.fill(1);reference=MapGen.generate(zone,game.state.seed);objects.UI.closeAll();
+ game.debugFlags.act3Combat=el('combatOverlay').checked;
+ el('enemy').replaceChildren(...Object.keys(objects.DATA.ACT3_ENEMY_PROFILES||{}).map(id=>new Option(objects.DATA.resolveEnemy(id,zone).name,id)));
+ if(!reference.act3)throw Error('Review composition missing for '+zone+'; reload current mapgen.js');
+ // Hold all existing enemies in place for readable screenshots; Play restores AI.
+ el('view').replaceChildren(new Option('Arrival','arrival'),new Option('Map center','center'));
+ for(const n of [...reference.act3.landmarks,...(map.act3.layerLandmarks||[])])el('view').add(new Option(n.label,n.id));
+ for(const [i,ex] of map.exits.entries())el('view').add(new Option('Passage � '+ex.label,'passage_'+i));
+ if(map.bossArena)el('view').add(new Option('Boss arena','boss'));
+ if(params.get('view')&&[...el('view').options].some(o=>o.value===params.get('view')))el('view').value=params.get('view');
+ 
+ showView();drawTopology();controls(true);el('play').textContent='Play encounter';el('status').textContent=`Ready · ${map.monsterSpawns.length} enemies · ${map.ramps?.length||0} ramps · ${version==='after'?map.act3.landmarks.length+' authored places':'original seeded layout'}`;
+ document.body.dataset.testStatus='passed';
+}
+function nearest(p,m=map){
+ const points=[];for(let y=1;y<m.h-1;y++)for(let x=1;x<m.w-1;x++)if(api.TerrainSurface.supported(m,x+.5,y+.5,.4))points.push({x:x+.5,y:y+.5});
+ return points.sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
+}
+function pointFor(view){if(view.startsWith('passage_')){const ex=map.exits[+view.split('_')[1]],th=map.thresholds?.find(t=>t.id===ex.thresholdId);return th?.approach||{x:(ex.x0+ex.x1)/2,y:(ex.y0+ex.y1)/2};}const layer=map.act3.layerLandmarks?.find(n=>n.id===view);if(layer)return layer;if(view==='arrival')return map.spawns.default;if(view==='boss'&&map.bossArena)return{x:map.bossArena.cx+4,y:map.bossArena.cy+3};if(view==='center')return nearest({x:map.w/2,y:map.h/2});const n=reference.act3.landmarks.find(n=>n.id===view),a=reference.bossArena;if(n&&a&&Math.hypot(n.x-a.cx,n.y-a.cy)<1)return nearest({x:n.x+4,y:n.y+3});return nearest(n||map.spawns.default);}
+function showView(){playing=false;el('play').textContent='Play encounter';const p=pointFor(el('view').value);game.__act3.place(p.x,p.y,p.surfaceId??0);game.__act3.render();api.UI.refreshHUD();if(win.__errors.length)throw Error(win.__errors.join('\n'));}
+function previewEnemy(id=el('enemy').value,signature=false){
+ if(!map.act3||map.id==='khalcamp')throw Error('Choose an adventure area for combat previews.');
+ playing=false;el('enemy').value=id;
+ const def=api.DATA.resolveEnemy(id,map.id),sp=def.act3Combat?.special;
+ const distance=signature&&sp?(sp.kind==='blink'?(sp.mode==='retreat'?2:6):['charge','leap','fan'].includes(sp.kind)?5:1.2):def.projectile?6:1.2;
+ const landmark=map.bossArena?{x:map.bossArena.cx,y:map.bossArena.cy}:reference.act3.landmarks.find(n=>n.id!=='entry');
+ let point=null;
+ for(let radius=0;radius<8&&!point;radius++)for(let k=0;k<8&&!point;k++){
+   const p={x:landmark.x+Math.cos(k*Math.PI/4)*radius,y:landmark.y+Math.sin(k*Math.PI/4)*radius};
+   if(api.TerrainNavigation.segment(map,p.x,p.y,p.x+distance+.9,p.y,.34*(def.big||1)))point=p;
+ }
+ if(!point)throw Error('No clear preview lane at this landmark.');
+ for(const m of game.state.monsters)m.imperialCombat?.cancel();
+ game.state.monsters=[];game.state.minions=[];game.state.projectiles=[];game.state.fx=[];game.state.ground=[];
+ game.__act3.place(point.x+distance,point.y);
+ const mon=new api.Monster(id,point.x,point.y);mon.aggro=true;mon.visAng=mon.angT=0;game.state.monsters=[mon];
+ if(signature&&!mon.imperialCombat?.trySpecial(true))throw Error('No signature skill can start at this position.');
+ game.__act3.render();api.UI.refreshHUD();el('status').textContent=def.name+' · '+def.act3Combat.role+' · '+(signature?'skill windup paused; Play advances combat':'isolated enemy; Play advances combat');
+ return mon;
+}
+function previewAnimation(kind,id=el('enemy').value){
+ const mon=previewEnemy(id,kind==='skill');
+ if(kind==='death'){mon.die(game.state.player);game.state.ground=[];}
+ else if(kind==='attack'){
+  mon.imperialCombat.cooldown=100;
+  const ranged=!!mon.def.projectile,duration=ranged?.55:Math.min(.6,.9/mon.def.atkRate),p=game.state.player;
+  mon.imperialCombat.begin(ranged?'bolt':'melee',{windup:duration*.55,recovery:duration*.45},p,null,{x:p.x,y:p.y});
+ }
+ game.__act3.render();el('status').textContent=mon.def.name+' · '+kind+' paused; Play or Step advances simulation';
+ return mon;
+}
+window.act3CombatReview={load,sample,previewEnemy,previewAnimation,get win(){return win;},get api(){return api;},get game(){return game;},get map(){return map;},render(){game.__act3.render();},step(dt){game.__act3.update(dt);game.__act3.render();}};
+function drawTopology(){const c=el('topology');c.width=map.w*3;c.height=map.h*3;const g=c.getContext('2d');g.drawImage(map.minimapBase,0,0,c.width,c.height);for(const ro of map.act3?.routes||[]){g.strokeStyle=ro.optional?'#ddaf62':'#8daeb6';g.lineWidth=2;g.beginPath();ro.points.forEach((p,i)=>i?g.lineTo(p.x*3,p.y*3):g.moveTo(p.x*3,p.y*3));g.stroke();}for(const n of map.act3?.landmarks||[]){g.fillStyle='#e8cf9f';g.beginPath();g.arc(n.x*3,n.y*3,4,0,Math.PI*2);g.fill();}}
+async function record(name,body){for(let attempt=0;attempt<3;attempt++)try{const r=await fetch('/api/act3-review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,...body})});if(!r.ok)throw Error('Artifact recording requires python tests/act3_server.py');return;}catch(e){if(attempt===2)throw e;await new Promise(resolve=>setTimeout(resolve,1000));}}
+async function capture(name){game.__act3.render();const view=win.document.getElementById('view');await record(name||`${el('zone').value}_${el('width').value}_${el('version').value}_${el('view').value}.webp`,{png:view.toDataURL('image/webp',.94)});}
+async function captureAll(){
+ const captures=[];
+ for(const width of [1920,3840])for(const version of params.has('captureAfter')?['after']:['environment_before','after'])for(const zone of zones.filter(z=>!params.has('captureZone')||z===params.get('captureZone'))){
+  el('width').value=width;await load(version,zone);
+  for(const view of ['arrival',...reference.act3.landmarks.map(n=>n.id),...map.exits.map((_,i)=>'passage_'+i)]){
+   el('view').value=view;showView();await raf();await capture();captures.push({width,version,zone,view});
+  }
+ }
+ await record(params.has('captureZone')?'captures_'+params.get('captureZone')+'.json':params.has('captureAfter')?'captures_after.json':'captures.json',{report:{status:'PASS',captures}});el('status').textContent=`Saved ${captures.length} matched scene images.`;
+}
+const summary=values=>{const a=values.toSorted((a,b)=>a-b);return{median:+a[Math.floor(a.length*.5)].toFixed(3),p95:+a[Math.floor(a.length*.95)].toFixed(3),max:+a.at(-1).toFixed(3)};};
+async function sample(mode){
+ const state=game.state,p=state.player,N=api.TerrainNavigation;
+ let start=nearest(reference.act3.landmarks[1]||map.spawns.default),travel=null,combatRadius=3;
+ if(mode==='moving'){
+  const origins=[];for(let y=2;y<map.h-2;y+=2)for(let x=2;x<map.w-2;x+=2)if(api.TerrainSurface.supported(map,x+.5,y+.5,.4))origins.push({x:x+.5,y:y+.5});
+  origins.sort((a,b)=>Math.hypot(a.x-map.spawns.default.x,a.y-map.spawns.default.y)-Math.hypot(b.x-map.spawns.default.x,b.y-map.spawns.default.y));
+  outer:for(const a of origins)for(const length of [12,8])for(const [dx,dy] of [[1,0],[0,1],[-1,0],[0,-1],[.707,.707],[-.707,.707],[.707,-.707],[-.707,-.707]]){
+   const b={x:a.x+dx*length,y:a.y+dy*length};
+   if(state.monsters.some(m=>{const t=Math.max(0,Math.min(1,((m.x-a.x)*(b.x-a.x)+(m.y-a.y)*(b.y-a.y))/(length*length)));return Math.hypot(m.x-a.x-(b.x-a.x)*t,m.y-a.y-(b.y-a.y)*t)<8;}))continue;
+   if(map.exits.some(e=>Math.min(a.x,b.x)<e.x1+1&&Math.max(a.x,b.x)>e.x0-1&&Math.min(a.y,b.y)<e.y1+1&&Math.max(a.y,b.y)>e.y0-1))continue;
+   if(!N.segment(map,a.x,a.y,b.x,b.y,.36))continue;
+   start=a;travel={...b,path:[{cx:b.x,cy:b.y,kind:'walk'}]};break outer;
+  }
+  if(!travel)throw Error('No clear travel profile in '+map.id);
+ }
+ if(mode==='combat'){
+  const pockets=[];
+  for(const radius of [3.5,3,2.5,2,1.5]){
+   for(let y=4;y<map.h-4;y++)for(let x=4;x<map.w-4;x++)if(api.TerrainSurface.supported(map,x+.5,y+.5,radius))pockets.push({x:x+.5,y:y+.5});
+   if(pockets.length){combatRadius=radius-.5;break;}
+  }
+  start=pockets.sort((a,b)=>Math.hypot(a.x-start.x,a.y-start.y)-Math.hypot(b.x-start.x,b.y-start.y))[0];
+  if(!start)throw Error('No spacious combat pocket');
+ }
+ game.__act3.place(start.x,start.y);p.hp=p.stats.maxHp;state.time=10;
+ const routes=[];if(!travel)for(let y=2;y<map.h-2;y+=2)for(let x=2;x<map.w-2;x+=2){const d=Math.hypot(x+.5-start.x,y+.5-start.y);if(d<18||d>30||!api.TerrainSurface.supported(map,x+.5,y+.5,.4))continue;const path=N.findPath(map,p,{x:x+.5,y:y+.5},{radius:.36,speed:4.5});if(path)routes.push({x:x+.5,y:y+.5,path});}
+ const destination=travel||routes.sort((a,b)=>a.path.length-b.path.length)[0];if(!destination)throw Error('No representative movement route');
+ if(mode==='moving'){p.path=destination.path;p.command={type:'move'};}
+ if(mode==='combat'){
+  const nearby=state.monsters.filter(m=>!m.beacon&&!m.encounter&&!m.dead).sort((a,b)=>Number(!!a.def.projectile)-Number(!!b.def.projectile)).slice(0,12);
+  for(const [i,m] of nearby.entries()){const a=i*Math.PI/6,radius=i===0?1.5:combatRadius,pos=nearest({x:p.x+Math.cos(a)*radius,y:p.y+Math.sin(a)*radius});m.x=pos.x;m.y=pos.y;m.aggro=true;m.hp=m.maxHp=Math.max(m.maxHp,100000);}
+  if(nearby.length)p.command={type:'attack',target:nearby[0],skill:'basic',hold:true};
+ }
+ for(let i=0;i<90;i++){game.__act3.update(1/60);game.__act3.updateCamera(1/60);game.__act3.render();if(i%15===0)await raf();}
+ const times=[],updateTimes=[],renderTimes=[],intervals=[];let last=performance.now(),distance=0,attackFrames=0,enemyAttackFrames=0,at={x:p.x,y:p.y};
+ const before=api.LevelTerrain.getDiagnostics();
+ for(let i=0;i<240;i++){
+  await raf();const now=performance.now();intervals.push(now-last);last=now;
+  if(mode==='moving'&&(!p.path||!p.path.length)){const target=Math.hypot(p.x-start.x,p.y-start.y)<3?destination:start;p.path=N.findPath(map,p,target,{radius:.36,speed:4.5});p.command={type:'move'};}
+  const t=performance.now();game.__act3.update(1/60);game.__act3.updateCamera(1/60);const rendered=performance.now();game.__act3.render();const ended=performance.now();times.push(ended-t);updateTimes.push(rendered-t);renderTimes.push(ended-rendered);
+  distance+=Math.hypot(p.x-at.x,p.y-at.y);at={x:p.x,y:p.y};
+  if(p.action?.state==='attack')attackFrames++;
+  enemyAttackFrames+=state.monsters.filter(m=>m.action?.state==='attack').length;
+ }
+ const after=api.LevelTerrain.getDiagnostics();
+ if(mode==='moving'&&distance<4)throw Error('Movement sample stalled in '+map.id+' ('+distance+' tiles)');
+ if(mode==='combat'&&(!attackFrames||!enemyAttackFrames))throw Error(`Combat sample did not exchange attacks: ${map.id}, hero ${attackFrames}, enemies ${enemyAttackFrames}`);
+ if(win.__errors.length)throw Error(win.__errors.join('\n'));
+ // Check a warmed stationary view separately from timed samples.
+ p.path=null;p.command=null;game.__act3.render();const warm=api.LevelTerrain.getDiagnostics();
+ for(let i=0;i<30;i++)game.__act3.render();const stable=api.LevelTerrain.getDiagnostics();
+ if(stable.totalBuilds!==warm.totalBuilds||stable.surfaceViewBuilds!==warm.surfaceViewBuilds)throw Error('Warmed terrain cache rebuilt');
+ return{mode,position:start,monsters:state.monsters.length,distance,attackFrames,enemyAttackFrames,cpuMs:summary(times),updateMs:summary(updateTimes),renderMs:summary(renderTimes),frameIntervalMs:summary(intervals),builds:after.totalBuilds-before.totalBuilds,warmCacheStable:true};
+}
+async function profile(){
+ // Use the fresh pre-environment snapshot for this comparison, matching the
+ // command-line browser runner. Never reuse historical architecture samples.
+ if(!params.has('profile')){params.set('profile','1');for(const saved of frames.values())saved.remove();frames.clear();}
+ const selected=params.has('all')?zones:[el('zone').value],widths=params.has('bothWidths')?[1920,3840]:[+el('width').value],runs=[],results=[];
+ for(const width of widths)for(const zone of selected)for(let pair=0;pair<2;pair++)for(const version of pair%2?['after','environment_before']:['environment_before','after'])for(const mode of zone==='khalcamp'?['moving']:['moving','combat']){
+  const methodRevision=3;
+  if(params.has('resume')){
+   const response=await fetch(`qa/act3/profile_${zone}_${width}_${pair}_${version}_${mode}.json`);
+   if(response.ok){const row=await response.json();if(row.methodRevision===methodRevision&&(version==='environment_before'||row.layoutRevision===4)){runs.push(row);continue;}}
+  }
+  el('width').value=width;await load(version,zone);controls(false);el('status').textContent=`Profiling ${zone} · ${width}px · ${version} · ${mode} · pair ${pair+1}/2`;
+  const row={methodRevision,layoutRevision:4,width,zone,pair,version,...await sample(mode)};runs.push(row);el('report').textContent=JSON.stringify(runs,null,2);await record(`profile_${zone}_${width}_${pair}_${version}_${mode}.json`,{report:row});
+ }
+ for(const width of widths)for(const zone of selected)for(const mode of zone==='khalcamp'?['moving']:['moving','combat']){
+  const mean=(version,stat)=>{const a=runs.filter(r=>r.width===width&&r.zone===zone&&r.mode===mode&&r.version===version);return a.reduce((s,r)=>s+r.cpuMs[stat],0)/a.length;};
+  const before={median:mean('environment_before','median'),p95:mean('environment_before','p95')},after={median:mean('after','median'),p95:mean('after','p95')};
+  results.push({width,zone,mode,before,after,passed:after.median<=before.median*1.1&&after.p95<=before.p95*1.1});
+ }
+ const report={status:results.every(r=>r.passed)?'PASS':'FAIL',baseline:'Fresh pre-environment snapshot, preserving the existing Act I and Act II work',method:'Fresh baseline runtime and current runtime; two alternating before/after pairs, 90 warmup and 240 sampled frames per workload, full roster retained, nearest open combat pocket, twelve durable targets with a close melee target, verified attack exchange, real 3D Vanguard, cached production terrain.',results};
+ await record(`performance_${selected.length===1?selected[0]:'all'}_${widths.length===1?widths[0]:'both'}.json`,{report});el('report').textContent=JSON.stringify(report,null,2);el('status').textContent=report.status+' · performance comparison complete';document.body.dataset.testStatus=report.status.toLowerCase();controls(true);
+}
+async function action(fn){if(busy)return;busy=true;try{await fn();}catch(e){error(e);}finally{busy=false;}}
+el('load').onclick=()=>action(()=>load());el('view').onchange=()=>{try{showView();}catch(e){error(e);}};
+el('previewEnemy').onclick=()=>action(()=>previewEnemy());el('forceSkill').onclick=()=>action(()=>previewEnemy(el('enemy').value,true));el('mixed').onclick=()=>action(()=>load());
+el('previewAttack').onclick=()=>action(()=>previewAnimation('attack'));el('previewDeath').onclick=()=>action(()=>previewAnimation('death'));
+el('stepFrame').onclick=()=>action(()=>{playing=false;el('play').textContent='Play encounter';game.__act3.update(1/60);game.__act3.render();});
+el('enemy').onchange=enemyControls;
+el('combatOverlay').onchange=()=>{game.debugFlags.act3Combat=el('combatOverlay').checked;game.__act3.render();};
+el('play').onclick=()=>{playing=!playing;el('play').textContent=playing?'Pause encounter':'Play encounter';};
+el('walk').onclick=()=>{const places=[...reference.act3.landmarks,...(map.act3.layerLandmarks||[])],index=places.findIndex(n=>n.id===el('view').value),place=places[(index+1)%places.length],target=place.surfaceId!==undefined?place:nearest(place);game.state.player.command={type:'move',point:target};game.repath(game.state.player,target.x,target.y,target.surfaceId??0);el('view').value=place.id;playing=true;el('play').textContent='Pause encounter';};
+el('capture').onclick=()=>action(async()=>{await capture();el('status').textContent='Scene image saved in tests/qa/act3.';});el('captureAll').onclick=()=>action(captureAll);el('profile').onclick=()=>action(profile);
+let previous=performance.now();function tick(now){const dt=Math.min(.05,(now-previous)/1000);previous=now;if(playing&&!busy&&game){try{game.__act3.update(dt);game.__act3.updateCamera(dt);game.__act3.render();}catch(e){playing=false;error(e);}}requestAnimationFrame(tick);}requestAnimationFrame(tick);
+try{await load();if(params.has('qa'))await action(async()=>{await captureAll();await profile();});else if(params.has('captureAll')||params.has('captureAfter'))await action(captureAll);else if(params.has('profile'))await action(profile);}catch(e){error(e);}
+</script></html>

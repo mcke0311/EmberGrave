@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="../">
+<title>Act V boundary cache verification</title><style>body{background:#182029;color:#eee;font:14px system-ui}pre{white-space:pre-wrap}</style>
+<h1>Act V boundary cache verification</h1><pre id="result">Loading…</pre>
+<script src="js/utils.js"></script><script src="js/data.js"></script><script src="js/data_overrides.js"></script><script src="js/sprite_manifest.js"></script><script src="js/sprite_assets.js"></script><script src="js/mapgen.js"></script><script src="js/level_terrain.js"></script>
+<script>
+(async()=>{const rows=[];try{
+ await SpriteAssets.loadBundle('world');
+ for(const zone of ['hellgate','ash_wastes','cinder_bastion','throne']){
+  await SpriteAssets.loadBundle('zone:'+zone);const m=MapGen.generate(zone,12345);
+  for(const [w,h] of [[1920,1080],[3840,2160]])for(const pos of [m.spawns.default,...m.thresholds.map(t=>t.axis?{x:t.x+1,y:t.y}:{x:t.x,y:t.y-1}),m.composition.landmarks[1]]){
+   const cam={x:Math.round(U.isoX(pos.x,pos.y)-w/2),y:Math.round(U.isoY(pos.x,pos.y)-h/2)},buffers=[];
+   for(const unbatched of [true,false]){
+    const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');
+    g.fillStyle='#352d27';g.fillRect(0,0,w,h);m.act5Environment.unbatched=unbatched;
+    const scene=[pos,...m.monsterSpawns.slice(0,20)].map((p,i)=>({kind:'test',d:p.x+p.y,sx:U.isoX(p.x,p.y)-cam.x,sy:U.isoY(p.x,p.y)-cam.y,color:i?'#61897c':'#d6a355'}));
+    CindersBoundaries.append(scene,m,cam,pos,w,h);scene.sort((a,b)=>a.d-b.d);
+    if(!unbatched)CindersBoundaries.merge(scene,m,cam,pos);
+    for(const d of scene){if(d.kind==='test'){g.fillStyle=d.color;g.fillRect(d.sx-16,d.sy-90,32,90);}else CindersBoundaries.draw(g,d,pos);}
+    buffers.push(g.getImageData(0,0,w,h).data);c.width=c.height=0;
+   }
+   let sum=0,max=0,large=0;const [a,b]=buffers;
+   for(let i=0;i<a.length;i++){const d=Math.abs(a[i]-b[i]);sum+=d;max=Math.max(max,d);if(d>4)large++;}
+   const row={zone,width:w,position:{x:pos.x,y:pos.y},mean:sum/a.length,max,channelsOver4:large};rows.push(row);
+   if(max>4||sum/a.length>.02)throw Error('Boundary batch differs: '+JSON.stringify(row));
+  }
+ }
+ const backdrops=[];
+ for(const zone of ['cinder_bastion','throne'])for(const width of [1920,3840]){
+  const m=MapGen.generate(zone,12345),height=width*9/16;
+  for(const offset of [0,19,65,287]){
+   const cam={x:181+offset,y:95+offset},images=[];
+   for(const uncachedBackdrop of [true,false]){
+    const c=document.createElement('canvas');c.width=width;c.height=height;
+    m.act5Environment.uncachedBackdrop=uncachedBackdrop;
+    LevelTerrain.drawEnvironmentBackdrop(c.getContext('2d'),m,cam,width,height);
+    images.push(c.getContext('2d').getImageData(0,0,width,height).data);c.width=c.height=0;
+   }
+   let max=0,sum=0;for(let i=0;i<images[0].length;i++){const d=Math.abs(images[0][i]-images[1][i]);max=Math.max(max,d);sum+=d;}
+   const row={zone,width,offset,max,mean:sum/images[0].length};backdrops.push(row);
+   if(max>2||row.mean>.02)throw Error('Backdrop cache differs: '+JSON.stringify(row));
+  }
+ }
+ window.report={status:'PASS',scenes:rows.length,rows,backdrops};document.body.dataset.testStatus='passed';
+}catch(e){window.report={status:'FAIL',error:e.stack,rows};document.body.dataset.testStatus='failed';}
+ document.querySelector('#result').textContent=JSON.stringify(window.report,null,2);
+})();
+</script></html>

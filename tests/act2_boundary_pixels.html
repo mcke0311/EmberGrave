@@ -1,0 +1,46 @@
+<!doctype html><meta charset="utf-8"><base href="../"><title>Act 2 boundary pixel checks</title>
+<pre id="result">Loading painted terrain…</pre>
+<script src="js/utils.js"></script><script src="js/data.js"></script><script src="js/data_overrides.js"></script>
+<script src="js/boss_encounters.js"></script><script src="js/sprite_manifest.js"></script><script src="js/sprite_assets.js"></script>
+<script src="js/mapgen.js"></script><script src="js/level_terrain.js"></script><script src="js/town_terrain.js"></script>
+<script>
+(async()=>{try{
+ await SpriteAssets.loadBundle('world');
+ const rows=[],canvas=document.createElement('canvas');document.body.append(canvas);
+ const ctx=canvas.getContext('2d',{willReadFrequently:true});
+ const draw=(m,cam)=>{ctx.clearRect(0,0,canvas.width,canvas.height);LevelTerrain.beginFrame(m);try{LevelTerrain.drawSurface(ctx,m,cam,0,m.w-1,0,m.h-1,()=>true,true);}finally{LevelTerrain.endFrame();}return ctx.getImageData(0,0,canvas.width,canvas.height).data;};
+ for(const zone of ['weeping_marsh','drowned_crypt','hollow_reeds','spawn_pools','ritual_site'])for(const width of [1920,3840]){
+  canvas.width=width;canvas.height=width*9/16;const m=MapGen.generate(zone,12345),n=m.act2.landmarks[1];
+  const origin={x:Math.floor(U.isoX(n.x,n.y)-width/2),y:Math.floor(U.isoY(n.x,n.y)-canvas.height/2)};
+  draw(m,origin);
+  for(const [dx,dy] of [[240,110],[-310,-240]]){
+   const cam={x:origin.x+dx,y:origin.y+dy},incremental=draw(m,cam);
+   const before=LevelTerrain.getDiagnostics();draw(m,cam);const after=LevelTerrain.getDiagnostics();
+   if(before.surfaceViewBuilds!==after.surfaceViewBuilds||before.totalBuilds!==after.totalBuilds)throw Error(zone+' warm cache rebuilt');
+   m.boundaries={...m.boundaries};const fresh=draw(m,cam);let max=0,count=0;
+   for(let i=0;i<fresh.length;i++){const delta=Math.abs(fresh[i]-incremental[i]);max=Math.max(max,delta);if(delta>1)count++;}
+   rows.push({zone,width,dx,dy,maxDifference:max,channelsAboveOne:count,warmCacheStable:true});
+   if(count)throw Error(zone+'/'+width+' incremental bank seams: '+JSON.stringify(rows.at(-1)));
+  }
+ }
+ const town=MapGen.generate('marshcamp',12345);canvas.width=1920;canvas.height=1080;
+ const cam={x:-600,y:-100};TownTerrain.draw(ctx,town,cam);
+ let calls=0;const original=ctx.drawImage.bind(ctx);ctx.drawImage=(...args)=>{calls++;original(...args);};
+ for(let i=0;i<30;i++)TownTerrain.draw(ctx,town,cam);
+ if(calls!==30)throw Error('Camp ground was repainted instead of copied');
+ ctx.drawImage=original;
+ // Direct source rectangles must preserve the previous clipped wall pixels.
+ const masonry=MapGen.generate('spawn_pools',12345),draws=[],player={x:1e6,y:1e6};
+ Act2Boundaries.append(draws,masonry,{x:-1e5,y:-1e5},player,1e6,1e6);
+ canvas.width=384;canvas.height=256;let wallCases=0;
+ for(const item of draws.filter(d=>d.s.kit!=='growth').slice(0,60))for(const alpha of [1,.24]){
+  const d={...item,sx:192,sy:155,centerX:192+item.cx-item.wx};
+  ctx.clearRect(0,0,384,256);ctx.globalAlpha=alpha;ctx.save();ctx.beginPath();ctx.rect(d.centerX-d.s.length*16-6,d.sy-d.f.sh-20,d.s.length*32+12,d.f.sh+60);ctx.clip();SpriteAssets.drawFrame(ctx,d.f,d.sx,d.sy);ctx.restore();
+  const old=ctx.getImageData(0,0,384,256).data;ctx.clearRect(0,0,384,256);Act2Boundaries.draw(ctx,d,player);const updated=ctx.getImageData(0,0,384,256).data;
+   for(let i=0;i<old.length;i++)if(Math.abs(old[i]-updated[i])>1)throw Error('Source-crop wall pixels differ '+JSON.stringify({id:d.f.id,length:d.s.length,alpha,index:i,old:old[i],updated:updated[i],frame:d.f.sh,anchor:d.f.anchorY}));wallCases++;
+ }
+ const report={status:'PASS',rows,campWarmFrames:30,campImageDraws:calls,wallCropCases:wallCases};
+ await fetch('/api/act2-review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'pixels.json',report})});
+ document.getElementById('result').textContent=JSON.stringify(report,null,2);document.body.dataset.testStatus='passed';
+}catch(e){document.getElementById('result').textContent=e.stack;document.body.dataset.testStatus='failed';}})();
+</script>

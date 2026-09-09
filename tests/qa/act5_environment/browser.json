@@ -1,0 +1,74 @@
+{
+  "status": "PASS",
+  "browser": "152.0.7977.83",
+  "legacyActors": false,
+  "reports": [
+    {
+      "zone": "ash_wastes",
+      "props": 24,
+      "enemies": 97,
+      "landmarks": 7,
+      "cacheStable": true,
+      "boundaryCache": {
+        "batchPixels": 628535,
+        "batchBuilds": 18,
+        "mergedPixels": 0,
+        "mergedBuilds": 0,
+        "lastBatches": 3,
+        "lastIndividuals": 9
+      }
+    },
+    {
+      "zone": "cinder_bastion",
+      "props": 19,
+      "enemies": 120,
+      "landmarks": 6,
+      "cacheStable": true,
+      "boundaryCache": {
+        "batchPixels": 2078911,
+        "batchBuilds": 37,
+        "mergedPixels": 12309269,
+        "mergedBuilds": 15,
+        "lastBatches": 17,
+        "lastIndividuals": 15
+      }
+    },
+    {
+      "zone": "throne",
+      "props": 15,
+      "enemies": 37,
+      "landmarks": 5,
+      "cacheStable": true,
+      "boundaryCache": {
+        "batchPixels": 2596851,
+        "batchBuilds": 46,
+        "mergedPixels": 20114356,
+        "mergedBuilds": 27,
+        "lastBatches": 3,
+        "lastIndividuals": 16
+      }
+    },
+    {
+      "zone": "hellgate",
+      "props": 30,
+      "enemies": 0,
+      "landmarks": 2,
+      "cacheStable": true,
+      "boundaryCache": {
+        "batchPixels": 2708875,
+        "batchBuilds": 50,
+        "mergedPixels": 20114356,
+        "mergedBuilds": 27,
+        "lastBatches": 2,
+        "lastIndividuals": 11
+      }
+    }
+  ],
+  "save": {
+    "status": "PASS",
+    "bossRemainsDead": true,
+    "questRetained": true,
+    "shrinesRetained": true
+  },
+  "errors": []
+}

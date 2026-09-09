@@ -1608,7 +1608,7 @@ const MapGen = (() => {
     const c=FRONTIER[zoneId],m=blank(zoneId,c.size,c.size),r=U.rng(seed^U.hash(zoneId)^0x61a17);
     m.zone={...m.zone,dark:c.dark};m.outdoor=!!c.outdoor;m.surfaceVersion=1;m.ramps=[];m.buildings=[];
     m.walls.fill(1);m.blocked.fill(1);scatterFloor(m,U.rng(seed^13));
-    const f=m.frontier={revision:1,seed,identity:zoneId,terrainWalls:true,landmarks:[],routes:[],reserved:[],
+    const f=m.frontier={revision:2,seed,identity:zoneId,terrainWalls:false,landmarks:[],routes:[],reserved:[],
       anchors:{beacons:[],events:[],survivors:[]},decals:[],scenery:[],encounters:[],arenaReserved:false};
     const nodes={};
     for(const [id,label,x,y,rx,ry,art] of c.nodes){
@@ -1624,21 +1624,26 @@ const MapGen = (() => {
         if(((x+.5-n.x)/rx)**2+((y+.5-n.y)/ry)**2<=edge)open(x,y);
       }
     };
-    for(const n of f.landmarks)ellipse(n);
+    for(const n of f.landmarks){
+      if(zoneId==='shattered_temple'){
+        for(let y=Math.floor(n.y-n.ry);y<=n.y+n.ry;y++)for(let x=Math.floor(n.x-n.rx);x<=n.x+n.rx;x++)open(x,y);
+      }else ellipse(n,n.rx+(c.outdoor?3:0),n.ry+(c.outdoor?3:0));
+    }
     function connect(aId,bId,optional=false){
       const a=nodes[aId],b=nodes[bId],horizontalFirst=r()<.5;
       // Midpoint doglegs vary by seed but always enter the authored room centers.
       const bend=Math.round((horizontalFirst?a.x+b.x:a.y+b.y)/2)+U.riR(r,-4,4)+.5;
-      const points=horizontalFirst?[{x:a.x,y:a.y},{x:bend,y:a.y},{x:bend,y:b.y},{x:b.x,y:b.y}]:
+      let points=horizontalFirst?[{x:a.x,y:a.y},{x:bend,y:a.y},{x:bend,y:b.y},{x:b.x,y:b.y}]:
         [{x:a.x,y:a.y},{x:a.x,y:bend},{x:b.x,y:bend},{x:b.x,y:b.y}];
-      const width=c.outdoor?9:7,route={from:aId,to:bId,optional,width,points};f.routes.push(route);
+      if(c.outdoor)points=settlementCurve(points.map(p=>[p.x,p.y]));
+      const width=c.outdoor?13:7,route={from:aId,to:bId,optional,width,points};f.routes.push(route);
       for(const [n,ordered,to] of [[a,points,bId],[b,points.slice().reverse(),aId]]){
         const p=ordered.find(p=>p.x!==n.x||p.y!==n.y),dx=p.x-n.x,dy=p.y-n.y;
         const t=Math.min(1,1/Math.sqrt((dx/(n.rx-2))**2+(dy/(n.ry-2))**2));
         n.entrances.push({to,x:n.x+dx*t,y:n.y+dy*t,width});
       }
       for(let k=1;k<points.length;k++){
-        const a=points[k-1],b=points[k],steps=Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y));
+        const a=points[k-1],b=points[k],steps=Math.max(1,Math.ceil(Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y))));
         for(let t=0;t<=steps;t++){
           const x=Math.round(U.lerp(a.x,b.x,t/(steps||1))-.5),y=Math.round(U.lerp(a.y,b.y,t/(steps||1))-.5);
           const shoulder=width/2+(c.outdoor?1.5:1)*(1+Math.sin((x+y)*.23+a.x*.1));
@@ -1693,8 +1698,7 @@ const MapGen = (() => {
       let h=0;for(const b of bands)if(((b.axis==='x'?x:y)-b.at)*b.highSide>=0)h=b.high;return h;
     };
     for(let y=0;y<m.h;y++)for(let x=0;x<m.w;x++){
-      const boundary=c.outdoor&&[[0,-1],[1,0],[0,1],[-1,0]].some(([dx,dy])=>inside(x+dx,y+dy)&&!m.walls[idx(m,x+dx,y+dy)]);
-      m.elev[idx(m,x,y)]=baseAt(x,y)+(m.walls[idx(m,x,y)]?(c.outdoor?(boundary?1:3):4):0);
+      m.elev[idx(m,x,y)]=baseAt(x,y);
     }
     for(const b of bands)for(const ro of f.routes)for(let k=1;k<ro.points.length;k++){
       const a=ro.points[k-1],z=ro.points[k],axis=b.axis,other=axis==='x'?'y':'x';
@@ -1855,8 +1859,9 @@ const MapGen = (() => {
       n.combatSpace={x0:n.x-4,y0:n.y-4,x1:n.x+4,y1:n.y+4};nodes[id]=n;f.landmarks.push(n);
       for(let yy=Math.floor(n.y-ry);yy<=n.y+ry;yy++)for(let xx=Math.floor(n.x-rx);xx<=n.x+rx;xx++){
         const dx=(xx+.5-n.x)/rx,dy=(yy+.5-n.y)/ry,angle=Math.atan2(dy,dx);
-        const shape=c.stone?Math.max(Math.abs(dx),Math.abs(dy)):dx*dx+dy*dy;
-        if(shape< (c.stone?.94:1+.08*Math.sin(angle*3+x)+.045*Math.sin(angle*7+y)))open(xx,yy);
+        const stone=c.stone||(zoneId==='spawn_pools'&&(id==='cistern'||id==='entry'));
+        const shape=stone?Math.max(Math.abs(dx),Math.abs(dy)):dx*dx+dy*dy;
+        if(shape< (stone?.94:1+.08*Math.sin(angle*3+x)+.045*Math.sin(angle*7+y)))open(xx,yy);
       }
     }
     const distSeg=(x,y,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,t=U.clamp(((x-a.x)*dx+(y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(x-a.x-dx*t,y-a.y-dy*t);};
@@ -1876,7 +1881,10 @@ const MapGen = (() => {
           const t=step/Math.max(1,Math.ceil(length*2)),x=U.lerp(p.x,q.x,t),y=U.lerp(p.y,q.y,t);
           for(let oy=-5;oy<=5;oy++)for(let ox=-5;ox<=5;ox++){
             const xx=Math.floor(x)+ox,yy=Math.floor(y)+oy,d=Math.hypot(xx+.5-x,yy+.5-y);
-            if(d<=width/2+.6)open(xx,yy,d<=2.6);
+            // Wide, slowly varying shoulders read as wetland rather than tubes.
+            // Route centers and the original guaranteed clear width stay intact.
+            const shoulder=c.outdoor?1.2+.8*Math.sin(xx*.17+yy*.11+seed%19):0;
+            if(d<=width/2+.6+shoulder)open(xx,yy,d<=2.6);
           }
         }
         if(c.boards)for(let d=1;d<length;d+=3.8)f.decals.push({type:Math.abs(q.x-p.x)>Math.abs(q.y-p.y)?'act2_boardwalk_y':'act2_boardwalk_x',x:U.lerp(p.x,q.x,d/length),y:U.lerp(p.y,q.y,d/length),scale:1,alpha:1});
@@ -1917,13 +1925,57 @@ const MapGen = (() => {
       f.reserved.push({...footprint,kind:'architecture',landmarkId});return p;
     }
     function threshold(n,type,target,key,returnKey){
-      // The sprite's solid rear is behind the clickable front approach.
-      const x=n.x-6,y=n.y-5;
-      solidArt(type,x,y,n.id,4);
-      const point={x:x+3,y:y+3};reserve('threshold',point,3);
-      m.exits.push({x0:point.x-1.4,y0:point.y-.8,x1:point.x+1.4,y1:point.y+1.5,target,spawnKey:key,label:DATA.ZONES[target].name});
-      if(returnKey){m.spawns[returnKey]={x:point.x+1.5,y:point.y+2.5};reserve('arrival',m.spawns[returnKey]);}
-      n.exit={...point,target};addLight(m,point.x,point.y,6,type.includes('monastery')?'#9db9cd':'#9fbda0',false);
+      // Seat the doorway on an outer bank, clear of every existing route and
+      // protected court. Its passage is open; only the flanking banks are solid.
+      const organic=type.startsWith('reeds'),split=organic||type.startsWith('ritual'),half=split?1.5:1;
+      let point;
+      for(const back of [0,3,6,9])for(const dx of [-4,4,0,-7,7,-11,11,-15,15]){
+        if(point)break;
+        const x=Math.floor(n.x+dx)+.5,y=Math.floor(n.y-n.ry)-back+.5;
+        const cells=[];for(let yy=Math.floor(y-1);yy<=Math.floor(y+1);yy++)for(let xx=Math.floor(x-6.5);xx<=Math.floor(x+6.5);xx++)if(Math.abs(xx+.5-x)>=half)cells.push([xx,yy]);
+        if(cells.every(([xx,yy])=>inside(xx,yy)&&!protectedPoint(xx+.5,yy+.5,.5)&&routeDistance(xx+.5,yy+.5)>4.2))point={x,y};
+      }
+      if(!point)throw Error('No clear Act 2 threshold seat: '+zoneId+'/'+n.id);
+      const {x,y}=point,id=n.id+'_'+type;
+      // The broad approach tapers only at the authored doorway; the landmark
+      // routes retain their original clearance and endpoints.
+      const approach={x,y:y+1.6},arrival={x,y:y+4.5};
+      for(let yy=Math.floor(y-5);yy<=n.y;yy++){
+        const t=U.clamp((yy-y-4)/Math.max(1,n.y-y-4),0,1),cx=U.lerp(x,n.x,t),radius=yy<y-1?3.7:U.lerp(half,3.7,U.clamp((yy-y)/6,0,1));
+        for(let xx=Math.floor(cx-radius);xx<=cx+radius;xx++)open(xx,yy,true);
+      }
+      const footprints=[];
+      for(const side of [-1,1]){
+        const a={x0:side<0?x-6.5:x+half,y0:Math.floor(y-1),x1:side<0?x-half:x+6.5,y1:Math.floor(y+1)+1};
+        footprints.push(a);
+        for(let yy=a.y0;yy<a.y1;yy++)for(let xx=Math.ceil(a.x0-.5);xx+.5<a.x1;xx++){
+          const i=idx(m,xx,yy);m.blocked[i]=1;m.walls[i]=f.water[i]=0;
+        }
+        f.reserved.push({...a,kind:'architecture',landmarkId:n.id});
+      }
+      const th={id,act:2,revision:1,type,landmarkId:n.id,opening:{x,y,halfWidth:half,height:organic?64:100},approach,arrival,
+        footprints,connections:[{x:x-5,y},{x:x+5,y}],parts:[]};
+      const part=(asset,px,py)=>{
+        const p=addProp(m,asset,px,py,{building:true,blocks:false,thresholdId:id});
+        th.parts.push({asset,x:px,y:py});return p;
+      };
+      if(split){part('a2threshold_'+type+'_left',x-half,y);part('a2threshold_'+type+'_right',x+half,y);}
+      else part('a2threshold_'+type,x,y);
+      if(!organic){
+        part('a2boundary_masonry_east',x-5,y+.65);
+        part('a2boundary_masonry_east',x+5,y+.65);
+      }
+      m.thresholds??=[];m.thresholds.push(th);
+      reserve('threshold',approach,4);reserve('arrival',arrival,3);
+      // Overlap the planks through the bend and land exactly on the route node.
+      // A fixed stride left an isolated last board short of the existing deck.
+      const steps=organic?Math.ceil((n.y-y+3)/1.2):Math.floor((n.y-y+3)/2.7);
+      for(let i=0;i<=steps;i++){const yy=organic?U.lerp(y-3,n.y,i/steps):y-3+i*2.7,t=U.clamp((yy-y-4)/Math.max(1,n.y-y-4),0,1);f.decals.push({type:organic?'act2_boardwalk_x':'act2_paving',x:U.lerp(x,n.x,t),y:yy,scale:organic?.7:.65,alpha:1});}
+      const ex={x0:x-half+.2,y0:y-.5,x1:x+half-.2,y1:y+1.8,target,spawnKey:key,label:DATA.ZONES[target].name,thresholdId:id};
+      m.exits.push(ex);
+      if(returnKey)m.spawns[returnKey]={...arrival};
+      else {m.spawns[c.entryKey]={...arrival};m.spawns.default={...arrival};}
+      n.exit={...approach,target};addLight(m,x,y+1,4,organic?'#9fbda0':'#9db9cd',false);
     }
     if(c.threshold)threshold(entry,c.threshold,'weeping_marsh',c.returnKey);
     for(const [id,target,key,type] of c.gates||[])threshold(nodes[id],type,target,'from_wild',key);
@@ -2427,16 +2479,76 @@ const MapGen = (() => {
     bakeMinimap(m);TerrainSurface.rebuild(m);m.hasElev=m.elev.some(v=>v>0);
     return m;
   }
+  // Apply local passage changes after all seeded dressing and encounters.
+  // Visual reservations must not perturb the shared legacy random stream.
+  function cinderPassages(m,seed){
+    const zoneId=m.id,c=CINDERS[zoneId],f=m.composition,nodes=Object.fromEntries(f.landmarks.map(n=>[n.id,n]));
+    const inside=(x,y)=>x>=1&&y>=1&&x<m.w-1&&y<m.h-1;
+    const baseAt=(x,y)=>c.band&&y>=c.band?2:0;
+    const open=(x,y,path=false)=>{if(!inside(x,y))return;setWall(m,x,y,0);m.hazard[idx(m,x,y)]=0;if(path)m.floor[idx(m,x,y)]=4;};
+    const routeDistance=(x,y)=>Math.min(...f.routes.flatMap(ro=>ro.points.slice(1).map((b,i)=>{
+      const a=ro.points[i],dx=b.x-a.x,dy=b.y-a.y,t=U.clamp(((x-a.x)*dx+(y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);
+      return Math.hypot(x-a.x-dx*t,y-a.y-dy*t);
+    })));
+    const reserve=(x,y,radius,kind)=>f.reserved.push({x0:x-radius,y0:y-radius,x1:x+radius,y1:y+radius,kind});
+    const oldGates=m.props.filter(p=>p.gate);
+    f.reserved=f.reserved.filter(a=>!['gate','arrival'].includes(a.kind)||!oldGates.some(p=>Math.hypot((a.x0+a.x1)/2-p.x,(a.y0+a.y1)/2-p.y)<5));
+    for(const p of oldGates)for(const a of p.footprints||[])for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++)m.blocked[idx(m,x,y)]=m.walls[idx(m,x,y)];
+    m.props=m.props.filter(p=>!p.gate);m.buildings=m.buildings.filter(p=>!p.gate);m.exits=[];m.thresholds=[];
+    const protectedPoint=(x,y,pad=0)=>f.reserved.some(a=>x>=a.x0-pad&&x<a.x1+pad&&y>=a.y0-pad&&y<a.y1+pad)||
+      m.ramps.some(a=>Math.abs(x-a.x)<5+pad&&y>a.y-2-pad&&y<a.y+6+pad);
+    // Seat complete painted gateways in the actual perimeter. Keep a clear
+    // approach and passage; only the side piers own solid collision.
+    for(const [id,art,target,spawnKey,returnKey,label] of c.gates){
+      const n=nodes[id];
+      let seat;
+      for(const back of [0,3,6,9,12])for(const dx of [0,-4,4,-8,8,-12,12]){
+        if(seat)break;
+        const x=Math.floor(n.x+dx)+.5,y=Math.floor(n.y-n.ry-back)+.5;
+        if(x<7||x>m.w-7||y<9||baseAt(x,y)!==baseAt(n.x,n.y))continue;
+        let safe=true;
+        for(const side of [-1,1])for(let yy=Math.floor(y)-1;yy<=y;yy++)for(let xx=Math.floor(x)+side*2;side<0?xx>=x-5:xx<=x+5;xx+=side)
+          if(routeDistance(xx+.5,yy+.5)<4.7||protectedPoint(xx+.5,yy+.5,1))safe=false;
+        if(m.props.some(p=>Math.abs(p.x-x)<7&&p.y>y-3&&p.y<y+6)||m.monsterSpawns.some(p=>Math.hypot(p.x-x,p.y-y)<8))safe=false;
+        if(safe)seat={x,y};
+      }
+      if(!seat)throw Error('No safe cinder doorway: '+zoneId+'/'+id+'/'+seed);
+      const {x,y}=seat,z=baseAt(n.x,n.y),kit=target==='hellgate'?'defense':target==='throne'||zoneId==='throne'?'throne':'bastion';
+      const thresholdId='act5_'+zoneId+'_'+id,approach={x,y:y+2.2},arrival={x,y:y+4.5};
+      // The route into the court tapers to the three-tile doorway. Ground
+      // continues behind it, so the opening never looks like a pasted scene.
+      for(let yy=Math.floor(y)-7;yy<=n.y;yy++){
+        const t=U.clamp((yy-y-4)/Math.max(1,n.y-y-4),0,1),cx=U.lerp(x,n.x,t),radius=yy<y+2?1.5:3;
+        for(let xx=Math.floor(cx-radius);xx<=cx+radius;xx++){open(xx,yy,true);m.elev[idx(m,xx,yy)]=z;}
+      }
+      const pr=addProp(m,'a5env_'+kit+'_door_east',x,y,{blocks:false,building:true,landmarkId:id,label,gate:true,thresholdId,footprints:[]});
+      for(const side of [-1,1]){
+        const fp={x0:Math.floor(x)+(side<0?-5:2),y0:Math.floor(y)-1,x1:Math.floor(x)+(side<0?-1:6),y1:Math.floor(y)+1};
+        for(let yy=fp.y0;yy<fp.y1;yy++)for(let xx=fp.x0;xx<fp.x1;xx++){setWall(m,xx,yy,1);m.elev[idx(m,xx,yy)]=z;}
+        pr.footprints.push(fp);m.buildings.push({type:art,footprint:fp,gate:true});
+      }
+      m.thresholds??=[];m.thresholds.push({id:thresholdId,act:5,kit,axis:0,x,y,height:z,landmarkId:id,
+        opening:{x,y,halfWidth:1.5,height:140,axis:0},approach,arrival,footprints:pr.footprints,
+        connections:[{x:x-4,y},{x:x+4,y}],parts:[{asset:pr.type,x,y}]});
+      m.exits.push({x0:x-1.2,y0:y-.5,x1:x+1.2,y1:y+1.1,target,spawnKey,label,thresholdId});
+      m.spawns[returnKey]={...arrival};n.exit={x,y,target};
+      reserve(x,y,7,'gate');reserve(arrival.x,arrival.y,3,'arrival');addLight(m,x,y+2,5,'#ff9c50');
+      for(let yy=y-2;yy<y+7;yy+=2.5)f.decals.push({type:'a5env_'+kit+'_ground',x,y:yy,scale:1.1,alpha:.85});
+    }
+
+    m.spawns.default={...(m.spawns.from_camp||m.spawns.from_wild)};
+    f.scenery=f.scenery.filter(s=>!m.thresholds.some(t=>Math.abs(s.x-t.x)<7&&Math.abs(s.y-t.y)<10));
+  }
   /* Act IV: authored memory islands with seeded room assignments and links. */
   function genCathedral(zoneId,seed) {
     const side=!!DATA.ZONES[zoneId].memoryParent,heart=zoneId==='cathedral2',bastion=zoneId==='cathedral_bastion';
     const m=blank(zoneId,side?72:112,side?72:112),r=U.rng(seed^U.hash(zoneId));
     const variant=U.riR(r,0,side?1:2),baseMaterial=side?(bastion?3:2):(heart?1:0);
-    m.zone={...m.zone,dark:side?(bastion?.61:.57):(heart?.65:.57)};
+    m.zone={...m.zone,dark:side?(bastion?.48:.44):(heart?.54:.46)};
     m.walls.fill(1);m.blocked.fill(1);m.void=new Uint8Array(m.w*m.h).fill(1);
     m.cathedralMaterials=new Uint8Array(m.w*m.h).fill(baseMaterial);
-    const c=m.cathedral={version:1,seed,variant,rooms:[],connections:[],anchors:{},reserved:[],decals:[],
-      void:m.void,baseMaterial,materials:['cathedral_floor_pale','cathedral_floor_dark','cathedral_floor_street','cathedral_floor_fortress'],arenaReserved:true};
+    const c=m.cathedral={version:2,seed,variant,rooms:[],connections:[],anchors:{},reserved:[],decals:[],
+      void:m.void,baseMaterial,materials:['a4v2_floor_pale','a4v2_floor_dark','a4v2_floor_ash','a4v2_floor_bastion'],arenaReserved:true};
     const nodes={},routeClearance=new Uint8Array(m.w*m.h);
     function open(x,y,mat=baseMaterial){if(x<2||y<2||x>=m.w-2||y>=m.h-2)return;const i=idx(m,x,y);m.walls[i]=m.blocked[i]=m.void[i]=0;m.floor[i]=2;m.cathedralMaterials[i]=mat;}
     function room(id,label,x,y,w,h,mat=baseMaterial){
@@ -2510,12 +2622,46 @@ const MapGen = (() => {
       const pr=prop('cathedral_'+type,x,y,{blocks:true,building:true,footprint});(m.buildings||(m.buildings=[])).push(pr);c.reserved.push({...footprint,kind:'architecture'});return pr;
     }
     function gate(n,type,target,spawnKey,returnKey,label,dx=0,dy=-4,preserve=false){
-      const x=n.x+dx,y=n.y+dy;
-      for(let yy=-2;yy<=4;yy++)for(let xx=-3;xx<=3;xx++)open(Math.floor(x)+xx,Math.floor(y)+yy,n.material);
-      prop('cathedral_'+type,x,y,{building:true,gate:true});
-      m.exits.push({x0:x-1.3,y0:y-.7,x1:x+1.3,y1:y+.7,target,spawnKey,label,reuseCachedMap:preserve});
-      if(returnKey)m.spawns[returnKey]={x,y:y+3};
-      c.reserved.push({x0:x-4,y0:y-3,x1:x+4,y1:y+5,kind:'gate'});
+      let x,y,found=false;
+      const back=Math.min(dy,-Math.floor(n.h/2)+2);
+      // Gate flanks cannot consume an existing bridge or an arena. Try the
+      // perimeter before opening a short extension into the surrounding void.
+      for(const offset of [0,-3,3,-6,6,-9,9])for(const extra of [0,-3,-6,-9,...(n.id==='entry'?[3-back,6-back]:[])]){
+        if(found)break;
+        const gx=n.x+dx+offset,gy=n.y+back+extra;
+        let clear=gx>7&&gx<m.w-8&&gy>5&&gy<m.h-6;
+        for(let yy=-3;yy<=0;yy++)for(let xx=-6;xx<=6;xx++)if(Math.abs(xx)>=2){
+          const px=Math.floor(gx)+xx,py=Math.floor(gy)+yy;
+          if(inArena(px+.5,py+.5,0)||routeClearance[idx(m,px,py)])clear=false;
+        }
+        if(clear){x=gx;y=gy;found=true;}
+      }
+      if(!found)throw Error('No cathedral passage socket: '+zoneId+'/'+n.id);
+      for(let yy=Math.min(Math.floor(y)-3,Math.floor(n.y)-2);yy<=Math.max(n.y+2,y+5);yy++){
+        const t=U.clamp((yy-y-3)/Math.max(1,n.y-y-3),0,1),cx=U.lerp(x,n.x,t);
+        for(let xx=Math.floor(cx)-3;xx<=cx+3;xx++)open(xx,yy,n.material);
+      }
+      const id='cathedral_'+n.id+'_'+type,footprints=[];
+      for(let yy=Math.floor(y)-3;yy<=Math.floor(y)+4;yy++)for(let xx=Math.floor(x)-1;xx<=Math.floor(x)+1;xx++)open(xx,yy,n.material);
+      for(const side of [-1,1]){
+        const a={x0:Math.floor(x)+(side<0?-6:2),x1:Math.floor(x)+(side<0?-1:7),y0:Math.floor(y)-3,y1:Math.floor(y)+1};
+        for(let yy=a.y0;yy<a.y1;yy++)for(let xx=a.x0;xx<a.x1;xx++){open(xx,yy,n.material);m.blocked[idx(m,xx,yy)]=1;}
+        footprints.push(a);
+      }
+      const th={id,revision:1,type:'cathedral_'+type,opening:{x,y,axis:0,halfWidth:1.5,height:200},
+        approach:{x,y:y+2},arrival:{x,y:y+4},footprints,connections:[{x:x-5,y},{x:x+5,y}],parts:[]};
+      const gateProp=prop('cathedral_'+type,x,y,{building:true,gate:true,thresholdId:id});
+      (m.buildings??=[]).push(...footprints.map(footprint=>({type:gateProp.type,footprint,gate:true})));
+      if(type!=='arrival'){
+        th.kit=type==='cinder_gate'?'ash':type==='bastion_gate'?'bastion':'dark';
+        th.environmentDoor=true;gateProp.hidden=true;
+      }
+      th.parts.push({asset:gateProp.type,x,y});
+      m.thresholds??=[];m.thresholds.push(th);
+      m.exits.push({x0:x-1.3,y0:y-.5,x1:x+1.3,y1:y+1.5,target,spawnKey,label,reuseCachedMap:preserve,thresholdId:id});
+      if(returnKey)m.spawns[returnKey]={...th.arrival};
+      c.reserved.push({x0:x-6,y0:y-4,x1:x+6,y1:y+6,kind:'gate'});
+      for(let yy=y+2;yy<n.y;yy+=3)c.decals.push({type:'a4env_transition_'+['pale','dark','ash','bastion'][n.material],x,y:yy,scale:1,alpha:.75});
       addLight(m,x,y,7,type==='cinder_gate'?'#dea461':'#b8b5e0',false);
     }
     const entry=nodes.entry;
@@ -2540,16 +2686,31 @@ const MapGen = (() => {
         const piece=architecture(type,n,dx,dy,4,2);if(piece){n.landmark={type:piece.type,x:piece.x,y:piece.y};break;}
       }
       if(!n.landmark)throw new Error('No cathedral landmark socket: '+zoneId+'/'+seed+'/'+id);
-      if(id!=='sanctuary')architecture('column',n,-Math.floor(n.w/2)+2,2,2,2);
-      addLight(m,n.x,n.y,side?10:12,n.material===2?'#d8a066':heart?'#aaa1c8':'#d4cbb4',false);
+      if(id!=='sanctuary'&&n.material!==2)architecture('column',n,-Math.floor(n.w/2)+2,2,2,2);
+      addLight(m,n.x,n.y,side?7:8,n.material===2?'#c7955d':heart?'#929cc8':'#8faec9',false);
     }
     const protectedPoint=(x,y)=>inArena(x,y)||c.reserved.some(a=>x>=a.x0-1&&x<a.x1+1&&y>=a.y0-1&&y<a.y1+1)||Object.values(c.anchors).some(a=>U.dist(x,y,a.x,a.y)<4)||Object.values(m.spawns).some(a=>U.dist(x,y,a.x,a.y)<5);
     for(const n of c.rooms){
       if(n.id==='entry'||n.id==='sanctuary')continue;
-      architecture('broken_arch',n,Math.floor(n.w/2)-2,-4,2,2);
-      architecture('parapet',n,4,Math.floor(n.h/2)-1,3,1);
-      for(let i=0;i<4;i++){const x=n.x+U.riR(r,-8,8),y=n.y+U.riR(r,-8,8);if(walkable(m,x,y)&&!protectedPoint(x,y))c.decals.push({type:'cathedral_'+(i%2?'glass':'rubble_decal'),x,y,scale:.8+r()*.5,alpha:.7});}
+      if(n.material!==2){
+        architecture('broken_arch',n,Math.floor(n.w/2)-2,-4,2,2);
+        architecture('parapet',n,4,Math.floor(n.h/2)-1,3,1);
+      }
+      for(let i=0;i<4;i++){const x=n.x+U.riR(r,-8,8),y=n.y+U.riR(r,-8,8);if(walkable(m,x,y)&&!protectedPoint(x,y))c.decals.push({type:side||i%2?'a4env_transition_'+['pale','dark','ash','bastion'][n.material]:'cathedral_glass',x,y,scale:.35+r()*.25,alpha:.7});}
       for(const [dx,dy] of [[-7,6],[6,7]]){const x=n.x+dx,y=n.y+dy;if(walkable(m,x,y)&&!protectedPoint(x,y))prop('cathedral_rubble',x,y);}
+    }
+    // Warm pools frame each court. Lamps stay outside encounter reservations
+    // and the central three-tile routes; dressing consumes no layout RNG.
+    for(const n of c.rooms){
+      const dx=Math.floor(n.w/2)-3,dy=Math.floor(n.h/2)-3;
+      for(const [ox,oy] of [[-dx,-dy],[dx,-dy],[-dx,dy],[dx,dy]]){
+        const x=n.x+ox,y=n.y+oy;
+        if(!walkable(m,x,y)||inArena(x,y,0)||routeClearance[idx(m,x|0,y|0)]||
+          c.reserved.some(a=>x>=a.x0-1&&x<a.x1+1&&y>=a.y0-1&&y<a.y1+1)||
+          m.props.some(p=>U.dist(x,y,p.x,p.y)<2)||Object.values(c.anchors).some(p=>U.dist(x,y,p.x,p.y)<3))continue;
+        prop('brazier',x,y,{cathedralLamp:true});addLight(m,x,y,4.5,'#ff9c50',true);
+      }
+      if(n.landmark?.type==='cathedral_rose_window')addLight(m,n.landmark.x+2,n.landmark.y+3,6,'#759bd0',false);
     }
     function pack(n,ids,count,elite=false,encounter=null,skillProfile=null){
       for(let i=0;i<count;i++){const x=n.x+(i%3-1)*2,y=n.y+Math.floor(i/3)*2;
@@ -2568,7 +2729,117 @@ const MapGen = (() => {
       for(const n of c.rooms){if(['entry','sanctuary'].includes(n.id))continue;pack(n,n.id.startsWith('ritual')?[K,K,K,S,W]:[K,K,P,S,W],5);if(n.id==='nave')pack({...n,x:n.x+6,y:n.y+3},K,4);}
       prop('chest',nodes.sanctuary.x+12,nodes.sanctuary.y+7,{lootable:true,rich:true,visual:'cathedral_reliquary',visualDone:'cathedral_reliquary_open'});
     }
-    bakeMinimap(m);return m;
+    // Side-aisle furniture is seated after encounters, so neither the seeded
+    // packs nor the reserved routes/objectives can be occupied by a pew.
+    if(!side)for(const n of c.rooms){
+      if(!['nave','karrhal','ritual_0','ritual_2'].includes(n.id))continue;
+      let placed=0;
+      const offset=Math.floor(n.w/2)-5;
+      for(const dx of [-offset,offset,-offset+2,offset-2])for(const dy of [-8,-4,0,4,8]){
+        const x=n.x+dx,y=n.y+dy;
+        if(placed>=(n.id==='nave'?4:2))break;
+        if([...m.monsterSpawns,...Object.values(m.spawns),...Object.values(c.anchors)].some(p=>U.dist(x,y,p.x,p.y)<4.2)||m.props.some(p=>U.dist(x,y,p.x,p.y)<2.6))continue;
+        const box={x0:Math.floor(x)-2,y0:Math.floor(y)-1,x1:Math.floor(x)+2,y1:Math.floor(y)+2};
+        if(c.reserved.some(a=>box.x0<a.x1+1&&box.x1>a.x0-1&&box.y0<a.y1+1&&box.y1>a.y0-1))continue;
+        let clear=true;
+        for(let yy=box.y0-1;yy<=box.y1;yy++)for(let xx=box.x0-1;xx<=box.x1;xx++)if(!walkable(m,xx+.5,yy+.5)||routeClearance[idx(m,xx,yy)])clear=false;
+        if(clear&&architecture('pews',n,dx,dy,4,3))placed++;
+      }
+    }
+    cathedralEnvironment(m,seed);bakeMinimap(m);return m;
+  }
+
+  function cathedralEnvironment(m,seed){
+    const c=m.cathedral,kits=['pale','dark','ash','bastion'];
+    const b=c.environment={revision:2,segments:[],corners:[],wings:[],supports:[],contours:[]};
+    const inside=(x,y)=>x>=0&&y>=0&&x<m.w&&y<m.h;
+    const land=(x,y)=>inside(x,y)&&!m.void[idx(m,x,y)];
+    // Trace the union once. A bounded simplification removes tile stairs on
+    // diagonal bridges without moving the navigation grid or its reservations.
+    const edges=new Map(),key=(x,y)=>x+':'+y;
+    function edge(x,y,xx,yy){const k=key(x,y);if(!edges.has(k))edges.set(k,[]);edges.get(k).push({x:xx,y:yy});}
+    for(let y=1;y<m.h-1;y++)for(let x=1;x<m.w-1;x++)if(land(x,y)){
+      if(!land(x,y-1))edge(x,y,x+1,y);
+      if(!land(x+1,y))edge(x+1,y,x+1,y+1);
+      if(!land(x,y+1))edge(x+1,y+1,x,y+1);
+      if(!land(x-1,y))edge(x,y+1,x,y);
+    }
+    function simplify(points){
+      if(points.length<3)return points;
+      const a=points[0],z=points.at(-1),dx=z.x-a.x,dy=z.y-a.y,l=dx*dx+dy*dy;
+      let far=0,at=0;
+      for(let i=1;i<points.length-1;i++){
+        const p=points[i],t=l?U.clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/l,0,1):0;
+        const d=(p.x-a.x-t*dx)**2+(p.y-a.y-t*dy)**2;if(d>far){far=d;at=i;}
+      }
+      return far>.82*.82?[...simplify(points.slice(0,at+1)).slice(0,-1),...simplify(points.slice(at))]:[a,z];
+    }
+    while(edges.size){
+      const first=edges.keys().next().value,[x,y]=first.split(':').map(Number),points=[{x,y}];let at=first;
+      do{const list=edges.get(at);if(!list)break;const p=list.pop();if(!list.length)edges.delete(at);points.push(p);at=key(p.x,p.y);}while(at!==first);
+      if(points.length>3){const half=Math.floor(points.length/2);b.contours.push([...simplify(points.slice(0,half+1)).slice(0,-1),...simplify(points.slice(half)).slice(0,-1)]);}
+    }
+    // Texture the narrow clipped margin too; this closes tiny visual holes at
+    // simplified corners while the actual blocked void remains unchanged.
+    b.surface=new Uint8Array(m.w*m.h);
+    for(let y=1;y<m.h-1;y++)for(let x=1;x<m.w-1;x++)if(land(x,y))
+      for(let yy=-1;yy<=1;yy++)for(let xx=-1;xx<=1;xx++)b.surface[x+xx+(y+yy)*m.w]=1;
+    function classify(x,y){
+      const room=c.rooms.find(n=>Math.abs(x-n.x)<n.w/2+.5&&Math.abs(y-n.y)<n.h/2+.5);
+      const mat=m.cathedralMaterials[idx(m,Math.floor(x),Math.floor(y))]??c.baseMaterial;
+      return {kit:kits[mat],role:room?.id||'bridge',room};
+    }
+    for(let axis=0;axis<2;axis++)for(let line=1;line<(axis?m.w:m.h);line++){
+      let start=-1,kind='',saved;
+      const flush=end=>{
+        if(start<0)return;
+        for(let at=start;at<end;at+=6){
+          const length=Math.min(6,end-at),x=axis?line:at,y=axis?at:line;
+          const variant=((Math.imul(x,73856093)^Math.imul(y,19349663)^seed)>>>0)%4;
+          const gate=m.thresholds?.some(t=>Math.abs(x-t.opening.x)<7&&Math.abs(y-t.opening.y)<4);
+          const wall=!gate&&saved.role!=='bridge'&&(saved.kit==='pale'||saved.kit==='dark'||saved.kit==='bastion');
+          b.segments.push({x,y,axis,length,side:saved.side,kit:saved.kit,role:saved.role,variant,
+            connection:length<6?'end':'straight',wall:wall&&length>=2,low:saved.side>0});
+        }
+        start=-1;
+      };
+      for(let t=0;t<(axis?m.h:m.w);t++){
+        const x=axis?line:t,y=axis?t:line,a=land(x,y),d=land(x-(axis?1:0),y-(axis?0:1));
+        let next='',spec;
+        if(a!==d){
+          const side=a?-1:1,lx=x-(a?0:axis?1:0),ly=y-(a?0:axis?0:1);
+          spec={...classify(lx+.5,ly+.5),side};next=spec.kit+':'+spec.role+':'+side;
+        }
+        if(next!==kind){flush(t);kind=next;saved=spec;}
+        if(next&&start<0)start=t;
+      }
+      flush(axis?m.h:m.w);
+    }
+    // One cap at a real contour turn, rather than a pillar on every tile.
+    const sockets=new Map();
+    for(const s of b.segments)for(const [x,y]of [[s.x,s.y],[s.x+(s.axis?0:s.length),s.y+(s.axis?s.length:0)]]){
+      const key=x+':'+y;if(!sockets.has(key))sockets.set(key,[]);sockets.get(key).push(s);
+    }
+    for(const [key,segments]of sockets){
+      if(!segments.some(s=>s.axis===0)||!segments.some(s=>s.axis===1))continue;
+      const [x,y]=key.split(':').map(Number),s=segments[0];
+      const occupied=[land(x-1,y-1),land(x,y-1),land(x-1,y),land(x,y)].filter(Boolean).length;
+      b.corners.push({x,y,kit:s.kit,role:s.role,inner:occupied===3,front:segments.every(s=>s.side>0),
+        wall:segments.every(s=>s.wall&&!s.low),connection:occupied===3?'inner':'outer'});
+    }
+    for(const th of m.thresholds||[]){
+      const {x,y}=th.opening,kit=classify(x,y).kit;
+      for(const side of [-1,1])b.wings.push({x:x+side*5-2,y:y-1,axis:0,length:4,side:-1,kit,role:'threshold',low:false,variant:0,connection:'door'});
+    }
+    for(const link of c.connections){
+      const a=c.rooms.find(n=>n.id===link.from),d=c.rooms.find(n=>n.id===link.to);if(!a||!d)continue;
+      for(const [room,other]of [[a,d],[d,a]]){
+        const dx=other.x-room.x,dy=other.y-room.y,l=Math.hypot(dx,dy),t=Math.min((room.w/2-1)/Math.max(.01,Math.abs(dx)),(room.h/2-1)/Math.max(.01,Math.abs(dy)));
+        const x=room.x+dx*t,y=room.y+dy*t;
+        const px=-dy/l*(link.width/2+.2),py=dx/l*(link.width/2+.2);
+        for(const sign of [-1,1])b.supports.push({x:x+sign*px,y:y+sign*py,kit:kits[room.material],role:'bridge',connection:'abutment'});
+      }
+    }
   }
 
   function generateLayout(zoneId, worldSeed) {
@@ -2822,6 +3093,646 @@ const MapGen = (() => {
     return m;
   }
   const generateBase=generate;
-  function generateImperial(zoneId,seed){const m=generateBase(zoneId,seed);if(m.act3&&!m.act3.architecture){imperialArchitecture(m);bakeMinimap(m);}return m;}
-  return { generate:generateImperial, walkable, canStep, elevAt };
+  function act2Causeway(m){
+    if(m.id!=='marshcamp'&&m.id!=='weeping_marsh')return;
+    const camp=m.id==='marshcamp',ex=m.exits.find(e=>e.target===(camp?'weeping_marsh':'marshcamp'));
+    const x=camp?m.w-1.5:1.5,y=(ex.y0+ex.y1)/2,id='landing_causeway';
+    const approach={x:camp?m.w-3:3,y},arrival={...(camp?m.spawns.from_wild:m.spawns.from_camp)};
+    const th={id,act:2,revision:1,type:camp?'causeway_out':'causeway_in',opening:{x,y,axis:1,halfWidth:2.5,height:40},approach,arrival,footprints:[],connections:[],parts:[]};
+    ex.thresholdId=id;m.thresholds??=[];m.thresholds.push(th);
+    m.thresholdDecals=[];
+    const lo=camp?m.w-8:0,hi=camp?m.w:12;
+    for(let px=lo+.8;px<hi;px+=2.8)m.thresholdDecals.push({type:'act2_boardwalk_y',x:px,y,scale:.78,alpha:1});
+    for(const side of [-1,1]){
+      const py=y+side*3.7;
+      for(const px of [camp?m.w-1:1.2,camp?m.w-3:4]){
+        const asset='a2boundary_root_south',p=addProp(m,asset,px,py,{blocks:false,building:true,thresholdId:id});
+        th.parts.push({asset,x:p.x,y:p.y});
+      }
+      th.connections.push({x,y:py});
+    }
+    if(m.act2)m.act2.decals.push(...m.thresholdDecals);
+  }
+  // Visual dressing has its own seeded stream and never edits collision,
+  // encounters, quest anchors or the reserved travel/boss spaces.
+  function act2Visuals(m,seed){
+    if(!m.boundaries)return;
+    const outdoor=m.outdoor||m.id==='marshcamp',r=U.rng(seed^U.hash(m.id)^0xa2175);
+    const env=m.act2Visual={revision:1,outdoor,dressing:[],lamps:[]};
+    const occupied=[];
+    const blocked=(x,y)=>x>=0&&y>=0&&x<m.w&&y<m.h&&!!m.blocked[Math.floor(x)+Math.floor(y)*m.w];
+    const nearGate=(x,y)=>m.thresholds?.some(t=>Math.hypot(x-t.opening.x,y-t.opening.y)<7);
+    const seat=(type,x,y,scale,flip=false)=>env.dressing.push({type,x,y,scale,flip});
+    if(m.act2){
+      m.zone={...m.zone,dark:outdoor?.27:m.id==='spawn_pools'?.36:.38};
+      // The original root and shoreline stamps made giant repeated knots in
+      // the floor. Continuous moss and the contour edge carry those materials.
+      m.act2.decals=m.act2.decals.filter(d=>!['act2_root_mat','act2_water_edge'].includes(d.type));
+      for(const n of m.act2.landmarks){
+        if(n.id==='basin'||n.id==='nave'||n.id==='cistern')m.act2.decals.push({type:'a2visual_seal',x:n.x,y:n.y,scale:n.id==='basin'?1.08:n.id==='nave'?.7:.64,alpha:.92});
+      }
+    }
+    for(const s of m.boundaries.segments){
+      if(s.length<2)continue;
+      const q=r(),depth=1.1+r()*1.3,x=s.x+(s.axis?s.side*depth:s.length/2),y=s.y+(s.axis?s.length/2:s.side*depth);
+      if(nearGate(x,y)||m.buildings?.some(p=>Math.hypot(x-p.x,y-p.y)<6))continue;
+      if(outdoor&&q<.36&&!occupied.some(p=>Math.hypot(x-p.x,y-p.y)<5.4)){
+        const ix=Math.floor(x),iy=Math.floor(y);
+        if(ix<0||iy<0||ix>=m.w||iy>=m.h||!m.blocked[ix+iy*m.w])continue;
+        occupied.push({x,y});seat('a2visual_cypress',x,y,.7+r()*.38,r()<.5);
+        // A smaller companion creates clusters instead of evenly spaced trees.
+        const xx=x+s.side*1.8,yy=y+1.6;
+        if(q<.09&&blocked(xx,yy)&&!nearGate(xx,yy))seat('a2visual_cypress',xx,yy,.42+r()*.12,r()<.5);
+      }else if(s.kit!=='masonry'&&q<.64){
+        seat('act2_reed_clump',x,y,.18+r()*.15,r()<.5);
+      }
+      if(s.kit==='masonry'&&s.length===3&&q<.38&&!occupied.some(p=>Math.hypot(x-p.x,y-p.y)<5)){
+        const px=s.x+(s.axis?s.side*.55:s.length/2),py=s.y+(s.axis?s.length/2:s.side*.55);
+        if(!blocked(px,py)||nearGate(px,py))continue;
+        seat('a2visual_pier',px,py,.85+r()*.14);
+        addLight(m,px,py,4.5,'#edc28c',true);
+        occupied.push({x:px,y:py});
+      }
+    }
+    for(const n of m.act2?.landmarks||[]){
+      for(const side of [-1,1]){
+        const x=n.x+side*5.4,y=n.y-4.8;
+        if(!walkable(m,x,y)||nearGate(x,y)||m.props.some(p=>Math.hypot(p.x-x,p.y-y)<1.7))continue;
+        seat('lantern',x,y,.8);
+        env.lamps.push({x,y,color:outdoor?'#f3bc78':m.id==='spawn_pools'?'#a3c985':'#e3b57b'});
+        addLight(m,x,y,5.2,env.lamps.at(-1).color,true);
+      }
+      if(n.artPosition)addLight(m,n.artPosition.x,n.artPosition.y,8,outdoor?'#9dc6b5':'#82bbca',false);
+    }
+    // Seat a paired warm light at the causeway's inner approach.
+    for(const t of m.thresholds||[]){
+      const a=t.approach||t.arrival;
+      if(!a)continue;
+      for(const side of [-1,1]){
+        const x=a.x+side*3.4,y=a.y+1;
+        if(!walkable(m,x,y))continue;
+        seat('lantern',x,y,.85);env.lamps.push({x,y,color:'#efbd82'});addLight(m,x,y,5,'#efbd82',true);
+      }
+    }
+  }
+  function act2Boundaries(m,seed){
+    if(!m.act2&&m.id!=='marshcamp')return;
+    const camp=m.id==='marshcamp',water=m.act2?.water,original=water?.slice();
+    const b=m.boundaries={revision:1,materials:new Uint8Array(m.w*m.h),segments:[]};
+    const inside=(x,y)=>x>=0&&y>=0&&x<m.w&&y<m.h;
+    const land=(x,y)=>inside(x,y)&&!m.blocked[x+y*m.w];
+    const near=(x,y,id,r)=>m.act2?.landmarks.some(n=>n.id===id&&Math.hypot(n.x-x,n.y-y)<r);
+    function material(x,y){
+      if(m.thresholds?.some(t=>Math.abs(x-t.opening.x)<t.opening.halfWidth+1&&y<t.opening.y-1&&y>t.opening.y-7))return 'shore';
+      if(camp||m.outdoor)return 'shore';
+      if(m.id==='drowned_crypt')return 'masonry';
+      if(m.id==='spawn_pools')return near(x,y,'cistern',21)||near(x,y,'entry',17)?'masonry':'root';
+      return near(x,y,'gallery',20)||near(x,y,'side',19)||near(x,y,'basin',24)?'root':'masonry';
+    }
+    // Only scenic terrain participates; building footprints retain their own art.
+    for(let y=0;y<m.h;y++)for(let x=0;x<m.w;x++){
+      const i=x+y*m.w;
+      if(camp?!m.walls[i]:!original[i])continue;
+      b.materials[i]=1;
+      if(![[0,-1],[1,0],[0,1],[-1,0]].some(([dx,dy])=>land(x+dx,y+dy)))continue;
+      const kit=material(x+.5,y+.5);b.materials[i]=kit==='masonry'?3:kit==='root'?2:1;
+      if(kit==='masonry'){m.walls[i]=1;water[i]=0;}
+    }
+    // Extract both sides of every boundary and merge only equal material/side.
+    // A run ends at each change in direction; no sprite is stretched to fit it.
+    for(let axis=0;axis<2;axis++)for(let line=1;line<(axis?m.w:m.h);line++){
+      let start=-1,kit='',side=0;
+      const flush=end=>{
+        if(start<0)return;
+        for(let at=start;at<end;at+=3){
+          const length=Math.min(3,end-at),x=axis?line:at,y=axis?at:line;
+          const variant=((Math.imul(x,73856093)^Math.imul(y,19349663)^seed)>>>0)%5;
+          b.segments.push({x,y,axis,length,side,kit,variant});
+        }
+        start=-1;
+      };
+      for(let t=0;t<(axis?m.h:m.w);t++){
+        const x=axis?line:t,y=axis?t:line,i=x+y*m.w,j=axis?i-1:i-m.w;
+        const a=b.materials[i],c=b.materials[j],eligible=(a&&!m.blocked[j])||(c&&!m.blocked[i]);
+        const code=a||c,next=eligible?(code===3?'masonry':code===2?'root':'shore'):'',s=a?1:-1;
+        if(!eligible||next!==kit||s!==side){flush(t);kit=next;side=s;}
+        if(eligible&&start<0)start=t;
+      }
+      flush(axis?m.h:m.w);
+    }
+    // Trace outdoor contours, then round each grid corner by a quarter tile.
+    // This only affects the painted waterline, within the bank's visible width.
+    const edges=[],starts=new Map();
+    for(const s of b.segments)if(s.kit==='shore')for(let t=0;t<s.length;t++){
+      const x=s.x+(s.axis?0:t),y=s.y+(s.axis?t:0);
+      let a={x,y},c={x:x+(s.axis?0:1),y:y+(s.axis?1:0)};
+      if(s.axis?s.side<0:s.side>0)[a,c]=[c,a];
+      const e={a,c,used:false};edges.push(e);const key=a.x+':'+a.y;
+      if(!starts.has(key))starts.set(key,[]);starts.get(key).push(e);
+    }
+    b.shorelines=[];
+    for(const first of edges){
+      if(first.used)continue;const points=[first.a];let e=first;
+      while(e&&!e.used){e.used=true;points.push(e.c);e=starts.get(e.c.x+':'+e.c.y)?.find(n=>!n.used);}
+      const closed=points[0].x===points.at(-1).x&&points[0].y===points.at(-1).y;
+      const smooth=[];
+      if(!closed)smooth.push(points[0]);
+      for(let i=1;i<points.length;i++){
+        const a=points[i-1],c=points[i];smooth.push({x:a.x*.75+c.x*.25,y:a.y*.75+c.y*.25},{x:a.x*.25+c.x*.75,y:a.y*.25+c.y*.75});
+      }
+      smooth.push(closed?smooth[0]:points.at(-1));b.shorelines.push(smooth);
+    }
+    // Flat terrain stays authoritative; masonry has its own upright rendering.
+    if(!camp)TerrainSurface.rebuild(m);
+    act2Visuals(m,seed);
+    bakeMinimap(m);
+  }
+  // The environment pass runs after encounter generation: scenery never draws
+  // from the encounter RNG or changes the campaign's authored budgets.
+  function imperialEnvironment(m,seed){
+    if(!m.act3||m.act3.environment)return;
+    const f=m.act3,outdoor=m.outdoor||!!m.settlement;
+    const env=f.environment={revision:1,outdoor,segments:[],corners:[],contours:[],foundations:[],passages:[]};
+    const inside=(x,y)=>x>=1&&y>=1&&x<m.w-1&&y<m.h-1;
+    const index=(x,y)=>Math.floor(x)+Math.floor(y)*m.w;
+    const baseHeight=(x,y)=>m.id==='shard_flats'&&y<58||m.id==='tomb_sanctum'&&x<60?2:0;
+    const random=(x,y)=>((Math.imul(x,73856093)^Math.imul(y,19349663)^seed)>>>0);
+    const distance=(x,y,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,t=U.clamp(((x-a.x)*dx+(y-a.y)*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(x-a.x-t*dx,y-a.y-t*dy);};
+    const routeDistance=(x,y)=>Math.min(Infinity,...f.routes.flatMap(r=>r.points.slice(1).map((b,i)=>distance(x,y,r.points[i],b))));
+    const contains=(a,x,y,pad=0)=>x>=a.x0-pad&&x<a.x1+pad&&y>=a.y0-pad&&y<a.y1+pad;
+    const reserved=(x,y)=>f.reserved.some(a=>contains(a,x,y,.8))||
+      Object.values(m.spawns).some(p=>Math.hypot(x-p.x,y-p.y)<3)||
+      m.monsterSpawns.some(p=>Math.hypot(x-p.x,y-p.y)<2)||
+      m.props.some(p=>Math.hypot(x-p.x,y-p.y)<2)||
+      f.landmarks.some(n=>n.combatSpace&&contains(n.combatSpace,x,y,.8));
+
+    if(m.outdoor&&!m.settlement){
+      // The old outdoor wall height also covered the outermost map cells;
+      // remove that frame so the horizon cannot become a straight cliff rail.
+      for(let i=0;i<m.walls.length;i++)if(m.walls[i])m.elev[i]=0;
+      // Broad connected basins replace the room-and-corridor outdoor silhouette.
+      // Retain the existing ramp band; expanding across it would create cliffs
+      // across otherwise inviting paths without an authored walking connection.
+      for(let y=2;y<m.h-2;y++)for(let x=2;x<m.w-2;x++){
+        const i=x+y*m.w;if(!m.walls[i])continue;
+        m.elev[i]=0;
+        if(m.id==='shard_flats'&&Math.abs(y-58)<6)continue;
+        if(f.reserved.some(a=>contains(a,x+.5,y+.5)))continue;
+        const wave=Math.sin(x*.17+(seed%101))*.8+Math.sin(y*.13+x*.06)*1.2;
+        const basin=f.landmarks.some(n=>((x+.5-n.x)/(n.rx+5+wave))**2+((y+.5-n.y)/(n.ry+4+wave))**2<1);
+        const corridor=routeDistance(x+.5,y+.5)<6.5+wave;
+        if(basin||corridor){setWall(m,x,y,0);m.elev[i]=baseHeight(x,y);}
+      }
+      // Existing scenic massifs came from unrelated generic desert assets.
+      f.scenery=[];
+    }
+
+    const family=target=>target==='underground_market'?'market':target==='sand_tombs'?'tomb':target==='khal_palace'?'palace':target==='tomb_sanctum'?'sovereign':target==='shard_flats'?'aqueduct':'road';
+    for(const ex of m.exits){
+      const edge=ex.target==='khalcamp'||m.id==='khalcamp';
+      const n=f.landmarks.find(n=>n.entrance?.target===ex.target)||f.landmarks.find(n=>n.id==='entry');
+      const old=m.props.find(p=>p.artZone==='act3'&&p.landmarkId===n?.id&&p.building);
+      const key=family(ex.target==='desert_wastes'&&!edge?m.id:ex.target);
+      let opening,approach,connections=[],footprints=[],side=1;
+      if(edge){
+        const x=m.id==='khalcamp'?m.w-1:1.5,y=(ex.y0+ex.y1)/2;
+        opening={x,y,axis:1,halfWidth:2.5,height:44};
+        approach={x:m.id==='khalcamp'?m.w-3:3,y};
+        // The road painting contains the checkpoint supports. Suppress the
+        // old freestanding billboard while preserving camp collision/services.
+        if(old&&m.id==='khalcamp')old.hidden=true;
+        if(old&&m.id==='desert_wastes'){
+          for(const a of old.footprints||[])for(let yy=a.y0;yy<a.y1;yy++)for(let xx=a.x0;xx<a.x1;xx++)m.blocked[xx+yy*m.w]=m.walls[xx+yy*m.w];
+          m.props=m.props.filter(p=>p!==old);m.buildings=m.buildings.filter(p=>p!==old);
+        }
+      }else{
+        // Remove only this gate's old supports before attaching the new opening
+        // to a real boundary. Other landmarks and their footprints stay intact.
+        const oldAreas=old?.footprints||[];
+        if(old){
+          for(const a of oldAreas)for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++)m.blocked[x+y*m.w]=m.walls[x+y*m.w];
+          m.props=m.props.filter(p=>p!==old);m.buildings=m.buildings.filter(p=>p!==old);
+          f.reserved=f.reserved.filter(a=>!(a.landmarkId===n.id&&['architecture','threshold'].includes(a.kind)));
+        }
+        let chosen;
+        const variants=[[0,1],[1,1],[0,-1],[1,-1]];
+        for(const [axis,s] of variants){
+          for(const extra of [0,2,4,6,8])for(const shift of [0,-3,3,-6,6]){
+            if(chosen)break;
+            const radius=(axis?n.rx:n.ry)+extra;
+            const cx=axis?Math.floor(n.x-s*radius):Math.floor(n.x+shift)+.5;
+            const cy=axis?Math.floor(n.y+shift)+.5:Math.floor(n.y-s*radius);
+            if(baseHeight(cx,cy)!==baseHeight(n.x,n.y)||m.id==='shard_flats'&&Math.abs(cy-58)<7||m.id==='tomb_sanctum'&&Math.abs(cx-60)<7)continue;
+            const pt=(t,d)=>({x:cx+(axis?d*s:t),y:cy+(axis?t:d*s)});
+            const cells=[];let valid=true;
+            for(let t=-4;t<=4;t++)for(let d=-2;d<=4;d++){
+              const p=pt(t,d),x=Math.floor(p.x),y=Math.floor(p.y);
+              if(!inside(x,y)||m.elev[index(p.x,p.y)]!==baseHeight(cx,cy)&&!m.walls[index(p.x,p.y)]){valid=false;break;}
+              if(Math.abs(t)>=3&&d<=0&&(reserved(x+.5,y+.5)||routeDistance(x+.5,y+.5)<3.4)){valid=false;break;}
+              if(Math.abs(t)<3&&d>=0&&m.blocked[index(p.x,p.y)]&&!m.walls[index(p.x,p.y)]){valid=false;break;}
+              cells.push({x,y,t,d});
+            }
+            const front=pt(0,4);
+            if(!valid||routeDistance(front.x,front.y)>12||Math.hypot(front.x-n.x,front.y-n.y)>radius+6)continue;
+            chosen={cx,cy,axis,s,pt,cells};
+          }
+          if(chosen)break;
+        }
+        if(!chosen)throw Error('No safe attached Act III passage: '+m.id+'/'+n.id);
+        const {cx,cy,axis,s,pt,cells}=chosen;side=s;
+        for(const p of cells){
+          if(Math.abs(p.t)<3||p.d>0){
+            if(!m.blocked[index(p.x,p.y)]||m.walls[index(p.x,p.y)])setWall(m,p.x,p.y,0);
+          }else setWall(m,p.x,p.y,1);
+          m.elev[index(p.x,p.y)]=baseHeight(cx,cy);m.hazard[index(p.x,p.y)]=0;
+        }
+        // Join the approach to its existing court without altering that court.
+        const front=pt(0,3);
+        for(let step=0;step<=24;step++){
+          const x=U.lerp(front.x,n.x,step/24),y=U.lerp(front.y,n.y,step/24);
+          for(let dx=-2;dx<=2;dx++)for(let dy=-2;dy<=2;dy++){
+            const xx=Math.floor(x)+dx,yy=Math.floor(y)+dy,i=xx+yy*m.w;
+            if(inside(xx,yy)&&m.walls[i]&&!reserved(xx+.5,yy+.5)){setWall(m,xx,yy,0);m.elev[i]=baseHeight(xx,yy);}
+          }
+        }
+        opening={x:cx,y:cy,axis,halfWidth:2.5,height:100};approach=front;
+        connections=[pt(-3.5,s>0?1:0),pt(3.5,s>0?1:0)];
+        for(const t of [-3.5,3.5]){const p=pt(t,-.5);footprints.push({x0:Math.floor(p.x),y0:Math.floor(p.y),x1:Math.floor(p.x)+1,y1:Math.floor(p.y)+1});}
+        Object.assign(ex,axis?{x0:cx-.8,x1:cx+.8,y0:cy-2.4,y1:cy+2.4}:{x0:cx-2.4,x1:cx+2.4,y0:cy-.8,y1:cy+.8});
+        n.entrance={x:cx,y:cy,target:ex.target};
+      }
+      const id='imperial_'+m.id+'_'+ex.target;
+      const returnKey=m.id==='khalcamp'?'from_wild':m.id!=='desert_wastes'?'from_wild':({khalcamp:'from_camp',underground_market:'from_market',sand_tombs:'from_tombs',khal_palace:'from_palace',shard_flats:'from_flats',tomb_sanctum:'from_sanctum'})[ex.target];
+      const th={id,act:3,revision:2,type:key,opening,approach,arrival:{...(m.spawns[returnKey]||m.spawns.default)},footprints,connections,side,
+        family:key,interior:!outdoor,parts:[],surfaceId:0};
+      if(!edge)th.wallCoverage=opening.axis?{x0:opening.x-3,x1:opening.x+2,y0:opening.y-4.5,y1:opening.y+4.5}:{x0:opening.x-4.5,x1:opening.x+4.5,y0:opening.y-3,y1:opening.y+2};
+      if(!edge){
+        const material=key==='market'||key==='aqueduct'?'sandstone':key==='palace'?'palace':key==='sovereign'?'sovereign':'tomb';
+        th.material=material;
+      }
+      ex.thresholdId=id;m.thresholds??=[];m.thresholds.push(th);env.passages.push(th);
+      const ground={x:opening.x,y:opening.y,asset:'a3env_sandstone_foundation',scale:1.5};
+      env.foundations.push(ground);
+    }
+
+    // Boundary extraction preserves which side is solid. No sprite is clipped
+    // into a short segment, and door apertures remove their own wall sections.
+    const kit=outdoor?'dune':m.id==='underground_market'?'sandstone':m.id==='khal_palace'?'palace':m.id==='tomb_sanctum'?'sovereign':'tomb';
+    for(let axis=0;axis<2;axis++)for(let line=1;line<(axis?m.w:m.h);line++){
+      let start=-1,side=0;
+      const flush=end=>{
+        if(start<0)return;
+        let at=start;
+        while(at<end){
+          const length=Math.min(outdoor?5:3,end-at),x=axis?line:at,y=axis?at:line;
+          const variant=random(x,y)%3,material=outdoor?(m.id==='shard_flats'?(variant===0?'shard':'rock'):(variant===0?'rock':'dune')):kit;
+          const direction=axis?'south':'east';
+          const part=outdoor?direction+(variant===1?'_alt':''):length===3?(variant===2&&random(x,y)%7===0?'broken_'+direction:direction+(variant===1?'_alt':'')):direction+'_'+length;
+          env.segments.push({x,y,axis,length,side,material,part,variant,
+            connections:[{x,y},{x:x+(axis?0:length),y:y+(axis?length:0)}]});at+=length;
+        }
+        start=-1;
+      };
+      for(let t=0;t<(axis?m.h:m.w);t++){
+        const x=axis?line:t,y=axis?t:line,i=x+y*m.w,j=axis?i-1:i-m.w;
+        const s=m.walls[i]&&!m.blocked[j]?1:m.walls[j]&&!m.blocked[i]?-1:0;
+        const px=x+(axis?0:.5),py=y+(axis?.5:0);
+        const passage=env.passages.find(th=>th.wallCoverage?contains(th.wallCoverage,px,py):th.opening.axis===axis&&Math.abs((axis?th.opening.x:th.opening.y)-line)<.1&&Math.abs(t+.5-(axis?th.opening.y:th.opening.x))<th.opening.halfWidth+1);
+        const aperture=!!passage;
+        // Follow the actual edge into each painted wing, including a turn in
+        // that edge. A guessed horizontal cap leaves a gap at a vertical join.
+        if(s&&passage?.wallCoverage&&Math.abs(passage.opening.axis?py-passage.opening.y:px-passage.opening.x)>=passage.opening.halfWidth+1){
+          passage.parts.push({asset:'a3env_'+passage.material+'_end_'+(axis?'south':'east'),x:px,y:py,span:1,axis,side:s,connections:[{x,y},{x:x+(axis?0:1),y:y+(axis?1:0)}]});
+        }
+        if(!s||s!==side||aperture){flush(t);side=s;}
+        if(s&&!aperture&&start<0)start=t;
+      }
+      flush(axis?m.h:m.w);
+    }
+    const vertices=new Map();
+    for(const s of env.segments)for(const p of s.connections){const key=p.x+':'+p.y;let v=vertices.get(key);if(!v)vertices.set(key,v={...p,segments:[]});v.segments.push(s);}
+    if(!outdoor)for(const v of vertices.values())if(new Set(v.segments.map(s=>s.axis)).size>1){
+      const filled=[[-1,-1],[0,-1],[-1,0],[0,0]].filter(([dx,dy])=>m.walls[index(v.x+dx,v.y+dy)]).length;
+      env.corners.push({x:v.x,y:v.y,material:kit,part:filled>=3?'inner':'outer',quadrant:random(v.x,v.y)%4});
+    }
+    env.contours=env.segments.map(s=>({a:s.connections[0],b:s.connections[1],side:s.side,material:s.material}));
+    if(outdoor){
+      // Follow each complete contour at a regular distance, rather than
+      // restarting a large landform at every one-tile staircase corner.
+      const edges=[],starts=new Map();
+      for(const s of env.segments)for(let k=0;k<s.length;k++){
+        let a={x:s.x+(s.axis?0:k),y:s.y+(s.axis?k:0)},b={x:a.x+(s.axis?0:1),y:a.y+(s.axis?1:0)};
+        if(s.axis?s.side<0:s.side>0)[a,b]=[b,a];
+        const edge={a,b,used:false,axis:s.axis,side:s.side};edges.push(edge);
+        const key=a.x+':'+a.y;if(!starts.has(key))starts.set(key,[]);starts.get(key).push(edge);
+      }
+      env.natural=[];
+      for(const first of edges){
+        if(first.used)continue;
+        let edge=first,travel=0;
+        while(edge&&!edge.used){
+          edge.used=true;
+          if(travel%5===0){
+            const x=(edge.a.x+edge.b.x)/2+(edge.axis?edge.side*.9:0),y=(edge.a.y+edge.b.y)/2+(edge.axis?0:edge.side*.9);
+            const cluster=random(Math.floor(x/12),Math.floor(y/12)),variant=random(Math.floor(x),Math.floor(y));
+            const material=m.id==='shard_flats'?(cluster%4===0?'shard':'rock'):(cluster%5===0?'rock':'dune');
+            const part=(edge.axis?'south':'east')+(variant%2?'_alt':'');
+            if(!env.natural.some(p=>Math.hypot(p.x-x,p.y-y)<3))env.natural.push({x,y,material,part,scale:.94+(variant%4)*.04});
+          }
+          travel++;edge=starts.get(edge.b.x+':'+edge.b.y)?.find(e=>!e.used);
+        }
+      }
+    }
+    f.architecture.walls=outdoor?[]:env.segments;
+    f.revision=4;
+    // Visual dressing has no random draws and does not change navigation or
+    // encounter footprints. Each light is attached to a real lamp or landmark.
+    env.visualRevision=1;
+    m.zone={...m.zone,dark:outdoor?.18:m.id==='underground_market'?.44:m.id==='khal_palace'?.38:m.id==='tomb_sanctum'?.68:.60};
+    for(const light of m.lights){
+      if(light.color==='#d0aa74'||light.color==='#d6b576'){
+        light.color=m.id==='tomb_sanctum'?'#739fae':m.id==='sand_tombs'?'#86aaa7':'#eac18a';
+        light.r=6;
+      }
+    }
+    const lampSafe=(x,y)=>inside(x,y)&&TerrainSurface.supported(m,x,y,.3)&&!m.hazard[index(x,y)]&&
+      !f.reserved.some(a=>contains(a,x,y,.5))&&!m.props.some(p=>Math.hypot(x-p.x,y-p.y)<2.1)&&
+      !Object.values(m.spawns).some(p=>Math.hypot(x-p.x,y-p.y)<3)&&
+      !env.passages.some(t=>Math.hypot(x-t.approach.x,y-t.approach.y)<4);
+    if(!m.settlement)for(const n of f.landmarks){
+      const count=outdoor?1:2;let placed=0;
+      for(const [dx,dy] of [[-6,-5],[6,5],[-5,6],[5,-6],[-8,0],[8,0],[0,-8],[0,8]]){
+        const x=Math.floor(n.x+dx)+.5,y=Math.floor(n.y+dy)+.5;
+        if(!lampSafe(x,y)||routeDistance(x,y)<2.6)continue;
+        addProp(m,'brazier',x,y,{blocks:false,artZone:'imperial',imperialLamp:true});
+        addLight(m,x,y,outdoor?5:6.5,'#ffb968',true);
+        if(++placed>=count)break;
+      }
+    }
+    TerrainSurface.rebuild(m);bakeMinimap(m);
+  }
+
+  function generateImperial(zoneId,seed){const m=generateBase(zoneId,seed);if(m.act3&&!m.act3.architecture){imperialArchitecture(m);bakeMinimap(m);}if(m.act3)imperialEnvironment(m,seed);act2Causeway(m);act2Boundaries(m,seed);return m;}
+  /* Painted Act I contours. Runs and passage reservations are compiled once,
+     independently of Act II's boundary and threshold work. */
+  function act1Environment(m,seed){
+    const kits={frosthaven:'town',frosthaven_approach:'north',north_wild:'north',mines:'mine',shattered_temple:'temple',shardpeak_shrine:'north',deepfreeze_cavern:'ice'};
+    if(!kits[m.id])return m;
+    const env=m.act1Environment={revision:2,kit:kits[m.id],segments:[],facades:[],corners:[],dressing:[],natural:[]};
+    // Moonlit snow, amber mine lamps and blue ice each keep a readable floor.
+    const darkness={frosthaven:.20,frosthaven_approach:.25,north_wild:.28,mines:.48,shattered_temple:.40,shardpeak_shrine:.30,deepfreeze_cavern:.32};
+    m.zone={...m.zone,dark:darkness[m.id]};
+    const inside=(x,y)=>x>=0&&y>=0&&x<m.w&&y<m.h;
+    const open=(x,y)=>{if(inside(x,y)){setWall(m,x,y,0);m.floor[idx(m,x,y)]=m.settlement?5:4;}};
+    function removeProp(p){
+      if(p.footprint)for(let y=p.footprint.y0;y<p.footprint.y1;y++)for(let x=p.footprint.x0;x<p.footprint.x1;x++)m.blocked[idx(m,x,y)]=m.walls[idx(m,x,y)];
+      m.props=m.props.filter(q=>q!==p);m.buildings=m.buildings?.filter(q=>q!==p);
+      if(m.frontier)m.frontier.reserved=m.frontier.reserved.filter(a=>!(a.kind==='architecture'&&a.landmarkId===p.landmarkId));
+    }
+    if(m.frontier)for(const p of [...m.props])if(['cryptdoor','monasterygate','stairs'].includes(p.type))removeProp(p);
+    m.thresholds??=[];
+    for(const [index,ex] of m.exits.entries()){
+      const id='act1_'+m.id+'_'+index;
+      let x=(ex.x0+ex.x1)/2,y=(ex.y0+ex.y1)/2,axis=0,arrival,approach;
+      const node=m.frontier?.landmarks.find(n=>n.exit?.target===ex.target)||m.frontier?.landmarks.find(n=>n.id==='entry');
+      const kit=ex.target==='mines'?'mine':ex.target==='shattered_temple'?'temple':ex.target==='deepfreeze_cavern'?'ice':ex.target==='shardpeak_shrine'?'north':
+        (m.id==='frosthaven'||ex.target==='frosthaven')?'town':env.kit;
+      const edge=m.id==='frosthaven'||m.id==='frosthaven_approach'||(m.id==='north_wild'&&ex.target==='frosthaven'),footprints=[];
+      if(edge){
+        axis=1;
+        if(m.id==='frosthaven'){x=m.w-2;approach={x:x-3,y};arrival={x:x-4,y};}
+        else if(m.id==='north_wild'){x=2;y=node.y;approach={x:x+3,y};arrival={x:x+4,y};}
+        else {x=94.5;y=6.5;axis=1;approach={x:95.5,y:6.5};arrival={x:96.5,y:6.5};}
+        if(m.id!=='frosthaven_approach'){
+          for(let yy=Math.floor(y)-3;yy<=y+3;yy++)for(let xx=Math.max(0,Math.floor(x)-4);xx<=Math.min(m.w-1,x+4);xx++)open(xx,yy);
+          Object.assign(ex,{x0:x-.7,x1:x+.7,y0:y-1.8,y1:y+1.8});
+        }
+      }else{
+        for(const p of [...m.props])if(p.landmarkId===node.id&&p.building)removeProp(p);
+        let seat;
+        for(const back of [0,3,6])for(const offset of [0,4,-4,7,-7]){
+          if(seat)break;
+          const px=Math.floor(node.x-node.rx-back)+.5,py=Math.floor(node.y+offset)+.5;
+          if(px<=5||px>=m.w-5||py<=3||py>=m.h-8)continue;
+          if(m.frontier.reserved.some(a=>a.kind==='boss'&&px>a.x0-5&&px<a.x1+5&&py>a.y0-4&&py<a.y1+4))continue;
+          if(m.props.some(p=>p.blocks&&Math.abs(p.x-px)<5&&p.y>py-3&&p.y<py+6)||m.ramps.some(r=>Math.hypot(r.x-px,r.y-py)<10))continue;
+          seat={x:px,y:py};
+        }
+        if(!seat)throw Error('Act I threshold has no safe seat: '+m.id+'/'+node.id);
+        ({x,y}=seat);axis=1;approach={x:x+3,y};arrival={x:x+4,y};
+        const z=m.elev[idx(m,node.x|0,node.y|0)];
+        for(let xx=Math.floor(x)-2;xx<=node.x;xx++){
+          const cy=U.lerp(y,node.y,U.clamp((xx-x-4)/Math.max(1,node.x-x-4),0,1));
+          for(let yy=Math.floor(cy)-2;yy<=cy+2;yy++){open(xx,yy);m.elev[idx(m,xx,yy)]=z;}
+        }
+        for(const side of [-1,1]){
+          const a={y0:Math.floor(y)+(side<0?-4:2),y1:Math.floor(y)+(side<0?-1:5),x0:Math.floor(x)-2,x1:Math.floor(x)+1};
+          for(let yy=a.y0;yy<a.y1;yy++)for(let xx=a.x0;xx<a.x1;xx++){setWall(m,xx,yy,1);m.elev[idx(m,xx,yy)]=z;}
+          footprints.push(a);
+        }
+        Object.assign(ex,{x0:x-.5,x1:x+1.1,y0:y-1.2,y1:y+1.2});
+        if(node.exit)Object.assign(node.exit,{x,y});
+      }
+      const th={id,act:1,kit,axis,x,y,approach,arrival,footprints,opening:{x,y,halfWidth:1.4,height:kit==='north'?65:100}};
+      m.thresholds.push(th);ex.thresholdId=id;
+      const from=m.id==='north_wild'&&ex.target!=='frosthaven'?FRONTIER.north_wild.gates.find(g=>g[1]===ex.target)?.[2]:
+        m.id==='north_wild'?'from_camp':m.id==='frosthaven'?'from_wild':m.frontier?'from_wild':null;
+      if(from)m.spawns[from]={...arrival};
+      if(m.frontier&&node?.id==='entry')m.spawns.default={...arrival};
+      const art='a1env_'+kit+'_door_'+(m.id==='north_wild'||m.id==='frosthaven_approach'?'out':'in');
+      // The return-side town gate and mountain pass were painted on the
+      // other isometric diagonal. Match the painting to the actual jamb axis;
+      // "in"/"out" selects the destination view, not a rotation of the wall.
+      const artAxis=art==='a1env_town_door_in'||art==='a1env_north_door_in'?0:1;
+      th.artAxis=artAxis;th.flipX=artAxis!==axis;
+      addProp(m,art,x,y,{blocks:false,building:true,thresholdId:id,act1Threshold:true,flipX:th.flipX});
+      addLight(m,approach.x,approach.y,kit==='north'?3:5,kit==='mine'?'#dfad70':'#beced8',false);
+      if(m.frontier)m.frontier.reserved.push({x0:x-5,y0:y-3,x1:x+5,y1:y+6,kind:'threshold',landmarkId:node.id});
+    }
+    const material=(x,y)=>m.id==='frosthaven_approach'&&x>87&&y<13?'town':env.kit;
+    // The city gates belong to a defensive wall, not a free-standing arch.
+    // These distant returns stand on border rock or beyond the playable grid.
+    if(m.id==='frosthaven_approach'){
+      for(let x=76.5;x<100.5;x+=6)env.facades.push({x,y:1.5,axis:0,kit:'town',height:0,length:6,variant:0});
+      for(let y=1.5;y<37.5;y+=6)env.facades.push({x:100.5,y,axis:1,kit:'town',height:0,length:6,variant:0});
+    }
+    if(m.id==='north_wild'){
+      const gate=m.thresholds.find(t=>t.kit==='town');
+      for(const [lo,hi] of [[gate.y-28,gate.y-4],[gate.y+4,gate.y+28]])for(let y=lo;y<hi;y+=6)
+        env.facades.push({x:-1.5,y,axis:1,kit:'town',height:0,length:6,variant:0});
+    }
+    for(let axis=0;axis<2;axis++)for(let line=1;line<(axis?m.w:m.h);line++){
+      let start=-1,side=0,kit='',height=0;
+      const flush=end=>{
+        if(start<0)return;const max=kit==='north'?4:6;
+        for(let at=start;at<end;at+=max){
+          const length=Math.min(max,end-at),x=axis?line:at,y=axis?at:line;
+          const h=(Math.imul(x,73856093)^Math.imul(y,19349663)^seed)>>>0;
+          env.segments.push({x,y,axis,side,kit,height,length,variant:h%5});
+        }
+        start=-1;
+      };
+      for(let t=0;t<(axis?m.h:m.w);t++){
+        const x=axis?line:t,y=axis?t:line,i=idx(m,x,y),j=axis?i-1:i-m.w;
+        const a=m.walls[i]&&!m.blocked[j],b=m.walls[j]&&!m.blocked[i];
+        const threshold=m.thresholds.some(th=>th.act===1&&Math.abs(x-th.x)<(th.axis?2.5:4.5)&&Math.abs(y-th.y)<(th.axis?4.5:2.5));
+        const eligible=(a||b)&&!threshold,next=material(x,y),s=a?1:-1,z=Math.min(m.elev[i],m.elev[j]);
+        if(!eligible||next!==kit||s!==side||z!==height){flush(t);kit=next;side=s;height=z;}
+        if(eligible&&start<0)start=t;
+      }
+      flush(axis?m.h:m.w);
+    }
+    const sockets=new Map();
+    for(const s of env.segments){
+      for(const [x,y] of [[s.x,s.y],[s.x+(s.axis?0:s.length),s.y+(s.axis?s.length:0)]]){
+        const key=x+':'+y;let c=sockets.get(key);if(!c)sockets.set(key,c={x,y,kit:s.kit,height:s.height,axes:new Set()});c.axes.add(s.axis);
+      }
+      if(s.kit==='north'&&s.length>=3&&s.variant===1){
+        const x=s.x+(s.axis?s.side*2:s.length/2),y=s.y+(s.axis?s.length/2:s.side*2);
+        if(inside(x|0,y|0)&&m.walls[idx(m,x|0,y|0)])env.dressing.push({x,y,height:s.height,part:'inner',scale:1.2});
+      }
+    }
+    for(const c of sockets.values())if(c.axes.size===2)env.corners.push({x:c.x,y:c.y,kit:c.kit,height:c.height});
+    // Layer real trees and rock silhouettes into the solid side of each edge.
+    // A second, more spacious row gives the woods depth beyond the first ridge.
+    const bins=new Map(),near=(x,y)=>{
+      for(let by=Math.floor(y/4)-1;by<=Math.floor(y/4)+1;by++)for(let bx=Math.floor(x/4)-1;bx<=Math.floor(x/4)+1;bx++)
+        if((bins.get(bx+':'+by)||[]).some(p=>Math.hypot(p.x-x,p.y-y)<2.8))return true;
+      return false;
+    };
+    const addNature=(x,y,s,rear=false)=>{
+      if(near(x,y)||!inside(x|0,y|0)||!m.walls[idx(m,x|0,y|0)]||m.thresholds.some(th=>Math.hypot(x-th.x,y-th.y)<5))return;
+      const variant=(Math.imul(x*10|0,73)^Math.imul(y*10|0,193)^seed)>>>0;
+      const alpine=m.id==='shardpeak_shrine',part=rear?(alpine?'crag':['fir','firs','pine'][variant%3]):
+        (alpine?['crag','boulders','standing_stone','boulders','pine','boulders']:['boulders','fir','crag','firs','pine','boulders'])[variant%6];
+      const p={x,y,axis:s.axis,height:m.elev[idx(m,x|0,y|0)],variant,part,scale:(rear?1.1:.78)+(variant%7)*.055};
+      env.natural.push(p);const k=Math.floor(x/4)+':'+Math.floor(y/4);if(!bins.has(k))bins.set(k,[]);bins.get(k).push(p);
+    };
+    for(const s of env.segments)if(s.kit==='north')for(let t=.8;t<s.length;t+=1.6){
+      addNature(s.x+(s.axis?s.side*1.7:t),s.y+(s.axis?t:s.side*1.7),s);
+      if(s.variant%2===0)addNature(s.x+(s.axis?s.side*5:t+.9),s.y+(s.axis?t+.9:s.side*5),s,true);
+    }
+    if(m.id==='frosthaven')for(const offset of [4,10])for(let t=-5;t<Math.max(m.w,m.h)+8;t+=5.5){
+      for(const [x,y] of [[t,-offset],[-offset,t],[t,m.h+offset],[m.w+offset,t]]){
+        if(m.exits.some(e=>Math.abs(y-(e.y0+e.y1)/2)<6&&x>m.w-5))continue;
+        const variant=(Math.imul(t*10|0,73)^Math.imul(offset,193)^seed)>>>0;
+        env.natural.push({x:x+(variant%3)*.5,y,height:0,axis:0,variant,part:['fir','firs','pine','crag'][variant%4],scale:.9+(variant%5)*.1});
+      }
+    }
+    // Recessed sconces establish a cadence and lead through the dungeon halls.
+    // All bases stay on existing solid cells; no encounter or route is moved.
+    if(!m.outdoor&&!m.settlement){
+      const placed=[];
+      for(const s of env.segments)if(s.length>=4&&s.variant%3===0){
+        const x=s.x+(s.axis?s.side*.55:s.length/2),y=s.y+(s.axis?s.length/2:s.side*.55);
+        if(placed.some(p=>Math.hypot(p.x-x,p.y-y)<12)||m.thresholds.some(t=>Math.hypot(t.x-x,t.y-y)<7))continue;
+        if(!inside(x|0,y|0)||!m.walls[idx(m,x|0,y|0)])continue;
+        const cold=env.kit==='ice';
+        env.dressing.push({x,y,height:s.height,part:cold?'standing_stone':'lamp',scale:cold?.65:.75});
+        addLight(m,x,y,cold?5.5:6.5,cold?'#75cce9':'#efa85c',!cold);placed.push({x,y});
+      }
+      // Remove the old tan trail overlay from sacred stone and frozen floors.
+      if(m.id==='shattered_temple')for(const d of m.frontier.decals)if(d.type==='frontier_paving')d.alpha=.45;
+    }
+    if(m.frontier&&m.outdoor)m.frontier.scenery=[];
+    if(m.surfaceVersion)TerrainSurface.rebuild(m);
+    bakeMinimap(m);return m;
+  }
+  /* Act V painted boundaries are independent of the collision grid's old
+     artificial height. Actual terraces and the campaign route graph remain. */
+  function act5Environment(m,seed){
+    if(!['hellgate','ash_wastes','cinder_bastion','throne'].includes(m.id))return m;
+    if(m.id!=='hellgate')cinderPassages(m,seed);
+    const camp=m.id==='hellgate',outdoor=camp||m.outdoor,kit=outdoor?'biome':m.id==='throne'?'throne':'bastion';
+    const env=m.act5Environment={revision:1,kit,outdoor,segments:[],corners:[],dressing:[],ground:[]};
+    const inside=(x,y)=>x>=0&&y>=0&&x<m.w&&y<m.h;
+    const base=y=>!camp&&CINDERS[m.id].band&&y>=CINDERS[m.id].band?2:0;
+    // These cells are still impassable. Their height represented a generic
+    // boundary slab, not traversable terrain, and is replaced by painted art.
+    for(let y=0;y<m.h;y++)for(let x=0;x<m.w;x++)if(m.walls[idx(m,x,y)])m.elev[idx(m,x,y)]=base(y);
+    if(camp){
+      const ex=m.exits[0],old=m.props.find(p=>p.type==='cinders_breach_gate');
+      if(old){
+        for(const a of old.footprints)for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++)m.blocked[idx(m,x,y)]=m.walls[idx(m,x,y)];
+        m.props=m.props.filter(p=>p!==old);m.buildings=m.buildings.filter(p=>p.type!=='breach_gate');
+      }
+      const x=m.w-2,y=15.5,id='act5_hellgate_gate',approach={x:x-2.2,y},arrival={x:x-4.5,y};
+      for(let yy=13;yy<=17;yy++)for(let xx=m.w-7;xx<m.w;xx++){setWall(m,xx,yy,0);m.floor[idx(m,xx,yy)]=5;}
+      const footprints=[];
+      for(const side of [-1,1]){
+        const a={x0:x,y0:Math.floor(y)+(side<0?-5:2),x1:x+1,y1:Math.floor(y)+(side<0?-1:6)};
+        for(let yy=a.y0;yy<a.y1;yy++)for(let xx=a.x0;xx<a.x1;xx++)setWall(m,xx,yy,1);
+        footprints.push(a);m.buildings.push({type:'act5_gate',footprint:a,gate:true});
+      }
+      const art='a5env_defense_door_south';
+      const pr=addProp(m,art,x,y,{blocks:false,building:true,gate:true,thresholdId:id,footprints});
+      m.thresholds=[{id,act:5,kit:'defense',axis:1,x,y,height:0,approach,arrival,footprints,
+        opening:{x,y,halfWidth:1.5,height:130,axis:1},connections:[{x,y:y-4},{x,y:y+4}],parts:[{asset:art,x,y}]}];
+      Object.assign(ex,{x0:x-.5,x1:x+1.1,y0:y-1.2,y1:y+1.2,thresholdId:id});
+      m.spawns.from_wild={...arrival};
+      Object.assign(m.composition.landmarks.find(n=>n.id==='gate'),{x:x-3,y,exit:{x,y,target:ex.target}});
+      m.thresholdDecals=[];
+      for(let xx=x-6;xx<x+2;xx+=2.5)m.thresholdDecals.push({type:'a5env_defense_ground',x:xx,y,scale:1,alpha:.9});
+    }
+    const thresholdAt=(x,y)=>m.thresholds?.find(t=>t.act===5&&(
+      Math.abs(x-t.x)<(t.axis?2:4.2)&&Math.abs(y-t.y)<(t.axis?4.2:2)||
+      !t.axis&&Math.abs(x-t.x)<2&&y<t.y&&y>t.y-9));
+    const material=(x,y)=>camp&&x>m.w-4&&Math.abs(y-15.5)<9?'defense':kit;
+    // Each maximal run owns endpoints and a material. Full modules tile at a
+    // fixed world scale; a short final section terminates with authored end art.
+    for(let axis=0;axis<2;axis++)for(let line=1;line<(axis?m.w:m.h);line++){
+      let start=-1,side=0,mat='',height=0;
+      const flush=end=>{
+        if(start<0)return;
+        const span=mat==='biome'?4:6;
+        for(let at=start;at<end;at+=span){
+          const length=Math.min(span,end-at),x=axis?line:at,y=axis?at:line,h=(Math.imul(x,73856093)^Math.imul(y,19349663)^seed)>>>0;
+          env.segments.push({x,y,axis,length,side,kit:mat,height,variant:h%7,start:at===start,end:at+span>=end});
+        }start=-1;
+      };
+      for(let t=0;t<(axis?m.h:m.w);t++){
+        const x=axis?line:t,y=axis?t:line,i=idx(m,x,y),j=axis?i-1:i-m.w;
+        const a=m.walls[i]&&!m.blocked[j],b=m.walls[j]&&!m.blocked[i],eligible=(a||b)&&!thresholdAt(x,y);
+        const next=material(x,y),s=a?1:-1,z=Math.min(m.elev[i],m.elev[j]);
+        if(!eligible||mat!==next||s!==side||height!==z){flush(t);mat=next;side=s;height=z;}
+        if(eligible&&start<0)start=t;
+      }flush(axis?m.h:m.w);
+    }
+    const joints=new Map();
+    for(const s of env.segments){
+      for(const [x,y,start] of [[s.x,s.y,true],[s.x+(s.axis?0:s.length),s.y+(s.axis?s.length:0),false]]){
+        const k=x+':'+y+':'+s.kit+':'+s.height;let j=joints.get(k);
+        if(!j)joints.set(k,j={x,y,kit:s.kit,height:s.height,ends:[]});j.ends.push({axis:s.axis,side:s.side,start});
+      }
+      const x=s.x+(s.axis?0:s.length/2),y=s.y+(s.axis?s.length/2:0);
+      env.ground.push({x,y,height:s.height,kit:s.kit,scale:s.kit==='biome'?1.4:.85});
+      if(s.kit==='biome'&&s.length>=2){
+        // Larger outcrops are offset into the blocked biome, leaving the path
+        // edge readable and breaking the collision grid's stair-step silhouette.
+        const px=x+(s.axis?s.side*1.2:0),py=y+(s.axis?0:s.side*1.2);
+        if(s.variant%3===0)env.dressing.push({x:px,y:py,height:s.height,kit:'biome',part:'pillar',scale:1.15+(s.variant%2)*.3});
+        if(camp)for(const depth of [1.5,3])env.ground.push({x:x+(s.axis?s.side*depth:0),y:y+(s.axis?0:s.side*depth),height:0,kit:'biome',scale:1.7});
+      }
+    }
+    for(const j of joints.values())if(j.ends.some(e=>e.axis===0)&&j.ends.some(e=>e.axis===1)){
+      // Classify exact turns for authoring/QA. Compact matching posts close
+      // runtime joins without overlapping the complete L pieces' long wings.
+      const e=j.ends.find(e=>e.axis===0),s=j.ends.find(e=>e.axis===1);
+      env.corners.push({...j,part:e.start===s.start?(e.start?'inner':'outer'):'pillar'});
+    }
+    for(const t of m.thresholds||[]){
+      if(t.act!==5)continue;
+      if(outdoor&&!camp)for(const offset of [-5.5,3])env.segments.push({x:t.x+offset,y:t.y,axis:0,length:2.5,side:-1,kit:t.kit,height:t.height,variant:0,start:true,end:true,role:'threshold'});
+      for(const p of t.connections)env.ground.push({...p,height:t.height,kit:t.kit,scale:.85});
+      // Continue a short paving strip through the aperture into its destination.
+      for(let d=-2;d<=4;d+=2)env.ground.push({x:t.x+(t.axis?d:0),y:t.y+(t.axis?0:d),height:t.height,kit:t.kit,scale:.85});
+    }
+    m.composition.revision=2;
+    if(m.surfaceVersion)TerrainSurface.rebuild(m);
+    m.hasElev=m.elev.some(v=>v>0);bakeMinimap(m);return m;
+  }
+  return { generate:(zoneId,seed)=>{
+    const map=act5Environment(act1Environment(generateImperial(zoneId,seed),seed),seed);
+    return typeof PropInteractions==='undefined'?map:PropInteractions.prepare(map,seed);
+  }, walkable, canStep, elevAt };
 })();

@@ -1,0 +1,179 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "captures": [
+    "frosthaven_arrival_1920_after.webp",
+    "frosthaven_exit_0_1920_after.webp",
+    "frosthaven_approach_arrival_1920_after.webp",
+    "frosthaven_approach_exit_0_1920_after.webp",
+    "north_wild_arrival_1920_after.webp",
+    "north_wild_mine_1920_after.webp",
+    "north_wild_watch_1920_after.webp",
+    "mines_arrival_1920_after.webp",
+    "mines_haul_1920_after.webp",
+    "shattered_temple_procession_1920_after.webp",
+    "shattered_temple_court_1920_after.webp",
+    "shattered_temple_boss_1920_after.webp",
+    "shardpeak_shrine_summit_1920_after.webp",
+    "deepfreeze_cavern_gallery_1920_after.webp",
+    "deepfreeze_cavern_boss_1920_after.webp"
+  ],
+  "profiles": [
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 6.5,
+        "y": 80.5
+      },
+      "monsters": 94,
+      "distance": 18.173333333333417,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.2,
+        "p95": 4.6,
+        "max": 12.9
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 18.7
+      },
+      "builds": 3,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 42.5,
+        "y": 76.5
+      },
+      "monsters": 94,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1326,
+      "cpuMs": {
+        "median": 4.2,
+        "p95": 5.3,
+        "max": 7.7
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 17.2
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "mines",
+      "width": 1920,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 12.5,
+        "y": 24.5
+      },
+      "monsters": 62,
+      "distance": 18.173333333333332,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.3,
+        "p95": 4.7,
+        "max": 9.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.4
+      },
+      "builds": 1,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "mines",
+      "width": 1920,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 44.5,
+        "y": 37.5
+      },
+      "monsters": 62,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1363,
+      "cpuMs": {
+        "median": 4.1,
+        "p95": 5.5,
+        "max": 7.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "shattered_temple",
+      "width": 1920,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 12.5,
+        "y": 24.5
+      },
+      "monsters": 64,
+      "distance": 18.173333333333332,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3,
+        "p95": 3.9,
+        "max": 8.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17
+      },
+      "builds": 1,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "shattered_temple",
+      "width": 1920,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 46.5,
+        "y": 36.5
+      },
+      "monsters": 64,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1221,
+      "cpuMs": {
+        "median": 3.5,
+        "p95": 4.3,
+        "max": 4.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 16.9
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    }
+  ]
+}

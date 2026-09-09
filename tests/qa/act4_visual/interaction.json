@@ -1,0 +1,75 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "zone": "cathedral1",
+      "target": "khalcamp",
+      "click": "opening"
+    },
+    {
+      "zone": "cathedral1",
+      "target": "khalcamp",
+      "click": "label"
+    },
+    {
+      "zone": "cathedral1",
+      "target": "cathedral_cinderwatch",
+      "click": "opening"
+    },
+    {
+      "zone": "cathedral1",
+      "target": "cathedral_cinderwatch",
+      "click": "label"
+    },
+    {
+      "zone": "cathedral1",
+      "target": "cathedral2",
+      "click": "opening"
+    },
+    {
+      "zone": "cathedral1",
+      "target": "cathedral2",
+      "click": "label"
+    },
+    {
+      "zone": "cathedral2",
+      "target": "cathedral1",
+      "click": "opening"
+    },
+    {
+      "zone": "cathedral2",
+      "target": "cathedral1",
+      "click": "label"
+    },
+    {
+      "zone": "cathedral2",
+      "target": "cathedral_bastion",
+      "click": "opening"
+    },
+    {
+      "zone": "cathedral2",
+      "target": "cathedral_bastion",
+      "click": "label"
+    },
+    {
+      "zone": "cathedral_cinderwatch",
+      "target": "cathedral1",
+      "click": "opening"
+    },
+    {
+      "zone": "cathedral_cinderwatch",
+      "target": "cathedral1",
+      "click": "label"
+    },
+    {
+      "zone": "cathedral_bastion",
+      "target": "cathedral2",
+      "click": "opening"
+    },
+    {
+      "zone": "cathedral_bastion",
+      "target": "cathedral2",
+      "click": "label"
+    }
+  ]
+}

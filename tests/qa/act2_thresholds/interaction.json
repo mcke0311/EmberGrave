@@ -1,0 +1,206 @@
+{
+  "status": "PASS",
+  "rows": [
+    {
+      "id": "monastery_monastery_out",
+      "target": "opening",
+      "destination": "drowned_crypt",
+      "spawnKey": "from_wild",
+      "commanded": true,
+      "steps": 60,
+      "clickDistance": 10,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "monastery_monastery_out",
+      "target": "label",
+      "destination": "drowned_crypt",
+      "spawnKey": "from_wild",
+      "commanded": true,
+      "steps": 30,
+      "clickDistance": 4.5,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "reeds_reeds_out",
+      "target": "opening",
+      "destination": "hollow_reeds",
+      "spawnKey": "from_wild",
+      "commanded": true,
+      "steps": 150,
+      "clickDistance": 10,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "reeds_reeds_out",
+      "target": "label",
+      "destination": "hollow_reeds",
+      "spawnKey": "from_wild",
+      "commanded": true,
+      "steps": 30,
+      "clickDistance": 4.5,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "pools_sluice_out",
+      "target": "opening",
+      "destination": "spawn_pools",
+      "spawnKey": "from_wild",
+      "commanded": true,
+      "steps": 150,
+      "clickDistance": 10,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "pools_sluice_out",
+      "target": "label",
+      "destination": "spawn_pools",
+      "spawnKey": "from_wild",
+      "commanded": true,
+      "steps": 30,
+      "clickDistance": 4.5,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "procession_ritual_out",
+      "target": "opening",
+      "destination": "ritual_site",
+      "spawnKey": "from_wild",
+      "commanded": true,
+      "steps": 270,
+      "clickDistance": 10,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "procession_ritual_out",
+      "target": "label",
+      "destination": "ritual_site",
+      "spawnKey": "from_wild",
+      "commanded": true,
+      "steps": 30,
+      "clickDistance": 4.5,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "landing_causeway",
+      "target": "opening",
+      "destination": "marshcamp",
+      "spawnKey": "from_wild",
+      "commanded": true,
+      "steps": 150,
+      "clickDistance": 10,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "landing_causeway",
+      "target": "label",
+      "destination": "marshcamp",
+      "spawnKey": "from_wild",
+      "commanded": false,
+      "steps": 30,
+      "clickDistance": 2,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "entry_monastery_in",
+      "target": "opening",
+      "destination": "weeping_marsh",
+      "spawnKey": "from_drowned",
+      "commanded": true,
+      "steps": 60,
+      "clickDistance": 10,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "entry_monastery_in",
+      "target": "label",
+      "destination": "weeping_marsh",
+      "spawnKey": "from_drowned",
+      "commanded": true,
+      "steps": 30,
+      "clickDistance": 4.5,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "entry_reeds_in",
+      "target": "opening",
+      "destination": "weeping_marsh",
+      "spawnKey": "from_reeds",
+      "commanded": true,
+      "steps": 60,
+      "clickDistance": 10,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "entry_reeds_in",
+      "target": "label",
+      "destination": "weeping_marsh",
+      "spawnKey": "from_reeds",
+      "commanded": true,
+      "steps": 30,
+      "clickDistance": 4.5,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "entry_sluice_in",
+      "target": "opening",
+      "destination": "weeping_marsh",
+      "spawnKey": "from_pools",
+      "commanded": true,
+      "steps": 60,
+      "clickDistance": 10,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "entry_sluice_in",
+      "target": "label",
+      "destination": "weeping_marsh",
+      "spawnKey": "from_pools",
+      "commanded": true,
+      "steps": 30,
+      "clickDistance": 4.5,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "entry_ritual_in",
+      "target": "opening",
+      "destination": "weeping_marsh",
+      "spawnKey": "from_ritual",
+      "commanded": true,
+      "steps": 60,
+      "clickDistance": 10,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "entry_ritual_in",
+      "target": "label",
+      "destination": "weeping_marsh",
+      "spawnKey": "from_ritual",
+      "commanded": true,
+      "steps": 30,
+      "clickDistance": 4.5,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "landing_causeway",
+      "target": "opening",
+      "destination": "weeping_marsh",
+      "spawnKey": "from_camp",
+      "commanded": true,
+      "steps": 60,
+      "clickDistance": 10,
+      "standingDidNotTravel": true
+    },
+    {
+      "id": "landing_causeway",
+      "target": "label",
+      "destination": "weeping_marsh",
+      "spawnKey": "from_camp",
+      "commanded": false,
+      "steps": 30,
+      "clickDistance": 2.0615528128088303,
+      "standingDidNotTravel": true
+    }
+  ],
+  "browser": "152.0.7977.83"
+}

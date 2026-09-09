@@ -1,0 +1,67 @@
+{
+  "status": "PASS",
+  "checks": 402493,
+  "seeds": 30,
+  "zones": [
+    {
+      "zone": "khalcamp",
+      "boundaries": 29,
+      "natural": 26,
+      "passages": 1,
+      "enemies": 0
+    },
+    {
+      "zone": "desert_wastes",
+      "boundaries": 512,
+      "natural": 140,
+      "passages": 6,
+      "enemies": 126
+    },
+    {
+      "zone": "underground_market",
+      "boundaries": 239,
+      "natural": 0,
+      "passages": 1,
+      "enemies": 52
+    },
+    {
+      "zone": "sand_tombs",
+      "boundaries": 306,
+      "natural": 0,
+      "passages": 1,
+      "enemies": 116
+    },
+    {
+      "zone": "khal_palace",
+      "boundaries": 259,
+      "natural": 0,
+      "passages": 1,
+      "enemies": 43
+    },
+    {
+      "zone": "shard_flats",
+      "boundaries": 329,
+      "natural": 98,
+      "passages": 1,
+      "enemies": 61
+    },
+    {
+      "zone": "tomb_sanctum",
+      "boundaries": 289,
+      "natural": 0,
+      "passages": 1,
+      "enemies": 116
+    }
+  ],
+  "passages": 360,
+  "otherActIsolation": [
+    "frosthaven",
+    "north_wild",
+    "mines",
+    "marshcamp",
+    "weeping_marsh",
+    "drowned_crypt",
+    "cathedral1",
+    "ash_wastes"
+  ]
+}

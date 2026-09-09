@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Act II · The Weeping Marsh — visual comparison</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b1417;color:#d9e0d8;font:14px/1.5 system-ui,sans-serif}main{max-width:1720px;margin:auto;padding:32px 32px 24px}.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#a8b9a3}h1{font:normal clamp(28px,3vw,44px)/1.1 Georgia,serif;color:#ece6cf;margin:10px 0}p{color:#9eaeb0;margin:12px 0 24px}.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:20px 0}label{display:flex;align-items:center;gap:10px}select,button,a{color:#dedeca;background:#17272a;border:1px solid #354e51;border-radius:3px;padding:9px 13px;font:inherit}a{text-decoration:none;margin-left:auto}button{cursor:pointer}button[aria-pressed=true]{background:#3b584f;color:#fff}select{min-width:250px}.compare{position:relative;aspect-ratio:16/9;overflow:hidden;background:#091012;border:1px solid #354447;--split:50%}.compare img{width:100%;height:100%;display:block;position:absolute;object-fit:contain}.after{clip-path:inset(0 0 0 var(--split))}.divider{pointer-events:none;position:absolute;top:0;bottom:0;left:var(--split);border-left:1px solid #ece6cf;filter:drop-shadow(0 0 3px #000)}.divider:after{content:'↔';position:absolute;top:50%;left:-19px;width:38px;height:38px;display:grid;place-items:center;border:1px solid #cfdbd0;border-radius:50%;background:#17272a;color:#fff;font-size:20px}.badge{position:absolute;top:16px;padding:5px 10px;background:#0b1417dd;font-size:11px;letter-spacing:.12em;text-transform:uppercase;border:1px solid #788a7970}.before-label{left:16px}.after-label{right:16px}.compare input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize}.compare:focus-within{outline:2px solid #b3c2a7;outline-offset:3px}footer{display:flex;justify-content:space-between;gap:20px;margin-top:14px;color:#8ea5a7;font-size:12px}#caption{color:#bac9bf}.note{max-width:900px;margin-top:24px;font-size:13px}@media(max-width:700px){main{padding:20px 12px}.controls a{margin-left:0}footer{display:block}select{min-width:0;max-width:100%}}
+</style>
+<main>
+ <div class="eyebrow">Embergrave / Act II</div>
+ <h1>The Weeping Marsh</h1>
+ <p>Continuous marsh water, mossy banks, cypress groves and candlelit drowned ruins.</p>
+ <div class="controls">
+  <label>Scene <select id="scene" aria-label="Choose a comparison scene"></select></label>
+  <button id="before" aria-pressed="false">Before</button><button id="split" aria-pressed="true">Compare</button><button id="after" aria-pressed="false">After</button>
+  <a href="../../act2_threshold_review.html?zone=weeping_marsh&view=hamlet">Play the isolated review ↗</a>
+ </div>
+ <div class="compare" id="compare">
+  <img id="old" alt="Act II before the visual overhaul"><img id="new" class="after" alt="Act II after the visual overhaul">
+  <span class="badge before-label">Before</span><span class="badge after-label">After</span><div class="divider"></div>
+  <input type="range" min="0" max="100" value="50" aria-label="Before and after comparison divider" id="slider">
+ </div>
+ <footer><span id="caption"></span><span>Matched cameras · 1920 × 1080 · Drag to compare</span></footer>
+ <p class="note">The comparison uses temporary heroes and the same world seed. The overhaul keeps the existing routes, combat encounters, quest anchors and travel links. Open the playable review to explore all six areas.</p>
+</main>
+<script>
+const scenes=[['weeping_marsh_hamlet','Abandoned stilt hamlet','Layered cypress groves, smaller reeds, mossy earth and warm lanterns.'],['weeping_marsh_arrival','The landing causeway','Water continues beyond the map with no diagonal landscape cut-off.'],['weeping_marsh_bell','The bell crossroads','A stronger silhouette and clearer route through the marsh.'],['weeping_marsh_monastery','Monastery forecourt','Cool wet stone against organic marsh vegetation.'],['drowned_crypt_arrival','The monastery descent','Gothic piers, warm lights and smaller environmental details.'],['drowned_crypt_cloister','Flooded cloister','Taller architectural rhythm and brighter stone in the walking space.'],['drowned_crypt_nave','The Choir nave','A carved ceremonial floor anchors the ritual space.'],['hollow_reeds_fork','The split boardwalk','Continuous water, readable timber paths and layered foliage.'],['hollow_reeds_boats','The boat graveyard','Lower reeds leave the wrecks and enemies visible.'],['hollow_reeds_grove','The silent grove','Moss, cypress and hanging branches give the grove its identity.'],['spawn_pools_cistern','The collapsed cistern','A weathered stone inlay and organic earth beneath the ruined cloister.'],['spawn_pools_brood','Brood Mother basin','Controlled vegetation and lights around the encounter.'],['ritual_site_stalls','Drowned choir stalls','New piers and warm candlelight in the drowned architecture.'],['ritual_site_gallery','The root galleries','Better separation between roots, walking surfaces and surrounding water.'],['ritual_site_boss','The Mire Mother','A large carved stone circle gives the final encounter a focal point.'],['marshcamp_arrival','Greywater Landing','The camp perimeter joins the new marsh environment.']];
+const el=id=>document.getElementById(id);
+for(const [key,label] of scenes)el('scene').add(new Option(label,key));
+function scene(){const [key,,caption]=scenes.find(s=>s[0]===el('scene').value);el('old').src=key+'_1920_before.webp';el('new').src=key+'_1920_after.webp';el('caption').textContent=caption;}
+function divider(value){el('slider').value=value;el('compare').style.setProperty('--split',value+'%');for(const [id,n] of [['before',100],['split',50],['after',0]])el(id).setAttribute('aria-pressed',String(+value===n));}
+el('scene').onchange=scene;el('slider').oninput=e=>divider(e.target.value);el('before').onclick=()=>divider(100);el('split').onclick=()=>divider(50);el('after').onclick=()=>divider(0);scene();
+</script>
+</html>

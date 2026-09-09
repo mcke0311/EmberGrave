@@ -1,0 +1,40 @@
+{
+  "methodRevision": 12,
+  "legacyActors": false,
+  "width": 3840,
+  "zone": "hellgate",
+  "pair": 2,
+  "version": "after",
+  "mode": "moving",
+  "position": {
+    "x": 20.5,
+    "y": 16.5
+  },
+  "pocketRadius": null,
+  "monsters": 0,
+  "distance": 18.173333333333233,
+  "attackFrames": 0,
+  "enemyAttackFrames": 0,
+  "cpuMs": {
+    "median": 2.1,
+    "p95": 2.6,
+    "max": 5
+  },
+  "updateMs": {
+    "median": 0.1,
+    "p95": 0.2,
+    "max": 0.3
+  },
+  "renderMs": {
+    "median": 1.9,
+    "p95": 2.5,
+    "max": 4.9
+  },
+  "frameIntervalMs": {
+    "median": 18,
+    "p95": 18.2,
+    "max": 42.9
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

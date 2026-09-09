@@ -1,0 +1,8 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Use case: stylized-concept. Asset type: single isolated isometric environment sprite for a dark fantasy drowned monastery RPG. A tall weathered Gothic stone pier with a square plinth, slender clustered engaged columns and broken pointed-arch springers at its crown, a small iron lantern containing a tiny warm amber candle attached halfway up. Wet grey limestone with moss crevices, restrained ivy at the base, chipped layered moldings, fine architectural detail. View from the same fixed orthographic isometric 30 degree downward game camera with no perspective convergence. Complete full column visible from broken crown to foot, centered on genuinely transparent alpha background with generous empty margins. Column approximately 2.4 human heights tall, narrow footprint, no walls attached, no large ground patch, no floor tile, no backdrop, no text, no symbols, no glow around silhouette. Cool muted gray blue lighting from upper left, tiny warm lantern accent, detailed realistic hand-painted game sprite.",
+  "refinements": [
+    "Remove background halo, preserve architecture; transparent alpha output.",
+    "Replace the failed checkerboard with an absolutely flat pure magenta #ff00ff technical matte; preserve only the stone pier, leaves and lantern."
+  ]
+}

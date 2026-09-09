@@ -1,0 +1,150 @@
+{
+  "status": "PASS",
+  "results": [
+    {
+      "command": [
+        "node",
+        "--preserve-symlinks",
+        "--preserve-symlinks-main",
+        "tests/act3_environment_contract.mjs"
+      ],
+      "seconds": 123.41,
+      "exitCode": 0,
+      "output": "{\n  status: 'PASS',\n  checks: 399621,\n  seeds: 30,\n  zones: [\n    {\n      zone: 'khalcamp',\n      boundaries: 29,\n      natural: 26,\n      passages: 1,\n      enemies: 0\n    },\n    {\n      zone: 'desert_wastes',\n      boundaries: 512,\n      natural: 140,\n      passages: 6,\n      enemies: 126\n    },\n    {\n      zone: 'underground_market',\n      boundaries: 239,\n      natural: 0,\n      passages: 1,\n      enemies: 52\n    },\n    {\n      zone: 'sand_tombs',\n      boundaries: 306,\n      natural: 0,\n      passages: 1,\n      enemies: 116\n    },\n    {\n      zone: 'khal_palace',\n      boundaries: 259,\n      natural: 0,\n      passages: 1,\n      enemies: 43\n    },\n    {\n      zone: 'shard_flats',\n      boundaries: 329,\n      natural: 98,\n      passages: 1,\n      enemies: 61\n    },\n    {\n      zone: 'tomb_sanctum',\n      boundaries: 289,\n      natural: 0,\n      passages: 1,\n      enemies: 116\n    }\n  ],\n  passages: 360\n}\n"
+    },
+    {
+      "command": [
+        "node",
+        "--preserve-symlinks",
+        "--preserve-symlinks-main",
+        "tests/act3_layout_contract.mjs",
+        "--record"
+      ],
+      "seconds": 115.49,
+      "exitCode": 0,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 111233,\n  \"seedCount\": 30,\n  \"areas\": [\n    {\n      \"zone\": \"khalcamp\",\n      \"minEnemies\": 0,\n      \"maxEnemies\": 0\n    },\n    {\n      \"zone\": \"desert_wastes\",\n      \"minEnemies\": 109,\n      \"maxEnemies\": 135\n    },\n    {\n      \"zone\": \"underground_market\",\n      \"minEnemies\": 47,\n      \"maxEnemies\": 57\n    },\n    {\n      \"zone\": \"sand_tombs\",\n      \"minEnemies\": 103,\n      \"maxEnemies\": 127\n    },\n    {\n      \"zone\": \"khal_palace\",\n      \"minEnemies\": 33,\n      \"maxEnemies\": 46\n    },\n    {\n      \"zone\": \"shard_flats\",\n      \"minEnemies\": 59,\n      \"maxEnemies\": 74\n    },\n    {\n      \"zone\": \"tomb_sanctum\",\n      \"minEnemies\": 107,\n      \"maxEnemies\": 126\n    }\n  ]\n}\n"
+    },
+    {
+      "command": [
+        "node",
+        "--preserve-symlinks",
+        "--preserve-symlinks-main",
+        "tests/act3_navigation_contract.mjs"
+      ],
+      "seconds": 71.74,
+      "exitCode": 0,
+      "output": "{\n  status: 'PASS',\n  checks: 121274,\n  seeds: 30,\n  areas: 7,\n  liveCompanionRoutes: 7,\n  coverage: 'Thirty seeds: skeletal routes, golem-width authored lanes, every enemy footprint, flat-sweep equivalence. Three seeds: complete golem and encounter paths. Seven live golem routes without teleport fallback.'\n}\n"
+    },
+    {
+      "command": [
+        "node",
+        "--preserve-symlinks",
+        "--preserve-symlinks-main",
+        "tests/act3_layers_contract.mjs",
+        "--all-seeds"
+      ],
+      "seconds": 21.73,
+      "exitCode": 0,
+      "output": "khalcamp 30 seeds PASS\ndesert_wastes 30 seeds PASS\nunderground_market 30 seeds PASS\nsand_tombs 30 seeds PASS\nkhal_palace 30 seeds PASS\nshard_flats 30 seeds PASS\ntomb_sanctum 30 seeds PASS\n{\"status\":\"PASS\",\"checks\":24227,\"seedCount\":30}\n"
+    },
+    {
+      "command": [
+        "node",
+        "--preserve-symlinks",
+        "--preserve-symlinks-main",
+        "tests/act3_quest_contract.mjs"
+      ],
+      "seconds": 5.12,
+      "exitCode": 0,
+      "output": "{\n  status: 'PASS',\n  checks: 51,\n  coverage: 'Relays and guards, partial saves, scholar rescue and regeneration, boss/map prerequisite, saved recovery, production travel and shrine/portal arrivals.'\n}\n"
+    },
+    {
+      "command": [
+        "node",
+        "--preserve-symlinks",
+        "--preserve-symlinks-main",
+        "tests/act3_combat_contract.mjs"
+      ],
+      "seconds": 26.55,
+      "exitCode": 0,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 33074,\n  \"enemies\": [\n    {\n      \"id\": \"sand_raider\",\n      \"hits\": 15,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"tomb_guard\",\n      \"hits\": 9,\n      \"attacks\": \"bash\"\n    },\n    {\n      \"id\": \"dune_shade\",\n      \"hits\": 13,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"soul_chained\",\n      \"hits\": 7,\n      \"attacks\": \"bolt\"\n    },\n    {\n      \"id\": \"gilt_construct\",\n      \"hits\": 7,\n      \"attacks\": \"pulse\"\n    },\n    {\n      \"id\": \"shard_construct\",\n      \"hits\": 8,\n      \"attacks\": \"fan\"\n    },\n    {\n      \"id\": \"crystal_marauder\",\n      \"hits\": 12,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"gilded_thrall\",\n      \"hits\": 9,\n      \"attacks\": \"sweep\"\n    },\n    {\n      \"id\": \"prisoned_shade\",\n      \"hits\": 13,\n      \"attacks\": \"bolt\"\n    },\n    {\n      \"id\": \"dune_serpent\",\n      \"hits\": 28,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"stone_gargoyle\",\n      \"hits\": 11,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"chained_sovereign\",\n      \"hits\": 8,\n      \"attacks\": \"pulse\"\n    }\n  ],\n  \"seedCount\": 30\n}\n"
+    },
+    {
+      "command": [
+        "node",
+        "--preserve-symlinks",
+        "--preserve-symlinks-main",
+        "tests/story_campaign_contract.mjs"
+      ],
+      "seconds": 13.36,
+      "exitCode": 0,
+      "output": "PASS 214 story checks: dialogue, objectives, old saves, boss wards, seeded routes, factions, phases, quest chest states and all endings.\n"
+    },
+    {
+      "command": [
+        "node",
+        "--preserve-symlinks",
+        "--preserve-symlinks-main",
+        "tests/gameplay_input_contract.mjs"
+      ],
+      "seconds": 0.64,
+      "exitCode": 0,
+      "output": "PASS 153 gameplay checks: tap/hold input, gesture ownership, collision, interruption, jumping, hazards and damage visibility timers.\n"
+    },
+    {
+      "command": [
+        "node",
+        "--preserve-symlinks",
+        "--preserve-symlinks-main",
+        "tests/navigation_contract.mjs"
+      ],
+      "seconds": 0.64,
+      "exitCode": 0,
+      "output": "PASS 210 navigation checks; longest seeded query 17.2 ms.\n"
+    },
+    {
+      "command": [
+        "node",
+        "--preserve-symlinks",
+        "--preserve-symlinks-main",
+        "tests/navigation_edge_contract.mjs"
+      ],
+      "seconds": 0.28,
+      "exitCode": 0,
+      "output": "PASS 75272 navigation checks: optimized edges match swept collision for ramps, walls, cliffs, diagonals, hopping and six body radii.\n"
+    },
+    {
+      "command": [
+        "node",
+        "--preserve-symlinks",
+        "--preserve-symlinks-main",
+        "tests/terrain_surface_contract.mjs"
+      ],
+      "seconds": 1.28,
+      "exitCode": 0,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 10728,\n  \"maxWalkHeightDelta\": 0.07500000000000018,\n  \"seedResults\": [\n    {\n      \"seed\": 0,\n      \"ramps\": 2,\n      \"raisedTiles\": 5280,\n      \"targets\": 16,\n      \"ms\": 287\n    },\n    {\n      \"seed\": 1,\n      \"ramps\": 2,\n      \"raisedTiles\": 5280,\n      \"targets\": 16,\n      \"ms\": 125\n    },\n    {\n      \"seed\": 123,\n      \"ramps\": 2,\n      \"raisedTiles\": 5280,\n      \"targets\": 16,\n      \"ms\": 138\n    },\n    {\n      \"seed\": 12345,\n      \"ramps\": 2,\n      \"raisedTiles\": 5280,\n      \"targets\": 16,\n      \"ms\": 121\n    },\n    {\n      \"seed\": 4294967295,\n      \"ramps\": 2,\n      \"raisedTiles\": 5280,\n      \"targets\": 16,\n      \"ms\": 121\n    }\n  ]\n}\n"
+    },
+    {
+      "command": [
+        "node",
+        "--preserve-symlinks",
+        "--preserve-symlinks-main",
+        "tests/terrain_view_cache_contract.mjs"
+      ],
+      "seconds": 3.44,
+      "exitCode": 0,
+      "output": "PASS 3991 projected terrain cache checks: raised and legacy floors, movement, resizing, grid/geometry changes, map identity, and released backing stores.\n"
+    },
+    {
+      "command": [
+        "node",
+        "--preserve-symlinks",
+        "--preserve-symlinks-main",
+        "tests/terrain_cache_contract.mjs"
+      ],
+      "seconds": 5.66,
+      "exitCode": 0,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 16407,\n  \"stationary\": [\n    {\n      \"viewport\": \"1920x1080\",\n      \"where\": \"entry\",\n      \"visibleChunks\": 19,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"1920x1080\",\n      \"where\": \"center\",\n      \"visibleChunks\": 31,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"2560x1440\",\n      \"where\": \"entry\",\n      \"visibleChunks\": 29,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"2560x1440\",\n      \"where\": \"center\",\n      \"visibleChunks\": 49,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"3840x2160\",\n      \"where\": \"entry\",\n      \"visibleChunks\": 48,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    },\n    {\n      \"viewport\": \"3840x2160\",\n      \"where\": \"center\",\n      \"visibleChunks\": 97,\n      \"warmFrames\": 300,\n      \"rebuilds\": 0\n    }\n  ],\n  \"coverage\": \"Three seeds; walking, retracing, resizing, map identity, memory budget, materials retained, late wall caps, read-only diagnostics.\"\n}\n"
+    }
+  ]
+}

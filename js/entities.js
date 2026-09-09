@@ -169,7 +169,7 @@ class Entity {
     o.ang = this.visAng;
     ex.airborne = !!(this.jumping || this.leaping || this.jumpZ > 0);
     const a = this.action;
-    if (a && (a.state === "death" || a.state === "attack" || a.state === "cast" || a.state === "kick" || a.state === "hit")) {
+    if (a && (a.state === "death" || a.state === "attack" || a.state === "cast" || a.state === "kick" || a.state === "reach" || a.state === "search" || a.state === "hit")) {
       o.state = a.state; o.t = U.clamp(a.t / a.dur, 0, 1);
       ex.castColor = a.castColor; ex.walkPh = undefined; ex.speed = undefined;
     } else if (this.moving) {
@@ -243,7 +243,7 @@ class Player extends Entity {
     super.startAction(state,dur,data);
     if(!Object.hasOwn(this,'_visualActionSequence'))Object.defineProperty(this,'_visualActionSequence',{value:0,writable:true});
     this.action.visual={id:++this._visualActionSequence,style:this._visualSkill||null,skillId:this._castingSkillId||null,startedAt:typeof Game!=='undefined'?Game.state?.time:undefined,releases:[]};
-    if(state==='kick')this.action.visual.releases=[.5];
+    if(['kick','reach','search'].includes(state))this.action.visual.releases=[.5];
   }
   markActionRelease(seconds=0) {
     const a=this.action;if(!a?.visual||!['attack','cast','kick'].includes(a.state))return;

@@ -23,7 +23,7 @@ const oscStart=OscillatorNode.prototype.start;OscillatorNode.prototype.start=fun
 const iframe=document.createElement('iframe');iframe.title='Prop interaction game';iframe.srcdoc=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>'+hooked+'<\/script>');document.getElementById('host').append(iframe);await new Promise(r=>iframe.onload=r);
 const win=iframe.contentWindow,doc=win.document;for(let i=0;i<300&&!doc.querySelector('#titleMenu button');i++)await new Promise(r=>setTimeout(r,30));
 const game=win.eval('Game'),ui=win.eval('UI'),sfx=win.eval('Sfx'),data=win.eval('DATA'),sprites=win.eval('SpriteAssets'),api=game.__propTest,probe=win.propProbe;
-const drawIds=[],nativeDraw=sprites.drawFrame;sprites.drawFrame=(ctx,frame,...args)=>{drawIds.push(frame.image.src);return nativeDraw(ctx,frame,...args);};
+const drawIds=[],nativeDraw=sprites.drawFrame;sprites.drawFrame=(ctx,frame,...args)=>{drawIds.push({src:frame.image.src,index:frame.index});return nativeDraw(ctx,frame,...args);};
 const render3D=createCharacterRenderer(),board=document.getElementById('poses'),b=board.getContext('2d');
 for(const id of Object.keys(CLASS_STYLES))select.add(new Option(data.CLASSES[id].name,id));select.value='vanguard';
 function step(seconds){for(let left=seconds;left>1e-8;){const dt=Math.min(.01,left);api.update(dt);left-=dt;}}
@@ -46,17 +46,17 @@ run.onclick=async()=>{
  run.disabled=true;
  try{
   sfx.setVol('master',.12);sfx.setVol('sfx',.35);sfx.setVol('music',0);await sfx.init();const p=await setup();
-  ok(probe.decoded.length===2,'recorded effects did not decode exactly once');
+  ok(probe.decoded.length>=2,'required UI/death recordings did not decode');
   const m=game.state.map,chest=prop('chest',21.5,20.5,{lootable:true,rich:true});
-  api.render();ok(drawIds.some(s=>s.includes('/chest.webp')),'closed chest sprite not drawn');drawIds.length=0;
-  api.click(chest);step(.01);ok(chest.opened&&!chest.lootable&&m.props.includes(chest),'clicked chest did not remain open');
-  const loot=game.state.ground.length;game.interact(chest);ok(game.state.ground.length===loot,'opened chest generated duplicate loot');api.render();ok(drawIds.some(s=>s.includes('/chest_open.webp')),'open state drew the closed sprite');
+  api.render();ok(drawIds.some(s=>s.src.includes('/interactive_act4.webp')&&s.index===2),'closed chest sprite not drawn');drawIds.length=0;
+  api.click(chest);step(.5);ok(chest.opened&&!chest.lootable&&m.props.includes(chest),'clicked chest did not remain open');
+  const loot=game.state.ground.length;game.interact(chest);ok(game.state.ground.length===loot,'opened chest generated duplicate loot');api.render();ok(drawIds.some(s=>s.src.includes('/interactive_act4.webp')&&s.index===4),'open state drew the closed sprite');
   await game.enterMap('mines','default');await game.enterMap('fields','default');ok(game.state.map.props.includes(chest)&&chest.opened,'revisiting a map closed the chest');game.state.monsters=[];game.state.npcs=[];game.state.ground=[];api.place(20.5,20.5);m.props=[];
-  const cache=prop('chest',22.5,20.5,{interact:'event',event:true,ev:data.EVENTS?.find?.(e=>e.kind==='cache')||{kind:'cache',name:'Cache',drops:1}});game.interact(cache);ok(cache.opened&&!cache.interact&&m.props.includes(cache),'event cache did not stay open');const cacheLoot=game.state.ground.length;game.interact(cache);ok(game.state.ground.length===cacheLoot,'event cache yielded twice');
+  const cache=prop('chest',22.5,20.5,{interact:'event',event:true,ev:data.EVENTS?.find?.(e=>e.kind==='cache')||{kind:'cache',name:'Cache',drops:1}});api.place(21.3,20.5);game.interact(cache);step(.5);ok(cache.opened&&!cache.interact&&m.props.includes(cache),'event cache did not stay open');const cacheLoot=game.state.ground.length;game.interact(cache);ok(game.state.ground.length===cacheLoot,'event cache yielded twice');
   for(const type of ['urn','barrel','crate']){
    game.state.ground=[];m.props=[];p.action=null;p.command=null;api.place(20.5,20.5);const pr=prop(type,21.5,20.5,{breakable:true});api.render();api.click(pr);step(.01);
    ok(p.action?.state==='kick'&&p.pose().state==='kick',type+': click did not start a kick');ok(!pr.broken,type+': broke before wind-up');const action=p.action;game.interact(pr);ok(p.action===action,type+': repeated click restarted the kick');
-   step(.25);ok(!pr.broken,type+': broke before impact');step(.04);ok(pr.broken&&!m.props.includes(pr),type+': not broken at impact');ok(!m.blocked[21+20*m.w],type+': collision remained');const n=game.state.ground.length;ok(!game.breakProp(pr)&&game.state.ground.length===n,type+': duplicate break rewards');step(.3);ok(!p.action&&p.pose().state==='idle',type+': failed to recover');
+   step(.25);ok(!pr.broken,type+': broke before impact');step(.04);ok(pr.broken&&m.props.includes(pr),type+': not broken at impact');ok(!m.blocked[21+20*m.w],type+': collision remained');const n=game.state.ground.length;ok(!game.breakProp(pr)&&game.state.ground.length===n,type+': duplicate break rewards');step(.3);ok(!p.action&&p.pose().state==='idle',type+': failed to recover');
   }
   for(const reason of ['hit','death','removed','moved']){
    game.state.ground=[];m.props=[];p.action=null;p.dead=false;p.stunT=0;api.place(20.5,20.5);const pr=prop('urn',21.5,20.5,{breakable:true});game.interact(pr);

@@ -7,6 +7,10 @@ recorded soundtrack and UI/death sounds. See [skill audio](docs/SKILL_AUDIO.md).
 JavaScript with **no build step**. Characters use the locally vendored,
 MIT-licensed Three.js renderer by default when the game is served over HTTP.
 
+World props feature five act-themed art sets, timed hero gestures and lasting
+used states, including eight searchable frozen bodies in Act I. See
+[animated props and validation](docs/PROP_INTERACTIONS.md).
+
 ## The saga (five acts)
 The playable opening, **The Last Warm Wall**, begins on the snowy road to
 **Frosthaven**. Follow Bryn, witness a fallen guard awaken beside an Embershard,
@@ -61,11 +65,37 @@ arrival bridge, a procession ring and two reserved boss platforms. Optional
 **Cinderwatch Remembered** and **The Last Bastion’s Echo** add looped detours,
 elite encounters and guarded caches. Returning from a memory preserves the
 parent map; normal cathedral visits reshuffle it. Thirty dedicated raster assets
-cover gateways, architecture, materials and completed story-object states.
+cover gateways, architecture, materials and completed story-object states. A further
+72 painted modules now connect the walls, deepen the floating foundations, blend
+outdoor ash into rock, and integrate entrances with their approach paths. Inspect
+the [environment overhaul](docs/ACT4_ENVIRONMENT.md) and its paired visual review at
+`tests/act4_environment_review.html`.
 See the [Cathedral of Memories design and validation guide](docs/CATHEDRAL_DESIGN.md)
 and the isolated review at `tests/cathedral_review.html`.
 
+The [latest Act IV visual pass](docs/ACT4_VISUAL_PASS.md) adds four original stone
+inlays, procession paving, colored lighting, architectural shadows and deeper
+floating foundations. Compare the current scenes with the starting version at
+`tests/act4_visual_review.html`.
+
 ## Raised terrain
+
+Act II now has continuous marsh water, mossy banks, cypress groves, candlelit
+Gothic ruins and a carved Mire Mother arena. Compare all six areas in the
+[before/after gallery](tests/qa/act2_visual/gallery.html), or read the
+[visual overhaul and validation notes](docs/ACT2_VISUAL_OVERHAUL.md).
+
+Act I has a new visual pass across the opening road, Frosthaven and all five
+adventure areas: continuous snow, layered fir woods and alpine rock, connected
+city defenses, clearer dungeon floors and colored local lighting. Inspect the
+[matched before/after gallery](tests/qa/act1_polish/gallery.html) and the
+[implementation and validation notes](docs/ACT1_VISUAL_POLISH.md).
+
+Act V now uses painted basalt/ash boundaries outdoors, continuous fortress and
+ceremonial walls indoors, and six connected level passages. The Breach retains
+short gate defenses within a natural perimeter. See the
+[Act V environment guide](docs/ACT5_ENVIRONMENT.md) for the playable before/after
+review, source artwork, and validation commands.
 
 Outside Frosthaven, terraces connect through visible, three-tile-wide ramps.
 Ground height, walking connections, pointer picking and foreground occlusion

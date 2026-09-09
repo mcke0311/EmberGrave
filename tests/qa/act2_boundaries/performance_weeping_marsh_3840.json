@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "baseline": "working-tree-before-act2-boundaries",
+  "method": "Three alternating before/after pairs, 90 warmup and 240 sampled frames per workload, full roster retained, nearest open combat pocket, twelve durable targets with a close melee target, verified attack exchange, real 3D Vanguard, cached production terrain.",
+  "results": [
+    {
+      "width": 3840,
+      "zone": "weeping_marsh",
+      "mode": "combat",
+      "before": {
+        "median": 7.199999999999999,
+        "p95": 8.399999999999999
+      },
+      "after": {
+        "median": 7.233333333333333,
+        "p95": 8.633333333333333
+      },
+      "regression": 0.0277777777777779,
+      "passed": true
+    }
+  ]
+}

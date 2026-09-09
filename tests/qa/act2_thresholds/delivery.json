@@ -1,0 +1,31 @@
+{
+  "implementation": "INTEGRATED",
+  "functionalValidation": "PASS",
+  "performance": "REVIEW",
+  "contract": {
+    "status": "PASS",
+    "checks": 2029330,
+    "seedCount": 30,
+    "endpoints": 300,
+    "isolation": "Current shared-workspace other-act code with only Act 2 threshold generation disabled"
+  },
+  "sprites": {
+    "status": "PASS",
+    "assets": 12,
+    "checks": 138,
+    "authorshipErrors": []
+  },
+  "interactionCases": 20,
+  "captures": 156,
+  "initialWorkloads": 22,
+  "initialFlaggedWorkloads": 4,
+  "remainingRegression": {
+    "zone": "spawn_pools",
+    "width": 3840,
+    "mode": "combat",
+    "beforeCpuP95Ms": 11.25,
+    "afterCpuP95Ms": 12.85,
+    "regressionPercent": 14.222222222222225
+  },
+  "notes": "All functional and cache-stability checks passed. Spawn Pools 4K combat p95 regression was investigated and remains unresolved; see ACT2_THRESHOLD_VALIDATION.md."
+}

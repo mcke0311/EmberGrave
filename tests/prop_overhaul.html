@@ -1,0 +1,72 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Animated prop review</title>
+<style>body{margin:20px;background:#14191d;color:#e5d7bb;font:15px system-ui}button,select{background:#2e363b;color:inherit;border:1px solid #6f6652;padding:9px;margin:4px}iframe{width:100%;height:800px;border:0}canvas{max-width:100%}p{color:#b7bab9}#status{white-space:pre-wrap}</style>
+<h1>World props — animation review</h1><p>Temporary review hero. Your saved characters are isolated. Click props in the game below, or replay a reaching/searching gesture.</p>
+<select id="zone"><option value="north_wild">Act I · Fallen North</option><option value="weeping_marsh">Act II · Weeping Marsh</option><option value="desert_wastes">Act III · Desert Wastes</option><option value="cathedral1">Act IV · Cathedral</option><option value="ash_wastes">Act V · Ash Wastes</option></select>
+<button id="travel" disabled>Visit area</button><button id="replay" disabled>Replay search</button><button id="checks" disabled>Run interaction checks</button><pre id="status">Preparing artwork…</pre><div id="host"></div>
+<script type="module">
+const status=document.querySelector('#status'),store=new Map(),errors=[];
+window.propQAStore=store;window.addEventListener('error',e=>errors.push(e.message));
+const [html,source]=await Promise.all(['../index.html','../js/game.js'].map(x=>fetch(x,{cache:'no-store'}).then(r=>r.text())));
+const injection=`<base href="${new URL('../index.html',location.href)}"><script>const memory=parent.propQAStore;Object.defineProperty(window,'localStorage',{value:{get length(){return memory.size},key:i=>[...memory.keys()][i]??null,getItem:k=>memory.get(k)??null,setItem:(k,v)=>memory.set(String(k),String(v)),removeItem:k=>memory.delete(k),clear:()=>memory.clear()}});window.requestAnimationFrame=()=>0;<\/script>`;
+const hooked=source.replace('    init, newGame, loadGame,',`    __props:{update,render,drawProp,propSpriteFrame,triggerEvent,setCamera(x,y){camPos={x:U.isoX(x,y)-canvas.width/2,y:U.isoY(x,y)-canvas.height/2-20};shakeOx=shakeOy=0;},click(prop){const f=propSpriteFrame(prop),b=PropInteractions.bounds(f,0,0);mouse.x=U.isoX(prop.x,prop.y)-camPos.x+b.x+b.w/2;mouse.y=U.isoY(prop.x,prop.y)-camPos.y-elevLift(prop.x,prop.y,prop.surfaceId)+b.y+b.h*.65;mouse.shift=false;updateHover();const r=canvas.getBoundingClientRect();canvas.dispatchEvent(new MouseEvent("mousedown",{button:0,clientX:r.left+mouse.x*r.width/canvas.width,clientY:r.top+mouse.y*r.height/canvas.height,bubbles:true}));window.dispatchEvent(new MouseEvent("mouseup",{button:0}));},move(x,y){PropInteractions.cancel(state);state.player.command={type:'move',point:{x,y}};repath(state.player,x,y);}},
+    init, newGame, loadGame,`).replace('__props:{update,render,drawProp,propSpriteFrame,triggerEvent,','__props:{update,render,drawProp,propSpriteFrame,triggerEvent,screenPoint(pr,ground=false){const f=propSpriteFrame(pr),b=PropInteractions.bounds(f,0,0);return {x:U.isoX(pr.x,pr.y)-camPos.x+(ground?0:b.x+b.w/2),y:U.isoY(pr.x,pr.y)-camPos.y-elevLift(pr.x,pr.y,pr.surfaceId)+(ground?0:b.y+b.h*.65)};},');
+const iframe=document.createElement('iframe');iframe.title='Playable prop review';iframe.srcdoc=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>'+hooked+'<\/script>');document.querySelector('#host').append(iframe);
+await new Promise(r=>iframe.onload=r);const win=iframe.contentWindow,doc=win.document;
+win.addEventListener('error',e=>errors.push(e.message));win.addEventListener('unhandledrejection',e=>errors.push(String(e.reason)));
+for(let i=0;i<500&&!doc.querySelector('#titleMenu button');i++)await new Promise(r=>setTimeout(r,30));
+const game=win.eval('Game'),ui=win.eval('UI'),props=win.eval('PropInteractions'),sprites=win.eval('SpriteAssets'),data=win.eval('DATA'),P3=win.eval('Player3D'),api=game.__props;
+let auto=false,last=0;function loop(now){if(auto&&game.state){api.update(Math.min(.033,(now-last)/1000||.016));api.render();}last=now;requestAnimationFrame(loop);}requestAnimationFrame(loop);
+await game.newGame('Prop review','vanguard',false);await game.skipOpening();ui.closeAll();
+function step(t){for(let left=t;left>1e-8;){const dt=Math.min(.01,left);api.update(dt);left-=dt;}}
+async function travel(zone){auto=false;await game.enterMap(zone,'default');ui.closeAll();const s=game.state;s.map.explored.fill(1);const target=s.map.props.find(p=>p.remainsSite)||s.map.props.find(p=>p.interact==='shrine');if(target)placeNear(target);api.render();return s;}
+function placeNear(pr){const s=game.state,p=s.player,N=win.eval('TerrainNavigation');let found=false;for(const radius of [1.25,1.5,(pr.interactionRange||1.6)-.06])for(let i=0;i<24&&!found;i++){const a=i*Math.PI/12,x=pr.x+Math.cos(a)*radius,y=pr.y+Math.sin(a)*radius;if(!N.clear(s.map,x,y,p.radius))continue;p.x=x;p.y=y;p.surfaceId=pr.surfaceId??0;found=props.reachable(s,pr);}if(!found)throw Error('No review approach for '+s.map.id+'/'+pr.type);p.action=null;p.command=null;p.path=null;p._animationController?.reset();api.setCamera(pr.x,pr.y);P3.update(p,.01);}
+function flat(){auto=false;const s=game.state,m=s.map,p=s.player;m.props=[];m.walls.fill(0);m.blocked.fill(0);m.elev.fill(0);m.hazard.fill(0);m.surfaceVersion=0;delete m.layers;m.exits=[];s.monsters=[];s.minions=[];s.npcs=[];s.ground=[];s.fx=[];s.projectiles=[];p.x=20.5;p.y=20.5;p.surfaceId=0;p.dead=false;p.stunT=0;p.action=null;p.command=null;p.path=null;p.buffs=[];p._animationController?.reset();api.setCamera(p.x,p.y);}
+function add(type,extra={}){const s=game.state,pr={type,x:21.6,y:20.5,seed:33,blocks:false,...extra};s.map.props.push(pr);return pr;}
+async function checks(){
+ await travel('north_wild');let count=0;const ok=(v,m)=>{count++;if(!v)throw Error(m);};flat();const s=game.state,p=s.player,m=s.map;
+ let rewards=0;const Items=win.eval('Items'),roll=Items.rollDrops;Items.rollDrops=(...args)=>{rewards++;return roll(...args);};
+ try{
+  for(const type of ['chest','strongbox','barrel','crate','urn','grave','frozen_remains']){
+   flat();const search=['grave','frozen_remains'].includes(type),breakable=['barrel','crate','urn'].includes(type);
+   const pr=add(type,search?{searchable:true,interact:'search_remains',...(type==='frozen_remains'?{propFamily:'frozen_soldier'}:{})}:breakable?{breakable:true}:{lootable:true});
+   const before=rewards;api.click(pr);step(.01);ok(!!p.action,type+' click missed visible sprite');const action=p.action;game.interact(pr);ok(p.action===action,type+' repeat restarted');
+   step(action.propInteraction.contact-.02);ok(rewards===before,type+' reward before contact');step(.025);ok(rewards===before+1,type+' contact missing reward');ok(m.props.includes(pr),type+' disappeared');
+   step(.5);game.interact(pr);step(.7);ok(rewards===before+1,type+' duplicate reward');ok(!p.action,type+' did not recover');ok(props.terminal(pr,s)>0,type+' no used visual');
+  }
+  for(const reason of ['move','combat','stun','death','removed','range','surface','travel']){
+   flat();const pr=add('chest',{lootable:true});game.interact(pr);step(.1);const before=rewards;
+   if(reason==='move')api.move(19,20);if(reason==='combat'){props.cancel(s);p.startAction('attack',.5);}if(reason==='stun')p.stunT=1;if(reason==='death')p.dead=true;if(reason==='removed')m.props=[];if(reason==='range')p.x-=5;if(reason==='surface')p.surfaceId=1;if(reason==='travel')props.cancel(s);
+   step(.5);ok(!pr.opened&&rewards===before,reason+' failed cancellation');
+  }
+  flat();const pr=add('grave',{searchable:true,interact:'search_remains',blocks:true});m.blocked[(pr.x|0)+(pr.y|0)*m.w]=1;
+  const husk=game.corpseFromGrave(p,pr,6);ok(husk?.fromGrave&&pr.corpseConsumed,'grave corpse missing');ok(!game.corpseFromGrave(p,pr,6),'duplicate corpse');ok(!m.blocked[(pr.x|0)+(pr.y|0)*m.w],'grave retained collision');
+  const before=rewards;game.interact(pr);step(.7);ok(rewards===before+1&&pr.searched,'corpse use ate grave loot');
+  flat();const second=add('grave',{searchable:true,interact:'search_remains'});game.interact(second);step(.7);ok(game.corpseFromGrave(p,second,6)?.fromGrave,'search ate corpse');
+  flat();const other=add('grave',{surfaceId:1});ok(!game.corpseFromGrave(p,other,6),'cross-surface corpse consumed');
+  for(const extra of [{storyId:'reserved'},{event:true}]){flat();const reserved=add('grave',extra);ok(!game.corpseFromGrave(p,reserved,6),'story/event grave consumed');}
+  flat();const event=add('shrine',{interact:'event',event:true,ev:data.EVENTS.find(e=>e.kind==='buff')});const barrel=add('barrel',{x:22.2,breakable:true});game.interact(event);step(.5);ok(event.spent&&m.props.includes(event)&&!event.interact,'event not depleted');ok(!barrel.broken,'cosmetic activation destroyed barrel');const buffs=p.buffs.length;game.interact(event);step(.5);ok(p.buffs.length===buffs,'duplicate blessing');
+  flat();const chest=add('chest',{lootable:true});game.interact(chest);step(.24);props.cancel(s);step(.5);ok(chest.opened,'post-contact cancellation rolled back');
+  // Real town services still open once at the end of their short gesture.
+  for(const zone of ['frosthaven','marshcamp','khalcamp','hellgate','town']){
+   await travel(zone);s.monsters=[];s.npcs=[];
+   for(const [kind,method] of [['storage','openStorage'],['forge','openForge'],['board','openBoard'],['caravan','openShrine'],['shrine','openShrine']]){
+    const service=s.map.props.find(p=>p.interact===kind);if(!service)continue;placeNear(service);let opened=0;const original=ui[method];ui[method]=()=>opened++;
+    try{api.click(service);step(.01);ok(!!p.action,zone+'/'+kind+' click did not approach service');step(.15);ok(!opened,zone+'/'+kind+' opened before contact');step(.4);ok(opened===1,zone+'/'+kind+' failed or duplicated panel');}finally{ui[method]=original;}
+   }
+  }
+  // Revisit the actual cached map; do not serialize or reconstruct the used prop.
+  const MapGen=win.eval('MapGen');s.mapsCache.north_wild=MapGen.generate('north_wild',s.seed);delete s.monstersByMap.north_wild;
+  await travel('north_wild');s.monsters=[];const body=s.map.props.find(pr=>pr.remainsSite);placeNear(body);game.interact(body);step(.7);ok(body.searched,'world body failed search');
+  await game.enterMap('mines','default');await game.enterMap('north_wild','default');ui.closeAll();ok(s.map.props.includes(body)&&body.searched,'revisit reset searched body');
+  const otherBody=s.map.props.find(pr=>pr.remainsSite&&!pr.searched);placeNear(otherBody);game.interact(otherBody);step(.1);await game.enterMap('mines','default');step(.5);await game.enterMap('north_wild','default');ui.closeAll();ok(!otherBody.searched,'travel committed pending search');
+  ok(errors.length===0,errors.join('\n'));
+ }finally{Items.rollDrops=roll;}
+ status.textContent='PASS · '+count+' interaction checks';return {status:'PASS',checks:count,errors};
+}
+window.propReview={game,win,doc,props,sprites,data,api,step,travel,flat,add,placeNear,checks,errors,setAuto:v=>auto=v};
+await travel('north_wild');for(const id of ['travel','replay','checks'])document.getElementById(id).disabled=false;
+document.getElementById('travel').onclick=async()=>{await travel(document.querySelector('#zone').value);auto=true;};
+document.getElementById('replay').onclick=async()=>{await travel('north_wild');const pr=game.state.map.props.find(p=>p.remainsSite&&!p.searched);if(pr){placeNear(pr);game.interact(pr);auto=true;}};
+document.getElementById('checks').onclick=()=>checks().catch(e=>{status.textContent='FAIL · '+e.stack;});
+status.textContent='Ready · Click a body, grave, or shrine to interact.';document.body.dataset.ready='true';auto=true;
+</script></html>

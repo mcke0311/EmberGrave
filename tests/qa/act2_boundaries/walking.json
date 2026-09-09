@@ -1,0 +1,719 @@
+{
+  "status": "PASS",
+  "routes": [
+    {
+      "zone": "weeping_marsh",
+      "from": "entry",
+      "to": "hamlet",
+      "reverse": false,
+      "distance": 26.400867036870995
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "entry",
+      "to": "hamlet",
+      "reverse": true,
+      "distance": 26.400867036870835
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "hamlet",
+      "to": "bell",
+      "reverse": false,
+      "distance": 32.3303179438916
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "hamlet",
+      "to": "bell",
+      "reverse": true,
+      "distance": 32.330317943891515
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "bell",
+      "to": "graveyard",
+      "reverse": false,
+      "distance": 47.01627279668454
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "bell",
+      "to": "graveyard",
+      "reverse": true,
+      "distance": 47.01552812808786
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "graveyard",
+      "to": "monastery",
+      "reverse": false,
+      "distance": 58.53568683153957
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "graveyard",
+      "to": "monastery",
+      "reverse": true,
+      "distance": 58.53568683154008
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "monastery",
+      "to": "bell",
+      "reverse": false,
+      "distance": 65.3796922585838
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "monastery",
+      "to": "bell",
+      "reverse": true,
+      "distance": 65.37969225858406
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "monastery",
+      "to": "procession",
+      "reverse": false,
+      "distance": 48.56102834535686
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "monastery",
+      "to": "procession",
+      "reverse": true,
+      "distance": 48.56102834535679
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "bell",
+      "to": "reeds",
+      "reverse": false,
+      "distance": 49.892651361963104
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "bell",
+      "to": "reeds",
+      "reverse": true,
+      "distance": 49.89265136196273
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "monastery",
+      "to": "pools",
+      "reverse": false,
+      "distance": 48.40477056357482
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "monastery",
+      "to": "pools",
+      "reverse": true,
+      "distance": 48.40477056357407
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "hamlet",
+      "to": "wreck",
+      "reverse": false,
+      "distance": 42.1904732766164
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "hamlet",
+      "to": "wreck",
+      "reverse": true,
+      "distance": 42.19047327661605
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "wreck",
+      "to": "graveyard",
+      "reverse": false,
+      "distance": 49.536728128306954
+    },
+    {
+      "zone": "weeping_marsh",
+      "from": "wreck",
+      "to": "graveyard",
+      "reverse": true,
+      "distance": 49.53672812830612
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "entry",
+      "to": "cloister",
+      "reverse": false,
+      "distance": 40.000000000000014
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "entry",
+      "to": "cloister",
+      "reverse": true,
+      "distance": 40.00000000000034
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "cloister",
+      "to": "ossuary",
+      "reverse": false,
+      "distance": 63
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "cloister",
+      "to": "ossuary",
+      "reverse": true,
+      "distance": 63.000000000000355
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "ossuary",
+      "to": "aisle",
+      "reverse": false,
+      "distance": 39
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "ossuary",
+      "to": "aisle",
+      "reverse": true,
+      "distance": 39
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "aisle",
+      "to": "nave",
+      "reverse": false,
+      "distance": 55
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "aisle",
+      "to": "nave",
+      "reverse": true,
+      "distance": 55
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "aisle",
+      "to": "reliquary",
+      "reverse": false,
+      "distance": 66.00000000000011
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "aisle",
+      "to": "reliquary",
+      "reverse": true,
+      "distance": 66
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "reliquary",
+      "to": "cloister",
+      "reverse": false,
+      "distance": 50.000000000000114
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "reliquary",
+      "to": "cloister",
+      "reverse": true,
+      "distance": 50.000000000000064
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "ossuary",
+      "to": "stores",
+      "reverse": false,
+      "distance": 47.00000000000004
+    },
+    {
+      "zone": "drowned_crypt",
+      "from": "ossuary",
+      "to": "stores",
+      "reverse": true,
+      "distance": 47
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "entry",
+      "to": "fork",
+      "reverse": false,
+      "distance": 37.00000000000021
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "entry",
+      "to": "fork",
+      "reverse": true,
+      "distance": 37.00000000000023
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "fork",
+      "to": "boats",
+      "reverse": false,
+      "distance": 60.00000000000012
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "fork",
+      "to": "boats",
+      "reverse": true,
+      "distance": 60
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "fork",
+      "to": "grove",
+      "reverse": false,
+      "distance": 53
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "fork",
+      "to": "grove",
+      "reverse": true,
+      "distance": 53
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "boats",
+      "to": "island",
+      "reverse": false,
+      "distance": 67
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "boats",
+      "to": "island",
+      "reverse": true,
+      "distance": 67.00000000000011
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "island",
+      "to": "shrine",
+      "reverse": false,
+      "distance": 39
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "island",
+      "to": "shrine",
+      "reverse": true,
+      "distance": 39
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "grove",
+      "to": "shrine",
+      "reverse": false,
+      "distance": 75
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "grove",
+      "to": "shrine",
+      "reverse": true,
+      "distance": 75
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "boats",
+      "to": "skiff",
+      "reverse": false,
+      "distance": 30
+    },
+    {
+      "zone": "hollow_reeds",
+      "from": "boats",
+      "to": "skiff",
+      "reverse": true,
+      "distance": 30
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "entry",
+      "to": "nursery",
+      "reverse": false,
+      "distance": 33.04187521033958
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "entry",
+      "to": "nursery",
+      "reverse": true,
+      "distance": 33.041875210339974
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "nursery",
+      "to": "cistern",
+      "reverse": false,
+      "distance": 40.6815416922693
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "nursery",
+      "to": "cistern",
+      "reverse": true,
+      "distance": 40.681541692269604
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "cistern",
+      "to": "west",
+      "reverse": false,
+      "distance": 37.80215402588935
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "cistern",
+      "to": "west",
+      "reverse": true,
+      "distance": 37.80215402588936
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "west",
+      "to": "brood",
+      "reverse": false,
+      "distance": 65.94945614088425
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "west",
+      "to": "brood",
+      "reverse": true,
+      "distance": 65.94945614088331
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "cistern",
+      "to": "east",
+      "reverse": false,
+      "distance": 47.18962010041734
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "cistern",
+      "to": "east",
+      "reverse": true,
+      "distance": 47.18962010041713
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "east",
+      "to": "brood",
+      "reverse": false,
+      "distance": 45.02498439450083
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "east",
+      "to": "brood",
+      "reverse": true,
+      "distance": 45.02498439450115
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "nursery",
+      "to": "nest",
+      "reverse": false,
+      "distance": 49.39268563716277
+    },
+    {
+      "zone": "spawn_pools",
+      "from": "nursery",
+      "to": "nest",
+      "reverse": true,
+      "distance": 49.392685637161264
+    },
+    {
+      "zone": "ritual_site",
+      "from": "entry",
+      "to": "stalls",
+      "reverse": false,
+      "distance": 38
+    },
+    {
+      "zone": "ritual_site",
+      "from": "entry",
+      "to": "stalls",
+      "reverse": true,
+      "distance": 38.00000000000027
+    },
+    {
+      "zone": "ritual_site",
+      "from": "stalls",
+      "to": "gallery",
+      "reverse": false,
+      "distance": 50
+    },
+    {
+      "zone": "ritual_site",
+      "from": "stalls",
+      "to": "gallery",
+      "reverse": true,
+      "distance": 50.00000000000021
+    },
+    {
+      "zone": "ritual_site",
+      "from": "gallery",
+      "to": "threshold",
+      "reverse": false,
+      "distance": 54
+    },
+    {
+      "zone": "ritual_site",
+      "from": "gallery",
+      "to": "threshold",
+      "reverse": true,
+      "distance": 54
+    },
+    {
+      "zone": "ritual_site",
+      "from": "gallery",
+      "to": "side",
+      "reverse": false,
+      "distance": 62
+    },
+    {
+      "zone": "ritual_site",
+      "from": "gallery",
+      "to": "side",
+      "reverse": true,
+      "distance": 62
+    },
+    {
+      "zone": "ritual_site",
+      "from": "side",
+      "to": "threshold",
+      "reverse": false,
+      "distance": 46
+    },
+    {
+      "zone": "ritual_site",
+      "from": "side",
+      "to": "threshold",
+      "reverse": true,
+      "distance": 46
+    },
+    {
+      "zone": "ritual_site",
+      "from": "threshold",
+      "to": "basin",
+      "reverse": false,
+      "distance": 44
+    },
+    {
+      "zone": "ritual_site",
+      "from": "threshold",
+      "to": "basin",
+      "reverse": true,
+      "distance": 44
+    },
+    {
+      "zone": "ritual_site",
+      "from": "gallery",
+      "to": "offering",
+      "reverse": false,
+      "distance": 56.00000000000033
+    },
+    {
+      "zone": "ritual_site",
+      "from": "gallery",
+      "to": "offering",
+      "reverse": true,
+      "distance": 56
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_0",
+      "reverse": false,
+      "distance": 6.708203932499358
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_0",
+      "reverse": true,
+      "distance": 6.708203932499358
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_1",
+      "reverse": false,
+      "distance": 12.909269189499456
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_1",
+      "reverse": true,
+      "distance": 12.786644432436852
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_2",
+      "reverse": false,
+      "distance": 8.714776642118856
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_2",
+      "reverse": true,
+      "distance": 8.714776642118856
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_3",
+      "reverse": false,
+      "distance": 10.484184320727298
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_3",
+      "reverse": true,
+      "distance": 10.633758019665995
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_4",
+      "reverse": false,
+      "distance": 5.385164807134502
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_4",
+      "reverse": true,
+      "distance": 5.385164807134502
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_5",
+      "reverse": false,
+      "distance": 2.23606797749979
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_5",
+      "reverse": true,
+      "distance": 2.23606797749979
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_6",
+      "reverse": false,
+      "distance": 1.4142135623730954
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_6",
+      "reverse": true,
+      "distance": 1.4142135623730951
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_7",
+      "reverse": false,
+      "distance": 11.313708498984782
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_7",
+      "reverse": true,
+      "distance": 11.313708498984761
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_8",
+      "reverse": false,
+      "distance": 5
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_8",
+      "reverse": true,
+      "distance": 5
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_9",
+      "reverse": false,
+      "distance": 7.615773105863919
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_9",
+      "reverse": true,
+      "distance": 7.6157731058639175
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_10",
+      "reverse": false,
+      "distance": 15.55634918610411
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_10",
+      "reverse": true,
+      "distance": 15.099019513592742
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_11",
+      "reverse": false,
+      "distance": 15.033296378372869
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_11",
+      "reverse": true,
+      "distance": 15.033296378372853
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_12",
+      "reverse": false,
+      "distance": 20.024984394500798
+    },
+    {
+      "zone": "marshcamp",
+      "from": "arrival",
+      "to": "service_12",
+      "reverse": true,
+      "distance": 20.024984394500798
+    }
+  ]
+}

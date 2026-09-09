@@ -17005,6 +17005,3836 @@ DATA.SPRITE_MANIFEST = {
       "rows": 4,
       "src": "assets/sprites/packed/world/paths/vigil.webp"
     },
+    "world.prop.a1env_ice_broken": {
+      "anchor": [
+        76,
+        68
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "18a051ac37b8",
+      "src": "assets/sprites/packed/world/props/a1env_ice_broken.webp"
+    },
+    "world.prop.a1env_ice_door_in": {
+      "anchor": [
+        154,
+        188
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "7a080925a589",
+      "src": "assets/sprites/packed/world/props/a1env_ice_door_in.webp"
+    },
+    "world.prop.a1env_ice_door_out": {
+      "anchor": [
+        163,
+        189
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "2cd881202ab7",
+      "src": "assets/sprites/packed/world/props/a1env_ice_door_out.webp"
+    },
+    "world.prop.a1env_ice_east": {
+      "anchor": [
+        113,
+        132
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b6f4929a6849",
+      "src": "assets/sprites/packed/world/props/a1env_ice_east.webp"
+    },
+    "world.prop.a1env_ice_east_alt": {
+      "anchor": [
+        111,
+        132
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "88a3e973d634",
+      "src": "assets/sprites/packed/world/props/a1env_ice_east_alt.webp"
+    },
+    "world.prop.a1env_ice_end_east": {
+      "anchor": [
+        41,
+        68
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d1081e91bef7",
+      "src": "assets/sprites/packed/world/props/a1env_ice_end_east.webp"
+    },
+    "world.prop.a1env_ice_end_south": {
+      "anchor": [
+        33,
+        63
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "425909c7af6a",
+      "src": "assets/sprites/packed/world/props/a1env_ice_end_south.webp"
+    },
+    "world.prop.a1env_ice_ground": {
+      "anchor": [
+        78,
+        64
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "035a8aa567a4",
+      "src": "assets/sprites/packed/world/props/a1env_ice_ground.webp"
+    },
+    "world.prop.a1env_ice_inner": {
+      "anchor": [
+        70,
+        95
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "482d35195f92",
+      "src": "assets/sprites/packed/world/props/a1env_ice_inner.webp"
+    },
+    "world.prop.a1env_ice_outer": {
+      "anchor": [
+        71,
+        95
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b722dd8c65ce",
+      "src": "assets/sprites/packed/world/props/a1env_ice_outer.webp"
+    },
+    "world.prop.a1env_ice_south": {
+      "anchor": [
+        116,
+        130
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "6fa87e181056",
+      "src": "assets/sprites/packed/world/props/a1env_ice_south.webp"
+    },
+    "world.prop.a1env_ice_south_alt": {
+      "anchor": [
+        122,
+        132
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "6aff70f36fd6",
+      "src": "assets/sprites/packed/world/props/a1env_ice_south_alt.webp"
+    },
+    "world.prop.a1env_mine_broken": {
+      "anchor": [
+        75,
+        80
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "461402f6384f",
+      "src": "assets/sprites/packed/world/props/a1env_mine_broken.webp"
+    },
+    "world.prop.a1env_mine_door_in": {
+      "anchor": [
+        161,
+        196
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "4dba48be65c7",
+      "src": "assets/sprites/packed/world/props/a1env_mine_door_in.webp"
+    },
+    "world.prop.a1env_mine_door_out": {
+      "anchor": [
+        164,
+        196
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ca3c5b368a0a",
+      "src": "assets/sprites/packed/world/props/a1env_mine_door_out.webp"
+    },
+    "world.prop.a1env_mine_east": {
+      "anchor": [
+        111,
+        134
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e12e6fe62236",
+      "src": "assets/sprites/packed/world/props/a1env_mine_east.webp"
+    },
+    "world.prop.a1env_mine_east_alt": {
+      "anchor": [
+        116,
+        134
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "868f41e91979",
+      "src": "assets/sprites/packed/world/props/a1env_mine_east_alt.webp"
+    },
+    "world.prop.a1env_mine_end_east": {
+      "anchor": [
+        54,
+        69
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "03f14240940a",
+      "src": "assets/sprites/packed/world/props/a1env_mine_end_east.webp"
+    },
+    "world.prop.a1env_mine_end_south": {
+      "anchor": [
+        46,
+        69
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ae58df2a6d2e",
+      "src": "assets/sprites/packed/world/props/a1env_mine_end_south.webp"
+    },
+    "world.prop.a1env_mine_ground": {
+      "anchor": [
+        78,
+        59
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d704eb79dc7a",
+      "src": "assets/sprites/packed/world/props/a1env_mine_ground.webp"
+    },
+    "world.prop.a1env_mine_inner": {
+      "anchor": [
+        77,
+        95
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1d144fd4bc8b",
+      "src": "assets/sprites/packed/world/props/a1env_mine_inner.webp"
+    },
+    "world.prop.a1env_mine_outer": {
+      "anchor": [
+        76,
+        98
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "43dd46de7bc6",
+      "src": "assets/sprites/packed/world/props/a1env_mine_outer.webp"
+    },
+    "world.prop.a1env_mine_south": {
+      "anchor": [
+        119,
+        134
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "148c1209e161",
+      "src": "assets/sprites/packed/world/props/a1env_mine_south.webp"
+    },
+    "world.prop.a1env_mine_south_alt": {
+      "anchor": [
+        120,
+        134
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "18b48f8dee79",
+      "src": "assets/sprites/packed/world/props/a1env_mine_south_alt.webp"
+    },
+    "world.prop.a1env_north_broken": {
+      "anchor": [
+        79,
+        75
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "878174035fad",
+      "src": "assets/sprites/packed/world/props/a1env_north_broken.webp"
+    },
+    "world.prop.a1env_north_door_in": {
+      "anchor": [
+        162,
+        196
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b166726e9ec4",
+      "src": "assets/sprites/packed/world/props/a1env_north_door_in.webp"
+    },
+    "world.prop.a1env_north_door_out": {
+      "anchor": [
+        161,
+        196
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c3f722337fb5",
+      "src": "assets/sprites/packed/world/props/a1env_north_door_out.webp"
+    },
+    "world.prop.a1env_north_east": {
+      "anchor": [
+        77,
+        73
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c76600f5465c",
+      "src": "assets/sprites/packed/world/props/a1env_north_east.webp"
+    },
+    "world.prop.a1env_north_east_alt": {
+      "anchor": [
+        81,
+        72
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b4978a31fbf3",
+      "src": "assets/sprites/packed/world/props/a1env_north_east_alt.webp"
+    },
+    "world.prop.a1env_north_end_east": {
+      "anchor": [
+        48,
+        39
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "115a26219593",
+      "src": "assets/sprites/packed/world/props/a1env_north_end_east.webp"
+    },
+    "world.prop.a1env_north_end_south": {
+      "anchor": [
+        56,
+        49
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9beb9f99615c",
+      "src": "assets/sprites/packed/world/props/a1env_north_end_south.webp"
+    },
+    "world.prop.a1env_north_ground": {
+      "anchor": [
+        81,
+        67
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "7a7efec43d5f",
+      "src": "assets/sprites/packed/world/props/a1env_north_ground.webp"
+    },
+    "world.prop.a1env_north_inner": {
+      "anchor": [
+        81,
+        90
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "70b637bc0ff7",
+      "src": "assets/sprites/packed/world/props/a1env_north_inner.webp"
+    },
+    "world.prop.a1env_north_outer": {
+      "anchor": [
+        79,
+        85
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "161173b71362",
+      "src": "assets/sprites/packed/world/props/a1env_north_outer.webp"
+    },
+    "world.prop.a1env_north_south": {
+      "anchor": [
+        78,
+        64
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ad1cb44e46b3",
+      "src": "assets/sprites/packed/world/props/a1env_north_south.webp"
+    },
+    "world.prop.a1env_north_south_alt": {
+      "anchor": [
+        81,
+        59
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d07e6fe7722d",
+      "src": "assets/sprites/packed/world/props/a1env_north_south_alt.webp"
+    },
+    "world.prop.a1env_temple_broken": {
+      "anchor": [
+        78,
+        81
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c488acdb821b",
+      "src": "assets/sprites/packed/world/props/a1env_temple_broken.webp"
+    },
+    "world.prop.a1env_temple_door_in": {
+      "anchor": [
+        160,
+        189
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "290616f362cd",
+      "src": "assets/sprites/packed/world/props/a1env_temple_door_in.webp"
+    },
+    "world.prop.a1env_temple_door_out": {
+      "anchor": [
+        160,
+        189
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "5a03f9a3c0a2",
+      "src": "assets/sprites/packed/world/props/a1env_temple_door_out.webp"
+    },
+    "world.prop.a1env_temple_east": {
+      "anchor": [
+        114,
+        129
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "80d979af931b",
+      "src": "assets/sprites/packed/world/props/a1env_temple_east.webp"
+    },
+    "world.prop.a1env_temple_east_alt": {
+      "anchor": [
+        115,
+        128
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "bcfcc43d8cf0",
+      "src": "assets/sprites/packed/world/props/a1env_temple_east_alt.webp"
+    },
+    "world.prop.a1env_temple_end_east": {
+      "anchor": [
+        48,
+        73
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "366930652960",
+      "src": "assets/sprites/packed/world/props/a1env_temple_end_east.webp"
+    },
+    "world.prop.a1env_temple_end_south": {
+      "anchor": [
+        52,
+        73
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d784cc048168",
+      "src": "assets/sprites/packed/world/props/a1env_temple_end_south.webp"
+    },
+    "world.prop.a1env_temple_ground": {
+      "anchor": [
+        78,
+        54
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "86bd9e9210ff",
+      "src": "assets/sprites/packed/world/props/a1env_temple_ground.webp"
+    },
+    "world.prop.a1env_temple_inner": {
+      "anchor": [
+        80,
+        91
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a2524726c8f7",
+      "src": "assets/sprites/packed/world/props/a1env_temple_inner.webp"
+    },
+    "world.prop.a1env_temple_outer": {
+      "anchor": [
+        76,
+        90
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "eb65d6970bed",
+      "src": "assets/sprites/packed/world/props/a1env_temple_outer.webp"
+    },
+    "world.prop.a1env_temple_south": {
+      "anchor": [
+        119,
+        131
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a697aa8c3c25",
+      "src": "assets/sprites/packed/world/props/a1env_temple_south.webp"
+    },
+    "world.prop.a1env_temple_south_alt": {
+      "anchor": [
+        119,
+        131
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a697aa8c3c25",
+      "src": "assets/sprites/packed/world/props/a1env_temple_south_alt.webp"
+    },
+    "world.prop.a1env_town_broken": {
+      "anchor": [
+        74,
+        83
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "4be57fa679a4",
+      "src": "assets/sprites/packed/world/props/a1env_town_broken.webp"
+    },
+    "world.prop.a1env_town_door_in": {
+      "anchor": [
+        154,
+        196
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "26df6b88b28f",
+      "src": "assets/sprites/packed/world/props/a1env_town_door_in.webp"
+    },
+    "world.prop.a1env_town_door_out": {
+      "anchor": [
+        163,
+        196
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "fa79f16c791d",
+      "src": "assets/sprites/packed/world/props/a1env_town_door_out.webp"
+    },
+    "world.prop.a1env_town_east": {
+      "anchor": [
+        104,
+        131
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3d55287b2d92",
+      "src": "assets/sprites/packed/world/props/a1env_town_east.webp"
+    },
+    "world.prop.a1env_town_east_alt": {
+      "anchor": [
+        108,
+        130
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "6590b560951e",
+      "src": "assets/sprites/packed/world/props/a1env_town_east_alt.webp"
+    },
+    "world.prop.a1env_town_end_east": {
+      "anchor": [
+        45,
+        72
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "875d3f170207",
+      "src": "assets/sprites/packed/world/props/a1env_town_end_east.webp"
+    },
+    "world.prop.a1env_town_end_south": {
+      "anchor": [
+        38,
+        69
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b64375e3ac26",
+      "src": "assets/sprites/packed/world/props/a1env_town_end_south.webp"
+    },
+    "world.prop.a1env_town_ground": {
+      "anchor": [
+        81,
+        75
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "53fec9c7245d",
+      "src": "assets/sprites/packed/world/props/a1env_town_ground.webp"
+    },
+    "world.prop.a1env_town_inner": {
+      "anchor": [
+        73,
+        92
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "deb91a55ea40",
+      "src": "assets/sprites/packed/world/props/a1env_town_inner.webp"
+    },
+    "world.prop.a1env_town_outer": {
+      "anchor": [
+        71,
+        90
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "12c04e75f786",
+      "src": "assets/sprites/packed/world/props/a1env_town_outer.webp"
+    },
+    "world.prop.a1env_town_south": {
+      "anchor": [
+        113,
+        131
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "fa757e6da955",
+      "src": "assets/sprites/packed/world/props/a1env_town_south.webp"
+    },
+    "world.prop.a1env_town_south_alt": {
+      "anchor": [
+        113,
+        131
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "fa757e6da955",
+      "src": "assets/sprites/packed/world/props/a1env_town_south_alt.webp"
+    },
+    "world.prop.a1polish_boulders": {
+      "anchor": [
+        57,
+        126
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "349cdca3fab6",
+      "src": "assets/sprites/packed/world/props/a1polish_boulders.webp"
+    },
+    "world.prop.a1polish_crag": {
+      "anchor": [
+        82,
+        226
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "096705d3bbbb",
+      "src": "assets/sprites/packed/world/props/a1polish_crag.webp"
+    },
+    "world.prop.a1polish_fir": {
+      "anchor": [
+        92,
+        291
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "990752ebbe12",
+      "src": "assets/sprites/packed/world/props/a1polish_fir.webp"
+    },
+    "world.prop.a1polish_firs": {
+      "anchor": [
+        89,
+        276
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "59c9dac78d6d",
+      "src": "assets/sprites/packed/world/props/a1polish_firs.webp"
+    },
+    "world.prop.a1polish_pine": {
+      "anchor": [
+        81,
+        256
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "0502f1144b16",
+      "src": "assets/sprites/packed/world/props/a1polish_pine.webp"
+    },
+    "world.prop.a1polish_snow": {
+      "anchor": [
+        256,
+        256
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "7fa1e616efa6",
+      "src": "assets/sprites/packed/world/props/a1polish_snow.webp"
+    },
+    "world.prop.a1polish_standing_stone": {
+      "anchor": [
+        51,
+        146
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "46af6847b657",
+      "src": "assets/sprites/packed/world/props/a1polish_standing_stone.webp"
+    },
+    "world.prop.a2boundary_masonry_broken_east": {
+      "anchor": [
+        60,
+        61
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c8c152c083e4",
+      "src": "assets/sprites/packed/world/props/a2boundary_masonry_broken_east.webp"
+    },
+    "world.prop.a2boundary_masonry_broken_south": {
+      "anchor": [
+        56,
+        50
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a57e0c2bb0ca",
+      "src": "assets/sprites/packed/world/props/a2boundary_masonry_broken_south.webp"
+    },
+    "world.prop.a2boundary_masonry_door_east": {
+      "anchor": [
+        61,
+        84
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "df21c0b1c734",
+      "src": "assets/sprites/packed/world/props/a2boundary_masonry_door_east.webp"
+    },
+    "world.prop.a2boundary_masonry_door_south": {
+      "anchor": [
+        57,
+        79
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8499ed42a398",
+      "src": "assets/sprites/packed/world/props/a2boundary_masonry_door_south.webp"
+    },
+    "world.prop.a2boundary_masonry_east": {
+      "anchor": [
+        61,
+        92
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e8eef5b0d323",
+      "src": "assets/sprites/packed/world/props/a2boundary_masonry_east.webp"
+    },
+    "world.prop.a2boundary_masonry_east_alt": {
+      "anchor": [
+        60,
+        92
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "503742517306",
+      "src": "assets/sprites/packed/world/props/a2boundary_masonry_east_alt.webp"
+    },
+    "world.prop.a2boundary_masonry_end_east": {
+      "anchor": [
+        60,
+        91
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "75c93d012bb3",
+      "src": "assets/sprites/packed/world/props/a2boundary_masonry_end_east.webp"
+    },
+    "world.prop.a2boundary_masonry_end_south": {
+      "anchor": [
+        53,
+        84
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "058937aea0e8",
+      "src": "assets/sprites/packed/world/props/a2boundary_masonry_end_south.webp"
+    },
+    "world.prop.a2boundary_masonry_inner": {
+      "anchor": [
+        40,
+        37
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "fc7621061885",
+      "src": "assets/sprites/packed/world/props/a2boundary_masonry_inner.webp"
+    },
+    "world.prop.a2boundary_masonry_outer": {
+      "anchor": [
+        40,
+        69
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "5ddafaf2243c",
+      "src": "assets/sprites/packed/world/props/a2boundary_masonry_outer.webp"
+    },
+    "world.prop.a2boundary_masonry_south": {
+      "anchor": [
+        57,
+        86
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ffc37b7387c0",
+      "src": "assets/sprites/packed/world/props/a2boundary_masonry_south.webp"
+    },
+    "world.prop.a2boundary_masonry_south_alt": {
+      "anchor": [
+        56,
+        86
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "2aa0838924c2",
+      "src": "assets/sprites/packed/world/props/a2boundary_masonry_south_alt.webp"
+    },
+    "world.prop.a2boundary_root_east": {
+      "anchor": [
+        60,
+        79
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c4be78f876b6",
+      "src": "assets/sprites/packed/world/props/a2boundary_root_east.webp"
+    },
+    "world.prop.a2boundary_root_east_alt": {
+      "anchor": [
+        60,
+        78
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "6b7ae6eaa949",
+      "src": "assets/sprites/packed/world/props/a2boundary_root_east_alt.webp"
+    },
+    "world.prop.a2boundary_root_end_east": {
+      "anchor": [
+        61,
+        80
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "0f80debbbb2c",
+      "src": "assets/sprites/packed/world/props/a2boundary_root_end_east.webp"
+    },
+    "world.prop.a2boundary_root_end_south": {
+      "anchor": [
+        63,
+        80
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b70fcf62294e",
+      "src": "assets/sprites/packed/world/props/a2boundary_root_end_south.webp"
+    },
+    "world.prop.a2boundary_root_inner": {
+      "anchor": [
+        41,
+        62
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ec24bc92b298",
+      "src": "assets/sprites/packed/world/props/a2boundary_root_inner.webp"
+    },
+    "world.prop.a2boundary_root_outer": {
+      "anchor": [
+        42,
+        62
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f6381d54c4bd",
+      "src": "assets/sprites/packed/world/props/a2boundary_root_outer.webp"
+    },
+    "world.prop.a2boundary_root_south": {
+      "anchor": [
+        62,
+        80
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "6dfc74d518f3",
+      "src": "assets/sprites/packed/world/props/a2boundary_root_south.webp"
+    },
+    "world.prop.a2boundary_root_south_alt": {
+      "anchor": [
+        62,
+        78
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8a02e9561e75",
+      "src": "assets/sprites/packed/world/props/a2boundary_root_south_alt.webp"
+    },
+    "world.prop.a2boundary_shore_east": {
+      "anchor": [
+        59,
+        56
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "02589f0b57d3",
+      "src": "assets/sprites/packed/world/props/a2boundary_shore_east.webp"
+    },
+    "world.prop.a2boundary_shore_east_alt": {
+      "anchor": [
+        67,
+        58
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3ea3d148c1b2",
+      "src": "assets/sprites/packed/world/props/a2boundary_shore_east_alt.webp"
+    },
+    "world.prop.a2boundary_shore_end_east": {
+      "anchor": [
+        60,
+        79
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "2e044441574d",
+      "src": "assets/sprites/packed/world/props/a2boundary_shore_end_east.webp"
+    },
+    "world.prop.a2boundary_shore_end_south": {
+      "anchor": [
+        56,
+        79
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "46c439ea1f79",
+      "src": "assets/sprites/packed/world/props/a2boundary_shore_end_south.webp"
+    },
+    "world.prop.a2boundary_shore_inner": {
+      "anchor": [
+        31,
+        37
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8baac3e26c7a",
+      "src": "assets/sprites/packed/world/props/a2boundary_shore_inner.webp"
+    },
+    "world.prop.a2boundary_shore_outer": {
+      "anchor": [
+        32,
+        55
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b6fc6d76c701",
+      "src": "assets/sprites/packed/world/props/a2boundary_shore_outer.webp"
+    },
+    "world.prop.a2boundary_shore_south": {
+      "anchor": [
+        62,
+        50
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9df85ad56b08",
+      "src": "assets/sprites/packed/world/props/a2boundary_shore_south.webp"
+    },
+    "world.prop.a2boundary_shore_south_alt": {
+      "anchor": [
+        60,
+        58
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e00abb82268a",
+      "src": "assets/sprites/packed/world/props/a2boundary_shore_south_alt.webp"
+    },
+    "world.prop.a2threshold_monastery_in": {
+      "anchor": [
+        156,
+        190
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "20da003eb4a7",
+      "src": "assets/sprites/packed/world/props/a2threshold_monastery_in.webp"
+    },
+    "world.prop.a2threshold_monastery_out": {
+      "anchor": [
+        163,
+        188
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b02ddce00927",
+      "src": "assets/sprites/packed/world/props/a2threshold_monastery_out.webp"
+    },
+    "world.prop.a2threshold_reeds_in_left": {
+      "anchor": [
+        144,
+        92
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b97d985d9438",
+      "src": "assets/sprites/packed/world/props/a2threshold_reeds_in_left.webp"
+    },
+    "world.prop.a2threshold_reeds_in_right": {
+      "anchor": [
+        37,
+        70
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "cd741f00ab10",
+      "src": "assets/sprites/packed/world/props/a2threshold_reeds_in_right.webp"
+    },
+    "world.prop.a2threshold_reeds_out_left": {
+      "anchor": [
+        138,
+        84
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "6f378b17a2d2",
+      "src": "assets/sprites/packed/world/props/a2threshold_reeds_out_left.webp"
+    },
+    "world.prop.a2threshold_reeds_out_right": {
+      "anchor": [
+        15,
+        47
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3da7d07da474",
+      "src": "assets/sprites/packed/world/props/a2threshold_reeds_out_right.webp"
+    },
+    "world.prop.a2threshold_ritual_in_left": {
+      "anchor": [
+        132,
+        166
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "763f626769af",
+      "src": "assets/sprites/packed/world/props/a2threshold_ritual_in_left.webp"
+    },
+    "world.prop.a2threshold_ritual_in_right": {
+      "anchor": [
+        6,
+        143
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "791296832c15",
+      "src": "assets/sprites/packed/world/props/a2threshold_ritual_in_right.webp"
+    },
+    "world.prop.a2threshold_ritual_out_left": {
+      "anchor": [
+        132,
+        166
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1717a0737b2a",
+      "src": "assets/sprites/packed/world/props/a2threshold_ritual_out_left.webp"
+    },
+    "world.prop.a2threshold_ritual_out_right": {
+      "anchor": [
+        6,
+        143
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a2435c5fe25f",
+      "src": "assets/sprites/packed/world/props/a2threshold_ritual_out_right.webp"
+    },
+    "world.prop.a2threshold_sluice_in": {
+      "anchor": [
+        166,
+        215
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1875bd451b63",
+      "src": "assets/sprites/packed/world/props/a2threshold_sluice_in.webp"
+    },
+    "world.prop.a2threshold_sluice_out": {
+      "anchor": [
+        168,
+        188
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8b081f6aeb8f",
+      "src": "assets/sprites/packed/world/props/a2threshold_sluice_out.webp"
+    },
+    "world.prop.a2visual_cypress": {
+      "anchor": [
+        180,
+        344
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "cecb8fb5d3b0",
+      "src": "assets/sprites/packed/world/props/a2visual_cypress.webp"
+    },
+    "world.prop.a2visual_moss": {
+      "anchor": [
+        384,
+        384
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "44a1f0fc9a54",
+      "src": "assets/sprites/packed/world/props/a2visual_moss.webp"
+    },
+    "world.prop.a2visual_pier": {
+      "anchor": [
+        22,
+        178
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a012591716c4",
+      "src": "assets/sprites/packed/world/props/a2visual_pier.webp"
+    },
+    "world.prop.a2visual_seal": {
+      "anchor": [
+        480,
+        210
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "5e470043543f",
+      "src": "assets/sprites/packed/world/props/a2visual_seal.webp"
+    },
+    "world.prop.a2visual_water": {
+      "anchor": [
+        384,
+        384
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "76686b36205c",
+      "src": "assets/sprites/packed/world/props/a2visual_water.webp"
+    },
+    "world.prop.a3env_dune_east": {
+      "anchor": [
+        135,
+        89
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d5db3813f355",
+      "src": "assets/sprites/packed/world/props/a3env_dune_east.webp"
+    },
+    "world.prop.a3env_dune_east_alt": {
+      "anchor": [
+        135,
+        87
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "bdc67fa0f2e8",
+      "src": "assets/sprites/packed/world/props/a3env_dune_east_alt.webp"
+    },
+    "world.prop.a3env_dune_south": {
+      "anchor": [
+        135,
+        97
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9b15dae60ce2",
+      "src": "assets/sprites/packed/world/props/a3env_dune_south.webp"
+    },
+    "world.prop.a3env_dune_south_alt": {
+      "anchor": [
+        135,
+        97
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d6ec8c13641f",
+      "src": "assets/sprites/packed/world/props/a3env_dune_south_alt.webp"
+    },
+    "world.prop.a3env_palace_broken_east": {
+      "anchor": [
+        57,
+        83
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "55db5979de59",
+      "src": "assets/sprites/packed/world/props/a3env_palace_broken_east.webp"
+    },
+    "world.prop.a3env_palace_broken_south": {
+      "anchor": [
+        55,
+        82
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c9d5da073bf1",
+      "src": "assets/sprites/packed/world/props/a3env_palace_broken_south.webp"
+    },
+    "world.prop.a3env_palace_east": {
+      "anchor": [
+        57,
+        85
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "005cc86fd272",
+      "src": "assets/sprites/packed/world/props/a3env_palace_east.webp"
+    },
+    "world.prop.a3env_palace_east_1": {
+      "anchor": [
+        19,
+        44
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8dde33b271fe",
+      "src": "assets/sprites/packed/world/props/a3env_palace_east_1.webp"
+    },
+    "world.prop.a3env_palace_east_2": {
+      "anchor": [
+        38,
+        71
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d0a5c757dac7",
+      "src": "assets/sprites/packed/world/props/a3env_palace_east_2.webp"
+    },
+    "world.prop.a3env_palace_east_alt": {
+      "anchor": [
+        57,
+        85
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "35288d27629b",
+      "src": "assets/sprites/packed/world/props/a3env_palace_east_alt.webp"
+    },
+    "world.prop.a3env_palace_end_east": {
+      "anchor": [
+        19,
+        44
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f40e1e9a5619",
+      "src": "assets/sprites/packed/world/props/a3env_palace_end_east.webp"
+    },
+    "world.prop.a3env_palace_end_south": {
+      "anchor": [
+        18,
+        44
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f7bd67b70ce3",
+      "src": "assets/sprites/packed/world/props/a3env_palace_end_south.webp"
+    },
+    "world.prop.a3env_palace_foundation": {
+      "anchor": [
+        75,
+        54
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "7b01aec77919",
+      "src": "assets/sprites/packed/world/props/a3env_palace_foundation.webp"
+    },
+    "world.prop.a3env_palace_inner": {
+      "anchor": [
+        37,
+        66
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "7519b74e8ba8",
+      "src": "assets/sprites/packed/world/props/a3env_palace_inner.webp"
+    },
+    "world.prop.a3env_palace_outer": {
+      "anchor": [
+        37,
+        71
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "50e3fbf2d72b",
+      "src": "assets/sprites/packed/world/props/a3env_palace_outer.webp"
+    },
+    "world.prop.a3env_palace_paving": {
+      "anchor": [
+        75,
+        53
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "85a9e10b5132",
+      "src": "assets/sprites/packed/world/props/a3env_palace_paving.webp"
+    },
+    "world.prop.a3env_palace_south": {
+      "anchor": [
+        55,
+        90
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "65ce0805057a",
+      "src": "assets/sprites/packed/world/props/a3env_palace_south.webp"
+    },
+    "world.prop.a3env_palace_south_1": {
+      "anchor": [
+        18,
+        42
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f2d424cded77",
+      "src": "assets/sprites/packed/world/props/a3env_palace_south_1.webp"
+    },
+    "world.prop.a3env_palace_south_2": {
+      "anchor": [
+        36,
+        74
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d772e2e60c2f",
+      "src": "assets/sprites/packed/world/props/a3env_palace_south_2.webp"
+    },
+    "world.prop.a3env_palace_south_alt": {
+      "anchor": [
+        55,
+        91
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d0d2afb3d311",
+      "src": "assets/sprites/packed/world/props/a3env_palace_south_alt.webp"
+    },
+    "world.prop.a3env_rock_east": {
+      "anchor": [
+        135,
+        119
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e668b251845c",
+      "src": "assets/sprites/packed/world/props/a3env_rock_east.webp"
+    },
+    "world.prop.a3env_rock_east_alt": {
+      "anchor": [
+        135,
+        119
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "80920a90d65f",
+      "src": "assets/sprites/packed/world/props/a3env_rock_east_alt.webp"
+    },
+    "world.prop.a3env_rock_south": {
+      "anchor": [
+        135,
+        130
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e9ba06aab077",
+      "src": "assets/sprites/packed/world/props/a3env_rock_south.webp"
+    },
+    "world.prop.a3env_rock_south_alt": {
+      "anchor": [
+        135,
+        132
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "7b3e46b154c0",
+      "src": "assets/sprites/packed/world/props/a3env_rock_south_alt.webp"
+    },
+    "world.prop.a3env_sandstone_broken_east": {
+      "anchor": [
+        57,
+        83
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "2e85dce29826",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_broken_east.webp"
+    },
+    "world.prop.a3env_sandstone_broken_south": {
+      "anchor": [
+        55,
+        81
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "99c7b92e0f49",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_broken_south.webp"
+    },
+    "world.prop.a3env_sandstone_east": {
+      "anchor": [
+        57,
+        85
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1d0b0867180c",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_east.webp"
+    },
+    "world.prop.a3env_sandstone_east_1": {
+      "anchor": [
+        19,
+        45
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1ca38016a0e1",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_east_1.webp"
+    },
+    "world.prop.a3env_sandstone_east_2": {
+      "anchor": [
+        38,
+        71
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "55e4816c2cf2",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_east_2.webp"
+    },
+    "world.prop.a3env_sandstone_east_alt": {
+      "anchor": [
+        57,
+        85
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1ad22136a2e8",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_east_alt.webp"
+    },
+    "world.prop.a3env_sandstone_end_east": {
+      "anchor": [
+        19,
+        43
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "5876833a0f9d",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_end_east.webp"
+    },
+    "world.prop.a3env_sandstone_end_south": {
+      "anchor": [
+        18,
+        44
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "52cd47285835",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_end_south.webp"
+    },
+    "world.prop.a3env_sandstone_foundation": {
+      "anchor": [
+        75,
+        53
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e6e7a1a398ab",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_foundation.webp"
+    },
+    "world.prop.a3env_sandstone_inner": {
+      "anchor": [
+        37,
+        66
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "128c5a86faa6",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_inner.webp"
+    },
+    "world.prop.a3env_sandstone_outer": {
+      "anchor": [
+        37,
+        71
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a029c8599831",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_outer.webp"
+    },
+    "world.prop.a3env_sandstone_paving": {
+      "anchor": [
+        75,
+        54
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c7e084e45d51",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_paving.webp"
+    },
+    "world.prop.a3env_sandstone_south": {
+      "anchor": [
+        55,
+        90
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9dac36338fb0",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_south.webp"
+    },
+    "world.prop.a3env_sandstone_south_1": {
+      "anchor": [
+        18,
+        43
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "73a9e56ca110",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_south_1.webp"
+    },
+    "world.prop.a3env_sandstone_south_2": {
+      "anchor": [
+        36,
+        74
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e6f3ff50ec99",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_south_2.webp"
+    },
+    "world.prop.a3env_sandstone_south_alt": {
+      "anchor": [
+        55,
+        91
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c89cde3632e8",
+      "src": "assets/sprites/packed/world/props/a3env_sandstone_south_alt.webp"
+    },
+    "world.prop.a3env_shard_east": {
+      "anchor": [
+        135,
+        153
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ee11b89fa6d1",
+      "src": "assets/sprites/packed/world/props/a3env_shard_east.webp"
+    },
+    "world.prop.a3env_shard_east_alt": {
+      "anchor": [
+        135,
+        147
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ed7c94d667f6",
+      "src": "assets/sprites/packed/world/props/a3env_shard_east_alt.webp"
+    },
+    "world.prop.a3env_shard_south": {
+      "anchor": [
+        135,
+        147
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "eaf37183a8f9",
+      "src": "assets/sprites/packed/world/props/a3env_shard_south.webp"
+    },
+    "world.prop.a3env_shard_south_alt": {
+      "anchor": [
+        135,
+        145
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "46b95fdfadbe",
+      "src": "assets/sprites/packed/world/props/a3env_shard_south_alt.webp"
+    },
+    "world.prop.a3env_sovereign_broken_east": {
+      "anchor": [
+        57,
+        83
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3a4d97698739",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_broken_east.webp"
+    },
+    "world.prop.a3env_sovereign_broken_south": {
+      "anchor": [
+        55,
+        81
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1727f34ea5cd",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_broken_south.webp"
+    },
+    "world.prop.a3env_sovereign_east": {
+      "anchor": [
+        57,
+        86
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "4e6b5cf60fae",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_east.webp"
+    },
+    "world.prop.a3env_sovereign_east_1": {
+      "anchor": [
+        19,
+        44
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a063b37bbfb7",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_east_1.webp"
+    },
+    "world.prop.a3env_sovereign_east_2": {
+      "anchor": [
+        38,
+        71
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "64d2b1271194",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_east_2.webp"
+    },
+    "world.prop.a3env_sovereign_east_alt": {
+      "anchor": [
+        57,
+        85
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ac268057dc2c",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_east_alt.webp"
+    },
+    "world.prop.a3env_sovereign_end_east": {
+      "anchor": [
+        19,
+        44
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "46779fa99148",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_end_east.webp"
+    },
+    "world.prop.a3env_sovereign_end_south": {
+      "anchor": [
+        18,
+        44
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f510a850ea51",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_end_south.webp"
+    },
+    "world.prop.a3env_sovereign_foundation": {
+      "anchor": [
+        75,
+        54
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3026046f6d4d",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_foundation.webp"
+    },
+    "world.prop.a3env_sovereign_inner": {
+      "anchor": [
+        37,
+        66
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1b9958671a17",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_inner.webp"
+    },
+    "world.prop.a3env_sovereign_outer": {
+      "anchor": [
+        37,
+        71
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "98f87b5831e5",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_outer.webp"
+    },
+    "world.prop.a3env_sovereign_paving": {
+      "anchor": [
+        75,
+        54
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "06728ba46616",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_paving.webp"
+    },
+    "world.prop.a3env_sovereign_south": {
+      "anchor": [
+        55,
+        90
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b82b94e5b38d",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_south.webp"
+    },
+    "world.prop.a3env_sovereign_south_1": {
+      "anchor": [
+        18,
+        43
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "6ce562f7189e",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_south_1.webp"
+    },
+    "world.prop.a3env_sovereign_south_2": {
+      "anchor": [
+        36,
+        74
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "96dfdfad2e88",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_south_2.webp"
+    },
+    "world.prop.a3env_sovereign_south_alt": {
+      "anchor": [
+        55,
+        92
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c6c6711cfa95",
+      "src": "assets/sprites/packed/world/props/a3env_sovereign_south_alt.webp"
+    },
+    "world.prop.a3env_tomb_broken_east": {
+      "anchor": [
+        57,
+        84
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "421bd6855d0f",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_broken_east.webp"
+    },
+    "world.prop.a3env_tomb_broken_south": {
+      "anchor": [
+        55,
+        81
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "05af6bc12ba0",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_broken_south.webp"
+    },
+    "world.prop.a3env_tomb_east": {
+      "anchor": [
+        57,
+        86
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1210fec4f8ab",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_east.webp"
+    },
+    "world.prop.a3env_tomb_east_1": {
+      "anchor": [
+        19,
+        44
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e81bc9355588",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_east_1.webp"
+    },
+    "world.prop.a3env_tomb_east_2": {
+      "anchor": [
+        38,
+        72
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "905c9c28795d",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_east_2.webp"
+    },
+    "world.prop.a3env_tomb_east_alt": {
+      "anchor": [
+        57,
+        85
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "5bf6e1f0eb12",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_east_alt.webp"
+    },
+    "world.prop.a3env_tomb_end_east": {
+      "anchor": [
+        19,
+        43
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "6c9cab0d0484",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_end_east.webp"
+    },
+    "world.prop.a3env_tomb_end_south": {
+      "anchor": [
+        18,
+        44
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "94eb9541b485",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_end_south.webp"
+    },
+    "world.prop.a3env_tomb_foundation": {
+      "anchor": [
+        75,
+        54
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "684c861dd5fc",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_foundation.webp"
+    },
+    "world.prop.a3env_tomb_inner": {
+      "anchor": [
+        37,
+        67
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "14603e17f55d",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_inner.webp"
+    },
+    "world.prop.a3env_tomb_outer": {
+      "anchor": [
+        37,
+        71
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e13311d6eb4b",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_outer.webp"
+    },
+    "world.prop.a3env_tomb_paving": {
+      "anchor": [
+        75,
+        54
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "fcbe3f2cdf7e",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_paving.webp"
+    },
+    "world.prop.a3env_tomb_south": {
+      "anchor": [
+        55,
+        90
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "015b18df7eff",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_south.webp"
+    },
+    "world.prop.a3env_tomb_south_1": {
+      "anchor": [
+        18,
+        42
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "2630e56e7705",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_south_1.webp"
+    },
+    "world.prop.a3env_tomb_south_2": {
+      "anchor": [
+        36,
+        74
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9de33209d9dd",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_south_2.webp"
+    },
+    "world.prop.a3env_tomb_south_alt": {
+      "anchor": [
+        55,
+        92
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "331d3f90c47a",
+      "src": "assets/sprites/packed/world/props/a3env_tomb_south_alt.webp"
+    },
+    "world.prop.a3passage_aqueduct_in_east": {
+      "anchor": [
+        170,
+        229
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a51670689b1d",
+      "src": "assets/sprites/packed/world/props/a3passage_aqueduct_in_east.webp"
+    },
+    "world.prop.a3passage_aqueduct_in_south": {
+      "anchor": [
+        170,
+        229
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1910d4dbee9a",
+      "src": "assets/sprites/packed/world/props/a3passage_aqueduct_in_south.webp"
+    },
+    "world.prop.a3passage_aqueduct_out_east": {
+      "anchor": [
+        170,
+        207
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "484940ed2a9c",
+      "src": "assets/sprites/packed/world/props/a3passage_aqueduct_out_east.webp"
+    },
+    "world.prop.a3passage_aqueduct_out_south": {
+      "anchor": [
+        170,
+        207
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "5674fd157d21",
+      "src": "assets/sprites/packed/world/props/a3passage_aqueduct_out_south.webp"
+    },
+    "world.prop.a3passage_market_in_east": {
+      "anchor": [
+        186,
+        243
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "4c43e8485866",
+      "src": "assets/sprites/packed/world/props/a3passage_market_in_east.webp"
+    },
+    "world.prop.a3passage_market_in_south": {
+      "anchor": [
+        194,
+        243
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "5fc850c3c7b1",
+      "src": "assets/sprites/packed/world/props/a3passage_market_in_south.webp"
+    },
+    "world.prop.a3passage_market_out_east": {
+      "anchor": [
+        194,
+        213
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "0a1d8def18c2",
+      "src": "assets/sprites/packed/world/props/a3passage_market_out_east.webp"
+    },
+    "world.prop.a3passage_market_out_south": {
+      "anchor": [
+        186,
+        213
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d25ee830e70c",
+      "src": "assets/sprites/packed/world/props/a3passage_market_out_south.webp"
+    },
+    "world.prop.a3passage_palace_in_east": {
+      "anchor": [
+        186,
+        249
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "07de0cbbedde",
+      "src": "assets/sprites/packed/world/props/a3passage_palace_in_east.webp"
+    },
+    "world.prop.a3passage_palace_in_south": {
+      "anchor": [
+        194,
+        249
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8c35b754e1c7",
+      "src": "assets/sprites/packed/world/props/a3passage_palace_in_south.webp"
+    },
+    "world.prop.a3passage_palace_out_east": {
+      "anchor": [
+        194,
+        222
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "cd286187267b",
+      "src": "assets/sprites/packed/world/props/a3passage_palace_out_east.webp"
+    },
+    "world.prop.a3passage_palace_out_south": {
+      "anchor": [
+        186,
+        222
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "02fc7e4e268d",
+      "src": "assets/sprites/packed/world/props/a3passage_palace_out_south.webp"
+    },
+    "world.prop.a3passage_road_in_east": {
+      "anchor": [
+        170,
+        236
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "09c414bf72fe",
+      "src": "assets/sprites/packed/world/props/a3passage_road_in_east.webp"
+    },
+    "world.prop.a3passage_road_in_south": {
+      "anchor": [
+        170,
+        236
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "824cd6315825",
+      "src": "assets/sprites/packed/world/props/a3passage_road_in_south.webp"
+    },
+    "world.prop.a3passage_road_out_east": {
+      "anchor": [
+        170,
+        203
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "aba500551fda",
+      "src": "assets/sprites/packed/world/props/a3passage_road_out_east.webp"
+    },
+    "world.prop.a3passage_road_out_south": {
+      "anchor": [
+        170,
+        203
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e5baba0db9f3",
+      "src": "assets/sprites/packed/world/props/a3passage_road_out_south.webp"
+    },
+    "world.prop.a3passage_sovereign_in_east": {
+      "anchor": [
+        186,
+        241
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "edaadc9af3cb",
+      "src": "assets/sprites/packed/world/props/a3passage_sovereign_in_east.webp"
+    },
+    "world.prop.a3passage_sovereign_in_south": {
+      "anchor": [
+        194,
+        241
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8479ae9e624a",
+      "src": "assets/sprites/packed/world/props/a3passage_sovereign_in_south.webp"
+    },
+    "world.prop.a3passage_sovereign_out_east": {
+      "anchor": [
+        194,
+        212
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "5a89dcabbb1f",
+      "src": "assets/sprites/packed/world/props/a3passage_sovereign_out_east.webp"
+    },
+    "world.prop.a3passage_sovereign_out_south": {
+      "anchor": [
+        186,
+        212
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c1bd71dd4746",
+      "src": "assets/sprites/packed/world/props/a3passage_sovereign_out_south.webp"
+    },
+    "world.prop.a3passage_tomb_in_east": {
+      "anchor": [
+        186,
+        244
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3e32dfc7e23e",
+      "src": "assets/sprites/packed/world/props/a3passage_tomb_in_east.webp"
+    },
+    "world.prop.a3passage_tomb_in_south": {
+      "anchor": [
+        194,
+        244
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "44eaed8ccae7",
+      "src": "assets/sprites/packed/world/props/a3passage_tomb_in_south.webp"
+    },
+    "world.prop.a3passage_tomb_out_east": {
+      "anchor": [
+        194,
+        220
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9c0f85499cea",
+      "src": "assets/sprites/packed/world/props/a3passage_tomb_out_east.webp"
+    },
+    "world.prop.a3passage_tomb_out_south": {
+      "anchor": [
+        186,
+        220
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b83ea5845376",
+      "src": "assets/sprites/packed/world/props/a3passage_tomb_out_south.webp"
+    },
+    "world.prop.a3visual_eclipse": {
+      "anchor": [
+        384,
+        384
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ba9e3e17c91f",
+      "src": "assets/sprites/packed/world/props/a3visual_eclipse.webp"
+    },
+    "world.prop.a3visual_palace": {
+      "anchor": [
+        384,
+        384
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "46eba7041121",
+      "src": "assets/sprites/packed/world/props/a3visual_palace.webp"
+    },
+    "world.prop.a3visual_sand": {
+      "anchor": [
+        384,
+        384
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "be147ddfa48e",
+      "src": "assets/sprites/packed/world/props/a3visual_sand.webp"
+    },
+    "world.prop.a3visual_sandstone": {
+      "anchor": [
+        384,
+        384
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "494e9a63f371",
+      "src": "assets/sprites/packed/world/props/a3visual_sandstone.webp"
+    },
+    "world.prop.a3visual_slate": {
+      "anchor": [
+        384,
+        384
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "00e69b0e7bc5",
+      "src": "assets/sprites/packed/world/props/a3visual_slate.webp"
+    },
+    "world.prop.a3visual_sun": {
+      "anchor": [
+        384,
+        384
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d952d216fd41",
+      "src": "assets/sprites/packed/world/props/a3visual_sun.webp"
+    },
+    "world.prop.a3visual_wall_palace": {
+      "anchor": [
+        192,
+        144
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "0836bda09050",
+      "src": "assets/sprites/packed/world/props/a3visual_wall_palace.webp"
+    },
+    "world.prop.a3visual_wall_sandstone": {
+      "anchor": [
+        192,
+        144
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "aaafc845e850",
+      "src": "assets/sprites/packed/world/props/a3visual_wall_sandstone.webp"
+    },
+    "world.prop.a3visual_wall_sovereign": {
+      "anchor": [
+        192,
+        144
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "907ae8a74cb3",
+      "src": "assets/sprites/packed/world/props/a3visual_wall_sovereign.webp"
+    },
+    "world.prop.a3visual_wall_tomb": {
+      "anchor": [
+        192,
+        144
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ec15943e70ea",
+      "src": "assets/sprites/packed/world/props/a3visual_wall_tomb.webp"
+    },
+    "world.prop.a4env_ash_abutment": {
+      "anchor": [
+        56,
+        36
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3b0a74bb9808",
+      "src": "assets/sprites/packed/world/props/a4env_ash_abutment.webp"
+    },
+    "world.prop.a4env_ash_broken_east": {
+      "anchor": [
+        112,
+        100
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "32c7f1e326c9",
+      "src": "assets/sprites/packed/world/props/a4env_ash_broken_east.webp"
+    },
+    "world.prop.a4env_ash_broken_south": {
+      "anchor": [
+        112,
+        80
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "54ee10361863",
+      "src": "assets/sprites/packed/world/props/a4env_ash_broken_south.webp"
+    },
+    "world.prop.a4env_ash_door_east": {
+      "anchor": [
+        112,
+        134
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c222dae421f3",
+      "src": "assets/sprites/packed/world/props/a4env_ash_door_east.webp"
+    },
+    "world.prop.a4env_ash_door_south": {
+      "anchor": [
+        112,
+        139
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c84c33abeae5",
+      "src": "assets/sprites/packed/world/props/a4env_ash_door_south.webp"
+    },
+    "world.prop.a4env_ash_east": {
+      "anchor": [
+        112,
+        124
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "0c04d03a5a7b",
+      "src": "assets/sprites/packed/world/props/a4env_ash_east.webp"
+    },
+    "world.prop.a4env_ash_east_alt": {
+      "anchor": [
+        112,
+        127
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3e24a73e5e04",
+      "src": "assets/sprites/packed/world/props/a4env_ash_east_alt.webp"
+    },
+    "world.prop.a4env_ash_end_east": {
+      "anchor": [
+        56,
+        72
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3cb1ebc21601",
+      "src": "assets/sprites/packed/world/props/a4env_ash_end_east.webp"
+    },
+    "world.prop.a4env_ash_end_south": {
+      "anchor": [
+        56,
+        68
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "79f5fcf67ce4",
+      "src": "assets/sprites/packed/world/props/a4env_ash_end_south.webp"
+    },
+    "world.prop.a4env_ash_foundation_corner": {
+      "anchor": [
+        56,
+        36
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "64f1a844f2f6",
+      "src": "assets/sprites/packed/world/props/a4env_ash_foundation_corner.webp"
+    },
+    "world.prop.a4env_ash_foundation_east": {
+      "anchor": [
+        112,
+        59
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "4073bc15e635",
+      "src": "assets/sprites/packed/world/props/a4env_ash_foundation_east.webp"
+    },
+    "world.prop.a4env_ash_foundation_south": {
+      "anchor": [
+        112,
+        59
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "af90faf11ebb",
+      "src": "assets/sprites/packed/world/props/a4env_ash_foundation_south.webp"
+    },
+    "world.prop.a4env_ash_inner": {
+      "anchor": [
+        56,
+        65
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "2a65b3e32052",
+      "src": "assets/sprites/packed/world/props/a4env_ash_inner.webp"
+    },
+    "world.prop.a4env_ash_outer": {
+      "anchor": [
+        56,
+        61
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "94681e33dc66",
+      "src": "assets/sprites/packed/world/props/a4env_ash_outer.webp"
+    },
+    "world.prop.a4env_ash_south": {
+      "anchor": [
+        112,
+        117
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a85106d70db0",
+      "src": "assets/sprites/packed/world/props/a4env_ash_south.webp"
+    },
+    "world.prop.a4env_ash_south_alt": {
+      "anchor": [
+        112,
+        117
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c59fbe852ede",
+      "src": "assets/sprites/packed/world/props/a4env_ash_south_alt.webp"
+    },
+    "world.prop.a4env_bastion_abutment": {
+      "anchor": [
+        56,
+        36
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b31c02b0635c",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_abutment.webp"
+    },
+    "world.prop.a4env_bastion_broken_east": {
+      "anchor": [
+        112,
+        103
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8f22043a8fec",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_broken_east.webp"
+    },
+    "world.prop.a4env_bastion_broken_south": {
+      "anchor": [
+        112,
+        108
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f9d353243fab",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_broken_south.webp"
+    },
+    "world.prop.a4env_bastion_door_east": {
+      "anchor": [
+        112,
+        169
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "eea6002ffc5e",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_door_east.webp"
+    },
+    "world.prop.a4env_bastion_door_south": {
+      "anchor": [
+        112,
+        155
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "2225a7dc21f3",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_door_south.webp"
+    },
+    "world.prop.a4env_bastion_east": {
+      "anchor": [
+        112,
+        159
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "7e310602892d",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_east.webp"
+    },
+    "world.prop.a4env_bastion_east_alt": {
+      "anchor": [
+        112,
+        159
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f2aa690b7f02",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_east_alt.webp"
+    },
+    "world.prop.a4env_bastion_end_east": {
+      "anchor": [
+        56,
+        101
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "cb125a2b28c7",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_end_east.webp"
+    },
+    "world.prop.a4env_bastion_end_south": {
+      "anchor": [
+        56,
+        98
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1062c1628730",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_end_south.webp"
+    },
+    "world.prop.a4env_bastion_foundation_corner": {
+      "anchor": [
+        56,
+        36
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "fb4fdf1bc574",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_foundation_corner.webp"
+    },
+    "world.prop.a4env_bastion_foundation_east": {
+      "anchor": [
+        112,
+        59
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a32fb7f24aab",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_foundation_east.webp"
+    },
+    "world.prop.a4env_bastion_foundation_south": {
+      "anchor": [
+        112,
+        59
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f1b5bc28eff9",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_foundation_south.webp"
+    },
+    "world.prop.a4env_bastion_inner": {
+      "anchor": [
+        56,
+        80
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "532edab8cb6d",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_inner.webp"
+    },
+    "world.prop.a4env_bastion_outer": {
+      "anchor": [
+        56,
+        81
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "5d1e8b2f0537",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_outer.webp"
+    },
+    "world.prop.a4env_bastion_south": {
+      "anchor": [
+        112,
+        157
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "751bb989e953",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_south.webp"
+    },
+    "world.prop.a4env_bastion_south_alt": {
+      "anchor": [
+        112,
+        156
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "5dd63def8727",
+      "src": "assets/sprites/packed/world/props/a4env_bastion_south_alt.webp"
+    },
+    "world.prop.a4env_dark_abutment": {
+      "anchor": [
+        56,
+        36
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "dc45bd71e829",
+      "src": "assets/sprites/packed/world/props/a4env_dark_abutment.webp"
+    },
+    "world.prop.a4env_dark_broken_east": {
+      "anchor": [
+        112,
+        166
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "218bb881e1e9",
+      "src": "assets/sprites/packed/world/props/a4env_dark_broken_east.webp"
+    },
+    "world.prop.a4env_dark_broken_south": {
+      "anchor": [
+        112,
+        125
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "45e2d91df568",
+      "src": "assets/sprites/packed/world/props/a4env_dark_broken_south.webp"
+    },
+    "world.prop.a4env_dark_door_east": {
+      "anchor": [
+        112,
+        280
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3ba7cecabd7e",
+      "src": "assets/sprites/packed/world/props/a4env_dark_door_east.webp"
+    },
+    "world.prop.a4env_dark_door_south": {
+      "anchor": [
+        112,
+        307
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "2015ab4b3bee",
+      "src": "assets/sprites/packed/world/props/a4env_dark_door_south.webp"
+    },
+    "world.prop.a4env_dark_east": {
+      "anchor": [
+        112,
+        218
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "016fd5eb5d8c",
+      "src": "assets/sprites/packed/world/props/a4env_dark_east.webp"
+    },
+    "world.prop.a4env_dark_east_alt": {
+      "anchor": [
+        112,
+        209
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b431a2c2b53e",
+      "src": "assets/sprites/packed/world/props/a4env_dark_east_alt.webp"
+    },
+    "world.prop.a4env_dark_end_east": {
+      "anchor": [
+        56,
+        162
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1460a2523624",
+      "src": "assets/sprites/packed/world/props/a4env_dark_end_east.webp"
+    },
+    "world.prop.a4env_dark_end_south": {
+      "anchor": [
+        56,
+        157
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "5801d9245f93",
+      "src": "assets/sprites/packed/world/props/a4env_dark_end_south.webp"
+    },
+    "world.prop.a4env_dark_foundation_corner": {
+      "anchor": [
+        56,
+        36
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a63d21e7e081",
+      "src": "assets/sprites/packed/world/props/a4env_dark_foundation_corner.webp"
+    },
+    "world.prop.a4env_dark_foundation_east": {
+      "anchor": [
+        112,
+        59
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a83b058f2992",
+      "src": "assets/sprites/packed/world/props/a4env_dark_foundation_east.webp"
+    },
+    "world.prop.a4env_dark_foundation_south": {
+      "anchor": [
+        112,
+        59
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3eb005868444",
+      "src": "assets/sprites/packed/world/props/a4env_dark_foundation_south.webp"
+    },
+    "world.prop.a4env_dark_inner": {
+      "anchor": [
+        56,
+        98
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3274d56dec6f",
+      "src": "assets/sprites/packed/world/props/a4env_dark_inner.webp"
+    },
+    "world.prop.a4env_dark_outer": {
+      "anchor": [
+        56,
+        102
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8be4b6591eff",
+      "src": "assets/sprites/packed/world/props/a4env_dark_outer.webp"
+    },
+    "world.prop.a4env_dark_south": {
+      "anchor": [
+        112,
+        215
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "03049a961bf5",
+      "src": "assets/sprites/packed/world/props/a4env_dark_south.webp"
+    },
+    "world.prop.a4env_dark_south_alt": {
+      "anchor": [
+        112,
+        207
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "80d578efe2e5",
+      "src": "assets/sprites/packed/world/props/a4env_dark_south_alt.webp"
+    },
+    "world.prop.a4env_floor_ash": {
+      "anchor": [
+        192,
+        192
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8210e253c184",
+      "src": "assets/sprites/packed/world/props/a4env_floor_ash.webp"
+    },
+    "world.prop.a4env_floor_bastion": {
+      "anchor": [
+        192,
+        191
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "98e7c63c8549",
+      "src": "assets/sprites/packed/world/props/a4env_floor_bastion.webp"
+    },
+    "world.prop.a4env_floor_dark": {
+      "anchor": [
+        192,
+        192
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "27559a4983b9",
+      "src": "assets/sprites/packed/world/props/a4env_floor_dark.webp"
+    },
+    "world.prop.a4env_floor_pale": {
+      "anchor": [
+        192,
+        191
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "894296992cb2",
+      "src": "assets/sprites/packed/world/props/a4env_floor_pale.webp"
+    },
+    "world.prop.a4env_pale_abutment": {
+      "anchor": [
+        56,
+        36
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "23edf7038b8e",
+      "src": "assets/sprites/packed/world/props/a4env_pale_abutment.webp"
+    },
+    "world.prop.a4env_pale_broken_east": {
+      "anchor": [
+        112,
+        114
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c776f72567a7",
+      "src": "assets/sprites/packed/world/props/a4env_pale_broken_east.webp"
+    },
+    "world.prop.a4env_pale_broken_south": {
+      "anchor": [
+        112,
+        106
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "5f912c8a359a",
+      "src": "assets/sprites/packed/world/props/a4env_pale_broken_south.webp"
+    },
+    "world.prop.a4env_pale_door_east": {
+      "anchor": [
+        112,
+        229
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "75ecbbe9494a",
+      "src": "assets/sprites/packed/world/props/a4env_pale_door_east.webp"
+    },
+    "world.prop.a4env_pale_door_south": {
+      "anchor": [
+        112,
+        226
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f72dd5dc22b4",
+      "src": "assets/sprites/packed/world/props/a4env_pale_door_south.webp"
+    },
+    "world.prop.a4env_pale_east": {
+      "anchor": [
+        112,
+        178
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c2cda6da7813",
+      "src": "assets/sprites/packed/world/props/a4env_pale_east.webp"
+    },
+    "world.prop.a4env_pale_east_alt": {
+      "anchor": [
+        112,
+        179
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "71b3ac50d4f0",
+      "src": "assets/sprites/packed/world/props/a4env_pale_east_alt.webp"
+    },
+    "world.prop.a4env_pale_end_east": {
+      "anchor": [
+        56,
+        135
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "bcbe08c44f69",
+      "src": "assets/sprites/packed/world/props/a4env_pale_end_east.webp"
+    },
+    "world.prop.a4env_pale_end_south": {
+      "anchor": [
+        56,
+        135
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "49701339f192",
+      "src": "assets/sprites/packed/world/props/a4env_pale_end_south.webp"
+    },
+    "world.prop.a4env_pale_foundation_corner": {
+      "anchor": [
+        56,
+        36
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "46bf1806370a",
+      "src": "assets/sprites/packed/world/props/a4env_pale_foundation_corner.webp"
+    },
+    "world.prop.a4env_pale_foundation_east": {
+      "anchor": [
+        112,
+        59
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "82bfae873c9c",
+      "src": "assets/sprites/packed/world/props/a4env_pale_foundation_east.webp"
+    },
+    "world.prop.a4env_pale_foundation_south": {
+      "anchor": [
+        112,
+        59
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "617fcb03b210",
+      "src": "assets/sprites/packed/world/props/a4env_pale_foundation_south.webp"
+    },
+    "world.prop.a4env_pale_inner": {
+      "anchor": [
+        56,
+        77
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e83934cb358e",
+      "src": "assets/sprites/packed/world/props/a4env_pale_inner.webp"
+    },
+    "world.prop.a4env_pale_outer": {
+      "anchor": [
+        56,
+        88
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "edc53150adfa",
+      "src": "assets/sprites/packed/world/props/a4env_pale_outer.webp"
+    },
+    "world.prop.a4env_pale_south": {
+      "anchor": [
+        112,
+        178
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c3d5e1bed0d9",
+      "src": "assets/sprites/packed/world/props/a4env_pale_south.webp"
+    },
+    "world.prop.a4env_pale_south_alt": {
+      "anchor": [
+        112,
+        174
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "28de5e8c8b3f",
+      "src": "assets/sprites/packed/world/props/a4env_pale_south_alt.webp"
+    },
+    "world.prop.a4env_transition_ash": {
+      "anchor": [
+        75,
+        55
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "edac5492b891",
+      "src": "assets/sprites/packed/world/props/a4env_transition_ash.webp"
+    },
+    "world.prop.a4env_transition_bastion": {
+      "anchor": [
+        75,
+        56
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9afbbd4cf07e",
+      "src": "assets/sprites/packed/world/props/a4env_transition_bastion.webp"
+    },
+    "world.prop.a4env_transition_dark": {
+      "anchor": [
+        75,
+        57
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3112ee76a58b",
+      "src": "assets/sprites/packed/world/props/a4env_transition_dark.webp"
+    },
+    "world.prop.a4env_transition_pale": {
+      "anchor": [
+        75,
+        56
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "fab66d77c9b8",
+      "src": "assets/sprites/packed/world/props/a4env_transition_pale.webp"
+    },
+    "world.prop.a4stone_paving": {
+      "anchor": [
+        256,
+        256
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1c2f712fe607",
+      "src": "assets/sprites/packed/world/props/a4stone_paving.webp"
+    },
+    "world.prop.a4v2_cliff_ash": {
+      "anchor": [
+        512,
+        85
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "df87fa72f8b0",
+      "src": "assets/sprites/packed/world/props/a4v2_cliff_ash.webp"
+    },
+    "world.prop.a4v2_cliff_bastion": {
+      "anchor": [
+        512,
+        103
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "62b9e503defa",
+      "src": "assets/sprites/packed/world/props/a4v2_cliff_bastion.webp"
+    },
+    "world.prop.a4v2_cliff_dark": {
+      "anchor": [
+        512,
+        95
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "4935e5adc048",
+      "src": "assets/sprites/packed/world/props/a4v2_cliff_dark.webp"
+    },
+    "world.prop.a4v2_cliff_pale": {
+      "anchor": [
+        512,
+        92
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "92c59bd2dcdd",
+      "src": "assets/sprites/packed/world/props/a4v2_cliff_pale.webp"
+    },
+    "world.prop.a4v2_crag_ash": {
+      "anchor": [
+        112,
+        140
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f77ac25d498e",
+      "src": "assets/sprites/packed/world/props/a4v2_crag_ash.webp"
+    },
+    "world.prop.a4v2_crag_bastion": {
+      "anchor": [
+        112,
+        134
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "47c7d5f71893",
+      "src": "assets/sprites/packed/world/props/a4v2_crag_bastion.webp"
+    },
+    "world.prop.a4v2_crag_dark": {
+      "anchor": [
+        112,
+        138
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d041e8b55438",
+      "src": "assets/sprites/packed/world/props/a4v2_crag_dark.webp"
+    },
+    "world.prop.a4v2_crag_pale": {
+      "anchor": [
+        112,
+        147
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e2b26eb7652e",
+      "src": "assets/sprites/packed/world/props/a4v2_crag_pale.webp"
+    },
+    "world.prop.a4v2_door_ash": {
+      "anchor": [
+        200,
+        138
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b77c8a72723b",
+      "src": "assets/sprites/packed/world/props/a4v2_door_ash.webp"
+    },
+    "world.prop.a4v2_door_bastion": {
+      "anchor": [
+        200,
+        134
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "82d8283323cb",
+      "src": "assets/sprites/packed/world/props/a4v2_door_bastion.webp"
+    },
+    "world.prop.a4v2_door_dark": {
+      "anchor": [
+        200,
+        139
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d5deff54b1c4",
+      "src": "assets/sprites/packed/world/props/a4v2_door_dark.webp"
+    },
+    "world.prop.a4v2_door_pale": {
+      "anchor": [
+        200,
+        138
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "4fdc92dd64a3",
+      "src": "assets/sprites/packed/world/props/a4v2_door_pale.webp"
+    },
+    "world.prop.a4v2_floor_ash": {
+      "anchor": [
+        256,
+        256
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "852921dca87a",
+      "src": "assets/sprites/packed/world/props/a4v2_floor_ash.webp"
+    },
+    "world.prop.a4v2_floor_bastion": {
+      "anchor": [
+        256,
+        256
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "16400486475c",
+      "src": "assets/sprites/packed/world/props/a4v2_floor_bastion.webp"
+    },
+    "world.prop.a4v2_floor_dark": {
+      "anchor": [
+        256,
+        256
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "2bdae131a19e",
+      "src": "assets/sprites/packed/world/props/a4v2_floor_dark.webp"
+    },
+    "world.prop.a4v2_floor_pale": {
+      "anchor": [
+        256,
+        256
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d2900418c67b",
+      "src": "assets/sprites/packed/world/props/a4v2_floor_pale.webp"
+    },
+    "world.prop.a4v2_inlay_ash": {
+      "anchor": [
+        384,
+        384
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1a06ee7f7b00",
+      "src": "assets/sprites/packed/world/props/a4v2_inlay_ash.webp"
+    },
+    "world.prop.a4v2_inlay_bastion": {
+      "anchor": [
+        384,
+        384
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d58da6b1e2f7",
+      "src": "assets/sprites/packed/world/props/a4v2_inlay_bastion.webp"
+    },
+    "world.prop.a4v2_inlay_dark": {
+      "anchor": [
+        384,
+        384
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "95e451beb92a",
+      "src": "assets/sprites/packed/world/props/a4v2_inlay_dark.webp"
+    },
+    "world.prop.a4v2_inlay_pale": {
+      "anchor": [
+        384,
+        384
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "0e4c1f0c90eb",
+      "src": "assets/sprites/packed/world/props/a4v2_inlay_pale.webp"
+    },
+    "world.prop.a4v2_pier_ash": {
+      "anchor": [
+        56,
+        78
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1aa61b3c52a8",
+      "src": "assets/sprites/packed/world/props/a4v2_pier_ash.webp"
+    },
+    "world.prop.a4v2_pier_bastion": {
+      "anchor": [
+        56,
+        84
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1c1422c53497",
+      "src": "assets/sprites/packed/world/props/a4v2_pier_bastion.webp"
+    },
+    "world.prop.a4v2_pier_dark": {
+      "anchor": [
+        56,
+        103
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "946d72c70e83",
+      "src": "assets/sprites/packed/world/props/a4v2_pier_dark.webp"
+    },
+    "world.prop.a4v2_pier_pale": {
+      "anchor": [
+        56,
+        102
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "23ec39ad1f04",
+      "src": "assets/sprites/packed/world/props/a4v2_pier_pale.webp"
+    },
+    "world.prop.a4v2_wall_ash": {
+      "anchor": [
+        512,
+        80
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b34e2424dcf5",
+      "src": "assets/sprites/packed/world/props/a4v2_wall_ash.webp"
+    },
+    "world.prop.a4v2_wall_bastion": {
+      "anchor": [
+        512,
+        107
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "7537bd99a690",
+      "src": "assets/sprites/packed/world/props/a4v2_wall_bastion.webp"
+    },
+    "world.prop.a4v2_wall_dark": {
+      "anchor": [
+        512,
+        91
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "af146016828a",
+      "src": "assets/sprites/packed/world/props/a4v2_wall_dark.webp"
+    },
+    "world.prop.a4v2_wall_pale": {
+      "anchor": [
+        512,
+        96
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "081f0cc6dab7",
+      "src": "assets/sprites/packed/world/props/a4v2_wall_pale.webp"
+    },
+    "world.prop.a5env_bastion_broken_east": {
+      "anchor": [
+        126,
+        176
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "0e398ee66467",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_broken_east.webp"
+    },
+    "world.prop.a5env_bastion_broken_south": {
+      "anchor": [
+        126,
+        184
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9c131ae2d271",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_broken_south.webp"
+    },
+    "world.prop.a5env_bastion_connector_east": {
+      "anchor": [
+        168,
+        250
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "08f578c43beb",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_connector_east.webp"
+    },
+    "world.prop.a5env_bastion_connector_south": {
+      "anchor": [
+        168,
+        247
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9b8227f70e08",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_connector_south.webp"
+    },
+    "world.prop.a5env_bastion_door_east": {
+      "anchor": [
+        168,
+        250
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "08f578c43beb",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_door_east.webp"
+    },
+    "world.prop.a5env_bastion_door_south": {
+      "anchor": [
+        168,
+        247
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9b8227f70e08",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_door_south.webp"
+    },
+    "world.prop.a5env_bastion_east": {
+      "anchor": [
+        126,
+        193
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9a1db6030f4b",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_east.webp"
+    },
+    "world.prop.a5env_bastion_east_alt": {
+      "anchor": [
+        126,
+        191
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "06ae81409642",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_east_alt.webp"
+    },
+    "world.prop.a5env_bastion_end_east": {
+      "anchor": [
+        63,
+        119
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3ac4efd1babd",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_end_east.webp"
+    },
+    "world.prop.a5env_bastion_end_south": {
+      "anchor": [
+        63,
+        124
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f50d7344c0bd",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_end_south.webp"
+    },
+    "world.prop.a5env_bastion_ground": {
+      "anchor": [
+        126,
+        90
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "264351a88439",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_ground.webp"
+    },
+    "world.prop.a5env_bastion_inner": {
+      "anchor": [
+        126,
+        166
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a1a59c5c864a",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_inner.webp"
+    },
+    "world.prop.a5env_bastion_outer": {
+      "anchor": [
+        126,
+        155
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a005e911e77a",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_outer.webp"
+    },
+    "world.prop.a5env_bastion_pillar": {
+      "anchor": [
+        29,
+        50
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "0327bcbf8f34",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_pillar.webp"
+    },
+    "world.prop.a5env_bastion_south": {
+      "anchor": [
+        126,
+        193
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "6d3e32906fc5",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_south.webp"
+    },
+    "world.prop.a5env_bastion_south_alt": {
+      "anchor": [
+        126,
+        192
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "59d47c367abc",
+      "src": "assets/sprites/packed/world/props/a5env_bastion_south_alt.webp"
+    },
+    "world.prop.a5env_biome_broken_east": {
+      "anchor": [
+        84,
+        57
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "48c55a3fcc3b",
+      "src": "assets/sprites/packed/world/props/a5env_biome_broken_east.webp"
+    },
+    "world.prop.a5env_biome_broken_south": {
+      "anchor": [
+        84,
+        61
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e3e8ad1dd1ea",
+      "src": "assets/sprites/packed/world/props/a5env_biome_broken_south.webp"
+    },
+    "world.prop.a5env_biome_east": {
+      "anchor": [
+        84,
+        66
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "da163c9ab71e",
+      "src": "assets/sprites/packed/world/props/a5env_biome_east.webp"
+    },
+    "world.prop.a5env_biome_east_alt": {
+      "anchor": [
+        84,
+        55
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ae99b105d76d",
+      "src": "assets/sprites/packed/world/props/a5env_biome_east_alt.webp"
+    },
+    "world.prop.a5env_biome_end_east": {
+      "anchor": [
+        84,
+        68
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "cfc2654cfc62",
+      "src": "assets/sprites/packed/world/props/a5env_biome_end_east.webp"
+    },
+    "world.prop.a5env_biome_end_south": {
+      "anchor": [
+        84,
+        56
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "bb4d9a73eecc",
+      "src": "assets/sprites/packed/world/props/a5env_biome_end_south.webp"
+    },
+    "world.prop.a5env_biome_ground": {
+      "anchor": [
+        84,
+        47
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "073ba9b46d40",
+      "src": "assets/sprites/packed/world/props/a5env_biome_ground.webp"
+    },
+    "world.prop.a5env_biome_inner": {
+      "anchor": [
+        84,
+        87
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "514b6eaabc34",
+      "src": "assets/sprites/packed/world/props/a5env_biome_inner.webp"
+    },
+    "world.prop.a5env_biome_outer": {
+      "anchor": [
+        84,
+        77
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8d6125a0cafa",
+      "src": "assets/sprites/packed/world/props/a5env_biome_outer.webp"
+    },
+    "world.prop.a5env_biome_pillar": {
+      "anchor": [
+        63,
+        64
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "dc509573fb2b",
+      "src": "assets/sprites/packed/world/props/a5env_biome_pillar.webp"
+    },
+    "world.prop.a5env_biome_south": {
+      "anchor": [
+        84,
+        58
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "35097acef524",
+      "src": "assets/sprites/packed/world/props/a5env_biome_south.webp"
+    },
+    "world.prop.a5env_biome_south_alt": {
+      "anchor": [
+        84,
+        61
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e3e8ad1dd1ea",
+      "src": "assets/sprites/packed/world/props/a5env_biome_south_alt.webp"
+    },
+    "world.prop.a5env_defense_broken_east": {
+      "anchor": [
+        126,
+        165
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ccf7a400d6e0",
+      "src": "assets/sprites/packed/world/props/a5env_defense_broken_east.webp"
+    },
+    "world.prop.a5env_defense_broken_south": {
+      "anchor": [
+        126,
+        165
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c6500673bd0f",
+      "src": "assets/sprites/packed/world/props/a5env_defense_broken_south.webp"
+    },
+    "world.prop.a5env_defense_connector_east": {
+      "anchor": [
+        168,
+        216
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8538c35cb2fa",
+      "src": "assets/sprites/packed/world/props/a5env_defense_connector_east.webp"
+    },
+    "world.prop.a5env_defense_connector_south": {
+      "anchor": [
+        168,
+        225
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "fb0956ec685b",
+      "src": "assets/sprites/packed/world/props/a5env_defense_connector_south.webp"
+    },
+    "world.prop.a5env_defense_door_east": {
+      "anchor": [
+        168,
+        216
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8538c35cb2fa",
+      "src": "assets/sprites/packed/world/props/a5env_defense_door_east.webp"
+    },
+    "world.prop.a5env_defense_door_south": {
+      "anchor": [
+        168,
+        225
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "fb0956ec685b",
+      "src": "assets/sprites/packed/world/props/a5env_defense_door_south.webp"
+    },
+    "world.prop.a5env_defense_east": {
+      "anchor": [
+        126,
+        168
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "4151e0e3ada5",
+      "src": "assets/sprites/packed/world/props/a5env_defense_east.webp"
+    },
+    "world.prop.a5env_defense_east_alt": {
+      "anchor": [
+        126,
+        166
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c24042cd29b3",
+      "src": "assets/sprites/packed/world/props/a5env_defense_east_alt.webp"
+    },
+    "world.prop.a5env_defense_end_east": {
+      "anchor": [
+        63,
+        92
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "4226bd471fe8",
+      "src": "assets/sprites/packed/world/props/a5env_defense_end_east.webp"
+    },
+    "world.prop.a5env_defense_end_south": {
+      "anchor": [
+        63,
+        99
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "cb5dd76fc35d",
+      "src": "assets/sprites/packed/world/props/a5env_defense_end_south.webp"
+    },
+    "world.prop.a5env_defense_ground": {
+      "anchor": [
+        126,
+        85
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a746afa68703",
+      "src": "assets/sprites/packed/world/props/a5env_defense_ground.webp"
+    },
+    "world.prop.a5env_defense_inner": {
+      "anchor": [
+        126,
+        168
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d0d5dedf22f8",
+      "src": "assets/sprites/packed/world/props/a5env_defense_inner.webp"
+    },
+    "world.prop.a5env_defense_outer": {
+      "anchor": [
+        126,
+        147
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "6d6d3c7c38c3",
+      "src": "assets/sprites/packed/world/props/a5env_defense_outer.webp"
+    },
+    "world.prop.a5env_defense_pillar": {
+      "anchor": [
+        29,
+        65
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "7e9dfebbd70a",
+      "src": "assets/sprites/packed/world/props/a5env_defense_pillar.webp"
+    },
+    "world.prop.a5env_defense_south": {
+      "anchor": [
+        126,
+        162
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "69f6d7f883f5",
+      "src": "assets/sprites/packed/world/props/a5env_defense_south.webp"
+    },
+    "world.prop.a5env_defense_south_alt": {
+      "anchor": [
+        126,
+        165
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c6500673bd0f",
+      "src": "assets/sprites/packed/world/props/a5env_defense_south_alt.webp"
+    },
+    "world.prop.a5env_throne_broken_east": {
+      "anchor": [
+        126,
+        196
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1ebe8d394cf7",
+      "src": "assets/sprites/packed/world/props/a5env_throne_broken_east.webp"
+    },
+    "world.prop.a5env_throne_broken_south": {
+      "anchor": [
+        126,
+        164
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "30b73d193929",
+      "src": "assets/sprites/packed/world/props/a5env_throne_broken_south.webp"
+    },
+    "world.prop.a5env_throne_connector_east": {
+      "anchor": [
+        168,
+        267
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "be93a4411bf0",
+      "src": "assets/sprites/packed/world/props/a5env_throne_connector_east.webp"
+    },
+    "world.prop.a5env_throne_connector_south": {
+      "anchor": [
+        168,
+        260
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "60893503f0b2",
+      "src": "assets/sprites/packed/world/props/a5env_throne_connector_south.webp"
+    },
+    "world.prop.a5env_throne_door_east": {
+      "anchor": [
+        168,
+        267
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "be93a4411bf0",
+      "src": "assets/sprites/packed/world/props/a5env_throne_door_east.webp"
+    },
+    "world.prop.a5env_throne_door_south": {
+      "anchor": [
+        168,
+        260
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "60893503f0b2",
+      "src": "assets/sprites/packed/world/props/a5env_throne_door_south.webp"
+    },
+    "world.prop.a5env_throne_east": {
+      "anchor": [
+        126,
+        168
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "53bf3647ab21",
+      "src": "assets/sprites/packed/world/props/a5env_throne_east.webp"
+    },
+    "world.prop.a5env_throne_east_alt": {
+      "anchor": [
+        126,
+        178
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "71b7132b48a7",
+      "src": "assets/sprites/packed/world/props/a5env_throne_east_alt.webp"
+    },
+    "world.prop.a5env_throne_end_east": {
+      "anchor": [
+        63,
+        110
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "296691b07c95",
+      "src": "assets/sprites/packed/world/props/a5env_throne_end_east.webp"
+    },
+    "world.prop.a5env_throne_end_south": {
+      "anchor": [
+        63,
+        81
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e71fb497a2ce",
+      "src": "assets/sprites/packed/world/props/a5env_throne_end_south.webp"
+    },
+    "world.prop.a5env_throne_ground": {
+      "anchor": [
+        126,
+        81
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "40aaedb61896",
+      "src": "assets/sprites/packed/world/props/a5env_throne_ground.webp"
+    },
+    "world.prop.a5env_throne_inner": {
+      "anchor": [
+        126,
+        200
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f6d467e71ef5",
+      "src": "assets/sprites/packed/world/props/a5env_throne_inner.webp"
+    },
+    "world.prop.a5env_throne_outer": {
+      "anchor": [
+        126,
+        157
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "246c4e03b245",
+      "src": "assets/sprites/packed/world/props/a5env_throne_outer.webp"
+    },
+    "world.prop.a5env_throne_pillar": {
+      "anchor": [
+        29,
+        49
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "57e7d88a71f8",
+      "src": "assets/sprites/packed/world/props/a5env_throne_pillar.webp"
+    },
+    "world.prop.a5env_throne_south": {
+      "anchor": [
+        126,
+        164
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "30b73d193929",
+      "src": "assets/sprites/packed/world/props/a5env_throne_south.webp"
+    },
+    "world.prop.a5env_throne_south_alt": {
+      "anchor": [
+        126,
+        164
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "30b73d193929",
+      "src": "assets/sprites/packed/world/props/a5env_throne_south_alt.webp"
+    },
     "world.prop.act2_bell_tower": {
       "anchor": [
         165,
@@ -18136,6 +21966,16 @@ DATA.SPRITE_MANIFEST = {
       "kind": "static",
       "revision": "be4465a78c31",
       "src": "assets/sprites/packed/world/props/cathedral_parapet.webp"
+    },
+    "world.prop.cathedral_pews": {
+      "anchor": [
+        120,
+        126
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b5c1b21bed15",
+      "src": "assets/sprites/packed/world/props/cathedral_pews.webp"
     },
     "world.prop.cathedral_reliquary": {
       "anchor": [
@@ -19906,6 +23746,1272 @@ DATA.SPRITE_MANIFEST = {
       "kind": "static",
       "revision": "024ed0e8d9ff",
       "src": "assets/sprites/packed/world/props/woodpile.webp"
+    },
+    "world.props.act1": {
+      "anchor": [
+        80,
+        152
+      ],
+      "bundle": "world",
+      "cell": [
+        160,
+        160
+      ],
+      "cols": 4,
+      "hitShapes": [
+        {
+          "bounds": [
+            41,
+            40,
+            119,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            41,
+            40,
+            119,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            49,
+            106,
+            111,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            49,
+            95,
+            112,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            84,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            94,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            95,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            107,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            49,
+            102,
+            111,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            50,
+            93,
+            111,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            78,
+            112,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            72,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            73,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            69,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            68,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            53,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            54,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            65,
+            115,
+            95,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            56,
+            119,
+            104,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            59,
+            106,
+            102,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            53,
+            109,
+            107,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            68,
+            115,
+            93,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            59,
+            121,
+            101,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            58,
+            115,
+            102,
+            155
+          ]
+        }
+      ],
+      "kind": "atlas",
+      "propArt": true,
+      "revision": "198b7c1022a9",
+      "rows": 6,
+      "src": "assets/sprites/packed/world/props/interactive_act1.webp"
+    },
+    "world.props.act2": {
+      "anchor": [
+        80,
+        152
+      ],
+      "bundle": "world",
+      "cell": [
+        160,
+        160
+      ],
+      "cols": 4,
+      "hitShapes": [
+        {
+          "bounds": [
+            41,
+            59,
+            119,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            41,
+            59,
+            119,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            51,
+            102,
+            110,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            50,
+            91,
+            111,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            82,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            52,
+            92,
+            108,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            99,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            98,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            50,
+            99,
+            111,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            49,
+            90,
+            111,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            83,
+            112,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            66,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            66,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            68,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            69,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            68,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            68,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            65,
+            111,
+            95,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            56,
+            110,
+            104,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            59,
+            110,
+            101,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            53,
+            108,
+            107,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            68,
+            110,
+            93,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            59,
+            122,
+            101,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            58,
+            115,
+            102,
+            155
+          ]
+        }
+      ],
+      "kind": "atlas",
+      "propArt": true,
+      "revision": "046fb75f36a8",
+      "rows": 6,
+      "src": "assets/sprites/packed/world/props/interactive_act2.webp"
+    },
+    "world.props.act3": {
+      "anchor": [
+        80,
+        152
+      ],
+      "bundle": "world",
+      "cell": [
+        160,
+        160
+      ],
+      "cols": 4,
+      "hitShapes": [
+        {
+          "bounds": [
+            42,
+            47,
+            119,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            41,
+            47,
+            119,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            51,
+            97,
+            110,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            52,
+            96,
+            109,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            80,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            96,
+            112,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            97,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            101,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            97,
+            112,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            49,
+            94,
+            112,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            49,
+            83,
+            112,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            43,
+            79,
+            117,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            76,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            43,
+            65,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            64,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            68,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            64,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            66,
+            113,
+            95,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            56,
+            113,
+            104,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            60,
+            110,
+            100,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            53,
+            109,
+            107,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            69,
+            108,
+            92,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            59,
+            115,
+            101,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            58,
+            119,
+            102,
+            155
+          ]
+        }
+      ],
+      "kind": "atlas",
+      "propArt": true,
+      "revision": "dba5d6c74070",
+      "rows": 6,
+      "src": "assets/sprites/packed/world/props/interactive_act3.webp"
+    },
+    "world.props.act4": {
+      "anchor": [
+        80,
+        152
+      ],
+      "bundle": "world",
+      "cell": [
+        160,
+        160
+      ],
+      "cols": 4,
+      "hitShapes": [
+        {
+          "bounds": [
+            42,
+            50,
+            119,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            41,
+            49,
+            119,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            99,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            49,
+            91,
+            112,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            84,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            90,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            92,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            101,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            49,
+            96,
+            112,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            50,
+            95,
+            110,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            81,
+            112,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            79,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            78,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            43,
+            63,
+            117,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            62,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            52,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            52,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            65,
+            111,
+            96,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            56,
+            113,
+            104,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            60,
+            110,
+            101,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            53,
+            110,
+            107,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            68,
+            108,
+            93,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            59,
+            113,
+            101,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            58,
+            105,
+            102,
+            155
+          ]
+        }
+      ],
+      "kind": "atlas",
+      "propArt": true,
+      "revision": "d4833c61d79d",
+      "rows": 6,
+      "src": "assets/sprites/packed/world/props/interactive_act4.webp"
+    },
+    "world.props.act5": {
+      "anchor": [
+        80,
+        152
+      ],
+      "bundle": "world",
+      "cell": [
+        160,
+        160
+      ],
+      "cols": 4,
+      "hitShapes": [
+        {
+          "bounds": [
+            41,
+            36,
+            119,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            41,
+            36,
+            119,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            51,
+            99,
+            109,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            49,
+            92,
+            112,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            81,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            52,
+            87,
+            109,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            95,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            49,
+            105,
+            111,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            49,
+            96,
+            111,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            49,
+            90,
+            111,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            79,
+            112,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            75,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            44,
+            76,
+            117,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            60,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            42,
+            59,
+            118,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            47,
+            48,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            48,
+            48,
+            113,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            65,
+            114,
+            95,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            56,
+            118,
+            104,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            59,
+            110,
+            102,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            53,
+            109,
+            107,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            68,
+            114,
+            92,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            59,
+            120,
+            101,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            58,
+            91,
+            102,
+            155
+          ]
+        }
+      ],
+      "kind": "atlas",
+      "propArt": true,
+      "revision": "396b13fafeaa",
+      "rows": 6,
+      "src": "assets/sprites/packed/world/props/interactive_act5.webp"
+    },
+    "world.props.remains_events": {
+      "anchor": [
+        80,
+        152
+      ],
+      "bundle": "world",
+      "cell": [
+        160,
+        160
+      ],
+      "cols": 4,
+      "hitShapes": [
+        {
+          "bounds": [
+            39,
+            84,
+            121,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            40,
+            84,
+            121,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            39,
+            82,
+            121,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            39,
+            83,
+            121,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            40,
+            79,
+            120,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            39,
+            79,
+            121,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            34,
+            80,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            35,
+            81,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            34,
+            73,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            34,
+            75,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            34,
+            67,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            34,
+            68,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            34,
+            69,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            35,
+            70,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            34,
+            67,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            35,
+            68,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            34,
+            58,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            35,
+            60,
+            125,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            34,
+            75,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            39,
+            96,
+            122,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            34,
+            68,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            34,
+            66,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            34,
+            37,
+            126,
+            155
+          ]
+        },
+        {
+          "bounds": [
+            34,
+            64,
+            126,
+            155
+          ]
+        }
+      ],
+      "kind": "atlas",
+      "propArt": true,
+      "revision": "32cfe23d74ff",
+      "rows": 6,
+      "src": "assets/sprites/packed/world/props/interactive_remains_events.webp"
     },
     "world.trap.barbed": {
       "anchor": [
@@ -33527,6 +38633,389 @@ DATA.SPRITE_MANIFEST = {
       "wildkeeper": "player.rig.wildkeeper.body.neutral.body"
     },
     "props": {
+      "a1env_ice_broken": "world.prop.a1env_ice_broken",
+      "a1env_ice_door_in": "world.prop.a1env_ice_door_in",
+      "a1env_ice_door_out": "world.prop.a1env_ice_door_out",
+      "a1env_ice_east": "world.prop.a1env_ice_east",
+      "a1env_ice_east_alt": "world.prop.a1env_ice_east_alt",
+      "a1env_ice_end_east": "world.prop.a1env_ice_end_east",
+      "a1env_ice_end_south": "world.prop.a1env_ice_end_south",
+      "a1env_ice_ground": "world.prop.a1env_ice_ground",
+      "a1env_ice_inner": "world.prop.a1env_ice_inner",
+      "a1env_ice_outer": "world.prop.a1env_ice_outer",
+      "a1env_ice_south": "world.prop.a1env_ice_south",
+      "a1env_ice_south_alt": "world.prop.a1env_ice_south_alt",
+      "a1env_mine_broken": "world.prop.a1env_mine_broken",
+      "a1env_mine_door_in": "world.prop.a1env_mine_door_in",
+      "a1env_mine_door_out": "world.prop.a1env_mine_door_out",
+      "a1env_mine_east": "world.prop.a1env_mine_east",
+      "a1env_mine_east_alt": "world.prop.a1env_mine_east_alt",
+      "a1env_mine_end_east": "world.prop.a1env_mine_end_east",
+      "a1env_mine_end_south": "world.prop.a1env_mine_end_south",
+      "a1env_mine_ground": "world.prop.a1env_mine_ground",
+      "a1env_mine_inner": "world.prop.a1env_mine_inner",
+      "a1env_mine_outer": "world.prop.a1env_mine_outer",
+      "a1env_mine_south": "world.prop.a1env_mine_south",
+      "a1env_mine_south_alt": "world.prop.a1env_mine_south_alt",
+      "a1env_north_broken": "world.prop.a1env_north_broken",
+      "a1env_north_door_in": "world.prop.a1env_north_door_in",
+      "a1env_north_door_out": "world.prop.a1env_north_door_out",
+      "a1env_north_east": "world.prop.a1env_north_east",
+      "a1env_north_east_alt": "world.prop.a1env_north_east_alt",
+      "a1env_north_end_east": "world.prop.a1env_north_end_east",
+      "a1env_north_end_south": "world.prop.a1env_north_end_south",
+      "a1env_north_ground": "world.prop.a1env_north_ground",
+      "a1env_north_inner": "world.prop.a1env_north_inner",
+      "a1env_north_outer": "world.prop.a1env_north_outer",
+      "a1env_north_south": "world.prop.a1env_north_south",
+      "a1env_north_south_alt": "world.prop.a1env_north_south_alt",
+      "a1env_temple_broken": "world.prop.a1env_temple_broken",
+      "a1env_temple_door_in": "world.prop.a1env_temple_door_in",
+      "a1env_temple_door_out": "world.prop.a1env_temple_door_out",
+      "a1env_temple_east": "world.prop.a1env_temple_east",
+      "a1env_temple_east_alt": "world.prop.a1env_temple_east_alt",
+      "a1env_temple_end_east": "world.prop.a1env_temple_end_east",
+      "a1env_temple_end_south": "world.prop.a1env_temple_end_south",
+      "a1env_temple_ground": "world.prop.a1env_temple_ground",
+      "a1env_temple_inner": "world.prop.a1env_temple_inner",
+      "a1env_temple_outer": "world.prop.a1env_temple_outer",
+      "a1env_temple_south": "world.prop.a1env_temple_south",
+      "a1env_temple_south_alt": "world.prop.a1env_temple_south_alt",
+      "a1env_town_broken": "world.prop.a1env_town_broken",
+      "a1env_town_door_in": "world.prop.a1env_town_door_in",
+      "a1env_town_door_out": "world.prop.a1env_town_door_out",
+      "a1env_town_east": "world.prop.a1env_town_east",
+      "a1env_town_east_alt": "world.prop.a1env_town_east_alt",
+      "a1env_town_end_east": "world.prop.a1env_town_end_east",
+      "a1env_town_end_south": "world.prop.a1env_town_end_south",
+      "a1env_town_ground": "world.prop.a1env_town_ground",
+      "a1env_town_inner": "world.prop.a1env_town_inner",
+      "a1env_town_outer": "world.prop.a1env_town_outer",
+      "a1env_town_south": "world.prop.a1env_town_south",
+      "a1env_town_south_alt": "world.prop.a1env_town_south_alt",
+      "a1polish_boulders": "world.prop.a1polish_boulders",
+      "a1polish_crag": "world.prop.a1polish_crag",
+      "a1polish_fir": "world.prop.a1polish_fir",
+      "a1polish_firs": "world.prop.a1polish_firs",
+      "a1polish_pine": "world.prop.a1polish_pine",
+      "a1polish_snow": "world.prop.a1polish_snow",
+      "a1polish_standing_stone": "world.prop.a1polish_standing_stone",
+      "a2boundary_masonry_broken_east": "world.prop.a2boundary_masonry_broken_east",
+      "a2boundary_masonry_broken_south": "world.prop.a2boundary_masonry_broken_south",
+      "a2boundary_masonry_door_east": "world.prop.a2boundary_masonry_door_east",
+      "a2boundary_masonry_door_south": "world.prop.a2boundary_masonry_door_south",
+      "a2boundary_masonry_east": "world.prop.a2boundary_masonry_east",
+      "a2boundary_masonry_east_alt": "world.prop.a2boundary_masonry_east_alt",
+      "a2boundary_masonry_end_east": "world.prop.a2boundary_masonry_end_east",
+      "a2boundary_masonry_end_south": "world.prop.a2boundary_masonry_end_south",
+      "a2boundary_masonry_inner": "world.prop.a2boundary_masonry_inner",
+      "a2boundary_masonry_outer": "world.prop.a2boundary_masonry_outer",
+      "a2boundary_masonry_south": "world.prop.a2boundary_masonry_south",
+      "a2boundary_masonry_south_alt": "world.prop.a2boundary_masonry_south_alt",
+      "a2boundary_root_east": "world.prop.a2boundary_root_east",
+      "a2boundary_root_east_alt": "world.prop.a2boundary_root_east_alt",
+      "a2boundary_root_end_east": "world.prop.a2boundary_root_end_east",
+      "a2boundary_root_end_south": "world.prop.a2boundary_root_end_south",
+      "a2boundary_root_inner": "world.prop.a2boundary_root_inner",
+      "a2boundary_root_outer": "world.prop.a2boundary_root_outer",
+      "a2boundary_root_south": "world.prop.a2boundary_root_south",
+      "a2boundary_root_south_alt": "world.prop.a2boundary_root_south_alt",
+      "a2boundary_shore_east": "world.prop.a2boundary_shore_east",
+      "a2boundary_shore_east_alt": "world.prop.a2boundary_shore_east_alt",
+      "a2boundary_shore_end_east": "world.prop.a2boundary_shore_end_east",
+      "a2boundary_shore_end_south": "world.prop.a2boundary_shore_end_south",
+      "a2boundary_shore_inner": "world.prop.a2boundary_shore_inner",
+      "a2boundary_shore_outer": "world.prop.a2boundary_shore_outer",
+      "a2boundary_shore_south": "world.prop.a2boundary_shore_south",
+      "a2boundary_shore_south_alt": "world.prop.a2boundary_shore_south_alt",
+      "a2threshold_monastery_in": "world.prop.a2threshold_monastery_in",
+      "a2threshold_monastery_out": "world.prop.a2threshold_monastery_out",
+      "a2threshold_reeds_in_left": "world.prop.a2threshold_reeds_in_left",
+      "a2threshold_reeds_in_right": "world.prop.a2threshold_reeds_in_right",
+      "a2threshold_reeds_out_left": "world.prop.a2threshold_reeds_out_left",
+      "a2threshold_reeds_out_right": "world.prop.a2threshold_reeds_out_right",
+      "a2threshold_ritual_in_left": "world.prop.a2threshold_ritual_in_left",
+      "a2threshold_ritual_in_right": "world.prop.a2threshold_ritual_in_right",
+      "a2threshold_ritual_out_left": "world.prop.a2threshold_ritual_out_left",
+      "a2threshold_ritual_out_right": "world.prop.a2threshold_ritual_out_right",
+      "a2threshold_sluice_in": "world.prop.a2threshold_sluice_in",
+      "a2threshold_sluice_out": "world.prop.a2threshold_sluice_out",
+      "a2visual_cypress": "world.prop.a2visual_cypress",
+      "a2visual_moss": "world.prop.a2visual_moss",
+      "a2visual_pier": "world.prop.a2visual_pier",
+      "a2visual_seal": "world.prop.a2visual_seal",
+      "a2visual_water": "world.prop.a2visual_water",
+      "a3env_dune_east": "world.prop.a3env_dune_east",
+      "a3env_dune_east_alt": "world.prop.a3env_dune_east_alt",
+      "a3env_dune_south": "world.prop.a3env_dune_south",
+      "a3env_dune_south_alt": "world.prop.a3env_dune_south_alt",
+      "a3env_palace_broken_east": "world.prop.a3env_palace_broken_east",
+      "a3env_palace_broken_south": "world.prop.a3env_palace_broken_south",
+      "a3env_palace_east": "world.prop.a3env_palace_east",
+      "a3env_palace_east_1": "world.prop.a3env_palace_east_1",
+      "a3env_palace_east_2": "world.prop.a3env_palace_east_2",
+      "a3env_palace_east_alt": "world.prop.a3env_palace_east_alt",
+      "a3env_palace_end_east": "world.prop.a3env_palace_end_east",
+      "a3env_palace_end_south": "world.prop.a3env_palace_end_south",
+      "a3env_palace_foundation": "world.prop.a3env_palace_foundation",
+      "a3env_palace_inner": "world.prop.a3env_palace_inner",
+      "a3env_palace_outer": "world.prop.a3env_palace_outer",
+      "a3env_palace_paving": "world.prop.a3env_palace_paving",
+      "a3env_palace_south": "world.prop.a3env_palace_south",
+      "a3env_palace_south_1": "world.prop.a3env_palace_south_1",
+      "a3env_palace_south_2": "world.prop.a3env_palace_south_2",
+      "a3env_palace_south_alt": "world.prop.a3env_palace_south_alt",
+      "a3env_rock_east": "world.prop.a3env_rock_east",
+      "a3env_rock_east_alt": "world.prop.a3env_rock_east_alt",
+      "a3env_rock_south": "world.prop.a3env_rock_south",
+      "a3env_rock_south_alt": "world.prop.a3env_rock_south_alt",
+      "a3env_sandstone_broken_east": "world.prop.a3env_sandstone_broken_east",
+      "a3env_sandstone_broken_south": "world.prop.a3env_sandstone_broken_south",
+      "a3env_sandstone_east": "world.prop.a3env_sandstone_east",
+      "a3env_sandstone_east_1": "world.prop.a3env_sandstone_east_1",
+      "a3env_sandstone_east_2": "world.prop.a3env_sandstone_east_2",
+      "a3env_sandstone_east_alt": "world.prop.a3env_sandstone_east_alt",
+      "a3env_sandstone_end_east": "world.prop.a3env_sandstone_end_east",
+      "a3env_sandstone_end_south": "world.prop.a3env_sandstone_end_south",
+      "a3env_sandstone_foundation": "world.prop.a3env_sandstone_foundation",
+      "a3env_sandstone_inner": "world.prop.a3env_sandstone_inner",
+      "a3env_sandstone_outer": "world.prop.a3env_sandstone_outer",
+      "a3env_sandstone_paving": "world.prop.a3env_sandstone_paving",
+      "a3env_sandstone_south": "world.prop.a3env_sandstone_south",
+      "a3env_sandstone_south_1": "world.prop.a3env_sandstone_south_1",
+      "a3env_sandstone_south_2": "world.prop.a3env_sandstone_south_2",
+      "a3env_sandstone_south_alt": "world.prop.a3env_sandstone_south_alt",
+      "a3env_shard_east": "world.prop.a3env_shard_east",
+      "a3env_shard_east_alt": "world.prop.a3env_shard_east_alt",
+      "a3env_shard_south": "world.prop.a3env_shard_south",
+      "a3env_shard_south_alt": "world.prop.a3env_shard_south_alt",
+      "a3env_sovereign_broken_east": "world.prop.a3env_sovereign_broken_east",
+      "a3env_sovereign_broken_south": "world.prop.a3env_sovereign_broken_south",
+      "a3env_sovereign_east": "world.prop.a3env_sovereign_east",
+      "a3env_sovereign_east_1": "world.prop.a3env_sovereign_east_1",
+      "a3env_sovereign_east_2": "world.prop.a3env_sovereign_east_2",
+      "a3env_sovereign_east_alt": "world.prop.a3env_sovereign_east_alt",
+      "a3env_sovereign_end_east": "world.prop.a3env_sovereign_end_east",
+      "a3env_sovereign_end_south": "world.prop.a3env_sovereign_end_south",
+      "a3env_sovereign_foundation": "world.prop.a3env_sovereign_foundation",
+      "a3env_sovereign_inner": "world.prop.a3env_sovereign_inner",
+      "a3env_sovereign_outer": "world.prop.a3env_sovereign_outer",
+      "a3env_sovereign_paving": "world.prop.a3env_sovereign_paving",
+      "a3env_sovereign_south": "world.prop.a3env_sovereign_south",
+      "a3env_sovereign_south_1": "world.prop.a3env_sovereign_south_1",
+      "a3env_sovereign_south_2": "world.prop.a3env_sovereign_south_2",
+      "a3env_sovereign_south_alt": "world.prop.a3env_sovereign_south_alt",
+      "a3env_tomb_broken_east": "world.prop.a3env_tomb_broken_east",
+      "a3env_tomb_broken_south": "world.prop.a3env_tomb_broken_south",
+      "a3env_tomb_east": "world.prop.a3env_tomb_east",
+      "a3env_tomb_east_1": "world.prop.a3env_tomb_east_1",
+      "a3env_tomb_east_2": "world.prop.a3env_tomb_east_2",
+      "a3env_tomb_east_alt": "world.prop.a3env_tomb_east_alt",
+      "a3env_tomb_end_east": "world.prop.a3env_tomb_end_east",
+      "a3env_tomb_end_south": "world.prop.a3env_tomb_end_south",
+      "a3env_tomb_foundation": "world.prop.a3env_tomb_foundation",
+      "a3env_tomb_inner": "world.prop.a3env_tomb_inner",
+      "a3env_tomb_outer": "world.prop.a3env_tomb_outer",
+      "a3env_tomb_paving": "world.prop.a3env_tomb_paving",
+      "a3env_tomb_south": "world.prop.a3env_tomb_south",
+      "a3env_tomb_south_1": "world.prop.a3env_tomb_south_1",
+      "a3env_tomb_south_2": "world.prop.a3env_tomb_south_2",
+      "a3env_tomb_south_alt": "world.prop.a3env_tomb_south_alt",
+      "a3passage_aqueduct_in_east": "world.prop.a3passage_aqueduct_in_east",
+      "a3passage_aqueduct_in_south": "world.prop.a3passage_aqueduct_in_south",
+      "a3passage_aqueduct_out_east": "world.prop.a3passage_aqueduct_out_east",
+      "a3passage_aqueduct_out_south": "world.prop.a3passage_aqueduct_out_south",
+      "a3passage_market_in_east": "world.prop.a3passage_market_in_east",
+      "a3passage_market_in_south": "world.prop.a3passage_market_in_south",
+      "a3passage_market_out_east": "world.prop.a3passage_market_out_east",
+      "a3passage_market_out_south": "world.prop.a3passage_market_out_south",
+      "a3passage_palace_in_east": "world.prop.a3passage_palace_in_east",
+      "a3passage_palace_in_south": "world.prop.a3passage_palace_in_south",
+      "a3passage_palace_out_east": "world.prop.a3passage_palace_out_east",
+      "a3passage_palace_out_south": "world.prop.a3passage_palace_out_south",
+      "a3passage_road_in_east": "world.prop.a3passage_road_in_east",
+      "a3passage_road_in_south": "world.prop.a3passage_road_in_south",
+      "a3passage_road_out_east": "world.prop.a3passage_road_out_east",
+      "a3passage_road_out_south": "world.prop.a3passage_road_out_south",
+      "a3passage_sovereign_in_east": "world.prop.a3passage_sovereign_in_east",
+      "a3passage_sovereign_in_south": "world.prop.a3passage_sovereign_in_south",
+      "a3passage_sovereign_out_east": "world.prop.a3passage_sovereign_out_east",
+      "a3passage_sovereign_out_south": "world.prop.a3passage_sovereign_out_south",
+      "a3passage_tomb_in_east": "world.prop.a3passage_tomb_in_east",
+      "a3passage_tomb_in_south": "world.prop.a3passage_tomb_in_south",
+      "a3passage_tomb_out_east": "world.prop.a3passage_tomb_out_east",
+      "a3passage_tomb_out_south": "world.prop.a3passage_tomb_out_south",
+      "a3visual_eclipse": "world.prop.a3visual_eclipse",
+      "a3visual_palace": "world.prop.a3visual_palace",
+      "a3visual_sand": "world.prop.a3visual_sand",
+      "a3visual_sandstone": "world.prop.a3visual_sandstone",
+      "a3visual_slate": "world.prop.a3visual_slate",
+      "a3visual_sun": "world.prop.a3visual_sun",
+      "a3visual_wall_palace": "world.prop.a3visual_wall_palace",
+      "a3visual_wall_sandstone": "world.prop.a3visual_wall_sandstone",
+      "a3visual_wall_sovereign": "world.prop.a3visual_wall_sovereign",
+      "a3visual_wall_tomb": "world.prop.a3visual_wall_tomb",
+      "a4env_ash_abutment": "world.prop.a4env_ash_abutment",
+      "a4env_ash_broken_east": "world.prop.a4env_ash_broken_east",
+      "a4env_ash_broken_south": "world.prop.a4env_ash_broken_south",
+      "a4env_ash_door_east": "world.prop.a4env_ash_door_east",
+      "a4env_ash_door_south": "world.prop.a4env_ash_door_south",
+      "a4env_ash_east": "world.prop.a4env_ash_east",
+      "a4env_ash_east_alt": "world.prop.a4env_ash_east_alt",
+      "a4env_ash_end_east": "world.prop.a4env_ash_end_east",
+      "a4env_ash_end_south": "world.prop.a4env_ash_end_south",
+      "a4env_ash_foundation_corner": "world.prop.a4env_ash_foundation_corner",
+      "a4env_ash_foundation_east": "world.prop.a4env_ash_foundation_east",
+      "a4env_ash_foundation_south": "world.prop.a4env_ash_foundation_south",
+      "a4env_ash_inner": "world.prop.a4env_ash_inner",
+      "a4env_ash_outer": "world.prop.a4env_ash_outer",
+      "a4env_ash_south": "world.prop.a4env_ash_south",
+      "a4env_ash_south_alt": "world.prop.a4env_ash_south_alt",
+      "a4env_bastion_abutment": "world.prop.a4env_bastion_abutment",
+      "a4env_bastion_broken_east": "world.prop.a4env_bastion_broken_east",
+      "a4env_bastion_broken_south": "world.prop.a4env_bastion_broken_south",
+      "a4env_bastion_door_east": "world.prop.a4env_bastion_door_east",
+      "a4env_bastion_door_south": "world.prop.a4env_bastion_door_south",
+      "a4env_bastion_east": "world.prop.a4env_bastion_east",
+      "a4env_bastion_east_alt": "world.prop.a4env_bastion_east_alt",
+      "a4env_bastion_end_east": "world.prop.a4env_bastion_end_east",
+      "a4env_bastion_end_south": "world.prop.a4env_bastion_end_south",
+      "a4env_bastion_foundation_corner": "world.prop.a4env_bastion_foundation_corner",
+      "a4env_bastion_foundation_east": "world.prop.a4env_bastion_foundation_east",
+      "a4env_bastion_foundation_south": "world.prop.a4env_bastion_foundation_south",
+      "a4env_bastion_inner": "world.prop.a4env_bastion_inner",
+      "a4env_bastion_outer": "world.prop.a4env_bastion_outer",
+      "a4env_bastion_south": "world.prop.a4env_bastion_south",
+      "a4env_bastion_south_alt": "world.prop.a4env_bastion_south_alt",
+      "a4env_dark_abutment": "world.prop.a4env_dark_abutment",
+      "a4env_dark_broken_east": "world.prop.a4env_dark_broken_east",
+      "a4env_dark_broken_south": "world.prop.a4env_dark_broken_south",
+      "a4env_dark_door_east": "world.prop.a4env_dark_door_east",
+      "a4env_dark_door_south": "world.prop.a4env_dark_door_south",
+      "a4env_dark_east": "world.prop.a4env_dark_east",
+      "a4env_dark_east_alt": "world.prop.a4env_dark_east_alt",
+      "a4env_dark_end_east": "world.prop.a4env_dark_end_east",
+      "a4env_dark_end_south": "world.prop.a4env_dark_end_south",
+      "a4env_dark_foundation_corner": "world.prop.a4env_dark_foundation_corner",
+      "a4env_dark_foundation_east": "world.prop.a4env_dark_foundation_east",
+      "a4env_dark_foundation_south": "world.prop.a4env_dark_foundation_south",
+      "a4env_dark_inner": "world.prop.a4env_dark_inner",
+      "a4env_dark_outer": "world.prop.a4env_dark_outer",
+      "a4env_dark_south": "world.prop.a4env_dark_south",
+      "a4env_dark_south_alt": "world.prop.a4env_dark_south_alt",
+      "a4env_floor_ash": "world.prop.a4env_floor_ash",
+      "a4env_floor_bastion": "world.prop.a4env_floor_bastion",
+      "a4env_floor_dark": "world.prop.a4env_floor_dark",
+      "a4env_floor_pale": "world.prop.a4env_floor_pale",
+      "a4env_pale_abutment": "world.prop.a4env_pale_abutment",
+      "a4env_pale_broken_east": "world.prop.a4env_pale_broken_east",
+      "a4env_pale_broken_south": "world.prop.a4env_pale_broken_south",
+      "a4env_pale_door_east": "world.prop.a4env_pale_door_east",
+      "a4env_pale_door_south": "world.prop.a4env_pale_door_south",
+      "a4env_pale_east": "world.prop.a4env_pale_east",
+      "a4env_pale_east_alt": "world.prop.a4env_pale_east_alt",
+      "a4env_pale_end_east": "world.prop.a4env_pale_end_east",
+      "a4env_pale_end_south": "world.prop.a4env_pale_end_south",
+      "a4env_pale_foundation_corner": "world.prop.a4env_pale_foundation_corner",
+      "a4env_pale_foundation_east": "world.prop.a4env_pale_foundation_east",
+      "a4env_pale_foundation_south": "world.prop.a4env_pale_foundation_south",
+      "a4env_pale_inner": "world.prop.a4env_pale_inner",
+      "a4env_pale_outer": "world.prop.a4env_pale_outer",
+      "a4env_pale_south": "world.prop.a4env_pale_south",
+      "a4env_pale_south_alt": "world.prop.a4env_pale_south_alt",
+      "a4env_transition_ash": "world.prop.a4env_transition_ash",
+      "a4env_transition_bastion": "world.prop.a4env_transition_bastion",
+      "a4env_transition_dark": "world.prop.a4env_transition_dark",
+      "a4env_transition_pale": "world.prop.a4env_transition_pale",
+      "a4stone_paving": "world.prop.a4stone_paving",
+      "a4v2_cliff_ash": "world.prop.a4v2_cliff_ash",
+      "a4v2_cliff_bastion": "world.prop.a4v2_cliff_bastion",
+      "a4v2_cliff_dark": "world.prop.a4v2_cliff_dark",
+      "a4v2_cliff_pale": "world.prop.a4v2_cliff_pale",
+      "a4v2_crag_ash": "world.prop.a4v2_crag_ash",
+      "a4v2_crag_bastion": "world.prop.a4v2_crag_bastion",
+      "a4v2_crag_dark": "world.prop.a4v2_crag_dark",
+      "a4v2_crag_pale": "world.prop.a4v2_crag_pale",
+      "a4v2_door_ash": "world.prop.a4v2_door_ash",
+      "a4v2_door_bastion": "world.prop.a4v2_door_bastion",
+      "a4v2_door_dark": "world.prop.a4v2_door_dark",
+      "a4v2_door_pale": "world.prop.a4v2_door_pale",
+      "a4v2_floor_ash": "world.prop.a4v2_floor_ash",
+      "a4v2_floor_bastion": "world.prop.a4v2_floor_bastion",
+      "a4v2_floor_dark": "world.prop.a4v2_floor_dark",
+      "a4v2_floor_pale": "world.prop.a4v2_floor_pale",
+      "a4v2_inlay_ash": "world.prop.a4v2_inlay_ash",
+      "a4v2_inlay_bastion": "world.prop.a4v2_inlay_bastion",
+      "a4v2_inlay_dark": "world.prop.a4v2_inlay_dark",
+      "a4v2_inlay_pale": "world.prop.a4v2_inlay_pale",
+      "a4v2_pier_ash": "world.prop.a4v2_pier_ash",
+      "a4v2_pier_bastion": "world.prop.a4v2_pier_bastion",
+      "a4v2_pier_dark": "world.prop.a4v2_pier_dark",
+      "a4v2_pier_pale": "world.prop.a4v2_pier_pale",
+      "a4v2_wall_ash": "world.prop.a4v2_wall_ash",
+      "a4v2_wall_bastion": "world.prop.a4v2_wall_bastion",
+      "a4v2_wall_dark": "world.prop.a4v2_wall_dark",
+      "a4v2_wall_pale": "world.prop.a4v2_wall_pale",
+      "a5env_bastion_broken_east": "world.prop.a5env_bastion_broken_east",
+      "a5env_bastion_broken_south": "world.prop.a5env_bastion_broken_south",
+      "a5env_bastion_connector_east": "world.prop.a5env_bastion_connector_east",
+      "a5env_bastion_connector_south": "world.prop.a5env_bastion_connector_south",
+      "a5env_bastion_door_east": "world.prop.a5env_bastion_door_east",
+      "a5env_bastion_door_south": "world.prop.a5env_bastion_door_south",
+      "a5env_bastion_east": "world.prop.a5env_bastion_east",
+      "a5env_bastion_east_alt": "world.prop.a5env_bastion_east_alt",
+      "a5env_bastion_end_east": "world.prop.a5env_bastion_end_east",
+      "a5env_bastion_end_south": "world.prop.a5env_bastion_end_south",
+      "a5env_bastion_ground": "world.prop.a5env_bastion_ground",
+      "a5env_bastion_inner": "world.prop.a5env_bastion_inner",
+      "a5env_bastion_outer": "world.prop.a5env_bastion_outer",
+      "a5env_bastion_pillar": "world.prop.a5env_bastion_pillar",
+      "a5env_bastion_south": "world.prop.a5env_bastion_south",
+      "a5env_bastion_south_alt": "world.prop.a5env_bastion_south_alt",
+      "a5env_biome_broken_east": "world.prop.a5env_biome_broken_east",
+      "a5env_biome_broken_south": "world.prop.a5env_biome_broken_south",
+      "a5env_biome_east": "world.prop.a5env_biome_east",
+      "a5env_biome_east_alt": "world.prop.a5env_biome_east_alt",
+      "a5env_biome_end_east": "world.prop.a5env_biome_end_east",
+      "a5env_biome_end_south": "world.prop.a5env_biome_end_south",
+      "a5env_biome_ground": "world.prop.a5env_biome_ground",
+      "a5env_biome_inner": "world.prop.a5env_biome_inner",
+      "a5env_biome_outer": "world.prop.a5env_biome_outer",
+      "a5env_biome_pillar": "world.prop.a5env_biome_pillar",
+      "a5env_biome_south": "world.prop.a5env_biome_south",
+      "a5env_biome_south_alt": "world.prop.a5env_biome_south_alt",
+      "a5env_defense_broken_east": "world.prop.a5env_defense_broken_east",
+      "a5env_defense_broken_south": "world.prop.a5env_defense_broken_south",
+      "a5env_defense_connector_east": "world.prop.a5env_defense_connector_east",
+      "a5env_defense_connector_south": "world.prop.a5env_defense_connector_south",
+      "a5env_defense_door_east": "world.prop.a5env_defense_door_east",
+      "a5env_defense_door_south": "world.prop.a5env_defense_door_south",
+      "a5env_defense_east": "world.prop.a5env_defense_east",
+      "a5env_defense_east_alt": "world.prop.a5env_defense_east_alt",
+      "a5env_defense_end_east": "world.prop.a5env_defense_end_east",
+      "a5env_defense_end_south": "world.prop.a5env_defense_end_south",
+      "a5env_defense_ground": "world.prop.a5env_defense_ground",
+      "a5env_defense_inner": "world.prop.a5env_defense_inner",
+      "a5env_defense_outer": "world.prop.a5env_defense_outer",
+      "a5env_defense_pillar": "world.prop.a5env_defense_pillar",
+      "a5env_defense_south": "world.prop.a5env_defense_south",
+      "a5env_defense_south_alt": "world.prop.a5env_defense_south_alt",
+      "a5env_throne_broken_east": "world.prop.a5env_throne_broken_east",
+      "a5env_throne_broken_south": "world.prop.a5env_throne_broken_south",
+      "a5env_throne_connector_east": "world.prop.a5env_throne_connector_east",
+      "a5env_throne_connector_south": "world.prop.a5env_throne_connector_south",
+      "a5env_throne_door_east": "world.prop.a5env_throne_door_east",
+      "a5env_throne_door_south": "world.prop.a5env_throne_door_south",
+      "a5env_throne_east": "world.prop.a5env_throne_east",
+      "a5env_throne_east_alt": "world.prop.a5env_throne_east_alt",
+      "a5env_throne_end_east": "world.prop.a5env_throne_end_east",
+      "a5env_throne_end_south": "world.prop.a5env_throne_end_south",
+      "a5env_throne_ground": "world.prop.a5env_throne_ground",
+      "a5env_throne_inner": "world.prop.a5env_throne_inner",
+      "a5env_throne_outer": "world.prop.a5env_throne_outer",
+      "a5env_throne_pillar": "world.prop.a5env_throne_pillar",
+      "a5env_throne_south": "world.prop.a5env_throne_south",
+      "a5env_throne_south_alt": "world.prop.a5env_throne_south_alt",
       "act2_bell_tower": "world.prop.act2_bell_tower",
       "act2_black_water": "world.prop.act2_black_water",
       "act2_boardwalk_x": "world.prop.act2_boardwalk_x",
@@ -33639,6 +39128,7 @@ DATA.SPRITE_MANIFEST = {
       "cathedral_memorial": "world.prop.cathedral_memorial",
       "cathedral_mountain_shrine": "world.prop.cathedral_mountain_shrine",
       "cathedral_parapet": "world.prop.cathedral_parapet",
+      "cathedral_pews": "world.prop.cathedral_pews",
       "cathedral_reliquary": "world.prop.cathedral_reliquary",
       "cathedral_reliquary_open": "world.prop.cathedral_reliquary_open",
       "cathedral_rose_window": "world.prop.cathedral_rose_window",

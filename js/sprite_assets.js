@@ -417,6 +417,7 @@ const SpriteAssets = (() => {
     }
     if (state === "attack") return t < .46 ? 3 : 4;
     if (state === "cast") return 5;
+    if (state === "reach" || state === "search") return t>.15&&t<.85?5:0;
     if (state === "hit") return 6;
     if (state === "death") return t < .58 ? 7 : 8;
     return 0;
@@ -965,6 +966,8 @@ const SpriteAssets = (() => {
     } else if (state === "attack" || state === "cast") {
       const hit = Math.sin(Math.max(0, Math.min(1, pose.t || 0)) * Math.PI);
       advance = hit * (state === "cast" ? 3 : 7); bob = -hit * 2; rot = hit * .05;
+    } else if(state==='reach'||state==='search'){
+      const w=Math.sin(Math.max(0,Math.min(1,pose.t||0))*Math.PI);advance=w*3;bob=state==='search'?w*3:0;rot=w*.035;
     } else if (state === "hit") {
       advance = -Math.sin(Math.max(0, Math.min(1, pose.t || 0)) * Math.PI) * 4;
     } else if (state === "death") {

@@ -1,8 +1,10 @@
 # Act III painted architecture
 
+The current environment pass supersedes the wall assembly described here. Outdoors now use natural biome contours; indoor boundaries use complete connected modules. See [current implementation and validation](../docs/ACT3_ENVIRONMENT.md).
+
 The bridge prototype has been scrapped at the user's request. Generated areas no longer contain its decks, piers, carved approach corridors, upper floors, stair links or upper chests. Painted walls, existing ground routes and the Dig Camp departure terrace remain. Open the review with `?zone=khal_palace&view=avenue` to see the current palace.
 
-`node tests/act3_layers_contract.mjs --all-seeds` now checks that all seven areas retain their walls and have no orphan upper surfaces, links or objects. Generic layered skill tests remain available independently.
+`node tests/act3_layers_contract.mjs --all-seeds` now checks that all seven areas retain the appropriate indoor walls or outdoor biome boundaries and have no orphan upper surfaces, links or objects. Generic layered skill tests remain available independently.
 
 The following records describe the withdrawn bridge prototype. Its captures and performance figures are historical and do not validate the current bridge-free build.
 

@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Act IV environment review</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#111118;color:#d7d2c5;font:15px system-ui}header{padding:22px 28px;border-bottom:1px solid #45404e}h1{margin:0 0 8px;font:30px Georgia;color:#e6d1a2}p{max-width:900px;line-height:1.5}label{display:inline-block;margin:6px 18px 6px 0}select,a{color:#e7dcc8}select{background:#272431;border:1px solid #62576b;padding:8px}a{margin-right:18px}.compare{display:grid;grid-template-columns:1fr 1fr;gap:2px}figure{margin:0}figcaption{padding:12px 20px;background:#211e2a}img{display:block;width:100%;height:auto}#caption{padding:12px 28px;color:#aaa49e}.native .compare{display:block}.native figure{overflow:auto}.native img{width:auto;max-width:none}@media(max-width:900px){.compare{grid-template-columns:1fr}}#status{color:#c4cba3}
+</style>
+<header><h1>Act IV · The rebuilt cathedral</h1><p>Connected gothic rooms, deep floating foundations, ash-and-rock memory islands, and entrances seated in their surroundings. These paired captures use the production game renderer with the same seed and canvas size.</p>
+<label>Location <select id="zone"><option value="cathedral1">The Shattered Cathedral</option><option value="cathedral2">Cathedral Heart</option><option value="cathedral_cinderwatch">Cinderwatch Remembered</option><option value="cathedral_bastion">The Last Bastion’s Echo</option></select></label>
+<label>Resolution <select id="width"><option value="1920">1080p</option><option value="3840">4K</option></select></label>
+<label>Scene <select id="view"></select></label><label><input id="native" type="checkbox"> Actual pixel size</label>
+<p><a id="play" href="cathedral_review.html">Open playable review</a><a href="qa/act4_environment/assets.png">Painted kits</a><a href="qa/act4_environment/performance.json">Performance results</a></p><span id="status"></span></header>
+<div class="compare"><figure><figcaption>Before</figcaption><a id="beforeLink"><img id="before" alt="Original Act IV environment"></a></figure><figure><figcaption>After</figcaption><a id="afterLink"><img id="after" alt="Rebuilt Act IV environment"></a></figure></div><p id="caption"></p>
+<script type="module">
+const $=id=>document.getElementById(id),scenes=await fetch('qa/act4_environment/scenes.json').then(r=>r.json());
+function show(){const s=scenes.find(s=>s.zone===$('zone').value&&s.width===+$('width').value&&s.view===$('view').value);if(!s)return;
+ for(const phase of ['before','after']){$(phase).src='qa/act4_environment/'+s[phase];$(phase+'Link').href=$(phase).src;}
+ $('caption').textContent=s.view.replaceAll('_',' ')+' · '+s.width+' × '+s.width*9/16;
+ $('play').href='cathedral_review.html?zone='+s.zone+'&width='+s.width;
+}
+function select(){const old=$('view').value,items=scenes.filter(s=>s.zone===$('zone').value&&s.width===+$('width').value);$('view').replaceChildren(...items.map(s=>new Option(s.view.replaceAll('_',' '),s.view)));if(items.some(s=>s.view===old))$('view').value=old;else $('view').value='arrival';show();}
+$('zone').onchange=$('width').onchange=select;$('view').onchange=show;$('native').onchange=()=>document.body.classList.toggle('native',$('native').checked);
+select();const report=await fetch('qa/act4_environment/performance.json').then(r=>r.json());$('status').textContent=report.status+' · '+report.rows.length+' performance comparisons · '+scenes.length+' paired views';
+</script></html>

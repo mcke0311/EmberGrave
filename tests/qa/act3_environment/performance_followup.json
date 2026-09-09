@@ -1,0 +1,448 @@
+{
+  "status": "INVESTIGATED",
+  "method": "Full 26-case, two-pair run plus both additional pairs for the flagged zones; retain every full-art sample, omit diagnostic ablations from acceptance. CPU frame time, not GPU completion. Final doorway edge stitching and fringe-only asset cleanup follow these timings.",
+  "comparisons": [
+    {
+      "zone": "khalcamp",
+      "width": 1920,
+      "mode": "moving",
+      "pairs": 2,
+      "before": {
+        "median": 2.75,
+        "p95": 3.8499999999999996
+      },
+      "after": {
+        "median": 2.7,
+        "p95": 3.8
+      },
+      "medianPct": -1.8181818181818077,
+      "p95Pct": -1.2987012987012991,
+      "withinTarget": true
+    },
+    {
+      "zone": "khalcamp",
+      "width": 3840,
+      "mode": "moving",
+      "pairs": 2,
+      "before": {
+        "median": 2.8,
+        "p95": 4.3
+      },
+      "after": {
+        "median": 2.6,
+        "p95": 3.35
+      },
+      "medianPct": -7.142857142857128,
+      "p95Pct": -22.093023255813947,
+      "withinTarget": true
+    },
+    {
+      "zone": "desert_wastes",
+      "width": 1920,
+      "mode": "moving",
+      "pairs": 2,
+      "before": {
+        "median": 4.25,
+        "p95": 5.45
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 5.55
+      },
+      "medianPct": -1.17647058823529,
+      "p95Pct": 1.83486238532109,
+      "withinTarget": true
+    },
+    {
+      "zone": "desert_wastes",
+      "width": 1920,
+      "mode": "combat",
+      "pairs": 2,
+      "before": {
+        "median": 5.85,
+        "p95": 8.55
+      },
+      "after": {
+        "median": 5.300000000000001,
+        "p95": 7.5
+      },
+      "medianPct": -9.401709401709379,
+      "p95Pct": -12.28070175438597,
+      "withinTarget": true
+    },
+    {
+      "zone": "desert_wastes",
+      "width": 3840,
+      "mode": "moving",
+      "pairs": 2,
+      "before": {
+        "median": 7.5,
+        "p95": 9.55
+      },
+      "after": {
+        "median": 6.45,
+        "p95": 9.35
+      },
+      "medianPct": -14.000000000000002,
+      "p95Pct": -2.0942408376963484,
+      "withinTarget": true
+    },
+    {
+      "zone": "desert_wastes",
+      "width": 3840,
+      "mode": "combat",
+      "pairs": 2,
+      "before": {
+        "median": 9.600000000000001,
+        "p95": 13.35
+      },
+      "after": {
+        "median": 7.25,
+        "p95": 11.45
+      },
+      "medianPct": -24.479166666666675,
+      "p95Pct": -14.232209737827716,
+      "withinTarget": true
+    },
+    {
+      "zone": "underground_market",
+      "width": 1920,
+      "mode": "moving",
+      "pairs": 2,
+      "before": {
+        "median": 3.95,
+        "p95": 5.5
+      },
+      "after": {
+        "median": 3.4,
+        "p95": 4.9
+      },
+      "medianPct": -13.924050632911399,
+      "p95Pct": -10.909090909090901,
+      "withinTarget": true
+    },
+    {
+      "zone": "underground_market",
+      "width": 1920,
+      "mode": "combat",
+      "pairs": 2,
+      "before": {
+        "median": 4.8,
+        "p95": 6.449999999999999
+      },
+      "after": {
+        "median": 4.4,
+        "p95": 6.300000000000001
+      },
+      "medianPct": -8.333333333333325,
+      "p95Pct": -2.325581395348819,
+      "withinTarget": true
+    },
+    {
+      "zone": "underground_market",
+      "width": 3840,
+      "mode": "moving",
+      "pairs": 2,
+      "before": {
+        "median": 6.25,
+        "p95": 9.649999999999999
+      },
+      "after": {
+        "median": 5.25,
+        "p95": 7.55
+      },
+      "medianPct": -16.000000000000004,
+      "p95Pct": -21.76165803108807,
+      "withinTarget": true
+    },
+    {
+      "zone": "underground_market",
+      "width": 3840,
+      "mode": "combat",
+      "pairs": 2,
+      "before": {
+        "median": 7.1,
+        "p95": 10.600000000000001
+      },
+      "after": {
+        "median": 5.9,
+        "p95": 7.6
+      },
+      "medianPct": -16.901408450704213,
+      "p95Pct": -28.301886792452848,
+      "withinTarget": true
+    },
+    {
+      "zone": "sand_tombs",
+      "width": 1920,
+      "mode": "moving",
+      "pairs": 4,
+      "before": {
+        "median": 4.625,
+        "p95": 6.675
+      },
+      "after": {
+        "median": 4.65,
+        "p95": 7.35
+      },
+      "medianPct": 0.5405405405405572,
+      "p95Pct": 10.1123595505618,
+      "withinTarget": false
+    },
+    {
+      "zone": "sand_tombs",
+      "width": 1920,
+      "mode": "combat",
+      "pairs": 4,
+      "before": {
+        "median": 5.55,
+        "p95": 7.5
+      },
+      "after": {
+        "median": 5.35,
+        "p95": 8.450000000000001
+      },
+      "medianPct": -3.603603603603611,
+      "p95Pct": 12.666666666666671,
+      "withinTarget": false
+    },
+    {
+      "zone": "sand_tombs",
+      "width": 3840,
+      "mode": "moving",
+      "pairs": 2,
+      "before": {
+        "median": 6.95,
+        "p95": 9.6
+      },
+      "after": {
+        "median": 6.35,
+        "p95": 8.5
+      },
+      "medianPct": -8.63309352517987,
+      "p95Pct": -11.458333333333325,
+      "withinTarget": true
+    },
+    {
+      "zone": "sand_tombs",
+      "width": 3840,
+      "mode": "combat",
+      "pairs": 2,
+      "before": {
+        "median": 8.25,
+        "p95": 11.55
+      },
+      "after": {
+        "median": 7.15,
+        "p95": 9.55
+      },
+      "medianPct": -13.33333333333333,
+      "p95Pct": -17.31601731601732,
+      "withinTarget": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "mode": "moving",
+      "pairs": 2,
+      "before": {
+        "median": 3.05,
+        "p95": 4.85
+      },
+      "after": {
+        "median": 2.8,
+        "p95": 4.2
+      },
+      "medianPct": -8.196721311475407,
+      "p95Pct": -13.40206185567009,
+      "withinTarget": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "mode": "combat",
+      "pairs": 2,
+      "before": {
+        "median": 4.45,
+        "p95": 6.35
+      },
+      "after": {
+        "median": 3.95,
+        "p95": 5.3
+      },
+      "medianPct": -11.235955056179769,
+      "p95Pct": -16.535433070866134,
+      "withinTarget": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "mode": "moving",
+      "pairs": 4,
+      "before": {
+        "median": 5.8,
+        "p95": 8.125
+      },
+      "after": {
+        "median": 6.4,
+        "p95": 9.5
+      },
+      "medianPct": 10.344827586206895,
+      "p95Pct": 16.92307692307693,
+      "withinTarget": false
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "mode": "combat",
+      "pairs": 4,
+      "before": {
+        "median": 6.625,
+        "p95": 8.875
+      },
+      "after": {
+        "median": 6.275,
+        "p95": 8.975
+      },
+      "medianPct": -5.283018867924527,
+      "p95Pct": 1.1267605633802802,
+      "withinTarget": true
+    },
+    {
+      "zone": "shard_flats",
+      "width": 1920,
+      "mode": "moving",
+      "pairs": 2,
+      "before": {
+        "median": 4.2,
+        "p95": 6.6
+      },
+      "after": {
+        "median": 3.2,
+        "p95": 5.05
+      },
+      "medianPct": -23.809523809523814,
+      "p95Pct": -23.484848484848484,
+      "withinTarget": true
+    },
+    {
+      "zone": "shard_flats",
+      "width": 1920,
+      "mode": "combat",
+      "pairs": 2,
+      "before": {
+        "median": 4.800000000000001,
+        "p95": 8.2
+      },
+      "after": {
+        "median": 3.9499999999999997,
+        "p95": 7.8
+      },
+      "medianPct": -17.70833333333335,
+      "p95Pct": -4.8780487804877986,
+      "withinTarget": true
+    },
+    {
+      "zone": "shard_flats",
+      "width": 3840,
+      "mode": "moving",
+      "pairs": 2,
+      "before": {
+        "median": 5.1,
+        "p95": 5.95
+      },
+      "after": {
+        "median": 4.1,
+        "p95": 5.15
+      },
+      "medianPct": -19.6078431372549,
+      "p95Pct": -13.4453781512605,
+      "withinTarget": true
+    },
+    {
+      "zone": "shard_flats",
+      "width": 3840,
+      "mode": "combat",
+      "pairs": 2,
+      "before": {
+        "median": 6.6,
+        "p95": 7.6
+      },
+      "after": {
+        "median": 4.9,
+        "p95": 5.8
+      },
+      "medianPct": -25.757575757575747,
+      "p95Pct": -23.684210526315784,
+      "withinTarget": true
+    },
+    {
+      "zone": "tomb_sanctum",
+      "width": 1920,
+      "mode": "moving",
+      "pairs": 2,
+      "before": {
+        "median": 4.449999999999999,
+        "p95": 6.8999999999999995
+      },
+      "after": {
+        "median": 4.15,
+        "p95": 5.65
+      },
+      "medianPct": -6.741573033707837,
+      "p95Pct": -18.1159420289855,
+      "withinTarget": true
+    },
+    {
+      "zone": "tomb_sanctum",
+      "width": 1920,
+      "mode": "combat",
+      "pairs": 2,
+      "before": {
+        "median": 5.9,
+        "p95": 9.2
+      },
+      "after": {
+        "median": 5.45,
+        "p95": 8.100000000000001
+      },
+      "medianPct": -7.6271186440677985,
+      "p95Pct": -11.95652173913041,
+      "withinTarget": true
+    },
+    {
+      "zone": "tomb_sanctum",
+      "width": 3840,
+      "mode": "moving",
+      "pairs": 2,
+      "before": {
+        "median": 5.65,
+        "p95": 6.65
+      },
+      "after": {
+        "median": 5.45,
+        "p95": 6.55
+      },
+      "medianPct": -3.539823008849563,
+      "p95Pct": -1.5037593984962516,
+      "withinTarget": true
+    },
+    {
+      "zone": "tomb_sanctum",
+      "width": 3840,
+      "mode": "combat",
+      "pairs": 2,
+      "before": {
+        "median": 7.4,
+        "p95": 8.95
+      },
+      "after": {
+        "median": 6.699999999999999,
+        "p95": 7.95
+      },
+      "medianPct": -9.459459459459474,
+      "p95Pct": -11.173184357541889,
+      "withinTarget": true
+    }
+  ]
+}

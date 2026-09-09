@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "legacyActors": false,
+  "baseline": "working-tree snapshot in tmp/act5_environment/before",
+  "method": "Three alternating before/after pairs, 90 warmup and 240 sampled frames per workload, means of per-run median/p95, full roster retained, identical routes and combat pockets supported by both maps, twelve nearest durable targets with a close melee target, verified attack exchange, real 3D Vanguard, cached production terrain.",
+  "results": [
+    {
+      "width": 1920,
+      "zone": "hellgate",
+      "mode": "moving",
+      "before": {
+        "median": 2.3333333333333335,
+        "p95": 3.6
+      },
+      "after": {
+        "median": 2.033333333333333,
+        "p95": 2.6666666666666665
+      },
+      "medianChangePct": -12.9,
+      "p95ChangePct": -25.9,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "hellgate",
+      "mode": "moving",
+      "before": {
+        "median": 2.2333333333333334,
+        "p95": 2.8000000000000003
+      },
+      "after": {
+        "median": 2,
+        "p95": 2.5666666666666664
+      },
+      "medianChangePct": -10.4,
+      "p95ChangePct": -8.3,
+      "passed": true
+    }
+  ]
+}

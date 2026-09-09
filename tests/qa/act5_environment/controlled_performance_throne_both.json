@@ -1,0 +1,72 @@
+{
+  "status": "FAIL",
+  "legacyActors": false,
+  "baseline": "original Act V map generator with current shared runtime and assets",
+  "method": "Three alternating before/after pairs, 90 warmup and 240 sampled frames per workload, means of per-run median/p95, full roster retained, identical routes and combat pockets supported by both maps, twelve nearest durable targets with a close melee target, verified attack exchange, real 3D Vanguard, cached production terrain.",
+  "results": [
+    {
+      "width": 1920,
+      "zone": "throne",
+      "mode": "moving",
+      "before": {
+        "median": 3.1666666666666665,
+        "p95": 4.266666666666667
+      },
+      "after": {
+        "median": 3.6,
+        "p95": 4.966666666666666
+      },
+      "medianChangePct": 13.7,
+      "p95ChangePct": 16.4,
+      "passed": false
+    },
+    {
+      "width": 1920,
+      "zone": "throne",
+      "mode": "combat",
+      "before": {
+        "median": 3.8333333333333335,
+        "p95": 5.599999999999999
+      },
+      "after": {
+        "median": 4.366666666666666,
+        "p95": 6.166666666666667
+      },
+      "medianChangePct": 13.9,
+      "p95ChangePct": 10.1,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "throne",
+      "mode": "moving",
+      "before": {
+        "median": 3.6,
+        "p95": 5.3
+      },
+      "after": {
+        "median": 4.8999999999999995,
+        "p95": 6.966666666666666
+      },
+      "medianChangePct": 36.1,
+      "p95ChangePct": 31.4,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "throne",
+      "mode": "combat",
+      "before": {
+        "median": 4.7,
+        "p95": 6.6000000000000005
+      },
+      "after": {
+        "median": 6.3,
+        "p95": 8.799999999999999
+      },
+      "medianChangePct": 34,
+      "p95ChangePct": 33.3,
+      "passed": false
+    }
+  ]
+}

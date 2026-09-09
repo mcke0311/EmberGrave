@@ -1,0 +1,1645 @@
+{
+  "version": 1,
+  "kits": [
+    {
+      "key": "north",
+      "source": "north.png",
+      "modules": [
+        {
+          "name": "east",
+          "box": [
+            0,
+            0,
+            384,
+            341
+          ],
+          "sockets": [
+            [
+              40,
+              145
+            ],
+            [
+              340,
+              295
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 4,
+            "depth": 1
+          }
+        },
+        {
+          "name": "east_alt",
+          "box": [
+            384,
+            0,
+            768,
+            341
+          ],
+          "sockets": [
+            [
+              40,
+              145
+            ],
+            [
+              340,
+              295
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 4,
+            "depth": 1
+          }
+        },
+        {
+          "name": "south",
+          "box": [
+            768,
+            0,
+            1152,
+            341
+          ],
+          "sockets": [
+            [
+              40,
+              295
+            ],
+            [
+              340,
+              145
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 4,
+            "depth": 1
+          }
+        },
+        {
+          "name": "south_alt",
+          "box": [
+            1152,
+            0,
+            1536,
+            341
+          ],
+          "sockets": [
+            [
+              40,
+              295
+            ],
+            [
+              340,
+              145
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 4,
+            "depth": 1
+          }
+        },
+        {
+          "name": "outer",
+          "box": [
+            0,
+            341,
+            384,
+            650
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 4,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "inner",
+          "box": [
+            384,
+            341,
+            768,
+            650
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 4,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "end_east",
+          "box": [
+            768,
+            341,
+            1152,
+            650
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 3,
+          "footprint": {
+            "length": 4,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "end_south",
+          "box": [
+            1152,
+            341,
+            1536,
+            650
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 3,
+          "footprint": {
+            "length": 4,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "broken",
+          "box": [
+            0,
+            650,
+            384,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 4,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "ground",
+          "box": [
+            384,
+            650,
+            768,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 4,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "door_out",
+          "box": [
+            768,
+            650,
+            1152,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              270
+            ],
+            [
+              340,
+              270
+            ]
+          ],
+          "span": 8,
+          "footprint": {
+            "opening": 3,
+            "depth": 2,
+            "width": 8
+          },
+          "anchor": [
+            192,
+            245
+          ]
+        },
+        {
+          "name": "door_in",
+          "box": [
+            1152,
+            650,
+            1536,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              270
+            ],
+            [
+              340,
+              270
+            ]
+          ],
+          "span": 8,
+          "footprint": {
+            "opening": 3,
+            "depth": 2,
+            "width": 8
+          },
+          "anchor": [
+            192,
+            245
+          ]
+        }
+      ]
+    },
+    {
+      "key": "mine",
+      "source": "mine.png",
+      "modules": [
+        {
+          "name": "east",
+          "box": [
+            0,
+            0,
+            384,
+            330
+          ],
+          "sockets": [
+            [
+              40,
+              145
+            ],
+            [
+              340,
+              295
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "east_alt",
+          "box": [
+            384,
+            0,
+            768,
+            330
+          ],
+          "sockets": [
+            [
+              40,
+              145
+            ],
+            [
+              340,
+              295
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "south",
+          "box": [
+            768,
+            0,
+            1152,
+            330
+          ],
+          "sockets": [
+            [
+              40,
+              295
+            ],
+            [
+              340,
+              145
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "south_alt",
+          "box": [
+            1152,
+            0,
+            1536,
+            330
+          ],
+          "sockets": [
+            [
+              40,
+              295
+            ],
+            [
+              340,
+              145
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "outer",
+          "box": [
+            0,
+            330,
+            384,
+            630
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "inner",
+          "box": [
+            384,
+            330,
+            768,
+            630
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "end_east",
+          "box": [
+            768,
+            330,
+            1152,
+            630
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 3,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "end_south",
+          "box": [
+            1152,
+            330,
+            1536,
+            630
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 3,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "broken",
+          "box": [
+            0,
+            630,
+            384,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "ground",
+          "box": [
+            384,
+            630,
+            768,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "door_out",
+          "box": [
+            768,
+            630,
+            1152,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              270
+            ],
+            [
+              340,
+              270
+            ]
+          ],
+          "span": 8,
+          "footprint": {
+            "opening": 3,
+            "depth": 2,
+            "width": 8
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "door_in",
+          "box": [
+            1152,
+            630,
+            1536,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              270
+            ],
+            [
+              340,
+              270
+            ]
+          ],
+          "span": 8,
+          "footprint": {
+            "opening": 3,
+            "depth": 2,
+            "width": 8
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        }
+      ]
+    },
+    {
+      "key": "temple",
+      "source": "temple.png",
+      "modules": [
+        {
+          "name": "east",
+          "box": [
+            0,
+            0,
+            384,
+            335
+          ],
+          "sockets": [
+            [
+              40,
+              145
+            ],
+            [
+              340,
+              295
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "east_alt",
+          "box": [
+            384,
+            0,
+            768,
+            335
+          ],
+          "sockets": [
+            [
+              40,
+              145
+            ],
+            [
+              340,
+              295
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "south",
+          "box": [
+            1152,
+            0,
+            1536,
+            335
+          ],
+          "sockets": [
+            [
+              40,
+              295
+            ],
+            [
+              340,
+              145
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "south_alt",
+          "box": [
+            1152,
+            0,
+            1536,
+            335
+          ],
+          "sockets": [
+            [
+              40,
+              295
+            ],
+            [
+              340,
+              145
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "outer",
+          "box": [
+            0,
+            335,
+            384,
+            635
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "inner",
+          "box": [
+            384,
+            335,
+            768,
+            635
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "end_east",
+          "box": [
+            768,
+            335,
+            1152,
+            635
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 3,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "end_south",
+          "box": [
+            1152,
+            335,
+            1536,
+            635
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 3,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "broken",
+          "box": [
+            0,
+            635,
+            384,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "ground",
+          "box": [
+            384,
+            635,
+            768,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "door_out",
+          "box": [
+            768,
+            635,
+            1152,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              270
+            ],
+            [
+              340,
+              270
+            ]
+          ],
+          "span": 8,
+          "footprint": {
+            "opening": 3,
+            "depth": 2,
+            "width": 8
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "door_in",
+          "box": [
+            1152,
+            635,
+            1536,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              270
+            ],
+            [
+              340,
+              270
+            ]
+          ],
+          "span": 8,
+          "footprint": {
+            "opening": 3,
+            "depth": 2,
+            "width": 8
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        }
+      ]
+    },
+    {
+      "key": "town",
+      "source": "town.png",
+      "modules": [
+        {
+          "name": "east",
+          "box": [
+            0,
+            0,
+            384,
+            335
+          ],
+          "sockets": [
+            [
+              40,
+              145
+            ],
+            [
+              340,
+              295
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "east_alt",
+          "box": [
+            384,
+            0,
+            768,
+            335
+          ],
+          "sockets": [
+            [
+              40,
+              145
+            ],
+            [
+              340,
+              295
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "south",
+          "box": [
+            1152,
+            0,
+            1536,
+            335
+          ],
+          "sockets": [
+            [
+              40,
+              295
+            ],
+            [
+              340,
+              145
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "south_alt",
+          "box": [
+            1152,
+            0,
+            1536,
+            335
+          ],
+          "sockets": [
+            [
+              40,
+              295
+            ],
+            [
+              340,
+              145
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "outer",
+          "box": [
+            0,
+            335,
+            384,
+            635
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "inner",
+          "box": [
+            384,
+            335,
+            768,
+            635
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "end_east",
+          "box": [
+            768,
+            335,
+            1152,
+            635
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 3,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "end_south",
+          "box": [
+            1152,
+            335,
+            1536,
+            635
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 3,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "broken",
+          "box": [
+            0,
+            635,
+            384,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "ground",
+          "box": [
+            384,
+            635,
+            768,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "door_out",
+          "box": [
+            768,
+            635,
+            1152,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              270
+            ],
+            [
+              340,
+              270
+            ]
+          ],
+          "span": 8,
+          "footprint": {
+            "opening": 3,
+            "depth": 2,
+            "width": 8
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "door_in",
+          "box": [
+            1152,
+            635,
+            1536,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              270
+            ],
+            [
+              340,
+              270
+            ]
+          ],
+          "span": 8,
+          "footprint": {
+            "opening": 3,
+            "depth": 2,
+            "width": 8
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ice",
+      "source": "ice.png",
+      "modules": [
+        {
+          "name": "east",
+          "box": [
+            0,
+            0,
+            384,
+            340
+          ],
+          "sockets": [
+            [
+              40,
+              145
+            ],
+            [
+              340,
+              295
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "east_alt",
+          "box": [
+            384,
+            0,
+            768,
+            340
+          ],
+          "sockets": [
+            [
+              40,
+              145
+            ],
+            [
+              340,
+              295
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "south",
+          "box": [
+            768,
+            0,
+            1152,
+            340
+          ],
+          "sockets": [
+            [
+              40,
+              295
+            ],
+            [
+              340,
+              145
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "south_alt",
+          "box": [
+            1152,
+            0,
+            1536,
+            340
+          ],
+          "sockets": [
+            [
+              40,
+              295
+            ],
+            [
+              340,
+              145
+            ]
+          ],
+          "span": 6,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          }
+        },
+        {
+          "name": "outer",
+          "box": [
+            0,
+            340,
+            384,
+            655
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "inner",
+          "box": [
+            384,
+            340,
+            768,
+            655
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "end_east",
+          "box": [
+            768,
+            340,
+            1152,
+            655
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 3,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "end_south",
+          "box": [
+            1152,
+            340,
+            1536,
+            655
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 3,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "broken",
+          "box": [
+            0,
+            655,
+            384,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "ground",
+          "box": [
+            384,
+            655,
+            768,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              200
+            ],
+            [
+              340,
+              200
+            ]
+          ],
+          "span": 4,
+          "footprint": {
+            "length": 6,
+            "depth": 1
+          },
+          "anchor": [
+            192,
+            240
+          ]
+        },
+        {
+          "name": "door_out",
+          "box": [
+            768,
+            655,
+            1152,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              270
+            ],
+            [
+              340,
+              270
+            ]
+          ],
+          "span": 8,
+          "footprint": {
+            "opening": 3,
+            "depth": 2,
+            "width": 8
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        },
+        {
+          "name": "door_in",
+          "box": [
+            1152,
+            655,
+            1536,
+            1024
+          ],
+          "sockets": [
+            [
+              40,
+              270
+            ],
+            [
+              340,
+              270
+            ]
+          ],
+          "span": 8,
+          "footprint": {
+            "opening": 3,
+            "depth": 2,
+            "width": 8
+          },
+          "anchor": [
+            192,
+            230
+          ]
+        }
+      ]
+    }
+  ]
+}

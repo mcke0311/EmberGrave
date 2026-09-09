@@ -1,0 +1,112 @@
+{
+  "status": "FAIL",
+  "method": "Uninstrumented ABBA order, 240 warmup and 960 measured frames each; sustained 4K Spawn Pools combat.",
+  "before": {
+    "p95": 10.75,
+    "median": 7.05
+  },
+  "after": {
+    "p95": 12.4,
+    "median": 8.05
+  },
+  "regression": 0.15348837209302335,
+  "rows": [
+    {
+      "version": "control",
+      "mode": "combat",
+      "position": {
+        "x": 50.5,
+        "y": 28.5
+      },
+      "monsters": 101,
+      "distance": 0,
+      "attackFrames": 960,
+      "enemyAttackFrames": 6880,
+      "cpuMs": {
+        "median": 7.3,
+        "p95": 10.4,
+        "max": 19.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 34.8
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 50.5,
+        "y": 28.5
+      },
+      "monsters": 101,
+      "distance": 0,
+      "attackFrames": 960,
+      "enemyAttackFrames": 6880,
+      "cpuMs": {
+        "median": 7.8,
+        "p95": 11.8,
+        "max": 23.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 36.5
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 50.5,
+        "y": 28.5
+      },
+      "monsters": 101,
+      "distance": 0,
+      "attackFrames": 960,
+      "enemyAttackFrames": 6880,
+      "cpuMs": {
+        "median": 8.3,
+        "p95": 13,
+        "max": 21.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 17,
+        "max": 75.8
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "version": "control",
+      "mode": "combat",
+      "position": {
+        "x": 50.5,
+        "y": 28.5
+      },
+      "monsters": 101,
+      "distance": 0,
+      "attackFrames": 960,
+      "enemyAttackFrames": 6880,
+      "cpuMs": {
+        "median": 6.8,
+        "p95": 11.1,
+        "max": 19.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 59.4
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    }
+  ],
+  "baseline": "Current shared renderer with pre-threshold Act 2 generation"
+}

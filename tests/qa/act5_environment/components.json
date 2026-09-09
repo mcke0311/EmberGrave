@@ -1,0 +1,113 @@
+[
+  {
+    "version": "before",
+    "report": {
+      "mode": "moving",
+      "position": {
+        "x": 20.5,
+        "y": 24.5
+      },
+      "pocketRadius": null,
+      "monsters": 121,
+      "distance": 18.173333333333233,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.6,
+        "p95": 4.3,
+        "max": 13.3
+      },
+      "updateMs": {
+        "median": 0.9,
+        "p95": 1.1,
+        "max": 1.7
+      },
+      "renderMs": {
+        "median": 2.6,
+        "p95": 3.3,
+        "max": 12.3
+      },
+      "frameIntervalMs": {
+        "median": 17.9,
+        "p95": 18.1,
+        "max": 18.5
+      },
+      "builds": 1,
+      "warmCacheStable": true
+    },
+    "timings": {
+      "backdrop": {
+        "ms": 5.799999997019768,
+        "calls": 361
+      },
+      "terrain": {
+        "ms": 30.80000002682209,
+        "calls": 361
+      }
+    },
+    "boundary": null
+  },
+  {
+    "version": "after",
+    "report": {
+      "mode": "moving",
+      "position": {
+        "x": 20.5,
+        "y": 24.5
+      },
+      "pocketRadius": null,
+      "monsters": 121,
+      "distance": 18.173333333333233,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.7,
+        "p95": 4.5,
+        "max": 17.6
+      },
+      "updateMs": {
+        "median": 0.9,
+        "p95": 1.2,
+        "max": 1.6
+      },
+      "renderMs": {
+        "median": 2.8,
+        "p95": 3.3,
+        "max": 16.6
+      },
+      "frameIntervalMs": {
+        "median": 17.9,
+        "p95": 18.1,
+        "max": 24.4
+      },
+      "builds": 3,
+      "warmCacheStable": true
+    },
+    "timings": {
+      "backdrop": {
+        "ms": 5.299999974668026,
+        "calls": 361
+      },
+      "terrain": {
+        "ms": 20.200000002980232,
+        "calls": 361
+      },
+      "append": {
+        "ms": 11.80000003427267,
+        "calls": 361
+      },
+      "walls": {
+        "ms": 15.300000071525574,
+        "calls": 3771
+      }
+    },
+    "boundary": {
+      "batchPixels": 934980,
+      "batchBuilds": 8,
+      "mergedPixels": 18931392,
+      "mergedBuilds": 26,
+      "lastBatches": 11,
+      "lastIndividuals": 10
+    }
+  }
+]

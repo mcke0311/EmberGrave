@@ -1,0 +1,72 @@
+[
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-restoration",
+    "role": "prop",
+    "key": "a4stone_paving",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4stone_paving.png",
+    "sha256": "876579fdc7abcca37ae924e11622657e7358b2025893e33adcfb423cff3c2d24",
+    "kind": "static",
+    "size": [
+      512,
+      512
+    ],
+    "anchor": [
+      256,
+      256
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4stone_paving",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-restoration",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_restoration/stone_source.png",
+      "sourceSha256": "711cb604558ee21103be2ef961e2d2a74cb884388f5c8510862f51ce0766da21",
+      "parameters": {
+        "alphaMethod": "opaque-material",
+        "alphaBounds": [
+          0,
+          0,
+          1254,
+          1254
+        ],
+        "scale": 0.4082934609250399
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-restoration",
+    "role": "prop",
+    "key": "cathedral_pews",
+    "path": "assets/sprites_src/gameplay_art/world/props/cathedral_pews.png",
+    "sha256": "7049cd7936c03b83b458093379e2258d68cce2147f1057275fde7a17b97db919",
+    "kind": "static",
+    "size": [
+      240,
+      185
+    ],
+    "anchor": [
+      120,
+      126
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.cathedral_pews",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-restoration",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_restoration/pews_source.png",
+      "sourceSha256": "52cdc8bd38da66965b54b181f05ae4fd6f0ff4a86cedacf061472c5485225994",
+      "parameters": {
+        "alphaMethod": "native-alpha",
+        "alphaBounds": [
+          187,
+          22,
+          1400,
+          959
+        ],
+        "scale": 0.1978565539983512
+      }
+    }
+  }
+]

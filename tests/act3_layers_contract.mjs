@@ -11,7 +11,7 @@ const ok=(value,label)=>{assert.ok(value,label);checks++;};
 for(const zone of areas)for(let sample=0;sample<seedCount;sample++){
  const seed=sample===0?12345:Math.imul(sample+37,2654435761)>>>0;
  const m=M.generate(zone,seed),label=zone+'/'+seed;
- ok(m.act3.architecture.walls.length>0,label+' painted walls retained');
+ ok(m.act3.environment?.outdoor?m.act3.architecture.walls.length===0:m.act3.architecture.walls.length>0,label+' appropriate natural or masonry boundaries');
  ok(m.act3.architecture.bridges.length===0,label+' no bridge assembly');
  ok(!Object.keys(m.layers||{}).length,label+' no invisible upper floor');
  ok(!(m.surfaceLinks||[]).length,label+' no orphan stairs');

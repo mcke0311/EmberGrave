@@ -1,0 +1,70 @@
+{
+  "status": "PASS",
+  "browser": "152.0.7977.83",
+  "connections": [
+    {
+      "from": "hellgate",
+      "to": "ash_wastes",
+      "status": "PASS",
+      "steps": 4
+    },
+    {
+      "from": "ash_wastes",
+      "to": "cinder_bastion",
+      "status": "PASS",
+      "steps": 4
+    },
+    {
+      "from": "cinder_bastion",
+      "to": "ash_wastes",
+      "status": "PASS",
+      "steps": 4
+    },
+    {
+      "from": "ash_wastes",
+      "to": "throne",
+      "status": "PASS",
+      "steps": 4
+    },
+    {
+      "from": "throne",
+      "to": "ash_wastes",
+      "status": "PASS",
+      "steps": 4
+    },
+    {
+      "from": "ash_wastes",
+      "to": "hellgate",
+      "status": "PASS",
+      "steps": 4
+    }
+  ],
+  "captures": [
+    "hellgate_act5_hellgate_gate_1920_arrival.webp",
+    "hellgate_act5_hellgate_gate_1920_foreground.webp",
+    "ash_wastes_act5_ash_wastes_entry_1920_arrival.webp",
+    "ash_wastes_act5_ash_wastes_entry_1920_foreground.webp",
+    "ash_wastes_act5_ash_wastes_forecourt_1920_arrival.webp",
+    "ash_wastes_act5_ash_wastes_forecourt_1920_foreground.webp",
+    "ash_wastes_act5_ash_wastes_bastion_1920_arrival.webp",
+    "ash_wastes_act5_ash_wastes_bastion_1920_foreground.webp",
+    "cinder_bastion_act5_cinder_bastion_entry_1920_arrival.webp",
+    "cinder_bastion_act5_cinder_bastion_entry_1920_foreground.webp",
+    "throne_act5_throne_entry_1920_arrival.webp",
+    "throne_act5_throne_entry_1920_foreground.webp",
+    "hellgate_act5_hellgate_gate_3840_arrival.webp",
+    "hellgate_act5_hellgate_gate_3840_foreground.webp",
+    "ash_wastes_act5_ash_wastes_entry_3840_arrival.webp",
+    "ash_wastes_act5_ash_wastes_entry_3840_foreground.webp",
+    "ash_wastes_act5_ash_wastes_forecourt_3840_arrival.webp",
+    "ash_wastes_act5_ash_wastes_forecourt_3840_foreground.webp",
+    "ash_wastes_act5_ash_wastes_bastion_3840_arrival.webp",
+    "ash_wastes_act5_ash_wastes_bastion_3840_foreground.webp",
+    "cinder_bastion_act5_cinder_bastion_entry_3840_arrival.webp",
+    "cinder_bastion_act5_cinder_bastion_entry_3840_foreground.webp",
+    "throne_act5_throne_entry_3840_arrival.webp",
+    "throne_act5_throne_entry_3840_foreground.webp"
+  ],
+  "errors": [],
+  "missing": []
+}

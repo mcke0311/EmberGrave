@@ -27,6 +27,10 @@
   const cell=m.cathedral.rooms[1],k=(cell.x|0)+(cell.y|0)*m.w;m.cathedralMaterials[k]=(m.cathedralMaterials[k]+1)%4;
   render(cached,origin,true);if(LevelTerrain.getDiagnostics().surfaceViewBuilds<=moved.surfaceViewBuilds)throw Error('Material change did not invalidate cache');
   m.void[k]=1;m.walls[k]=m.blocked[k]=1;const before=LevelTerrain.getDiagnostics();render(cached,origin,true);if(LevelTerrain.getDiagnostics().surfaceViewBuilds<=before.surfaceViewBuilds)throw Error('Void change did not invalidate cache');
+  const boundaries=LevelTerrain.getDiagnostics();m.cathedral.environment={...m.cathedral.environment};render(cached,origin,true);
+  if(LevelTerrain.getDiagnostics().surfaceViewBuilds<=boundaries.surfaceViewBuilds)throw Error('Boundary replacement did not invalidate cache');
+  const revision=LevelTerrain.getDiagnostics();m.cathedral.environment.revision++;render(cached,origin,true);
+  if(LevelTerrain.getDiagnostics().surfaceViewBuilds<=revision.surfaceViewBuilds)throw Error('Boundary revision did not invalidate cache');
  }
  window.cathedralPixelReport={status:'PASS',rows};document.body.dataset.testStatus='passed';
 }catch(e){window.cathedralPixelReport={status:'FAIL',error:e.stack,rows};document.body.dataset.testStatus='failed';}document.getElementById('result').textContent=JSON.stringify(window.cathedralPixelReport,null,2);})();

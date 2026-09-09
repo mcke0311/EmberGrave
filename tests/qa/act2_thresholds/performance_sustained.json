@@ -1,0 +1,111 @@
+{
+  "status": "FAIL",
+  "method": "Uninstrumented ABBA order, 240 warmup and 960 measured frames each; sustained 4K Spawn Pools combat.",
+  "before": {
+    "p95": 11.25,
+    "median": 7.25
+  },
+  "after": {
+    "p95": 12.85,
+    "median": 8.4
+  },
+  "regression": 0.14222222222222225,
+  "rows": [
+    {
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 50.5,
+        "y": 28.5
+      },
+      "monsters": 101,
+      "distance": 0,
+      "attackFrames": 960,
+      "enemyAttackFrames": 6880,
+      "cpuMs": {
+        "median": 7.2,
+        "p95": 11,
+        "max": 19
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 31.8
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 50.5,
+        "y": 28.5
+      },
+      "monsters": 101,
+      "distance": 0,
+      "attackFrames": 960,
+      "enemyAttackFrames": 6880,
+      "cpuMs": {
+        "median": 8.3,
+        "p95": 12.1,
+        "max": 19.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 32.7
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 50.5,
+        "y": 28.5
+      },
+      "monsters": 101,
+      "distance": 0,
+      "attackFrames": 960,
+      "enemyAttackFrames": 6880,
+      "cpuMs": {
+        "median": 8.5,
+        "p95": 13.6,
+        "max": 16.9
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 17.2,
+        "max": 23.3
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 50.5,
+        "y": 28.5
+      },
+      "monsters": 101,
+      "distance": 0,
+      "attackFrames": 960,
+      "enemyAttackFrames": 6880,
+      "cpuMs": {
+        "median": 7.3,
+        "p95": 11.5,
+        "max": 17.3
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 35.7
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    }
+  ]
+}

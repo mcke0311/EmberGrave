@@ -1,0 +1,17 @@
+{
+  "revision": 1,
+  "assets": [
+    {"key":"monastery_out","source":"monastery_out.png","connections":[[125,560],[1320,1000]],"foundation":[710,739],"opening":[[620,700],[800,780]],"span":10},
+    {"key":"reeds_out_left","source":"reeds_out.png","box":[0,0,880,550],"connections":[[100,300],[740,460]],"foundation":[740,460],"span":4},
+    {"key":"reeds_out_right","source":"reeds_out.png","box":[880,300,1774,887],"connections":[[100,290],[770,490]],"foundation":[100,290],"span":4},
+    {"key":"monastery_in","source":"monastery_in.png","connections":[[190,518],[1360,958]],"foundation":[749,735],"opening":[[650,685],[850,770]],"span":10},
+    {"key":"sluice_out","source":"sluice_out.png","connections":[[350,485],[1370,830]],"foundation":[886,637],"opening":[[780,565],[997,685]],"span":10},
+    {"key":"sluice_in","source":"sluice_in.png","connections":[[270,600],[1260,940]],"foundation":[760,736],"opening":[[670,675],[840,785]],"span":10},
+    {"key":"reeds_in_left","source":"reeds_in.png","box":[0,0,905,560],"connections":[[110,365],[725,465]],"foundation":[725,465],"span":4},
+    {"key":"reeds_in_right","source":"reeds_in.png","box":[820,325,1774,887],"exclude":[[0,0,120,240]],"connections":[[200,365],[840,505]],"foundation":[200,365],"span":4},
+    {"key":"ritual_out_left","source":"ritual_out.png","box":[0,0,760,800],"connections":[[120,570],[650,728]],"foundation":[650,728],"span":4},
+    {"key":"ritual_out_right","source":"ritual_out.png","box":[820,200,1536,1024],"connections":[[60,669],[590,782]],"foundation":[60,669],"span":4},
+    {"key":"ritual_in_left","source":"ritual_in.png","box":[0,0,760,800],"connections":[[120,570],[650,728]],"foundation":[650,728],"span":4},
+    {"key":"ritual_in_right","source":"ritual_in.png","box":[820,200,1536,1024],"connections":[[60,669],[590,782]],"foundation":[60,669],"span":4}
+  ]
+}

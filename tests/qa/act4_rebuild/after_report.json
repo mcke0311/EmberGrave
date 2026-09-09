@@ -1,0 +1,234 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "rows": [
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "mode": "moving",
+      "cpuMs": {
+        "median": 2.8,
+        "p95": 5,
+        "max": 20.1
+      },
+      "frameIntervalMs": {
+        "median": 18,
+        "p95": 18.4,
+        "max": 29.5
+      },
+      "distance": 13.800000000000384,
+      "attacks": 0,
+      "enemyAttacks": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "mode": "combat",
+      "cpuMs": {
+        "median": 3,
+        "p95": 4,
+        "max": 6
+      },
+      "frameIntervalMs": {
+        "median": 17.9,
+        "p95": 18.2,
+        "max": 29.8
+      },
+      "distance": 0,
+      "attacks": 180,
+      "enemyAttacks": 476,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral2",
+      "width": 1920,
+      "mode": "moving",
+      "cpuMs": {
+        "median": 2.3,
+        "p95": 3.5,
+        "max": 21.9
+      },
+      "frameIntervalMs": {
+        "median": 18,
+        "p95": 18.2,
+        "max": 30.4
+      },
+      "distance": 13.800000000000262,
+      "attacks": 0,
+      "enemyAttacks": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral2",
+      "width": 1920,
+      "mode": "combat",
+      "cpuMs": {
+        "median": 3.5,
+        "p95": 5.5,
+        "max": 10.5
+      },
+      "frameIntervalMs": {
+        "median": 17.9,
+        "p95": 18.3,
+        "max": 44.5
+      },
+      "distance": 0,
+      "attacks": 180,
+      "enemyAttacks": 484,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral_cinderwatch",
+      "width": 1920,
+      "mode": "moving",
+      "cpuMs": {
+        "median": 1.9,
+        "p95": 2.4,
+        "max": 7.3
+      },
+      "frameIntervalMs": {
+        "median": 18,
+        "p95": 18.1,
+        "max": 19.7
+      },
+      "distance": 13.80000000000016,
+      "attacks": 0,
+      "enemyAttacks": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral_cinderwatch",
+      "width": 1920,
+      "mode": "combat",
+      "cpuMs": {
+        "median": 1.9,
+        "p95": 3.1,
+        "max": 4.7
+      },
+      "frameIntervalMs": {
+        "median": 18,
+        "p95": 18.2,
+        "max": 24.6
+      },
+      "distance": 0,
+      "attacks": 180,
+      "enemyAttacks": 416,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral_bastion",
+      "width": 1920,
+      "mode": "moving",
+      "cpuMs": {
+        "median": 2.6,
+        "p95": 4,
+        "max": 8.4
+      },
+      "frameIntervalMs": {
+        "median": 18,
+        "p95": 18.1,
+        "max": 28.7
+      },
+      "distance": 13.799999999999601,
+      "attacks": 0,
+      "enemyAttacks": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral_bastion",
+      "width": 1920,
+      "mode": "combat",
+      "cpuMs": {
+        "median": 2.5,
+        "p95": 3.1,
+        "max": 3.5
+      },
+      "frameIntervalMs": {
+        "median": 18,
+        "p95": 18.1,
+        "max": 30.9
+      },
+      "distance": 0,
+      "attacks": 180,
+      "enemyAttacks": 394,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "mode": "combat",
+      "cpuMs": {
+        "median": 4.1,
+        "p95": 5.8,
+        "max": 7.3
+      },
+      "frameIntervalMs": {
+        "median": 18,
+        "p95": 18.3,
+        "max": 91.3
+      },
+      "distance": 0,
+      "attacks": 180,
+      "enemyAttacks": 476,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral2",
+      "width": 3840,
+      "mode": "combat",
+      "cpuMs": {
+        "median": 5.2,
+        "p95": 9,
+        "max": 10.4
+      },
+      "frameIntervalMs": {
+        "median": 18,
+        "p95": 22.1,
+        "max": 84.7
+      },
+      "distance": 0,
+      "attacks": 180,
+      "enemyAttacks": 484,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral_cinderwatch",
+      "width": 3840,
+      "mode": "combat",
+      "cpuMs": {
+        "median": 2.7,
+        "p95": 3.4,
+        "max": 5.5
+      },
+      "frameIntervalMs": {
+        "median": 18,
+        "p95": 18.2,
+        "max": 30.5
+      },
+      "distance": 0,
+      "attacks": 180,
+      "enemyAttacks": 416,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral_bastion",
+      "width": 3840,
+      "mode": "combat",
+      "cpuMs": {
+        "median": 3.6,
+        "p95": 4.2,
+        "max": 5.8
+      },
+      "frameIntervalMs": {
+        "median": 18,
+        "p95": 18.1,
+        "max": 59.4
+      },
+      "distance": 0,
+      "attacks": 180,
+      "enemyAttacks": 394,
+      "warmCacheStable": true
+    }
+  ]
+}

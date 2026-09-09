@@ -595,6 +595,7 @@ const Game = (() => {
 
   /* ---------------- map transitions ---------------- */
   async function enterMap(zoneId, spawnKey, { revive = false, openingMode = null, arrivalPosition = null, reuseCachedMap = false, recoverable: recoverableTravel = false, quietQuestAudio = false } = {}) {
+    if(typeof PropInteractions!=='undefined')PropInteractions.cancel(state);
     if(openingMode === "gate" && !opening.ready) {
       const s=state.flags.opening?.stage;
       UI.openingCaption("Bryn",["provision","bossIntro","boss"].includes(s)?"The captain still holds the gate. We have to end his watch.":["rescue","rescueTalk","road"].includes(s)?"There are people stranded on the road. We can’t leave them here.":"The risen are still on the road. Clear them first."); return false;
@@ -972,9 +973,9 @@ const Game = (() => {
       if (!prop.storyId) continue;
       const obj = DATA.STORY_OBJECTS[zone].find(o=>o.id===prop.storyId);
       prop.interact = !obj.travel && DATA.CAMPAIGN.found(state,zone,obj.id) ? null : "story";
+      prop.completed = !obj.travel && DATA.CAMPAIGN.found(state,zone,obj.id);
       if (prop.type === "chest") prop.opened = !prop.interact;
       if (state.map.cathedral) {
-        prop.completed=!obj.travel && DATA.CAMPAIGN.found(state,zone,obj.id);
         if (obj.travel) prop.hidden=!DATA.CAMPAIGN.bossDead(state,obj.requireKill);
       }
       if(state.map.act3 && zone==='underground_market')prop.visualType=prop.interact?'relay_active':'relay_disabled';
@@ -983,25 +984,25 @@ const Game = (() => {
   }
   function interactStory(prop) {
     const zone=state.map.id, obj=DATA.STORY_OBJECTS[zone]?.find(o=>o.id===prop.storyId);
-    if (!obj || (!obj.travel && DATA.CAMPAIGN.found(state,zone,obj.id))) return;
+    if (!obj || (!obj.travel && DATA.CAMPAIGN.found(state,zone,obj.id))) return false;
     if (obj.requireKill && !DATA.CAMPAIGN.bossDead(state,obj.requireKill)) {
-      msg(`Defeat ${DATA.ENEMIES[obj.requireKill].name} first.`,"#d8b880"); return;
+      msg(`Defeat ${DATA.ENEMIES[obj.requireKill].name} first.`,"#d8b880"); return false;
     }
     if (obj.guards && state.monsters.some(m=>!m.dead && obj.guards.includes(m.defId) && U.dist(m.x,m.y,prop.x,prop.y)<5)) {
-      msg("The guardians still hold this place. Defeat them first.","#d8b880"); return;
+      msg("The guardians still hold this place. Defeat them first.","#d8b880"); return false;
     }
     if (obj.travel) {
       const q=DATA.QUESTS.find(q=>q.id==="q17");
       if (DATA.CAMPAIGN.remaining(state,q).length && state.quests.q17?.state!=="done") {
-        msg("Break the Quieting seals, recover the sword, and defeat the priests before entering the portal.","#d8b880"); return;
+        msg("Break the Quieting seals, recover the sword, and defeat the priests before entering the portal.","#d8b880"); return false;
       }
       if (state.quests.q17?.state === "reward") completeQuest("q17");
       msg(obj.text,"#d8c79a"); enterMap(obj.travel,"default"); return;
     }
     campaignEvent({kind:"interact",zone,target:obj.id});
     msg(obj.text,"#d8c79a"); centerMsg(obj.label,"Recovered in your quest journal");
-    Sfx.play("questProgress"); addNova(prop.x,prop.y,1.5,"#c0dcff");
-    syncStoryObjects(); saveGame();
+    Sfx.play("questProgress"); PropInteractions.effect(prop,state,'quest');
+    prop.completed=true;syncStoryObjects(); saveGame();
   }
   function bossWard(mon) {
     const qid = mon.defId === "empty_archangel" ? "q16" : mon.defId === "malthoron" ? "q17" : null;
@@ -1631,11 +1632,12 @@ const Game = (() => {
   function triggerEvent(prop) {
     if (prop.interact !== "event" || !state.map.props.includes(prop)) return;
     const ev = prop.ev, p = state.player;
-    if (prop.type === "chest") { prop.opened = true; prop.interact = null; prop.event = false; prop.lootable = false; }
-    else { const i = state.map.props.indexOf(prop); if (i >= 0) state.map.props.splice(i, 1); }
+    prop.spent=true;prop.interact=null;prop.event=false;prop.lootable=false;
+    if (prop.type === "chest" || prop.type === "strongbox") prop.opened=true;
     const lvl = (state.map.zone.lvl || 1) + DATA.DIFFICULTIES[state.difficulty].lvlAdd;
     Sfx.play("shrine"); centerMsg(ev.name, "");
-    addNova(prop.x, prop.y, 2.2, ev.color || "#8fd8ff");
+    // Activation is cosmetic; it must not smash neighboring loot containers.
+    PropInteractions.effect(prop,state,'activate');
     switch (ev.kind) {
       case "buff": {
         const b = ev.buff;
@@ -1712,45 +1714,23 @@ const Game = (() => {
       }
     }
   }
-  /* smash a single breakable prop: remove it, free its tile, fx + loot */
+  /* Smash once, retaining nonblocking, visibly broken remains for this expedition. */
   function breakProp(prop) {
     if (!prop || !prop.breakable || prop.broken) return false;
     const m = state.map, p = state.player;
     if (!m.props.includes(prop)||!TerrainLayers.affects(m,prop,p)) return false;
     prop.broken = true;
-    const idx = m.props.indexOf(prop); if (idx >= 0) m.props.splice(idx, 1);
-    const surface=TerrainLayers.view(m,prop.surfaceId??0);
-    surface.blocked[(prop.x | 0) + (prop.y | 0) * m.w] = surface.walls[(prop.x | 0) + (prop.y | 0) * m.w];
-    Sfx.play("barrel");
-    for (let i = 0; i < 8; i++) addParticle(prop.x, prop.y, "#7a5a32");
+    prop.breakable=false;
+    PropInteractions.freeTile(m,prop);PropInteractions.effect(prop,state,'break');
+    Sfx.play(PropInteractions.sound(prop));
     scatterDrops(Items.rollDrops((m.zone.lvl || 1) + DATA.DIFFICULTIES[state.difficulty].lvlAdd, "barrel", p.stats.mf, p.stats.goldFind), prop.x, prop.y);
-    return true;
-  }
-  /* Direct interactions strike at the boot's contact pose. Spells continue to
-     call breakProp directly, so distant explosions never make the hero kick. */
-  function kickProp(prop) {
-    const m = state.map, p = state.player;
-    const canReach = () => TerrainLayers.same(p,prop) && U.dist(p.x,p.y,prop.x,prop.y) < 1.6 &&
-      Math.abs(TerrainNavigation.height(m,p.x,p.y,p.surfaceId)-TerrainNavigation.height(m,prop.x,prop.y,prop.surfaceId)) <= 1 &&
-      U.los((x,y) => (x===(prop.x|0) && y===(prop.y|0)) || MapGen.walkable(m,x,y),p.x,p.y,prop.x,prop.y);
-    if (!prop.breakable || prop.broken || !m.props.includes(prop) || p.dead || p.action || p.stunT > 0 ||
-        p.jumping || p.leaping || p.charging || p.dashing || p.spinning || !canReach()) return false;
-    p.path = null; p.command = null; p.moving = false; p.curSpeed = 0;
-    p.face(prop.x,prop.y); p.visAng = p.angT;
-    p.startAction("kick", .56);
-    const action = p.action;
-    Sfx.play("swing");
-    afterDelay(.28, () => {
-      if (state.map !== m || state.player !== p || p.dead || p.action !== action || p.stunT > 0 || p.jumping || p.leaping || !canReach()) return;
-      breakProp(prop);
-    });
     return true;
   }
   /* skills/AoE: shatter every breakable prop within a radius (called from addNova) */
   function breakPropsNear(x, y, radius) {
     if (!state || !state.map || !state.player || !state.map.props) return;
     const r2 = radius * radius;
-    for (const pr of state.map.props.slice()) {   // slice: breakProp splices the live array
+    for (const pr of state.map.props) {   // Broken props retain a nonblocking terminal state.
       if (pr.breakable && !pr.broken && U.dist2(x, y, pr.x, pr.y) <= r2) breakProp(pr);
     }
   }
@@ -1877,10 +1857,11 @@ const Game = (() => {
     if(!TerrainLayers.same(state.player,prop))return;
     return TerrainLayers.scope(state.map,state.player,()=>interactOnSurface(prop));
   }
-  function interactOnSurface(prop) {
+  function interactOnSurface(prop, committed=false) {
     const p = state.player;
+    if(!committed&&PropInteractions.profile(prop))return PropInteractions.begin(state,prop,()=>interactOnSurface(prop,true));
     if(opening.interact(prop))return;
-    if (prop.storyId) { interactStory(prop); return; }
+    if (prop.storyId) return interactStory(prop);
     /* people get a conversation (the board is a special "NPC") */
     if (prop.isNpc || (prop.def && DATA.NPCS[prop.id])) {
       if (prop.survivor) { rescueSurvivor(prop); return; }   // free the trapped, don't chat
@@ -1907,10 +1888,17 @@ const Game = (() => {
       UI.openShrine();
       return;
     }
-    if (prop.breakable) { kickProp(prop); return; }
+    if(prop.searchable){
+      if(prop.searched)return false;
+      prop.searched=true;prop.interact=null;
+      Sfx.play(PropInteractions.sound(prop));
+      scatterDrops(Items.rollDrops((state.map.zone.lvl||1)+DATA.DIFFICULTIES[state.difficulty].lvlAdd,'barrel',p.stats.mf,p.stats.goldFind),prop.x,prop.y+.5);
+      return true;
+    }
+    if (prop.breakable) return breakProp(prop);
     if (prop.lootable) {
       if (prop.encounterLock && state.monsters.some(mon=>!mon.dead && mon.cathedralEncounter===prop.encounterLock)) {
-        msg("Defeat the guardians of this memory to open its cache.","#d8b880"); return;
+        msg("Defeat the guardians of this memory to open its cache.","#d8b880"); return false;
       }
       prop.lootable = false;
       prop.opened = true;
@@ -1999,6 +1987,7 @@ const Game = (() => {
       if (UI.escOpen()) { if (k === "escape") UI.closeEsc(); return; }
       if (document.activeElement && ["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)) { if (k === "escape" && UI.anyOpen()) { UI.closeAll(); e.preventDefault(); } return; }
       if (k === LootFilter.config.revealKey) LootFilter.setReveal(true);   // hold to reveal hidden loot (faded)
+      if(['f1','f2','f3','f4',' ','spacebar','escape'].includes(k))PropInteractions.cancel(state);
       switch (k) {
         case "1": case "2": case "3": case "4": state.player.quaff(+k - 1); break;
         case "i": UI.togglePanel("inv"); break;
@@ -2096,6 +2085,10 @@ const Game = (() => {
     }
     updateHover();
     const w = screenToWorld(mouse.x, mouse.y);
+    if(p.action?.propInteraction){
+      if(!rightBtn&&!mouse.shift&&hoverProp===p.action.propInteraction.prop)return;
+      PropInteractions.cancel(state);
+    }
     const skill = rightBtn ? p.skillR : p.skillL;
 
     // A ground press owns its hold even if picking a cliff supplies no route.
@@ -2113,7 +2106,8 @@ const Game = (() => {
         return;
       }
       if (hoverExit) {
-        const ex = hoverExit, cx = (ex.x0 + ex.x1) / 2, cy = (ex.y0 + ex.y1) / 2;
+        const ex = hoverExit, approach=state.map.thresholds?.find(t=>t.id===ex.thresholdId)?.approach,
+          cx = approach?.x??(ex.x0 + ex.x1) / 2, cy = approach?.y??(ex.y0 + ex.y1) / 2;
         const go = () => {
           /* Korvath's barrier seals the Shattered Temple until the beacons fall */
           if (ex.target === "shattered_temple" && !state.flags.fn_temple_open) {
@@ -2260,24 +2254,52 @@ const Game = (() => {
     /* portals */
     const portalSpots = portalPositions();
     for (const ps of portalSpots) if (TerrainLayers.same(ps,state.player)&&test(ps.x, ps.y, 70, 30)) { hoverPortal = ps; return; }
+    /* Authored passages share their opening and label hit geometry with drawing. */
+    for(const ex of state.map.exits){
+      const th=state.map.thresholds?.find(t=>t.id===ex.thresholdId);
+      if(!th||th.act!==3)continue;
+      const g=thresholdGeometry(th,ex,cam);
+      if((Math.abs(mouse.x-g.x)<g.width&&mouse.y>g.y-g.height&&mouse.y<g.y+18)||
+        (g.showLabel&&Math.abs(mouse.x-g.x)<g.labelWidth/2&&mouse.y>g.labelY-16&&mouse.y<g.labelY+7)){
+        hoverExit=ex;return;
+      }
+    }
     for (const pr of state.map.props) {
       if (!TerrainLayers.same(pr,state.player) || pr.hidden || !(pr.interact || pr.breakable || pr.lootable)) continue;
       /* tall interactables (shrines, forge, strongbox, board) need a generous box so
          clicking the VISIBLE sprite — not just its base — registers */
       if (pr.building) {
         const frame = propSpriteFrame(pr);
+        const anchorX=pr.flipX?frame.sw-frame.anchorX:frame.anchorX;
         const sx=U.isoX(pr.x,pr.y)-cam.x,sy=U.isoY(pr.x,pr.y)-cam.y-elevLift(pr.x,pr.y,pr.surfaceId);
-        if (mouse.x>=sx-frame.anchorX && mouse.x<=sx-frame.anchorX+frame.sw && mouse.y>=sy-frame.anchorY && mouse.y<=sy-frame.anchorY+frame.sh) { hoverProp=pr;return; }
+        if (mouse.x>=sx-anchorX && mouse.x<=sx-anchorX+frame.sw && mouse.y>=sy-frame.anchorY && mouse.y<=sy-frame.anchorY+frame.sh) { hoverProp=pr;return; }
+        continue;
+      }
+      if(PropInteractions.themed(pr)){
+        const frame=propSpriteFrame(pr),sx=U.isoX(pr.x,pr.y)-cam.x,sy=U.isoY(pr.x,pr.y)-cam.y-elevLift(pr.x,pr.y,pr.surfaceId);
+        const b=PropInteractions.bounds(frame,sx,sy,!!pr.flipX);
+        if(!hidden(pr.x,pr.y)&&mouse.x>=b.x-5&&mouse.x<=b.x+b.w+5&&mouse.y>=b.y-5&&mouse.y<=b.y+b.h+5){hoverProp=pr;return;}
         continue;
       }
       const tall = pr.interact === "shrine" ? 76 : (pr.interact ? 62 : 46);
       const wide = pr.interact === "shrine" ? 30 : 26;
       if (test(pr.x, pr.y, tall, wide)) { hoverProp = pr; return; }
     }
+    /* Authored passages share their opening and label hit geometry with drawing. */
+    for(const ex of state.map.exits){
+      const th=state.map.thresholds?.find(t=>t.id===ex.thresholdId);
+      if(!th||th.act===3)continue;
+      const g=thresholdGeometry(th,ex,cam);
+      if((Math.abs(mouse.x-g.x)<g.width&&mouse.y>g.y-g.height&&mouse.y<g.y+18)||
+        (g.showLabel&&Math.abs(mouse.x-g.x)<g.labelWidth/2&&mouse.y>g.labelY-16&&mouse.y<g.labelY+7)){
+        hoverExit=ex;return;
+      }
+    }
     /* map exits — click to travel (a generous world-space AABB hover) */
     const wm = screenToWorld(mouse.x, mouse.y);
     if(!wm)return;
     for (const ex of state.map.exits) {
+      if(ex.thresholdId&&state.map.thresholds?.some(t=>t.id===ex.thresholdId))continue;
       if (TerrainLayers.same(wm,ex)&&wm.x >= ex.x0 - 0.7 && wm.x <= ex.x1 + 0.7 && wm.y >= ex.y0 - 0.7 && wm.y <= ex.y1 + 0.7) { hoverExit = ex; return; }
     }
   }
@@ -2296,6 +2318,12 @@ const Game = (() => {
       out.push({ x: state.actGate.x, y: state.actGate.y, gate: true, target: state.actGate.target });
     }
     return out;
+  }
+  function thresholdGeometry(th,ex,cam){
+    const o=th.opening,x=U.isoX(o.x,o.y)-cam.x,y=U.isoY(o.x,o.y)-cam.y-((th.act===1||th.act===3||th.act===5)?surfaceLift(o.x,o.y,th.surfaceId??0):0);
+    const showLabel=ex===hoverExit||U.dist(state.player.x,state.player.y,th.approach.x,th.approach.y)<7;
+    return{x,y,width:o.halfWidth*32+6,height:o.height,labelY:y-o.height-14,
+      labelWidth:Math.max(120,(ex.label||'Travel').length*8+30),showLabel};
   }
 
   /* =====================================================================
@@ -2331,6 +2359,7 @@ const Game = (() => {
   function update(dt) {
     state.time += dt;
     const p = state.player;
+    PropInteractions.update(state);
     opening.update(dt);
     if (LootFilter.version !== lootFilterVersion) refreshLoot();   // re-apply the filter only when it changed
     /* delayed callbacks */
@@ -2513,20 +2542,21 @@ const Game = (() => {
   function corpseFromGrave(self, aim, range) {
     const m = state.map; if (!m || !Array.isArray(m.props)) return null;
     const ax = aim ? aim.x : self.x, ay = aim ? aim.y : self.y, r2 = range * range;
-    let best = null, bi = -1, bd = Infinity;
+    let best = null, bd = Infinity;
     for (let i = 0; i < m.props.length; i++) {
       const p = m.props[i];
-      if (!p || p.type !== "grave") continue;
+      if (!p || p.type !== "grave" || p.corpseConsumed || p.storyId || p.event || p.ev || !TerrainLayers.same(self,p)) continue;
       if (U.dist2(self.x, self.y, p.x, p.y) > r2) continue;     // must be within reach of the caster
       const dd = U.dist2(ax, ay, p.x, p.y);
-      if (dd < bd) { bd = dd; best = p; bi = i; }
+      if (dd < bd) { bd = dd; best = p; }
     }
     if (!best) return null;
-    m.props.splice(bi, 1);                                       // the stone cracks; the dead come free
-    m.blocked[(best.x | 0) + (best.y | 0) * m.w] = m.walls[(best.x | 0) + (best.y | 0) * m.w];   // free the tile (graves block) so the raised minion can move
-    addNova(best.x, best.y, 1.0, "#9a8a6a"); bloodBurst(best.x, best.y, 6); Sfx.play("die_bone");
+    best.corpseConsumed=true;
+    PropInteractions.freeTile(m,best);PropInteractions.effect(best,state,'corpse');
+    Sfx.play('propStone');
     spawnCorpse(best.x, best.y, 12);
     const husk = state.monsters[state.monsters.length - 1];
+    husk.surfaceId=best.surfaceId??self.surfaceId??0;
     husk.fromGrave = true;                                       // marks summons raised here as Empowered
     return husk;
   }
@@ -2852,9 +2882,11 @@ const Game = (() => {
     cathedral: "dungeon", bastion: "hellwild", throne: "hellwild", town: "fields" };
 
   function drawBackdrop(theme, m, W, H, cam) {
+    if(m.cathedral?.environment){CathedralEnvironment.drawBackdrop(ctx,m,cam,W,H);return;}
+    if(m.act5Environment||m.act2Visual||m.act3?.environment){LevelTerrain.drawEnvironmentBackdrop(ctx,m,cam,W,H);return;}
     const direct = SpriteAssets.maps.backdrops && SpriteAssets.maps.backdrops[theme];
     const key = direct ? theme : (BACKDROP_ALIAS[theme] || "default");
-    const assetId = m.cathedral ? SpriteAssets.maps.props.cathedral_void_backdrop : SpriteAssets.maps.backdrops && (
+    const assetId = m.act3?.environment?.outdoor ? SpriteAssets.maps.props.act3_ground_sand : m.cathedral ? SpriteAssets.maps.props.cathedral_void_backdrop : SpriteAssets.maps.backdrops && (
       SpriteAssets.maps.backdrops[key] || SpriteAssets.maps.backdrops.default
     );
     if (!assetId) throw new Error(`Missing required authored backdrop mapping: ${key}`);
@@ -2973,9 +3005,13 @@ const Game = (() => {
 
     /* ---- depth-sorted drawables: walls, props, entities, projectiles ---- */
     const draws = [];
+    if(m.cathedral?.environment)CathedralEnvironment.append(draws,m,cam,p,W,H);
+    if(m.boundaries)Act2Boundaries.append(draws,m,cam,p,W,H);
+    if(m.act1Environment)Act1Environment.append(draws,m,cam,p,W,H);
     if(m.act3?.architecture)ImperialArchitecture.append(draws,m,cam,p,W,H);
+    if(m.act3?.environment)ImperialEnvironment.append(draws,m,cam,p,W,H);
     /* walls: only facades (wall tiles with a floor neighbor) — culled to the visible box */
-    if(!m.act3?.architecture&&!(m.composition||m.frontier)?.terrainWalls)for (let y = ty0; y <= ty1; y++) for (let x = tx0; x <= tx1; x++) {
+    if(!m.act5Environment&&!m.act1Environment&&!m.boundaries&&!m.act3?.architecture&&!(m.composition||m.frontier)?.terrainWalls)for (let y = ty0; y <= ty1; y++) for (let x = tx0; x <= tx1; x++) {
       const i = x + y * m.w;
       if (!m.walls[i] || m.void?.[i]) continue;
       if ((m.composition||m.frontier)?.terrainWalls) continue; // cached surface cliffs define these solid landforms
@@ -3011,10 +3047,11 @@ const Game = (() => {
     for (const pr of state.map.props) {
       if (pr.hidden) continue;
       const sx = U.isoX(pr.x, pr.y) - cam.x, sy = U.isoY(pr.x, pr.y) - cam.y;
-      if (pr.building) {
+      if (pr.building || PropInteractions.themed(pr)) {
         const f=propSpriteFrame(pr);
+        const anchorX=pr.flipX?f.sw-f.anchorX:f.anchorX;
         const seated=sy-elevLift(pr.x,pr.y,pr.surfaceId);
-        if(sx-f.anchorX>W || sx-f.anchorX+f.sw<0 || seated-f.anchorY>H || seated-f.anchorY+f.sh<0)continue;
+        if(sx-anchorX>W || sx-anchorX+f.sw<0 || seated-f.anchorY>H || seated-f.anchorY+f.sh<0)continue;
       } else if (!inView(sx, sy)) continue;
       draws.push({ d: pr.x + pr.y, kind: "prop", sx, sy, pr });
     }
@@ -3069,7 +3106,9 @@ const Game = (() => {
         d.floorOrder=d.kind==='imperialPlane'?1:d.kind==='imperialGroundFx'?1.5:d.kind==='imperialRail'||d.kind==='imperialLoot'||d.surfaceId?2:0;
       }
     }
+    if(m.act5Environment)CindersBoundaries.append(draws,m,cam,p,W,H);
     draws.sort((a, b) => (a.floorOrder||0)-(b.floorOrder||0)||a.d-b.d);
+    if(m.act5Environment)CindersBoundaries.merge(draws,m,cam,p);
 
     const beneathGallery=m.layers&&!p.surfaceId&&m.act3.architecture.bridges.some(b=>p.x>=b.lo&&p.x<b.hi&&p.y>b.y0-2&&p.y<b.y1+2);
     for (const d of draws) {
@@ -3097,6 +3136,11 @@ const Game = (() => {
           ctx.save();LevelTerrain.clipBehind(ctx,m,cam,d.x,d.y);BossVFX.drawItem(ctx,d,cam);ctx.restore();break;
         case "skillvfx":
           ctx.save();LevelTerrain.clipBehind(ctx,m,cam,d.x,d.y,d.surfaceId);SkillVFX.drawItem(ctx,d,cam);ctx.restore();break;
+        case "act5Boundary": CindersBoundaries.draw(ctx,d,p);break;
+        case "act2Boundary": Act2Boundaries.draw(ctx,d,p);break;
+        case "cathedralWall": CathedralEnvironment.draw(ctx,d,p);break;
+        case "imperialEnvironment": ImperialEnvironment.draw(ctx,d,p);break;
+        case "act1Boundary": Act1Environment.draw(ctx,d,p);break;
         case "wall":
         case "wallcap": {
           if (m.outdoor && MASSIF_THEMES.has(theme)) {   /* thematic impassable terrain: mountains/rock/boulders/spires/hills/thickets */
@@ -3442,6 +3486,8 @@ const Game = (() => {
 
     /* ---- lighting overlay ---- */
     renderLighting(cam);
+    if(m.cathedral?.environment)CathedralEnvironment.atmosphere(ctx,m,cam,W,H,state.time);
+    if(m.act2Visual)Act2Boundaries.atmosphere(ctx,m,cam,W,H,state.time);
     if(typeof SkillVFX!=='undefined')SkillVFX.drawLights(ctx,state,cam);
 
     /* ---- restrained color grade + lens vignette ---- */
@@ -3502,15 +3548,28 @@ const Game = (() => {
       const hl = (pr === hoverProp);
       /* on hover, the beacon nameplate carries a one-line description so the player knows what it does */
       const desc = isShrine
-        ? { label: "Click to attune, then fast-travel between waypoints", color: "#8fb8d0" }
+        ? { label: state.shrines.includes(state.map.id)?"Attuned · Click to travel":"Click to attune this waypoint", color: "#8fb8d0" }
         : (pr.ev ? { label: eventDesc(pr.ev), color: "#c8b890" } : null);
-      nameplate(isShrine ? "✦ Waypoint" : "✦ " + (pr.label || "Event"), sx, sy - 74,
+      const labelY=PropInteractions.themed(pr)?PropInteractions.bounds(propSpriteFrame(pr),sx,sy).y-9:sy-74;
+      nameplate(isShrine ? "✦ Waypoint" : "✦ " + (pr.label || "Event"), sx, labelY,
         hl ? "#ffffff" : (isShrine ? "#9fd8ff" : (pr.ev && pr.ev.color) || "#ffd070"),
         undefined, hl ? desc : null);
     }
 
     /* ---- map exits: click-to-travel markers (ground ring + rising chevrons; brighter + labelled on hover) ---- */
     for (const ex of state.map.exits) {
+      const th=state.map.thresholds?.find(t=>t.id===ex.thresholdId);
+      if(th){
+        const g=thresholdGeometry(th,ex,cam),hl=ex===hoverExit;
+        if(g.x+g.width<0||g.x-g.width>W||g.y+24<0||g.y-g.height-40>H)continue;
+        if(hl){
+          ctx.save();ctx.strokeStyle='rgba(220,214,177,.8)';ctx.lineWidth=1.5;
+          const slope=th.opening.axis?-.5:.5;
+          ctx.beginPath();ctx.moveTo(g.x-g.width,g.y-g.width*slope);ctx.lineTo(g.x+g.width,g.y+g.width*slope);ctx.stroke();ctx.restore();
+        }
+        if(g.showLabel)nameplate('→ '+(ex.label||'Travel'),g.x,g.labelY,hl?'#fff0c5':'#d5d2ba');
+        continue;
+      }
       const cx = (ex.x0 + ex.x1) / 2, cy = (ex.y0 + ex.y1) / 2;
       const sx = U.isoX(cx, cy) - cam.x, sy = U.isoY(cx, cy) - cam.y - surfaceLift(cx,cy);
       if (sx < -60 || sx > W + 60 || sy < -120 || sy > H + 60) continue;
@@ -3870,6 +3929,7 @@ const Game = (() => {
     return ((pr.completed||pr.opened)&&pr.visualDone) || pr.visual || pr.visualType || (pr.type==='chest'&&pr.opened?'chest_open':pr.type);
   }
   function propSpriteFrame(pr) {
+    const animated=PropInteractions.frame(pr,state);if(animated)return animated;
     const type=propVisualType(pr);
     return SpriteAssets.getFrame(SpriteAssets.maps.props[(pr.artZone||state.map.id)+'_'+type]||SpriteAssets.maps.props[type],0);
   }
@@ -3878,21 +3938,35 @@ const Game = (() => {
     d.sy -= elevLift(pr.x,pr.y,pr.surfaceId);   // props sit on raised terrain (d is a per-frame entry)
     const visualType = propVisualType(pr);
     const propId = SpriteAssets.maps.props[`${pr.artZone || state.map.id}_${visualType}`] || SpriteAssets.maps.props[visualType];
-    if (!propId) throw new Error(`Missing required prop sprite: ${state.map.id}/${pr.type}`);
-    const propFrame = SpriteAssets.getFrame(propId, 0);
-    const mirror = pr.type === "longhouse" && (((pr.seed || (pr.x * 17 + pr.y * 31)) | 0) & 1);
+    if (!propId&&!PropInteractions.themed(pr)) throw new Error(`Missing required prop sprite: ${state.map.id}/${pr.type}`);
+    const propFrame = propSpriteFrame(pr);
+    const mirror = !!pr.flipX || pr.type === "longhouse" && (((pr.seed || (pr.x * 17 + pr.y * 31)) | 0) & 1);
     // Fade tall architecture only while it covers the hero behind it.
     const p=state.player, dx=U.isoX(p.x,p.y)-U.isoX(pr.x,pr.y), dy=U.isoY(p.x,p.y)-U.isoY(pr.x,pr.y)-24;
     const coversHero=pr.building && !pr.interact && p.x+p.y<pr.x+pr.y && Math.abs(dx)<propFrame.sw*.42 && dy>-propFrame.anchorY && dy<0 && (pr.artZone!=='act3'||architectureCovers(propFrame,dx,dy-24-elevLift(p.x,p.y,p.surfaceId)+elevLift(pr.x,pr.y,pr.surfaceId)));
     ctx.save();LevelTerrain.clipBehind(ctx,state.map,camera(),pr.x,pr.y,pr.surfaceId);
-    SpriteAssets.drawFrame(ctx, propFrame, d.sx, d.sy, { flip: mirror, alpha:coversHero?.4:1 });
+    const marshScale=state.map.act2Visual&&pr.artZone==='act2'?(pr.type==='reed_clump'?.32:pr.type==='votives'?.64:1):1;
+    const propOptions={scale:marshScale,flip:mirror,alpha:coversHero?.4:pr.spent&&!PropInteractions.themed(pr)?.6:1};
+    if(!PropInteractions.draw(ctx,pr,state,d.sx,d.sy,propOptions))SpriteAssets.drawFrame(ctx, propFrame, d.sx, d.sy, propOptions);
+    PropInteractions.drawEffects(ctx,pr,state,d.sx,d.sy,propFrame,pr===hoverProp);
     ctx.restore();
-    const drawH = propFrame.anchorY;
+    const drawH = PropInteractions.themed(pr)?d.sy-PropInteractions.bounds(propFrame,d.sx,d.sy,mirror).y:propFrame.anchorY;
     /* Ambient fire and shrine glows are transient effects layered over sprite art. */
     if (pr.type === "brazier" && !pr.extinguished) {
       const t = state.time * 7 + pr.x;
       ctx.save();
       ctx.translate(d.sx, d.sy - drawH + 32);
+      if(pr.cathedralLamp||pr.imperialLamp){
+        const sway=Math.sin(t*1.7)*1.5;
+        ctx.shadowColor='#ff9f42';ctx.shadowBlur=12;
+        for(let i=0;i<3;i++){
+          const w=4.2-i,tip=-19-i*2+Math.sin(t+i)*3;
+          ctx.fillStyle=['rgba(234,110,34,.65)','rgba(255,173,66,.8)','rgba(255,227,151,.9)'][i];
+          ctx.beginPath();ctx.moveTo(-w,-5);ctx.bezierCurveTo(-w-2,-10,sway-3,tip+8,sway,tip);
+          ctx.bezierCurveTo(sway+1,tip+8,w+3,-10,w,-5);ctx.quadraticCurveTo(0,0,-w,-5);ctx.fill();
+        }
+        ctx.restore();
+      }else{
       for (let i = 0; i < 3; i++) {
         const fy = -6 - i * 5 - Math.sin(t + i * 2) * 2;
         const fr2 = 6 - i * 1.6 + Math.sin(t * 1.3 + i) * 1.2;
@@ -3900,6 +3974,7 @@ const Game = (() => {
         ctx.beginPath(); ctx.ellipse(Math.sin(t + i) * 1.5, fy, fr2, fr2 * 1.5, 0, 0, Math.PI * 2); ctx.fill();
       }
       ctx.restore();
+      }
     }
     if (pr.type === "shrine") {
       const k = 0.5 + Math.sin(state.time * 2) * 0.3;
@@ -3920,6 +3995,14 @@ const Game = (() => {
   /* baked light masks (built once): a unit radial sprite blitted+scaled per light each frame,
      instead of allocating a fresh createRadialGradient for every light every frame. */
   let lightMask = null, warmMask = null;
+  const cathedralLightMasks=new Map();
+  function cathedralLightMask(color){
+    if(cathedralLightMasks.has(color))return cathedralLightMasks.get(color);
+    const image=document.createElement('canvas');image.width=image.height=128;
+    const g=image.getContext('2d'),glow=g.createRadialGradient(64,64,0,64,64,64);
+    glow.addColorStop(0,color+'42');glow.addColorStop(.4,color+'20');glow.addColorStop(1,color+'00');
+    g.fillStyle=glow;g.fillRect(0,0,128,128);cathedralLightMasks.set(color,image);return image;
+  }
   function buildLightMasks() {
     lightMask = document.createElement("canvas"); lightMask.width = lightMask.height = 128;
     let g2 = lightMask.getContext("2d"), gr = g2.createRadialGradient(64, 64, 0, 64, 64, 64);
@@ -3935,7 +4018,7 @@ const Game = (() => {
     const m = state.map;
     const W = canvas.width, H = canvas.height;
     lightCtx.clearRect(0, 0, W, H);
-    lightCtx.fillStyle = `rgba(0,0,0,${m.zone.dark})`;
+    lightCtx.fillStyle = m.act3?.environment ? `rgba(8,17,24,${m.zone.dark})` : `rgba(0,0,0,${m.zone.dark})`;
     lightCtx.fillRect(0, 0, W, H);
     lightCtx.globalCompositeOperation = "destination-out";
     const punch = (wx, wy, r, intensity, flicker, height=10, surfaceId=0) => {
@@ -3959,11 +4042,11 @@ const Game = (() => {
     ctx.save();
     ctx.globalCompositeOperation = "overlay";
     for (const l of m.lights) {
-      if (l.color !== "#ff9c50") continue;
+      if (l.color !== "#ff9c50"&&!m.cathedral&&!m.act1Environment&&!m.act2Visual&&!m.act3?.environment) continue;
       const sx = U.isoX(l.x, l.y) - cam.x, sy = U.isoY(l.x, l.y) - cam.y - surfaceLift(l.x,l.y);
       if (sx < -200 || sx > W + 200 || sy < -200 || sy > H + 200) continue;
       const rr = l.r * 26;
-      ctx.drawImage(warmMask, sx - rr, sy - 20 - rr, rr * 2, rr * 2);
+      ctx.drawImage(m.cathedral||m.act1Environment||m.act2Visual||m.act3?.environment?cathedralLightMask(l.color):warmMask, sx - rr, sy - 20 - rr, rr * 2, rr * 2);
     }
     ctx.restore();
   }

@@ -1,0 +1,42 @@
+<!doctype html><meta charset="utf-8"><base href="../"><title>Act III environment pixel checks</title><pre id="result">Loading artwork…</pre>
+<script src="js/utils.js"></script><script src="js/data.js"></script><script src="js/data_overrides.js"></script><script src="js/boss_encounters.js"></script><script src="js/sprite_manifest.js"></script><script src="js/sprite_assets.js"></script><script src="js/mapgen.js"></script><script src="js/level_terrain.js"></script><script src="js/town_terrain.js"></script>
+<script>
+(async()=>{try{
+ await SpriteAssets.loadBundle('world');
+ const rows=[],canvas=document.createElement('canvas');document.body.append(canvas);const ctx=canvas.getContext('2d',{willReadFrequently:true});
+ const draw=(m,cam)=>{ctx.clearRect(0,0,canvas.width,canvas.height);LevelTerrain.beginFrame(m);try{LevelTerrain.drawSurface(ctx,m,cam,0,m.w-1,0,m.h-1,()=>true,true);}finally{LevelTerrain.endFrame();}return ctx.getImageData(0,0,canvas.width,canvas.height).data;};
+ for(const zone of ['desert_wastes','underground_market','sand_tombs','khal_palace','shard_flats','tomb_sanctum'])for(const width of [1920,3840]){
+  canvas.width=width;canvas.height=width*9/16;const m=MapGen.generate(zone,12345),n=m.act3.landmarks[0];
+  const origin={x:Math.floor(U.isoX(n.x,n.y)-width/2),y:Math.floor(U.isoY(n.x,n.y)-canvas.height/2)};draw(m,origin);
+  for(const [dx,dy] of [[240,110],[-310,-240]]){
+   const cam={x:origin.x+dx,y:origin.y+dy},incremental=draw(m,cam);
+   const before=LevelTerrain.getDiagnostics();draw(m,cam);const after=LevelTerrain.getDiagnostics();
+   if(before.surfaceViewBuilds!==after.surfaceViewBuilds||before.totalBuilds!==after.totalBuilds)throw Error(zone+' warm cache rebuilt');
+   m.act3.environment={...m.act3.environment};const fresh=draw(m,cam);let max=0,count=0;
+   for(let i=0;i<fresh.length;i++){const d=Math.abs(fresh[i]-incremental[i]);max=Math.max(max,d);if(d>1)count++;}
+   // GPU antialiasing at a clipped elevated triangle can round two channels
+   // by 2/255 at 4K. Broad seams or a larger error remain a failure.
+   rows.push({zone,width,dx,dy,maxDifference:max,channelsAboveOne:count});if(max>2||count>8)throw Error('Cached foundation seams: '+JSON.stringify(rows.at(-1)));
+  }
+ }
+ const m=MapGen.generate('khalcamp',12345),cam={x:-600,y:-100};canvas.width=1920;canvas.height=1080;TownTerrain.draw(ctx,m,cam);
+ let calls=0;const drawImage=ctx.drawImage.bind(ctx);ctx.drawImage=(...a)=>{calls++;drawImage(...a);};for(let i=0;i<30;i++)TownTerrain.draw(ctx,m,cam);ctx.drawImage=drawImage;
+ if(calls!==30)throw Error('Camp ground is not cached');
+ // Registered sprites are complete images, so direct rectangles must match
+ // the transform-based helper without sampling an adjacent atlas frame. Compare
+ // premultiplied color: RGB in almost-transparent pixels is not visible color.
+ canvas.width=640;canvas.height=512;let moduleCases=0,maxModuleDifference=0;
+ for(const zone of ['underground_market','shard_flats','tomb_sanctum']){
+  const map=MapGen.generate(zone,12345),draws=[],player={x:1e6,y:1e6};ImperialEnvironment.append(draws,map,{x:-1e5,y:-1e5},player,1e6,1e6);
+  const assets=new Map(draws.map(d=>[d.asset+(d.f.visualKey||''),d]));
+  for(const d of assets.values())for(const alpha of [1,.25]){
+   const item={...d,sx:320.35,sy:380.65,hx:1e6,hy:1e6};ctx.clearRect(0,0,640,512);ctx.globalAlpha=alpha;SpriteAssets.drawFrame(ctx,item.f,item.sx,item.sy,{scale:item.scale||1});
+   const original=ctx.getImageData(0,0,640,512).data;ctx.clearRect(0,0,640,512);ImperialEnvironment.draw(ctx,item,player);const direct=ctx.getImageData(0,0,640,512).data;
+   let max=0;for(let i=0;i<original.length;i+=4){max=Math.max(max,Math.abs(original[i+3]-direct[i+3]));for(let c=0;c<3;c++)max=Math.max(max,Math.abs(original[i+c]*original[i+3]/255-direct[i+c]*direct[i+3]/255));}
+   if(max>2)throw Error('Direct registered sprite differs: '+item.asset+'/'+max);maxModuleDifference=Math.max(maxModuleDifference,max);moduleCases++;
+  }
+ }
+ ctx.globalAlpha=1;
+ window.environmentResult={status:'PASS',rows,campWarmFrames:30,campImageDraws:calls,moduleCases,maxModuleDifference};document.getElementById('result').textContent=JSON.stringify(window.environmentResult,null,2);document.body.dataset.testStatus='passed';
+}catch(e){document.getElementById('result').textContent=e.stack;document.body.dataset.testStatus='failed';}})();
+</script>

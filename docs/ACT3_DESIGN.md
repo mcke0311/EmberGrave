@@ -1,5 +1,10 @@
 # Act III: The Buried Imperial City
 
+See [the latest visual overhaul](ACT3_VISUAL_PASS.md) for the current terrain,
+wall, lighting and before/after gameplay review.
+
+Current walls, natural boundaries, and physical passages are documented in [ACT3_ENVIRONMENT.md](ACT3_ENVIRONMENT.md). The original route and story design below remains in place.
+
 Act III keeps its existing campaign destinations and prerequisites. Its six
 adventure maps now compose sandstone courts, burial galleries and imperial
 streets around named landmarks, with seeded offsets, route bends, reconnecting

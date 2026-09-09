@@ -198,6 +198,13 @@ export function createWildshape(formId){
       set('Torso',-drive*.12);set('Head',drive*.10);
       const foot=contacts.find(f=>f.id===leg.id);foot.y+=(biped?.5:.24)*drive+.16*chamber;foot.z+=(biped?.6:.27)*drive;foot.contact=drive+chamber<.001;
     }
+    if(state==='reach'||state==='search'){
+      const w=smooth(t/.38)*(1-smooth((t-.6)/.4)),search=state==='search';
+      set('Torso',(search?.25:.12)*w);set('Head',(search?.32:.16)*w);
+      shift('Torso',0,-(search?.06:.025)*w,.035*w);
+      if(biped){set('Arm1',-.95*w,0,.18*w);set('Forearm1',-.35*w);}
+      else {const paw=contacts.find(f=>f.id==='L0');if(paw){paw.y+=.12*w;paw.z+=.19*w;paw.contact=w<.001;}}
+    }
     if(state==='airborne'){
       const tuck=Math.sin(t*Math.PI);set('Torso',.10*tuck);set('Head',-.12*tuck);
       for(const leg of limbs){set(leg.upper.name,-.45*tuck);set(leg.lower.name,.85*tuck);set(leg.paw.name,-.2*tuck);}

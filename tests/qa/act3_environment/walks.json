@@ -1,0 +1,140 @@
+{
+  "status": "PASS",
+  "walks": [
+    {
+      "from": "khalcamp",
+      "to": "desert_wastes",
+      "frames": 210,
+      "companion": true,
+      "arrivalKey": "from_camp",
+      "arrivalDistance": 0
+    },
+    {
+      "from": "desert_wastes",
+      "to": "khalcamp",
+      "frames": 150,
+      "companion": true,
+      "arrivalKey": "from_wild",
+      "arrivalDistance": 0
+    },
+    {
+      "from": "desert_wastes",
+      "to": "underground_market",
+      "frames": 420,
+      "companion": true,
+      "arrivalKey": "from_wild",
+      "arrivalDistance": 0
+    },
+    {
+      "from": "desert_wastes",
+      "to": "sand_tombs",
+      "frames": 540,
+      "companion": true,
+      "arrivalKey": "from_wild",
+      "arrivalDistance": 0
+    },
+    {
+      "from": "desert_wastes",
+      "to": "khal_palace",
+      "frames": 840,
+      "companion": true,
+      "arrivalKey": "from_wild",
+      "arrivalDistance": 0
+    },
+    {
+      "from": "desert_wastes",
+      "to": "shard_flats",
+      "frames": 570,
+      "companion": true,
+      "arrivalKey": "from_wild",
+      "arrivalDistance": 0
+    },
+    {
+      "from": "desert_wastes",
+      "to": "tomb_sanctum",
+      "frames": 210,
+      "companion": true,
+      "arrivalKey": "from_wild",
+      "arrivalDistance": 0
+    },
+    {
+      "from": "underground_market",
+      "to": "desert_wastes",
+      "frames": 60,
+      "companion": true,
+      "arrivalKey": "from_market",
+      "arrivalDistance": 0
+    },
+    {
+      "from": "sand_tombs",
+      "to": "desert_wastes",
+      "frames": 120,
+      "companion": true,
+      "arrivalKey": "from_tombs",
+      "arrivalDistance": 0
+    },
+    {
+      "from": "khal_palace",
+      "to": "desert_wastes",
+      "frames": 60,
+      "companion": true,
+      "arrivalKey": "from_palace",
+      "arrivalDistance": 0
+    },
+    {
+      "from": "shard_flats",
+      "to": "desert_wastes",
+      "frames": 60,
+      "companion": true,
+      "arrivalKey": "from_flats",
+      "arrivalDistance": 0
+    },
+    {
+      "from": "tomb_sanctum",
+      "to": "desert_wastes",
+      "frames": 60,
+      "companion": true,
+      "arrivalKey": "from_sanctum",
+      "arrivalDistance": 0
+    }
+  ],
+  "portals": [
+    {
+      "zone": "desert_wastes",
+      "home": "frosthaven",
+      "exactMap": true,
+      "exactPosition": true
+    },
+    {
+      "zone": "underground_market",
+      "home": "frosthaven",
+      "exactMap": true,
+      "exactPosition": true
+    },
+    {
+      "zone": "sand_tombs",
+      "home": "frosthaven",
+      "exactMap": true,
+      "exactPosition": true
+    },
+    {
+      "zone": "khal_palace",
+      "home": "frosthaven",
+      "exactMap": true,
+      "exactPosition": true
+    },
+    {
+      "zone": "shard_flats",
+      "home": "frosthaven",
+      "exactMap": true,
+      "exactPosition": true
+    },
+    {
+      "zone": "tomb_sanctum",
+      "home": "frosthaven",
+      "exactMap": true,
+      "exactPosition": true
+    }
+  ],
+  "errors": []
+}

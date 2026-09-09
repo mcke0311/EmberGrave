@@ -1,0 +1,230 @@
+{
+  "status": "PASS",
+  "method": "Three production samples per zone/resolution/workload, 60 warm-up and 180 measured frames; current-workspace baseline; median and p95 limit 10%.",
+  "rows": [
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 3.033333333333333,
+        "p95": 5.533333333333334
+      },
+      "after": {
+        "median": 2.533333333333333,
+        "p95": 4.033333333333334
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 3.6,
+        "p95": 4.866666666666666
+      },
+      "after": {
+        "median": 2.733333333333333,
+        "p95": 4.366666666666666
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral2",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 2.9,
+        "p95": 3.733333333333334
+      },
+      "after": {
+        "median": 2.266666666666667,
+        "p95": 3.5666666666666664
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral2",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 3.266666666666667,
+        "p95": 4.1
+      },
+      "after": {
+        "median": 2.7000000000000006,
+        "p95": 3.933333333333333
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral_cinderwatch",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 2.733333333333334,
+        "p95": 3.6666666666666665
+      },
+      "after": {
+        "median": 2.2,
+        "p95": 3
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral_cinderwatch",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 2.8000000000000003,
+        "p95": 3.6999999999999997
+      },
+      "after": {
+        "median": 2.2666666666666666,
+        "p95": 2.9333333333333336
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral_bastion",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 2.3666666666666667,
+        "p95": 3.4333333333333336
+      },
+      "after": {
+        "median": 1.9000000000000001,
+        "p95": 2.766666666666666
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral_bastion",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 2.3333333333333335,
+        "p95": 3.233333333333333
+      },
+      "after": {
+        "median": 2.3,
+        "p95": 2.7999999999999994
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 2.566666666666667,
+        "p95": 4.033333333333334
+      },
+      "after": {
+        "median": 2.333333333333333,
+        "p95": 3.2000000000000006
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 2.9,
+        "p95": 3.6666666666666665
+      },
+      "after": {
+        "median": 2.766666666666667,
+        "p95": 3.9
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral2",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 3.1999999999999997,
+        "p95": 5
+      },
+      "after": {
+        "median": 2.2333333333333334,
+        "p95": 3.0666666666666664
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral2",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 3.1,
+        "p95": 4.4
+      },
+      "after": {
+        "median": 2.8333333333333335,
+        "p95": 3.466666666666667
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral_cinderwatch",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 2.4,
+        "p95": 3.2999999999999994
+      },
+      "after": {
+        "median": 2.1999999999999997,
+        "p95": 2.766666666666667
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral_cinderwatch",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 3.1666666666666665,
+        "p95": 4.433333333333334
+      },
+      "after": {
+        "median": 2.1333333333333333,
+        "p95": 2.466666666666667
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral_bastion",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 3.633333333333333,
+        "p95": 5.366666666666667
+      },
+      "after": {
+        "median": 2.3666666666666667,
+        "p95": 3.1666666666666665
+      },
+      "passed": true
+    },
+    {
+      "zone": "cathedral_bastion",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 3.0333333333333337,
+        "p95": 4.266666666666667
+      },
+      "after": {
+        "median": 2.4333333333333336,
+        "p95": 3
+      },
+      "passed": true
+    }
+  ]
+}

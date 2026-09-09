@@ -874,7 +874,8 @@ def validate_files(manifest: dict[str, Any], errors: list[str]) -> dict[str, dic
                          "world.prop.cathedral_floor_pale", "world.prop.cathedral_floor_dark",
                          "world.prop.cathedral_floor_street", "world.prop.cathedral_floor_fortress",
                          "world.prop.cathedral_void_backdrop"}
-                         or asset_id.startswith("world.backdrop."))
+                         or asset_id.startswith("world.backdrop.")
+                         or asset_id.startswith("world.prop.a3visual_"))
                 )
                 if "A" not in source.getbands() and not opaque_scenic:
                     add(errors, f"{asset_id}: no alpha channel")
@@ -3391,7 +3392,7 @@ def validate_gameplay_art_authorship(
         "kind", "size", "anchor", "bundle", "assetId",
     }
     atlas_keys = required_keys | {"cell", "cols", "rows"}
-    allowed_optional = {"displayHeight", "tintKey"}
+    allowed_optional = {"displayHeight", "tintKey", "lossless"}
     provenance_keys = {"method", "source", "sourceSha256", "parameters"}
     role_map = {
         "ground": "grounds", "hazard": "hazards", "path": "paths", "wall": "walls",
@@ -3407,10 +3408,12 @@ def validate_gameplay_art_authorship(
             add(errors, f"gameplay art {descriptor_id}: descriptor must be an object")
             continue
         kind = descriptor.get("kind")
-        exact_keys = (atlas_keys if kind == "atlas" else required_keys) | ({"displayHeight"} if "displayHeight" in descriptor else set()) | ({"tintKey"} if "tintKey" in descriptor else set())
+        exact_keys = (atlas_keys if kind == "atlas" else required_keys) | (allowed_optional & set(descriptor))
         if kind not in {"atlas", "static"} or set(descriptor) != exact_keys or set(descriptor) - (atlas_keys | allowed_optional):
             add(errors, f"gameplay art {descriptor_id}: malformed exact {kind!r} descriptor keys")
             continue
+        if "lossless" in descriptor and type(descriptor["lossless"]) is not bool:
+            add(errors, f"gameplay art {descriptor_id}: lossless must be a boolean")
         role, key = descriptor.get("role"), descriptor.get("key")
         if role not in expected_roles or not isinstance(key, str) or descriptor_id != f"{role}:{key}":
             add(errors, f"gameplay art {descriptor_id}: role/key identity mismatch")
@@ -3606,7 +3609,8 @@ def validate_gameplay_art_authorship(
                     for field, value in expected_entry.items():
                         if entry.get(field) != value:
                             add(errors, f"gameplay art {descriptor_id}: runtime {field} does not match authored descriptor")
-                    for field in allowed_optional:
+                    # Encoding belongs to the compiler, not the draw-time entry.
+                    for field in allowed_optional - {"lossless"}:
                         if descriptor.get(field) is not None and entry.get(field) != descriptor.get(field):
                             add(errors, f"gameplay art {descriptor_id}: runtime {field} does not match authored descriptor")
         map_name = role_map.get(role)

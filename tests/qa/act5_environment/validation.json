@@ -1,0 +1,329 @@
+{
+  "status": "Act 5 checks PASS; shared sprite validation FAIL outside this kit",
+  "recordedAt": "2026-09-09T18:46:17.667349+00:00",
+  "layout": {
+    "status": "PASS",
+    "checks": 1423685,
+    "seeds": 30,
+    "zones": [
+      "hellgate",
+      "ash_wastes",
+      "cinder_bastion",
+      "throne"
+    ],
+    "endpoints": 180
+  },
+  "regressions": {
+    "cindersLayout": {
+      "status": "PASS",
+      "checks": 82566
+    },
+    "cindersGameplay": {
+      "status": "PASS",
+      "checks": 241
+    },
+    "navigation": {
+      "status": "PASS",
+      "checks": 75272
+    },
+    "terrainSurfaces": {
+      "status": "PASS",
+      "checks": 10728
+    },
+    "terrainCache": {
+      "status": "PASS",
+      "checks": 3991
+    },
+    "act5Sprites": {
+      "status": "PASS",
+      "checks": 540,
+      "modules": 60
+    }
+  },
+  "browserReports": [
+    "browser.json",
+    "pixels.json",
+    "transitions.json",
+    "captures.json"
+  ],
+  "finalPerformance": {
+    "hellgate": {
+      "report": "steady_performance_hellgate_both.json",
+      "status": "PASS",
+      "pairs": 3,
+      "warmupFrames": 600,
+      "sampledFramesPerWorkloadPerPair": 240,
+      "results": [
+        {
+          "width": 1920,
+          "zone": "hellgate",
+          "mode": "moving",
+          "before": {
+            "median": 2.466666666666667,
+            "p95": 3.233333333333333
+          },
+          "after": {
+            "median": 2.4,
+            "p95": 3.266666666666667
+          },
+          "medianChangePct": -2.7,
+          "p95ChangePct": 1,
+          "passed": true
+        },
+        {
+          "width": 3840,
+          "zone": "hellgate",
+          "mode": "moving",
+          "before": {
+            "median": 2.733333333333333,
+            "p95": 3.6666666666666665
+          },
+          "after": {
+            "median": 2.533333333333333,
+            "p95": 3.733333333333333
+          },
+          "medianChangePct": -7.3,
+          "p95ChangePct": 1.8,
+          "passed": true
+        }
+      ]
+    },
+    "ash_wastes": {
+      "report": "steady_performance_ash_wastes_both.json",
+      "status": "PASS",
+      "pairs": 3,
+      "warmupFrames": 600,
+      "sampledFramesPerWorkloadPerPair": 240,
+      "results": [
+        {
+          "width": 1920,
+          "zone": "ash_wastes",
+          "mode": "moving",
+          "before": {
+            "median": 3.5666666666666664,
+            "p95": 4.3999999999999995
+          },
+          "after": {
+            "median": 3.5666666666666664,
+            "p95": 4.533333333333333
+          },
+          "medianChangePct": 0,
+          "p95ChangePct": 3,
+          "passed": true
+        },
+        {
+          "width": 1920,
+          "zone": "ash_wastes",
+          "mode": "combat",
+          "before": {
+            "median": 4.666666666666667,
+            "p95": 6
+          },
+          "after": {
+            "median": 4.666666666666667,
+            "p95": 5.7
+          },
+          "medianChangePct": 0,
+          "p95ChangePct": -5,
+          "passed": true
+        },
+        {
+          "width": 3840,
+          "zone": "ash_wastes",
+          "mode": "moving",
+          "before": {
+            "median": 4.2,
+            "p95": 5.033333333333333
+          },
+          "after": {
+            "median": 4.233333333333333,
+            "p95": 5.366666666666667
+          },
+          "medianChangePct": 0.8,
+          "p95ChangePct": 6.6,
+          "passed": true
+        },
+        {
+          "width": 3840,
+          "zone": "ash_wastes",
+          "mode": "combat",
+          "before": {
+            "median": 5.1000000000000005,
+            "p95": 5.8999999999999995
+          },
+          "after": {
+            "median": 5.3,
+            "p95": 6.166666666666667
+          },
+          "medianChangePct": 3.9,
+          "p95ChangePct": 4.5,
+          "passed": true
+        }
+      ]
+    },
+    "cinder_bastion": {
+      "report": "steady_performance_cinder_bastion_both.json",
+      "status": "PASS",
+      "pairs": 6,
+      "warmupFrames": 600,
+      "sampledFramesPerWorkloadPerPair": 240,
+      "results": [
+        {
+          "width": 1920,
+          "zone": "cinder_bastion",
+          "mode": "moving",
+          "before": {
+            "median": 4,
+            "p95": 6.366666666666667
+          },
+          "after": {
+            "median": 3.85,
+            "p95": 5.383333333333333
+          },
+          "medianChangePct": -3.7,
+          "p95ChangePct": -15.4,
+          "passed": true
+        },
+        {
+          "width": 1920,
+          "zone": "cinder_bastion",
+          "mode": "combat",
+          "before": {
+            "median": 5.666666666666667,
+            "p95": 7.466666666666666
+          },
+          "after": {
+            "median": 5.383333333333333,
+            "p95": 7.266666666666667
+          },
+          "medianChangePct": -5,
+          "p95ChangePct": -2.7,
+          "passed": true
+        },
+        {
+          "width": 3840,
+          "zone": "cinder_bastion",
+          "mode": "moving",
+          "before": {
+            "median": 4.999999999999999,
+            "p95": 6.75
+          },
+          "after": {
+            "median": 5.266666666666667,
+            "p95": 6.883333333333334
+          },
+          "medianChangePct": 5.3,
+          "p95ChangePct": 2,
+          "passed": true
+        },
+        {
+          "width": 3840,
+          "zone": "cinder_bastion",
+          "mode": "combat",
+          "before": {
+            "median": 6.683333333333334,
+            "p95": 9.033333333333333
+          },
+          "after": {
+            "median": 6.516666666666667,
+            "p95": 8.75
+          },
+          "medianChangePct": -2.5,
+          "p95ChangePct": -3.1,
+          "passed": true
+        }
+      ]
+    },
+    "throne": {
+      "report": "steady_performance_throne_both.json",
+      "status": "PASS",
+      "pairs": 3,
+      "warmupFrames": 600,
+      "sampledFramesPerWorkloadPerPair": 240,
+      "results": [
+        {
+          "width": 1920,
+          "zone": "throne",
+          "mode": "moving",
+          "before": {
+            "median": 2.9,
+            "p95": 3.9666666666666663
+          },
+          "after": {
+            "median": 3.0999999999999996,
+            "p95": 4.333333333333333
+          },
+          "medianChangePct": 6.9,
+          "p95ChangePct": 9.2,
+          "passed": true
+        },
+        {
+          "width": 1920,
+          "zone": "throne",
+          "mode": "combat",
+          "before": {
+            "median": 3.5666666666666664,
+            "p95": 4.766666666666667
+          },
+          "after": {
+            "median": 3.5999999999999996,
+            "p95": 4.7
+          },
+          "medianChangePct": 0.9,
+          "p95ChangePct": -1.4,
+          "passed": true
+        },
+        {
+          "width": 3840,
+          "zone": "throne",
+          "mode": "moving",
+          "before": {
+            "median": 3.233333333333333,
+            "p95": 4.066666666666667
+          },
+          "after": {
+            "median": 3.3000000000000003,
+            "p95": 4.3
+          },
+          "medianChangePct": 2.1,
+          "p95ChangePct": 5.7,
+          "passed": true
+        },
+        {
+          "width": 3840,
+          "zone": "throne",
+          "mode": "combat",
+          "before": {
+            "median": 4.233333333333333,
+            "p95": 5.333333333333333
+          },
+          "after": {
+            "median": 4.033333333333333,
+            "p95": 5.133333333333333
+          },
+          "medianChangePct": -4.7,
+          "p95ChangePct": -3.8,
+          "passed": true
+        }
+      ]
+    }
+  },
+  "performanceScope": "CPU update and render submission; means of per-run median/p95; completed GPU work and cold caches are not covered. Earlier failed and controlled runs retained.",
+  "sharedSpriteValidation": {
+    "status": "FAIL",
+    "report": "shared_sprite_validation_final.txt",
+    "reason": "Errors outside the 60-module Act 5 kit, including unfinished Act IV provenance and opaque material alpha checks."
+  },
+  "sourceSha256": {
+    "js/mapgen.js": "2e5370c390439a80928468907a37a647f26eec2cf2222ba28040c85f2421c6b2",
+    "js/game.js": "650f53792045018f6cd8e4f1cb508ee0a9393aa9f1b334fa347d99163fb1cecb",
+    "js/level_terrain.js": "5cc73ddd007b67cf693775cecd9775bdfc59bcd986542bde64586d6a36c18d9d",
+    "js/town_terrain.js": "02255ee77b026f4a1d3da5b8adbcc1a895a4f8abbf515b4f816fde17bf96ecac",
+    "js/data.js": "6c1cd428d6dbd6c2d9b148f53199bb7a516dc8ce819ce9a7af1e287631cf5ea9",
+    "js/sprite_manifest.js": "5101298df74383c1c89eccfbc9749395f0f1280a08e9ec48050117fb752036df",
+    "tests/act5_environment_review.html": "d172cb2705f96854dc17489eca34ab3d62c9f5c7a445ef9e805b1582b991a781",
+    "tests/act5_environment_browser.cjs": "ef231998da456f97fc74bb91c8a54074c3644ad3d5d1861aefb4ea9b1fc00de8",
+    "tests/fixtures/act5_environment_before.zip": "2c07d2ca46c2f342ebe346193081ff1997c0fc32e7aca0500bef6e2b423f73ff",
+    "assets/sprites_src/gameplay_art_authored/act5_environment/registration.json": "72dd9f1fb942d6135df7e7fe81379f307809a226c1ea9690db7f1724444ba550"
+  }
+}

@@ -41,11 +41,23 @@ for(const zone of zones){
       }
     }
     for(const exit of m.exits){
-      const gx=Math.floor((exit.x0+exit.x1)/2),gy=Math.floor((exit.y0+exit.y1)/2);
-      for(let dy=-2;dy<=4;dy++)for(let dx=-3;dx<=3;dx++)ok(!m.blocked[gx+dx+(gy+dy)*m.w],label+' blocked entrance apron');
+      const th=m.thresholds.find(t=>t.id===exit.thresholdId);ok(th,label+' missing passage geometry');
+      const gx=Math.floor(th.opening.x),gy=Math.floor(th.opening.y);
+      for(let dy=-2;dy<=4;dy++)for(let dx=-1;dx<=1;dx++)ok(!m.blocked[gx+dx+(gy+dy)*m.w],label+' blocked passage');
+      for(const p of [th.approach,th.arrival])ok(N.clear(m,p.x,p.y,.36)&&seen[(p.x|0)+(p.y|0)*m.w],label+' inaccessible passage approach');
+      for(const f of th.footprints)for(let y=f.y0;y<f.y1;y++)for(let x=f.x0;x<f.x1;x++)ok(m.blocked[x+y*m.w],label+' passage flank has no collision');
       const destination=M.generate(exit.target,seed);ok(destination.spawns[exit.spawnKey],label+' unresolved travel spawn '+exit.target+'/'+exit.spawnKey);
       const spawn=Object.values(m.spawns).find(p=>Math.abs(p.x-(exit.x0+exit.x1)/2)<.1&&p.y>exit.y1);
       ok(spawn,label+' missing safe return apron');
+    }
+    const env=c.environment;ok(env?.segments.length>0,label+' no painted boundary');
+    for(const s of env.segments){
+      ok(s.length>0&&s.length<=6,label+' invalid boundary span');
+      for(let t=0;t<s.length;t++){
+        const x=s.x+(s.axis?0:t),y=s.y+(s.axis?t:0),a=m.void[x+y*m.w],b=m.void[x-(s.axis?1:0)+(y-(s.axis?0:1))*m.w];
+        ok(a!==b,label+' boundary does not follow void contour');
+      }
+      if(s.kit==='ash'||s.role==='bridge')ok(!s.wall,label+' outdoor edge enclosed by wall');
     }
     if(m.bossArena){const a=m.bossArena;ok(a.x1-a.x0===21&&a.y1-a.y0===21,label+' boss size');
       for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++)ok(!m.blocked[x+y*m.w]&&!m.void[x+y*m.w]&&!m.elev[x+y*m.w]&&!m.hazard[x+y*m.w],label+' obstructed arena');

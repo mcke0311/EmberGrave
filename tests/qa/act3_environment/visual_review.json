@@ -1,0 +1,35 @@
+{
+  "status": "REVIEWED",
+  "resolutions": [
+    [
+      1920,
+      1080
+    ],
+    [
+      3840,
+      2160
+    ]
+  ],
+  "beforeCaptures": 120,
+  "afterCaptures": 120,
+  "contactSheets": [
+    "locations_1920_1.jpg",
+    "locations_1920_2.jpg",
+    "locations_3840_1.jpg",
+    "locations_3840_2.jpg",
+    "passages_1920_1.jpg",
+    "passages_1920_2.jpg",
+    "passages_1920_3.jpg",
+    "passages_3840_1.jpg",
+    "passages_3840_2.jpg",
+    "passages_3840_3.jpg"
+  ],
+  "observations": [
+    "Outdoor basins now use low sand banks, rock shelves and scattered crystal formations; the old perimeter wall and raised outer-map rail are absent.",
+    "Camp road and terrace remain grounded in the desert backdrop; services stay in their established places.",
+    "All twelve directed passages have destination labels and attached wings. The tomb wing gap was corrected with joins along the real edge.",
+    "Indoor long runs use complete pieces and modeled turns, with the established room topology visible at both resolutions.",
+    "Foreground passage art leaves the hero readable. Matte fringes on the low sand banks were removed and the final captures refreshed."
+  ],
+  "performanceCaveat": "Three combined timing cases exceed 10%; see performance_followup.json and docs/ACT3_ENVIRONMENT.md."
+}

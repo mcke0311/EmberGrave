@@ -13,7 +13,7 @@ globalThis.document={createElement(){
 }};
 for(const f of ['utils','data','data_overrides','sprite_manifest','mapgen'])vm.runInThisContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'));
 const {U,DATA,MapGen,TerrainSurface:S}=vm.runInThisContext('({U,DATA,MapGen,TerrainSurface})');
-globalThis.SpriteAssets={WALL_VIEW_H:128,maps:DATA.SPRITE_MANIFEST.maps,getFrame:()=>({image:{},sx:0,sy:0,sw:512,sh:512}),drawCliffPolygon:noop,drawCliff:noop};
+globalThis.SpriteAssets={WALL_VIEW_H:128,maps:DATA.SPRITE_MANIFEST.maps,getFrame:()=>({image:{},sx:0,sy:0,sw:512,sh:512,anchorX:256,anchorY:256}),drawFrame:noop,drawCliffPolygon:noop,drawCliff:noop};
 vm.runInThisContext(fs.readFileSync(new URL('../js/level_terrain.js',import.meta.url),'utf8'));
 const T=vm.runInThisContext('LevelTerrain');let checks=0;const ok=(v,msg)=>{checks++;assert.ok(v,msg);};
 const c=document.createElement('canvas'),ctx=c.getContext('2d'),map=MapGen.generate('north_wild',12345);
@@ -51,6 +51,10 @@ ok(blank._surfaceGeometry!==geometry,'adding a ramp did not invalidate cached gr
 c.width=1920;c.height=1080;let trace=null;
 for(const name of ['beginPath','rect','moveTo','lineTo','closePath','clip'])ctx[name]=(...args)=>{if(trace)trace.push([name,...args]);};
 const actors=[[79.5,79.5],[80.49,80.5],[81.5,86.5],[83.5,82.5]];
+// Use an explicit ledge: these viewpoints no longer sit beside artificial
+// boundary cliffs after the Act I landscape change.
+for(let y=80;y<=85;y++)for(let x=79;x<=84;x++)map.elev[x+y*map.w]=3;
+S.rebuild(map);
 for(const cam of [{x:-960,y:2000},{x:-960.35,y:2000.65}]){
  const commands=[];
  for(const cached of [false,true]){
@@ -84,6 +88,14 @@ for(const zone of ['weeping_marsh','drowned_crypt','ritual_site','hollow_reeds',
   ok(render(m,cam).surfaceViewBuilds===cold.surfaceViewBuilds+1,zone+' stale scenic water');m.act2.water[index]^=1;
   const stable=render(m,cam);m.act2.decals[0].x+=1;
   ok(render(m,cam).surfaceViewBuilds===stable.surfaceViewBuilds+1,zone+' stale Act 2 decal');
+  const boundaryView=render(m,cam);m.boundaries={...m.boundaries};
+  ok(render(m,cam).surfaceViewBuilds===boundaryView.surfaceViewBuilds+1,zone+' stale replaced boundary assembly');
  }
+}
+for(const zone of ['ash_wastes','cinder_bastion','throne']){
+ const m=MapGen.generate(zone,12345),cam={x:0,y:1000},cold=render(m,cam);
+ ok(render(m,cam).surfaceViewBuilds===cold.surfaceViewBuilds,zone+' rebuilt warm Act V slopes');
+ m.act5Environment={...m.act5Environment};
+ ok(render(m,cam).surfaceViewBuilds===cold.surfaceViewBuilds+1,zone+' retained stale painted boundary ground');
 }
 console.log(`PASS ${checks} projected terrain cache checks: raised and legacy floors, movement, resizing, grid/geometry changes, map identity, and released backing stores.`);

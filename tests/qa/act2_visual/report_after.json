@@ -1,0 +1,274 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "captures": [
+    "weeping_marsh_arrival_1920_after.webp",
+    "weeping_marsh_hamlet_1920_after.webp",
+    "weeping_marsh_bell_1920_after.webp",
+    "weeping_marsh_monastery_1920_after.webp",
+    "drowned_crypt_arrival_1920_after.webp",
+    "drowned_crypt_cloister_1920_after.webp",
+    "drowned_crypt_nave_1920_after.webp",
+    "hollow_reeds_fork_1920_after.webp",
+    "hollow_reeds_boats_1920_after.webp",
+    "hollow_reeds_grove_1920_after.webp",
+    "spawn_pools_cistern_1920_after.webp",
+    "spawn_pools_brood_1920_after.webp",
+    "ritual_site_stalls_1920_after.webp",
+    "ritual_site_gallery_1920_after.webp",
+    "ritual_site_boss_1920_after.webp",
+    "marshcamp_arrival_1920_after.webp"
+  ],
+  "profiles": [
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "mode": "moving",
+      "position": {
+        "x": 2.5,
+        "y": 86.5
+      },
+      "monsters": 137,
+      "distance": 18.173333333333396,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.9,
+        "p95": 5.3,
+        "max": 13.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.3
+      },
+      "builds": 1,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "mode": "combat",
+      "position": {
+        "x": 37.5,
+        "y": 84.5
+      },
+      "monsters": 137,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2084,
+      "cpuMs": {
+        "median": 5.2,
+        "p95": 6.9,
+        "max": 9.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 17.2
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "drowned_crypt",
+      "width": 1920,
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 14.5
+      },
+      "monsters": 94,
+      "distance": 18.17333333333329,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.5,
+        "p95": 7.4,
+        "max": 11.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 17.3
+      },
+      "builds": 3,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "drowned_crypt",
+      "width": 1920,
+      "mode": "combat",
+      "position": {
+        "x": 54.5,
+        "y": 24.5
+      },
+      "monsters": 94,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1307,
+      "cpuMs": {
+        "median": 5.2,
+        "p95": 7,
+        "max": 8.3
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 21
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "hollow_reeds",
+      "width": 1920,
+      "mode": "moving",
+      "position": {
+        "x": 12.5,
+        "y": 18.5
+      },
+      "monsters": 101,
+      "distance": 18.173333333333332,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4,
+        "p95": 6.2,
+        "max": 11.7
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 22.5
+      },
+      "builds": 2,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "hollow_reeds",
+      "width": 1920,
+      "mode": "combat",
+      "position": {
+        "x": 45.5,
+        "y": 32.5
+      },
+      "monsters": 101,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2171,
+      "cpuMs": {
+        "median": 4.6,
+        "p95": 5.5,
+        "max": 10.4
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 20.5
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "spawn_pools",
+      "width": 1920,
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 14.5
+      },
+      "monsters": 95,
+      "distance": 18.17333333333329,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.1,
+        "p95": 5.8,
+        "max": 12.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.1
+      },
+      "builds": 3,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "spawn_pools",
+      "width": 1920,
+      "mode": "combat",
+      "position": {
+        "x": 50.5,
+        "y": 28.5
+      },
+      "monsters": 95,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1698,
+      "cpuMs": {
+        "median": 4.6,
+        "p95": 5.3,
+        "max": 6.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "ritual_site",
+      "width": 1920,
+      "mode": "moving",
+      "position": {
+        "x": 12.5,
+        "y": 14.5
+      },
+      "monsters": 95,
+      "distance": 18.173333333333332,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.1,
+        "p95": 5.7,
+        "max": 10.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 18.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "ritual_site",
+      "width": 1920,
+      "mode": "combat",
+      "position": {
+        "x": 48.5,
+        "y": 27.5
+      },
+      "monsters": 95,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1867,
+      "cpuMs": {
+        "median": 4.6,
+        "p95": 6.3,
+        "max": 9.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    }
+  ]
+}

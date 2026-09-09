@@ -2269,7 +2269,10 @@ def _copy_final_aligned_source(descriptor: dict) -> Path:
     target = OUT / "packed" / source.relative_to(GAMEPLAY_ART_ROOT).with_suffix(".webp")
     # Encoding is the only compiler operation. Pixel geometry, anchors, frame
     # placement, and palette are already frozen in the checked-in RGBA source.
-    save_webp(rgba(source), target, 94)
+    if descriptor.get('lossless'):
+        save_lossless_webp(rgba(source), target)
+    else:
+        save_webp(rgba(source), target, 94)
     return target
 
 
@@ -2571,6 +2574,8 @@ def main() -> None:
     install_act4_animations(entries, maps)
     from import_act5_animations import install as install_act5_animations
     install_act5_animations(entries, maps)
+    from import_prop_interactions import install as install_prop_interactions
+    install_prop_interactions(entries, maps)
     emit_manifest(entries, maps, player_rig_report)
     print(f"Built {len(entries)} sprite assets and {len(maps)} lookup maps")
 

@@ -1,0 +1,26 @@
+{
+  "width": 1920,
+  "zone": "deepfreeze_cavern",
+  "version": "before",
+  "mode": "moving",
+  "position": {
+    "x": 18.5,
+    "y": 26.5
+  },
+  "monsters": 62,
+  "distance": 18.173333333333233,
+  "attackFrames": 0,
+  "enemyAttackFrames": 0,
+  "cpuMs": {
+    "median": 3.2,
+    "p95": 4.7,
+    "max": 14.3
+  },
+  "frameIntervalMs": {
+    "median": 17.6,
+    "p95": 18.2,
+    "max": 18.6
+  },
+  "builds": 3,
+  "warmCacheStable": true
+}

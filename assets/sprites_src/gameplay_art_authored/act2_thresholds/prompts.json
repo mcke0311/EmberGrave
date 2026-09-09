@@ -1,0 +1,58 @@
+{
+  "method": "built-in-imagegen",
+  "reference": "assets/sprites_src/gameplay_art/world/props/act2_cloister.png",
+  "assets": [
+    {
+      "key": "monastery_out",
+      "prompt": "Use case: stylized-concept. Production game sprite: ONE compact ruined monastery entrance WALL SECTION, transparent RGBA background. Reference is style/perspective only. Match detailed Gothic grey-blue mossy stone, upper-left light, 2:1 orthographic isometric camera. A wall extends along the screen diagonal from upper left to lower right, viewed on its southwest face, no second wall axis. Broad central pointed doorway with fully transparent open aperture reaching the ground, two short attached wall wings ending in flat connection faces. Total ground span seven tiles; central opening three tiles; wall height two tiles, arch peak three tiles. Doorway tall enough for one person, not monumental. Level ground, no stairs, no ramp, no floor patch, no dark rectangle filling the opening, no backdrop. Broken tracery and moss on piers, restrained detail, complete silhouette generous margins. Opening base and both wing bases lie on the SAME straight 2:1 isometric diagonal. Transparent space below and behind. Draw only this single complete module, no sheet, no text.",
+      "references": [
+        "assets/sprites_src/gameplay_art/world/props/act2_cloister.png"
+      ]
+    },
+    {
+      "key": "reeds_out",
+      "prompt": "Use case: stylized-concept. Production sprite on a SOLID FLAT UNIFORM PURE MAGENTA RGB(255,0,255) background for technical extraction. OPAQUE image, do NOT make transparency, do NOT render shadows or halos on the magenta. ONE compact two-sided wetland passage: two low ragged banks of exposed blackbrown roots and pale marsh reeds, with a wide empty gap in the center occupying one third of width. Both banks arranged end to end along a single 2:1 isometric diagonal upper-left to lower-right. Leave magenta through the opening and between stalks. No arch over gap, no floor, no boardwalk. Entire assembly sits inside central 75% of canvas with large magenta margins. Detailed hand painted dark Gothic game asset, weathered moss, dull olive, damp mud, upper-left light. Low broad banks and reed height comparable to a person. No text, no black backdrop, no gradient, no vignette, no glow. Every background pixel must be flat magenta.",
+      "references": []
+    },
+    {
+      "key": "monastery_in",
+      "prompt": "Use case: stylized-concept. Create ONE compact interior monastery return passage wall sprite. Use reference for matched grey-blue Gothic painted stone and 2:1 isometric camera. Flat uniform opaque pure MAGENTA technical matte, including opening; no transparency, shadow or halo on matte. Wall extends upper-left to lower-right at exactly slope 1 vertical to 2 horizontal. A broad pointed arch with low attached broken wall wings on either side. Opening occupies ONE THIRD of entire width, arch height only twice opening width. NO stairs, NO ramp, NO floor patch. Damp interior stone, small carved choir reliefs, exposed broken vault ribs, pale moss, understated cool daylight on the inner arch. Whole silhouette and generous margins. Complete OPEN aperture reaches base, matte visible behind. Side wing bases and opening base align on SAME diagonal. Match late 1990s detailed dark Gothic ARPG paint. No text or glow.",
+      "references": [
+        "assets/sprites_src/gameplay_art/world/props/act2_cloister.png"
+      ]
+    },
+    {
+      "key": "reeds_in",
+      "prompt": "Use case: stylized-concept. Production isometric Gothic game sprite on opaque perfectly flat PURE MAGENTA RGB255,0,255 technical background. One low natural passage assembly made of two separate side banks with a wide empty gap between them. Left bank in upper-left half, right bank in lower-right half, lying on one 2:1 isometric diagonal, gap 30% of total width. Thick weathered twisted roots, dense pale dry reeds, a few votive cords, black mud and moss. Low broad profiles, no overhead arch, no doorway architecture, no floor patch, no stairs. Complete silhouette with generous margins, fine painterly textures matching damp ruined monastery game art. Upper-left light. Return-side variant, pale dry seed heads and exposed dark roots. No glow, no shadows on background, no haze, no vignette, no text. Matte visible throughout the clear central opening and behind stalks.",
+      "references": []
+    },
+    {
+      "key": "sluice_out",
+      "prompt": "Use case: stylized-concept. ONE compact ruined cistern sluice entrance sprite on perfectly flat opaque PURE MAGENTA RGB255,0,255 technical matte. Reference for detailed mossy Gothic stone game style. Orthographic 2:1 isometric wall aligned diagonal upper-left to lower-right, foundation slope exactly 1:2. A LOW broad rounded drainage arch, open at ground level, with short attached stone wall wings. The central clear gap occupies one THIRD total width. Broken rusty grate only hangs from TOP and sides, never blocks opening. Knotted roots and small pale egg sacs grip the outer wing bases. Damp blue-grey masonry, restrained olive moss, upper-left lighting. Complete silhouette with generous margin. NO stairs, no ramp, no water, no floor patch, no backdrop, no text, no glow, no matte shadow. Pure magenta visible through fully clear passage.",
+      "references": [
+        "assets/sprites_src/gameplay_art/world/props/act2_cloister.png"
+      ]
+    },
+    {
+      "key": "sluice_in",
+      "prompt": "Use case: stylized-concept. Production isometric Gothic game sprite on solid opaque PURE MAGENTA extraction matte. Reference for stone painting style. Interior return side of an old cistern sluice: one LOW rounded stone arch with attached short broken wall wings, central empty gap one third total width. Whole wall along upper-left to lower-right 2:1 isometric diagonal. Flat ground level, NO stairs, NO ramp, NO floor. Worn damp blue-grey stone and brown-black roots; rusty hinges and snapped grate remnants attached only at outer sides, CLEAR center. A few empty egg shells in roots on outside bases. Compact silhouette, restrained upper-left lighting, generous margins. No glow, no background shadow, no haze, no text. Uniform pure magenta visible through the entire doorway.",
+      "references": [
+        "assets/sprites_src/gameplay_art/world/props/act2_cloister.png"
+      ]
+    },
+    {
+      "key": "ritual_out",
+      "prompt": "Use case: stylized-concept. One ruined ceremonial processional passage game sprite on perfectly flat opaque PURE MAGENTA RGB255,0,255 technical matte. Reference only for Gothic painted textures. Two low weathered Gothic stone piers with attached short ruined wall wings and crooked black roots. OPEN broad central gap, no intact overhead arch, small broken arch springers only. Piers unequal, mute bronze bells hang from outer roots, pale cloth strips. Entire foundation follows upper-left to lower-right 2:1 isometric diagonal. Opening one third total width; columns no taller than twice doorway width. Roots overtake grey-blue mossy stone, upper-left light, no glowing effects. No stairs, ramp, floor patch, background scene or text. Complete silhouette with generous margins; magenta clear through opening and between branches. Fine detailed painterly late1990s dark fantasy ARPG style.",
+      "references": [
+        "assets/sprites_src/gameplay_art/world/props/act2_cloister.png"
+      ]
+    },
+    {
+      "key": "ritual_in",
+      "prompt": "Create an alternate RETURN SIDE of the reference game sprite. KEEP the perfectly flat pure magenta RGB255,0,255 background EXACTLY. Opaque RGB technical matte, NOT transparency. Keep same two low stone piers with broken wall wings and open gap, same compact proportions and 2:1 isometric perspective. Change the pier faces to worn silent choir relief carvings, smaller bronze bells, fewer pale cloth strips, darker wet roots. Preserve the wide empty magenta aperture to the ground, preserve all complete silhouettes and margins. No floor or stairs. NO glow or halo or gradient or vignette or shadows on the magenta. Every pixel outside the painted objects must be pure magenta. Detailed painted Gothic game style, upper-left light.",
+      "references": [
+        "assets/sprites_src/gameplay_art_authored/act2_thresholds/ritual_out.png"
+      ]
+    }
+  ]
+}

@@ -108,10 +108,10 @@ export function createAnimationController(){
       feet.set(foot.id,{...point,y:lift,contact,settle,start:contact?null:old?.contact?{x:old.x,z:old.z}:old?.start});
       if(touchdown&&moving&&!air&&!dead&&previous)onFootstep?.(foot.id);
     }
-    const key=state+':'+(['attack','cast','kick','hit','death'].includes(state)?action?.visual?.id||0:held?state:form||'');
+    const key=state+':'+(['attack','cast','kick','reach','search','hit','death'].includes(state)?action?.visual?.id||0:held?state:form||'');
     if(frame&&key!==lastKey){
       const end=action?.visual?.releases?.[0];
-      const duration=state==='death'?.10:['attack','cast','kick'].includes(state)?Math.min(.09,Math.max(0,(end??.4)*(action?.dur||.4)*.65)):.14;
+      const duration=state==='death'?.10:['attack','cast','kick','reach','search'].includes(state)?Math.min(.09,Math.max(0,(end??.4)*(action?.dur||.4)*.65)):.14;
       transition=duration>0?{from:frame,age:0,duration}:null;
     }else if(transition){transition.age+=dt;if(transition.age>=transition.duration)transition=null;}
     const releases=action?.visual?.releases?.slice()||null;

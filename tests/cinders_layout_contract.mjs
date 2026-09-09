@@ -44,7 +44,7 @@ for(const [zone,budget] of [['ash_wastes',96],['cinder_bastion',120],['throne',3
   }
   for(const ramp of m.ramps){ok(ramp.width>=5,label+' narrow ramp');for(let w=-2;w<=2;w++)ok(N.segment(m,ramp.x+w+.5,ramp.y-.5,ramp.x+w+.5,ramp.y+ramp.length+.5,.36),label+' blocked ramp');}
   for(const b of m.buildings){const a=b.footprint;for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++)ok(!!m.blocked[x+y*m.w],label+' footprint hole');}
-  for(const e of m.exits){const g=m.props.find(p=>p.gate&&Math.abs(p.x-(e.x0+e.x1)/2)<.01&&Math.abs(p.y-(e.y0+e.y1)/2)<.01);ok(g&&g.footprints.length===2,label+' unregistered gate');ok(N.segment(m,g.x+3,g.y+3,g.x,g.y,.36),label+' blocked threshold');}
+  for(const e of m.exits){const t=m.thresholds.find(t=>t.id===e.thresholdId),g=m.props.find(p=>p.gate&&p.thresholdId===e.thresholdId);ok(g&&g.footprints.length===2&&t,label+' unregistered gate');ok(N.segment(m,t.arrival.x,t.arrival.y,t.opening.x,t.opening.y,.36),label+' blocked threshold');}
   if(m.bossArena){const a=m.bossArena;ok(a.x1-a.x0===21&&a.y1-a.y0===21,label+' boss arena dimensions');for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++)ok(!m.blocked[x+y*m.w]&&!m.hazard[x+y*m.w]&&!m.elev[x+y*m.w],label+' boss floor obstructed');}
   const signature=hash(m);hashes.add(signature);ok(signature===hash(M.generate(zone,seed)),label+' nondeterministic');
   rows.push({seed,reachable:queue.length,enemies:count,ramps:m.ramps.length,landmarks:f.landmarks.length});

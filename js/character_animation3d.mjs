@@ -133,6 +133,14 @@ export function classPoseAt(id,state,u){
     add('Hips',.035*gather,(-.07*gather+.08*release)*(id==='gravebinder'?.4:1));
     add('Head',.035*gather-.045*release);add('HandL',-.12*release,.06*release,.09*gather);
   }
+  if(state==='reach'||state==='search'){
+    const w=smooth(u/.38)*(1-smooth((u-.60)/.40)),search=state==='search';
+    // The unencumbered hand approaches the prop; the equipped hand stays guarded.
+    height-=(search?.15:.035)*w;
+    add('Spine',(search?.40:.13)*w);add('Chest',.05*w,-.07*w);add('Head',.22*w);
+    add('UpperArmL',-(search?.80:1.02)*w,0,.14*w);add('ForearmL',.38*w);add('HandL',-.18*w);
+    add('UpperArmR',.10*w);add('ForearmR',-.10*w);
+  }
   // Let the lower arm fold onto the body during side falls, rather than acting
   // as a rigid prop. The forward Gravebinder collapse leaves both arms trailing.
   if(state==='death'||state==='dead'){
@@ -255,6 +263,12 @@ export function sampleHumanoid(id,pose,equipment={},depth=0){
     const wind=smooth(time/.24)*(1-smooth((time-.24)/.26));
     const drive=smooth((time-.24)/.26)*(1-smooth((time-.5)/.5));
     const foot=feet.find(f=>f.id==='R');foot.z=.025+.69*drive;foot.y=.55*drive+.24*wind;foot.pitch=-.2*wind+.12*drive;foot.contact=wind+drive<.001;
+  }
+  if(name==='reach'||name==='search'){
+    // Keep two-handed grips solved and show searching through torso and head.
+    const w=smooth(time/.38)*(1-smooth((time-.60)/.40));
+    if(equipment.main?.twoHand){add('Spine',(name==='search'?.27:.12)*w);add('Head',.18*w);}
+    motion.spell=0;
   }
   if(name==='draw'){if(category==='bow')motion.draw=motion.handDraw=.2+.8*smooth(time);motion.arrow=true;motion.power=1;motion.spell=0;}
   if(name==='channel'){motion.spell=.88+Math.sin((pose.t||0)*4)*.08;motion.power=1;add('HandL',Math.sin((pose.t||0)*3)*.045);}

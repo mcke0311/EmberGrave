@@ -42,27 +42,42 @@ const TownTerrain = (() => {
   function build(m) {
     const w=m.w*SCALE,h=m.h*SCALE;
     const surface=canvas(w,h),ctx=surface.getContext('2d');
-    ctx.fillStyle=ctx.createPattern(material(m.id+'_soil',512),'repeat');ctx.fillRect(0,0,w,h);
+    ctx.fillStyle=ctx.createPattern(m.act3?.environment?LevelTerrain.imperialMaterial('a3visual_sand'):material(m.id==='frosthaven'&&m.act1Environment?'a1polish_snow':m.id+'_soil',512),'repeat');ctx.fillRect(0,0,w,h);
     if(m.settlement.pools.length){
       const mask=canvas(w,h),g=mask.getContext('2d');g.fillStyle='#fff';g.filter='blur(17px)';
       for(const pool of m.settlement.pools){trace(g,pool,true);g.fill();}
       layer(ctx,material('town_marshwater',384),mask,.87);
     }
-    layer(ctx,material(m.id+'_street',256),routeMask(m,w,h),m.id==='marshcamp'?.98:.9);
-    for(const d of m.act3?.decals||[]){
+    layer(ctx,m.act3?.environment?LevelTerrain.imperialMaterial('a3visual_sandstone'):material(m.id+'_street',256),routeMask(m,w,h),m.id==='marshcamp'?.98:.9);
+    if(m.act3?.environment)ImperialEnvironment.decorateFloor(ctx,m,0,0,Math.max(w,h),SCALE,LevelTerrain.imperialMaterial);
+    for(const d of m.thresholdDecals||m.act3?.decals||[]){
+      if(m.act3?.environment&&d.type.startsWith('act3_'))continue;
       const f=SpriteAssets.getFrame(SpriteAssets.maps.props[d.type],0),s=d.scale||1;
       ctx.save();ctx.setTransform(.5,-.5,1,1,d.x*SCALE,d.y*SCALE);ctx.scale(s,s);ctx.globalAlpha=d.alpha??1;
       ctx.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,-f.anchorX,-f.anchorY,f.sw,f.sh);ctx.restore();
     }
     // Project one continuous surface into the same 32x16 world coordinate system.
-    const projected=canvas((m.w+m.h)*32+4,(m.w+m.h)*16+4),g=projected.getContext('2d');
-    g.setTransform(1,.5,-1,.5,m.h*32+2,2);g.drawImage(surface,0,0);
-    return {canvas:projected,x:-m.h*32-2,y:-2};
+    const margin=m.act5Environment?192:0;
+    const projected=canvas((m.w+m.h)*32+4+margin*2,(m.w+m.h)*16+4+margin*2),g=projected.getContext('2d');
+    g.setTransform(1,.5,-1,.5,m.h*32+2+margin,2+margin);g.drawImage(surface,0,0);
+    g.setTransform(1,0,0,1,0,0);
+    if(m.boundaries)Act2Boundaries.drawGround(g,m,{x:-m.h*32-2,y:-2},()=>true);
+    if(m.act1Environment)Act1Environment.drawGround(g,m,{x:-m.h*32-2-margin,y:-2-margin},()=>true);
+    if(m.act3?.environment)ImperialEnvironment.drawGround(g,m,{x:-m.h*32-2-margin,y:-2-margin},()=>true);
+    if(m.act5Environment)CindersBoundaries.drawGround(g,m,{x:-m.h*32-2-margin,y:-2-margin},()=>true);
+    return {canvas:projected,x:-m.h*32-2-margin,y:-2-margin,boundaries:m.boundaries,imperialEnvironment:m.act3?.environment,act5Environment:m.act5Environment,act1Environment:m.act1Environment};
   }
   function draw(ctx,m,cam) {
     let entry=cache.get(m);
-    if(!entry){entry=build(m);cache.set(m,entry);while(cache.size>2)cache.delete(cache.keys().next().value);}
+    if(!entry||entry.act1Environment!==m.act1Environment||entry.imperialEnvironment!==m.act3?.environment||entry.boundaries!==m.boundaries||entry.act5Environment!==m.act5Environment){if(entry){entry.canvas.width=0;entry.canvas.height=0;}entry=build(m);cache.set(m,entry);while(cache.size>2)cache.delete(cache.keys().next().value);}
     else {cache.delete(m);cache.set(m,entry);}
+    if(m.act1Environment){
+      // The town sits in a snowfield; its rectangular navigation grid is not
+      // an island floating above the distant mountain backdrop.
+      ctx.save();ctx.transform(1,.5,-1,.5,-cam.x,-cam.y);
+      ctx.fillStyle=ctx.createPattern(material('a1polish_snow',512),'repeat');
+      ctx.fillRect(-8192,-8192,m.w*SCALE+16384,m.h*SCALE+16384);ctx.restore();
+    }
     ctx.drawImage(entry.canvas,entry.x-cam.x,entry.y-cam.y);
   }
   return {draw};

@@ -1,5 +1,15 @@
 # Act IV — Cathedral of Memories
 
+The [painted environment overhaul](ACT4_ENVIRONMENT.md) supersedes this document's
+original wall, foundation, floor and entrance presentation. It adds 72 coordinated
+assets, classified boundary assemblies and integrated clickable passages across
+all four locations; the campaign and memory-instance behavior below is preserved.
+
+The [painted environment overhaul](ACT4_ENVIRONMENT.md) supersedes this document's
+original wall, foundation, floor and entrance presentation. It adds 72 coordinated
+assets, classified boundary assemblies and integrated clickable passages across
+all four locations; the campaign and memory-instance behavior below is preserved.
+
 The two main cathedral levels now use authored memory islands and seeded
 connections instead of the shared crypt halls. Each 112×112 map has three
 arrangements; room dimensions, memory placement, routes and dressing vary by

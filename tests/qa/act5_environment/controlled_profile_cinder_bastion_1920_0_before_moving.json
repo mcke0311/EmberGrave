@@ -1,0 +1,40 @@
+{
+  "methodRevision": 12,
+  "legacyActors": false,
+  "width": 1920,
+  "zone": "cinder_bastion",
+  "pair": 0,
+  "version": "before",
+  "mode": "moving",
+  "position": {
+    "x": 20.5,
+    "y": 24.5
+  },
+  "pocketRadius": null,
+  "monsters": 121,
+  "distance": 18.173333333333233,
+  "attackFrames": 0,
+  "enemyAttackFrames": 0,
+  "cpuMs": {
+    "median": 3.6,
+    "p95": 4.5,
+    "max": 15
+  },
+  "updateMs": {
+    "median": 1,
+    "p95": 1.2,
+    "max": 2.1
+  },
+  "renderMs": {
+    "median": 2.6,
+    "p95": 3.3,
+    "max": 14.1
+  },
+  "frameIntervalMs": {
+    "median": 17.9,
+    "p95": 18.1,
+    "max": 19.8
+  },
+  "builds": 1,
+  "warmCacheStable": true
+}

@@ -1,0 +1,112 @@
+{
+  "status": "PASS",
+  "method": "Uninstrumented ABBA order, 240 warmup and 960 measured frames each; sustained 4K Spawn Pools combat.",
+  "before": {
+    "p95": 9.8,
+    "median": 6.5
+  },
+  "after": {
+    "p95": 9.55,
+    "median": 6.85
+  },
+  "regression": -0.025510204081632626,
+  "rows": [
+    {
+      "version": "hidden",
+      "mode": "combat",
+      "position": {
+        "x": 50.5,
+        "y": 28.5
+      },
+      "monsters": 101,
+      "distance": 0,
+      "attackFrames": 960,
+      "enemyAttackFrames": 6880,
+      "cpuMs": {
+        "median": 6.3,
+        "p95": 8.4,
+        "max": 15.3
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 29.2
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 50.5,
+        "y": 28.5
+      },
+      "monsters": 101,
+      "distance": 0,
+      "attackFrames": 960,
+      "enemyAttackFrames": 6880,
+      "cpuMs": {
+        "median": 7.1,
+        "p95": 10,
+        "max": 15.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 34.6
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 50.5,
+        "y": 28.5
+      },
+      "monsters": 101,
+      "distance": 0,
+      "attackFrames": 960,
+      "enemyAttackFrames": 6880,
+      "cpuMs": {
+        "median": 6.6,
+        "p95": 9.1,
+        "max": 13.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 33
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "version": "hidden",
+      "mode": "combat",
+      "position": {
+        "x": 50.5,
+        "y": 28.5
+      },
+      "monsters": 101,
+      "distance": 0,
+      "attackFrames": 960,
+      "enemyAttackFrames": 6880,
+      "cpuMs": {
+        "median": 6.7,
+        "p95": 11.2,
+        "max": 14.4
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 30.6
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    }
+  ],
+  "baseline": "Current map with only threshold upright art hidden"
+}

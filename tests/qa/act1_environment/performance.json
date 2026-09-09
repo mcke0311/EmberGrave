@@ -1,0 +1,345 @@
+{
+  "method": "Fresh source archive; 90 warmup, 240 measured frames; full roster; movement and exchanged combat; real 3D Vanguard. One initial pair per scenario; investigate ratios above 1.10.",
+  "comparisons": [
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 4.8,
+        "p95": 6.3,
+        "max": 31.9
+      },
+      "after": {
+        "median": 5.2,
+        "p95": 6.9,
+        "max": 21
+      },
+      "medianRatio": 1.0833333333333335,
+      "p95Ratio": 1.0952380952380953
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 5.4,
+        "p95": 6.7,
+        "max": 9.3
+      },
+      "after": {
+        "median": 5.2,
+        "p95": 6.8,
+        "max": 9.3
+      },
+      "medianRatio": 0.9629629629629629,
+      "p95Ratio": 1.0149253731343284
+    },
+    {
+      "zone": "mines",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 5.3,
+        "p95": 6.7,
+        "max": 19.3
+      },
+      "after": {
+        "median": 5,
+        "p95": 6.4,
+        "max": 18.3
+      },
+      "medianRatio": 0.9433962264150944,
+      "p95Ratio": 0.9552238805970149
+    },
+    {
+      "zone": "mines",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 6.7,
+        "p95": 9.4,
+        "max": 13.3
+      },
+      "after": {
+        "median": 6.2,
+        "p95": 8,
+        "max": 9.6
+      },
+      "medianRatio": 0.9253731343283582,
+      "p95Ratio": 0.851063829787234
+    },
+    {
+      "zone": "shattered_temple",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 6.4,
+        "p95": 8.9,
+        "max": 21.6
+      },
+      "after": {
+        "median": 5.3,
+        "p95": 6.7,
+        "max": 18.5
+      },
+      "medianRatio": 0.8281249999999999,
+      "p95Ratio": 0.7528089887640449
+    },
+    {
+      "zone": "shattered_temple",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 6.4,
+        "p95": 8.4,
+        "max": 12.4
+      },
+      "after": {
+        "median": 5.1,
+        "p95": 7.9,
+        "max": 10.1
+      },
+      "medianRatio": 0.7968749999999999,
+      "p95Ratio": 0.9404761904761905
+    },
+    {
+      "zone": "shardpeak_shrine",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 3.7,
+        "p95": 5.6,
+        "max": 18.1
+      },
+      "after": {
+        "median": 3.5,
+        "p95": 5,
+        "max": 10
+      },
+      "medianRatio": 0.9459459459459459,
+      "p95Ratio": 0.8928571428571429
+    },
+    {
+      "zone": "shardpeak_shrine",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 4,
+        "p95": 5.8,
+        "max": 9.9
+      },
+      "after": {
+        "median": 3.4,
+        "p95": 4.7,
+        "max": 6.7
+      },
+      "medianRatio": 0.85,
+      "p95Ratio": 0.810344827586207
+    },
+    {
+      "zone": "deepfreeze_cavern",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 3.2,
+        "p95": 4.7,
+        "max": 14.3
+      },
+      "after": {
+        "median": 3.1,
+        "p95": 4.7,
+        "max": 9.3
+      },
+      "medianRatio": 0.96875,
+      "p95Ratio": 1
+    },
+    {
+      "zone": "deepfreeze_cavern",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 4.1,
+        "p95": 5.6,
+        "max": 7
+      },
+      "after": {
+        "median": 4,
+        "p95": 5.7,
+        "max": 7.2
+      },
+      "medianRatio": 0.9756097560975611,
+      "p95Ratio": 1.017857142857143
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 4.9,
+        "p95": 7,
+        "max": 35.8
+      },
+      "after": {
+        "median": 4.4,
+        "p95": 6,
+        "max": 48.3
+      },
+      "medianRatio": 0.8979591836734694,
+      "p95Ratio": 0.8571428571428571
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 7.8,
+        "p95": 10.3,
+        "max": 11.7
+      },
+      "after": {
+        "median": 7.2,
+        "p95": 11.3,
+        "max": 16.5
+      },
+      "medianRatio": 0.9230769230769231,
+      "p95Ratio": 1.0970873786407767
+    },
+    {
+      "zone": "mines",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 6.7,
+        "p95": 8.6,
+        "max": 33.4
+      },
+      "after": {
+        "median": 4.9,
+        "p95": 7.2,
+        "max": 17.6
+      },
+      "medianRatio": 0.7313432835820896,
+      "p95Ratio": 0.8372093023255814
+    },
+    {
+      "zone": "mines",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 6.8,
+        "p95": 8.8,
+        "max": 15.7
+      },
+      "after": {
+        "median": 6.5,
+        "p95": 8.9,
+        "max": 11.4
+      },
+      "medianRatio": 0.9558823529411765,
+      "p95Ratio": 1.0113636363636362
+    },
+    {
+      "zone": "shattered_temple",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 4.6,
+        "p95": 6.8,
+        "max": 19.2
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 5.4,
+        "max": 19.4
+      },
+      "medianRatio": 0.9130434782608696,
+      "p95Ratio": 0.7941176470588236
+    },
+    {
+      "zone": "shattered_temple",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 6.4,
+        "p95": 8.9,
+        "max": 11.7
+      },
+      "after": {
+        "median": 5.9,
+        "p95": 8.3,
+        "max": 16.1
+      },
+      "medianRatio": 0.921875,
+      "p95Ratio": 0.9325842696629214
+    },
+    {
+      "zone": "shardpeak_shrine",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 4.3,
+        "p95": 6.8,
+        "max": 34.6
+      },
+      "after": {
+        "median": 3.5,
+        "p95": 4.6,
+        "max": 8.9
+      },
+      "medianRatio": 0.813953488372093,
+      "p95Ratio": 0.676470588235294
+    },
+    {
+      "zone": "shardpeak_shrine",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 4.7,
+        "p95": 6.5,
+        "max": 8.3
+      },
+      "after": {
+        "median": 5,
+        "p95": 7,
+        "max": 8.2
+      },
+      "medianRatio": 1.0638297872340425,
+      "p95Ratio": 1.0769230769230769
+    },
+    {
+      "zone": "deepfreeze_cavern",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 7.1,
+        "p95": 11.8,
+        "max": 26.6
+      },
+      "after": {
+        "median": 7.3,
+        "p95": 9.4,
+        "max": 11.8
+      },
+      "medianRatio": 1.028169014084507,
+      "p95Ratio": 0.7966101694915254
+    },
+    {
+      "zone": "deepfreeze_cavern",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 8.9,
+        "p95": 11.6,
+        "max": 14.7
+      },
+      "after": {
+        "median": 9.2,
+        "p95": 15.5,
+        "max": 23.3
+      },
+      "medianRatio": 1.0337078651685392,
+      "p95Ratio": 1.3362068965517242
+    }
+  ]
+}

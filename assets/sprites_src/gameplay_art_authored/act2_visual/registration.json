@@ -1,0 +1,92 @@
+[
+  {
+    "name": "water",
+    "size": [
+      768,
+      768
+    ],
+    "anchor": [
+      384,
+      384
+    ],
+    "method": "imagegen-act2-visual",
+    "source": "assets/sprites_src/gameplay_art_authored/act2_visual/water.png",
+    "sourceSha256": "193e309a3544f1dcc9c9df2fed15f5af59570b06c9ce9db90033341597339b76",
+    "crop": null
+  },
+  {
+    "name": "moss",
+    "size": [
+      768,
+      768
+    ],
+    "anchor": [
+      384,
+      384
+    ],
+    "method": "imagegen-act2-visual",
+    "source": "assets/sprites_src/gameplay_art_authored/act2_visual/moss.png",
+    "sourceSha256": "21612b8aaf00262bffc247e2485142c04578d041edd3bc12923f603b07711ea0",
+    "crop": null
+  },
+  {
+    "name": "cypress",
+    "size": [
+      360,
+      360
+    ],
+    "anchor": [
+      180,
+      344
+    ],
+    "method": "imagegen-act2-visual",
+    "source": "assets/sprites_src/gameplay_art_authored/act2_visual/cypress.png",
+    "sourceSha256": "7b069f5aa1830aba8777d7044627219038ccc5e75c08fc416e92a4cfbbc781a8",
+    "crop": [
+      0,
+      9,
+      1244,
+      1254
+    ]
+  },
+  {
+    "name": "seal",
+    "size": [
+      960,
+      421
+    ],
+    "anchor": [
+      480,
+      210
+    ],
+    "method": "imagegen-act2-visual",
+    "source": "assets/sprites_src/gameplay_art_authored/act2_visual/seal.png",
+    "sourceSha256": "066dff92eaacb12d03fe404c25242dc698ad83ccd78ee8158919b1664bd11877",
+    "crop": [
+      0,
+      77,
+      1755,
+      847
+    ]
+  },
+  {
+    "name": "pier",
+    "size": [
+      44,
+      186
+    ],
+    "anchor": [
+      22,
+      178
+    ],
+    "method": "imagegen-act2-visual",
+    "source": "assets/sprites_src/gameplay_art_authored/act2_visual/pier.png",
+    "sourceSha256": "0a13d2e3c4809e51c463e097993a5b46f36981da9b2913f08f21fb488aadef5d",
+    "crop": [
+      349,
+      14,
+      702,
+      1495
+    ]
+  }
+]

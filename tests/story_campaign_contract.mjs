@@ -9,9 +9,10 @@ const ctx=vm.createContext({console,Math,Date,performance,Uint8Array,Uint16Array
   Sfx:new Proxy({vol:{}},{get:(t,k)=>t[k]||(()=>{})}), Player3D:{assets:{}},
   UI:new Proxy({msg:t=>messages.push(t)},{get:(t,k)=>t[k]||(()=>{})}),
 });
-for(const f of ['utils','data','data_overrides','boss_encounters','skill_perks','sprite_manifest','mapgen','navigation','items','entities'])vm.runInContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'),ctx);
+for(const f of ['utils','data','data_overrides','boss_encounters','skill_perks','sprite_manifest','prop_interactions','mapgen','navigation','items','entities'])vm.runInContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'),ctx);
+// Progression checks exercise contact commits; the browser prop suite tests approach and gesture timing.
 let gameSource=fs.readFileSync(new URL('../js/game.js',import.meta.url),'utf8');
-gameSource=gameSource.replace('    init, newGame, loadGame,','    __test:{freshState,setState:s=>state=s,questKillEvent,campaignEvent,syncStoryObjects,setupRitualQuest},\n    init, newGame, loadGame,');
+gameSource=gameSource.replace('    init, newGame, loadGame,','    __test:{interactImmediate:prop=>interactOnSurface(prop,true),freshState,setState:s=>state=s,questKillEvent,campaignEvent,syncStoryObjects,setupRitualQuest},\n    init, newGame, loadGame,');
 vm.runInContext(gameSource,ctx);
 const {DATA:D,Game:G,MapGen:M,Monster,Npc,Player,TerrainNavigation:N}=vm.runInContext('({DATA,Game,MapGen,Monster,Npc,Player,TerrainNavigation})',ctx);
 const C=D.CAMPAIGN,q=id=>D.QUESTS.find(q=>q.id===id);
@@ -41,7 +42,7 @@ event(s,'enter','underground_market','underground_market');
 for(let i=0;i<20;i++)G.__test.questKillEvent({defId:'sand_raider'});
 ok(C.count(s,C.objectives(q('q13'))[1])===0,'generic kills substituted for constructs');
 for(let i=0;i<6;i++)G.__test.questKillEvent({defId:'gilt_construct'});
-for(const prop of s.map.props.filter(p=>p.storyId))G.interact(prop);
+for(const prop of s.map.props.filter(p=>p.storyId))G.__test.interactImmediate(prop);
 ok(s.quests.q13.state==='reward','market objectives failed');
 ok(s.map.props.filter(p=>p.storyId).every(p=>!p.interact),'relays remain repeatable');
 
@@ -49,7 +50,7 @@ s=fresh('sand_tombs');activate(s,'q14');
 for(let i=0;i<16;i++)G.__test.questKillEvent({defId:'tomb_guard'});
 ok(s.quests.q14.state==='active','kills still rescue the scholar');
 const scholar=s.map.npcs.find(n=>n.storyId);
-s.npcs=[new Npc(scholar.id,scholar.x,scholar.y,{...scholar})];G.interact(s.npcs[0]);
+s.npcs=[new Npc(scholar.id,scholar.x,scholar.y,{...scholar})];G.__test.interactImmediate(s.npcs[0]);
 ok(s.quests.q14.state==='reward'&&s.npcs.length===0,'scholar rescue not recorded/removed');
 const loaded=JSON.parse(JSON.stringify({quests:s.quests,flags:s.flags,difficulty:s.difficulty}));
 ok(C.found(loaded,'sand_tombs','imprisoned_scholar'),'scholar rescue lost in serialization');
@@ -58,7 +59,7 @@ const angel=new Monster('empty_archangel',s.player.x+2,s.player.y);
 angel.takeDamage(1e8,s.player);ok(!angel.dead&&angel.hp===angel.maxHp,'false angel skipped soul rescue');
 angel.scorch={until:100,dps:1e8};angel.update(1,s.player,s.map);angel.die(s.player);
 ok(!angel.dead,'damage over time/execute bypassed soul rescue');angel.scorch=null;
-for(const n of s.map.npcs.filter(n=>n.storyId))G.interact(new Npc(n.id,n.x,n.y,n));
+for(const n of s.map.npcs.filter(n=>n.storyId))G.__test.interactImmediate(new Npc(n.id,n.x,n.y,n));
 ok(!G.bossWard(angel),'souls failed to release false angel ward');
 G.__test.questKillEvent(angel);ok(s.quests.q16.state==='reward','souls plus boss did not complete q16');
 
@@ -66,7 +67,7 @@ s=fresh('cathedral2');activate(s,'q17');
 s.quests.q16={state:'done'};
 const king=new Monster('malthoron',s.player.x+2,s.player.y);
 ok(!!G.bossWard(king),'Hollow King bypasses seals/sword');
-for(const p of s.map.props.filter(p=>p.storyId&&p.storyId!=='hell_portal'))G.interact(p);
+for(const p of s.map.props.filter(p=>p.storyId&&p.storyId!=='hell_portal'))G.__test.interactImmediate(p);
 for(let i=0;i<3;i++)G.__test.questKillEvent({defId:'choir_priest'});
 ok(!G.bossWard(king),'all cathedral objectives failed to remove ward');
 G.__test.questKillEvent(king);ok(s.quests.q17.state==='reward','cathedral objectives did not complete q17');
@@ -74,13 +75,13 @@ G.__test.questKillEvent(king);ok(s.quests.q17.state==='reward','cathedral object
 // Boss kills before acceptance must leave a collectible, never an unwinnable quest.
 s=fresh('ritual_site');G.__test.questKillEvent({defId:'mire_mother'});
 ok(s.quests.q12.state==='active','early boss kill skipped shard recovery');
-const shard=s.map.props.find(p=>p.storyId==='mire_shard');G.interact(shard);
+const shard=s.map.props.find(p=>p.storyId==='mire_shard');G.__test.interactImmediate(shard);
 ok(s.quests.q12.state==='active','live boss did not guard shard');
-s.flags['dead_mire_mother@0']=true;G.interact(shard);
+s.flags['dead_mire_mother@0']=true;G.__test.interactImmediate(shard);
 ok(s.quests.q12.state==='active','early boss bypassed Oris’s investigation/Choir chain');
 s.quests.q11={state:'done'};C.sync(s);
 ok(s.quests.q12.state==='reward','early Mire Mother kill left quest stuck');
-G.interact(shard);ok(C.count(s,q('q12').objectives[1])===1,'shard duplicated');
+G.__test.interactImmediate(shard);ok(C.count(s,q('q12').objectives[1])===1,'shard duplicated');
 s=fresh();s.quests.q14={state:'done',count:16};C.sync(s);ok(s.quests.q14.state==='done','legacy completed quest regressed');
 
 // All generated objectives resolve installed art and are reachable across seeds.
@@ -138,7 +139,7 @@ for(const ending of ['destroy','seal','give']){
 s=fresh('cathedral2');G.__test.syncStoryObjects();
 let questChest=s.map.props.find(p=>p.storyId==='sword_piece_0');
 ok(questChest&&!questChest.opened&&questChest.interact==='story','unclaimed quest chest is already open');
-G.interact(questChest);ok(questChest.opened&&!questChest.interact,'claimed quest chest still looks closed');
+G.__test.interactImmediate(questChest);ok(questChest.opened&&!questChest.interact,'claimed quest chest still looks closed');
 s.map=M.generate('cathedral2',456);G.__test.syncStoryObjects();
 questChest=s.map.props.find(p=>p.storyId==='sword_piece_0');
 ok(questChest.opened&&!questChest.interact,'regenerated quest chest lost its open state');

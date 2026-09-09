@@ -1,0 +1,3026 @@
+[
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_east.png",
+    "sha256": "1418a654e11fec823d503e14ac63038eac4355cb2a0911bbeace0883ce72763b",
+    "kind": "static",
+    "size": [
+      224,
+      239
+    ],
+    "anchor": [
+      112,
+      178
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          0,
+          0,
+          311,
+          305
+        ],
+        "alphaBounds": [
+          36,
+          35,
+          275,
+          290
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9372384937238494,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_south.png",
+    "sha256": "dd614620ab78aa94549726683770f4d4186b207073c0053a7cc07de9d2bb2739",
+    "kind": "static",
+    "size": [
+      224,
+      239
+    ],
+    "anchor": [
+      112,
+      178
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          311,
+          0,
+          622,
+          305
+        ],
+        "alphaBounds": [
+          31,
+          35,
+          270,
+          290
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9372384937238494,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_east_alt",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_east_alt.png",
+    "sha256": "ad7f9f5cdaecb84e7271baa253afcb5539a8211fac3a7f68556cd5adb978ce88",
+    "kind": "static",
+    "size": [
+      224,
+      240
+    ],
+    "anchor": [
+      112,
+      179
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_east_alt",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          622,
+          0,
+          932,
+          305
+        ],
+        "alphaBounds": [
+          34,
+          35,
+          271,
+          289
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9451476793248945,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_south_alt",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_south_alt.png",
+    "sha256": "461c892b60f5b5130713dde24af80aa86880a35ecdf5d199ee71867a8c576a57",
+    "kind": "static",
+    "size": [
+      224,
+      235
+    ],
+    "anchor": [
+      112,
+      174
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_south_alt",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          932,
+          0,
+          1243,
+          305
+        ],
+        "alphaBounds": [
+          30,
+          36,
+          270,
+          288
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9333333333333333,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_inner",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_inner.png",
+    "sha256": "1edd47dc8352edbeab1adc1873b32a7907af48b6cb8e84f1c7dd42305a4a51b8",
+    "kind": "static",
+    "size": [
+      112,
+      87
+    ],
+    "anchor": [
+      56,
+      77
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_inner",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          0,
+          305,
+          311,
+          577
+        ],
+        "alphaBounds": [
+          28,
+          29,
+          303,
+          243
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.4072727272727273,
+        "anchorKind": "corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_outer",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_outer.png",
+    "sha256": "664fc10abf582803a63c351a28eb7b65811228324e34630360d7b0f83cada2fc",
+    "kind": "static",
+    "size": [
+      112,
+      98
+    ],
+    "anchor": [
+      56,
+      88
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_outer",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          311,
+          305,
+          622,
+          577
+        ],
+        "alphaBounds": [
+          49,
+          44,
+          291,
+          256
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.4628099173553719,
+        "anchorKind": "corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_end_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_end_east.png",
+    "sha256": "b4a8586ab203cff97afd347ed5bf1fc10f9795bb8c8ae7f40d1e59db1b52763f",
+    "kind": "static",
+    "size": [
+      112,
+      168
+    ],
+    "anchor": [
+      56,
+      135
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_end_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          622,
+          305,
+          932,
+          577
+        ],
+        "alphaBounds": [
+          90,
+          30,
+          240,
+          255
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.7466666666666667,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_end_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_end_south.png",
+    "sha256": "983dece82d051ac28c73af6861eee0fb495cc1bc7dfed7e69d5bb98f2fc0c5fc",
+    "kind": "static",
+    "size": [
+      112,
+      168
+    ],
+    "anchor": [
+      56,
+      135
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_end_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          932,
+          305,
+          1243,
+          577
+        ],
+        "alphaBounds": [
+          60,
+          30,
+          209,
+          254
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.7516778523489933,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_broken_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_broken_east.png",
+    "sha256": "c83dbfb78733f48a8b9ecb461b8f05928b66b06efcd53766a659080b5833d3c0",
+    "kind": "static",
+    "size": [
+      224,
+      175
+    ],
+    "anchor": [
+      112,
+      114
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_broken_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          0,
+          577,
+          311,
+          843
+        ],
+        "alphaBounds": [
+          52,
+          65,
+          277,
+          241
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9955555555555555,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_broken_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_broken_south.png",
+    "sha256": "19f4f6257e86a4421384c500d257256084f0c7eb00c728b71bcb6f9403e63326",
+    "kind": "static",
+    "size": [
+      224,
+      167
+    ],
+    "anchor": [
+      112,
+      106
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_broken_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          311,
+          577,
+          622,
+          843
+        ],
+        "alphaBounds": [
+          40,
+          91,
+          264,
+          258
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 1.0,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_door_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_door_east.png",
+    "sha256": "0609cd6f4066131615049680858dc4a2d7b3c0595157bffb2af850edb8a4654b",
+    "kind": "static",
+    "size": [
+      224,
+      290
+    ],
+    "anchor": [
+      112,
+      229
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_door_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          622,
+          577,
+          932,
+          843
+        ],
+        "alphaBounds": [
+          63,
+          20,
+          250,
+          262
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 1.1978609625668448,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_door_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_door_south.png",
+    "sha256": "5aa696cfaa7a94fec8879c8565ea3bc3c7729b67dcbf44c06e59bdb6abde813d",
+    "kind": "static",
+    "size": [
+      224,
+      287
+    ],
+    "anchor": [
+      112,
+      226
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_door_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          932,
+          577,
+          1243,
+          843
+        ],
+        "alphaBounds": [
+          65,
+          21,
+          252,
+          261
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 1.1978609625668448,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_foundation_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_foundation_east.png",
+    "sha256": "64a26fba3dece0483d156c248da51c65af3179d5d7e88ec6b351f2494ea53702",
+    "kind": "static",
+    "size": [
+      224,
+      355
+    ],
+    "anchor": [
+      112,
+      59
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_foundation_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          0,
+          843,
+          311,
+          1266
+        ],
+        "alphaBounds": [
+          49,
+          8,
+          293,
+          395
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9180327868852459,
+        "anchorKind": "foundation"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_foundation_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_foundation_south.png",
+    "sha256": "8fad1e48f4b4debb9fed379d204cb41010ce23c68f390cb1d0a776ceb6c99fec",
+    "kind": "static",
+    "size": [
+      224,
+      352
+    ],
+    "anchor": [
+      112,
+      59
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_foundation_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          311,
+          843,
+          622,
+          1266
+        ],
+        "alphaBounds": [
+          37,
+          18,
+          276,
+          394
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9372384937238494,
+        "anchorKind": "foundation"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_foundation_corner",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_foundation_corner.png",
+    "sha256": "7f38b9c006511c18346df40cb537ee5bb0776d365657a71128c81ce51422ec98",
+    "kind": "static",
+    "size": [
+      112,
+      155
+    ],
+    "anchor": [
+      56,
+      36
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_foundation_corner",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          622,
+          843,
+          932,
+          1266
+        ],
+        "alphaBounds": [
+          34,
+          49,
+          273,
+          380
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.4686192468619247,
+        "anchorKind": "foundation_corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_pale_abutment",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_pale_abutment.png",
+    "sha256": "c5bb332c301c0cb46486e823ce49a004f04d4808a58a354062150f418bfb2e7b",
+    "kind": "static",
+    "size": [
+      112,
+      145
+    ],
+    "anchor": [
+      56,
+      36
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_pale_abutment",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/pale_matte.png",
+      "sourceSha256": "258c91df7196b621a0d87a7dc720c518060b7e836e33b598f15f7ec36653b778",
+      "parameters": {
+        "box": [
+          932,
+          843,
+          1243,
+          1266
+        ],
+        "alphaBounds": [
+          8,
+          28,
+          289,
+          393
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.398576512455516,
+        "anchorKind": "foundation_corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_east.png",
+    "sha256": "6a38b9bb45b385cececdf66f7b681e9196c16954e583f3c28052fc5ae8d7412e",
+    "kind": "static",
+    "size": [
+      224,
+      279
+    ],
+    "anchor": [
+      112,
+      218
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          0,
+          0,
+          314,
+          310
+        ],
+        "alphaBounds": [
+          66,
+          17,
+          294,
+          301
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9824561403508771,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_south.png",
+    "sha256": "35463665b7a727473e8007b151e85ef07c8c5e6b787d3215411c78a10950d902",
+    "kind": "static",
+    "size": [
+      224,
+      276
+    ],
+    "anchor": [
+      112,
+      215
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          314,
+          0,
+          627,
+          310
+        ],
+        "alphaBounds": [
+          26,
+          18,
+          255,
+          300
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9781659388646288,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_east_alt",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_east_alt.png",
+    "sha256": "ff26863b501565f77259beda93ccc42baf7eff3c933187d422d5509cb68a31a3",
+    "kind": "static",
+    "size": [
+      224,
+      270
+    ],
+    "anchor": [
+      112,
+      209
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_east_alt",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          627,
+          0,
+          940,
+          310
+        ],
+        "alphaBounds": [
+          36,
+          17,
+          268,
+          297
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9655172413793104,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_south_alt",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_south_alt.png",
+    "sha256": "7683a4db8177f5f96acc67ff779c1373cf2b300768ca9e6378b0f0804d7d57c4",
+    "kind": "static",
+    "size": [
+      224,
+      268
+    ],
+    "anchor": [
+      112,
+      207
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_south_alt",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          940,
+          0,
+          1254,
+          310
+        ],
+        "alphaBounds": [
+          35,
+          17,
+          269,
+          297
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9572649572649573,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_inner",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_inner.png",
+    "sha256": "90d93b57e1c4c5854e9865ed57515645cae5e64bddfeee8725428a47e38ef1f4",
+    "kind": "static",
+    "size": [
+      112,
+      108
+    ],
+    "anchor": [
+      56,
+      98
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_inner",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          0,
+          310,
+          314,
+          585
+        ],
+        "alphaBounds": [
+          47,
+          10,
+          295,
+          250
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.45161290322580644,
+        "anchorKind": "corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_outer",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_outer.png",
+    "sha256": "fb900bfe7f660ff8ce5d290696339ff859291e0c0d02005f1e4aac64dc4225fd",
+    "kind": "static",
+    "size": [
+      112,
+      112
+    ],
+    "anchor": [
+      56,
+      102
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_outer",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          314,
+          310,
+          627,
+          585
+        ],
+        "alphaBounds": [
+          48,
+          32,
+          282,
+          265
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.47863247863247865,
+        "anchorKind": "corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_end_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_end_east.png",
+    "sha256": "9e9a84fac8cbd46a3ba989d680bd0241d21a730b767e132daba816ce91b3e23c",
+    "kind": "static",
+    "size": [
+      112,
+      195
+    ],
+    "anchor": [
+      56,
+      162
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_end_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          627,
+          310,
+          940,
+          585
+        ],
+        "alphaBounds": [
+          82,
+          22,
+          219,
+          260
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8175182481751825,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_end_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_end_south.png",
+    "sha256": "b25b0711f2ffdb6c348ba738e3643052e10c100af0fdc235b0a42229783b3c3f",
+    "kind": "static",
+    "size": [
+      112,
+      190
+    ],
+    "anchor": [
+      56,
+      157
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_end_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          940,
+          310,
+          1254,
+          585
+        ],
+        "alphaBounds": [
+          82,
+          21,
+          222,
+          259
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_broken_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_broken_east.png",
+    "sha256": "3723c4d2df894383de1a6fdd455333d24b7848390fef73950513e666921d00a9",
+    "kind": "static",
+    "size": [
+      224,
+      227
+    ],
+    "anchor": [
+      112,
+      166
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_broken_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          0,
+          585,
+          314,
+          834
+        ],
+        "alphaBounds": [
+          67,
+          26,
+          282,
+          244
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 1.041860465116279,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_broken_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_broken_south.png",
+    "sha256": "aff6760b27f6570f91b2a20034f267189acf3942c7cadbaa2c6e150a2f4f90d4",
+    "kind": "static",
+    "size": [
+      224,
+      186
+    ],
+    "anchor": [
+      112,
+      125
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_broken_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          314,
+          585,
+          627,
+          834
+        ],
+        "alphaBounds": [
+          43,
+          55,
+          271,
+          244
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9824561403508771,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_door_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_door_east.png",
+    "sha256": "caae1bcae1c9fbe10f3a4c29e435c3e5853f9c092afc9646973bbcf69d0962a9",
+    "kind": "static",
+    "size": [
+      224,
+      341
+    ],
+    "anchor": [
+      112,
+      280
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_door_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          627,
+          585,
+          940,
+          834
+        ],
+        "alphaBounds": [
+          74,
+          20,
+          217,
+          238
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 1.5664335664335665,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_door_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_door_south.png",
+    "sha256": "a39e305ba975b949825ddaa47155f0b8de285d07feeac041dfe072382ca4f499",
+    "kind": "static",
+    "size": [
+      224,
+      368
+    ],
+    "anchor": [
+      112,
+      307
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_door_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          940,
+          585,
+          1254,
+          834
+        ],
+        "alphaBounds": [
+          95,
+          13,
+          230,
+          235
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 1.6592592592592592,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_foundation_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_foundation_east.png",
+    "sha256": "744943f101b6475efa87c1db8c2ad279c74a10d4c9c42320c723a00088d68006",
+    "kind": "static",
+    "size": [
+      224,
+      350
+    ],
+    "anchor": [
+      112,
+      59
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_foundation_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          0,
+          834,
+          314,
+          1254
+        ],
+        "alphaBounds": [
+          56,
+          10,
+          291,
+          377
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9531914893617022,
+        "anchorKind": "foundation"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_foundation_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_foundation_south.png",
+    "sha256": "39e2d29c1fa3f15324139df080966fcddd2336390312920619525f658b473d4e",
+    "kind": "static",
+    "size": [
+      224,
+      347
+    ],
+    "anchor": [
+      112,
+      59
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_foundation_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          314,
+          834,
+          627,
+          1254
+        ],
+        "alphaBounds": [
+          39,
+          11,
+          275,
+          377
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9491525423728814,
+        "anchorKind": "foundation"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_foundation_corner",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_foundation_corner.png",
+    "sha256": "d6b32576a573d7fdd6b32515dbaa97d0a484b4f080bf027681f3f850f57e7f99",
+    "kind": "static",
+    "size": [
+      112,
+      155
+    ],
+    "anchor": [
+      56,
+      36
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_foundation_corner",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          627,
+          834,
+          940,
+          1254
+        ],
+        "alphaBounds": [
+          33,
+          45,
+          267,
+          368
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.47863247863247865,
+        "anchorKind": "foundation_corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_dark_abutment",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_dark_abutment.png",
+    "sha256": "263cbcd83d27c77a2a4b763e290074e585f7f056d235a64b87e4d435bf418edd",
+    "kind": "static",
+    "size": [
+      112,
+      172
+    ],
+    "anchor": [
+      56,
+      36
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_dark_abutment",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/dark_matte.png",
+      "sourceSha256": "ef06c143d098ba1e3dcb16d729ca341ffbb32704622b9f273ff41beefb1b1e27",
+      "parameters": {
+        "box": [
+          940,
+          834,
+          1254,
+          1254
+        ],
+        "alphaBounds": [
+          32,
+          8,
+          286,
+          399
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.4409448818897638,
+        "anchorKind": "foundation_corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_east.png",
+    "sha256": "718e0d98e71e3e1bba653c6c85173a4fdffd3500bf7d1db42c6af9e561fc4be2",
+    "kind": "static",
+    "size": [
+      224,
+      185
+    ],
+    "anchor": [
+      112,
+      124
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          0,
+          0,
+          314,
+          320
+        ],
+        "alphaBounds": [
+          26,
+          58,
+          305,
+          289
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8028673835125448,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_south.png",
+    "sha256": "3fa042cb33fcc087e76758435faa3a93cc2b4cf5b0521d4dd206e43508b113b9",
+    "kind": "static",
+    "size": [
+      224,
+      178
+    ],
+    "anchor": [
+      112,
+      117
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          314,
+          0,
+          627,
+          320
+        ],
+        "alphaBounds": [
+          18,
+          60,
+          296,
+          281
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8057553956834532,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_east_alt",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_east_alt.png",
+    "sha256": "788bab5c2539ab8b8f37f26aeaa6f9e3ff5841e8f5f27c27caa7485ca717d1e6",
+    "kind": "static",
+    "size": [
+      224,
+      188
+    ],
+    "anchor": [
+      112,
+      127
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_east_alt",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          627,
+          0,
+          940,
+          320
+        ],
+        "alphaBounds": [
+          19,
+          57,
+          294,
+          288
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8145454545454546,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_south_alt",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_south_alt.png",
+    "sha256": "a637b32c0092abb22247d39067e19fc92cb3b9f5ab18cb2b9570f0f85108d1f2",
+    "kind": "static",
+    "size": [
+      224,
+      178
+    ],
+    "anchor": [
+      112,
+      117
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_south_alt",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          940,
+          0,
+          1254,
+          320
+        ],
+        "alphaBounds": [
+          11,
+          60,
+          293,
+          284
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.7943262411347518,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_inner",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_inner.png",
+    "sha256": "1ead3a265b89914e449e3c7d124e82457ee05ab158db840b8968b2a6becdd844",
+    "kind": "static",
+    "size": [
+      112,
+      75
+    ],
+    "anchor": [
+      56,
+      65
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_inner",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          0,
+          320,
+          314,
+          590
+        ],
+        "alphaBounds": [
+          28,
+          52,
+          300,
+          235
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.4117647058823529,
+        "anchorKind": "corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_outer",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_outer.png",
+    "sha256": "25ffff10162ec9053f937e8cd4d46fa31e647595840996855c8759886ab24b08",
+    "kind": "static",
+    "size": [
+      112,
+      71
+    ],
+    "anchor": [
+      56,
+      61
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_outer",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          314,
+          320,
+          627,
+          590
+        ],
+        "alphaBounds": [
+          33,
+          75,
+          302,
+          246
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.4163568773234201,
+        "anchorKind": "corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_end_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_end_east.png",
+    "sha256": "049ad6f92d0963852062c0d2e1ba24699d6e4e0583f0c94a20a7dc75ac9edf45",
+    "kind": "static",
+    "size": [
+      112,
+      105
+    ],
+    "anchor": [
+      56,
+      72
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_end_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          627,
+          320,
+          940,
+          590
+        ],
+        "alphaBounds": [
+          65,
+          49,
+          265,
+          236
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.56,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_end_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_end_south.png",
+    "sha256": "6f5a5e709898bb681ea5994d45105d15f2974ebdd8a2c9038feb1ba39db01f10",
+    "kind": "static",
+    "size": [
+      112,
+      101
+    ],
+    "anchor": [
+      56,
+      68
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_end_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          940,
+          320,
+          1254,
+          590
+        ],
+        "alphaBounds": [
+          60,
+          61,
+          253,
+          235
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.5803108808290155,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_broken_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_broken_east.png",
+    "sha256": "a7f02a8c681f93c68583a3c0fb9926b3ce67921dd72eaa9059fbac2bada7055a",
+    "kind": "static",
+    "size": [
+      224,
+      161
+    ],
+    "anchor": [
+      112,
+      100
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_broken_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          0,
+          590,
+          314,
+          875
+        ],
+        "alphaBounds": [
+          34,
+          75,
+          290,
+          259
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.875,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_broken_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_broken_south.png",
+    "sha256": "3689f20d0ad35f2942a4c9e77c65fe88ec760b10c17bcb6164b8a97846b00972",
+    "kind": "static",
+    "size": [
+      224,
+      141
+    ],
+    "anchor": [
+      112,
+      80
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_broken_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          314,
+          590,
+          627,
+          875
+        ],
+        "alphaBounds": [
+          26,
+          93,
+          289,
+          259
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8517110266159695,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_door_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_door_east.png",
+    "sha256": "26f92d811ba09de5758b502fc0c391800bc6cacc7998a4ce00032ac74a093f2c",
+    "kind": "static",
+    "size": [
+      224,
+      195
+    ],
+    "anchor": [
+      112,
+      134
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_door_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          627,
+          590,
+          940,
+          875
+        ],
+        "alphaBounds": [
+          27,
+          44,
+          278,
+          262
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8924302788844621,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_door_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_door_south.png",
+    "sha256": "924f277c061a092edfc98a0af0a3e3d96f0ecb3ebc348a59a3616e93c505e41a",
+    "kind": "static",
+    "size": [
+      224,
+      200
+    ],
+    "anchor": [
+      112,
+      139
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_door_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          940,
+          590,
+          1254,
+          875
+        ],
+        "alphaBounds": [
+          52,
+          46,
+          284,
+          253
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9655172413793104,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_foundation_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_foundation_east.png",
+    "sha256": "921267cb80599bd42362971b5ae93a93990dfb053f327254102dcbba72927d87",
+    "kind": "static",
+    "size": [
+      224,
+      260
+    ],
+    "anchor": [
+      112,
+      59
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_foundation_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          0,
+          875,
+          314,
+          1254
+        ],
+        "alphaBounds": [
+          24,
+          16,
+          299,
+          335
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8145454545454546,
+        "anchorKind": "foundation"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_foundation_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_foundation_south.png",
+    "sha256": "054475c7b8a0a647352969929923ba8a565cd6769e0ce1fe5ca3e4d6b5fea331",
+    "kind": "static",
+    "size": [
+      224,
+      253
+    ],
+    "anchor": [
+      112,
+      59
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_foundation_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          314,
+          875,
+          627,
+          1254
+        ],
+        "alphaBounds": [
+          21,
+          19,
+          299,
+          333
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8057553956834532,
+        "anchorKind": "foundation"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_foundation_corner",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_foundation_corner.png",
+    "sha256": "8d80efb423d69488ab9c7134f5960602cd7dc9ac6f30d24a3f3734d61b69b58c",
+    "kind": "static",
+    "size": [
+      112,
+      116
+    ],
+    "anchor": [
+      56,
+      36
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_foundation_corner",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          627,
+          875,
+          940,
+          1254
+        ],
+        "alphaBounds": [
+          26,
+          41,
+          300,
+          326
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.40875912408759124,
+        "anchorKind": "foundation_corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_ash_abutment",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_ash_abutment.png",
+    "sha256": "021fcc77b4d88fc594ba1ecbc8d8c183dae14f5b40cfa7ad31d913cbbf02488b",
+    "kind": "static",
+    "size": [
+      112,
+      116
+    ],
+    "anchor": [
+      56,
+      36
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_ash_abutment",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/ash_matte.png",
+      "sourceSha256": "754c1bc95a1b50bd5e6e856a1482e96725466bc57c5c26751c9770a37a490d1e",
+      "parameters": {
+        "box": [
+          940,
+          875,
+          1254,
+          1254
+        ],
+        "alphaBounds": [
+          17,
+          41,
+          294,
+          327
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.4043321299638989,
+        "anchorKind": "foundation_corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_east.png",
+    "sha256": "1ee7418c8249b5907609d2e29c1fdddb7a8458599a62ad72ac546835c12a7b29",
+    "kind": "static",
+    "size": [
+      224,
+      220
+    ],
+    "anchor": [
+      112,
+      159
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          0,
+          0,
+          312,
+          305
+        ],
+        "alphaBounds": [
+          13,
+          20,
+          284,
+          286
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8265682656826568,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_south.png",
+    "sha256": "770dc0387303ed82dd8a4534d7eb507dabb25a80b1f3792f8bb8be1f23d09a50",
+    "kind": "static",
+    "size": [
+      224,
+      218
+    ],
+    "anchor": [
+      112,
+      157
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          312,
+          0,
+          624,
+          305
+        ],
+        "alphaBounds": [
+          17,
+          20,
+          288,
+          284
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8265682656826568,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_east_alt",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_east_alt.png",
+    "sha256": "94913f24d0376b57e3d3812f17943ddd057e67cdadf032e13a0d81560889634f",
+    "kind": "static",
+    "size": [
+      224,
+      220
+    ],
+    "anchor": [
+      112,
+      159
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_east_alt",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          624,
+          0,
+          935,
+          305
+        ],
+        "alphaBounds": [
+          16,
+          20,
+          292,
+          291
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8115942028985508,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_south_alt",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_south_alt.png",
+    "sha256": "36f87901a68f1245eb547ca912ca5d00b75a9451ac6a053387a44d4898e7100a",
+    "kind": "static",
+    "size": [
+      224,
+      217
+    ],
+    "anchor": [
+      112,
+      156
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_south_alt",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          935,
+          0,
+          1247,
+          305
+        ],
+        "alphaBounds": [
+          19,
+          20,
+          293,
+          286
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8175182481751825,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_inner",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_inner.png",
+    "sha256": "f8d6504404f0904c0b806d396991ee6ecf3fa0eccb75778153183a6a0e2c9200",
+    "kind": "static",
+    "size": [
+      112,
+      90
+    ],
+    "anchor": [
+      56,
+      80
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_inner",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          0,
+          305,
+          312,
+          574
+        ],
+        "alphaBounds": [
+          16,
+          16,
+          283,
+          231
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.41947565543071164,
+        "anchorKind": "corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_outer",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_outer.png",
+    "sha256": "9686922da762bd274f0d19e5e4d9b0132200fb418f28fb994bf3eb0f02fb944f",
+    "kind": "static",
+    "size": [
+      112,
+      91
+    ],
+    "anchor": [
+      56,
+      81
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_outer",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          312,
+          305,
+          624,
+          574
+        ],
+        "alphaBounds": [
+          23,
+          30,
+          287,
+          245
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.42424242424242425,
+        "anchorKind": "corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_end_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_end_east.png",
+    "sha256": "be0a2cd19d0427e2594370acfbb3f4736276a65173ad17b83773d2232b900e0d",
+    "kind": "static",
+    "size": [
+      112,
+      134
+    ],
+    "anchor": [
+      56,
+      101
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_end_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          624,
+          305,
+          935,
+          574
+        ],
+        "alphaBounds": [
+          61,
+          20,
+          250,
+          246
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.5925925925925926,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_end_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_end_south.png",
+    "sha256": "8010ea744c9c0b1480b35e39402a91121eb5e99701ddf79af5dd40500ecbfa9d",
+    "kind": "static",
+    "size": [
+      112,
+      131
+    ],
+    "anchor": [
+      56,
+      98
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_end_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          935,
+          305,
+          1247,
+          574
+        ],
+        "alphaBounds": [
+          38,
+          20,
+          231,
+          246
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.5803108808290155,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_broken_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_broken_east.png",
+    "sha256": "6df5e1cfc9b40127e44016e8e19bc8841b9c28da454226f1b76eaf31f3585e25",
+    "kind": "static",
+    "size": [
+      224,
+      164
+    ],
+    "anchor": [
+      112,
+      103
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_broken_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          0,
+          574,
+          312,
+          835
+        ],
+        "alphaBounds": [
+          24,
+          42,
+          285,
+          233
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8582375478927203,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_broken_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_broken_south.png",
+    "sha256": "00eff0e121a7b869b96b2d0ce2bbfe71ba1ba6a2c19045426a56d6203ffcdc0e",
+    "kind": "static",
+    "size": [
+      224,
+      169
+    ],
+    "anchor": [
+      112,
+      108
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_broken_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          312,
+          574,
+          624,
+          835
+        ],
+        "alphaBounds": [
+          23,
+          37,
+          284,
+          234
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8582375478927203,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_door_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_door_east.png",
+    "sha256": "547ded47bad8ed88a83c56624d926997b6d243ecffea162d03121afa13481e8e",
+    "kind": "static",
+    "size": [
+      224,
+      230
+    ],
+    "anchor": [
+      112,
+      169
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_door_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          624,
+          574,
+          935,
+          835
+        ],
+        "alphaBounds": [
+          27,
+          11,
+          262,
+          252
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9531914893617022,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_door_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_door_south.png",
+    "sha256": "a2a95d660a35ab5636f3109b9238b89a631659507cddf0fe825a63d68c27cded",
+    "kind": "static",
+    "size": [
+      224,
+      216
+    ],
+    "anchor": [
+      112,
+      155
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_door_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          935,
+          574,
+          1247,
+          835
+        ],
+        "alphaBounds": [
+          22,
+          23,
+          264,
+          256
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.9256198347107438,
+        "anchorKind": "wall"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_foundation_east",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_foundation_east.png",
+    "sha256": "9d80b65eebfdb84135d1fe156b05f3a5073afbe973296698b4e7188bd2826467",
+    "kind": "static",
+    "size": [
+      224,
+      338
+    ],
+    "anchor": [
+      112,
+      59
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_foundation_east",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          0,
+          835,
+          312,
+          1261
+        ],
+        "alphaBounds": [
+          34,
+          4,
+          292,
+          393
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8682170542635659,
+        "anchorKind": "foundation"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_foundation_south",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_foundation_south.png",
+    "sha256": "863b9c24708f6ae650f3527530ba9aeb9eabbf5dc5dca6fbb28e63beba37f208",
+    "kind": "static",
+    "size": [
+      224,
+      332
+    ],
+    "anchor": [
+      112,
+      59
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_foundation_south",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          312,
+          835,
+          624,
+          1261
+        ],
+        "alphaBounds": [
+          9,
+          9,
+          267,
+          391
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.8682170542635659,
+        "anchorKind": "foundation"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_foundation_corner",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_foundation_corner.png",
+    "sha256": "104f26f105f6b3f6d1869863090892c7bf4d76a1f9b4d162c4f1fb57e8105860",
+    "kind": "static",
+    "size": [
+      112,
+      134
+    ],
+    "anchor": [
+      56,
+      36
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_foundation_corner",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          624,
+          835,
+          935,
+          1261
+        ],
+        "alphaBounds": [
+          28,
+          42,
+          311,
+          380
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.3957597173144876,
+        "anchorKind": "foundation_corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_bastion_abutment",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_bastion_abutment.png",
+    "sha256": "56659f41f522018b0c126f0d161b39d406cb750dfe4215f8d7c70432e6399a30",
+    "kind": "static",
+    "size": [
+      112,
+      143
+    ],
+    "anchor": [
+      56,
+      36
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_bastion_abutment",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/bastion_matte.png",
+      "sourceSha256": "4bdc98802e1bb90d8267e29f10a4835b07a8d101384484c1b9e36688dee6fd51",
+      "parameters": {
+        "box": [
+          935,
+          835,
+          1247,
+          1261
+        ],
+        "alphaBounds": [
+          0,
+          18,
+          297,
+          398
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.3771043771043771,
+        "anchorKind": "foundation_corner"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_floor_pale",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_floor_pale.png",
+    "sha256": "929a8699f676de246fa7e7815e93db7691d4a06d88c42f5ad475f16b04a08f3b",
+    "kind": "static",
+    "size": [
+      384,
+      383
+    ],
+    "anchor": [
+      192,
+      191
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_floor_pale",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/floors.png",
+      "sourceSha256": "7c054617683da8612b98cf0f74efe670cb11ee39b8b6279ab86f75a1e0845c54",
+      "parameters": {
+        "box": [
+          2,
+          2,
+          442,
+          441
+        ],
+        "alphaBounds": [
+          0,
+          0,
+          440,
+          439
+        ],
+        "alphaMethod": "opaque-material",
+        "scale": 0.8727272727272727,
+        "anchorKind": "material"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_transition_pale",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_transition_pale.png",
+    "sha256": "d4c3348f62ae31dd43518a554dada922e99b26e76f159f45a7c9fb734d26ddce",
+    "kind": "static",
+    "size": [
+      150,
+      112
+    ],
+    "anchor": [
+      75,
+      56
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_transition_pale",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/floors.png",
+      "sourceSha256": "7c054617683da8612b98cf0f74efe670cb11ee39b8b6279ab86f75a1e0845c54",
+      "parameters": {
+        "box": [
+          2,
+          445,
+          442,
+          885
+        ],
+        "alphaBounds": [
+          21,
+          74,
+          425,
+          377
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.3712871287128713,
+        "anchorKind": "decal"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_floor_dark",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_floor_dark.png",
+    "sha256": "4a8952fc6e61749ac9d1c353fd5dca36336ef521fad1db8bd17390171739a0e2",
+    "kind": "static",
+    "size": [
+      384,
+      384
+    ],
+    "anchor": [
+      192,
+      192
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_floor_dark",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/floors.png",
+      "sourceSha256": "7c054617683da8612b98cf0f74efe670cb11ee39b8b6279ab86f75a1e0845c54",
+      "parameters": {
+        "box": [
+          446,
+          2,
+          885,
+          441
+        ],
+        "alphaBounds": [
+          0,
+          0,
+          439,
+          439
+        ],
+        "alphaMethod": "opaque-material",
+        "scale": 0.8747152619589977,
+        "anchorKind": "material"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_transition_dark",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_transition_dark.png",
+    "sha256": "18616d7e12442f96fec8ba5e8501958c352ab212ce93c4f3acd2b700ead24da9",
+    "kind": "static",
+    "size": [
+      150,
+      115
+    ],
+    "anchor": [
+      75,
+      57
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_transition_dark",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/floors.png",
+      "sourceSha256": "7c054617683da8612b98cf0f74efe670cb11ee39b8b6279ab86f75a1e0845c54",
+      "parameters": {
+        "box": [
+          446,
+          445,
+          885,
+          885
+        ],
+        "alphaBounds": [
+          19,
+          71,
+          422,
+          381
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.37220843672456577,
+        "anchorKind": "decal"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_floor_ash",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_floor_ash.png",
+    "sha256": "c1d820c9dfecf83f31ce5857bee2f6c500d5141bef07ea614e60e02bccb96713",
+    "kind": "static",
+    "size": [
+      384,
+      384
+    ],
+    "anchor": [
+      192,
+      192
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_floor_ash",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/floors.png",
+      "sourceSha256": "7c054617683da8612b98cf0f74efe670cb11ee39b8b6279ab86f75a1e0845c54",
+      "parameters": {
+        "box": [
+          889,
+          2,
+          1328,
+          441
+        ],
+        "alphaBounds": [
+          0,
+          0,
+          439,
+          439
+        ],
+        "alphaMethod": "opaque-material",
+        "scale": 0.8747152619589977,
+        "anchorKind": "material"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_transition_ash",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_transition_ash.png",
+    "sha256": "367bd3182e1429ee49afb7ddc5d2973e0468a21dbd3c47ac29c0e7b3b5bccc06",
+    "kind": "static",
+    "size": [
+      150,
+      110
+    ],
+    "anchor": [
+      75,
+      55
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_transition_ash",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/floors.png",
+      "sourceSha256": "7c054617683da8612b98cf0f74efe670cb11ee39b8b6279ab86f75a1e0845c54",
+      "parameters": {
+        "box": [
+          889,
+          445,
+          1328,
+          885
+        ],
+        "alphaBounds": [
+          5,
+          73,
+          429,
+          385
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.35377358490566035,
+        "anchorKind": "decal"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_floor_bastion",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_floor_bastion.png",
+    "sha256": "dc126ccd764a3afb411c30662b8f6f013ae13ef2f34a0d74249566e5959dff16",
+    "kind": "static",
+    "size": [
+      384,
+      383
+    ],
+    "anchor": [
+      192,
+      191
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_floor_bastion",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/floors.png",
+      "sourceSha256": "7c054617683da8612b98cf0f74efe670cb11ee39b8b6279ab86f75a1e0845c54",
+      "parameters": {
+        "box": [
+          1332,
+          2,
+          1772,
+          441
+        ],
+        "alphaBounds": [
+          0,
+          0,
+          440,
+          439
+        ],
+        "alphaMethod": "opaque-material",
+        "scale": 0.8727272727272727,
+        "anchorKind": "material"
+      }
+    }
+  },
+  {
+    "sourceKind": "authored-final-aligned",
+    "review": "act4-environment-gameplay-v1",
+    "role": "prop",
+    "key": "a4env_transition_bastion",
+    "path": "assets/sprites_src/gameplay_art/world/props/a4env_transition_bastion.png",
+    "sha256": "00e889c149cf46d43118ed7f5f3185cc970147d146c79fff405b49cb90e2af07",
+    "kind": "static",
+    "size": [
+      150,
+      113
+    ],
+    "anchor": [
+      75,
+      56
+    ],
+    "bundle": "world",
+    "assetId": "world.prop.a4env_transition_bastion",
+    "lossless": true,
+    "provenance": {
+      "method": "imagegen-act4-environment-v1",
+      "source": "assets/sprites_src/gameplay_art_authored/act4_environment/floors.png",
+      "sourceSha256": "7c054617683da8612b98cf0f74efe670cb11ee39b8b6279ab86f75a1e0845c54",
+      "parameters": {
+        "box": [
+          1332,
+          445,
+          1772,
+          885
+        ],
+        "alphaBounds": [
+          12,
+          76,
+          424,
+          386
+        ],
+        "alphaMethod": "magenta-matte-unmixed",
+        "scale": 0.3640776699029126,
+        "anchorKind": "decal"
+      }
+    }
+  }
+]

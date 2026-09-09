@@ -1,0 +1,67 @@
+{
+  "status": "FAIL",
+  "baseline": "working-tree-before-act2-thresholds",
+  "method": "Three alternating before/after pairs, 90 warmup and 240 sampled frames per workload, full roster retained, nearest open combat pocket, twelve durable targets with a close melee target, verified attack exchange, real 3D Vanguard, cached production terrain.",
+  "results": [
+    {
+      "width": 3840,
+      "zone": "weeping_marsh",
+      "mode": "moving",
+      "before": {
+        "median": 7.766666666666667,
+        "p95": 10.433333333333332
+      },
+      "after": {
+        "median": 6.966666666666666,
+        "p95": 9.566666666666668
+      },
+      "regression": -0.08306709265175694,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "weeping_marsh",
+      "mode": "combat",
+      "before": {
+        "median": 11,
+        "p95": 16.599999999999998
+      },
+      "after": {
+        "median": 8.9,
+        "p95": 11.5
+      },
+      "regression": -0.30722891566265054,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "spawn_pools",
+      "mode": "combat",
+      "before": {
+        "median": 9.233333333333334,
+        "p95": 12.433333333333332
+      },
+      "after": {
+        "median": 9.333333333333334,
+        "p95": 13.800000000000002
+      },
+      "regression": 0.1099195710455767,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "ritual_site",
+      "mode": "combat",
+      "before": {
+        "median": 8.166666666666666,
+        "p95": 11.833333333333334
+      },
+      "after": {
+        "median": 8.3,
+        "p95": 11
+      },
+      "regression": -0.07042253521126762,
+      "passed": true
+    }
+  ]
+}

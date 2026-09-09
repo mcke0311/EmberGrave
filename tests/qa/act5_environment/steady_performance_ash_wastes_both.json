@@ -1,0 +1,72 @@
+{
+  "status": "PASS",
+  "legacyActors": false,
+  "baseline": "working-tree snapshot in tmp/act5_environment/before",
+  "method": "Three alternating before/after pairs, 600 warmup and 240 sampled frames per workload, means of per-run median/p95, full roster retained, identical routes and combat pockets supported by both maps, twelve nearest durable targets with a close melee target, verified attack exchange, real 3D Vanguard, cached production terrain.",
+  "results": [
+    {
+      "width": 1920,
+      "zone": "ash_wastes",
+      "mode": "moving",
+      "before": {
+        "median": 3.5666666666666664,
+        "p95": 4.3999999999999995
+      },
+      "after": {
+        "median": 3.5666666666666664,
+        "p95": 4.533333333333333
+      },
+      "medianChangePct": 0,
+      "p95ChangePct": 3,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "ash_wastes",
+      "mode": "combat",
+      "before": {
+        "median": 4.666666666666667,
+        "p95": 6
+      },
+      "after": {
+        "median": 4.666666666666667,
+        "p95": 5.7
+      },
+      "medianChangePct": 0,
+      "p95ChangePct": -5,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "ash_wastes",
+      "mode": "moving",
+      "before": {
+        "median": 4.2,
+        "p95": 5.033333333333333
+      },
+      "after": {
+        "median": 4.233333333333333,
+        "p95": 5.366666666666667
+      },
+      "medianChangePct": 0.8,
+      "p95ChangePct": 6.6,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "ash_wastes",
+      "mode": "combat",
+      "before": {
+        "median": 5.1000000000000005,
+        "p95": 5.8999999999999995
+      },
+      "after": {
+        "median": 5.3,
+        "p95": 6.166666666666667
+      },
+      "medianChangePct": 3.9,
+      "p95ChangePct": 4.5,
+      "passed": true
+    }
+  ]
+}

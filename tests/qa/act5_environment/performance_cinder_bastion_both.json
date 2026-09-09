@@ -1,0 +1,72 @@
+{
+  "status": "FAIL",
+  "legacyActors": false,
+  "baseline": "working-tree snapshot in tmp/act5_environment/before",
+  "method": "Three alternating before/after pairs, 90 warmup and 240 sampled frames per workload, means of per-run median/p95, full roster retained, identical routes and combat pockets supported by both maps, twelve nearest durable targets with a close melee target, verified attack exchange, real 3D Vanguard, cached production terrain.",
+  "results": [
+    {
+      "width": 1920,
+      "zone": "cinder_bastion",
+      "mode": "moving",
+      "before": {
+        "median": 4.6000000000000005,
+        "p95": 5.933333333333334
+      },
+      "after": {
+        "median": 5.033333333333334,
+        "p95": 7.033333333333334
+      },
+      "medianChangePct": 9.4,
+      "p95ChangePct": 18.5,
+      "passed": false
+    },
+    {
+      "width": 1920,
+      "zone": "cinder_bastion",
+      "mode": "combat",
+      "before": {
+        "median": 6.066666666666666,
+        "p95": 9.766666666666666
+      },
+      "after": {
+        "median": 5.533333333333334,
+        "p95": 7.6000000000000005
+      },
+      "medianChangePct": -8.8,
+      "p95ChangePct": -22.2,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "cinder_bastion",
+      "mode": "moving",
+      "before": {
+        "median": 6.333333333333333,
+        "p95": 8.566666666666666
+      },
+      "after": {
+        "median": 6.5,
+        "p95": 9.466666666666667
+      },
+      "medianChangePct": 2.6,
+      "p95ChangePct": 10.5,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "cinder_bastion",
+      "mode": "combat",
+      "before": {
+        "median": 7.366666666666667,
+        "p95": 10.566666666666666
+      },
+      "after": {
+        "median": 6.800000000000001,
+        "p95": 8.866666666666667
+      },
+      "medianChangePct": -7.7,
+      "p95ChangePct": -16.1,
+      "passed": true
+    }
+  ]
+}

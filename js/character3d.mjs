@@ -5,17 +5,17 @@ import {CLASS_STYLES,ARMOR_FAMILIES} from './character_catalog3d.mjs';
 import {createWeapon,createWearable,createArmorDetails,disposeObject,rod} from './character_equipment3d.mjs?v=7';
 import {surfaceMaterial,disposeMaterials} from './character_materials3d.mjs';
 import {armorPalette,armorRank} from './character_armor3d.mjs?v=4';
-import {CLASS_ANIMATIONS,classPoseAt,sampleHumanoid,smooth} from './character_animation3d.mjs?v=10';
-import {createWildshape} from './character_forms3d.mjs?v=9';
+import {CLASS_ANIMATIONS,classPoseAt,sampleHumanoid,smooth} from './character_animation3d.mjs?v=11';
+import {createWildshape} from './character_forms3d.mjs?v=10';
 import {shiftLayers,applyShiftPose,drawShiftEffect} from './character_wildshape3d.mjs';
 export {createWildshapeController} from './character_wildshape3d.mjs';
-export {createAnimationController} from './character_motion3d.mjs';
+export {createAnimationController} from './character_motion3d.mjs?props=1';
 export {CLASS_STYLES} from './character_catalog3d.mjs';
 
 const TAU = Math.PI * 2;
 const clamp = THREE.MathUtils.clamp;
 export const ARMOR = ARMOR_FAMILIES;
-export const STATES = ['idle', 'walk', 'attack', 'cast', 'kick', 'hit', 'death', 'dead'];
+export const STATES = ['idle', 'walk', 'attack', 'cast', 'kick', 'reach', 'search', 'hit', 'death', 'dead'];
 
 export function createCharacter(classId='emberwitch') {
   const profile=CLASS_STYLES[classId];if(!profile)throw new Error(`Unknown 3D class: ${classId}`);

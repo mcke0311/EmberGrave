@@ -1,0 +1,337 @@
+{
+  "status": "FAIL",
+  "baseline": "working-tree-before-act2-boundaries",
+  "method": "Three alternating before/after pairs, 90 warmup and 240 sampled frames per workload, full roster retained, nearest open combat pocket, twelve durable targets with a close melee target, verified attack exchange, real 3D Vanguard, cached production terrain.",
+  "results": [
+    {
+      "width": 1920,
+      "zone": "weeping_marsh",
+      "mode": "moving",
+      "before": {
+        "median": 3.466666666666667,
+        "p95": 5.1
+      },
+      "after": {
+        "median": 3.4333333333333336,
+        "p95": 4.8
+      },
+      "regression": -0.05882352941176472,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "weeping_marsh",
+      "mode": "combat",
+      "before": {
+        "median": 4.6000000000000005,
+        "p95": 6.433333333333333
+      },
+      "after": {
+        "median": 4.3,
+        "p95": 5.433333333333334
+      },
+      "regression": -0.1554404145077719,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "drowned_crypt",
+      "mode": "moving",
+      "before": {
+        "median": 3.1999999999999997,
+        "p95": 4.433333333333334
+      },
+      "after": {
+        "median": 3.233333333333333,
+        "p95": 4.333333333333333
+      },
+      "regression": -0.022556390977443774,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "drowned_crypt",
+      "mode": "combat",
+      "before": {
+        "median": 3.6999999999999997,
+        "p95": 4.733333333333333
+      },
+      "after": {
+        "median": 3.8666666666666667,
+        "p95": 4.8999999999999995
+      },
+      "regression": 0.035211267605633756,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "hollow_reeds",
+      "mode": "moving",
+      "before": {
+        "median": 3.4333333333333336,
+        "p95": 4.966666666666667
+      },
+      "after": {
+        "median": 3.3000000000000003,
+        "p95": 4.266666666666667
+      },
+      "regression": -0.14093959731543626,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "hollow_reeds",
+      "mode": "combat",
+      "before": {
+        "median": 3.9333333333333336,
+        "p95": 5.199999999999999
+      },
+      "after": {
+        "median": 3.9,
+        "p95": 5.466666666666666
+      },
+      "regression": 0.05128205128205132,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "spawn_pools",
+      "mode": "moving",
+      "before": {
+        "median": 3.4333333333333336,
+        "p95": 4.4
+      },
+      "after": {
+        "median": 3.9,
+        "p95": 5.2
+      },
+      "regression": 0.18181818181818166,
+      "passed": false
+    },
+    {
+      "width": 1920,
+      "zone": "spawn_pools",
+      "mode": "combat",
+      "before": {
+        "median": 4.2,
+        "p95": 5.3999999999999995
+      },
+      "after": {
+        "median": 4.3,
+        "p95": 5.266666666666667
+      },
+      "regression": -0.024691358024691246,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "ritual_site",
+      "mode": "moving",
+      "before": {
+        "median": 3.6,
+        "p95": 4.633333333333334
+      },
+      "after": {
+        "median": 3.766666666666667,
+        "p95": 4.7
+      },
+      "regression": 0.014388489208633004,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "ritual_site",
+      "mode": "combat",
+      "before": {
+        "median": 4.066666666666666,
+        "p95": 5
+      },
+      "after": {
+        "median": 4.233333333333333,
+        "p95": 5.233333333333333
+      },
+      "regression": 0.046666666666666634,
+      "passed": true
+    },
+    {
+      "width": 1920,
+      "zone": "marshcamp",
+      "mode": "moving",
+      "before": {
+        "median": 2.4,
+        "p95": 3.266666666666667
+      },
+      "after": {
+        "median": 2.766666666666667,
+        "p95": 3.6333333333333333
+      },
+      "regression": 0.11224489795918347,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "weeping_marsh",
+      "mode": "moving",
+      "before": {
+        "median": 5.233333333333333,
+        "p95": 6.666666666666667
+      },
+      "after": {
+        "median": 5.5,
+        "p95": 6.933333333333334
+      },
+      "regression": 0.040000000000000036,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "weeping_marsh",
+      "mode": "combat",
+      "before": {
+        "median": 6.666666666666667,
+        "p95": 7.8
+      },
+      "after": {
+        "median": 7,
+        "p95": 8.933333333333334
+      },
+      "regression": 0.14529914529914545,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "drowned_crypt",
+      "mode": "moving",
+      "before": {
+        "median": 5.2,
+        "p95": 6.733333333333333
+      },
+      "after": {
+        "median": 5.833333333333333,
+        "p95": 7.533333333333332
+      },
+      "regression": 0.1188118811881187,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "drowned_crypt",
+      "mode": "combat",
+      "before": {
+        "median": 6.2,
+        "p95": 7.733333333333333
+      },
+      "after": {
+        "median": 7,
+        "p95": 9.133333333333335
+      },
+      "regression": 0.18103448275862077,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "hollow_reeds",
+      "mode": "moving",
+      "before": {
+        "median": 5.233333333333333,
+        "p95": 6.633333333333333
+      },
+      "after": {
+        "median": 5,
+        "p95": 6.033333333333334
+      },
+      "regression": -0.0904522613065325,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "hollow_reeds",
+      "mode": "combat",
+      "before": {
+        "median": 5.666666666666667,
+        "p95": 6.8
+      },
+      "after": {
+        "median": 5.566666666666666,
+        "p95": 7.266666666666667
+      },
+      "regression": 0.06862745098039214,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "spawn_pools",
+      "mode": "moving",
+      "before": {
+        "median": 4.533333333333334,
+        "p95": 5.633333333333334
+      },
+      "after": {
+        "median": 5.266666666666667,
+        "p95": 6.466666666666666
+      },
+      "regression": 0.1479289940828401,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "spawn_pools",
+      "mode": "combat",
+      "before": {
+        "median": 5.866666666666667,
+        "p95": 7.033333333333334
+      },
+      "after": {
+        "median": 7.166666666666667,
+        "p95": 8.933333333333332
+      },
+      "regression": 0.2701421800947863,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "ritual_site",
+      "mode": "moving",
+      "before": {
+        "median": 4.8,
+        "p95": 6.233333333333333
+      },
+      "after": {
+        "median": 5.233333333333333,
+        "p95": 6.3
+      },
+      "regression": 0.010695187165775444,
+      "passed": true
+    },
+    {
+      "width": 3840,
+      "zone": "ritual_site",
+      "mode": "combat",
+      "before": {
+        "median": 5.666666666666667,
+        "p95": 6.733333333333333
+      },
+      "after": {
+        "median": 6.333333333333333,
+        "p95": 7.466666666666666
+      },
+      "regression": 0.10891089108910879,
+      "passed": false
+    },
+    {
+      "width": 3840,
+      "zone": "marshcamp",
+      "mode": "moving",
+      "before": {
+        "median": 3.0666666666666664,
+        "p95": 4.133333333333334
+      },
+      "after": {
+        "median": 3.733333333333333,
+        "p95": 4.766666666666667
+      },
+      "regression": 0.15322580645161277,
+      "passed": false
+    }
+  ]
+}

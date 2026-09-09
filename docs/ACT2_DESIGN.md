@@ -1,5 +1,68 @@
 # Act II: Drowned Ruins and the Silent Choir
 
+The [latest visual overhaul](ACT2_VISUAL_OVERHAUL.md) adds continuous teal water,
+mossy shores, cypress groves, Gothic piers, carved ritual floors and colored
+lighting. See the [matched before/after gallery](../tests/qa/act2_visual/gallery.html)
+for the current appearance; the boundary notes below describe the original kit.
+
+## Painted boundaries (September 2026)
+
+All five adventure areas now assemble painted boundary art from the collision
+contours. Greywater Landing also uses the marsh kit along its existing perimeter;
+its collision, streets, NPCs, services and departure remain unchanged.
+
+The Weeping Marsh and Hollow Reeds use flat muddy shoreline ribbons with sparse
+upright reeds. Their route shoulders vary gently without moving the route graph.
+Flooded Crypts uses continuous wet Gothic masonry. Spawn Pools has squared stone
+enclosures at the entrance and cistern, transitioning to organic root banks.
+Choir's Ritual transitions from processional masonry into rooted galleries and
+the boss basin. Existing doorway landmarks, seven/five-cell route reservations,
+quest anchors, enemy quotas and flat boss floors remain authoritative.
+
+`map.boundaries` is optional generated metadata, never saved. Revision 1 contains
+`materials` (byte grid: 0 excluded/building or walkable land, 1 scenic bank/water,
+2 root bank, 3 masonry), `segments` (`x`, `y`, `axis`, `length`, `side`, `kit`,
+`variant`) and `shorelines` (ordered world-coordinate points). `axis=0` runs along
+world X; `axis=1` along Y. `side` identifies the blocked side of the contour.
+Segments span at most three tiles. Replacing the boundary record invalidates
+the terrain cache and the sprite assembly. Generate a new map to change geometry.
+
+Masonry is a solid strip on the blocked side; its water mask is cleared. Building
+footprints are excluded because their existing landmark art already represents
+them. Shoreline rounding stays within a quarter tile of collision contours.
+Flat mud art is tangent-aligned into the existing bounded terrain view cache;
+upright masonry, roots and sparse reeds are depth-sorted with actors and fade
+to 24% opacity when they obscure the player. Short runs crop complete paintings
+at their registered scale. No wall texture is warped into a polygonal face.
+
+The 28-piece library contains masonry straights/alternates, corners, ends,
+doorways and rubble; shoreline straights, corners and tapered ends; and rooted
+bank straights, corners and transitions. Current contour assembly uses straight,
+alternate and transition pieces; it retains existing large doorway landmarks
+so narrow kit openings cannot obstruct the reserved travel lanes. Corner and
+doorway modules are also registered for explicit authored placements.
+
+Sources, full prompts, measured connection sockets and hashes live in
+`assets/sprites_src/gameplay_art_authored/act2_boundaries/`. The importer is
+`python tools/import_act2_boundaries.py` (Pillow and NumPy required). It extracts
+the technical magenta matte, scales uniformly, records anchors and losslessly
+packs the `a2boundary_` namespace. The general compiler honors each descriptor's
+`lossless` flag, so a later full sprite build retains identical RGBA pixels.
+
+Run `python tests/act2_boundary_baseline.py` to restore the exact pre-boundary
+source snapshot, then `python tests/act2_boundary_server.py`. The six-area review
+is at `http://127.0.0.1:8752/tests/act2_boundary_review.html`, using temporary
+heroes and memory-only saves. It supports matched before/after landmark captures,
+route/service walks, and three alternating timing pairs at 1080p and 4K.
+Use `tests/act2_boundary_browser.cjs` with `?captureAll`, `?walkAll`, or
+`?profile&all&bothWidths&resume`; Node needs Playwright and installed Chrome.
+On the Windows sandbox, use Node's `--preserve-symlinks --preserve-symlinks-main`.
+
+Boundary contracts and sprite validation are `tests/act2_boundary_contract.mjs`
+and `tests/act2_boundary_sprites.py`. Captures and raw reports are in
+`tests/qa/act2_boundaries/`; measured results are documented in
+[ACT2_BOUNDARY_VALIDATION.md](ACT2_BOUNDARY_VALIDATION.md).
+
 Act 2 now uses five authored compositions with deterministic seed variation.
 The landing causeway, bell crossroads, monastery courts, reed islands, breeding
 cistern and final ritual basin have distinct silhouettes and route structures.
@@ -99,3 +162,29 @@ Pass `act2_review.html?walkAll`, `act2_review.html?captureAll`, or
 
 Results, matched images, artwork contact sheets and raw measurements are in
 `tests/qa/act2_redesign/`. See `tests/act2_redesign_results.md` for measured limits.
+
+## Integrated entrances and exits
+
+Act 2's five connections now use openings attached to their boundary footprints.
+Greywater Landing and the marsh share timber causeway approaches and rooted banks;
+the crypt uses a compact monastery arch; Hollow Reeds uses open reed-bank passages;
+Spawn Pools uses low cistern sluices; the ritual connection uses broken ceremonial
+piers. Both sides have matched source art and registered foundations. Eight generated
+sources produce twelve losslessly packed modules, with prompts and registration in
+`assets/sprites_src/gameplay_art_authored/act2_thresholds/`.
+
+Optional generated `map.thresholds` records carry `act: 2`, a stable ID, opening,
+approach, arrival, solid side footprints, connection anchors, and placed art parts.
+Exits opt in through `thresholdId`; their target IDs and spawn keys remain intact.
+Collision grids remain authoritative. Local approaches and return positions move
+with their entrances, while landmark routes, quest anchors and combat arenas remain
+protected. Map generation and save interfaces are unchanged.
+
+Clicking the opening or destination label uses the same registered geometry as
+the displayed passage. Nearby destinations are labelled; hover highlights the
+threshold line. Travel remains click-only. Existing unregistered exits retain their
+legacy markers, and portals and waypoints keep their existing behavior.
+
+Paving and boardwalk approaches use terrain caches; upright architecture and banks
+use full sprite bounds, actor depth ordering and foreground fading. The importer
+and verification workflow are documented in `ACT2_THRESHOLD_VALIDATION.md`.
