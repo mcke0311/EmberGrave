@@ -10,6 +10,7 @@
 class Entity {
   constructor(x, y) {
     this.x = x; this.y = y;
+    this.surfaceId = typeof Game!=="undefined"&&Game.state ? TerrainLayers.current(Game.state.map) : 0;
     this.radius = 0.36;
     this.dir = 4;                  // legacy 8-dir index (kept for baked-sprite path)
     this.visAng = Math.random() * Math.PI * 2;  // smoothed on-screen facing (radians)
@@ -38,6 +39,12 @@ class Entity {
   moveAlong(dt, speed, map, others) {
     if (!this.path || !this.path.length) { this.moving = false; this.curSpeed = 0; return; }
     const wp = this.path[0];
+    if(wp.kind==='surface'){
+      if(TerrainLayers.connectAt(map,this.x,this.y,this.surfaceId,wp.surfaceId,this.radius)){
+        this.surfaceId=wp.surfaceId;this.path.shift();this._navStall=0;
+      }else{this.path=null;this._navCache=null;}
+      return;
+    }
     const tx = wp.x + 0.5 !== wp.x ? (wp.cx !== undefined ? wp.cx : wp.x + 0.5) : wp.x;
     const ty = wp.cy !== undefined ? wp.cy : wp.y + 0.5;
     const d = U.dist(this.x, this.y, tx, ty);
@@ -74,7 +81,7 @@ class Entity {
     let ny = this.y + (ty - this.y) / d * step;
     /* entity separation (soft) */
     if (others) for (const o of others) {
-      if (o === this || o.dead) continue;
+      if (o === this || o.dead || !TerrainLayers.same(this,o)) continue;
       const od = U.dist(nx, ny, o.x, o.y), min = this.radius + o.radius;
       if (od < min && od > 0.001) {
         const push = (min - od) * 0.5;
@@ -83,7 +90,7 @@ class Entity {
     }
     /* wall + cliff collision: test axis separately for sliding (canStep forbids climbing >1 height) */
     if (typeof TerrainNavigation !== "undefined") {
-      const legal = (x, y) => TerrainNavigation.segment(map, this.x, this.y, x, y, this.radius);
+      const legal = (x, y) => TerrainNavigation.segment(map, this.x, this.y, x, y, this.radius,1,this.surfaceId);
       if (legal(nx, ny)) { this.x = nx; this.y = ny; }
       else { if (legal(nx, this.y)) this.x = nx; if (legal(this.x, ny)) this.y = ny; }
     } else {
@@ -118,6 +125,7 @@ class Entity {
   /* Map hazards affect the player and grounded companions only. Combat fields
      and traps have their own targeting and still affect monsters. */
   tileHazardTick(dt, map, isPlayer) {
+    if(map)map=TerrainLayers.view(map,this.surfaceId??0);
     if (this.groundImmune || !map || !map.hazard) return;   // Spirit Hawk etc. float above ground effects
     const code = map.hazard[(this.x | 0) + (this.y | 0) * map.w];
     if (!code) { this._inHaz = 0; return; }
@@ -684,7 +692,7 @@ class Player extends Entity {
     if (primal) {   /* fiery eruption: half the blow to every other foe in a small area */
       Sfx.playSkill?.('primal_surge','impact',{owner:this,target:mon,elem:'fire',trigger:'primal'}); Game.addNova(mon.x, mon.y, 2.2, "#ff7a30");
       for (let i = 0; i < 9; i++) Game.addParticle(mon.x, mon.y, "#ff9040");
-      for (const m2 of Game.state.monsters) { if (m2 === mon || m2.dead) continue; if (U.dist(mon.x, mon.y, m2.x, m2.y) < 2.2 + m2.radius) m2.takeDamage(total * 0.5, this, null, "fire"); }
+      for (const m2 of TerrainLayers.targets(Game.state.monsters)) { if (m2 === mon || m2.dead) continue; if (U.dist(mon.x, mon.y, m2.x, m2.y) < 2.2 + m2.radius) m2.takeDamage(total * 0.5, this, null, "fire"); }
     }
     Game.addFloat(mon.x, mon.y, Math.floor(total), d.crit ? "#ffb030" : primal ? "#ff7a30" : fireMode ? "#ff9040" : "#ffffff", d.crit || primal);
     Game.bloodBurst(mon.x, mon.y, d.crit ? 14 : 7);
@@ -732,7 +740,7 @@ class Player extends Entity {
     /* Rimeguard: melee attackers are chilled and bitten by frost */
     if (this.retalCold && Game.state.time < this.retalCold.until && (source instanceof Monster) && U.dist(this.x, this.y, source.x, source.y) < 1.9) { source.takeDamage(this.retalCold.dmg, this); source.applySlow(2, 40); Sfx.playSkill?.('rimeguard','impact',{owner:this,target:source,elem:'cold'}); }
     /* Kindred Bond: the pack shares the hero's wounds */
-    if (this.stats.pShare > 0) { const beasts = Game.state.minions.filter(m => !m.dead); if (beasts.length) { const share = dmg * Math.min(0.5, this.stats.pShare / 100); dmg -= share; const each = share / beasts.length; for (const mi of beasts) mi.takeDamage(each, source); if(typeof SkillAudio!=='undefined')Sfx.playSkill?.('kinship','impact',{owner:this,trigger:'minion',level:.5}); } }
+    if (this.stats.pShare > 0) { const beasts = TerrainLayers.targets(Game.state.minions).filter(m => !m.dead); if (beasts.length) { const share = dmg * Math.min(0.5, this.stats.pShare / 100); dmg -= share; const each = share / beasts.length; for (const mi of beasts) mi.takeDamage(each, source); if(typeof SkillAudio!=='undefined')Sfx.playSkill?.('kinship','impact',{owner:this,trigger:'minion',level:.5}); } }
     dmg = Math.max(1, dmg);
     if (typeof UniquePowers !== "undefined") dmg = UniquePowers.absorb(this,dmg);
     if (dmg <= 0) return;
@@ -840,7 +848,7 @@ class Player extends Entity {
         this.afterActionDelay(dur * 0.5, () => {
           if (this.dead) return;
           let hits = 0;
-          for (const mon of Game.state.monsters) {
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) {
             if (mon.dead) continue;
             const d = U.dist(this.x, this.y, mon.x, mon.y);
             if (d > range + mon.radius) continue;
@@ -860,7 +868,7 @@ class Player extends Entity {
         Game.addNova(this.x, this.y, radius, skillId === "terrifying_bellow" ? "#b070d0" : skillId === "smothering_veil" ? "#6a6480" : "#d8b860");
         Game.fx.shake = Math.max(Game.fx.shake, skillId === "ground_slam" ? 5 : 2);
         this.afterActionDelay(0.12, () => {
-          for (const mon of Game.state.monsters) {
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) {
             if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > radius + mon.radius) continue;
             if (mult > 0) this.strike(mon, mult, { auto: true });
             if (sk.stun) mon.stunT = Math.max(mon.stunT, sk.stun(rk));
@@ -959,6 +967,7 @@ class Player extends Entity {
         };
         /* cap concurrent traps */
         if (Game.state.traps.length >= 4+(this.stats.trapCap||0)) Game.state.traps.shift();
+        trap.surfaceId=this.surfaceId??0;
         Game.state.traps.push(trap);
         Sfx.play("click");
         Game.dustPuff(aim.x, aim.y);
@@ -1019,7 +1028,7 @@ class Player extends Entity {
         if (!first) {
           const ap = point || { x: this.x, y: this.y };
           let bd = 11 * 11;
-          for (const m of Game.state.monsters) { if (m.dead) continue; const dd = U.dist2(ap.x, ap.y, m.x, m.y); if (dd < bd) { bd = dd; first = m; } }
+          for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead) continue; const dd = U.dist2(ap.x, ap.y, m.x, m.y); if (dd < bd) { bd = dd; first = m; } }
         }
         if (!first) { Game.msg("Nothing for the arc to leap to.", "#9a9a9a"); return false; }
         this.pay(sk, rk);
@@ -1036,7 +1045,7 @@ class Player extends Entity {
             this.spellHit(cur, r.dmg, sk.elem, { crit: r.crit });
             hitset.add(cur); fxp = cur.x; fyp = cur.y;
             let next = null, bd = 5.5 * 5.5;
-            for (const m of Game.state.monsters) { if (m.dead || hitset.has(m)) continue; const dd = U.dist2(fxp, fyp, m.x, m.y); if (dd < bd) { bd = dd; next = m; } }
+            for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || hitset.has(m)) continue; const dd = U.dist2(fxp, fyp, m.x, m.y); if (dd < bd) { bd = dd; next = m; } }
             cur = next;
           }
         });
@@ -1059,7 +1068,7 @@ class Player extends Entity {
           Game.addNova(spot.x, spot.y, radius, blastCols[0]);
           Game.fx.shake = Math.max(Game.fx.shake, 3);
           for (let i = 0; i < 16; i++) Game.addParticle(spot.x + U.rf(-radius, radius) * 0.5, spot.y + U.rf(-radius, radius) * 0.5, U.pick(blastCols));
-          for (const mon of Game.state.monsters) {
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) {
             if (mon.dead || U.dist(spot.x, spot.y, mon.x, mon.y) > radius + mon.radius) continue;
             const r = this.spellRoll(sk, rk);
             this.spellHit(mon, r.dmg, sk.elem, { crit: r.crit, burn, pdot });
@@ -1078,14 +1087,14 @@ class Player extends Entity {
           corpse = Game.corpseFromGrave(this, aim, sk.castRange(rk));   // PRIORITY: raise from a gravestone (Empowered)
           if (!corpse) {                                                // else the nearest real corpse — near aim first, then near caster
             let bd = 2.5 * 2.5;
-            if (aim) for (const mon of Game.state.monsters) {
+            if (aim) for (const mon of TerrainLayers.targets(Game.state.monsters)) {
               if (!mon.dead || mon.corpseT <= 0 || mon.exploded) continue;
               const dd = U.dist2(aim.x, aim.y, mon.x, mon.y);
               if (dd < bd) { bd = dd; corpse = mon; }
             }
             if (!corpse) {
               bd = sk.castRange(rk) ** 2;
-              for (const mon of Game.state.monsters) {
+              for (const mon of TerrainLayers.targets(Game.state.monsters)) {
                 if (!mon.dead || mon.corpseT <= 0 || mon.exploded) continue;
                 const dd = U.dist2(this.x, this.y, mon.x, mon.y);
                 if (dd < bd) { bd = dd; corpse = mon; }
@@ -1105,7 +1114,7 @@ class Player extends Entity {
           stats.hp = Math.floor(stats.hp * (1 + this.stats.minionHpPct / 100));
           if (empowered) { stats.hp *= 2; stats.dmg = [stats.dmg[0] * 2, stats.dmg[1] * 2]; }   // gravestone-raised: doubled stats
           const cap = sk.cap(rk);
-          const mine = Game.state.minions.filter(m => !m.dead && m.kindId === sk.minion);
+          const mine = TerrainLayers.targets(Game.state.minions).filter(m => !m.dead && m.kindId === sk.minion);
           if (mine.length >= cap) mine.reduce((lo, m) => m.hp < lo.hp ? m : lo, mine[0]).die();   // the most wounded returns to the wild
           const mi = new Minion(sk.minion, stats, this);
           mi.sourceSkill=skillId;
@@ -1147,7 +1156,7 @@ class Player extends Entity {
         for (let i = 0; i < 10; i++) Game.addParticle(this.x + U.rf(-0.4, 0.4), this.y + U.rf(-0.4, 0.4), "#7a8a4a");
         Game.fx.shake = Math.max(Game.fx.shake, 2);
         /* Primal Surge: shifting releases a stagger shockwave */
-        if (this.stats.shiftRadius > 0) { Game.addNova(this.x, this.y, this.stats.shiftRadius, "#a8c860"); for (const mon of Game.state.monsters) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > this.stats.shiftRadius + mon.radius) continue; mon.stunT = Math.max(mon.stunT, this.stats.shiftStun || 0.4); } }
+        if (this.stats.shiftRadius > 0) { Game.addNova(this.x, this.y, this.stats.shiftRadius, "#a8c860"); for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > this.stats.shiftRadius + mon.radius) continue; mon.stunT = Math.max(mon.stunT, this.stats.shiftStun || 0.4); } }
         if (UI.refreshBuffs) UI.refreshBuffs();
         return true;
       }
@@ -1180,7 +1189,7 @@ class Player extends Entity {
           if (this.dead) return;
           Game.addNova(cx, cy, rad, "#ff7a30"); Sfx.play("fireHit"); Game.fx.shake = Math.max(Game.fx.shake, 2.5);
           for (let k = 0; k < 9; k++) Game.addParticle(cx, cy, "#ff9040");
-          for (const mon of Game.state.monsters) { if (mon.dead) continue; if (U.dist(cx, cy, mon.x, mon.y) < rad + mon.radius) { const r = this.spellRoll(sk, rk); this.spellHit(mon, r.dmg, "fire", { crit: r.crit, burn: 2 }); } }
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead) continue; if (U.dist(cx, cy, mon.x, mon.y) < rad + mon.radius) { const r = this.spellRoll(sk, rk); this.spellHit(mon, r.dmg, "fire", { crit: r.crit, burn: 2 }); } }
         };
         for (let i = 0; i < N; i++) {
           const cx = this.x + fxw * step * (i + 1), cy = this.y + fyw * step * (i + 1);
@@ -1209,7 +1218,7 @@ class Player extends Entity {
         return true;
       }
       case "minionbuff": {
-        if (!Game.state.minions.some(m => !m.dead)) { Game.msg("You have no servants to muster.", "#9a9a9a"); return false; }
+        if (!TerrainLayers.targets(Game.state.minions).some(m => !m.dead)) { Game.msg("You have no servants to muster.", "#9a9a9a"); return false; }
         if (sk.cd && this.skillCd[skillId] && Game.state.time < this.skillCd[skillId]) { Game.msg(sk.name + " not ready.", "#c0a060"); Sfx.play("error"); return false; }
         this.pay(sk, rk);
         if (sk.cd) this.skillCd[skillId] = Game.state.time + sk.cd(rk);
@@ -1218,7 +1227,7 @@ class Player extends Entity {
           if (this.dead) return;
           Sfx.play("roar");
           const healPct = sk.heal ? sk.heal(rk) : 100;   // dread_muster heals a %, feral_howl full
-          for (const mi of Game.state.minions) {
+          for (const mi of TerrainLayers.targets(Game.state.minions)) {
             if (mi.dead) continue;
             mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * healPct / 100);
             mi.buffUntil = Game.state.time + sk.dur(rk);
@@ -1239,7 +1248,7 @@ class Player extends Entity {
           if (this.dead) return;
           Sfx.play("curse");
           Game.addNova(aim.x, aim.y, radius, "#b070d0");
-          for (const mon of Game.state.monsters) {
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) {
             if (mon.dead || U.dist(aim.x, aim.y, mon.x, mon.y) > radius + mon.radius) continue;
             if (sk.curse === "frailty") mon.curseFrailty = { until: Game.state.time + cdur, pct };
             else { mon.curseWither = { until: Game.state.time + cdur, pct }; mon.applySlow(cdur, slowPct); }
@@ -1252,7 +1261,7 @@ class Player extends Entity {
         const aim = target ? { x: target.x, y: target.y } : point;
         if (!aim) return false;
         let corpse = null, bd = 2.5 * 2.5;
-        for (const mon of Game.state.monsters) {
+        for (const mon of TerrainLayers.targets(Game.state.monsters)) {
           if (!mon.dead || mon.corpseT <= 0 || mon.exploded) continue;
           const dd = U.dist2(aim.x, aim.y, mon.x, mon.y);
           if (dd < bd) { bd = dd; corpse = mon; }
@@ -1271,7 +1280,7 @@ class Player extends Entity {
           Game.bloodBurst(corpse.x, corpse.y, 16);
           for (let i = 0; i < 8; i++) Game.addParticle(corpse.x, corpse.y, "#cfd8c0");
           Game.fx.shake = Math.max(Game.fx.shake, 3);
-          for (const mon of Game.state.monsters) {
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) {
             if (mon.dead || U.dist(corpse.x, corpse.y, mon.x, mon.y) > radius + mon.radius) continue;
             const r = this.spellRoll(sk, rk);
             this.spellHit(mon, r.dmg, "poison", { crit: r.crit });
@@ -1290,7 +1299,7 @@ class Player extends Entity {
           Game.addNova(this.x, this.y, radius, novaCol);
           if (sk.elem === "earth") Game.fx.shake = Math.max(Game.fx.shake, 4);
           for (let i = 0; i < 14; i++) Game.addParticle(this.x + U.rf(-1, 1), this.y + U.rf(-1, 1), novaCol);
-          for (const mon of Game.state.monsters) {
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) {
             if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > radius + mon.radius) continue;
             const r = this.spellRoll(sk, rk);
             this.spellHit(mon, r.dmg, sk.elem, { crit: r.crit, chill: slowDur });
@@ -1320,7 +1329,7 @@ class Player extends Entity {
           Sfx.play(sk.sound || (useWeapon ? "swing" : "zap"));
           Game.beamFx(this.x, this.y, ex, ey, sk.beamColor || (sk.elem === "cold" ? "#9fd8ff" : sk.elem === "poison" ? "#90ff70" : sk.elem === "shadow" ? "#c89ae0" : useWeapon ? "#ffe6b0" : "#fff080"));
           Game.fx.shake = Math.max(Game.fx.shake, 2);
-          for (const mon of Game.state.monsters) {
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) {
             if (mon.dead) continue;
             const t = U.clamp((mon.x - this.x) * Math.cos(ang) + (mon.y - this.y) * Math.sin(ang), 0, range);
             const px = this.x + Math.cos(ang) * t, py = this.y + Math.sin(ang) * t;
@@ -1360,7 +1369,7 @@ class Player extends Entity {
         const radius = sk.radius(rk), delay = sk.delay ? sk.delay(rk) : 0.7;
         const spot = aim, col = sk.elem === "cold" ? "#9fd8ff" : sk.elem === "light" ? "#fff080" : sk.elem === "poison" ? "#90ff70" : sk.elem === "shadow" ? "#c89ae0" : "#ff9040";
         /* a visible rock streaks down from the sky onto the target, landing exactly at impact */
-        Game.state.fx.push({ type: "meteorfall", x: spot.x, y: spot.y, radius, col, ttl: dur * 0.5 + delay, maxTtl: dur * 0.5 + delay });
+        Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "meteorfall", x: spot.x, y: spot.y, radius, col, ttl: dur * 0.5 + delay, maxTtl: dur * 0.5 + delay });
         this.afterActionDelay(dur * 0.5, () => { if (!this.dead) Sfx.play("firebolt"); });
         this.afterSkillDelay(dur * 0.5 + delay, () => {
           if (this.dead) return;
@@ -1368,7 +1377,7 @@ class Player extends Entity {
           Game.addNova(spot.x, spot.y, radius, col);
           Game.fx.shake = Math.max(Game.fx.shake, 6);
           for (let i = 0; i < 22; i++) Game.addParticle(spot.x + U.rf(-radius, radius) * 0.6, spot.y + U.rf(-radius, radius) * 0.6, col);
-          for (const mon of Game.state.monsters) {
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) {
             if (mon.dead || U.dist(spot.x, spot.y, mon.x, mon.y) > radius + mon.radius) continue;
             const r = this.spellRoll(sk, rk);
             this.spellHit(mon, r.dmg, sk.elem, { crit: r.crit, burn: sk.burn ? sk.burn(rk) : 0 });
@@ -1397,7 +1406,7 @@ class Player extends Entity {
         const a0 = Math.atan2(aim.y - this.y, aim.x - this.x), arc = sk.arc(rk) * (1 + 0.25 * t), mult = sk.dmgMult(rk) * (0.6 + 0.35 * t) * syn, range = sk.range(rk);
         this.afterActionDelay(dur * 0.5, () => {
           if (this.dead) return;
-          for (const mon of Game.state.monsters) { if (mon.dead) continue; if (U.dist(this.x, this.y, mon.x, mon.y) > range + mon.radius) continue; let da = Math.abs(Math.atan2(mon.y - this.y, mon.x - this.x) - a0); if (da > Math.PI) da = Math.PI * 2 - da; if (da <= arc / 2) { const dealt=this.strike(mon, mult); if(mon.imperialCombat&&!dealt)continue; mon.sunder = { until: Game.state.time + sk.shredDur(rk), stacks: Math.min(3, ((mon.sunder && mon.sunder.stacks) || 0) + t) }; } }
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead) continue; if (U.dist(this.x, this.y, mon.x, mon.y) > range + mon.radius) continue; let da = Math.abs(Math.atan2(mon.y - this.y, mon.x - this.x) - a0); if (da > Math.PI) da = Math.PI * 2 - da; if (da <= arc / 2) { const dealt=this.strike(mon, mult); if(mon.imperialCombat&&!dealt)continue; mon.sunder = { until: Game.state.time + sk.shredDur(rk), stacks: Math.min(3, ((mon.sunder && mon.sunder.stacks) || 0) + t) }; } }
           Game.addNova(this.x, this.y, range, "#e6e6e6");
         });
         this.tempo = Math.min(t,sk.tempoRetain?.(rk)??0);
@@ -1413,7 +1422,7 @@ class Player extends Entity {
           if (this.dead || target.dead) return;
           if (!target.isBoss && target.hp / target.maxHp <= thresh) { Game.addNova(target.x, target.y, 1.6, "#c01818"); Game.fx.hitPause = Math.max(Game.fx.hitPause, 0.08); Game.bloodBurst(target.x, target.y, 18); target.takeDamage(1e9, this); }
           else this.strike(target, mainMult);
-          if (t >= 2) for (const mon of Game.state.monsters) { if (mon !== target && !mon.dead && U.dist(target.x, target.y, mon.x, mon.y) < 1.8) this.strike(mon, mainMult * 0.5, { auto: true }); }
+          if (t >= 2) for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon !== target && !mon.dead && U.dist(target.x, target.y, mon.x, mon.y) < 1.8) this.strike(mon, mainMult * 0.5, { auto: true }); }
           if (target.dead) { this.tempo = Math.min(3 + (this.stats.tempoCapBonus || 0), this.tempo + 2); this.skillCd[skillId] = 0; }
         });
         return true;
@@ -1425,7 +1434,7 @@ class Player extends Entity {
         this.buffs = this.buffs.filter(b => b.id !== "rally_run");
         this.buffs.push({ id: "rally_run", label: "Rally", emoji: "📯", stats: { frw: sk.runPct(rk) }, until: Game.state.time + sk.rallyDur(rk) });
         this.computeStats();
-        for (const mi of Game.state.minions) if (!mi.dead && U.dist(this.x, this.y, mi.x, mi.y) < sk.radius(rk)) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * (sk.allyHealPct?.(rk)??25)/100);
+        for (const mi of TerrainLayers.targets(Game.state.minions)) if (!mi.dead && U.dist(this.x, this.y, mi.x, mi.y) < sk.radius(rk)) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * (sk.allyHealPct?.(rk)??25)/100);
         Sfx.play("roar"); Game.addNova(this.x, this.y, sk.radius(rk), "#ffe6b0"); Game.addFloat(this.x, this.y, "+" + heal, "#80ff90");
         return true;
       }
@@ -1433,7 +1442,7 @@ class Player extends Entity {
         this.pay(sk, rk); this.startAction("attack", dur * 0.8); Sfx.play("roar");
         const R = sk.radius(rk);
         Game.addNova(this.x, this.y, R, "#b070d0"); Game.fx.shake = Math.max(Game.fx.shake, 3);
-        for (const mon of Game.state.monsters) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > R + mon.radius) continue; if (mon.isBoss) mon.applySlow(sk.dur(rk), 50); else { mon.feared = Game.state.time + sk.dur(rk); mon.aggro = true; } if(sk.fearWeaken?.(rk)>0)mon.curseWither={until:Game.state.time+sk.dur(rk),pct:sk.fearWeaken(rk)}; }
+        for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > R + mon.radius) continue; if (mon.isBoss) mon.applySlow(sk.dur(rk), 50); else { mon.feared = Game.state.time + sk.dur(rk); mon.aggro = true; } if(sk.fearWeaken?.(rk)>0)mon.curseWither={until:Game.state.time+sk.dur(rk),pct:sk.fearWeaken(rk)}; }
         return true;
       }
       case "combat_stance": case "parry_stance": {   // Berserker / Bulwark / Riposte (toggle)
@@ -1480,14 +1489,14 @@ class Player extends Entity {
         Sfx.play("slam"); Game.fx.shake = Math.max(Game.fx.shake, 4);
         const baseX = this.x, baseY = this.y, N = Math.ceil(len / step);
         /* a jagged crack tears open along the line (drawn in the fx pass) */
-        Game.state.fx.push({ type: "fissure", x0: baseX, y0: baseY, ang, len, visualWidth:stepR, ttl: 0.75, maxTtl: 0.75, seed: ((baseX * 13 + baseY * 7) | 0) });
+        Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "fissure", x0: baseX, y0: baseY, ang, len, visualWidth:stepR, ttl: 0.75, maxTtl: 0.75, seed: ((baseX * 13 + baseY * 7) | 0) });
         for (let i = 0; i <= N; i++) {
           const ex = baseX + Math.cos(ang) * (i * step), ey = baseY + Math.sin(ang) * (i * step);
           this.afterSkillDelay(i * 0.05, () => {
             if (this.dead) return;
             Game.addNova(ex, ey, 0.7, "#8a6a3a"); Game.fx.shake = Math.max(Game.fx.shake, 2);
             for (let d = 0; d < 4; d++) Game.addParticle(ex + U.rf(-0.45, 0.45), ey + U.rf(-0.45, 0.45), d % 2 ? "#7a6242" : "#5a4a36");   // dust + rock shards
-            for (const mon of Game.state.monsters) { if (mon.dead || hitset.has(mon)) continue; if (U.dist(ex, ey, mon.x, mon.y) < stepR + mon.radius) { hitset.add(mon); if (weapon) this.strike(mon, mult, { auto: true }); else this.spellHit(mon, this.spellRoll(sk, rk).dmg, sk.elem || "earth", {}); mon.stunT = Math.max(mon.stunT, sk.stun(rk)); } }
+            for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || hitset.has(mon)) continue; if (U.dist(ex, ey, mon.x, mon.y) < stepR + mon.radius) { hitset.add(mon); if (weapon) this.strike(mon, mult, { auto: true }); else this.spellHit(mon, this.spellRoll(sk, rk).dmg, sk.elem || "earth", {}); mon.stunT = Math.max(mon.stunT, sk.stun(rk)); } }
           });
         }
         return true;
@@ -1498,7 +1507,7 @@ class Player extends Entity {
         const a0 = Math.atan2(aim.y - this.y, aim.x - this.x), arc = sk.arc(rk), range = sk.range(rk), mult = sk.dmgMult(rk) * syn, kb = sk.knockback(rk);
         this.afterActionDelay(dur * 0.5, () => {
           if (this.dead) return;
-          for (const mon of Game.state.monsters) { if (mon.dead) continue; if (U.dist(this.x, this.y, mon.x, mon.y) > range + mon.radius) continue; let da = Math.abs(Math.atan2(mon.y - this.y, mon.x - this.x) - a0); if (da > Math.PI) da = Math.PI * 2 - da; if (da <= arc / 2) { const dealt=this.strike(mon, mult); if(mon.imperialCombat&&!dealt)continue; const bx = mon.x, by = mon.y; Game.knockMonster(mon, this.x, this.y, kb); const moved = U.dist(bx, by, mon.x, mon.y); mon.stunT = Math.max(mon.stunT, moved < kb * 0.5 ? 1.4 : 0.6); } }
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead) continue; if (U.dist(this.x, this.y, mon.x, mon.y) > range + mon.radius) continue; let da = Math.abs(Math.atan2(mon.y - this.y, mon.x - this.x) - a0); if (da > Math.PI) da = Math.PI * 2 - da; if (da <= arc / 2) { const dealt=this.strike(mon, mult); if(mon.imperialCombat&&!dealt)continue; const bx = mon.x, by = mon.y; Game.knockMonster(mon, this.x, this.y, kb); const moved = U.dist(bx, by, mon.x, mon.y); mon.stunT = Math.max(mon.stunT, moved < kb * 0.5 ? 1.4 : 0.6); } }
           Game.fx.shake = Math.max(Game.fx.shake, 3);
         });
         return true;
@@ -1508,7 +1517,7 @@ class Player extends Entity {
         if (!MapGen.walkable(Game.state.map, aim.x, aim.y)) aim = { x: this.x, y: this.y };
         this.pay(sk, rk);
         Game.state.fx = Game.state.fx.filter(f => !(f.type === "banner" && f.tag === sk.id));
-        Game.state.fx.push({ type: "banner", tag: sk.id, x: aim.x, y: aim.y, radius: sk.radius(rk), ttl: sk.dur(rk), maxTtl: sk.dur(rk), tickEvery: 0.3,
+        Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "banner", tag: sk.id, x: aim.x, y: aim.y, radius: sk.radius(rk), ttl: sk.dur(rk), maxTtl: sk.dur(rk), tickEvery: 0.3,
           allyDmg: sk.allyDmg ? sk.allyDmg(rk) : 10, allyIas: sk.allyIas ? sk.allyIas(rk) : 8, enemyDmg: sk.enemyDmg ? sk.enemyDmg(rk) : 12,
           heal: sk.type === "banner_ultimate" ? (sk.heal ? sk.heal(rk) : 4) : (sk.bannerHeal?.(rk)??0), kindCol: sk.type === "banner_ultimate" ? "#ffe6a0" : "#d8b84a", owner: this });
         Sfx.play("roar"); Game.addNova(aim.x, aim.y, 1.2, "#ffe6b0");
@@ -1518,7 +1527,7 @@ class Player extends Entity {
         this.pay(sk, rk); this.startAction("attack", dur * 0.8); Sfx.play("roar");
         const R = sk.radius(rk);
         Game.addNova(this.x, this.y, R, "#d8b84a"); Game.fx.shake = Math.max(Game.fx.shake, 2);
-        for (const mon of Game.state.monsters) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > R + mon.radius) continue; const duration=sk.debuffDuration?.(rk)??6; mon.sunder = { until: Game.state.time + duration, stacks: Math.min(3, ((mon.sunder && mon.sunder.stacks) || 0) + 2) }; mon.applySlow(duration, sk.roarSlow?.(rk)??15); if(sk.roarWeaken?.(rk)>0)mon.curseWither={until:Game.state.time+duration,pct:sk.roarWeaken(rk)}; }
+        for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > R + mon.radius) continue; const duration=sk.debuffDuration?.(rk)??6; mon.sunder = { until: Game.state.time + duration, stacks: Math.min(3, ((mon.sunder && mon.sunder.stacks) || 0) + 2) }; mon.applySlow(duration, sk.roarSlow?.(rk)??15); if(sk.roarWeaken?.(rk)>0)mon.curseWither={until:Game.state.time+duration,pct:sk.roarWeaken(rk)}; }
         return true;
       }
       /* ===================== EMBER WITCH ===================== */
@@ -1528,7 +1537,7 @@ class Player extends Entity {
         if (d > maxR) { const k = maxR / d; aim = { x: this.x + (aim.x - this.x) * k, y: this.y + (aim.y - this.y) * k }; }
         this.pay(sk, rk); const dur0 = this.beginCast(sk, aim);
         const len = sk.len(rk), dm = sk.dmg(rk), ang = Math.atan2(aim.y - this.y, aim.x - this.x) + Math.PI / 2, ax = aim.x, ay = aim.y;
-        this.afterActionDelay(dur0 * 0.4, () => { if (this.dead) return; Sfx.play("blast"); const fwx0 = ax - Math.cos(ang) * len / 2, fwy0 = ay - Math.sin(ang) * len / 2, fwx1 = ax + Math.cos(ang) * len / 2, fwy1 = ay + Math.sin(ang) * len / 2; Game.state.fx.push({ type: "firewall", x: ax, y: ay, x0: fwx0, y0: fwy0, x1: fwx1, y1: fwy1, width: 0.8, ttl: sk.dur(rk), maxTtl: sk.dur(rk), tickEvery: 0.4, lo: dm[0], hi: dm[1], owner: this }); Game.breakPropsSeg(fwx0, fwy0, fwx1, fwy1, 1.0); });
+        this.afterActionDelay(dur0 * 0.4, () => { if (this.dead) return; Sfx.play("blast"); const fwx0 = ax - Math.cos(ang) * len / 2, fwy0 = ay - Math.sin(ang) * len / 2, fwx1 = ax + Math.cos(ang) * len / 2, fwy1 = ay + Math.sin(ang) * len / 2; Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "firewall", x: ax, y: ay, x0: fwx0, y0: fwy0, x1: fwx1, y1: fwy1, width: 0.8, ttl: sk.dur(rk), maxTtl: sk.dur(rk), tickEvery: 0.4, lo: dm[0], hi: dm[1], owner: this }); Game.breakPropsSeg(fwx0, fwy0, fwx1, fwy1, 1.0); });
         return true;
       }
       case "pyreblast": {   // Pyre — detonation that devours Scorch stacks
@@ -1541,10 +1550,10 @@ class Player extends Entity {
           if (this.dead) return;
           Sfx.play("blast"); Game.addNova(at.x, at.y, radius, "#ff9040"); Game.addNova(at.x, at.y, radius * 0.6, "#ffe27a"); Game.fx.shake = Math.max(Game.fx.shake, 4);
           /* a roaring pyre column erupts on the spot (drawn over the actors) */
-          Game.state.fx.push({ type: "pyre", x: at.x, y: at.y, radius, ttl: 0.6, maxTtl: 0.6 });
+          Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "pyre", x: at.x, y: at.y, radius, ttl: 0.6, maxTtl: 0.6 });
           for (let i = 0; i < 24; i++) Game.addParticle(at.x + U.rf(-radius, radius) * 0.5, at.y + U.rf(-radius, radius) * 0.5, i % 3 ? "#ff9040" : "#ffe27a");
           let consumed = 0;
-          for (const mon of Game.state.monsters) {
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) {
             if (mon.dead || U.dist(at.x, at.y, mon.x, mon.y) > radius + mon.radius) continue;
             let dmg = this.spellRoll(sk, rk).dmg;
             if (mon.scorch) { dmg += perStack * mon.scorch.stacks; consumed += mon.scorch.stacks; mon.scorch = null; }
@@ -1563,14 +1572,14 @@ class Player extends Entity {
         this.afterActionDelay(dur0 * 0.5, () => {
           if (this.dead) return; Sfx.play("frost"); Game.addNova(this.x, this.y, radius, "#9fd8ff");
           for (let i = 0; i < 14; i++) Game.addParticle(this.x + U.rf(-1, 1), this.y + U.rf(-1, 1), "#cfeaff");
-          for (const mon of Game.state.monsters) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > radius + mon.radius) continue; const r = this.spellRoll(sk, rk); this.spellHit(mon, r.dmg, "cold", { crit: r.crit }); mon.frozen = Game.state.time + fr; mon.stunT = Math.max(mon.stunT, fr); }
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > radius + mon.radius) continue; const r = this.spellRoll(sk, rk); this.spellHit(mon, r.dmg, "cold", { crit: r.crit }); mon.frozen = Game.state.time + fr; mon.stunT = Math.max(mon.stunT, fr); }
         });
         return true;
       }
       case "balllightning": {   // Ball Lightning — slow drifting plasma orb that discharges arcs
         let aim = target ? { x: target.x, y: target.y } : point; if (!aim) { const [wx, wy] = U.screenVecToWorld(this.visAng); aim = { x: this.x + wx * 5, y: this.y + wy * 5 }; }
         this.pay(sk, rk); const dur0 = this.beginCast(sk, aim); const dm = sk.dmg(rk), a = Math.atan2(aim.y - this.y, aim.x - this.x), bx = this.x, by = this.y;
-        this.afterActionDelay(dur0 * 0.5, () => { if (this.dead) return; Sfx.play("zap"); Game.state.fx.push({ type: "cyclone", orb: true, x: bx, y: by, vx: Math.cos(a) * 2.5, vy: Math.sin(a) * 2.5, ttl: sk.dur(rk), radius: sk.orbRadius?.(rk)??3.0, tickEvery: sk.orbTick?.(rk)??0.35, drift: 0, lo: dm[0], hi: dm[1], pull: 0, owner: this }); });
+        this.afterActionDelay(dur0 * 0.5, () => { if (this.dead) return; Sfx.play("zap"); Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "cyclone", orb: true, x: bx, y: by, vx: Math.cos(a) * 2.5, vy: Math.sin(a) * 2.5, ttl: sk.dur(rk), radius: sk.orbRadius?.(rk)??3.0, tickEvery: sk.orbTick?.(rk)??0.35, drift: 0, lo: dm[0], hi: dm[1], pull: 0, owner: this }); });
         return true;
       }
       case "arcblink": {   // Arc Teleport — blink then burst on arrival
@@ -1583,7 +1592,7 @@ class Player extends Entity {
         this.x = tx; this.y = ty; this._animationController?.reset(); this.path = null; Sfx.play("zap");
         const radius = sk.radius(rk);
         Game.addNova(this.x, this.y, radius, "#fff080"); Game.fx.shake = Math.max(Game.fx.shake, 2);
-        for (const mon of Game.state.monsters) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > radius + mon.radius) continue; const r = this.spellRoll(sk, rk); this.spellHit(mon, r.dmg, "light", { crit: r.crit }); Game.lightningBolt(this.x, this.y, mon.x, mon.y); }
+        for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > radius + mon.radius) continue; const r = this.spellRoll(sk, rk); this.spellHit(mon, r.dmg, "light", { crit: r.crit }); Game.lightningBolt(this.x, this.y, mon.x, mon.y); }
         return true;
       }
       case "overloadnuke": {   // Overload — dump all Static into one blast
@@ -1592,7 +1601,7 @@ class Player extends Entity {
         this.afterActionDelay(dur0 * 0.5, () => {
           if (this.dead) return; Sfx.play("blast"); Game.addNova(this.x, this.y, radius, "#fff080"); Game.fx.shake = Math.max(Game.fx.shake, 6 + Math.min(6, st0 * 0.3));
           for (let i = 0; i < 20; i++) Game.addParticle(this.x + U.rf(-radius, radius) * 0.5, this.y + U.rf(-radius, radius) * 0.5, "#fff080");
-          for (const mon of Game.state.monsters) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > radius + mon.radius) continue; const r = this.spellRoll(sk, rk); this.spellHit(mon, r.dmg + per * st0, "light", { crit: r.crit }); mon.stunT = Math.max(mon.stunT, Math.min(1.0, st0 * 0.05)); }
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > radius + mon.radius) continue; const r = this.spellRoll(sk, rk); this.spellHit(mon, r.dmg + per * st0, "light", { crit: r.crit }); mon.stunT = Math.max(mon.stunT, Math.min(1.0, st0 * 0.05)); }
         });
         return true;
       }
@@ -1607,7 +1616,7 @@ class Player extends Entity {
           slowPct: sk.slowPct ? sk.slowPct(rk) : 0, selfDodge: sk.selfDodge ? sk.selfDodge(rk) : 0, weakenPct: sk.weakenPct ? sk.weakenPct(rk) : 0, heal: sk.heal ? sk.heal(rk) : 0 };
         if (kind === "spore") { const a = Math.atan2(aim.y - this.y, aim.x - this.x); f.vx = Math.cos(a) * 0.6; f.vy = Math.sin(a) * 0.6; }
         if (["inferno", "glacier", "static"].includes(kind)) Game.state.fx = Game.state.fx.filter(g => !(g.type === "groundfield" && g.fieldKind === kind));
-        this.afterActionDelay(dur0 * 0.5, () => { if (this.dead) return; Sfx.play(kind === "glacier" ? "frost" : kind === "static" ? "zap" : "blast"); Game.addNova(aim.x, aim.y, f.radius, col); Game.state.fx.push(f); });
+        this.afterActionDelay(dur0 * 0.5, () => { if (this.dead) return; Sfx.play(kind === "glacier" ? "frost" : kind === "static" ? "zap" : "blast"); Game.addNova(aim.x, aim.y, f.radius, col); Game.state.fx.push(Object.assign(f,{surfaceId:TerrainLayers.current(Game.state.map)})); });
         return true;
       }
       /* ===================== GRAVEBINDER ===================== */
@@ -1619,7 +1628,7 @@ class Player extends Entity {
         return true;
       }
       case "sacrifice": {   // Sacrificial Pyre (all) / Blood of the Pack (one)
-        const mode = sk.mode || "all", beasts = Game.state.minions.filter(m => !m.dead);
+        const mode = sk.mode || "all", beasts = TerrainLayers.targets(Game.state.minions).filter(m => !m.dead);
         if (!beasts.length) { Game.msg(mode === "one" ? "No beast to give." : "You have no servants to sacrifice.", "#9a9a9a"); return false; }
         this.pay(sk, rk); Sfx.play("blast");
         if (mode === "all") {
@@ -1627,7 +1636,7 @@ class Player extends Entity {
           for (const mi of beasts) {
             const sizeMult = mi.kindId === "bone_golem" ? 2.0 : mi.isArcher ? 0.7 : 1.0, dmg = U.rf(dm[0], dm[1]) * (mi.hp / mi.maxHp) * sizeMult;
             Game.addNova(mi.x, mi.y, radius, "#90ff70");
-            for (const mon of Game.state.monsters) { if (mon.dead || U.dist(mi.x, mi.y, mon.x, mon.y) > radius + mon.radius) continue; this.spellHit(mon, dmg, "poison", {}); }
+            for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(mi.x, mi.y, mon.x, mon.y) > radius + mon.radius) continue; this.spellHit(mon, dmg, "poison", {}); }
             const cx = mi.x, cy = mi.y; mi.die(); Game.spawnCorpse(cx, cy, 12);
           }
           Game.fx.shake = Math.max(Game.fx.shake, Math.min(8, 2 + beasts.length));
@@ -1637,15 +1646,15 @@ class Player extends Entity {
           if (!best) { Game.msg("No beast near enough.", "#9a9a9a"); return false; }
           const cx = best.x, cy = best.y, healAmt = this.stats.maxHp * sk.healPct(rk) / 100;
           best.die(); this.healLife(healAmt);
-          for (const mi of Game.state.minions) if (!mi.dead) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * 0.2);
-          Game.state.fx.push({ type: "groundfield", fieldKind: "regrowth", x: cx, y: cy, radius: sk.fieldRadius ? sk.fieldRadius(rk) : 2.6, ttl: sk.fieldTtl ? sk.fieldTtl(rk) : 6, maxTtl: sk.fieldTtl ? sk.fieldTtl(rk) : 6, tickEvery: 0.5, heal: sk.fieldHeal ? sk.fieldHeal(rk) : 3, owner: this });
+          for (const mi of TerrainLayers.targets(Game.state.minions)) if (!mi.dead) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * 0.2);
+          Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "groundfield", fieldKind: "regrowth", x: cx, y: cy, radius: sk.fieldRadius ? sk.fieldRadius(rk) : 2.6, ttl: sk.fieldTtl ? sk.fieldTtl(rk) : 6, maxTtl: sk.fieldTtl ? sk.fieldTtl(rk) : 6, tickEvery: 0.5, heal: sk.fieldHeal ? sk.fieldHeal(rk) : 3, owner: this });
           Game.addNova(cx, cy, 1.6, "#90ff70"); Game.addFloat(this.x, this.y, "+" + Math.floor(healAmt), "#80ff90");
         }
         return true;
       }
       case "siphon_beam": {   // Soul Siphon — maintained life-tether
         let first = target;
-        if (!first) { let bd = 81; for (const m of Game.state.monsters) { if (m.dead) continue; const dd = U.dist2(this.x, this.y, m.x, m.y); if (dd < bd) { bd = dd; first = m; } } }
+        if (!first) { let bd = 81; for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead) continue; const dd = U.dist2(this.x, this.y, m.x, m.y); if (dd < bd) { bd = dd; first = m; } } }
         if (!first) { Game.msg("Nothing to siphon.", "#9a9a9a"); return false; }
         this.pay(sk, rk);
         this.siphon = { target: first, ramp: 0, until: Game.state.time + sk.maxChannel(rk), tickT: 0, tickRate: sk.tickRate(rk), tickDmg: sk.tickDmg(rk), drain: sk.drain(rk), manaPerSec: sk.manaPerSec ? sk.manaPerSec(rk) : 2 };
@@ -1653,7 +1662,7 @@ class Player extends Entity {
         return true;
       }
       case "doom": {   // Doom — a charging death-timer
-        if (!target) { const ap = point || { x: this.x, y: this.y }; let bd = 64; for (const m of Game.state.monsters) { if (m.dead) continue; const dd = U.dist2(ap.x, ap.y, m.x, m.y); if (dd < bd) { bd = dd; target = m; } } }
+        if (!target) { const ap = point || { x: this.x, y: this.y }; let bd = 64; for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead) continue; const dd = U.dist2(ap.x, ap.y, m.x, m.y); if (dd < bd) { bd = dd; target = m; } } }
         if (!target) return false;
         this.pay(sk, rk); const dur0 = this.beginCast(sk, target), timer = sk.timer(rk) * (1 + (this.stats.curseDurPct || 0) / 100);
         target.doom = { until: Game.state.time + dur0 + timer, charge: 0, maxCharge: timer, dmgLo: sk.dmgLo(rk), dmgHi: sk.dmgHi(rk), radius: sk.radius(rk) * (1 + (this.stats.curseRadiusPct || 0) / 100) };
@@ -1664,11 +1673,11 @@ class Player extends Entity {
         let aim = point || (target ? { x: target.x, y: target.y } : null); if (!aim) return false;
         this.pay(sk, rk); const dur0 = this.beginCast(sk, aim);
         const radius = sk.radius(rk) * (1 + (this.stats.curseRadiusPct || 0) / 100), dur = sk.dur(rk) * (1 + (this.stats.curseDurPct || 0) / 100), spot = aim;
-        this.afterActionDelay(dur0 * 0.5, () => { if (this.dead) return; Sfx.play("curse"); Game.addNova(spot.x, spot.y, radius, "#9a40c0"); for (const mon of Game.state.monsters) { if (mon.dead || U.dist(spot.x, spot.y, mon.x, mon.y) > radius + mon.radius) continue; mon.beckon = { until: Game.state.time + dur, x: spot.x, y: spot.y }; } });
+        this.afterActionDelay(dur0 * 0.5, () => { if (this.dead) return; Sfx.play("curse"); Game.addNova(spot.x, spot.y, radius, "#9a40c0"); for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(spot.x, spot.y, mon.x, mon.y) > radius + mon.radius) continue; mon.beckon = { until: Game.state.time + dur, x: spot.x, y: spot.y }; } });
         return true;
       }
       case "plague_seed": {   // Contagion — self-spreading plague
-        if (!target) { const ap = point || { x: this.x, y: this.y }; let bd = 64; for (const m of Game.state.monsters) { if (m.dead) continue; const dd = U.dist2(ap.x, ap.y, m.x, m.y); if (dd < bd) { bd = dd; target = m; } } }
+        if (!target) { const ap = point || { x: this.x, y: this.y }; let bd = 64; for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead) continue; const dd = U.dist2(ap.x, ap.y, m.x, m.y); if (dd < bd) { bd = dd; target = m; } } }
         if (!target) return false;
         this.pay(sk, rk); const dur0 = this.beginCast(sk, target);
         target.plague = { until: Game.state.time + dur0 + sk.dur(rk), tick: sk.tick(rk), tickT: 0, spreadCd: 1.5, spreadRange: sk.spreadRange(rk), burstRange: sk.burstRange(rk) };
@@ -1678,19 +1687,19 @@ class Player extends Entity {
       case "devour": {   // Devour Corpse — heal + cleanse
         const aim = target ? { x: target.x, y: target.y } : point || { x: this.x, y: this.y };
         const searchRadius=sk.devourRadius?.(rk)??9;
-        let corpse = null, bd = searchRadius**2; for (const mon of Game.state.monsters) { if (!mon.dead || mon.corpseT <= 0 || mon.exploded) continue; const dd = U.dist2(aim.x, aim.y, mon.x, mon.y); if (dd < bd) { bd = dd; corpse = mon; } }
+        let corpse = null, bd = searchRadius**2; for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (!mon.dead || mon.corpseT <= 0 || mon.exploded) continue; const dd = U.dist2(aim.x, aim.y, mon.x, mon.y); if (dd < bd) { bd = dd; corpse = mon; } }
         if (!corpse) corpse = Game.corpseFromGrave(this, aim, searchRadius);
         if (!corpse) { Game.msg("No corpse or grave to devour.", "#9a9a9a"); return false; }
         this.pay(sk, rk); corpse.exploded = true; corpse.corpseT = 0;
         const heal = this.stats.maxHp * sk.healPct(rk) / 100; this.healLife(heal); this.slowT = 0; this.slowPct = 0; this.poisonDot = null;
-        for (const mi of Game.state.minions) if (!mi.dead && U.dist(this.x, this.y, mi.x, mi.y) < 4) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * (sk.devourMinionHeal?.(rk)??10)/100);
+        for (const mi of TerrainLayers.targets(Game.state.minions)) if (!mi.dead && U.dist(this.x, this.y, mi.x, mi.y) < 4) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * (sk.devourMinionHeal?.(rk)??10)/100);
         this.mana=Math.min(this.stats.maxMana,this.mana+this.stats.maxMana*(sk.devourMana?.(rk)??0)/100);
         Sfx.play("potion"); Game.addNova(this.x, this.y, 1.5, "#90ff70"); Game.addFloat(this.x, this.y, "+" + Math.floor(heal), "#80ff90");
         return true;
       }
       case "corpse_launch": {   // Corpse Spear — hurl a cadaver-javelin
         const aim = target ? { x: target.x, y: target.y } : point; if (!aim) return false;
-        let corpse = null, bd = (sk.castRange ? sk.castRange(rk) : 9) ** 2; for (const mon of Game.state.monsters) { if (!mon.dead || mon.corpseT <= 0 || mon.exploded) continue; const dd = U.dist2(this.x, this.y, mon.x, mon.y); if (dd < bd) { bd = dd; corpse = mon; } }
+        let corpse = null, bd = (sk.castRange ? sk.castRange(rk) : 9) ** 2; for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (!mon.dead || mon.corpseT <= 0 || mon.exploded) continue; const dd = U.dist2(this.x, this.y, mon.x, mon.y); if (dd < bd) { bd = dd; corpse = mon; } }
         if (!corpse) corpse = Game.corpseFromGrave(this, aim, (sk.castRange ? sk.castRange(rk) : 9));
         if (!corpse) { Game.msg("No corpse or grave to hurl.", "#9a9a9a"); return false; }
         this.pay(sk, rk); corpse.exploded = true; corpse.corpseT = 0; const dm = sk.dmg(rk);
@@ -1704,7 +1713,7 @@ class Player extends Entity {
         const a0 = Math.atan2(aim.y - this.y, aim.x - this.x), arc = sk.arc(rk), radius = sk.radius(rk), bonus = sk.bonusVsCursed(rk), reapHeal = sk.reapHeal(rk);
         this.afterActionDelay(dur0 * 0.5, () => {
           if (this.dead) return; Sfx.play("curse"); Game.addNova(this.x, this.y, radius, "#c080e0");
-          for (const mon of Game.state.monsters) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > radius + mon.radius) continue; let da = Math.abs(Math.atan2(mon.y - this.y, mon.x - this.x) - a0); if (da > Math.PI) da = Math.PI * 2 - da; if (da > arc / 2) continue;
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > radius + mon.radius) continue; let da = Math.abs(Math.atan2(mon.y - this.y, mon.x - this.x) - a0); if (da > Math.PI) da = Math.PI * 2 - da; if (da > arc / 2) continue;
             let dmg = this.spellRoll(sk, rk).dmg; const cursed = (mon.curseFrailty && Game.state.time < mon.curseFrailty.until) || (mon.curseWither && Game.state.time < mon.curseWither.until);
             if (cursed) { dmg *= 1 + bonus / 100; this.healLife(reapHeal); mon.curseFrailty = null; mon.curseWither = null; }
             if (mon.doom) Game.detonateDoom(mon);
@@ -1714,16 +1723,16 @@ class Player extends Entity {
       }
       case "outbreak": {   // Outbreak — expanding pestilence ring
         this.pay(sk, rk); const dur0 = this.beginCast(sk, null), bx = this.x, by = this.y;
-        this.afterActionDelay(dur0 * 0.5, () => { if (this.dead) return; Sfx.play("blast"); Game.state.fx.push({ type: "outbreak", x: bx, y: by, r: 0, maxR: sk.maxR(rk), dur: sk.dur(rk), ttl: sk.dur(rk) + 0.5, tick: sk.tick(rk), corpseDmg: sk.corpseDmg(rk), hitMon: new Set(), owner: this }); });
+        this.afterActionDelay(dur0 * 0.5, () => { if (this.dead) return; Sfx.play("blast"); Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "outbreak", x: bx, y: by, r: 0, maxR: sk.maxR(rk), dur: sk.dur(rk), ttl: sk.dur(rk) + 0.5, tick: sk.tick(rk), corpseDmg: sk.corpseDmg(rk), hitMon: new Set(), owner: this }); });
         return true;
       }
       case "summon_golem": {   // Bone Golem — stitched from corpses; re-cast on corpses to feed & grow
         const gatherR = sk.gatherRadius(rk), maxStitch = sk.maxCorpses(rk);
-        const existing = Game.state.minions.find(m => !m.dead && m.kindId === "bone_golem");
+        const existing = TerrainLayers.targets(Game.state.minions).find(m => !m.dead && m.kindId === "bone_golem");
         const cur = existing ? (existing.stitches || 1) : 0, remaining = maxStitch - cur;
         if (existing && remaining <= 0) { Game.msg(`The golem is already whole (${maxStitch} bones).`, "#9a9a9a"); Sfx.play("error"); return false; }
         /* every cast — including feeding — must consume at least one nearby corpse */
-        const corpses = Game.state.monsters.filter(m => m.dead && m.corpseT > 0 && !m.exploded && U.dist(this.x, this.y, m.x, m.y) < gatherR).slice(0, remaining);
+        const corpses = TerrainLayers.targets(Game.state.monsters).filter(m => m.dead && m.corpseT > 0 && !m.exploded && U.dist(this.x, this.y, m.x, m.y) < gatherR).slice(0, remaining);
         for (let need = remaining - corpses.length; need > 0; need--) { const h = Game.corpseFromGrave(this, null, gatherR); if (!h) break; corpses.push(h); }   // gravestones count too
         if (corpses.length === 0) { Game.msg("The Bone Golem needs a corpse or grave nearby.", "#9a9a9a"); Sfx.play("error"); return false; }
         this.pay(sk, rk);
@@ -1772,14 +1781,14 @@ class Player extends Entity {
         let aim = target ? { x: target.x, y: target.y } : point; if (!aim) aim = { x: this.x, y: this.y };
         const maxR = sk.castRange ? sk.castRange(rk) : 9, d = U.dist(this.x, this.y, aim.x, aim.y); if (d > maxR) { const k = maxR / d; aim = { x: this.x + (aim.x - this.x) * k, y: this.y + (aim.y - this.y) * k }; }
         this.pay(sk, rk); this.startAction("attack", dur); Sfx.play("bow");
-        Game.state.fx.push({ type: "rain", x: aim.x, y: aim.y, radius: sk.radius(rk), ttl: sk.dur(rk), maxTtl: sk.dur(rk), tickEvery: 0.25, mult: sk.dmgMult(rk) * syn, owner: this });
+        Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "rain", x: aim.x, y: aim.y, radius: sk.radius(rk), ttl: sk.dur(rk), maxTtl: sk.dur(rk), tickEvery: 0.25, mult: sk.dmgMult(rk) * syn, owner: this });
         return true;
       }
       case "tripwire": {   // Tripwire — a bleeding line snare
         let aim = target ? { x: target.x, y: target.y } : point; if (!aim) { const [wx, wy] = U.screenVecToWorld(this.visAng); aim = { x: this.x + wx * 5, y: this.y + wy * 5 }; }
         const len = sk.length(rk), d = U.dist(this.x, this.y, aim.x, aim.y) || 1, ex = this.x + (aim.x - this.x) / d * len, ey = this.y + (aim.y - this.y) / d * len;
         this.pay(sk, rk); const dm = sk.dmg(rk);
-        Game.state.fx.push({ type: "tripwire", x: (this.x + ex) / 2, y: (this.y + ey) / 2, x0: this.x, y0: this.y, x1: ex, y1: ey, ttl: sk.ttl ? sk.ttl(rk) : 20, sprung: false, lo: dm[0], hi: dm[1], bleed: sk.bleed(rk), root: sk.root(rk), owner: this });
+        Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "tripwire", x: (this.x + ex) / 2, y: (this.y + ey) / 2, x0: this.x, y0: this.y, x1: ex, y1: ey, ttl: sk.ttl ? sk.ttl(rk) : 20, sprung: false, lo: dm[0], hi: dm[1], bleed: sk.bleed(rk), root: sk.root(rk), owner: this });
         Sfx.play("click");
         return true;
       }
@@ -1807,7 +1816,7 @@ class Player extends Entity {
         return true;
       }
       case "deathmark": {   // Killing Mark — single-target amp + detonate
-        if (!target) { const ap = point || { x: this.x, y: this.y }; let bd = 64; for (const m of Game.state.monsters) { if (m.dead) continue; const dd = U.dist2(ap.x, ap.y, m.x, m.y); if (dd < bd) { bd = dd; target = m; } } }
+        if (!target) { const ap = point || { x: this.x, y: this.y }; let bd = 64; for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead) continue; const dd = U.dist2(ap.x, ap.y, m.x, m.y); if (dd < bd) { bd = dd; target = m; } } }
         if (!target) return false;
         this.pay(sk, rk);
         target.killMark = { until: Game.state.time + sk.dur(rk), amp: sk.amp(rk), det: sk.detDmg(rk) };
@@ -1817,7 +1826,7 @@ class Player extends Entity {
       case "detonate_dots": {   // Hemorrhage — burst every prepared wound on screen
         this.pay(sk, rk); Sfx.play("blast"); Game.fx.shake = Math.max(Game.fx.shake, 4);
         const wd = this.weaponDamage(), wavg = (wd[0] + wd[1]) / 2;
-        for (const mon of Game.state.monsters) {
+        for (const mon of TerrainLayers.targets(Game.state.monsters)) {
           if (mon.dead) continue;
           let burst = 0;
           if (mon.poisonDot) burst += mon.poisonDot.dps * mon.poisonDot.t * sk.dotMult(rk);
@@ -1841,14 +1850,14 @@ class Player extends Entity {
         const cap = sk.cap(rk) + Math.floor((this.effRank("totem_mastery") || 0) / 10) + (this.stats.totemCapacity||0);
         const same = Game.state.fx.filter(f => f.type === "totem" && f.totemKind === kind);
         while (same.length >= cap) { const old = same.shift(); const idx = Game.state.fx.indexOf(old); if (idx >= 0) Game.state.fx.splice(idx, 1); }
-        Game.state.fx.push({ type: "totem", totemKind: kind, x: aim.x, y: aim.y, ttl, maxTtl: ttl, radius: sk.radius(rk), zapCd: sk.zapCd ? sk.zapCd(rk) : 1.1, zapT: 0.3, lo: dm[0], hi: dm[1], pulseCd: sk.pulseCd ? sk.pulseCd(rk) : 1.4, pulseT: 0, wispCd: sk.wispCd ? sk.wispCd(rk) : 3, wispT: 1, ringR: 0, owner: this });
+        Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "totem", totemKind: kind, x: aim.x, y: aim.y, ttl, maxTtl: ttl, radius: sk.radius(rk), zapCd: sk.zapCd ? sk.zapCd(rk) : 1.1, zapT: 0.3, lo: dm[0], hi: dm[1], pulseCd: sk.pulseCd ? sk.pulseCd(rk) : 1.4, pulseT: 0, wispCd: sk.wispCd ? sk.wispCd(rk) : 3, wispT: 1, ringR: 0, owner: this });
         Sfx.play("shrine"); Game.addNova(aim.x, aim.y, 1.2, kind === "tempest" ? "#fff080" : "#cfe0ff");
         return true;
       }
       case "roamaoe": {   // Cyclone — a wandering tornado
         let aim = target ? { x: target.x, y: target.y } : point; if (!aim) { const [wx, wy] = U.screenVecToWorld(this.visAng); aim = { x: this.x + wx * 4, y: this.y + wy * 4 }; }
         this.pay(sk, rk); const dm = sk.dmg(rk);
-        Game.state.fx.push({ type: "cyclone", x: this.x, y: this.y, vx: 0, vy: 0, ttl: sk.ttl(rk), radius: sk.radius(rk), tickEvery: sk.tickCd ? sk.tickCd(rk) : 0.4, drift: sk.drift ? sk.drift(rk) : 2.5, lo: dm[0], hi: dm[1], pull: sk.pull ? sk.pull(rk) : 1.5, owner: this });
+        Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "cyclone", x: this.x, y: this.y, vx: 0, vy: 0, ttl: sk.ttl(rk), radius: sk.radius(rk), tickEvery: sk.tickCd ? sk.tickCd(rk) : 0.4, drift: sk.drift ? sk.drift(rk) : 2.5, lo: dm[0], hi: dm[1], pull: sk.pull ? sk.pull(rk) : 1.5, owner: this });
         Sfx.play("blast"); Game.addNova(this.x, this.y, 1.5, "#cfe0ff");
         return true;
       }
@@ -1916,7 +1925,7 @@ class Player extends Entity {
         this.thunderT = 3;
         const R = 7.5 + (st.lightRadius || 0);
         let tgt = null, bd = R * R;
-        for (const m of Game.state.monsters) { if (m.dead) continue; const dd = U.dist2(this.x, this.y, m.x, m.y); if (dd < bd) { bd = dd; tgt = m; } }
+        for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead) continue; const dd = U.dist2(this.x, this.y, m.x, m.y); if (dd < bd) { bd = dd; tgt = m; } }
         if (tgt) {
           const ss = this.effRank("stormshell");
           const dmg = ss > 0 ? 4 + 2 * ss : 0;     // Stormshell's additive lightning damage
@@ -1929,7 +1938,7 @@ class Player extends Entity {
       }
     } else this.thunderT = 0;
     /* regen + potion pools */
-    const beasts=Game.state.minions.filter(m=>!m.dead && m.owner===this && m.beast).length;
+    const beasts=TerrainLayers.targets(Game.state.minions).filter(m=>!m.dead && m.owner===this && m.beast).length;
     const potionMana=Math.min(this.manaPool || 0,22*dt);
     const manaFlow=(st.manaRegen + beasts*(st.pManaPerBeast || 0)-this.companionUpkeep())*dt+potionMana;
     this.mana=Math.min(st.maxMana,Math.max(0,this.mana+manaFlow));
@@ -1950,7 +1959,7 @@ class Player extends Entity {
     if (this.siphon) {
       const SI = this.siphon;
       if (SI.target && SI.target.dead && !this.moving && Game.state.time <= SI.until) {   // re-acquire on kill
-        let nt = null, bd = 81; for (const m of Game.state.monsters) { if (m.dead) continue; const dd = U.dist2(this.x, this.y, m.x, m.y); if (dd < bd) { bd = dd; nt = m; } } SI.target = nt;
+        let nt = null, bd = 81; for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead) continue; const dd = U.dist2(this.x, this.y, m.x, m.y); if (dd < bd) { bd = dd; nt = m; } } SI.target = nt;
       }
       if (!SI.target || SI.target.dead || this.moving || Game.state.time > SI.until || U.dist(this.x, this.y, SI.target.x, SI.target.y) > 9) this.siphon = null;
       else {
@@ -1973,7 +1982,7 @@ class Player extends Entity {
       this.x = U.lerp(C.fx, C.tx, k); this.y = U.lerp(C.fy, C.ty, k);
       this.recordMovement(ox, oy, dt);
       const ang = Math.atan2(C.ty - C.fy, C.tx - C.fx);
-      for (const mon of Game.state.monsters) {
+      for (const mon of TerrainLayers.targets(Game.state.monsters)) {
         if (mon.dead || C.hit.has(mon)) continue;
         const t = U.clamp((mon.x - this.x) * Math.cos(ang) + (mon.y - this.y) * Math.sin(ang), -0.6, C.width);
         const px = this.x + Math.cos(ang) * t, py = this.y + Math.sin(ang) * t;
@@ -2007,7 +2016,7 @@ class Player extends Entity {
         Sfx.play("slam");
         Game.fx.shake = 7;
         Game.addNova(this.x, this.y, L.radius, "#d8b860");
-        for (const mon of Game.state.monsters) {
+        for (const mon of TerrainLayers.targets(Game.state.monsters)) {
           if (!mon.dead && U.dist(this.x, this.y, mon.x, mon.y) <= L.radius + mon.radius) this.strike(mon, L.mult, { auto: true });
         }
         this.leaping = null;
@@ -2053,7 +2062,7 @@ class Player extends Entity {
       if (S.tick <= 0) {
         S.tick = 0.22;
         Sfx.play("swing");
-        for (const mon of Game.state.monsters) {
+        for (const mon of TerrainLayers.targets(Game.state.monsters)) {
           if (!mon.dead && U.dist(this.x, this.y, mon.x, mon.y) <= S.radius + mon.radius) this.strike(mon, S.mult, { auto: true });
         }
       }
@@ -2068,11 +2077,14 @@ class Player extends Entity {
     if (!cmd) { this.moving = false; return; }
     if (cmd.skill && this.rejectSkillWeapon(cmd.skill)) return;
     if (cmd.type === "move") {
-      this.moveAlong(dt, st.moveSpeed, Game.state.map, Game.state.monsters);
+      this.moveAlong(dt, st.moveSpeed, Game.state.map, TerrainLayers.targets(Game.state.monsters));
       if ((!this.path || !this.path.length) && !this.jumping) this.command = null;
       this.footsteps(dt);
     } else if (cmd.type === "steer") {
-      this.moveToward(dt, st.moveSpeed, cmd.point.x, cmd.point.y, Game.state.map, Game.state.monsters);
+      if(Game.state.map.layers&&(cmd.point.surfaceId??this.surfaceId)!==this.surfaceId){
+        Game.repath(this,cmd.point.x,cmd.point.y,cmd.point.surfaceId);this.moveAlong(dt,st.moveSpeed,Game.state.map,TerrainLayers.targets(Game.state.monsters));return;
+      }
+      this.moveToward(dt, st.moveSpeed, cmd.point.x, cmd.point.y, Game.state.map, TerrainLayers.targets(Game.state.monsters));
       this.footsteps(dt);
     } else if (cmd.type === "attack") {
       const t = cmd.target;
@@ -2091,13 +2103,13 @@ class Player extends Entity {
       const d = U.dist(this.x, this.y, t.x, t.y);
       const walk = (x, y) => MapGen.walkable(Game.state.map, x, y);
       const hasLos = !(this.stats.ranged || isSpell) || U.los(walk, this.x, this.y, t.x, t.y);
-      if (d <= reach && hasLos) {
+      if (TerrainLayers.same(this,t) && d <= reach && hasLos) {
         this.path = null; this.moving = false;
         this.performSkill(cmd.skill, t, null);
         if (!cmd.hold) this.command = null;
       } else {
-        Game.repath(this, t.x, t.y);
-        this.moveAlong(dt, st.moveSpeed, Game.state.map, Game.state.monsters);
+        Game.repath(this, t.x, t.y,t.surfaceId);
+        this.moveAlong(dt, st.moveSpeed, Game.state.map, TerrainLayers.targets(Game.state.monsters));
         this.footsteps(dt);
       }
     } else if (cmd.type === "skillPoint") {
@@ -2107,22 +2119,22 @@ class Player extends Entity {
     } else if (cmd.type === "pickup") {
       const g = cmd.gi;
       if (!Game.state.ground.includes(g)) { this.command = null; return; }
-      if (U.dist(this.x, this.y, g.x, g.y) < 1.2) {
+      if (TerrainLayers.same(this,g) && U.dist(this.x, this.y, g.x, g.y) < 1.2) {
         Game.pickupGround(g);
         this.command = null; this.path = null; this.moving = false;
       } else {
-        this.moveAlong(dt, st.moveSpeed, Game.state.map, Game.state.monsters);
+        this.moveAlong(dt, st.moveSpeed, Game.state.map, TerrainLayers.targets(Game.state.monsters));
         this.footsteps(dt);
         if (!this.path || !this.path.length) Game.repath(this, g.x, g.y);
       }
     } else if (cmd.type === "interact") {
       const o = cmd.obj;
       const d = U.dist(this.x, this.y, o.x, o.y);
-      if (d < (cmd.run ? 1.8 : (o.interactionRange || 1.6))) {
+      if (TerrainLayers.same(this,o) && d < (cmd.run ? 1.8 : (o.interactionRange || 1.6))) {
         this.path = null; this.moving = false; this.command = null;
         if (cmd.run) cmd.run(); else Game.interact(o);
       } else {
-        this.moveAlong(dt, st.moveSpeed, Game.state.map, Game.state.monsters);
+        this.moveAlong(dt, st.moveSpeed, Game.state.map, TerrainLayers.targets(Game.state.monsters));
         this.footsteps(dt);
         if (!this.path || !this.path.length) Game.repath(this, o.x, o.y);
       }
@@ -2163,7 +2175,8 @@ class Player extends Entity {
 class Minion extends Entity {
   constructor(kindId, stats, owner) {
     super(owner.x + U.rf(-1.2, 1.2), owner.y + U.rf(-1.2, 1.2));
-    if (!MapGen.walkable(Game.state.map, this.x, this.y)) { this.x = owner.x; this.y = owner.y; }
+    this.surfaceId=owner.surfaceId??0;
+    if (!MapGen.walkable(Game.state.map, this.x, this.y,this.surfaceId)) { this.x = owner.x; this.y = owner.y; }
     this.autoHop = !stats.noAttack;
     this.kindId = kindId;
     this.owner = owner;
@@ -2262,17 +2275,24 @@ class Minion extends Entity {
     /* old bone knits itself back together */
     if (!this.beast && this.hp < this.maxHp) this.hp = Math.min(this.maxHp, this.hp + 1 * dt);
     /* lost too far behind: claw back out of the ground beside the master */
-    if (U.dist(this.x, this.y, player.x, player.y) > 16) {
+    if (!map.layers && U.dist(this.x, this.y, player.x, player.y) > 16) {
       this.x = player.x + U.rf(-1, 1); this.y = player.y + U.rf(-1, 1);
       this.path = null;
       Game.addNova(this.x, this.y, 0.6, "#80ff90");
     }
     if (this.stunT > 0) { this.moving = false; return; }
     if (this.action && this.action.state === "attack") { this.moving = false; return; }
+    if(map.layers&&!TerrainLayers.same(this,player)){
+      this.attackCd-=dt;
+      if(this.slamRadius)this.slamCd-=dt;
+      Game.repath(this,player.x,player.y,player.surfaceId);
+      this.moveAlong(dt,this.speed*1.2,map,TerrainLayers.targets(Game.state.minions));
+      return;
+    }
     const walk = (x, y) => MapGen.walkable(map, x, y);
     /* nearest living monster within leash range */
     let target = null, bd = 8 * 8;
-    for (const mon of Game.state.monsters) {
+    for (const mon of TerrainLayers.targets(Game.state.monsters)) {
       if (mon.dead) continue;
       const dd = U.dist2(this.x, this.y, mon.x, mon.y);
       if (dd < bd) { bd = dd; target = mon; }
@@ -2285,7 +2305,7 @@ class Minion extends Entity {
       if (this.slamRadius && this.slamCd <= 0 && d < this.slamRadius + target.radius + 0.6) {
         this.slamCd = 4.5; this.startAction("attack", 0.6);
         const sx = this.x, sy = this.y, sdmg = this.slamDmg ? U.rf(this.slamDmg[0], this.slamDmg[1]) * (1 + (this.owner.stats?.minionDmgPct ?? this.dmgPctOwner) / 100) : this.dmgRoll() * 1.5;
-        Game.afterDelay(0.4, () => { if (this.dead) return; this.playSound('impact','slam',{elem:'earth'}); Game.addNova(sx, sy, this.slamRadius, "#c0a060"); Game.fx.shake = Math.max(Game.fx.shake, 3); for (const mon of Game.state.monsters) { if (mon.dead || U.dist(sx, sy, mon.x, mon.y) > this.slamRadius + mon.radius) continue; mon.takeDamage(sdmg, this); Game.minionFloat(mon.x, mon.y, sdmg); mon.stunT = Math.max(mon.stunT, this.slamStun || 0.6); Game.knockMonster(mon, sx, sy, 1.0); } });
+        Game.afterDelay(0.4, () => { if (this.dead) return; this.playSound('impact','slam',{elem:'earth'}); Game.addNova(sx, sy, this.slamRadius, "#c0a060"); Game.fx.shake = Math.max(Game.fx.shake, 3); for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(sx, sy, mon.x, mon.y) > this.slamRadius + mon.radius) continue; mon.takeDamage(sdmg, this); Game.minionFloat(mon.x, mon.y, sdmg); mon.stunT = Math.max(mon.stunT, this.slamStun || 0.6); Game.knockMonster(mon, sx, sy, 1.0); } });
         this.moving = false; return;
       }
       const reach = this.isArcher ? this.range : this.range + target.radius + this.radius;
@@ -2299,7 +2319,7 @@ class Minion extends Entity {
           this.startAction("attack", dur);
           const tref = target;
           Game.afterDelay(dur * 0.55, () => {
-            if (this.dead || tref.dead) return;
+            if (this.dead || tref.dead || !TerrainLayers.same(this,tref)) return;
             const pdot = this.totalPdot();
             if (this.isArcher) {
               this.playSound('release',this.projKind === 'venom' ? 'firebolt' : 'bow');
@@ -2320,14 +2340,14 @@ class Minion extends Entity {
           this.repathT = 0.4;
           Game.repath(this, target.x, target.y);
         }
-        this.moveAlong(dt, this.speed, map, Game.state.minions);
+        this.moveAlong(dt, this.speed, map, TerrainLayers.targets(Game.state.minions));
         if (!this.path || !this.path.length) this.moving = false;
       }
     } else if (U.dist(this.x, this.y, player.x, player.y) > 2.6) {
       /* heel */
       this.repathT -= dt;
       if (this.repathT <= 0) { this.repathT = 0.35; Game.repath(this, player.x + U.rf(-1.2, 1.2), player.y + U.rf(-1.2, 1.2)); }
-      this.moveAlong(dt, this.speed * 1.2, map, Game.state.minions);
+      this.moveAlong(dt, this.speed * 1.2, map, TerrainLayers.targets(Game.state.minions));
       if (!this.path || !this.path.length) this.moving = false;
     } else this.moving = false;
   }
@@ -2348,11 +2368,11 @@ class ImperialCombat {
   disabled(){const m=this.mon;return m.stunT>0||m.frozen>this.world.time||m.feared>this.world.time||m.beckon?.until>this.world.time||m.fleeUntil>this.world.time||!!m.pulled;}
   cancel(){this.epoch++;this.active=null;if(['attack','cast'].includes(this.mon.action?.state))this.mon.action=null;this.mon.jumpZ=0;}
   tick(dt){this.cooldown=Math.max(0,this.cooldown-dt);if(this.profile.role!=='boss')this.mon.attackCd=Math.max(0,this.mon.attackCd-dt);if(!this.valid()||this.disabled())this.cancel();}
-  targets(){return [this.world.player,...this.world.minions].filter(t=>!t.dead&&!t.untargetable);}
-  los(t){return U.los((x,y)=>MapGen.walkable(this.map,x,y),this.mon.x,this.mon.y,t.x,t.y);}
-  clear(p){return TerrainSurface.supported(this.map,p.x,p.y,this.mon.radius);}
-  landing(p){return this.clear(p)&&this.world.monsters.every(t=>t===this.mon||t.dead||Math.hypot(t.x-p.x,t.y-p.y)>t.radius+this.mon.radius+.15);}
-  free(p){return this.clear(p)&&[...this.targets(),...this.world.monsters].every(t=>t===this.mon||t.dead||Math.hypot(t.x-p.x,t.y-p.y)>t.radius+this.mon.radius+.15);}
+  targets(){return [this.world.player,...this.world.minions].filter(t=>TerrainLayers.same(this.mon,t)&&!t.dead&&!t.untargetable);}
+  los(t){return (t.surfaceId===undefined||TerrainLayers.same(this.mon,t))&&U.los((x,y)=>MapGen.walkable(this.map,x,y,this.mon.surfaceId),this.mon.x,this.mon.y,t.x,t.y);}
+  clear(p){return TerrainSurface.supported(this.map,p.x,p.y,this.mon.radius,this.mon.surfaceId);}
+  landing(p){return this.clear(p)&&this.world.monsters.every(t=>!TerrainLayers.same(this.mon,t)||t===this.mon||t.dead||Math.hypot(t.x-p.x,t.y-p.y)>t.radius+this.mon.radius+.15);}
+  free(p){return this.clear(p)&&[...this.targets(),...this.world.monsters].every(t=>!TerrainLayers.same(this.mon,t)||t===this.mon||t.dead||Math.hypot(t.x-p.x,t.y-p.y)>t.radius+this.mon.radius+.15);}
   block(source){
     const m=this.mon, chance=this.profile.guard;
     if(!chance||!source||!this.valid()||this.disabled()||this.active||m.action?.state==='attack')return false;
@@ -2401,7 +2421,7 @@ class ImperialCombat {
     this.cooldown=s.cd;this.begin(s.kind,s,t,shape,point);return true;
   }
   damage(target,mult,elem='phys'){
-    if(target.dead)return;
+    if(target.dead||!TerrainLayers.same(this.mon,target))return;
     const m=this.mon;
     target.takeDamage(U.rf(...m.def.dmg)*(m.def.dmgMult||1)*2.2*m.witherMult()*mult,m,elem);
   }
@@ -2500,7 +2520,7 @@ class ImperialCombat {
     const a=this.active,m=this.mon;if(!this.valid())return;
     const showWarnings=debug||this.profile.role==='boss';
     if(!debug&&!(showWarnings&&a?.shape&&a.stage!=='recovery')&&!(this.blockUntil>this.world.time))return;
-    const project=(x,y)=>({x:U.isoX(x,y)-cam.x,y:U.isoY(x,y)-cam.y-TerrainSurface.heightAt(this.map,x,y)*TerrainSurface.LIFT});
+    const project=(x,y)=>({x:U.isoX(x,y)-cam.x,y:U.isoY(x,y)-cam.y-TerrainSurface.heightAt(this.map,x,y,m.surfaceId)*TerrainSurface.LIFT});
     const trace=s=>{
       const points=[];
       if(s.kind==='line'){const dx=Math.cos(s.angle),dy=Math.sin(s.angle),r=s.width/2;points.push([s.x-dy*r,s.y+dx*r],[s.x+dx*s.length-dy*r,s.y+dy*s.length+dx*r],[s.x+dx*s.length+dy*r,s.y+dy*s.length-dx*r],[s.x+dy*r,s.y-dx*r]);}
@@ -2527,6 +2547,7 @@ class Monster extends Entity {
   constructor(defId, x, y, opts) {
     super(x, y);
     opts = opts || {};
+    this.surfaceId=opts.surfaceId??this.surfaceId;
     const base = DATA.resolveEnemy(defId,Game.state?.map?.id);
     /* clone def so elite modifiers can mutate */
     const def = JSON.parse(JSON.stringify(base));
@@ -2614,13 +2635,13 @@ class Monster extends Entity {
   pickTarget(player) {
     let best = player.dead ? null : player;
     let bd = player.dead ? Infinity : U.dist2(this.x, this.y, player.x, player.y);
-    for (const mi of Game.state.minions) {
+    for (const mi of TerrainLayers.targets(Game.state.minions)) {
       if (mi.dead || mi.untargetable) continue;   // hawks can't be picked as a direct target
       const dd = U.dist2(this.x, this.y, mi.x, mi.y);
       if (dd < bd) { bd = dd; best = mi; }
     }
     if (Game.state.map.zone.infight && !this.def.projectile && !this.isBoss) {
-      for (const o of Game.state.monsters) {
+      for (const o of TerrainLayers.targets(Game.state.monsters)) {
         if (o === this || o.dead || o.isBoss || (o.def.faction || o.def.family) === (this.def.faction || this.def.family)) continue;
         const dd = U.dist2(this.x, this.y, o.x, o.y);
         if (dd < bd && dd < (this.def.sight * this.def.sight)) { bd = dd; best = o; }
@@ -2628,7 +2649,7 @@ class Monster extends Entity {
     }
     /* taunting bulwarks (boar / bear / Bone Golem / decoy) drag aggro onto themselves */
     let taunter = null, td = 1e9;
-    for (const mi of Game.state.minions) { if (mi.dead || !mi.taunt) continue; const dd = U.dist2(this.x, this.y, mi.x, mi.y); if (dd < mi.taunt * mi.taunt && dd < td) { td = dd; taunter = mi; } }
+    for (const mi of TerrainLayers.targets(Game.state.minions)) { if (mi.dead || !mi.taunt) continue; const dd = U.dist2(this.x, this.y, mi.x, mi.y); if (dd < mi.taunt * mi.taunt && dd < td) { td = dd; taunter = mi; } }
     if (taunter) return taunter;
     return best;
   }
@@ -2734,7 +2755,7 @@ class Monster extends Entity {
   }
   allied(other){return !!other&&other!==this&&(other.def.faction||other.def.family)===(this.def.faction||this.def.family);}
   eligibleTarget(target){
-    if(!target||target.dead||target.untargetable)return false;
+    if(!target||target.dead||target.untargetable||!TerrainLayers.same(this,target))return false;
     const world=Game.state;
     if(target===world.player||world.minions.includes(target))return true;
     return !!world.map.zone.infight&&!this.def.projectile&&!this.isBoss&&target!==this&&!target.isBoss&&world.monsters.includes(target)&&!this.allied(target);
@@ -2742,9 +2763,9 @@ class Monster extends Entity {
   hostileTargets(){
     const world=Game.state,targets=[world.player,...world.minions];
     if(world.map.zone.infight&&!this.def.projectile&&!this.isBoss)for(const other of world.monsters)if(this.eligibleTarget(other))targets.push(other);
-    return targets.filter(t=>!t.dead&&!t.untargetable);
+    return targets.filter(t=>!t.dead&&!t.untargetable&&TerrainLayers.same(this,t));
   }
-  combatLos(target,origin=this){return U.los((x,y)=>MapGen.walkable(Game.state.map,x,y),origin.x,origin.y,target.x,target.y);}
+  combatLos(target,origin=this){return (target.surfaceId===undefined||TerrainLayers.same(this,target))&&U.los((x,y)=>MapGen.walkable(Game.state.map,x,y,this.surfaceId),origin.x,origin.y,target.x,target.y);}
   supportedPoint(x,y,radius=this.radius,map=Game.state.map){
     if(!TerrainNavigation.clear(map,x,y,radius))return false;
     if(map.surfaceVersion)return TerrainSurface.supported(map,x,y,radius);
@@ -2786,7 +2807,7 @@ class Monster extends Entity {
   }
   warnAttack(kind,shape,ability,resolve){
     const duration=Math.max(ability.windup||0,this.def.warnings?.[kind]||({slam:.8,charge:.6,leap:.6,whirl:.6}[kind]||.6));
-    const warning={type:'enemywarning',owner:this,shape,kind,col:this.combatColor(ability.elem||this.def.meleeElem),x:shape.x,y:shape.y,ttl:duration,maxTtl:duration};
+    const warning={surfaceId:this.surfaceId,type:'enemywarning',owner:this,shape,kind,col:this.combatColor(ability.elem||this.def.meleeElem),x:shape.x,y:shape.y,ttl:duration,maxTtl:duration};
     this.attackWarning=warning;Game.state.fx.push(warning);this.path=null;this.moving=false;
     this.startAction('attack',duration+(ability.recovery??.25),{act5Kind:kind});
     this.deferAttack(duration,()=>{if(this.attackWarning!==warning)return;warning.ttl=0;this.attackWarning=null;resolve(warning);});
@@ -2798,7 +2819,7 @@ class Monster extends Entity {
     child.summonOwner=this;child.fromSummon=true;child.def.faction=this.def.faction||this.def.family;
     this.children.push(child);return child;
   }
-  livingChildren(){this.children=this.children.filter(c=>!c.dead&&Game.state.monsters.includes(c));return this.children.length;}
+  livingChildren(){this.children=this.children.filter(c=>!c.dead&&TerrainLayers.targets(Game.state.monsters).includes(c));return this.children.length;}
 
   die(source, uniqueContext) {
     if (this.dead) return;
@@ -2827,33 +2848,33 @@ class Monster extends Entity {
       const bx = this.x, by = this.y, br = this.plague.burstRange || 2.5;
       Sfx.playSkill?.('gravebinder_2_1','impact',{owner:Game.state.player,emitter:this,elem:'poison'});
       if(typeof SkillVFX!=='undefined')SkillVFX.scope(Game.state.player,'gravebinder_2_1',()=>Game.addNova(bx,by,br,"#90ff70"));else Game.addNova(bx, by, br, "#90ff70");
-      for (const m of Game.state.monsters) { if (m.dead || m === this || m.plague) continue; if (U.dist(bx, by, m.x, m.y) <= br + m.radius) m.plague = { until: Game.state.time + 5, tick: this.plague.tick, tickT: 0, spreadCd: 1.5, spreadRange: this.plague.spreadRange, burstRange: br }; }
+      for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this || m.plague) continue; if (U.dist(bx, by, m.x, m.y) <= br + m.radius) m.plague = { until: Game.state.time + 5, tick: this.plague.tick, tickT: 0, spreadCd: 1.5, spreadRange: this.plague.spreadRange, burstRange: br }; }
     }
     /* Rabies: a rabid corpse erupts into a contagious poison cloud */
     if (this.rabies && Game.state.time < this.rabies.until) {
       Sfx.playSkill?.('rabies','impact',{owner:this.rabies.owner||Game.state.player,emitter:this,elem:'poison'});
       if(typeof SkillVFX!=='undefined')SkillVFX.scope(this.rabies.owner||Game.state.player,'rabies',()=>Game.addNova(this.x,this.y,this.rabies.cloudRad,"#90ff70"));else Game.addNova(this.x, this.y, this.rabies.cloudRad, "#90ff70");
-      Game.state.fx.push({ type: "groundfield", fieldKind: "miasma", rabies: true, rdps: this.rabies.dps, rdur: 8, rcloud: this.rabies.cloudRad,
+      Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "groundfield", fieldKind: "miasma", rabies: true, rdps: this.rabies.dps, rdur: 8, rcloud: this.rabies.cloudRad,
         owner: this.rabies.owner || Game.state.player, sourceSkill:'rabies', x: this.x, y: this.y, radius: this.rabies.cloudRad, ttl: 4, maxTtl: 4, tickEvery: 0.5 });
     }
     /* Brittle Bones: a frozen foe SHATTERS on death, splashing cold */
     if (this.frozen && Game.state.time < this.frozen && Game.state.player && Game.state.player.stats && Game.state.player.stats.shatterRank > 0) {
       const sr = Game.state.player.stats.shatterRank, pl0 = Game.state.player;
       Game.addNova(this.x, this.y, 2.2, "#9fd8ff"); Sfx.playSkill?.('emberwitch_1_2','impact',{owner:pl0,emitter:this,elem:'cold',trigger:'frozen'});
-      for (const m of Game.state.monsters) { if (m.dead || m === this) continue; if (U.dist(this.x, this.y, m.x, m.y) < 2.2 + m.radius) pl0.spellHit(m, 6 + 3 * sr, "cold", {}); }
+      for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this) continue; if (U.dist(this.x, this.y, m.x, m.y) < 2.2 + m.radius) pl0.spellHit(m, 6 + 3 * sr, "cold", {}); }
     }
     /* Heat Haze: a Scorched corpse erupts, scattering its stacks to the pack */
     if (this.scorch && Game.state.player && Game.state.player.stats && Game.state.player.stats.scorchSpread > 0) {
       if(typeof SkillAudio!=='undefined')SkillAudio.passive(Game.state.player,'fire',{emitter:this});
       const give = Math.ceil(this.scorch.stacks / 2), sdps = this.scorch.dps;
       Game.addNova(this.x, this.y, 2.0, "#ff7a20");
-      for (const m of Game.state.monsters) { if (m.dead || m === this) continue; if (U.dist(this.x, this.y, m.x, m.y) < 2.0 + m.radius) { const sc = m.scorch || { stacks: 0 }; sc.stacks = Math.min(5, sc.stacks + give); sc.dps = sdps; sc.until = Game.state.time + 3; m.scorch = sc; } }
+      for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this) continue; if (U.dist(this.x, this.y, m.x, m.y) < 2.0 + m.radius) { const sc = m.scorch || { stacks: 0 }; sc.stacks = Math.min(5, sc.stacks + give); sc.dps = sdps; sc.until = Game.state.time + 3; m.scorch = sc; } }
     }
     /* Grave Whispers: a curse leaps off the dead to the nearest un-cursed foe */
     const pl = Game.state.player;
     if (pl && pl.stats && pl.stats.curseSpread > 0 && (this.curseFrailty || this.curseWither)) {
       let best = null, bd = 25;
-      for (const m of Game.state.monsters) { if (m.dead || m === this || m.curseFrailty || m.curseWither) continue; const dd = U.dist2(this.x, this.y, m.x, m.y); if (dd < bd) { bd = dd; best = m; } }
+      for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this || m.curseFrailty || m.curseWither) continue; const dd = U.dist2(this.x, this.y, m.x, m.y); if (dd < bd) { bd = dd; best = m; } }
       if (best) { if (this.curseFrailty) best.curseFrailty = { until: Game.state.time + 6, pct: this.curseFrailty.pct }; if (this.curseWither) best.curseWither = { until: Game.state.time + 6, pct: this.curseWither.pct }; Game.addParticle(best.x, best.y, "#b070d0"); if(typeof SkillAudio!=='undefined')SkillAudio.passive(pl,'curse',{target:best}); }
     }
     /* Soul Harvest: each cursed/marked kill grants a stacking spell charge */
@@ -2869,7 +2890,7 @@ class Monster extends Entity {
       const b = this.def.deathBurst, bx = this.x, by = this.y;
       const world=Game.state,map=world.map,epoch=this.castEpoch,windup=Math.max(.6,b.windup||0),col=this.combatColor(b.elem||'poison');
       const shape={kind:'circle',x:bx,y:by,radius:b.radius};
-      const warning={type:'enemywarning',owner:this,death:true,shape,kind:'deathBurst',col,x:bx,y:by,ttl:windup,maxTtl:windup};
+      const warning={surfaceId:this.surfaceId,type:'enemywarning',owner:this,death:true,shape,kind:'deathBurst',col,x:bx,y:by,ttl:windup,maxTtl:windup};
       world.fx.push(warning);
       Game.afterDelay(windup, () => {
         warning.ttl=0;
@@ -2903,7 +2924,7 @@ class Monster extends Entity {
 
   startTelegraphedSlam(player, map) {
     const s=this.def.slam, hero=player, world=Game.state;
-    const warning={type:"slamwarning",owner:this,x:this.x,y:this.y,radius:s.radius,
+    const warning={surfaceId:this.surfaceId,type:"slamwarning",owner:this,x:this.x,y:this.y,radius:s.radius,
       ttl:s.windup,maxTtl:s.windup,col:s.color||"#a8e5ff"};
     this.slamWarning=warning;this.slamCd=s.cd;this.path=null;this.moving=false;
     this.startAction("attack",s.windup+(s.recovery??1),{act5Kind:"slam"});
@@ -2982,7 +3003,7 @@ class Monster extends Entity {
         pg.spreadCd = 1.5 * (1 - ((player.stats && player.stats.plagueSpreadPct) || 0) / 100);
         const rng = (pg.spreadRange || 3.5) * (1 + ((player.stats && player.stats.plagueSpreadPct) || 0) / 100);
         let best = null, bd = rng * rng;
-        for (const m of Game.state.monsters) { if (m.dead || m === this || m.plague) continue; const dd = U.dist2(this.x, this.y, m.x, m.y); if (dd < bd) { bd = dd; best = m; } }
+        for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this || m.plague) continue; const dd = U.dist2(this.x, this.y, m.x, m.y); if (dd < bd) { bd = dd; best = m; } }
         if (best) best.plague = { until: Game.state.time + (pg.until - Game.state.time), tick: pg.tick, tickT: 0, spreadCd: 1.5, spreadRange: pg.spreadRange, burstRange: pg.burstRange };
         if(best&&typeof SkillVFX!=='undefined')SkillVFX.transfer(player,'gravebinder_2_1',this,best);
       }
@@ -2997,6 +3018,19 @@ class Monster extends Entity {
     /* Killing Mark detonates on expiry too, not only on death */
     if (this.killMark && Game.state.time >= this.killMark.until) Game.detonateMark(this);
     if (this.def.regen && !this.noHeal) this.hp = Math.min(this.maxHp, this.hp + this.maxHp * this.def.regen * dt);
+    // Keep lifecycle and existing damage ticking while the pursuit takes stairs.
+    // Stationary encounters remain in their authored arenas.
+    if(map.layers&&!TerrainLayers.same(this,player)){
+      if(!this.awaitingSurface){this.cancelAttacks();this.awaitingSurface=true;}
+      if(this.isBoss||this.encounter||this.stunT>0||this.frozen>Game.state.time||player.dead||(!this.aggro&&U.dist(this.x,this.y,player.x,player.y)>22)){
+        this.path=null;this.moving=false;return;
+      }
+      this.aggro=true;
+      Game.repath(this,player.x,player.y,player.surfaceId);
+      this.moveAlong(dt,this.def.speed,map,TerrainLayers.targets(Game.state.monsters));
+      return;
+    }
+    this.awaitingSurface=false;
     if(this.encounter){this.encounter.update(dt,player,map);return;}
     if(this.act2Held){this.path=null;this.moving=false;return;}
     if(this.act2Grace>0){this.act2Grace-=dt;this.moving=false;return;}
@@ -3098,7 +3132,7 @@ class Monster extends Entity {
     /* Hex of Beckoning: drop everything and stampede to the marked point */
     if (this.beckon && Game.state.time < this.beckon.until) {
       this.aggro = true;
-      if (U.dist(this.x, this.y, this.beckon.x, this.beckon.y) > 0.7) { this.path = [{ cx: this.beckon.x, cy: this.beckon.y }]; this.moveAlong(dt, this.def.speed, map, Game.state.monsters); }
+      if (U.dist(this.x, this.y, this.beckon.x, this.beckon.y) > 0.7) { this.path = [{ cx: this.beckon.x, cy: this.beckon.y }]; this.moveAlong(dt, this.def.speed, map, TerrainLayers.targets(Game.state.monsters)); }
       else this.moving = false;
       return;
     }
@@ -3107,7 +3141,7 @@ class Monster extends Entity {
       const dd = U.dist(this.x, this.y, player.x, player.y) || 1;
       const tx = this.x + (this.x - player.x) / dd * 2.5, ty = this.y + (this.y - player.y) / dd * 2.5;
       this.path = [{ cx: U.clamp(tx, 1, map.w - 2), cy: U.clamp(ty, 1, map.h - 2) }];
-      this.moveAlong(dt, this.def.speed * 1.1, map, Game.state.monsters);
+      this.moveAlong(dt, this.def.speed * 1.1, map, TerrainLayers.targets(Game.state.monsters));
       return;
     }
     if (player.dead) { this.aggro = false; }
@@ -3147,7 +3181,7 @@ class Monster extends Entity {
         if (this.def.voice) Sfx.voice(this.def.voice, this.def.aggroLines[0]);
       }
       /* wake the pack */
-      for (const o of Game.state.monsters) if (!o.dead && !o.aggro && U.dist(o.x, o.y, this.x, this.y) < 5) o.aggro = true;
+      for (const o of TerrainLayers.targets(Game.state.monsters)) if (!o.dead && !o.aggro && U.dist(o.x, o.y, this.x, this.y) < 5) o.aggro = true;
     }
     /* treasure-beasts bolt away from the hero — catch them for the hoard;
        the "cause flee" affix sets a temporary fleeUntil timer */
@@ -3156,7 +3190,7 @@ class Monster extends Entity {
       const dd = U.dist(this.x, this.y, player.x, player.y) || 1;
       const tx = this.x + (this.x - player.x) / dd * 2, ty = this.y + (this.y - player.y) / dd * 2;
       this.path = [{ cx: U.clamp(tx, 1, map.w - 2), cy: U.clamp(ty, 1, map.h - 2) }];
-      this.moveAlong(dt, this.def.speed, map, Game.state.monsters);
+      this.moveAlong(dt, this.def.speed, map, TerrainLayers.targets(Game.state.monsters));
       return;
     }
     if (!this.aggro) {
@@ -3168,7 +3202,7 @@ class Monster extends Entity {
         const tx = this.x + Math.cos(a) * r, ty = this.y + Math.sin(a) * r;
         if (walk(tx, ty)) this.path = [{ cx: tx, cy: ty, x: tx | 0, y: ty | 0 }];
       }
-      this.moveAlong(dt, this.def.speed * 0.4, map, Game.state.monsters);
+      this.moveAlong(dt, this.def.speed * 0.4, map, TerrainLayers.targets(Game.state.monsters));
       if (!this.path || !this.path.length) this.moving = false;
       return;
     }
@@ -3219,7 +3253,7 @@ class Monster extends Entity {
       const da = this.def.detonateAllies;
       this.detonateCd = (this.detonateCd || 0) - dt;
       if (this.detonateCd <= 0 && d < (da.range || 10)) {
-        const allies = Game.state.monsters.filter(m => !m.dead && m !== this && !m.isBoss
+        const allies = TerrainLayers.targets(Game.state.monsters).filter(m => !m.dead && m !== this && !m.isBoss
           && U.dist(this.x, this.y, m.x, m.y) < (da.range || 10)
           && (m.minion || m.fromSummon || /dead|risen|cult|drowned|husk|skeleton|wretch|choir/.test(m.defId || "")));
         if (allies.length) {
@@ -3238,7 +3272,7 @@ class Monster extends Entity {
               for (let i = 0; i < 12; i++) Game.addParticle(ex, ey, "#ff9040");
               const dmg = U.rf(...this.def.dmg) * (da.mult || 1.5) * (this.def.dmgMult || 1) * 2.2 * this.witherMult();
               if (!pl.dead && U.dist(ex, ey, pl.x, pl.y) <= da.radius + pl.radius) pl.takeDamage(dmg, this, "fire");
-              for (const mi of Game.state.minions) if (!mi.dead && U.dist(ex, ey, mi.x, mi.y) <= da.radius + mi.radius) mi.takeDamage(dmg, this);
+              for (const mi of TerrainLayers.targets(Game.state.minions)) if (!mi.dead && U.dist(ex, ey, mi.x, mi.y) <= da.radius + mi.radius) mi.takeDamage(dmg, this);
             }
             Game.fx.shake = Math.max(Game.fx.shake, 5); Sfx.play("blast");
           });
@@ -3262,7 +3296,7 @@ class Monster extends Entity {
           spots.push({ x: player.x + Math.cos(a) * rr, y: player.y + Math.sin(a) * rr });
         }
         spots.forEach((s, i) => {
-          this.deferAttack(i * 0.18, () => { if (!this.dead) Game.state.fx.push({ type: "meteorfall", owner: this, x: s.x, y: s.y, radius, col: "#ff7a30", ttl: warn, maxTtl: warn }); });
+          this.deferAttack(i * 0.18, () => { if (!this.dead) Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "meteorfall", owner: this, x: s.x, y: s.y, radius, col: "#ff7a30", ttl: warn, maxTtl: warn }); });
           this.deferAttack(warn + i * 0.18, () => {
             if (this.dead) return;
             const pl = Game.state.player;
@@ -3270,7 +3304,7 @@ class Monster extends Entity {
             for (let k = 0; k < 16; k++) Game.addParticle(s.x + U.rf(-radius, radius) * 0.6, s.y + U.rf(-radius, radius) * 0.6, "#ff9040");
             const dmg = U.rf(...this.def.dmg) * (mr.mult || 1.4) * (this.def.dmgMult || 1) * 2.2 * this.witherMult();
             if (!pl.dead && U.dist(s.x, s.y, pl.x, pl.y) <= radius + pl.radius) pl.takeDamage(dmg, this, "fire");
-            for (const mi of Game.state.minions) if (!mi.dead && U.dist(s.x, s.y, mi.x, mi.y) <= radius + mi.radius) mi.takeDamage(dmg, this);
+            for (const mi of TerrainLayers.targets(Game.state.minions)) if (!mi.dead && U.dist(s.x, s.y, mi.x, mi.y) <= radius + mi.radius) mi.takeDamage(dmg, this);
             Sfx.play("blast");
           });
         });
@@ -3302,7 +3336,7 @@ class Monster extends Entity {
       this.healCd -= dt;
       if (this.healCd <= 0) {
         let patient = null, mostMissing = 8;
-        for (const o of Game.state.monsters) {
+        for (const o of TerrainLayers.targets(Game.state.monsters)) {
           if (o.dead || o.noHeal || !this.allied(o) || !this.combatLos(o)) continue;
           if (U.dist(this.x, this.y, o.x, o.y) > this.def.heals.radius) continue;
           const missing = o.maxHp - o.hp;
@@ -3312,7 +3346,7 @@ class Monster extends Entity {
           this.healCd = this.def.heals.cd;
           this.startAction("attack", 0.6, {act5Kind:"heal"});
           this.deferAttack(0.4, () => {
-            if (this.dead || patient.dead || patient.noHeal || !this.allied(patient) || !Game.state.monsters.includes(patient) || U.dist(this.x,this.y,patient.x,patient.y)>this.def.heals.radius || !this.combatLos(patient)) return;
+            if (this.dead || patient.dead || patient.noHeal || !this.allied(patient) || !TerrainLayers.targets(Game.state.monsters).includes(patient) || U.dist(this.x,this.y,patient.x,patient.y)>this.def.heals.radius || !this.combatLos(patient)) return;
             patient.hp = Math.min(patient.maxHp, patient.hp + this.def.heals.amount);
             Game.addNova(patient.x, patient.y, 0.8, "#90ff90",typeof Act5EnemyAnimation!=='undefined'?Act5EnemyAnimation.novaPresentation(this):undefined);
             Game.addFloat(patient.x, patient.y, "+" + this.def.heals.amount, "#90ff90");
@@ -3465,7 +3499,7 @@ class Monster extends Entity {
       if (dT > .001 && dT < this.def.keepDist - 1 && hasLos) {
         /* back away */
         const ax = this.x + (this.x - tgt.x) / dT * 1.5, ay = this.y + (this.y - tgt.y) / dT * 1.5;
-        if (walk(ax, ay)) { this.path = [{ cx: ax, cy: ay }]; this.moveAlong(dt, this.def.speed, map, Game.state.monsters); return; }
+        if (walk(ax, ay)) { this.path = [{ cx: ax, cy: ay }]; this.moveAlong(dt, this.def.speed, map, TerrainLayers.targets(Game.state.monsters)); return; }
       }
       if (!hasLos || dT > this.def.range - 1) {
         this.chase(dt, tgt, map, walk);
@@ -3507,7 +3541,7 @@ class Monster extends Entity {
       this.repathT = 0.4 + Math.random() * 0.3;
       Game.repath(this, player.x, player.y);
     }
-    this.moveAlong(dt, this.def.speed, map, Game.state.monsters);
+    this.moveAlong(dt, this.def.speed, map, TerrainLayers.targets(Game.state.monsters));
     if (!this.path || !this.path.length) this.moving = false;
   }
 }
@@ -3558,7 +3592,7 @@ class Projectile {
   constructor(o) {
     this.enemySlow=o.enemySlow||null;
     this.sourceSkill=o.sourceSkill||null;this.visualOwner=o.visualOwner||null;
-    this.x = o.x; this.y = o.y;
+    this.x = o.x; this.y = o.y; this.surfaceId=o.surfaceId??TerrainLayers.current(Game.state.map);
     this.lift = o.lift ?? 14;       // fixed world height captured at weapon release
     const d = Math.max(0.001, U.dist(o.x, o.y, o.tx, o.ty));
     this.vx = (o.tx - o.x) / d * o.speed;
@@ -3578,7 +3612,7 @@ class Projectile {
     this.minionSource = o.minionSource || (o.visualOwner ? { owner:o.visualOwner } : null);
     this.pierce = !!o.pierce;           // weapon-based piercing arrows
     this.lob = o.lob || null;               // {sx,sy,tx,ty,dur,pool,count,radius,dmg}  (thrown undead body)
-    if(this.lob?.owner){const l=this.lob;Game.state.fx.push({type:'enemywarning',projectile:this,shape:{kind:'circle',x:l.tx,y:l.ty,radius:l.radius},kind:'throw',col:'#e4d1b0',x:l.tx,y:l.ty,ttl:l.dur,maxTtl:l.dur});}
+    if(this.lob?.owner){const l=this.lob;Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map),type:'enemywarning',projectile:this,shape:{kind:'circle',x:l.tx,y:l.ty,radius:l.radius},kind:'throw',col:'#e4d1b0',x:l.tx,y:l.ty,ttl:l.dur,maxTtl:l.dur});}
     this.boomerang = o.boomerang || null;   // {maxRange, returning}  (Returning Axe)
     this.ricochet = o.ricochet || null;     // {bounces}              (Ricochet Shard)
     this.maxPierce = o.maxPierce || 0;      // charge_shot pierce cap
@@ -3722,7 +3756,7 @@ class Projectile {
         const mon = this.mon;
         const hitDmg = mon ? U.rf(...mon.def.dmg) * (mon.def.dmgMult || 1) * 2.2 * mon.witherMult() * this.bossMult : 0;
         const elem = this.elem || (mon && mon.def.projectile && mon.def.projectile.elem);
-        if (!player.dead && U.dist(this.x, this.y, player.x, player.y) < player.radius + 0.25 &&
+        if (TerrainLayers.same(this,player) && !player.dead && U.dist(this.x, this.y, player.x, player.y) < player.radius + 0.25 &&
             (!this.bossLane||BossEncounters.contains(this.bossLane,player.x,player.y))) {
           if (player.stats.dodge > 0 && Math.random() * 100 < player.stats.dodge) { Game.addFloat(player.x, player.y, "evade", "#b0a0d0"); }
           else if (player.tryBlock(this)) { Sfx.play("block"); Game.addFloat(player.x, player.y, "block", "#80a0ff"); }
@@ -3733,7 +3767,7 @@ class Projectile {
           }
           this.dead = true; return;
         }
-        for (const mi of Game.state.minions) {
+        for (const mi of TerrainLayers.targets(Game.state.minions)) {
           if (mi.dead || mi.untargetable) continue;
           if (U.dist(this.x, this.y, mi.x, mi.y) < mi.radius + 0.25 &&
               (!this.bossLane||BossEncounters.contains(this.bossLane,mi.x,mi.y))) {
@@ -3749,4 +3783,28 @@ class Projectile {
     else if (this.kind === "lance" && Math.random() < dt * 34) Game.addParticle(this.x, this.y, "#cfeaff");
     else if (this.kind === "spark" && Math.random() < dt * 26) Game.addParticle(this.x, this.y, "#fff080");
   }
+}
+
+
+/* Scope legacy skill implementations to their actor's surface. All collection
+   reads and terrain queries inside a release share the same floor identity. */
+for(const Type of [Player,Monster,Minion,Projectile]){
+  for(const name of ['update','performSkill','releaseDraw']){
+    const original=Type.prototype[name];if(!original)continue;
+    Type.prototype[name]=function(...args){
+      const map=Game.state.map;
+      if(name==='performSkill'&&((args[1]&&!TerrainLayers.same(this,args[1]))||(args[2]&&args[2].surfaceId!==undefined&&!TerrainLayers.same(this,args[2]))))return false;
+      if(Type===Projectile&&name==='update')args[3]=TerrainLayers.targets(args[3],this);
+      return TerrainLayers.scope(map,this,()=>original.apply(this,args));
+    };
+  }
+  const damage=Type.prototype.takeDamage;
+  if(damage)Type.prototype.takeDamage=function(amount,source,...rest){
+    if(!TerrainLayers.affects(Game.state.map,this,source))return 0;
+    return damage.call(this,amount,source,...rest);
+  };
+}
+for(const name of ['strike','spellHit']){
+  const original=Player.prototype[name];
+  Player.prototype[name]=function(target,...args){if(!TerrainLayers.affects(Game.state.map,target,this))return 0;return original.call(this,target,...args);};
 }

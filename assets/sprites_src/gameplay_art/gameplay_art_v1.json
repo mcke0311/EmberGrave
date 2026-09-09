@@ -14544,6 +14544,1371 @@
       ],
       "sourceKind": "authored-final-aligned"
     },
+    "prop:act3_arch_bridge_arch": {
+      "anchor": [
+        100,
+        324
+      ],
+      "assetId": "world.prop.act3_arch_bridge_arch",
+      "bundle": "world",
+      "key": "act3_arch_bridge_arch",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_bridge_arch.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            114,
+            7,
+            418,
+            512
+          ],
+          "cell": [
+            1024,
+            0,
+            1536,
+            512
+          ],
+          "uniformWidth": 200
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/bridge.png",
+        "sourceSha256": "d6f0dec6d57f5141e32f899f607fe09363074ee893742e20cade28ca00ccb90d"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "4f321469bb19e5721992f7d9f5dfc824601c84cfd142d55656c46f26b668a928",
+      "size": [
+        200,
+        332
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_bridge_deck_east": {
+      "anchor": [
+        128,
+        177
+      ],
+      "assetId": "world.prop.act3_arch_bridge_deck_east",
+      "bundle": "world",
+      "key": "act3_arch_bridge_deck_east",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_bridge_deck_east.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            28,
+            64,
+            512,
+            413
+          ],
+          "cell": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "uniformWidth": 256
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/bridge.png",
+        "sourceSha256": "d6f0dec6d57f5141e32f899f607fe09363074ee893742e20cade28ca00ccb90d"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "9265cad09b773378a6a77d920b3faa448e9e5818598cb5ac68ba8891ee8171ec",
+      "size": [
+        256,
+        185
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_bridge_deck_south": {
+      "anchor": [
+        128,
+        179
+      ],
+      "assetId": "world.prop.act3_arch_bridge_deck_south",
+      "bundle": "world",
+      "key": "act3_arch_bridge_deck_south",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_bridge_deck_south.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            33,
+            64,
+            512,
+            413
+          ],
+          "cell": [
+            512,
+            0,
+            1024,
+            512
+          ],
+          "uniformWidth": 256
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/bridge.png",
+        "sourceSha256": "d6f0dec6d57f5141e32f899f607fe09363074ee893742e20cade28ca00ccb90d"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "25bf45a48d4c129ffbec0289c0fa18c375e9b41d11eee5e35c8e573a2a40b73a",
+      "size": [
+        256,
+        187
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_bridge_parapet": {
+      "anchor": [
+        56,
+        82
+      ],
+      "assetId": "world.prop.act3_arch_bridge_parapet",
+      "bundle": "world",
+      "key": "act3_arch_bridge_parapet",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_bridge_parapet.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            49,
+            82,
+            469,
+            418
+          ],
+          "cell": [
+            1024,
+            512,
+            1536,
+            1024
+          ],
+          "uniformWidth": 112
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/bridge.png",
+        "sourceSha256": "d6f0dec6d57f5141e32f899f607fe09363074ee893742e20cade28ca00ccb90d"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "67fd482fd5ba2e162bcd4713de6f9cdaa944c74e5337ede2219e7e09deeb6ea7",
+      "size": [
+        112,
+        90
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_bridge_stairs_east": {
+      "anchor": [
+        120,
+        216
+      ],
+      "assetId": "world.prop.act3_arch_bridge_stairs_east",
+      "bundle": "world",
+      "key": "act3_arch_bridge_stairs_east",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_bridge_stairs_east.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            39,
+            9,
+            500,
+            439
+          ],
+          "cell": [
+            0,
+            512,
+            512,
+            1024
+          ],
+          "uniformWidth": 240
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/bridge.png",
+        "sourceSha256": "d6f0dec6d57f5141e32f899f607fe09363074ee893742e20cade28ca00ccb90d"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "4afff0ec88d48b7454a332b677085bd14b685066a80444554c0bc3d930ba8bfa",
+      "size": [
+        240,
+        224
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_bridge_stairs_south": {
+      "anchor": [
+        120,
+        217
+      ],
+      "assetId": "world.prop.act3_arch_bridge_stairs_south",
+      "bundle": "world",
+      "key": "act3_arch_bridge_stairs_south",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_bridge_stairs_south.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            27,
+            10,
+            485,
+            439
+          ],
+          "cell": [
+            512,
+            512,
+            1024,
+            1024
+          ],
+          "uniformWidth": 240
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/bridge.png",
+        "sourceSha256": "d6f0dec6d57f5141e32f899f607fe09363074ee893742e20cade28ca00ccb90d"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "a230b90f7bf7f6ef6631711049196dab7188182f37b384e22faa2b529b91b980",
+      "size": [
+        240,
+        225
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_deckmaterial_material": {
+      "anchor": [
+        128,
+        120
+      ],
+      "assetId": "world.prop.act3_arch_deckmaterial_material",
+      "bundle": "world",
+      "key": "act3_arch_deckmaterial_material",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_deckmaterial_material.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            0,
+            0,
+            256,
+            128
+          ],
+          "cell": [
+            0,
+            0,
+            256,
+            128
+          ],
+          "uniformWidth": 256
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/deckmaterial.png",
+        "sourceSha256": "6a2e7010ac4c003a2fce2e4fcc3fad0bff684dc3f8499d9a1b5d8b6cc719fb1c"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "6a2e7010ac4c003a2fce2e4fcc3fad0bff684dc3f8499d9a1b5d8b6cc719fb1c",
+      "size": [
+        256,
+        128
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_palace_broken": {
+      "anchor": [
+        60,
+        134
+      ],
+      "assetId": "world.prop.act3_arch_palace_broken",
+      "bundle": "world",
+      "key": "act3_arch_palace_broken",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_palace_broken.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            45,
+            13,
+            363,
+            390
+          ],
+          "cell": [
+            444,
+            444,
+            887,
+            887
+          ],
+          "uniformWidth": 120
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/palace.png",
+        "sourceSha256": "f09ceb0bf555ba294219ec76c695a3edb48d7f56eb43245ed62272a9466928c7"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "b70eaf268e7c00dc62c52fcbc1277c63e90485d7af31182daf3dd69edbb1eb3d",
+      "size": [
+        120,
+        142
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_palace_buttress": {
+      "anchor": [
+        32,
+        79
+      ],
+      "assetId": "world.prop.act3_arch_palace_buttress",
+      "bundle": "world",
+      "key": "act3_arch_palace_buttress",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_palace_buttress.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            100,
+            0,
+            386,
+            391
+          ],
+          "cell": [
+            1330,
+            444,
+            1774,
+            887
+          ],
+          "uniformWidth": 64
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/palace.png",
+        "sourceSha256": "f09ceb0bf555ba294219ec76c695a3edb48d7f56eb43245ed62272a9466928c7"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "6b12bb2983db354b286824265c6c74196147ae0b992e2a396c4be8e9001bc360",
+      "size": [
+        64,
+        87
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_palace_door": {
+      "anchor": [
+        75,
+        161
+      ],
+      "assetId": "world.prop.act3_arch_palace_door",
+      "bundle": "world",
+      "key": "act3_arch_palace_door",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_palace_door.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            53,
+            0,
+            407,
+            399
+          ],
+          "cell": [
+            887,
+            444,
+            1330,
+            887
+          ],
+          "uniformWidth": 150
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/palace.png",
+        "sourceSha256": "f09ceb0bf555ba294219ec76c695a3edb48d7f56eb43245ed62272a9466928c7"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "6f1a4ba568186f5e1cdcf1f20df53389734f79a4b9deaff358634b2ab215f558",
+      "size": [
+        150,
+        169
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_palace_east": {
+      "anchor": [
+        60,
+        123
+      ],
+      "assetId": "world.prop.act3_arch_palace_east",
+      "bundle": "world",
+      "key": "act3_arch_palace_east",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_palace_east.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            62,
+            44,
+            401,
+            413
+          ],
+          "cell": [
+            444,
+            0,
+            887,
+            444
+          ],
+          "uniformWidth": 120
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/palace.png",
+        "sourceSha256": "f09ceb0bf555ba294219ec76c695a3edb48d7f56eb43245ed62272a9466928c7"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "533bc154e731e5c0091b6e189dacf08c98f174e2ab349564aaa457754d19ae9c",
+      "size": [
+        120,
+        131
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_palace_inner": {
+      "anchor": [
+        75,
+        132
+      ],
+      "assetId": "world.prop.act3_arch_palace_inner",
+      "bundle": "world",
+      "key": "act3_arch_palace_inner",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_palace_inner.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            50,
+            36,
+            402,
+            364
+          ],
+          "cell": [
+            1330,
+            0,
+            1774,
+            444
+          ],
+          "uniformWidth": 150
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/palace.png",
+        "sourceSha256": "f09ceb0bf555ba294219ec76c695a3edb48d7f56eb43245ed62272a9466928c7"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "ddf284533ce98bb883687450017fa32b8cec69572a3b2d3f343a0d934bc731c4",
+      "size": [
+        150,
+        140
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_palace_outer": {
+      "anchor": [
+        75,
+        144
+      ],
+      "assetId": "world.prop.act3_arch_palace_outer",
+      "bundle": "world",
+      "key": "act3_arch_palace_outer",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_palace_outer.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            65,
+            43,
+            390,
+            373
+          ],
+          "cell": [
+            887,
+            0,
+            1330,
+            444
+          ],
+          "uniformWidth": 150
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/palace.png",
+        "sourceSha256": "f09ceb0bf555ba294219ec76c695a3edb48d7f56eb43245ed62272a9466928c7"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "e0e73a284701512b7dd4f19a270aaf9eefcdeeb496b5fd9ce030de13c5aadb3d",
+      "size": [
+        150,
+        152
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_palace_pillar": {
+      "anchor": [
+        32,
+        119
+      ],
+      "assetId": "world.prop.act3_arch_palace_pillar",
+      "bundle": "world",
+      "key": "act3_arch_palace_pillar",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_palace_pillar.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            125,
+            4,
+            314,
+            380
+          ],
+          "cell": [
+            0,
+            444,
+            444,
+            887
+          ],
+          "uniformWidth": 64
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/palace.png",
+        "sourceSha256": "f09ceb0bf555ba294219ec76c695a3edb48d7f56eb43245ed62272a9466928c7"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "96b99cf6aed63401aac7e20b7a2a442a03331da48d2c9a399dd42d1b17c1aa20",
+      "size": [
+        64,
+        127
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_palace_south": {
+      "anchor": [
+        60,
+        113
+      ],
+      "assetId": "world.prop.act3_arch_palace_south",
+      "bundle": "world",
+      "key": "act3_arch_palace_south",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_palace_south.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            33,
+            11,
+            426,
+            408
+          ],
+          "cell": [
+            0,
+            0,
+            444,
+            444
+          ],
+          "uniformWidth": 120
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/palace.png",
+        "sourceSha256": "f09ceb0bf555ba294219ec76c695a3edb48d7f56eb43245ed62272a9466928c7"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "b2b87de197c8d1028d41d4e7122002bb456421d535ad4369d3718b5be2f7dcf2",
+      "size": [
+        120,
+        121
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_rock_east": {
+      "anchor": [
+        60,
+        76
+      ],
+      "assetId": "world.prop.act3_arch_rock_east",
+      "bundle": "world",
+      "key": "act3_arch_rock_east",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_rock_east.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            46,
+            11,
+            761,
+            512
+          ],
+          "cell": [
+            0,
+            0,
+            768,
+            512
+          ],
+          "uniformWidth": 120
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/rock.png",
+        "sourceSha256": "8eee8cce81b50c9bbb89eb792b2f0cf2c844789fb0e894777e9c34006a4f8338"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "1a2341157541f48a6bd0ff39931eccfd591bb36ac1557c35ca5a04f487392ba9",
+      "size": [
+        120,
+        84
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_rock_outer": {
+      "anchor": [
+        75,
+        98
+      ],
+      "assetId": "world.prop.act3_arch_rock_outer",
+      "bundle": "world",
+      "key": "act3_arch_rock_outer",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_rock_outer.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            82,
+            16,
+            729,
+            473
+          ],
+          "cell": [
+            0,
+            512,
+            768,
+            1024
+          ],
+          "uniformWidth": 150
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/rock.png",
+        "sourceSha256": "8eee8cce81b50c9bbb89eb792b2f0cf2c844789fb0e894777e9c34006a4f8338"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "8823738d7e81ed8599c3723c377b937384f52c828d569bc88e18c4b3faa7c2c5",
+      "size": [
+        150,
+        106
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_rock_retaining": {
+      "anchor": [
+        75,
+        110
+      ],
+      "assetId": "world.prop.act3_arch_rock_retaining",
+      "bundle": "world",
+      "key": "act3_arch_rock_retaining",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_rock_retaining.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            97,
+            0,
+            694,
+            470
+          ],
+          "cell": [
+            768,
+            512,
+            1536,
+            1024
+          ],
+          "uniformWidth": 150
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/rock.png",
+        "sourceSha256": "8eee8cce81b50c9bbb89eb792b2f0cf2c844789fb0e894777e9c34006a4f8338"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "9a33c57f9e9b3c8b721c135f82d649f3531c3452ca689ec4d5e292e43feb28c1",
+      "size": [
+        150,
+        118
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_rock_south": {
+      "anchor": [
+        60,
+        79
+      ],
+      "assetId": "world.prop.act3_arch_rock_south",
+      "bundle": "world",
+      "key": "act3_arch_rock_south",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_rock_south.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            30,
+            15,
+            715,
+            512
+          ],
+          "cell": [
+            768,
+            0,
+            1536,
+            512
+          ],
+          "uniformWidth": 120
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/rock.png",
+        "sourceSha256": "8eee8cce81b50c9bbb89eb792b2f0cf2c844789fb0e894777e9c34006a4f8338"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "4e32bc81855e2a9882b73deb617af83c79473b97167d488ba631a73da1feceb1",
+      "size": [
+        120,
+        87
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_sandstone_broken": {
+      "anchor": [
+        60,
+        130
+      ],
+      "assetId": "world.prop.act3_arch_sandstone_broken",
+      "bundle": "world",
+      "key": "act3_arch_sandstone_broken",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_sandstone_broken.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            37,
+            6,
+            379,
+            400
+          ],
+          "cell": [
+            444,
+            444,
+            887,
+            887
+          ],
+          "uniformWidth": 120
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/sandstone.png",
+        "sourceSha256": "eb3929b2815d6edc958a67eb03be2e9658dd80425d8edf84c426002787a46ac5"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "4195526deb42070515c117705115b4514737f3c4df4663e6eac83b942130594f",
+      "size": [
+        120,
+        138
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_sandstone_buttress": {
+      "anchor": [
+        32,
+        78
+      ],
+      "assetId": "world.prop.act3_arch_sandstone_buttress",
+      "bundle": "world",
+      "key": "act3_arch_sandstone_buttress",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_sandstone_buttress.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            99,
+            0,
+            393,
+            397
+          ],
+          "cell": [
+            1330,
+            444,
+            1774,
+            887
+          ],
+          "uniformWidth": 64
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/sandstone.png",
+        "sourceSha256": "eb3929b2815d6edc958a67eb03be2e9658dd80425d8edf84c426002787a46ac5"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "e97c7707eaece9dc9c97220036abb11f11b766354568ae4528651fa69dc1ee0b",
+      "size": [
+        64,
+        86
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_sandstone_door": {
+      "anchor": [
+        75,
+        156
+      ],
+      "assetId": "world.prop.act3_arch_sandstone_door",
+      "bundle": "world",
+      "key": "act3_arch_sandstone_door",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_sandstone_door.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            46,
+            0,
+            411,
+            400
+          ],
+          "cell": [
+            887,
+            444,
+            1330,
+            887
+          ],
+          "uniformWidth": 150
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/sandstone.png",
+        "sourceSha256": "eb3929b2815d6edc958a67eb03be2e9658dd80425d8edf84c426002787a46ac5"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "11adaed5beaed24f51292c2fb7652ae71be6709410d2a145347227d7e00499c4",
+      "size": [
+        150,
+        164
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_sandstone_east": {
+      "anchor": [
+        60,
+        126
+      ],
+      "assetId": "world.prop.act3_arch_sandstone_east",
+      "bundle": "world",
+      "key": "act3_arch_sandstone_east",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_sandstone_east.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            60,
+            43,
+            406,
+            430
+          ],
+          "cell": [
+            444,
+            0,
+            887,
+            444
+          ],
+          "uniformWidth": 120
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/sandstone.png",
+        "sourceSha256": "eb3929b2815d6edc958a67eb03be2e9658dd80425d8edf84c426002787a46ac5"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "b9e5c06745c599ce9e2520427e611c2aa2cd792d8b76e5ac395a6b00589fb9b1",
+      "size": [
+        120,
+        134
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_sandstone_inner": {
+      "anchor": [
+        75,
+        133
+      ],
+      "assetId": "world.prop.act3_arch_sandstone_inner",
+      "bundle": "world",
+      "key": "act3_arch_sandstone_inner",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_sandstone_inner.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            46,
+            34,
+            409,
+            375
+          ],
+          "cell": [
+            1330,
+            0,
+            1774,
+            444
+          ],
+          "uniformWidth": 150
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/sandstone.png",
+        "sourceSha256": "eb3929b2815d6edc958a67eb03be2e9658dd80425d8edf84c426002787a46ac5"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "08b34f6ab00321d1e53cf3eedc974e35fbf3dda5bfe1ca9051872b0d1826fc74",
+      "size": [
+        150,
+        141
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_sandstone_outer": {
+      "anchor": [
+        75,
+        147
+      ],
+      "assetId": "world.prop.act3_arch_sandstone_outer",
+      "bundle": "world",
+      "key": "act3_arch_sandstone_outer",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_sandstone_outer.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            63,
+            41,
+            395,
+            384
+          ],
+          "cell": [
+            887,
+            0,
+            1330,
+            444
+          ],
+          "uniformWidth": 150
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/sandstone.png",
+        "sourceSha256": "eb3929b2815d6edc958a67eb03be2e9658dd80425d8edf84c426002787a46ac5"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "11ee605bb1b31dd0a336fd0d720bb71d5cc42c32aced04912d6b50d149d6b409",
+      "size": [
+        150,
+        155
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_sandstone_pillar": {
+      "anchor": [
+        32,
+        115
+      ],
+      "assetId": "world.prop.act3_arch_sandstone_pillar",
+      "bundle": "world",
+      "key": "act3_arch_sandstone_pillar",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_sandstone_pillar.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            120,
+            0,
+            316,
+            376
+          ],
+          "cell": [
+            0,
+            444,
+            444,
+            887
+          ],
+          "uniformWidth": 64
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/sandstone.png",
+        "sourceSha256": "eb3929b2815d6edc958a67eb03be2e9658dd80425d8edf84c426002787a46ac5"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "48735a1c58d3f6b73627bf9588e7b2fa78813f680e51cc251534651c25a2ff62",
+      "size": [
+        64,
+        123
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_sandstone_south": {
+      "anchor": [
+        60,
+        113
+      ],
+      "assetId": "world.prop.act3_arch_sandstone_south",
+      "bundle": "world",
+      "key": "act3_arch_sandstone_south",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_sandstone_south.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            30,
+            7,
+            433,
+            414
+          ],
+          "cell": [
+            0,
+            0,
+            444,
+            444
+          ],
+          "uniformWidth": 120
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/sandstone.png",
+        "sourceSha256": "eb3929b2815d6edc958a67eb03be2e9658dd80425d8edf84c426002787a46ac5"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "223c543bc07af37188bdb7f028ba2ccdaca7f761ce5289bdf5de25d7eccc480f",
+      "size": [
+        120,
+        121
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_tomb_broken": {
+      "anchor": [
+        60,
+        133
+      ],
+      "assetId": "world.prop.act3_arch_tomb_broken",
+      "bundle": "world",
+      "key": "act3_arch_tomb_broken",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_tomb_broken.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            43,
+            13,
+            367,
+            393
+          ],
+          "cell": [
+            444,
+            444,
+            887,
+            887
+          ],
+          "uniformWidth": 120
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/tomb.png",
+        "sourceSha256": "2b64d7dbb2df758c8b481101ab90891e776013b7c97f968db4d2a779ad0d6dc1"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "ed2c4d7658a4b7851f48d2be279af872cc04f147f966b1a188920ac685f170e1",
+      "size": [
+        120,
+        141
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_tomb_buttress": {
+      "anchor": [
+        32,
+        79
+      ],
+      "assetId": "world.prop.act3_arch_tomb_buttress",
+      "bundle": "world",
+      "key": "act3_arch_tomb_buttress",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_tomb_buttress.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            100,
+            0,
+            388,
+            393
+          ],
+          "cell": [
+            1330,
+            444,
+            1774,
+            887
+          ],
+          "uniformWidth": 64
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/tomb.png",
+        "sourceSha256": "2b64d7dbb2df758c8b481101ab90891e776013b7c97f968db4d2a779ad0d6dc1"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "c3071ad4376b805b2a367ffdd156bf6152c436a5216a0a6d63f06c520c47f43b",
+      "size": [
+        64,
+        87
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_tomb_door": {
+      "anchor": [
+        75,
+        160
+      ],
+      "assetId": "world.prop.act3_arch_tomb_door",
+      "bundle": "world",
+      "key": "act3_arch_tomb_door",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_tomb_door.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            51,
+            0,
+            410,
+            401
+          ],
+          "cell": [
+            887,
+            444,
+            1330,
+            887
+          ],
+          "uniformWidth": 150
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/tomb.png",
+        "sourceSha256": "2b64d7dbb2df758c8b481101ab90891e776013b7c97f968db4d2a779ad0d6dc1"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "f07675148d21aa9dba6fec154f2027a7a89a341d4fa521f08f0a79a222ad17c6",
+      "size": [
+        150,
+        168
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_tomb_east": {
+      "anchor": [
+        60,
+        122
+      ],
+      "assetId": "world.prop.act3_arch_tomb_east",
+      "bundle": "world",
+      "key": "act3_arch_tomb_east",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_tomb_east.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            60,
+            44,
+            404,
+            417
+          ],
+          "cell": [
+            444,
+            0,
+            887,
+            444
+          ],
+          "uniformWidth": 120
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/tomb.png",
+        "sourceSha256": "2b64d7dbb2df758c8b481101ab90891e776013b7c97f968db4d2a779ad0d6dc1"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "423cf8a0b1cffa8ecdb94e68953c3bc8022162fb51ff40c47a41fee95b74a0a5",
+      "size": [
+        120,
+        130
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_tomb_inner": {
+      "anchor": [
+        75,
+        131
+      ],
+      "assetId": "world.prop.act3_arch_tomb_inner",
+      "bundle": "world",
+      "key": "act3_arch_tomb_inner",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_tomb_inner.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            47,
+            34,
+            406,
+            366
+          ],
+          "cell": [
+            1330,
+            0,
+            1774,
+            444
+          ],
+          "uniformWidth": 150
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/tomb.png",
+        "sourceSha256": "2b64d7dbb2df758c8b481101ab90891e776013b7c97f968db4d2a779ad0d6dc1"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "adcc7c1ed0e9ef3e675f146f79340dba9c2868944ed1eaad44b72f421feb6c38",
+      "size": [
+        150,
+        139
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_tomb_outer": {
+      "anchor": [
+        75,
+        144
+      ],
+      "assetId": "world.prop.act3_arch_tomb_outer",
+      "bundle": "world",
+      "key": "act3_arch_tomb_outer",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_tomb_outer.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            64,
+            42,
+            391,
+            373
+          ],
+          "cell": [
+            887,
+            0,
+            1330,
+            444
+          ],
+          "uniformWidth": 150
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/tomb.png",
+        "sourceSha256": "2b64d7dbb2df758c8b481101ab90891e776013b7c97f968db4d2a779ad0d6dc1"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "992c5bde335d787007dd8fe2dc3bd08629b5527b8e5c1f69a76dbc466e63a80e",
+      "size": [
+        150,
+        152
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_tomb_pillar": {
+      "anchor": [
+        32,
+        119
+      ],
+      "assetId": "world.prop.act3_arch_tomb_pillar",
+      "bundle": "world",
+      "key": "act3_arch_tomb_pillar",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_tomb_pillar.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            124,
+            3,
+            315,
+            381
+          ],
+          "cell": [
+            0,
+            444,
+            444,
+            887
+          ],
+          "uniformWidth": 64
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/tomb.png",
+        "sourceSha256": "2b64d7dbb2df758c8b481101ab90891e776013b7c97f968db4d2a779ad0d6dc1"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "f82d6547a16e7c0d4846154f62eeb533e33492e7b4dfbe7e4f79b59bada7cf1e",
+      "size": [
+        64,
+        127
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
+    "prop:act3_arch_tomb_south": {
+      "anchor": [
+        60,
+        113
+      ],
+      "assetId": "world.prop.act3_arch_tomb_south",
+      "bundle": "world",
+      "key": "act3_arch_tomb_south",
+      "kind": "static",
+      "path": "assets/sprites_src/gameplay_art/world/props/act3_arch_tomb_south.png",
+      "provenance": {
+        "method": "imagegen-imperial-kit-v1",
+        "parameters": {
+          "alphaBounds": [
+            31,
+            8,
+            429,
+            409
+          ],
+          "cell": [
+            0,
+            0,
+            444,
+            444
+          ],
+          "uniformWidth": 120
+        },
+        "source": "assets/sprites_src/gameplay_art_authored/act3_architecture/tomb.png",
+        "sourceSha256": "2b64d7dbb2df758c8b481101ab90891e776013b7c97f968db4d2a779ad0d6dc1"
+      },
+      "review": "visual-contact-sheet-v1",
+      "role": "prop",
+      "sha256": "de753fa31fe12617d86441b79b761feb96e377a6cc87b6d543ecc5eda284dc2f",
+      "size": [
+        120,
+        121
+      ],
+      "sourceKind": "authored-final-aligned"
+    },
     "prop:act3_awning": {
       "anchor": [
         125,

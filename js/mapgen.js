@@ -38,12 +38,13 @@ const MapGen = (() => {
   function block(m, x, y) { if (x >= 0 && y >= 0 && x < m.w && y < m.h) m.blocked[idx(m, x, y)] = 1; }
   function setHaz(m, x, y, code) { if (x >= 0 && y >= 0 && x < m.w && y < m.h) m.hazard[idx(m, x, y)] = code; }
   function setElev(m, x, y, v) { if (x >= 0 && y >= 0 && x < m.w && y < m.h) m.elev[idx(m, x, y)] = v; }
-  const elevAt = (m, x, y) => (x < 0 || y < 0 || x >= m.w || y >= m.h) ? 0 : m.elev[idx(m, x, y)];
+  const elevAt = (m, x, y, surfaceId) => {if(m.layers)m=TerrainLayers.view(m,surfaceId);return (x < 0 || y < 0 || x >= m.w || y >= m.h) ? 0 : m.elev[idx(m, x, y)];};
   /* may an entity step from tile a to tile b? blocked-aware AND height-aware (climb/descend <=1). */
-  function canStep(m, ax, ay, bx, by) {
+  function canStep(m, ax, ay, bx, by, surfaceId) {
+    if(m.layers)m=TerrainLayers.view(m,surfaceId);
     return walkable(m,bx,by) && (m.surfaceVersion ? TerrainSurface.connected(m,Math.floor(ax),Math.floor(ay),Math.floor(bx),Math.floor(by)) : Math.abs(elevAt(m,ax|0,ay|0)-elevAt(m,bx|0,by|0))<=1);
   }
-  function walkable(m, x, y) { x |= 0; y |= 0; return x >= 0 && y >= 0 && x < m.w && y < m.h && !m.blocked[idx(m, x, y)]; }
+  function walkable(m, x, y, surfaceId) { if(m.layers)m=TerrainLayers.view(m,surfaceId); x |= 0; y |= 0; return x >= 0 && y >= 0 && x < m.w && y < m.h && !m.blocked[idx(m, x, y)]; }
 
   function addProp(m, type, x, y, opts) {
     const p = Object.assign({ type, x, y, seed: ((x * 31 + y * 17) | 0), blocks: true }, opts || {});
@@ -2738,12 +2739,45 @@ const MapGen = (() => {
     if(m.surfaceVersion){m.ramps=m.ramps.filter(r=>!inside(r.x,r.y,3));TerrainSurface.rebuild(m);}
     m.hasElev=m.elev.some(v=>v>0);bakeMinimap(m);
   }
+  function imperialArchitecture(m) {
+    if(!m.act3)return;
+    const f=m.act3;f.revision=3;f.architecture={kit:m.id==='sand_tombs'||m.id==='tomb_sanctum'?'tomb':m.id==='khal_palace'?'palace':'sandstone',walls:[],bridges:[]};
+    // Separate constructed walls from the actual walking elevation. Interior
+    // masonry no longer creates acres of raised, flat terrain caps.
+    if(!m.outdoor&&!m.settlement)for(let i=0;i<m.w*m.h;i++)if(m.walls[i])m.elev[i]=0;
+    if(m.settlement){
+      // The departure road climbs onto an excavated loading terrace. Existing
+      // services and the checkpoint keep their world positions and footprints.
+      m.surfaceVersion=1;m.ramps=[{x:25,y:21,dx:1,dy:0,width:5,length:4,low:0,high:2}];
+      for(let y=19;y<=23;y++)for(let x=25;x<m.w;x++)m.elev[x+y*m.w]=x>=29?2:0;
+      f.architecture.terraces=[{id:'departure_terrace',x:30,y:21,lo:25,hi:36,y0:19,y1:24,height:2,surfaceId:0,terrace:true}];
+      f.layerLandmarks=[{id:'departure_terrace',label:'The raised departure terrace',x:32.5,y:21.5,surfaceId:0}];
+    }
+    // Merge straight boundary edges into coherent three-tile masonry runs.
+    const walls=f.architecture.walls;
+    for(let axis=0;axis<2;axis++)for(let line=1;line<(axis?m.w:m.h)-(m.settlement?0:1);line++){
+      let start=-1;
+      const flush=end=>{if(start<0)return;for(let at=start;at<end;at+=3){const length=Math.min(3,end-at);walls.push({x:axis?line:at,y:axis?at:line,axis,length});}start=-1;};
+      for(let t=1;t<(axis?m.h:m.w)-1;t++){
+        const x=axis?line:t,y=axis?t:line,i=x+y*m.w,j=axis?i-1:i-m.w;
+        const boundary=!!m.walls[i]!==!!m.walls[j];
+        if(boundary){if(start<0)start=t;}else flush(t);
+      }flush((axis?m.h:m.w)-1);
+    }
+    for(const wall of walls){
+      const x=wall.x+(wall.axis?0:wall.length/2),y=wall.y+(wall.axis?wall.length/2:0);
+      wall.kit=m.outdoor?'rock':f.architecture.kit;
+      if(m.id==='desert_wastes'&&f.landmarks.some(n=>Math.hypot(x-n.x,y-n.y)<10))wall.kit='sandstone';
+      wall.broken=wall.kit==='sandstone'&&!m.settlement&&!wall.axis&&wall.length===3&&(wall.x*7+wall.y*11)%13===0;
+    }
+    TerrainSurface.rebuild(m);
+  }
   function generate(zoneId, worldSeed) {
     const m = generateLayout(zoneId, worldSeed);
     if(zoneId==='khalcamp')dressAct3Camp(m);
     reserveBossArena(m);
     const objects = DATA.STORY_OBJECTS[zoneId] || [];
-    if (!objects.length) return m;
+    if (!objects.length) { imperialArchitecture(m); bakeMinimap(m); return m; }
     // All objectives go on ground reachable from the entrance after dressing.
     const start = m.spawns.default, seen = new Set(), queue = [[start.x|0,start.y|0]];
     for (let i=0;i<queue.length;i++) {
@@ -2787,5 +2821,7 @@ const MapGen = (() => {
     }
     return m;
   }
-  return { generate, walkable, canStep, elevAt };
+  const generateBase=generate;
+  function generateImperial(zoneId,seed){const m=generateBase(zoneId,seed);if(m.act3&&!m.act3.architecture){imperialArchitecture(m);bakeMinimap(m);}return m;}
+  return { generate:generateImperial, walkable, canStep, elevAt };
 })();

@@ -171,3 +171,40 @@ const TerrainNavigation = (() => {
   }
   return {clear, height, step, segment, transition, findPath, groundPoint, HOP_DURATION, HOP_COOLDOWN};
 })();
+
+/* Layered maps keep the fast single-floor search. A stair landing is an
+   explicit graph edge; smoothing is confined to each side of that edge. */
+{
+  const localPath=TerrainNavigation.findPath,groundPoint=TerrainNavigation.groundPoint;
+  const {clear,height,step,segment,transition}=TerrainNavigation;
+  TerrainNavigation.clear=(m,x,y,r,id)=>clear(m.layers?TerrainLayers.view(m,id):m,x,y,r);
+  TerrainNavigation.height=(m,x,y,id)=>height(m.layers?TerrainLayers.view(m,id):m,x,y);
+  TerrainNavigation.step=(m,x,y,nx,ny,r,id)=>step(m.layers?TerrainLayers.view(m,id):m,x,y,nx,ny,r);
+  TerrainNavigation.segment=(m,x,y,nx,ny,r,rise,id)=>segment(m.layers?TerrainLayers.view(m,id):m,x,y,nx,ny,r,rise);
+  TerrainNavigation.transition=(m,x,y,nx,ny,profile,id)=>transition(m.layers?TerrainLayers.view(m,id):m,x,y,nx,ny,profile);
+  TerrainNavigation.findPath=function(m,from,to,profile={}){
+    if(!m.layers)return localPath(m,from,to,profile);
+    const a=from.surfaceId??TerrainLayers.current(m),b=to.surfaceId??a;
+    const search=(surfaceId,start,end)=>{
+      const p=localPath(TerrainLayers.view(m,surfaceId),start,end,{...profile,hop:false});
+      return p?.map(n=>({...n,surfaceId}));
+    };
+    if(a===b)return search(a,from,to);
+    let best=null,cost=Infinity;
+    for(const link of m.surfaceLinks||[]){
+      if(!((link.from===a&&link.to===b)||(link.from===b&&link.to===a)))continue;
+      const first=search(a,from,link);if(!first)continue;
+      const second=search(b,link,to);if(!second)continue;
+      const path=[...first,{cx:link.x,cy:link.y,kind:'surface',surfaceId:b},...second];
+      let length=0,p=from;for(const n of path){length+=Math.hypot(n.cx-p.x,n.cy-p.y);p={x:n.cx,y:n.cy};}
+      if(length<cost){cost=length;best=path;}
+    }
+    return best;
+  };
+  TerrainNavigation.groundPoint=function(m,sx,sy,lift=14,preferred=0){
+    if(!m.layers)return groundPoint(m,sx,sy,lift);
+    const hit=TerrainSurface.pick(m,sx,sy,preferred);
+    if(!hit)return null;
+    return {x:U.clamp(hit.x,hit.tx+1e-6,hit.tx+1-1e-6),y:U.clamp(hit.y,hit.ty+1e-6,hit.ty+1-1e-6),surfaceId:hit.surfaceId};
+  };
+}

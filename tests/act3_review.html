@@ -5,7 +5,7 @@
 <header><h1>Act III · The Buried Imperial City</h1><p>Six authored adventure areas and the Dig Camp with seeded routes. This review uses temporary heroes and an in-memory save store.</p>
 <label>Area <select id="zone"><option value="desert_wastes">The Shifting Wastes</option><option value="underground_market">Underground Market</option><option value="sand_tombs">The Shifting Tombs</option><option value="khal_palace">Palace of Khal-Zahir</option><option value="shard_flats">The Shard Flats</option><option value="tomb_sanctum">Tomb of the Chained Sovereign</option><option value="khalcamp">The Dig Camp</option></select></label>
 <label>Seed <input id="seed" type="number" min="0" max="4294967295" value="12345"></label>
-<label>Version <select id="version"><option value="after">Redesigned</option><option value="before">Before redesign</option><option value="combat_before">Before enemy pass (local snapshot)</option></select></label>
+<label>Version <select id="version"><option value="after">Redesigned</option><option value="architecture_before">Before architecture (local snapshot)</option><option value="before">Before redesign</option><option value="combat_before">Before enemy pass (local snapshot)</option></select></label>
 <label>Canvas <select id="width"><option value="1920">1080p</option><option value="3840">4K</option></select></label>
 <label>View <select id="view"><option value="arrival">Arrival</option></select></label>
 <div><label>Enemy <select id="enemy"></select></label><button id="previewEnemy" disabled>Preview enemy</button><button id="forceSkill" disabled>Preview signature skill</button><button id="mixed" disabled>Restore mixed encounters</button><label><input id="combatOverlay" type="checkbox" style="width:auto"> Attack ranges and cooldowns</label></div>
@@ -34,10 +34,10 @@ async function load(version=el('version').value,zone=el('zone').value){
  for(const saved of frames.values())saved.style.display='none';
  if(frames.has(version)){frame=frames.get(version);frame.style.display='block';resize();win=frame.contentWindow;win.dispatchEvent(new Event('resize'));}
  else {
- const prefix=version==='combat_before'?'tmp/act3_combat/before/':version==='before'&&!params.has('profile')?'tmp/act3/before/':'',paths=[prefix+'index.html',prefix+'js/game.js'];
+ const prefix=version==='architecture_before'?'tmp/act3_architecture/before/':version==='combat_before'?'tmp/act3_combat/before/':version==='before'&&!params.has('profile')?'tmp/act3/before/':'',paths=[prefix+'index.html',prefix+'js/game.js'];
  const [html,original]=await Promise.all(paths.map(async p=>{const response=await fetch(new URL(p,root));if(!response.ok)throw Error('Missing baseline; run python tests/act3_baseline.py first.');return response.text();}));
  const source=original.replace('Game.init().catch','Game.init().then(()=>window.__ready=true).catch').replace('    init, newGame, loadGame,',
- `    __act3:{render,update,updateCamera,setupBeaconQuest,placeEvents,place(x,y){state.player.x=x;state.player.y=y;state.player.path=null;state.player.command=null;state.player.jumping=null;state.player.jumpZ=0;state.player._animationController?.reset();camPos={x:U.isoX(x,y)-canvas.width/2,y:U.isoY(x,y)-surfaceLift(x,y)-canvas.height/2-20};shakeOx=shakeOy=0;}},\n    init, newGame, loadGame,`);
+ `    __act3:{render,update,updateCamera,setupBeaconQuest,placeEvents,clickWorld(x,y,surfaceId=0){const c=camera();mouse.x=U.isoX(x,y)-c.x;mouse.y=U.isoY(x,y)-surfaceLift(x,y,surfaceId)-c.y;updateHover();handleClick(false);},place(x,y,surfaceId=0){state.player.surfaceId=surfaceId;state.player.x=x;state.player.y=y;state.player.path=null;state.player.command=null;state.player.jumping=null;state.player.jumpZ=0;state.player._animationController?.reset();camPos={x:U.isoX(x,y)-canvas.width/2,y:U.isoY(x,y)-surfaceLift(x,y,surfaceId)-canvas.height/2-20};shakeOx=shakeOy=0;}},\n    init, newGame, loadGame,`);
  if(!source.includes('__act3:'))throw Error('Review hooks missing');
  const injection=`<base href="${root}"><script>const store=parent.act3Store;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});window.requestAnimationFrame=()=>0;window.__errors=[];window.addEventListener('error',e=>window.__errors.push(e.message));<\/script>`;
  frame=document.createElement('iframe');frame.title='Playable act3 review';frames.set(version,frame);
@@ -59,7 +59,7 @@ async function load(version=el('version').value,zone=el('zone').value){
  if(!reference.act3)throw Error('Review composition missing for '+zone+'; reload current mapgen.js');
  // Hold all existing enemies in place for readable screenshots; Play restores AI.
  el('view').replaceChildren(new Option('Arrival','arrival'),new Option('Map center','center'));
- for(const n of reference.act3.landmarks)el('view').add(new Option(n.label,n.id));
+ for(const n of [...reference.act3.landmarks,...(map.act3.layerLandmarks||[])])el('view').add(new Option(n.label,n.id));
  if(map.bossArena)el('view').add(new Option('Boss arena','boss'));
  if(params.get('view')&&[...el('view').options].some(o=>o.value===params.get('view')))el('view').value=params.get('view');
  
@@ -70,8 +70,8 @@ function nearest(p,m=map){
  const points=[];for(let y=1;y<m.h-1;y++)for(let x=1;x<m.w-1;x++)if(api.TerrainSurface.supported(m,x+.5,y+.5,.4))points.push({x:x+.5,y:y+.5});
  return points.sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
 }
-function pointFor(view){if(view==='arrival')return map.spawns.default;if(view==='boss'&&map.bossArena)return{x:map.bossArena.cx+4,y:map.bossArena.cy+3};if(view==='center')return nearest({x:map.w/2,y:map.h/2});const n=reference.act3.landmarks.find(n=>n.id===view),a=reference.bossArena;if(n&&a&&Math.hypot(n.x-a.cx,n.y-a.cy)<1)return nearest({x:n.x+4,y:n.y+3});return nearest(n||map.spawns.default);}
-function showView(){playing=false;el('play').textContent='Play encounter';const p=pointFor(el('view').value);game.__act3.place(p.x,p.y);game.__act3.render();api.UI.refreshHUD();if(win.__errors.length)throw Error(win.__errors.join('\n'));}
+function pointFor(view){const layer=map.act3.layerLandmarks?.find(n=>n.id===view);if(layer)return layer;if(view==='arrival')return map.spawns.default;if(view==='boss'&&map.bossArena)return{x:map.bossArena.cx+4,y:map.bossArena.cy+3};if(view==='center')return nearest({x:map.w/2,y:map.h/2});const n=reference.act3.landmarks.find(n=>n.id===view),a=reference.bossArena;if(n&&a&&Math.hypot(n.x-a.cx,n.y-a.cy)<1)return nearest({x:n.x+4,y:n.y+3});return nearest(n||map.spawns.default);}
+function showView(){playing=false;el('play').textContent='Play encounter';const p=pointFor(el('view').value);game.__act3.place(p.x,p.y,p.surfaceId??0);game.__act3.render();api.UI.refreshHUD();if(win.__errors.length)throw Error(win.__errors.join('\n'));}
 function previewEnemy(id=el('enemy').value,signature=false){
  if(!map.act3||map.id==='khalcamp')throw Error('Choose an adventure area for combat previews.');
  playing=false;el('enemy').value=id;
@@ -103,7 +103,7 @@ function previewAnimation(kind,id=el('enemy').value){
  game.__act3.render();el('status').textContent=mon.def.name+' · '+kind+' paused; Play or Step advances simulation';
  return mon;
 }
-window.act3CombatReview={load,previewEnemy,previewAnimation,get win(){return win;},get api(){return api;},get game(){return game;},get map(){return map;},render(){game.__act3.render();},step(dt){game.__act3.update(dt);game.__act3.render();}};
+window.act3CombatReview={load,sample,previewEnemy,previewAnimation,get win(){return win;},get api(){return api;},get game(){return game;},get map(){return map;},render(){game.__act3.render();},step(dt){game.__act3.update(dt);game.__act3.render();}};
 function drawTopology(){const c=el('topology');c.width=map.w*3;c.height=map.h*3;const g=c.getContext('2d');g.drawImage(map.minimapBase,0,0,c.width,c.height);for(const ro of map.act3?.routes||[]){g.strokeStyle=ro.optional?'#ddaf62':'#8daeb6';g.lineWidth=2;g.beginPath();ro.points.forEach((p,i)=>i?g.lineTo(p.x*3,p.y*3):g.moveTo(p.x*3,p.y*3));g.stroke();}for(const n of map.act3?.landmarks||[]){g.fillStyle='#e8cf9f';g.beginPath();g.arc(n.x*3,n.y*3,4,0,Math.PI*2);g.fill();}}
 async function record(name,body){for(let attempt=0;attempt<3;attempt++)try{const r=await fetch('/api/act3-review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,...body})});if(!r.ok)throw Error('Artifact recording requires python tests/act3_server.py');return;}catch(e){if(attempt===2)throw e;await new Promise(resolve=>setTimeout(resolve,1000));}}
 async function capture(name){game.__act3.render();const view=win.document.getElementById('view');await record(name||`${el('zone').value}_${el('width').value}_${el('version').value}_${el('view').value}.webp`,{png:view.toDataURL('image/webp',.94)});}
@@ -202,7 +202,7 @@ el('stepFrame').onclick=()=>action(()=>{playing=false;el('play').textContent='Pl
 el('enemy').onchange=enemyControls;
 el('combatOverlay').onchange=()=>{game.debugFlags.act3Combat=el('combatOverlay').checked;game.__act3.render();};
 el('play').onclick=()=>{playing=!playing;el('play').textContent=playing?'Pause encounter':'Play encounter';};
-el('walk').onclick=()=>{const index=reference.act3.landmarks.findIndex(n=>n.id===el('view').value),target=nearest(reference.act3.landmarks[(index+1)%reference.act3.landmarks.length]);game.repath(game.state.player,target.x,target.y);game.state.player.command={type:'move'};playing=true;el('play').textContent='Pause encounter';};
+el('walk').onclick=()=>{const places=[...reference.act3.landmarks,...(map.act3.layerLandmarks||[])],index=places.findIndex(n=>n.id===el('view').value),place=places[(index+1)%places.length],target=place.surfaceId!==undefined?place:nearest(place);game.state.player.command={type:'move',point:target};game.repath(game.state.player,target.x,target.y,target.surfaceId??0);el('view').value=place.id;playing=true;el('play').textContent='Pause encounter';};
 el('capture').onclick=()=>action(async()=>{await capture();el('status').textContent='Scene image saved in tests/qa/act3.';});el('captureAll').onclick=()=>action(captureAll);el('profile').onclick=()=>action(profile);
 let previous=performance.now();function tick(now){const dt=Math.min(.05,(now-previous)/1000);previous=now;if(playing&&!busy&&game){try{game.__act3.update(dt);game.__act3.updateCamera(dt);game.__act3.render();}catch(e){playing=false;error(e);}}requestAnimationFrame(tick);}requestAnimationFrame(tick);
 try{await load();if(params.has('qa'))await action(async()=>{await captureAll();await profile();});else if(params.has('captureAll')||params.has('captureAfter'))await action(captureAll);else if(params.has('profile'))await action(profile);}catch(e){error(e);}

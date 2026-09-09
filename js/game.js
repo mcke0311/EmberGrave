@@ -13,10 +13,10 @@ const Game = (() => {
   const fx = { shake: 0, hitPause: 0 };
   const EH = 14;   // screen px per terrain-elevation step
   const ACTOR_BODY_SCALE = 1.1;
-  function elevLift(x, y) { const m = state.map; return m ? TerrainNavigation.height(m,x,y)*EH : 0; }
+  function elevLift(x, y, surfaceId) { const m = state.map; return m ? TerrainNavigation.height(m,x,y,surfaceId)*EH : 0; }
   // Existing zones retain their historical FX anchors while the new surface
   // model seats all world overlays on the same geometry as the actors.
-  function surfaceLift(x,y) { return state.map.surfaceVersion ? elevLift(x,y) : 0; }
+  function surfaceLift(x,y,surfaceId) { return state.map.surfaceVersion ? elevLift(x,y,surfaceId) : 0; }
   /* per-biome weather, keyed by zone theme (camps inherit their act's theme).
      ONLY outdoor themes — indoor genCrypt dungeons (mine/temple/drowned/tombs/palace/
      crypt/vigil/chapel/monastery/cathedral/bastion/throne) get no weather. */
@@ -728,11 +728,12 @@ const Game = (() => {
       p.dead = false; p.action = null;
       p.hp = p.stats.maxHp; p.mana = p.stats.maxMana;
     }
-    p.x = sp.x; p.y = sp.y;
+    p.x = sp.x; p.y = sp.y; p.surfaceId=sp.surfaceId??0;
     p._animationController?.reset();
     camPos = null;                 // snap camera to the new map
     /* raised servants follow their master between maps */
     for (const mi of state.minions) {
+      mi.surfaceId=p.surfaceId;
       mi.x = p.x + U.rf(-1.2, 1.2); mi.y = p.y + U.rf(-1.2, 1.2);
       if (!MapGen.walkable(map, mi.x, mi.y)||(map.surfaceVersion&&!TerrainSurface.supported(map,mi.x,mi.y,mi.radius))) { mi.x = p.x; mi.y = p.y; }
       mi.path = null; clearTraversal(mi);
@@ -1193,47 +1194,47 @@ const Game = (() => {
   /* =====================================================================
      COMBAT SUPPORT / EFFECTS
      ===================================================================== */
-  function afterDelay(sec, fn) { delayed.push({ t: state.time + sec, fn }); }
+  function afterDelay(sec, fn) { const m=state.map,surfaceId=TerrainLayers.current(m);delayed.push({ t: state.time + sec, fn:()=>TerrainLayers.scope(m,surfaceId,fn) }); }
   function addFloat(x, y, text, color, big) {
     if (!options.dmgNumbers && typeof text === "number") return;
-    floats.push({ x, y, text: "" + text, color, big, t: 0 });
+    floats.push({ surfaceId:TerrainLayers.current(state.map), x, y, text: "" + text, color, big, t: 0 });
   }
   /* minion-dealt damage — its own toggle, independent of the player dmg-numbers gate */
   function minionFloat(x, y, dmg) {
     if (!options.minionDamage) return;
-    floats.push({ x, y, text: "" + Math.floor(dmg), color: "#9fd0ff", big: false, t: 0 });
+    floats.push({ surfaceId:TerrainLayers.current(state.map), x, y, text: "" + Math.floor(dmg), color: "#9fd0ff", big: false, t: 0 });
   }
   /* damage the PLAYER takes, colored by element (always shown — vital combat feedback).
      P grey · F orange · C blue · L yellow · Ps green (matches the monster-resist palette). */
   const HURT_COL = { phys: "#cfcfcf", fire: "#ff8a3c", cold: "#6fa8ff", light: "#ffe24c", poison: "#7ee06a", shadow: "#c080e0" };
   function playerHurtFloat(x, y, dmg, elem) {
-    floats.push({ x, y, text: "" + Math.max(1, Math.round(dmg)), color: HURT_COL[elem || "phys"] || HURT_COL.phys, big: false, t: 0 });
+    floats.push({ surfaceId:TerrainLayers.current(state.map), x, y, text: "" + Math.max(1, Math.round(dmg)), color: HURT_COL[elem || "phys"] || HURT_COL.phys, big: false, t: 0 });
   }
   const MAX_PARTICLES = 700;   // hard cap: cosmetic only — keeps spell-spam / many emitters from flooding the array
   function addParticle(x, y, color) {
     if (particles.length >= MAX_PARTICLES) return;
-    particles.push({ x, y, vx: U.rf(-1.4, 1.4), vy: U.rf(-2.4, -0.4), z: U.rf(8, 22), color, t: U.rf(0.3, 0.7), grav: 26 });
+    particles.push({ surfaceId:TerrainLayers.current(state.map), x, y, vx: U.rf(-1.4, 1.4), vy: U.rf(-2.4, -0.4), z: U.rf(8, 22), color, t: U.rf(0.3, 0.7), grav: 26 });
   }
   function bloodBurst(x, y, n) {
     for (let i = 0; i < n; i++)
-      particles.push({ x, y, vx: U.rf(-2.4, 2.4), vy: U.rf(-2.4, 2.4), z: U.rf(6, 20), color: Math.random() < 0.8 ? "#8a1414" : "#5a0c0c", t: U.rf(0.25, 0.6), grav: 60 });
+      particles.push({ surfaceId:TerrainLayers.current(state.map), x, y, vx: U.rf(-2.4, 2.4), vy: U.rf(-2.4, 2.4), z: U.rf(6, 20), color: Math.random() < 0.8 ? "#8a1414" : "#5a0c0c", t: U.rf(0.25, 0.6), grav: 60 });
   }
   function dustPuff(x, y) {
-    if (Math.random() < 0.5) particles.push({ x, y, vx: U.rf(-0.6, 0.6), vy: U.rf(-0.6, 0.6), z: 4, color: "#6a6055", t: 0.4, grav: -4 });
+    if (Math.random() < 0.5) particles.push({ surfaceId:TerrainLayers.current(state.map), x, y, vx: U.rf(-0.6, 0.6), vy: U.rf(-0.6, 0.6), z: 4, color: "#6a6055", t: 0.4, grav: -4 });
   }
   function addNova(x, y, radius, color, presentation) {
-    novas.push({ x, y, radius, color, t: 0, dur: 0.35, hideRadius:!!presentation?.hideRadius,
+    novas.push({ surfaceId:TerrainLayers.current(state.map), x, y, radius, color, t: 0, dur: 0.35, hideRadius:!!presentation?.hideRadius,
       styled:typeof SkillVFX!=='undefined'&&SkillVFX.area(x,y,radius,state.player,presentation) });
     // Radius visibility is cosmetic; retain prop destruction and its rewards.
     if (radius >= 1.2) breakPropsNear(x, y, radius * 0.9);
   }
   /* a jagged lightning arc between two world points (Arc Lattice, Thunderstorm) */
   function lightningBolt(x0, y0, x1, y1, color) {
-    bolts.push({ x0, y0, x1, y1, color: color || "#fff080", t: 0, dur: 0.22, seed: (Math.random() * 1000) | 0, styled:typeof SkillVFX!=='undefined'&&SkillVFX.beam(x0,y0,x1,y1) });
+    bolts.push({ surfaceId:TerrainLayers.current(state.map), x0, y0, x1, y1, color: color || "#fff080", t: 0, dur: 0.22, seed: (Math.random() * 1000) | 0, styled:typeof SkillVFX!=='undefined'&&SkillVFX.beam(x0,y0,x1,y1) });
   }
   /* a straight glowing beam between two world points (beam-type skills) */
   function beamFx(x0, y0, x1, y1, color) {
-    bolts.push({ x0, y0, x1, y1, color: color || "#fff080", t: 0, dur: 0.2, seed: 0, straight: true, width: 6.5, styled:typeof SkillVFX!=='undefined'&&SkillVFX.beam(x0,y0,x1,y1) });
+    bolts.push({ surfaceId:TerrainLayers.current(state.map), x0, y0, x1, y1, color: color || "#fff080", t: 0, dur: 0.2, seed: 0, straight: true, width: 6.5, styled:typeof SkillVFX!=='undefined'&&SkillVFX.beam(x0,y0,x1,y1) });
   }
   function spawnProjectile(o) {
     if(typeof SkillAudio!=='undefined'&&(o.fromPlayer||o.minionDmg!==undefined)){
@@ -1241,8 +1242,9 @@ const Game = (() => {
     }
     if(o.fromPlayer&&o.kind==='arrow'){
       const p=state.player,origin=Player3D.projectileOrigin?.(p,ACTOR_BODY_SCALE);
-      if(origin)o={...o,x:p.x+origin.x,y:p.y+origin.y,lift:origin.lift+(p.jumpZ||0)+elevLift(p.x,p.y)};
+      if(origin)o={...o,x:p.x+origin.x,y:p.y+origin.y,lift:origin.lift+(p.jumpZ||0)+elevLift(p.x,p.y,p.surfaceId)};
     }
+    o.surfaceId ??= TerrainLayers.current(state.map);
     const projectile=new Projectile(o);
     if(typeof SkillVFX!=='undefined')SkillVFX.registerProjectile(projectile,o.visualOwner||state.player);
     state.projectiles.push(projectile);
@@ -1252,16 +1254,16 @@ const Game = (() => {
     ent._pendingClick = null; ent._navPendingGoal = null; ent._navGoal = null;
     ent._navCache = null; ent._navStall = 0; ent._navRetryAt = 0;
   }
-  function repath(ent, tx, ty) {
-    if (ent.jumping) { ent._navPendingGoal = {x: tx, y: ty}; return; }
+  function repath(ent, tx, ty, surfaceId = ent.command?.point?.surfaceId ?? ent.command?.target?.surfaceId ?? ent.command?.obj?.surfaceId ?? ent.command?.gi?.surfaceId ?? ent._navGoal?.surfaceId ?? ent.surfaceId ?? 0) {
+    if (ent.jumping) { ent._navPendingGoal = {x: tx, y: ty, surfaceId}; return; }
     const m = state.map, now = state.time, cache = ent._navCache;
-    ent._navGoal = {x: tx, y: ty};
-    if (cache && cache.map === m) {
+    ent._navGoal = {x: tx, y: ty, surfaceId};
+    if (cache && cache.map === m && cache.surfaceId===surfaceId) {
       const drift = Math.hypot(tx-cache.x,ty-cache.y), age = now-cache.time;
       if ((drift < .15 && (ent.path?.length || age < .4)) || (ent.path?.length && drift < 2 && age < .2)) return;
     }
-    ent._navCache = {map: m, x: tx, y: ty, time: now};
-    ent.path = TerrainNavigation.findPath(m, ent, {x: tx, y: ty}, {hop: !!ent.autoHop, radius: ent.radius, speed: ent.stats?.moveSpeed || ent.speed || ent.def?.speed || 4.5});
+    ent._navCache = {map: m, x: tx, y: ty, time: now,surfaceId};
+    ent.path = TerrainNavigation.findPath(m, ent, {x: tx, y: ty, surfaceId}, {hop: !!ent.autoHop, radius: ent.radius, speed: ent.stats?.moveSpeed || ent.speed || ent.def?.speed || 4.5});
   }
   function finishTraversal(ent) {
     if (ent === state.player && groundHold) {
@@ -1286,7 +1288,7 @@ const Game = (() => {
     if (state.time < (p.jumpCdUntil || 0)) return;
     if (UI.anyOpen && UI.anyOpen()) return;
     const w = screenToWorld(mouse.x, mouse.y);
-    if(!w)return;
+    if(!w||(w.surfaceId??0)!==(p.surfaceId??0))return;
     const d = U.dist(p.x, p.y, w.x, w.y) || 0.001, maxR = 4.2;
     let tx = w.x, ty = w.y;
     if (d > maxR) { tx = p.x + (w.x - p.x) / d * maxR; ty = p.y + (w.y - p.y) / d * maxR; }
@@ -1658,7 +1660,7 @@ const Game = (() => {
         for (let k = 0; k < (ev.count || 2); k++) {
           const it = Items.rollGlyph(lvl, p.stats.mf);
           const a = Math.random() * Math.PI * 2;
-          state.ground.push({ x: prop.x + Math.cos(a), y: prop.y + Math.sin(a), item: it, toss: 0.3 });
+          state.ground.push({ surfaceId:TerrainLayers.current(state.map), x: prop.x + Math.cos(a), y: prop.y + Math.sin(a), item: it, toss: 0.3 });
         }
         Sfx.play("dropRare"); msg("Glyphs spill from the stone.", "#7fd8c0");
         break;
@@ -1696,7 +1698,7 @@ const Game = (() => {
       const a = Math.random() * Math.PI * 2, r = U.rf(0.3, 1.1);
       let tx = x + Math.cos(a) * r, ty = y + Math.sin(a) * r;
       if (!MapGen.walkable(state.map, tx, ty)) { tx = x; ty = y; }
-      const gi = { x: tx, y: ty, toss: 0.35 };
+      const gi = {surfaceId:TerrainLayers.current(state.map), x: tx, y: ty, toss: 0.35 };
       if (d.gold) gi.gold = d.gold;
       else gi.item = d.item;
       state.ground.push(gi);
@@ -1714,10 +1716,11 @@ const Game = (() => {
   function breakProp(prop) {
     if (!prop || !prop.breakable || prop.broken) return false;
     const m = state.map, p = state.player;
-    if (!m.props.includes(prop)) return false;
+    if (!m.props.includes(prop)||!TerrainLayers.affects(m,prop,p)) return false;
     prop.broken = true;
     const idx = m.props.indexOf(prop); if (idx >= 0) m.props.splice(idx, 1);
-    m.blocked[(prop.x | 0) + (prop.y | 0) * m.w] = m.walls[(prop.x | 0) + (prop.y | 0) * m.w];
+    const surface=TerrainLayers.view(m,prop.surfaceId??0);
+    surface.blocked[(prop.x | 0) + (prop.y | 0) * m.w] = surface.walls[(prop.x | 0) + (prop.y | 0) * m.w];
     Sfx.play("barrel");
     for (let i = 0; i < 8; i++) addParticle(prop.x, prop.y, "#7a5a32");
     scatterDrops(Items.rollDrops((m.zone.lvl || 1) + DATA.DIFFICULTIES[state.difficulty].lvlAdd, "barrel", p.stats.mf, p.stats.goldFind), prop.x, prop.y);
@@ -1727,8 +1730,8 @@ const Game = (() => {
      call breakProp directly, so distant explosions never make the hero kick. */
   function kickProp(prop) {
     const m = state.map, p = state.player;
-    const canReach = () => U.dist(p.x,p.y,prop.x,prop.y) < 1.6 &&
-      Math.abs(TerrainNavigation.height(m,p.x,p.y)-TerrainNavigation.height(m,prop.x,prop.y)) <= 1 &&
+    const canReach = () => TerrainLayers.same(p,prop) && U.dist(p.x,p.y,prop.x,prop.y) < 1.6 &&
+      Math.abs(TerrainNavigation.height(m,p.x,p.y,p.surfaceId)-TerrainNavigation.height(m,prop.x,prop.y,prop.surfaceId)) <= 1 &&
       U.los((x,y) => (x===(prop.x|0) && y===(prop.y|0)) || MapGen.walkable(m,x,y),p.x,p.y,prop.x,prop.y);
     if (!prop.breakable || prop.broken || !m.props.includes(prop) || p.dead || p.action || p.stunT > 0 ||
         p.jumping || p.leaping || p.charging || p.dashing || p.spinning || !canReach()) return false;
@@ -1760,9 +1763,10 @@ const Game = (() => {
   }
   function dropAtFeet(item) {
     const p = state.player;
-    state.ground.push({ x: p.x + U.rf(-0.4, 0.4), y: p.y + U.rf(-0.4, 0.4), item, toss: 0.3 });
+    state.ground.push({ surfaceId:p.surfaceId??0, x: p.x + U.rf(-0.4, 0.4), y: p.y + U.rf(-0.4, 0.4), item, toss: 0.3 });
   }
   function pickupGround(gi) {
+    if(!TerrainLayers.same(state.player,gi))return;
     const p = state.player;
     const i = state.ground.indexOf(gi);
     if (i < 0) return;
@@ -1870,6 +1874,10 @@ const Game = (() => {
      INTERACTION (props, portals, shrines)
      ===================================================================== */
   function interact(prop) {
+    if(!TerrainLayers.same(state.player,prop))return;
+    return TerrainLayers.scope(state.map,state.player,()=>interactOnSurface(prop));
+  }
+  function interactOnSurface(prop) {
     const p = state.player;
     if(opening.interact(prop))return;
     if (prop.storyId) { interactStory(prop); return; }
@@ -1914,12 +1922,12 @@ const Game = (() => {
   function isHub(id) { return id === "town" || (DATA.ZONES[id] && DATA.ZONES[id].kind === "camp"); }
   function safeArrival(map, point) {
     const p=point || map.spawns.default || {x:map.w/2,y:map.h/2};
-    const supported=(x,y)=>MapGen.walkable(map,x,y) && (!map.surfaceVersion || TerrainSurface.supported(map,x,y,state.player.radius));
+    const supported=(x,y)=>MapGen.walkable(map,x,y,p.surfaceId??0) && (!map.surfaceVersion || TerrainSurface.supported(map,x,y,state.player.radius,p.surfaceId??0));
     if (Number.isFinite(p.x) && Number.isFinite(p.y) && supported(p.x,p.y)) return p;
     let best=null, distance=Infinity;
     for(let y=0;y<map.h;y++)for(let x=0;x<map.w;x++) {
       const d=(x+.5-p.x)**2+(y+.5-p.y)**2;
-      if(d<distance && supported(x+.5,y+.5)){distance=d;best={x:x+.5,y:y+.5};}
+      if(d<distance && supported(x+.5,y+.5)){distance=d;best={x:x+.5,y:y+.5,surfaceId:p.surfaceId??0};}
     }
     return best || map.spawns.default;
   }
@@ -1927,7 +1935,7 @@ const Game = (() => {
   let travelPending=false;
   function castPortal() {
     if (isHub(state.map.id)) { msg("You are already home.", "#9b8a60"); return false; }
-    state.portal = { mapId: state.map.id, x: state.player.x, y: state.player.y + 0.4, returnPosition:{x:state.player.x,y:state.player.y}, home: state.home || "frosthaven",
+    state.portal = { surfaceId:state.player.surfaceId, mapId: state.map.id, x: state.player.x, y: state.player.y + 0.4, returnPosition:{x:state.player.x,y:state.player.y,surfaceId:state.player.surfaceId}, home: state.home || "frosthaven",
       instance:{map:state.map,monsters:state.monsters,ground:state.ground} };
     Sfx.play("portalOpen");
     msg("A doorway home tears open.", "#8fd8ff");
@@ -2021,7 +2029,7 @@ const Game = (() => {
     if (!state) return;
     const p = opening.cameraTarget() || state.player;
     const tx = U.isoX(p.x, p.y) - canvas.width / 2;
-    const ty = U.isoY(p.x, p.y) - canvas.height / 2 - 20 - surfaceLift(p.x,p.y);
+    const ty = U.isoY(p.x, p.y) - canvas.height / 2 - 20 - surfaceLift(p.x,p.y,p.surfaceId);
     if (!camPos) camPos = { x: tx, y: ty };
     const k = 1 - Math.exp(-dt * 8);            // gentle ease toward the player
     camPos.x += (tx - camPos.x) * k;
@@ -2036,13 +2044,13 @@ const Game = (() => {
   }
   function screenToWorld(sx, sy) {
     const cam = camera();
-    return TerrainNavigation.groundPoint(state.map, sx + cam.x, sy + cam.y, EH);
+    return TerrainNavigation.groundPoint(state.map, sx + cam.x, sy + cam.y, EH,state.player.surfaceId);
   }
   function steeringPoint() {
     const picked = screenToWorld(mouse.x, mouse.y);
     if (picked) return picked;
     const cam = camera(), p = state.player;
-    const sx = mouse.x + cam.x, sy = mouse.y + cam.y + elevLift(p.x, p.y);
+    const sx = mouse.x + cam.x, sy = mouse.y + cam.y + elevLift(p.x,p.y,p.surfaceId);
     return {x: U.unisoX(sx, sy), y: U.unisoY(sx, sy)};
   }
   function cancelGroundHold() {
@@ -2071,6 +2079,9 @@ const Game = (() => {
     return !(sk && NO_REPEAT_SKILL.has(sk.type));
   }
   function handleClick(rightBtn) {
+    return TerrainLayers.scope(state.map,state.player,()=>handleSurfaceClick(rightBtn));
+  }
+  function handleSurfaceClick(rightBtn) {
     const p = state.player;
     if (p.dead) return;
     if (p.jumping && (rightBtn || mouse.shift)) { const world=screenToWorld(mouse.x,mouse.y);if(world)p._pendingClick = {rightBtn, mouse: {...mouse}, world}; return; }
@@ -2140,6 +2151,7 @@ const Game = (() => {
     if(!w)return; // An exposed cliff face is not a destination behind that cliff.
     const sk = p.resolveSkill(skill);
     if (mouse.shift || rightBtn) {
+      if(!TerrainLayers.same(p,w))return;
       if(p.rejectSkillWeapon(skill))return;
       /* stand and use skill toward point */
       if (sk.type === "melee") {
@@ -2162,8 +2174,8 @@ const Game = (() => {
     }
     /* plain move */
     {
-      p.command = { type: "move" };
-      repath(p, w.x, w.y);
+      p.command = { type: "move", point:w };
+      repath(p, w.x, w.y,w.surfaceId);
       if (!p.path) { p.command = null; }
     }
   }
@@ -2177,6 +2189,8 @@ const Game = (() => {
       else {
         if (performance.now() - groundHold.startedAt >= 150) {
           groundHold.active = true;
+          const aim=steeringPoint();
+          if(state.map.layers&&(aim.surfaceId??p.surfaceId)!==p.surfaceId){p.command={type:'move',point:aim};repath(p,aim.x,aim.y,aim.surfaceId);return;}
           p.path = null; p._navGoal = null; p._navCache = null; p._navStall = 0;
           p._navPendingGoal = null; p._pendingClick = null; heldTarget = null;
           p.command = {type: "steer", point: steeringPoint()};
@@ -2202,7 +2216,7 @@ const Game = (() => {
 
   function monsterGeometry(mon, cam) {
     const x = U.isoX(mon.x, mon.y) - cam.x;
-    const y = U.isoY(mon.x, mon.y) - cam.y - elevLift(mon.x, mon.y);
+    const y = U.isoY(mon.x, mon.y) - cam.y - elevLift(mon.x, mon.y,mon.surfaceId);
     if (mon.beacon || mon.defId==="boss_portal") return SpriteAssets.frameGeometry(SpriteAssets.getFrame(SpriteAssets.maps.props.beacon, 0), x, y);
     return SpriteAssets.actorGeometry(mon.spriteOpts, mon.pose(), x, y - (mon.jumpZ || 0), ACTOR_BODY_SCALE);
   }
@@ -2211,20 +2225,20 @@ const Game = (() => {
   function updateHover() {
     hoverMon = null; hoverLabel = null; hoverProp = null; hoverNpc = null; hoverPortal = null; hoverExit = null;
     const cam = camera();
-    const terrainHit=state.map.surfaceVersion ? TerrainSurface.pick(state.map,mouse.x+cam.x,mouse.y+cam.y) : null;
-    const hidden=(x,y)=>terrainHit&&terrainHit.depth>x+y+1e-7&&terrainHit.z>TerrainNavigation.height(state.map,x,y)+1e-7&&
+    const terrainHit=state.map.surfaceVersion ? TerrainSurface.pick(state.map,mouse.x+cam.x,mouse.y+cam.y,state.player.surfaceId) : null;
+    const hidden=(x,y)=>terrainHit&&terrainHit.depth>x+y+1e-7&&terrainHit.z>TerrainNavigation.height(state.map,x,y,state.player.surfaceId)+1e-7&&
       !(terrainHit.kind==='ground'&&terrainHit.tx===Math.floor(x)&&terrainHit.ty===Math.floor(y));
     /* loot labels first (they float) */
     for (const lr of labelRects) {
-      if (mouse.x >= lr.x && mouse.x <= lr.x + lr.w && mouse.y >= lr.y && mouse.y <= lr.y + lr.h) { hoverLabel = lr; return; }
+      if (TerrainLayers.same(lr.gi,state.player)&&mouse.x >= lr.x && mouse.x <= lr.x + lr.w && mouse.y >= lr.y && mouse.y <= lr.y + lr.h) { hoverLabel = lr; return; }
     }
     const test = (ex, ey, h, rpx) => {
-      const sx = U.isoX(ex, ey) - cam.x, sy = U.isoY(ex, ey) - cam.y - surfaceLift(ex,ey);
+      const sx = U.isoX(ex, ey) - cam.x, sy = U.isoY(ex, ey) - cam.y - surfaceLift(ex,ey,state.player.surfaceId);
       return !hidden(ex,ey)&&Math.abs(mouse.x - sx) < rpx && mouse.y > sy - h && mouse.y < sy + 10;
     };
     /* Prefer painted pixels over nearby padding, then the last/frontmost
        monster in the renderer's stable x+y depth order. */
-    const candidates = state.monsters.filter(mon => !mon.dead && !mon.husk)
+    const candidates = state.monsters.filter(mon => !mon.dead && !mon.husk && TerrainLayers.same(mon,state.player))
       .map(mon => ({ mon, geometry: monsterGeometry(mon, cam) }));
     for (const padding of [0, 3]) {
       let depth = -Infinity;
@@ -2238,20 +2252,21 @@ const Game = (() => {
     /* ground loot: clicking the item itself works, not just its label */
     for (let i = state.ground.length - 1; i >= 0; i--) {
       const gi = state.ground[i];
-      const sx = U.isoX(gi.x, gi.y) - cam.x, sy = U.isoY(gi.x, gi.y) - cam.y - surfaceLift(gi.x,gi.y);
+      if(!TerrainLayers.same(gi,state.player))continue;
+      const sx = U.isoX(gi.x, gi.y) - cam.x, sy = U.isoY(gi.x, gi.y) - cam.y - surfaceLift(gi.x,gi.y,gi.surfaceId);
       if (!hidden(gi.x,gi.y)&&Math.abs(mouse.x - sx) < 20 && mouse.y > sy - 28 && mouse.y < sy + 12) { hoverLabel = { gi }; return; }
     }
-    for (const n of state.npcs) if (test(n.x, n.y, 52, 22)) { hoverNpc = n; return; }
+    for (const n of state.npcs) if (TerrainLayers.same(n,state.player) && test(n.x, n.y, 52, 22)) { hoverNpc = n; return; }
     /* portals */
     const portalSpots = portalPositions();
-    for (const ps of portalSpots) if (test(ps.x, ps.y, 70, 30)) { hoverPortal = ps; return; }
+    for (const ps of portalSpots) if (TerrainLayers.same(ps,state.player)&&test(ps.x, ps.y, 70, 30)) { hoverPortal = ps; return; }
     for (const pr of state.map.props) {
-      if (pr.hidden || !(pr.interact || pr.breakable || pr.lootable)) continue;
+      if (!TerrainLayers.same(pr,state.player) || pr.hidden || !(pr.interact || pr.breakable || pr.lootable)) continue;
       /* tall interactables (shrines, forge, strongbox, board) need a generous box so
          clicking the VISIBLE sprite — not just its base — registers */
       if (pr.building) {
         const frame = propSpriteFrame(pr);
-        const sx=U.isoX(pr.x,pr.y)-cam.x,sy=U.isoY(pr.x,pr.y)-cam.y-elevLift(pr.x,pr.y);
+        const sx=U.isoX(pr.x,pr.y)-cam.x,sy=U.isoY(pr.x,pr.y)-cam.y-elevLift(pr.x,pr.y,pr.surfaceId);
         if (mouse.x>=sx-frame.anchorX && mouse.x<=sx-frame.anchorX+frame.sw && mouse.y>=sy-frame.anchorY && mouse.y<=sy-frame.anchorY+frame.sh) { hoverProp=pr;return; }
         continue;
       }
@@ -2263,7 +2278,7 @@ const Game = (() => {
     const wm = screenToWorld(mouse.x, mouse.y);
     if(!wm)return;
     for (const ex of state.map.exits) {
-      if (wm.x >= ex.x0 - 0.7 && wm.x <= ex.x1 + 0.7 && wm.y >= ex.y0 - 0.7 && wm.y <= ex.y1 + 0.7) { hoverExit = ex; return; }
+      if (TerrainLayers.same(wm,ex)&&wm.x >= ex.x0 - 0.7 && wm.x <= ex.x1 + 0.7 && wm.y >= ex.y0 - 0.7 && wm.y <= ex.y1 + 0.7) { hoverExit = ex; return; }
     }
   }
   function portalPositions() {
@@ -2273,7 +2288,7 @@ const Game = (() => {
         const sp = state.map.spawns.portal;
         if (sp) out.push({ x: sp.x, y: sp.y });
       } else if (state.map.id === state.portal.mapId && (!state.portal.instance || state.map === state.portal.instance.map)) {
-        out.push({ x: state.portal.x, y: state.portal.y });
+        out.push({ x: state.portal.x, y: state.portal.y,surfaceId:state.portal.surfaceId??0 });
       }
     }
     /* the waygate opened by an act boss — leads forward to the next act's camp */
@@ -2339,8 +2354,8 @@ const Game = (() => {
     /* minions */
     for (const mi of state.minions) mi.update(dt, p, state.map);
     state.minions = state.minions.filter(mi => !mi.dead || mi.deathT > 0);
-    updateTraps(dt);
-    updateFx(dt);
+    updateLayerEffects("traps",updateTraps,dt);
+    updateLayerEffects("fx",updateFx,dt);
     /* npcs / projectiles / ground toss */
     for (const n of state.npcs) n.update(dt);
     for (const pr of state.projectiles) pr.update(dt, state.map, p, state.monsters);
@@ -2353,7 +2368,7 @@ const Game = (() => {
     if (!p.dead) {
       for (let i = state.ground.length - 1; i >= 0; i--) {
         const gi = state.ground[i];
-        if (gi.gold && gi.toss <= 0 && U.dist(p.x, p.y, gi.x, gi.y) < 1.4) pickupGround(gi);
+        if (TerrainLayers.same(p,gi) && gi.gold && gi.toss <= 0 && U.dist(p.x, p.y, gi.x, gi.y) < 1.4) pickupGround(gi);
       }
     }
     /* particles, floats, novas */
@@ -2387,6 +2402,12 @@ const Game = (() => {
   }
 
   /* ---------------- ranger traps ---------------- */
+  function updateLayerEffects(key,run,dt){
+    if(!state.map.layers){run(dt);return;}
+    const all=state[key],out=[];
+    for(const surfaceId of [0,1]){state[key]=all.filter(f=>(f.surfaceId??0)===surfaceId);TerrainLayers.scope(state.map,surfaceId,()=>run(dt));out.push(...state[key]);}
+    state[key]=out;
+  }
   function updateTraps(dt) {
     const p = state.player;
     for (let i = state.traps.length - 1; i >= 0; i--) {
@@ -2395,7 +2416,7 @@ const Game = (() => {
       tr.ttl -= dt;
       if (tr.ttl <= 0) { state.traps.splice(i, 1); continue; }
       let sprung = false;
-      for (const mon of state.monsters) {
+      for (const mon of TerrainLayers.targets(state.monsters)) {
         if (mon.dead) continue;
         if (U.dist(tr.x, tr.y, mon.x, mon.y) < tr.trigger + mon.radius) { sprung = true; break; }
       }
@@ -2408,7 +2429,7 @@ const Game = (() => {
       else addNova(tr.x, tr.y, tr.radius, col);
       if (tr.kind === "powder") fx.shake = Math.max(fx.shake, 4);
       for (let j = 0; j < 12; j++) addParticle(tr.x + U.rf(-0.5, 0.5), tr.y + U.rf(-0.5, 0.5), col);
-      for (const mon of state.monsters) {
+      for (const mon of TerrainLayers.targets(state.monsters)) {
         if (mon.dead || U.dist(tr.x, tr.y, mon.x, mon.y) > tr.radius + mon.radius) continue;
         let dmg = U.rf(tr.dmgLo, tr.dmgHi) * tr.mult;
         let crit = false;
@@ -2457,7 +2478,7 @@ const Game = (() => {
     if (!mon.killMark) return; const o = state.player, det = mon.killMark.det || 10, amp = mon.killMark.amp || 25;
     Sfx.playSkill?.('veilranger_2_4','impact',{owner:o,emitter:mon,elem:'shadow'});
     addNova(mon.x, mon.y, 2.5, "#c080e0");
-    for (const m of state.monsters) {
+    for (const m of TerrainLayers.targets(state.monsters)) {
       if (m.dead || U.dist(mon.x, mon.y, m.x, m.y) > 2.5 + m.radius) continue;
       o.spellHit(m, det, "shadow", {});
       if (m !== mon && !m.killMark) m.killMark = { until: state.time + 3, amp: amp / 2, det: det / 2 };
@@ -2472,7 +2493,7 @@ const Game = (() => {
     if (!mon.doom) return; const o = state.player, d = mon.doom, k = 0.5 + 0.5 * (d.charge / d.maxCharge);
     Sfx.playSkill?.('gravebinder_1_2','impact',{owner:o,emitter:mon,elem:'shadow'});
     addNova(mon.x, mon.y, d.radius, "#9a40c0"); fx.shake = Math.max(fx.shake, 4);
-    for (const m of state.monsters) {
+    for (const m of TerrainLayers.targets(state.monsters)) {
       if (m.dead || U.dist(mon.x, mon.y, m.x, m.y) > d.radius + m.radius) continue;
       o.spellHit(m, U.rf(d.dmgLo, d.dmgHi) * k, "shadow", {});
     }
@@ -2480,7 +2501,7 @@ const Game = (() => {
   }
   function spawnCorpse(x, y, ttl) {
     /* a lightweight husk the corpse-finders accept; not rendered as a monster */
-    state.monsters.push({ husk: true, dead: true, exploded: false, corpseT: ttl || 12, x, y, radius: 0.3,
+    state.monsters.push({ surfaceId:TerrainLayers.current(state.map), husk: true, dead: true, exploded: false, corpseT: ttl || 12, x, y, radius: 0.3,
       lvl: state.player.lvl, type: "undead", hp: 0, maxHp: 1, def: {},
       pose() { return { state: "idle", t: 0, ang: 0, ex: {} }; },   // defensive: never drawn, but safe if asked
       takeDamage() {}, applySlow() {}, update(dt) { this.corpseT -= dt; } });
@@ -2518,7 +2539,7 @@ const Game = (() => {
     if(info.owner)info.owner.areaAttack({kind:'circle',x,y,radius:r},info.dmg,'phys');
     else {
       if (!p.dead && U.dist(x, y, p.x, p.y) <= r + p.radius) p.takeDamage(info.dmg, null, "phys");
-      for (const mi of state.minions) if (!mi.dead && U.dist(x, y, mi.x, mi.y) <= r + mi.radius) mi.takeDamage(info.dmg, null);
+      for (const mi of TerrainLayers.targets(state.minions)) if (!mi.dead && U.dist(x, y, mi.x, mi.y) <= r + mi.radius) mi.takeDamage(info.dmg, null);
     }
     for (let i = 0; i < (info.count || 1); i++) {
       if(info.owner&&!info.owner.isBoss&&info.owner.livingChildren()>=6)break;
@@ -2532,7 +2553,7 @@ const Game = (() => {
   function applyGroundField(f, o) {
     const inR = m => U.dist(f.x, f.y, m.x, m.y) <= f.radius + m.radius;
     if (f.rabies) {   // contagious rabies cloud left by a dead rabid foe — poisons + infects all inside
-      for (const m of state.monsters) {
+      for (const m of TerrainLayers.targets(state.monsters)) {
         if (m.dead || !inR(m)) continue;
         m.poisonDot = { dps: Math.max((m.poisonDot && m.poisonDot.dps) || 0, f.rdps || 6), t: 3 };
         if (!m.rabies || m.rabies.until < state.time) { m.rabies = { until: state.time + (f.rdur || 8), dps: f.rdps || 6, cloudRad: f.rcloud || 2.4, owner: f.owner }; for (let i = 0; i < 2; i++) addParticle(m.x, m.y, "#90ff70"); }
@@ -2540,39 +2561,39 @@ const Game = (() => {
       return;
     }
     switch (f.fieldKind) {
-      case "inferno": for (const m of state.monsters) { if (!m.dead && inR(m)) o.spellHit(m, fieldDmgRoll(f), "fire", { burn: 2 }); } break;
-      case "glacier": for (const m of state.monsters) { if (m.dead || !inR(m)) continue; o.spellHit(m, fieldDmgRoll(f), "cold", {}); m.applySlow(0.9, f.slowPct || 60); m.glacierT = (m.glacierT || 0) + (f.tickEvery || 0.5); if (m.glacierT > 1.2) { m.frozen = Math.max(m.frozen || 0, state.time + 1.0); m.stunT = Math.max(m.stunT, 1.0); } } break;
-      case "static": { let t = null, bd = 1e9; for (const m of state.monsters) { if (m.dead || !inR(m)) continue; const dd = U.dist2(f.x, f.y, m.x, m.y); if (dd < bd) { bd = dd; t = m; } } if (t) { const sc = 1 + ((o.staticChg || 0) / 40); o.spellHit(t, fieldDmgRoll(f) * sc, "light", {}); lightningBolt(f.x, f.y, t.x, t.y); } break; }
-      case "caltrop": for (const m of state.monsters) { if (m.dead || !inR(m)) continue; o.spellHit(m, fieldDmgRoll(f), "phys", {}); m.applySlow(0.6, f.slowPct || 40); } break;
-      case "smoke": { for (const m of state.monsters) { if (!m.dead && inR(m)) m.blindUntil = state.time + 0.6; } if (U.dist(state.player.x, state.player.y, f.x, f.y) < f.radius) refreshBuff(state.player, "smoke_evasion", { dodge: f.selfDodge || 30 }, 0.6); break; }
-      case "miasma": for (const m of state.monsters) { if (m.dead || !inR(m)) continue; o.spellHit(m, fieldDmgRoll(f), "poison", {}); m.applySlow(0.7, f.slowPct || 20); } break;
-      case "snare": for (const m of state.monsters) { if (m.dead || !inR(m)) continue; m.applySlow(0.8, 95); o.spellHit(m, fieldDmgRoll(f), "poison", {}); } break;
-      case "spore": for (const m of state.monsters) { if (m.dead || !inR(m)) continue; m.poisonDot = { dps: Math.max((m.poisonDot && m.poisonDot.dps) || 0, f.lo || 3), t: 3 }; m.curseWither = { until: state.time + 1.5, pct: f.weakenPct || 12 }; } break;
-      case "quake": if (Math.random() < 0.7) { const a = Math.random() * 6.283, r = Math.random() * f.radius, qx = f.x + Math.cos(a) * r, qy = f.y + Math.sin(a) * r; addNova(qx, qy, 1.2, "#c0a060"); fx.shake = Math.max(fx.shake, 2); for (const m of state.monsters) { if (m.dead) continue; if (U.dist(qx, qy, m.x, m.y) < 1.4 + m.radius) { o.spellHit(m, fieldDmgRoll(f), "earth", {}); m.applySlow(0.6, f.slowPct || 25); } } } break;
-      case "regrowth": { const pl = state.player; if (U.dist(pl.x, pl.y, f.x, f.y) < f.radius) pl.healLife(pl.stats.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); for (const mi of state.minions) { if (!mi.dead && U.dist(mi.x, mi.y, f.x, f.y) < f.radius) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); } break; }
+      case "inferno": for (const m of TerrainLayers.targets(state.monsters)) { if (!m.dead && inR(m)) o.spellHit(m, fieldDmgRoll(f), "fire", { burn: 2 }); } break;
+      case "glacier": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; o.spellHit(m, fieldDmgRoll(f), "cold", {}); m.applySlow(0.9, f.slowPct || 60); m.glacierT = (m.glacierT || 0) + (f.tickEvery || 0.5); if (m.glacierT > 1.2) { m.frozen = Math.max(m.frozen || 0, state.time + 1.0); m.stunT = Math.max(m.stunT, 1.0); } } break;
+      case "static": { let t = null, bd = 1e9; for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; const dd = U.dist2(f.x, f.y, m.x, m.y); if (dd < bd) { bd = dd; t = m; } } if (t) { const sc = 1 + ((o.staticChg || 0) / 40); o.spellHit(t, fieldDmgRoll(f) * sc, "light", {}); lightningBolt(f.x, f.y, t.x, t.y); } break; }
+      case "caltrop": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; o.spellHit(m, fieldDmgRoll(f), "phys", {}); m.applySlow(0.6, f.slowPct || 40); } break;
+      case "smoke": { for (const m of TerrainLayers.targets(state.monsters)) { if (!m.dead && inR(m)) m.blindUntil = state.time + 0.6; } if (TerrainLayers.same(f,state.player) && U.dist(state.player.x, state.player.y, f.x, f.y) < f.radius) refreshBuff(state.player, "smoke_evasion", { dodge: f.selfDodge || 30 }, 0.6); break; }
+      case "miasma": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; o.spellHit(m, fieldDmgRoll(f), "poison", {}); m.applySlow(0.7, f.slowPct || 20); } break;
+      case "snare": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; m.applySlow(0.8, 95); o.spellHit(m, fieldDmgRoll(f), "poison", {}); } break;
+      case "spore": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; m.poisonDot = { dps: Math.max((m.poisonDot && m.poisonDot.dps) || 0, f.lo || 3), t: 3 }; m.curseWither = { until: state.time + 1.5, pct: f.weakenPct || 12 }; } break;
+      case "quake": if (Math.random() < 0.7) { const a = Math.random() * 6.283, r = Math.random() * f.radius, qx = f.x + Math.cos(a) * r, qy = f.y + Math.sin(a) * r; addNova(qx, qy, 1.2, "#c0a060"); fx.shake = Math.max(fx.shake, 2); for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead) continue; if (U.dist(qx, qy, m.x, m.y) < 1.4 + m.radius) { o.spellHit(m, fieldDmgRoll(f), "earth", {}); m.applySlow(0.6, f.slowPct || 25); } } } break;
+      case "regrowth": { const pl = state.player; if (TerrainLayers.same(f,pl) && U.dist(pl.x, pl.y, f.x, f.y) < f.radius) pl.healLife(pl.stats.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); for (const mi of TerrainLayers.targets(state.minions)) { if (!mi.dead && U.dist(mi.x, mi.y, f.x, f.y) < f.radius) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); } break; }
     }
   }
   function applyBanner(f, p) {
-    const inAura = U.dist(p.x, p.y, f.x, f.y) < f.radius;
+    const inAura = TerrainLayers.same(f,p) && U.dist(p.x, p.y, f.x, f.y) < f.radius;
     if (inAura) { refreshBuff(p, "banner_aura", { dmgPct: f.allyDmg, ias: f.allyIas }, 0.6); if (f.heal) p.healLife(p.stats.maxHp * f.heal / 100 * (f.tickEvery || 0.3)); }
-    for (const mi of state.minions) { if (!mi.dead && U.dist(mi.x, mi.y, f.x, f.y) < f.radius) { mi.buffUntil = Math.max(mi.buffUntil, state.time + 0.6); mi.buffDmg = Math.max(mi.buffDmg, f.allyDmg); if (f.heal) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * f.heal / 100 * (f.tickEvery || 0.3)); } }
-    for (const m of state.monsters) { if (!m.dead && U.dist(m.x, m.y, f.x, f.y) < f.radius) m.bannerWeak = { until: state.time + 0.6, pct: f.enemyDmg }; }
+    for (const mi of TerrainLayers.targets(state.minions)) { if (!mi.dead && U.dist(mi.x, mi.y, f.x, f.y) < f.radius) { mi.buffUntil = Math.max(mi.buffUntil, state.time + 0.6); mi.buffDmg = Math.max(mi.buffDmg, f.allyDmg); if (f.heal) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * f.heal / 100 * (f.tickEvery || 0.3)); } }
+    for (const m of TerrainLayers.targets(state.monsters)) { if (!m.dead && U.dist(m.x, m.y, f.x, f.y) < f.radius) m.bannerWeak = { until: state.time + 0.6, pct: f.enemyDmg }; }
   }
   function updateTripwire(f, o) {
     if (f.sprung) return;
-    for (const m of state.monsters) {
+    for (const m of TerrainLayers.targets(state.monsters)) {
       if (m.dead) continue;
       if (distToSeg(m.x, m.y, f.x0, f.y0, f.x1, f.y1) < 0.55 + m.radius) {
         f.sprung = true;
-        for (const mm of state.monsters) { if (mm.dead) continue; if (distToSeg(mm.x, mm.y, f.x0, f.y0, f.x1, f.y1) < 0.75 + mm.radius) { o.spellHit(mm, U.rf(f.lo, f.hi), "phys", {}); mm.poisonDot = { dps: f.bleed, t: 3 }; mm.applySlow(f.root || 0.8, 95); } }
+        for (const mm of TerrainLayers.targets(state.monsters)) { if (mm.dead) continue; if (distToSeg(mm.x, mm.y, f.x0, f.y0, f.x1, f.y1) < 0.75 + mm.radius) { o.spellHit(mm, U.rf(f.lo, f.hi), "phys", {}); mm.poisonDot = { dps: f.bleed, t: 3 }; mm.applySlow(f.root || 0.8, 95); } }
         addNova((f.x0 + f.x1) / 2, (f.y0 + f.y1) / 2, 1, "#d8c79a"); Sfx.play("hit"); f.ttl = Math.min(f.ttl, 0.3); break;
       }
     }
   }
   function updateOutbreak(f, o, dt) {
     const prevR = f.r; f.r += (f.maxR / f.dur) * dt;
-    for (const m of state.monsters) { if (m.dead || f.hitMon.has(m)) continue; const dm = U.dist(f.x, f.y, m.x, m.y); if (dm >= prevR && dm <= f.r) { f.hitMon.add(m); m.plague = { until: state.time + 5, tick: f.tick, tickT: 0, spreadCd: 1.5, spreadRange: 3.5, burstRange: 2.5 }; o.spellHit(m, f.tick, "poison", {}); } }
-    for (const c of state.monsters) { if (!c.dead || !c.corpseT || c.exploded || f.hitMon.has(c)) continue; const dm = U.dist(f.x, f.y, c.x, c.y); if (dm >= prevR && dm <= f.r) { f.hitMon.add(c); c.exploded = true; c.corpseT = 0; addNova(c.x, c.y, 2.2, "#90ff70"); for (const m of state.monsters) { if (m.dead || U.dist(c.x, c.y, m.x, m.y) > 2.2 + m.radius) continue; o.spellHit(m, f.corpseDmg, "poison", {}); } } }
+    for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || f.hitMon.has(m)) continue; const dm = U.dist(f.x, f.y, m.x, m.y); if (dm >= prevR && dm <= f.r) { f.hitMon.add(m); m.plague = { until: state.time + 5, tick: f.tick, tickT: 0, spreadCd: 1.5, spreadRange: 3.5, burstRange: 2.5 }; o.spellHit(m, f.tick, "poison", {}); } }
+    for (const c of TerrainLayers.targets(state.monsters)) { if (!c.dead || !c.corpseT || c.exploded || f.hitMon.has(c)) continue; const dm = U.dist(f.x, f.y, c.x, c.y); if (dm >= prevR && dm <= f.r) { f.hitMon.add(c); c.exploded = true; c.corpseT = 0; addNova(c.x, c.y, 2.2, "#90ff70"); for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || U.dist(c.x, c.y, m.x, m.y) > 2.2 + m.radius) continue; o.spellHit(m, f.corpseDmg, "poison", {}); } } }
     if (f.r >= f.maxR) f.ttl = 0;
   }
   function updateTotem(f, o, dt) {
@@ -2581,20 +2602,20 @@ const Game = (() => {
       if (f.pulseT <= 0) { f.pulseT = f.pulseCd || 1.4; f.ringR = 0; f.ringHit = new Set(); }
       f.ringR = (f.ringR || 0) + (f.radius / (f.pulseCd || 1.4)) * dt;
       if (!f.ringHit) f.ringHit = new Set();
-      for (const m of state.monsters) { if (m.dead) continue; if (Math.abs(U.dist(f.x, f.y, m.x, m.y) - f.ringR) < 0.8 && !f.ringHit.has(m)) { f.ringHit.add(m); o.spellHit(m, U.rf(f.lo, f.hi), "light", {}); } }
+      for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead) continue; if (Math.abs(U.dist(f.x, f.y, m.x, m.y) - f.ringR) < 0.8 && !f.ringHit.has(m)) { f.ringHit.add(m); o.spellHit(m, U.rf(f.lo, f.hi), "light", {}); } }
       f.wispT = (f.wispT || 0) - dt;
-      if (f.wispT <= 0) { f.wispT = f.wispCd || 3; let t = null, bd = 1e9; for (const m of state.monsters) { if (m.dead) continue; const dd = U.dist2(f.x, f.y, m.x, m.y); if (dd < bd) { bd = dd; t = m; } } if (t) state.fx.push({ type: "wisp", x: f.x, y: f.y, target: t, ttl: 3, lo: f.lo, hi: f.hi, owner: o, sourceSkill:f.sourceSkill }); }
+      if (f.wispT <= 0) { f.wispT = f.wispCd || 3; let t = null, bd = 1e9; for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead) continue; const dd = U.dist2(f.x, f.y, m.x, m.y); if (dd < bd) { bd = dd; t = m; } } if (t) state.fx.push({ surfaceId:TerrainLayers.current(state.map), type: "wisp", x: f.x, y: f.y, target: t, ttl: 3, lo: f.lo, hi: f.hi, owner: o, sourceSkill:f.sourceSkill }); }
     } else {
       const rate = (f.zapCd || 1.1) * Math.max(.1,1 - ((o.stats && o.stats.totemRate) || 0) / 100);
       f.zapT = (f.zapT || 0) - dt;
-      if (f.zapT <= 0) { let t = null, bd = f.radius * f.radius; for (const m of state.monsters) { if (m.dead) continue; const dd = U.dist2(f.x, f.y, m.x, m.y); if (dd < bd) { bd = dd; t = m; } } if (t) { f.zapT = rate; o.spellHit(t, U.rf(f.lo, f.hi), "light", {}); lightningBolt(f.x, f.y, t.x, t.y); Sfx.play("zap"); } else f.zapT = 0.25; }
+      if (f.zapT <= 0) { let t = null, bd = f.radius * f.radius; for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead) continue; const dd = U.dist2(f.x, f.y, m.x, m.y); if (dd < bd) { bd = dd; t = m; } } if (t) { f.zapT = rate; o.spellHit(t, U.rf(f.lo, f.hi), "light", {}); lightningBolt(f.x, f.y, t.x, t.y); Sfx.play("zap"); } else f.zapT = 0.25; }
     }
   }
   function updateCyclone(f, o, dt) {
     if (f.orb) { const nx = f.x + f.vx * dt, ny = f.y + f.vy * dt; if (MapGen.walkable(state.map, nx, f.y)) f.x = nx; else f.vx = 0; if (MapGen.walkable(state.map, f.x, ny)) f.y = ny; else f.vy = 0; }
-    else { let t = null, bd = 1e9; for (const m of state.monsters) { if (m.dead) continue; const dd = U.dist2(f.x, f.y, m.x, m.y); if (dd < bd) { bd = dd; t = m; } } if (t) { const d = Math.sqrt(bd) || 1, sp = f.drift * dt, nx = f.x + (t.x - f.x) / d * sp, ny = f.y + (t.y - f.y) / d * sp; if (MapGen.walkable(state.map, nx, f.y)) f.x = nx; if (MapGen.walkable(state.map, f.x, ny)) f.y = ny; } }
+    else { let t = null, bd = 1e9; for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead) continue; const dd = U.dist2(f.x, f.y, m.x, m.y); if (dd < bd) { bd = dd; t = m; } } if (t) { const d = Math.sqrt(bd) || 1, sp = f.drift * dt, nx = f.x + (t.x - f.x) / d * sp, ny = f.y + (t.y - f.y) / d * sp; if (MapGen.walkable(state.map, nx, f.y)) f.x = nx; if (MapGen.walkable(state.map, f.x, ny)) f.y = ny; } }
     f.tickT = (f.tickT || 0) - dt;
-    if (f.tickT <= 0) { f.tickT = f.tickEvery || 0.4; for (const m of state.monsters) { if (m.dead || U.dist(f.x, f.y, m.x, m.y) > f.radius + m.radius) continue; o.spellHit(m, U.rf(f.lo, f.hi), "light", {}); if (f.orb) lightningBolt(f.x, f.y, m.x, m.y); else if (f.pull) { const d2 = U.dist(f.x, f.y, m.x, m.y) || 1, pull = Math.min(d2, f.pull * (f.tickEvery || 0.4)), px = m.x + (f.x - m.x) / d2 * pull, py = m.y + (f.y - m.y) / d2 * pull; if (MapGen.walkable(state.map, px, m.y)) m.x = px; if (MapGen.walkable(state.map, m.x, py)) m.y = py; } } }
+    if (f.tickT <= 0) { f.tickT = f.tickEvery || 0.4; for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || U.dist(f.x, f.y, m.x, m.y) > f.radius + m.radius) continue; o.spellHit(m, U.rf(f.lo, f.hi), "light", {}); if (f.orb) lightningBolt(f.x, f.y, m.x, m.y); else if (f.pull) { const d2 = U.dist(f.x, f.y, m.x, m.y) || 1, pull = Math.min(d2, f.pull * (f.tickEvery || 0.4)), px = m.x + (f.x - m.x) / d2 * pull, py = m.y + (f.y - m.y) / d2 * pull; if (MapGen.walkable(state.map, px, m.y)) m.x = px; if (MapGen.walkable(state.map, m.x, py)) m.y = py; } } }
     if (Math.random() < 0.8) { const a = Math.random() * 6.283, r = Math.random() * f.radius; addParticle(f.x + Math.cos(a) * r, f.y + Math.sin(a) * r, f.orb ? "#fff080" : "#cfe0ff"); }
   }
   function updateWisp(f, o, dt) {
@@ -2611,10 +2632,10 @@ const Game = (() => {
       const o = f.owner || p;
       const tick = () => { f.tickT = (f.tickT || 0) - dt; if (f.tickT <= 0) { f.tickT = f.tickEvery || 0.4; return true; } return false; };
       const runEffect=()=>{switch (f.type) {
-        case "firewall": if (tick()) for (const m of state.monsters) { if (!m.dead && distToSeg(m.x, m.y, f.x0, f.y0, f.x1, f.y1) < f.width + m.radius) o.spellHit(m, fieldDmgRoll(f), "fire", {}); } break;   /* flat per-tick fire — no stacking burn DoT */
+        case "firewall": if (tick()) for (const m of TerrainLayers.targets(state.monsters)) { if (!m.dead && distToSeg(m.x, m.y, f.x0, f.y0, f.x1, f.y1) < f.width + m.radius) o.spellHit(m, fieldDmgRoll(f), "fire", {}); } break;   /* flat per-tick fire — no stacking burn DoT */
         case "groundfield": if (f.fieldKind === "spore") { f.x += (f.vx || 0) * dt; f.y += (f.vy || 0) * dt; } if (tick()) applyGroundField(f, o); break;
         case "banner": if (tick()) applyBanner(f, p); break;
-        case "rain": if (tick()) for (const m of state.monsters) { if (m.dead || U.dist(f.x, f.y, m.x, m.y) > f.radius + m.radius) continue; o.strike(m, f.mult * ((m.quarry && state.time < m.quarry.until) ? 1.25 : 1), { auto: true }); } if (Math.random() < 0.7) { const a = Math.random() * 6.283, r = Math.random() * f.radius; addParticle(f.x + Math.cos(a) * r, f.y + Math.sin(a) * r, "#d8c79a"); } break;
+        case "rain": if (tick()) for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || U.dist(f.x, f.y, m.x, m.y) > f.radius + m.radius) continue; o.strike(m, f.mult * ((m.quarry && state.time < m.quarry.until) ? 1.25 : 1), { auto: true }); } if (Math.random() < 0.7) { const a = Math.random() * 6.283, r = Math.random() * f.radius; addParticle(f.x + Math.cos(a) * r, f.y + Math.sin(a) * r, "#d8c79a"); } break;
         case "tripwire": updateTripwire(f, o); break;
         case "outbreak": updateOutbreak(f, o, dt); break;
         case "totem": updateTotem(f, o, dt); break;
@@ -2657,7 +2678,7 @@ const Game = (() => {
     ctx.shadowBlur = 0; ctx.restore();
   }
   function drawFx(f, cam) {
-    const sx = U.isoX(f.x, f.y) - cam.x, sy = U.isoY(f.x, f.y) - cam.y - surfaceLift(f.x,f.y);
+    const sx = U.isoX(f.x, f.y) - cam.x, sy = U.isoY(f.x, f.y) - cam.y - surfaceLift(f.x,f.y,f.surfaceId);
     ctx.save();
     if (f.type === "groundfield") {
       const col = GF_COL[f.fieldKind] || "#ffffff", rr = f.radius * 32, ry = rr * 0.5;
@@ -2683,7 +2704,7 @@ const Game = (() => {
       }
     } else if (f.type === "firewall") {
       /* a row of flickering flame tongues along the line — a real wall of fire, not a glowing streak */
-      const x0 = U.isoX(f.x0, f.y0) - cam.x, y0 = U.isoY(f.x0, f.y0) - cam.y - surfaceLift(f.x0,f.y0), x1 = U.isoX(f.x1, f.y1) - cam.x, y1 = U.isoY(f.x1, f.y1) - cam.y - surfaceLift(f.x1,f.y1);
+      const x0 = U.isoX(f.x0, f.y0) - cam.x, y0 = U.isoY(f.x0, f.y0) - cam.y - surfaceLift(f.x0,f.y0,f.surfaceId), x1 = U.isoX(f.x1, f.y1) - cam.x, y1 = U.isoY(f.x1, f.y1) - cam.y - surfaceLift(f.x1,f.y1,f.surfaceId);
       const dxw = x1 - x0, dyw = y1 - y0, len = Math.hypot(dxw, dyw) || 1, n = Math.max(2, Math.round(len / 9));
       const life = U.clamp(f.ttl / 0.6, 0, 1) * U.clamp((f.maxTtl - f.ttl) / 0.25, 0, 1);   // fade in at birth, out at death
       const seed0 = (f.x0 * 7 + f.y0 * 13);
@@ -2709,7 +2730,7 @@ const Game = (() => {
     } else if (f.type === "rain") {
       ctx.globalAlpha = 0.28; ctx.strokeStyle = "#d8c79a"; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(sx, sy, f.radius * 32, f.radius * 16, 0, 0, 6.283); ctx.stroke();
     } else if (f.type === "tripwire") {
-      const x0 = U.isoX(f.x0, f.y0) - cam.x, y0 = U.isoY(f.x0, f.y0) - cam.y - surfaceLift(f.x0,f.y0), x1 = U.isoX(f.x1, f.y1) - cam.x, y1 = U.isoY(f.x1, f.y1) - cam.y - surfaceLift(f.x1,f.y1);
+      const x0 = U.isoX(f.x0, f.y0) - cam.x, y0 = U.isoY(f.x0, f.y0) - cam.y - surfaceLift(f.x0,f.y0,f.surfaceId), x1 = U.isoX(f.x1, f.y1) - cam.x, y1 = U.isoY(f.x1, f.y1) - cam.y - surfaceLift(f.x1,f.y1,f.surfaceId);
       ctx.strokeStyle = f.sprung ? "#7a2a2a" : "#b8b0a0"; ctx.globalAlpha = 0.85; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
     } else if (f.type === "outbreak") {
       ctx.strokeStyle = "#90ff70"; ctx.shadowColor = "#52c020"; ctx.shadowBlur = 10; ctx.globalAlpha = 0.6; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(sx, sy, f.r * 32, f.r * 16, 0, 0, 6.283); ctx.stroke(); ctx.shadowBlur = 0;
@@ -2809,14 +2830,14 @@ const Game = (() => {
       for (const l of m.lights) {
         if (l.color !== "#ff9c50") continue;
         if (U.dist(l.x, l.y, p.x, p.y) > 14) continue;
-        if (Math.random() < 0.5) particles.push({ x: l.x + U.rf(-0.2, 0.2), y: l.y + U.rf(-0.2, 0.2), vx: U.rf(-0.2, 0.2), vy: U.rf(-0.3, 0.1), z: U.rf(20, 30), color: "#ffb050", t: U.rf(0.5, 1.2), grav: -14 });
+        if (Math.random() < 0.5) particles.push({ surfaceId:TerrainLayers.current(state.map), x: l.x + U.rf(-0.2, 0.2), y: l.y + U.rf(-0.2, 0.2), vx: U.rf(-0.2, 0.2), vy: U.rf(-0.3, 0.1), z: U.rf(20, 30), color: "#ffb050", t: U.rf(0.5, 1.2), grav: -14 });
       }
     }
     /* chimney smoke — slow grey plumes lolling up off rooftops near the player */
     if (m.chimneys && m.chimneys.length && Math.random() < dt * 5) {
       for (const ch of m.chimneys) {
         if (U.dist(ch.x, ch.y, p.x, p.y) > 16) continue;
-        if (Math.random() < 0.6) particles.push({ x: ch.x + U.rf(-0.1, 0.1), y: ch.y + U.rf(-0.1, 0.1), vx: U.rf(-0.05, 0.18), vy: U.rf(-0.12, 0.02), z: U.rf(34, 42), color: "#9aa0a8", t: U.rf(1.6, 3.0), grav: -7 });
+        if (Math.random() < 0.6) particles.push({ surfaceId:TerrainLayers.current(state.map), x: ch.x + U.rf(-0.1, 0.1), y: ch.y + U.rf(-0.1, 0.1), vx: U.rf(-0.05, 0.18), vy: U.rf(-0.12, 0.02), z: U.rf(34, 42), color: "#9aa0a8", t: U.rf(1.6, 3.0), grav: -7 });
       }
     }
   }
@@ -2860,6 +2881,7 @@ const Game = (() => {
     const vis = (sx, sy) => sx > -M && sx < W + M && sy > -M && sy < H + M;
     const reveal = mouse.alt || LootFilter.revealing;            // hold to reveal hidden (faded)
     const plate = (gi, f, sx, sy, tossZ, faded, hover) => {
+      if(!TerrainLayers.same(gi,state.player))return;
       const text = gi.gold ? `${gi.gold} gold` : ((gi.item.identified ? gi.item.name : gi.item.baseName) + (gi.item.count > 1 ? ` (${gi.item.count})` : ""));
       const sz = Math.max(10, Math.round(12 * (f.size || 1)));
       ctx.font = `${sz}px 'Palatino Linotype', serif`;
@@ -2877,7 +2899,7 @@ const Game = (() => {
     };
     for (const gi of state.ground) {
       const f = gi.filt || (gi.filt = LootFilter.evaluate(gi, state.player));
-      const sx = U.isoX(gi.x, gi.y) - cam.x, sy = U.isoY(gi.x, gi.y) - cam.y - surfaceLift(gi.x,gi.y);
+      const sx = U.isoX(gi.x, gi.y) - cam.x, sy = U.isoY(gi.x, gi.y) - cam.y - surfaceLift(gi.x,gi.y,gi.surfaceId);
       if (!vis(sx, sy)) continue;
       if (f.hide && !reveal) continue;                            // filtered out
       if (f.beam && !f.hide) {                                    // vertical loot beam beneath the label
@@ -2891,7 +2913,7 @@ const Game = (() => {
     /* hovered item always reveals its name, even if the filter hid it */
     if (hoverLabel && hoverLabel.gi && state.ground.includes(hoverLabel.gi) && !labelRects.some(r => r.gi === hoverLabel.gi)) {
       const gi = hoverLabel.gi, f = gi.filt || LootFilter.evaluate(gi, state.player);
-      const sx = U.isoX(gi.x, gi.y) - cam.x, sy = U.isoY(gi.x, gi.y) - cam.y - surfaceLift(gi.x,gi.y);
+      const sx = U.isoX(gi.x, gi.y) - cam.x, sy = U.isoY(gi.x, gi.y) - cam.y - surfaceLift(gi.x,gi.y,gi.surfaceId);
       plate(gi, f, sx, sy, 0, false, true);
       ctx.fillStyle = f.color + "28"; ctx.beginPath(); ctx.ellipse(sx, sy, 15, 7.5, 0, 0, Math.PI * 2); ctx.fill();
     }
@@ -2924,15 +2946,16 @@ const Game = (() => {
     const massifTerrain = m.outdoor && MASSIF_THEMES.has(theme);
     const ev = m.elev;
     if (m.settlement) TownTerrain.draw(ctx,m,cam);
-    if(m.surfaceVersion)LevelTerrain.drawSurface(ctx,m,cam,tx0,tx1,ty0,ty1,inView,true);
+    if(m.surfaceVersion&&!m.settlement)LevelTerrain.drawSurface(ctx,m,cam,tx0,tx1,ty0,ty1,inView,true);
     if(!m.settlement&&!m.surfaceVersion)LevelTerrain.drawFloor(ctx,m,cam,tx0,tx1,ty0,ty1,inView,true);
 
     /* ---- ground items: ICONS ONLY (flat). Their name labels are drawn later, on top of
        walls/props/actors, in drawLootLabels() so geometry never obscures them. ---- */
     for (const gi of state.ground) {
-      const sx = U.isoX(gi.x, gi.y) - cam.x, sy = U.isoY(gi.x, gi.y) - cam.y - surfaceLift(gi.x,gi.y);
+      if(m.layers&&gi.surfaceId)continue;
+      const sx = U.isoX(gi.x, gi.y) - cam.x, sy = U.isoY(gi.x, gi.y) - cam.y - surfaceLift(gi.x,gi.y,gi.surfaceId);
       if (!inView(sx, sy)) continue;
-      ctx.save();LevelTerrain.clipBehind(ctx,m,cam,gi.x,gi.y);
+      ctx.save();LevelTerrain.clipBehind(ctx,m,cam,gi.x,gi.y,gi.surfaceId);
       const tossZ = gi.toss > 0 ? Math.sin(gi.toss / 0.35 * Math.PI) * 18 : 0;
       if (gi.gold) {
         SpriteAssets.drawFrame(ctx, SpriteAssets.goldFrame(), sx, sy - 5 - tossZ, { scale: .46 });
@@ -2950,8 +2973,9 @@ const Game = (() => {
 
     /* ---- depth-sorted drawables: walls, props, entities, projectiles ---- */
     const draws = [];
+    if(m.act3?.architecture)ImperialArchitecture.append(draws,m,cam,p,W,H);
     /* walls: only facades (wall tiles with a floor neighbor) — culled to the visible box */
-    for (let y = ty0; y <= ty1; y++) for (let x = tx0; x <= tx1; x++) {
+    if(!m.act3?.architecture&&!(m.composition||m.frontier)?.terrainWalls)for (let y = ty0; y <= ty1; y++) for (let x = tx0; x <= tx1; x++) {
       const i = x + y * m.w;
       if (!m.walls[i] || m.void?.[i]) continue;
       if ((m.composition||m.frontier)?.terrainWalls) continue; // cached surface cliffs define these solid landforms
@@ -2989,7 +3013,7 @@ const Game = (() => {
       const sx = U.isoX(pr.x, pr.y) - cam.x, sy = U.isoY(pr.x, pr.y) - cam.y;
       if (pr.building) {
         const f=propSpriteFrame(pr);
-        const seated=sy-elevLift(pr.x,pr.y);
+        const seated=sy-elevLift(pr.x,pr.y,pr.surfaceId);
         if(sx-f.anchorX>W || sx-f.anchorX+f.sw<0 || seated-f.anchorY>H || seated-f.anchorY+f.sh<0)continue;
       } else if (!inView(sx, sy)) continue;
       draws.push({ d: pr.x + pr.y, kind: "prop", sx, sy, pr });
@@ -3007,7 +3031,7 @@ const Game = (() => {
       draws.push({ d: mi.x + mi.y, kind: "minion", sx, sy, mi });
     }
     for (const tr of state.traps) {
-      const sx = U.isoX(tr.x, tr.y) - cam.x, sy = U.isoY(tr.x, tr.y) - cam.y - surfaceLift(tr.x,tr.y);
+      const sx = U.isoX(tr.x, tr.y) - cam.x, sy = U.isoY(tr.x, tr.y) - cam.y - surfaceLift(tr.x,tr.y,tr.surfaceId);
       if (!inView(sx, sy)) continue;
       draws.push({ d: tr.x + tr.y - 0.4, kind: "trap", sx, sy, tr });
     }
@@ -3024,11 +3048,11 @@ const Game = (() => {
       draws.push({ d: pr.x + pr.y, kind: "proj", sx, sy, pr });
     }
     for (const ps of portalPositions()) {
-      const sx = U.isoX(ps.x, ps.y) - cam.x, sy = U.isoY(ps.x, ps.y) - cam.y - surfaceLift(ps.x,ps.y);
+      const sx = U.isoX(ps.x, ps.y) - cam.x, sy = U.isoY(ps.x, ps.y) - cam.y - surfaceLift(ps.x,ps.y,ps.surfaceId);
       draws.push({ d: ps.x + ps.y, kind: "portal", sx, sy, ps });
     }
     /* transient fields/banners/totems/weather, beneath the actors */
-    for (const f of state.fx) if(f.type!=="slamwarning"&&f.type!=='enemywarning'&&!(typeof SkillVFX!=='undefined'&&SkillVFX.isStyled(f)))drawFx(f, cam);
+    for (const f of state.fx) if(!f.surfaceId&&f.type!=="slamwarning"&&f.type!=='enemywarning'&&!(typeof SkillVFX!=='undefined'&&SkillVFX.isStyled(f)))drawFx(f, cam);
     if(typeof SkillVFX!=='undefined'){
       SkillVFX.drawGround(ctx,state,cam);
       SkillVFX.appendDraws(draws,state,cam,W,H);
@@ -3037,10 +3061,32 @@ const Game = (() => {
     if(typeof BossVFX!=='undefined'){BossVFX.drawGround(ctx,state,cam);BossVFX.appendDraws(draws,state,cam,W,H);}
     if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.drawGround(ctx,state,cam);
     if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.drawGround(ctx,state,cam);
-    draws.sort((a, b) => a.d - b.d);
+    if(m.layers){
+      draws.push({kind:'imperialGroundFx',d:-Infinity});
+      for(const gi of state.ground)if(gi.surfaceId)draws.push({kind:'imperialLoot',d:gi.x+gi.y,gi});
+      for(const d of draws){
+        d.surfaceId=TerrainLayers.id(d.mon||d.mi||d.tr||d.n||d.pr||d.ps||d.payload?.field||d.payload?.event||d.payload?.particles?.[0]||d.payload?.ghost||(d.kind==='player'?p:null));
+        d.floorOrder=d.kind==='imperialPlane'?1:d.kind==='imperialGroundFx'?1.5:d.kind==='imperialRail'||d.kind==='imperialLoot'||d.surfaceId?2:0;
+      }
+    }
+    draws.sort((a, b) => (a.floorOrder||0)-(b.floorOrder||0)||a.d-b.d);
 
+    const beneathGallery=m.layers&&!p.surfaceId&&m.act3.architecture.bridges.some(b=>p.x>=b.lo&&p.x<b.hi&&p.y>b.y0-2&&p.y<b.y1+2);
     for (const d of draws) {
+      const fadeUpper=beneathGallery&&d.floorOrder>=1.5&&d.kind!=='imperialRail';
+      if(fadeUpper){ctx.save();ctx.globalAlpha=.18;}
       switch (d.kind) {
+        case 'imperialGroundFx':
+          for(const f of state.fx)if(f.surfaceId&&f.type!=='slamwarning'&&f.type!=='enemywarning'&&!(typeof SkillVFX!=='undefined'&&SkillVFX.isStyled(f)))drawFx(f,cam);
+          if(typeof SkillVFX!=='undefined')SkillVFX.drawGround(ctx,state,cam,1);
+          break;
+        case 'imperialLoot': {
+          const gi=d.gi,sx=U.isoX(gi.x,gi.y)-cam.x,sy=U.isoY(gi.x,gi.y)-cam.y-surfaceLift(gi.x,gi.y,1);
+          if(gi.gold)SpriteAssets.drawFrame(ctx,SpriteAssets.goldFrame(),sx,sy-5,{scale:.46});
+          else{const icon=SpriteAssets.itemIcon(gi.item);ctx.drawImage(icon,sx-icon.width*.31,sy-icon.height*.31-6,icon.width*.62,icon.height*.62);}break;
+        }
+        case 'imperialWall': case 'imperialCap': case 'imperialPlane': case 'imperialSupport': case 'imperialRail':
+          ImperialArchitecture.draw(ctx,d,m,cam,p);break;
         case 'scenery': {
           const id=SpriteAssets.maps.massifs[`${theme}_${d.sc.variant}`];
           if(id){const f=SpriteAssets.getFrame(id,0),s=d.sc.scale;ctx.save();
@@ -3050,7 +3096,7 @@ const Game = (() => {
         case "bossvfx":
           ctx.save();LevelTerrain.clipBehind(ctx,m,cam,d.x,d.y);BossVFX.drawItem(ctx,d,cam);ctx.restore();break;
         case "skillvfx":
-          ctx.save();LevelTerrain.clipBehind(ctx,m,cam,d.x,d.y);SkillVFX.drawItem(ctx,d,cam);ctx.restore();break;
+          ctx.save();LevelTerrain.clipBehind(ctx,m,cam,d.x,d.y,d.surfaceId);SkillVFX.drawItem(ctx,d,cam);ctx.restore();break;
         case "wall":
         case "wallcap": {
           if (m.outdoor && MASSIF_THEMES.has(theme)) {   /* thematic impassable terrain: mountains/rock/boulders/spires/hills/thickets */
@@ -3080,7 +3126,7 @@ const Game = (() => {
         case "prop": drawProp(d); break;
         case "mon": {
           drawEntity(d.mon, d.sx, d.sy);
-          d.sy-=surfaceLift(d.mon.x,d.mon.y);
+          d.sy-=surfaceLift(d.mon.x,d.mon.y,d.mon.surfaceId);
           /* hex rune above cursed monsters */
           const m2 = d.mon;
           const cursed = (m2.curseFrailty && state.time < m2.curseFrailty.until) || (m2.curseWither && state.time < m2.curseWither.until);
@@ -3138,7 +3184,7 @@ const Game = (() => {
         case "minion": {
           const mi = d.mi;
           drawEntity(mi, d.sx, d.sy);
-          d.sy-=surfaceLift(mi.x,mi.y);
+          d.sy-=surfaceLift(mi.x,mi.y,mi.surfaceId);
           /* minion life bars: always / when hurt (recent hit or missing life) / never */
           const mode = options.minionBars;
           if (!mi.dead && mode !== "never" && (mode === "always" || state.time - mi.lastHitT < 3)) {
@@ -3179,7 +3225,7 @@ const Game = (() => {
           }
           ctx.restore();
           ctx.globalAlpha = 1;
-          if(typeof SkillVFX!=='undefined'){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,tr.x,tr.y);SkillVFX.drawTrap(ctx,tr,cam);ctx.restore();}
+          if(typeof SkillVFX!=='undefined'){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,tr.x,tr.y,tr.surfaceId);SkillVFX.drawTrap(ctx,tr,cam);ctx.restore();}
           break;
         }
         case "npc": {
@@ -3197,23 +3243,23 @@ const Game = (() => {
           break;
         }
         case "player": {
-          drawLiveActor(playerModelOpts(p), p.pose(), d.sx, d.sy - (p.jumpZ || 0) - elevLift(p.x, p.y), p.flashT > 0, 1, null, p);
-          if(typeof SkillVFX!=='undefined'){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,p.x,p.y);SkillVFX.drawActor(ctx,p,cam);ctx.restore();}
+          drawLiveActor(playerModelOpts(p), p.pose(), d.sx, d.sy - (p.jumpZ || 0) - elevLift(p.x,p.y,p.surfaceId), p.flashT > 0, 1, null, p);
+          if(typeof SkillVFX!=='undefined'){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,p.x,p.y,p.surfaceId);SkillVFX.drawActor(ctx,p,cam);ctx.restore();}
           break;
         }
         case "proj": {
           const pr = d.pr;
           if(pr.imperialVisual){
             const col=pr.imperialVisual.color||'#a5cce0',a=Math.atan2(U.isoY(pr.vx,pr.vy),U.isoX(pr.vx,pr.vy));
-            ctx.save();LevelTerrain.clipBehind(ctx,m,cam,pr.x,pr.y);ctx.translate(d.sx,d.sy-(pr.imperialVisual.lift||34));ctx.rotate(a);ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=1.8;
+            ctx.save();LevelTerrain.clipBehind(ctx,m,cam,pr.x,pr.y,pr.surfaceId);ctx.translate(d.sx,d.sy-(pr.imperialVisual.lift||34));ctx.rotate(a);ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=1.8;
             if(pr.imperialVisual.kind==='chain'){
               for(let i=0;i<4;i++){ctx.globalAlpha=1-i*.18;ctx.beginPath();ctx.ellipse(-i*6,0,4,i%2?1.6:3,0,0,Math.PI*2);ctx.stroke();}
               ctx.globalAlpha=1;ctx.beginPath();ctx.arc(3,0,3,0,Math.PI*2);ctx.fill();
             }else{ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(-5,4);ctx.lineTo(-2,0);ctx.lineTo(-5,-4);ctx.closePath();ctx.fill();ctx.stroke();}
             ctx.restore();break;
           }
-          if(typeof BossVFX!=='undefined'&&BossVFX.enabled&&pr.bossVisual){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,pr.x,pr.y);BossVFX.drawProjectile(ctx,pr,cam);ctx.restore();break;}
-          if(typeof SkillVFX!=='undefined'&&SkillVFX.enabled&&SkillVFX.recipes[pr.sourceSkill]){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,pr.x,pr.y);SkillVFX.drawProjectile(ctx,pr,cam);ctx.restore();break;}
+          if(typeof BossVFX!=='undefined'&&BossVFX.enabled&&pr.bossVisual){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,pr.x,pr.y,pr.surfaceId);BossVFX.drawProjectile(ctx,pr,cam);ctx.restore();break;}
+          if(typeof SkillVFX!=='undefined'&&SkillVFX.enabled&&SkillVFX.recipes[pr.sourceSkill]){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,pr.x,pr.y,pr.surfaceId);SkillVFX.drawProjectile(ctx,pr,cam);ctx.restore();break;}
           const a = pr.kind==='arrow'?Math.atan2(U.isoY(pr.vx,pr.vy),U.isoX(pr.vx,pr.vy)):Math.atan2(pr.vy * 0.5, pr.vx);
           if (pr.kind === "firebolt") {
             ctx.fillStyle = "#ff9040";
@@ -3325,11 +3371,12 @@ const Game = (() => {
           break;
         }
       }
+      if(fadeUpper)ctx.restore();
     }
 
     /* ---- particles (world space, after entities) ---- */
     for (const pa of particles) {
-      const sx = U.isoX(pa.x, pa.y) - cam.x, sy = U.isoY(pa.x, pa.y) - cam.y - surfaceLift(pa.x,pa.y) - pa.z;
+      const sx = U.isoX(pa.x, pa.y) - cam.x, sy = U.isoY(pa.x, pa.y) - cam.y - surfaceLift(pa.x,pa.y,pa.surfaceId) - pa.z;
       ctx.fillStyle = pa.color;
       ctx.globalAlpha = U.clamp(pa.t * 2.5, 0, 1);
       ctx.fillRect(sx - 1.5, sy - 1.5, 3, 3);
@@ -3338,7 +3385,7 @@ const Game = (() => {
     /* novas */
     for (const nv of novas) {
       if(nv.hideRadius||(nv.styled&&typeof SkillVFX!=='undefined'&&SkillVFX.enabled))continue;
-      const sx = U.isoX(nv.x, nv.y) - cam.x, sy = U.isoY(nv.x, nv.y) - cam.y - surfaceLift(nv.x,nv.y);
+      const sx = U.isoX(nv.x, nv.y) - cam.x, sy = U.isoY(nv.x, nv.y) - cam.y - surfaceLift(nv.x,nv.y,nv.surfaceId);
       const k = nv.t / nv.dur;
       ctx.strokeStyle = nv.color;
       ctx.globalAlpha = 1 - k;
@@ -3351,8 +3398,8 @@ const Game = (() => {
     /* lightning arcs (Arc Lattice stream, Thunderstorm strikes) — jagged bright bolts */
     for (const b of bolts) {
       if(b.styled&&typeof SkillVFX!=='undefined'&&SkillVFX.enabled)continue;
-      const x0 = U.isoX(b.x0, b.y0) - cam.x, y0 = U.isoY(b.x0, b.y0) - cam.y - surfaceLift(b.x0,b.y0) - 12;
-      const x1 = U.isoX(b.x1, b.y1) - cam.x, y1 = U.isoY(b.x1, b.y1) - cam.y - surfaceLift(b.x1,b.y1) - 12;
+      const x0 = U.isoX(b.x0, b.y0) - cam.x, y0 = U.isoY(b.x0, b.y0) - cam.y - surfaceLift(b.x0,b.y0,b.surfaceId) - 12;
+      const x1 = U.isoX(b.x1, b.y1) - cam.x, y1 = U.isoY(b.x1, b.y1) - cam.y - surfaceLift(b.x1,b.y1,b.surfaceId) - 12;
       if (b.straight) {
         ctx.globalAlpha = U.clamp(1 - b.t / b.dur, 0, 1);
         ctx.lineCap = "round"; ctx.strokeStyle = b.color; ctx.shadowColor = b.color; ctx.shadowBlur = 12;
@@ -3378,7 +3425,7 @@ const Game = (() => {
     /* floating combat text */
     ctx.textAlign = "center";
     for (const f of floats) {
-      const sx = U.isoX(f.x, f.y) - cam.x, sy = U.isoY(f.x, f.y) - cam.y - surfaceLift(f.x,f.y) - 46 - f.t * 30;
+      const sx = U.isoX(f.x, f.y) - cam.x, sy = U.isoY(f.x, f.y) - cam.y - surfaceLift(f.x,f.y,f.surfaceId) - 46 - f.t * 30;
       ctx.font = (f.big ? "bold 17px" : "13px") + " 'Palatino Linotype', serif";
       ctx.globalAlpha = U.clamp(1.4 - f.t, 0, 1);
       ctx.fillStyle = "#000";
@@ -3407,11 +3454,11 @@ const Game = (() => {
     for (const f of state.fx) {
       if (f.type === "meteorfall") {
         if(typeof SkillVFX!=='undefined'&&SkillVFX.isStyled(f))continue;
-        const msx = U.isoX(f.x, f.y) - cam.x, msy = U.isoY(f.x, f.y) - cam.y - surfaceLift(f.x,f.y);
+        const msx = U.isoX(f.x, f.y) - cam.x, msy = U.isoY(f.x, f.y) - cam.y - surfaceLift(f.x,f.y,f.surfaceId);
         drawMeteorBall(msx, msy, f.radius, 1 - U.clamp(f.ttl / f.maxTtl, 0, 1), f.col);
       } else if (f.type === "pyre") {
         if(typeof SkillVFX!=='undefined'&&SkillVFX.isStyled(f))continue;
-        const psx = U.isoX(f.x, f.y) - cam.x, psy = U.isoY(f.x, f.y) - cam.y - surfaceLift(f.x,f.y);
+        const psx = U.isoX(f.x, f.y) - cam.x, psy = U.isoY(f.x, f.y) - cam.y - surfaceLift(f.x,f.y,f.surfaceId);
         const k = 1 - U.clamp(f.ttl / f.maxTtl, 0, 1), rise = Math.sin(U.clamp(k, 0, 1) * Math.PI), rr = f.radius * 32;
         ctx.save(); ctx.globalCompositeOperation = "lighter";
         ctx.globalAlpha = 0.5 * (1 - k); ctx.strokeStyle = "#ffb24a"; ctx.lineWidth = 3 + (1 - k) * 4;   // expanding ground ring
@@ -3437,7 +3484,7 @@ const Game = (() => {
     for (const pr of state.map.props) {
       const isShrine = pr.interact === "shrine", isEvent = pr.interact === "event";
       if (!isShrine && !isEvent) continue;
-      const sx = U.isoX(pr.x, pr.y) - cam.x, sy = U.isoY(pr.x, pr.y) - cam.y - surfaceLift(pr.x,pr.y);
+      const sx = U.isoX(pr.x, pr.y) - cam.x, sy = U.isoY(pr.x, pr.y) - cam.y - surfaceLift(pr.x,pr.y,pr.surfaceId);
       if (sx < -60 || sx > W + 60 || sy < -180 || sy > H + 60) continue;
       const [r, gg, b] = hex2rgb(isShrine ? "#96d7ff" : ((pr.ev && pr.ev.color) || "#ffd070"));
       const k = 0.6 + Math.sin(state.time * 3 + pr.x) * 0.4;
@@ -3599,7 +3646,7 @@ const Game = (() => {
   }
   function drawLiveActor(opts, pose, sx, sy, flash, alpha, tint, ground) {
     ctx.save();
-    if(ground)LevelTerrain.clipBehind(ctx,state.map,camera(),ground.x,ground.y);
+    if(ground)LevelTerrain.clipBehind(ctx,state.map,camera(),ground.x,ground.y,ground.surfaceId);
     const bodyScale = ACTOR_BODY_SCALE;
     const footprint = opts.scale == null ? 1 : opts.scale;
     /* Contact shadows share the same ground anchor for models and sprites. */
@@ -3643,7 +3690,7 @@ const Game = (() => {
   }
   function drawEntity(e, sx, sy) {
     if (e.husk) return;         // bodiless corpse husk: a logical corpse source, not a drawable figure
-    sy -= elevLift(e.x, e.y);   // stand on top of raised terrain
+    sy -= elevLift(e.x, e.y,e.surfaceId);   // stand on top of raised terrain
     let alpha = 1;
     if (e.dead && e.corpseT !== undefined && e.corpseT < 3) alpha = Math.max(0, e.corpseT / 3);
     /* beacons are obelisks, not figures — draw the rune-stone with a barrier glow */
@@ -3667,7 +3714,7 @@ const Game = (() => {
     }
     const opts = e.playerEcho ? { threePlayer: e.playerEcho, scale: 1 } : e.spriteOpts;
     drawLiveActor(opts, e.pose(), sx, sy - (e.jumpZ || 0), e.flashT > 0, alpha * (e.playerEcho ? .55 : 1), e.playerEcho ? '#9185c2' : !e.dead && e.tint ? e.tint : null, e);
-    if(typeof SkillVFX!=='undefined'&&SkillVFX.hasStatus(e)){ctx.save();LevelTerrain.clipBehind(ctx,state.map,camera(),e.x,e.y);SkillVFX.drawStatus(ctx,e,camera());ctx.restore();}
+    if(typeof SkillVFX!=='undefined'&&SkillVFX.hasStatus(e)){ctx.save();LevelTerrain.clipBehind(ctx,state.map,camera(),e.x,e.y,e.surfaceId);SkillVFX.drawStatus(ctx,e,camera());ctx.restore();}
   }
   /* "!" over quest givers, "?" when a reward waits */
   function questMarkerFor(giverId, art) {
@@ -3828,7 +3875,7 @@ const Game = (() => {
   }
   function drawProp(d) {
     const pr = d.pr;
-    d.sy -= elevLift(pr.x, pr.y);   // props sit on raised terrain (d is a per-frame entry)
+    d.sy -= elevLift(pr.x,pr.y,pr.surfaceId);   // props sit on raised terrain (d is a per-frame entry)
     const visualType = propVisualType(pr);
     const propId = SpriteAssets.maps.props[`${pr.artZone || state.map.id}_${visualType}`] || SpriteAssets.maps.props[visualType];
     if (!propId) throw new Error(`Missing required prop sprite: ${state.map.id}/${pr.type}`);
@@ -3836,8 +3883,8 @@ const Game = (() => {
     const mirror = pr.type === "longhouse" && (((pr.seed || (pr.x * 17 + pr.y * 31)) | 0) & 1);
     // Fade tall architecture only while it covers the hero behind it.
     const p=state.player, dx=U.isoX(p.x,p.y)-U.isoX(pr.x,pr.y), dy=U.isoY(p.x,p.y)-U.isoY(pr.x,pr.y)-24;
-    const coversHero=pr.building && !pr.interact && p.x+p.y<pr.x+pr.y && Math.abs(dx)<propFrame.sw*.42 && dy>-propFrame.anchorY && dy<0 && (pr.artZone!=='act3'||architectureCovers(propFrame,dx,dy-24-elevLift(p.x,p.y)+elevLift(pr.x,pr.y)));
-    ctx.save();LevelTerrain.clipBehind(ctx,state.map,camera(),pr.x,pr.y);
+    const coversHero=pr.building && !pr.interact && p.x+p.y<pr.x+pr.y && Math.abs(dx)<propFrame.sw*.42 && dy>-propFrame.anchorY && dy<0 && (pr.artZone!=='act3'||architectureCovers(propFrame,dx,dy-24-elevLift(p.x,p.y,p.surfaceId)+elevLift(pr.x,pr.y,pr.surfaceId)));
+    ctx.save();LevelTerrain.clipBehind(ctx,state.map,camera(),pr.x,pr.y,pr.surfaceId);
     SpriteAssets.drawFrame(ctx, propFrame, d.sx, d.sy, { flip: mirror, alpha:coversHero?.4:1 });
     ctx.restore();
     const drawH = propFrame.anchorY;
@@ -3891,8 +3938,8 @@ const Game = (() => {
     lightCtx.fillStyle = `rgba(0,0,0,${m.zone.dark})`;
     lightCtx.fillRect(0, 0, W, H);
     lightCtx.globalCompositeOperation = "destination-out";
-    const punch = (wx, wy, r, intensity, flicker, height=10) => {
-      const sx = U.isoX(wx, wy) - cam.x, sy = U.isoY(wx, wy) - cam.y - surfaceLift(wx,wy);
+    const punch = (wx, wy, r, intensity, flicker, height=10, surfaceId=0) => {
+      const sx = U.isoX(wx, wy) - cam.x, sy = U.isoY(wx, wy) - cam.y - surfaceLift(wx,wy,surfaceId);
       if (sx < -300 || sx > W + 300 || sy < -300 || sy > H + 300) return;
       let rr = r * 32;
       if (flicker) rr *= 1 + Math.sin(state.time * 9 + wx * 7) * 0.05 + Math.sin(state.time * 23 + wy * 3) * 0.03;
@@ -3901,11 +3948,11 @@ const Game = (() => {
       lightCtx.globalAlpha = 1;
     };
     const p = state.player;
-    punch(p.x, p.y, 7.5 + (p.stats.lightRadius || 0), 1, false);
+    punch(p.x, p.y, 7.5 + (p.stats.lightRadius || 0), 1, false,10,p.surfaceId);
     // Keep the authored face and attack pose readable in the darkest boss rooms.
     for(const mon of state.monsters)if(mon.encounter?.active&&!mon.dead)punch(mon.x,mon.y,6.5,.9,false,55*mon.scale);
     for (const l of m.lights) punch(l.x, l.y, l.r, 0.95, l.flicker);
-    for (const ps of portalPositions()) punch(ps.x, ps.y, 4, 0.9, true);
+    for (const ps of portalPositions()) punch(ps.x, ps.y, 4, 0.9, true,10,ps.surfaceId);
     lightCtx.globalCompositeOperation = "source-over";
     /* warm glow pass over fires */
     ctx.drawImage(lightCv, 0, 0);
@@ -3959,20 +4006,29 @@ const Game = (() => {
     mmCtx.fillRect(0, 0, 220, 160);
     const sc = 3;
     mmCtx.imageSmoothingEnabled = false;
+    if(m.layers&&p.surfaceId)mmCtx.globalAlpha=.35;
     mmCtx.drawImage(mmCanvas, p.x - 220 / sc / 2, p.y - 160 / sc / 2, 220 / sc, 160 / sc, 0, 0, 220, 160);
+    mmCtx.globalAlpha=1;
     const dot = (wx, wy, col, s) => {
       const dx = (wx - p.x) * sc + 110, dy = (wy - p.y) * sc + 80;
       if (dx < 0 || dx > 220 || dy < 0 || dy > 160) return;
       mmCtx.fillStyle = col;
       mmCtx.fillRect(dx - (s || 2) / 2, dy - (s || 2) / 2, s || 2, s || 2);
     };
-    for (const mon of state.monsters) if (!mon.dead && m.explored[(mon.x | 0) + (mon.y | 0) * m.w]) dot(mon.x, mon.y, mon.isBoss ? "#ff5030" : mon.elite ? "#c0a0ff" : "#c03030");
+    if(m.layers){
+      for(const b of m.act3.architecture.bridges)for(let x=b.lo;x<b.hi;x++)for(let y=b.y0;y<b.y1;y++)if(m.explored[x+y*m.w])dot(x+.5,y+.5,p.surfaceId?'#dac894':'#554f43',Math.max(1,sc));
+      for(const link of m.surfaceLinks)dot(link.x,link.y,'#ead5a0',4);
+    }
+    for (const mon of state.monsters) if (!mon.dead && m.explored[(mon.x | 0) + (mon.y | 0) * m.w]) dot(mon.x, mon.y, !TerrainLayers.same(p,mon)?'#564747':mon.isBoss ? "#ff5030" : mon.elite ? "#c0a0ff" : "#c03030");
     for (const n of state.npcs) dot(n.x, n.y, "#50c050", 3);
     for (const ex of m.exits) dot((ex.x0 + ex.x1) / 2, (ex.y0 + ex.y1) / 2, "#d8b860", 4);
     if (m.shrine) { const pulse = 5 + Math.round(Math.sin(state.time * 3) + 1); dot(m.shrine.x, m.shrine.y, "#bfeaff", pulse); }
     for (const ps of portalPositions()) dot(ps.x, ps.y, "#6eaaff", 4);
     /* notable loot the filter flagged for the minimap */
     for (const gi of state.ground) { const f = gi.filt; if (f && f.minimap && !f.hide) dot(gi.x, gi.y, f.minimap, 3); }
+    if(m.layers){
+      mmCtx.fillStyle='#0b0b0b';mmCtx.fillRect(4,3,111,18);mmCtx.font='12px sans-serif';mmCtx.fillStyle='#ead5a0';mmCtx.fillText(p.surfaceId?'Upper gallery':'Lower passage',8,16);
+    }
     dot(p.x, p.y, "#ffffff", 3);
   }
   function renderMapOverlay() {
@@ -3985,21 +4041,27 @@ const Game = (() => {
     ctx.fillStyle = "#060504";
     ctx.fillRect(0, 0, W, H);
     ctx.imageSmoothingEnabled = false;
+    if(m.layers&&p.surfaceId)ctx.globalAlpha=.3;
     ctx.drawImage(mmCanvas, ox, oy, m.w * sc, m.h * sc);
+    ctx.globalAlpha=.78;
     ctx.imageSmoothingEnabled = true;
     const dot = (wx, wy, col, s) => { ctx.fillStyle = col; ctx.fillRect(ox + wx * sc - s / 2, oy + wy * sc - s / 2, s, s); };
+    if(m.layers){
+      for(const b of m.act3.architecture.bridges)for(let x=b.lo;x<b.hi;x++)for(let y=b.y0;y<b.y1;y++)if(m.explored[x+y*m.w])dot(x+.5,y+.5,p.surfaceId?'#dac894':'#554f43',sc);
+      for(const link of m.surfaceLinks)dot(link.x,link.y,'#ead5a0',6);
+    }
     for (const ex of m.exits) {
       dot((ex.x0 + ex.x1) / 2, (ex.y0 + ex.y1) / 2, "#d8b860", 8);
       ctx.font = "12px 'Palatino Linotype', serif"; ctx.fillStyle = "#d8b860";
       ctx.fillText(ex.label, ox + (ex.x0 + ex.x1) / 2 * sc + 8, oy + (ex.y0 + ex.y1) / 2 * sc + 4);
     }
     if (m.shrine) dot(m.shrine.x, m.shrine.y, "#8fd8ff", 6);
-    for (const mon of state.monsters) if (!mon.dead && m.explored[(mon.x | 0) + (mon.y | 0) * m.w]) dot(mon.x, mon.y, mon.isBoss ? "#ff5030" : "#c03030", 3);
+    for (const mon of state.monsters) if (!mon.dead && m.explored[(mon.x | 0) + (mon.y | 0) * m.w]) dot(mon.x, mon.y, !TerrainLayers.same(p,mon)?'#564747':mon.isBoss ? "#ff5030" : "#c03030", 3);
     for (const n of state.npcs) dot(n.x, n.y, "#50c050", 5);
     dot(p.x, p.y, "#ffffff", 6);
     ctx.font = "16px 'Palatino Linotype', serif";
     ctx.fillStyle = "#d8c79a"; ctx.textAlign = "center";
-    ctx.fillText(m.zone.name + "  —  press M to close", W / 2, 30);
+    ctx.fillText(m.zone.name + (m.layers?(p.surfaceId?' · Upper gallery':' · Lower passage'):'') + "  —  press M to close", W / 2, 30);
     ctx.textAlign = "left";
     ctx.restore();
   }
@@ -4106,4 +4168,3 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-

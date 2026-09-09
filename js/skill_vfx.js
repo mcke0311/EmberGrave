@@ -146,8 +146,8 @@ wildkeeper_2_6 fire apexform`;
     return id&&get(id)?{owner,id,recipe:get(id)}:null;
   }
   const value=(sk,key,rk,fallback)=>typeof sk?.[key]==='function'?sk[key](rk):fallback;
-  const terrain=(x,y)=>world?.map&&typeof TerrainNavigation!=='undefined'?TerrainNavigation.height(world.map,x,y)*14:0;
-  const at=(entity,lift=0)=>({x:entity.x,y:entity.y,z:terrain(entity.x,entity.y)+(entity.jumpZ||0)+lift});
+  const terrain=(x,y,surfaceId)=>world?.map&&typeof TerrainNavigation!=='undefined'?TerrainNavigation.height(world.map,x,y,surfaceId)*14:0;
+  const at=(entity,lift=0)=>({x:entity.x,y:entity.y,surfaceId:entity.surfaceId??0,z:terrain(entity.x,entity.y,entity.surfaceId)+(entity.jumpZ||0)+lift});
   function sampleAnchors(p){
     const a=actors.get(p)||{},time=typeof Game!=='undefined'?Game.state.time:now;
     // A fan releases several projectiles at one marker. Solve that pose once.
@@ -159,14 +159,14 @@ wildkeeper_2_6 fire apexform`;
   }
   function anchor(p,name='hand'){
     const a=actors.get(p)?.anchors?.[name];
-    if(a)return {x:p.x+a.x,y:p.y+a.y,z:terrain(p.x,p.y)+(p.jumpZ||0)+a.lift};
+    if(a)return {x:p.x+a.x,y:p.y+a.y,z:terrain(p.x,p.y,p.surfaceId)+(p.jumpZ||0)+a.lift};
     const [dx,dy]=U.screenVecToWorld(p.visAng||0);
-    return {x:p.x+dx*.35,y:p.y+dy*.35,z:terrain(p.x,p.y)+(p.jumpZ||0)+(name==='weapon'?23:30)};
+    return {x:p.x+dx*.35,y:p.y+dy*.35,z:terrain(p.x,p.y,p.surfaceId)+(p.jumpZ||0)+(name==='weapon'?23:30)};
   }
   function push(kind,recipe,point,extra={}){
     if(!enabled||!recipe||!Number.isFinite(point.x+point.y))return null;
     if(events.length>=LIMITS.events){dropped++;return null;}
-    const event={kind,recipe,x:point.x,y:point.y,z:point.z??terrain(point.x,point.y),t:0,dur:.5,seed:++sequence,radius:1,...extra};
+    const event={surfaceId:point.surfaceId??(typeof TerrainLayers!=='undefined'?TerrainLayers.current(world?.map):0),kind,recipe,x:point.x,y:point.y,z:point.z??terrain(point.x,point.y),t:0,dur:.5,seed:++sequence,radius:1,...extra};
     events.push(event);peakEvents=Math.max(peakEvents,events.length);return event;
   }
   function burst(recipe,point,count=12,force=1){
@@ -176,7 +176,7 @@ wildkeeper_2_6 fire apexform`;
     for(let i=0;i<Math.ceil(count*density);i++){
       if(particles.length>=cap){dropped++;break;}
       const a=random()*TAU,s=(.35+random()*2)*force,dur=.3+random()*.5;
-      particles.push({x:point.x,y:point.y,z:point.z??terrain(point.x,point.y)+12,vx:Math.cos(a)*s,vy:Math.sin(a)*s,vz:12+random()*32,ground:terrain(point.x,point.y),t:0,dur,size:1.2+random()*3,angle:random()*TAU,spin:(random()-.5)*9,recipe,seed:sequence++});
+      particles.push({surfaceId:point.surfaceId??(typeof TerrainLayers!=='undefined'?TerrainLayers.current(world?.map):0),x:point.x,y:point.y,z:point.z??terrain(point.x,point.y)+12,vx:Math.cos(a)*s,vy:Math.sin(a)*s,vz:12+random()*32,ground:terrain(point.x,point.y),t:0,dur,size:1.2+random()*3,angle:random()*TAU,spin:(random()-.5)*9,recipe,seed:sequence++});
     }
     peakParticles=Math.max(peakParticles,particles.length);
   }
@@ -255,7 +255,7 @@ wildkeeper_2_6 fire apexform`;
     if(!pr.fromPlayer&&pr.minionDmg===undefined)return;
     const c=context(owner);if(c){pr.sourceSkill=c.id;pr.visualOwner=c.owner||owner;}
     if(!enabled||!get(pr.sourceSkill))return;
-    let origin={x:pr.x,y:pr.y,z:pr.kind==='arrow'?pr.lift:terrain(pr.x,pr.y)+pr.lift};
+    let origin={x:pr.x,y:pr.y,z:pr.kind==='arrow'?pr.lift:terrain(pr.x,pr.y,pr.surfaceId)+pr.lift};
     if(pr.fromPlayer&&pr.kind!=='arrow'&&owner){
       const anchors=sampleAnchors(owner);
       const hand=anchors?.hand;if(hand)origin={x:owner.x+hand.x,y:owner.y+hand.y,z:terrain(owner.x,owner.y)+(owner.jumpZ||0)+hand.lift};
@@ -328,7 +328,7 @@ wildkeeper_2_6 fire apexform`;
     c.fillStyle=g;c.fillRect(0,0,64,64);stamps.set(key,canvas);return canvas;
   }
   function glow(c,r,x,y,w,h=w,alpha=.45){c.save();c.globalAlpha*=alpha;c.globalCompositeOperation='lighter';c.drawImage(stamp(r.material),x-w/2,y-h/2,w,h);c.restore();}
-  const project=(p,cam)=>[U.isoX(p.x,p.y)-cam.x,U.isoY(p.x,p.y)-cam.y-(p.z??terrain(p.x,p.y))];
+  const project=(p,cam)=>[U.isoX(p.x,p.y)-cam.x,U.isoY(p.x,p.y)-cam.y-(p.z??terrain(p.x,p.y,p.surfaceId))];
   function line(c,points,color,width=1,alpha=1){if(points.length<2)return;c.save();c.globalAlpha*=alpha;c.strokeStyle=color;c.lineWidth=width;c.lineJoin='round';c.lineCap='round';c.beginPath();c.moveTo(...points[0]);for(let i=1;i<points.length;i++)c.lineTo(...points[i]);c.stroke();c.restore();}
   function shard(c,x,y,size,angle,col,bone=false){
     c.save();c.translate(x,y);c.rotate(angle);c.fillStyle=col[1];c.beginPath();c.moveTo(size*2,0);c.lineTo(-size,-size*.65);c.lineTo(-size*.5,size*.65);c.closePath();c.fill();
@@ -447,7 +447,7 @@ wildkeeper_2_6 fire apexform`;
   function fieldRecipe(f){return get(f.sourceSkill||f.skillId);}
   function drawField(c,f,cam,ground){
     const r=fieldRecipe(f);if(!r||!enabled)return false;
-    const col=palettes[r.material],[x,y]=project({x:f.x,y:f.y,z:terrain(f.x,f.y)},cam),rad=(f.radius||1)*32;
+    const col=palettes[r.material],[x,y]=project({x:f.x,y:f.y,z:terrain(f.x,f.y,f.surfaceId)},cam),rad=(f.radius||1)*32;
     const life=Math.min(1,(f.ttl??1)/.55),seed=r.seed;
     c.save();c.globalAlpha*=life;
     if(ground){
@@ -474,7 +474,7 @@ wildkeeper_2_6 fire apexform`;
         }
       }
     }else if(f.type==='firewall'){
-      const [ex,ey]=project({x:f.x1,y:f.y1,z:terrain(f.x1,f.y1)},cam),[sx,sy]=project({x:f.x0,y:f.y0,z:terrain(f.x0,f.y0)},cam),n=Math.min(38,Math.ceil(Math.hypot(ex-sx,ey-sy)/9));
+      const [ex,ey]=project({x:f.x1,y:f.y1,z:terrain(f.x1,f.y1,f.surfaceId)},cam),[sx,sy]=project({x:f.x0,y:f.y0,z:terrain(f.x0,f.y0,f.surfaceId)},cam),n=Math.min(38,Math.ceil(Math.hypot(ex-sx,ey-sy)/9));
       line(c,[[sx,sy],[ex,ey]],col[2],9,.8);
       for(let i=0;i<=n;i++){const u=i/n,px=sx+(ex-sx)*u,py=sy+(ey-sy)*u;flame(c,r,px,py,34+Math.sin(now*9+i*1.8)*9+noise(seed,i)*9,i,now);}
     }else if(f.type==='pyre'){
@@ -488,7 +488,7 @@ wildkeeper_2_6 fire apexform`;
         line(c,[[px-8,py-h-22],[px,py-h]],col[1],1.2,.3+t*.5);shard(c,px,py-h,2,1.22,col);if(t>.88)glow(c,r,px,py,15,6,.3);
       }
     }else if(f.type==='tripwire'){
-      const start=project({x:f.x0,y:f.y0,z:terrain(f.x0,f.y0)+2},cam),end=project({x:f.x1,y:f.y1,z:terrain(f.x1,f.y1)+2},cam);
+      const start=project({x:f.x0,y:f.y0,z:terrain(f.x0,f.y0,f.surfaceId)+2},cam),end=project({x:f.x1,y:f.y1,z:terrain(f.x1,f.y1,f.surfaceId)+2},cam);
       line(c,[start,end],f.sprung?'#804637':col[1],1.5,.85);
       for(const p of [start,end]){shard(c,p[0],p[1],4,-Math.PI/2,col);glow(c,r,p[0],p[1],12,7,.25);}
     }else if(f.type==='totem'||f.type==='banner'){
@@ -521,7 +521,7 @@ wildkeeper_2_6 fire apexform`;
   }
   function drawTrap(c,tr,cam){
     const r=fieldRecipe(tr);if(!enabled||!r)return false;
-    const [x,y]=project({x:tr.x,y:tr.y,z:terrain(tr.x,tr.y)},cam),col=palettes[r.material],armed=tr.armT<=0;
+    const [x,y]=project({x:tr.x,y:tr.y,z:terrain(tr.x,tr.y,tr.surfaceId)},cam),col=palettes[r.material],armed=tr.armT<=0;
     c.save();c.globalAlpha=armed?1:.55;glow(c,r,x,y,32,15,armed?.25:.1);
     c.strokeStyle='#74685a';c.lineWidth=2.5;c.beginPath();c.ellipse(x,y,12,6,0,0,TAU);c.stroke();
     for(let i=0;i<8;i++){const a=i*TAU/8;shard(c,x+Math.cos(a)*11,y+Math.sin(a)*5,3,-Math.PI/2+Math.cos(a)*.5,col);}
@@ -560,14 +560,15 @@ wildkeeper_2_6 fire apexform`;
   }
   const groundEvent=e=>['wave','fissure','sigil'].includes(e.kind);
   const visible=(p,cam,w,h,margin=120)=>{const [x,y]=project(p,cam);return x>-margin&&y>-margin&&x<w+margin&&y<h+margin;};
-  function drawGround(c,state,cam){
+  function drawGround(c,state,cam,surfaceId=0){
     if(!enabled||state.player?.dead)return;
-    for(const e of events)if(groundEvent(e)&&visible(e,cam,c.canvas.width,c.canvas.height,e.radius*64+150)){c.save();LevelTerrain.clipBehind(c,state.map,cam,e.x,e.y);drawEvent(c,e,cam);c.restore();}
+    for(const e of events)if((e.surfaceId??0)===surfaceId&&groundEvent(e)&&visible(e,cam,c.canvas.width,c.canvas.height,e.radius*64+150)){c.save();LevelTerrain.clipBehind(c,state.map,cam,e.x,e.y,e.surfaceId);drawEvent(c,e,cam);c.restore();}
     for(const f of state.fx){
-      const p={x:f.x??f.x0,y:f.y??f.y0};
+      if((f.surfaceId??0)!==surfaceId)continue;
+      const p={x:f.x??f.x0,y:f.y??f.y0,surfaceId:f.surfaceId};
       if(!fieldRecipe(f)||f.type==='slamwarning'||!visible(p,cam,c.canvas.width,c.canvas.height,(f.len||f.radius||2)*64+150))continue;
-      c.save();LevelTerrain.clipBehind(c,state.map,cam,p.x,p.y);
-      if(f.type==='fissure')drawEvent(c,{...p,z:terrain(p.x,p.y),kind:'fissure',recipe:fieldRecipe(f),tx:f.x0+Math.cos(f.ang)*f.len,ty:f.y0+Math.sin(f.ang)*f.len,t:f.maxTtl-f.ttl,dur:f.maxTtl,radius:f.visualWidth||1.5,seed:f.seed},cam);
+      c.save();LevelTerrain.clipBehind(c,state.map,cam,p.x,p.y,p.surfaceId);
+      if(f.type==='fissure')drawEvent(c,{...p,z:terrain(p.x,p.y,p.surfaceId),kind:'fissure',recipe:fieldRecipe(f),tx:f.x0+Math.cos(f.ang)*f.len,ty:f.y0+Math.sin(f.ang)*f.len,t:f.maxTtl-f.ttl,dur:f.maxTtl,radius:f.visualWidth||1.5,seed:f.seed},cam);
       else drawField(c,f,cam,true);c.restore();
     }
   }
@@ -577,7 +578,7 @@ wildkeeper_2_6 fire apexform`;
     for(const e of events)if(!groundEvent(e)&&visible(e,cam,w,h,200))add(e.x,e.y,{event:e});
     for(const f of state.fx)if(fieldRecipe(f)&&f.type!=='slamwarning'&&visible(f,cam,w,h,(f.radius||2)*64+260))add(f.x,f.y,{field:f});
     // Particles share clipping and depth per tile instead of hundreds of terrain queries.
-    const groups=new Map();for(const p of particles){if(!visible(p,cam,w,h,24))continue;const key=Math.floor(p.x)+','+Math.floor(p.y);let group=groups.get(key);if(!group){group=[];groups.set(key,group);}group.push(p);}
+    const groups=new Map();for(const p of particles){if(!visible(p,cam,w,h,24))continue;const key=(p.surfaceId??0)+':'+Math.floor(p.x)+','+Math.floor(p.y);let group=groups.get(key);if(!group){group=[];groups.set(key,group);}group.push(p);}
     for(const group of groups.values())add(group[0].x,group[0].y,{particles:group});
     for(const g of ghosts)if(visible(g,cam,w,h,140))add(g.x,g.y,{ghost:g});
   }
@@ -594,7 +595,7 @@ wildkeeper_2_6 fire apexform`;
   function drawLights(c,state,cam){
     if(!enabled)return;
     let count=0;for(const e of events){if(!['impact','flash','wave'].includes(e.kind)||++count>16||!visible(e,cam,c.canvas.width,c.canvas.height))continue;
-      c.save();LevelTerrain.clipBehind(c,state.map,cam,e.x,e.y);const [x,y]=project(e,cam);glow(c,e.recipe,x,y,Math.min(120,35+e.radius*20),30+e.radius*8,.14*(1-e.t/e.dur));c.restore();}
+      c.save();LevelTerrain.clipBehind(c,state.map,cam,e.x,e.y,e.surfaceId);const [x,y]=project(e,cam);glow(c,e.recipe,x,y,Math.min(120,35+e.radius*20),30+e.radius*8,.14*(1-e.t/e.dur));c.restore();}
   }
   function diagnostics(){return {enabled,recipes:Object.keys(recipes).length-1,particles:particles.length,events:events.length,ghosts:ghosts.length,peakParticles,peakEvents,dropped,limits:LIMITS};}
   const hasStatus=m=>enabled&&!m.dead&&!!(m.killMark||m.doom||m.curseFrailty||m.curseWither||m.plague||m.rabies);

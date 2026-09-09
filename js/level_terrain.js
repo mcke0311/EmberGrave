@@ -207,8 +207,8 @@ const LevelTerrain = (() => {
     ctx.save();ctx.transform(1,.5,-1,.5,sx,sy-16);
     ctx.drawImage(surface,ux-.5,uy-.5,33,33,-.5,-.5,33,33);ctx.restore();
   }
-  function drawSurfaceTile(ctx,m,x,y,cam){
-    const {surface,ux,uy}=tileTexture(m,x,y),[a,b,,d]=TerrainSurface.tileGeometry(m,x,y).top.points;
+  function drawSurfaceTile(ctx,m,x,y,cam,geometryMap=m){
+    const {surface,ux,uy}=tileTexture(m,x,y),[a,b,,d]=TerrainSurface.tileGeometry(geometryMap,x,y).top.points;
     ctx.save();
     ctx.transform((b.sx-a.sx)/TILE,(b.sy-a.sy)/TILE,(d.sx-a.sx)/TILE,(d.sy-a.sy)/TILE,a.sx-cam.x,a.sy-cam.y);
     ctx.drawImage(surface,ux-.5,uy-.5,33,33,-.5,-.5,33,33);
@@ -450,9 +450,9 @@ const LevelTerrain = (() => {
     // even when it straddles multiple spatial cells.
     ids.sort((a,b)=>a-b);return ids.map(id=>surfacePolygons[id]);
   }
-  function clipBehind(ctx,m,cam,x,y){
+  function clipBehind(ctx,m,cam,x,y,surfaceId=0){
     if(!m.surfaceVersion)return;
-    const sx=U.isoX(x,y),sy=U.isoY(x,y)-TerrainSurface.heightAt(m,x,y)*14,h=TerrainSurface.heightAt(m,x,y);
+    const sx=U.isoX(x,y),sy=U.isoY(x,y)-TerrainSurface.heightAt(m,x,y,surfaceId)*14,h=TerrainSurface.heightAt(m,x,y,surfaceId);
     for(const poly of nearbyPolygons(sx,sy)) {
       if(poly.right<sx-160||poly.left>sx+160||poly.bottom<sy-252||poly.top>sy+68||!poly.points.some(p=>p.z>h+1e-7))continue;
       if(poly.kind==='ground'&&poly.tx===Math.floor(x)&&poly.ty===Math.floor(y))continue;
@@ -467,4 +467,115 @@ const LevelTerrain = (() => {
     }
   }
   return Object.freeze({beginFrame,drawTile,drawSurfaceTile,drawSurface,drawFloor,clipBehind,endFrame,getDiagnostics});
+})();
+
+/* Painted masonry is depth-sorted with actors. Decks are separate surfaces,
+   never solid cliff columns, so the route beneath stays visible and usable. */
+const ImperialArchitecture=(()=>{
+  const frame=key=>SpriteAssets.getFrame(SpriteAssets.maps.props['act3_arch_'+key],0);
+  const planes=new WeakMap(),assemblies=new WeakMap();
+  function assembly(m){
+    const key=m._surfaceGeometry;
+    let cached=assemblies.get(key);if(cached)return cached;
+    const art=m.act3.architecture;
+    const walls=art.walls.map(wall=>{
+      const x=wall.x+(wall.axis?0:wall.length/2),y=wall.y+(wall.axis?wall.length/2:0);
+      const a=TerrainSurface.heightAt(m,wall.x-.01,wall.y-.01,0),b=TerrainSurface.heightAt(m,wall.x+.01,wall.y+.01,0);
+      return {kind:'imperialWall',d:x+y,wx:U.isoX(x,y),wy:U.isoY(x,y)-Math.min(a,b)*14,wall,kit:wall.kit||(m.outdoor?'rock':art.kit)};
+    });
+    const sockets=new Map();
+    for(const d of walls)if(d.kit!=='rock'){
+      const w=d.wall;
+      for(const [x,y] of [[w.x,w.y],[w.x+(w.axis?0:w.length),w.y+(w.axis?w.length:0)]]){
+        const key=x+':'+y;let n=sockets.get(key);
+        if(!n)sockets.set(key,n={x,y,kit:d.kit,axes:new Set()});n.axes.add(w.axis);
+      }
+    }
+    for(const n of sockets.values())if(n.axes.size===2){
+      const z=Math.min(...[-.01,.01].flatMap(dx=>[-.01,.01].map(dy=>TerrainSurface.heightAt(m,n.x+dx,n.y+dy,0))));
+      walls.push({kind:'imperialCap',d:n.x+n.y+.01,wx:U.isoX(n.x,n.y),wy:U.isoY(n.x,n.y)-z*14,kit:n.kit,wall:{length:1}});
+    }
+    const bridges=[...art.bridges,...(art.terraces||[])].map(bridge=>{
+      const v=bridge.terrace?m:m.layers[1],rails=[],supports=[];
+      for(const x of bridge.terrace?[]:[bridge.x-4.5,bridge.x+6.5])for(const y of [bridge.y0+.5,bridge.y1-.5])
+        supports.push({kind:'imperialSupport',d:x+y,x,y,wx:U.isoX(x,y),wy:U.isoY(x,y)});
+      for(let x=bridge.lo+1.5;x<bridge.hi-1.5;x+=1.5)for(const y of [bridge.y0,bridge.y1]){
+        const z=TerrainSurface.heightAt(v,x,Math.min(bridge.y1-.01,Math.max(bridge.y0+.01,y)));
+        rails.push({kind:'imperialRail',d:x+y,x,y,wx:U.isoX(x,y),wy:U.isoY(x,y)-z*14});
+      }
+      return {bridge,rails,supports};
+    });
+    cached={walls,bridges};assemblies.set(key,cached);return cached;
+  }
+  function plane(m,bridge){
+    const v=bridge.terrace?m:m.layers[1],key=v._surfaceGeometry;
+    let cached=planes.get(key);if(cached)return cached;
+    const cells=[];let left=Infinity,top=Infinity,right=-Infinity,bottom=-Infinity;
+    for(let y=bridge.y0;y<bridge.y1;y++)for(let x=bridge.lo;x<bridge.hi;x++){
+      const g=TerrainSurface.tileGeometry(v,x,y);cells.push({kind:'imperialDeck',x,y,g,bridge,under:false});
+      for(const p of g.top.points){left=Math.min(left,p.sx);right=Math.max(right,p.sx);top=Math.min(top,p.sy);bottom=Math.max(bottom,p.sy+8);}
+    }
+    left=Math.floor(left)-2;top=Math.floor(top)-2;
+    const image=document.createElement('canvas');image.width=Math.ceil(right-left)+4;image.height=Math.ceil(bottom-top)+4;
+    const ctx=image.getContext('2d'),cam={x:left,y:top};
+    cells.sort((a,b)=>a.x+a.y-b.x-b.y);for(const cell of cells)draw(ctx,cell,m,cam,{});
+    cached={image,left,top};planes.set(key,cached);return cached;
+  }
+  function append(draws,m,cam,player,W,H){
+    const art=assembly(m);
+    const hx=U.isoX(player.x,player.y)-cam.x,hy=U.isoY(player.x,player.y)-cam.y-TerrainSurface.heightAt(m,player.x,player.y,player.surfaceId)*14;
+    for(const d of art.walls){
+      const {wall}=d,sx=d.wx-cam.x,sy=d.wy-cam.y;
+      if(sx< -180||sx>W+180||sy< -50||sy>H+180)continue;
+      d.sx=sx;d.sy=sy;d.hx=hx;d.hy=hy;draws.push(d);
+    }
+    for(const {bridge,rails,supports} of art.bridges){
+      const under=!bridge.terrace&&player.surfaceId!==1&&player.x>=bridge.lo&&player.x<bridge.hi&&player.y>bridge.y0-2&&player.y<bridge.y1+2;
+      const cached=plane(m,bridge);
+      if(cached.left-cam.x<W&&cached.left-cam.x+cached.image.width>0&&cached.top-cam.y<H&&cached.top-cam.y+cached.image.height>0)
+        draws.push({kind:'imperialPlane',d:bridge.terrace?-Infinity:bridge.x+bridge.y,plane:cached,under,bridge});
+      for(const list of [supports,rails])for(const d of list){
+        d.sx=d.wx-cam.x;d.sy=d.wy-cam.y;d.under=under;
+        if(d.sx>-100&&d.sx<W+100&&d.sy>-60&&d.sy<H+160)draws.push(d);
+      }
+    }
+  }
+  function draw(ctx,d,m,cam,player){
+    ctx.save();
+    if(d.kind==='imperialPlane'){
+      if(d.under)ctx.globalAlpha=.18;
+      ctx.drawImage(d.plane.image,d.plane.left-cam.x,d.plane.top-cam.y);
+    }else if(d.kind==='imperialWall'){
+      const w=d.wall,f=frame(d.kit+'_'+(w.broken?'broken':w.axis?'south':'east'));
+      if(Math.abs(d.hx-d.sx)<w.length*32+24&&d.hy>d.sy-f.sh&&d.hy<d.sy+30&&player.x+player.y<d.d+1)ctx.globalAlpha=.24;
+      // Crop short end runs; preserve the painting's scale and masonry size.
+      const fullX=w.x+(w.axis?0:1.5),fullY=w.y+(w.axis?1.5:0),sx=U.isoX(fullX,fullY)-cam.x;
+      const sy=d.sy+(3-w.length)*8;
+      if(w.length<3){ctx.beginPath();ctx.rect(d.sx-w.length*16-9,d.sy-200,w.length*32+18,240);ctx.clip();}
+      SpriteAssets.drawFrame(ctx,f,sx,sy+16);
+    }else if(d.kind==='imperialCap'){
+      if(Math.abs(d.hx-d.sx)<30&&d.hy>d.sy-75&&d.hy<d.sy+25&&player.x+player.y<d.d+1)ctx.globalAlpha=.24;
+      SpriteAssets.drawFrame(ctx,frame(d.kit+'_pillar'),d.sx,d.sy+10,{scale:.55});
+    }else if(d.kind==='imperialRail'){
+      if(d.under)ctx.globalAlpha=.18;
+      SpriteAssets.drawFrame(ctx,frame('bridge_parapet'),d.sx,d.sy+5,{scale:.55});
+    }else if(d.kind==='imperialSupport'){
+      const f=frame(m.act3.architecture.kit+'_pillar'),scale=112/(f.sh-8);
+      SpriteAssets.drawFrame(ctx,f,d.sx,d.sy,{scale});
+    }else{
+      const v=d.bridge.terrace?m:m.layers[1],g=d.g,under=d.under;
+      if(under)ctx.globalAlpha=.18;
+      // Only the slab fascia is solid; nothing fills the space beneath it.
+      const cliff=SpriteAssets.maps.cliffs[m.zone.theme]||SpriteAssets.maps.cliffs.fields;
+      for(const [a,b,facing] of [[g.top.points[1],g.top.points[2],0],[g.top.points[3],g.top.points[2],4]]){
+        const points=[a,b,{...b,sy:b.sy+7,z:b.z-.5},{...a,sy:a.sy+7,z:a.z-.5}];
+        SpriteAssets.drawCliffPolygon(ctx,SpriteAssets.getFrame(cliff,facing),points,cam);
+      }
+      const f=frame('deckmaterial_material'),[a,b,,c]=g.top.points;
+      ctx.transform((b.sx-a.sx)/64,(b.sy-a.sy)/64,(c.sx-a.sx)/64,(c.sy-a.sy)/64,a.sx-cam.x,a.sy-cam.y);
+      ctx.drawImage(f.image,f.sx+(d.x%4)*64,f.sy+(d.y%2)*64,64,64,-.3,-.3,64.6,64.6);
+    }
+    ctx.restore();
+  }
+  return {append,draw};
 })();

@@ -17265,6 +17265,356 @@ DATA.SPRITE_MANIFEST = {
       "revision": "f36fcfb24ca3",
       "src": "assets/sprites/packed/world/props/act3_aqueduct_gate.webp"
     },
+    "world.prop.act3_arch_bridge_arch": {
+      "anchor": [
+        100,
+        324
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "449b9c294125",
+      "src": "assets/sprites/packed/world/props/act3_arch_bridge_arch.webp"
+    },
+    "world.prop.act3_arch_bridge_deck_east": {
+      "anchor": [
+        128,
+        177
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1b1c0316d874",
+      "src": "assets/sprites/packed/world/props/act3_arch_bridge_deck_east.webp"
+    },
+    "world.prop.act3_arch_bridge_deck_south": {
+      "anchor": [
+        128,
+        179
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "211f17678022",
+      "src": "assets/sprites/packed/world/props/act3_arch_bridge_deck_south.webp"
+    },
+    "world.prop.act3_arch_bridge_parapet": {
+      "anchor": [
+        56,
+        82
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "50d93ca73a1c",
+      "src": "assets/sprites/packed/world/props/act3_arch_bridge_parapet.webp"
+    },
+    "world.prop.act3_arch_bridge_stairs_east": {
+      "anchor": [
+        120,
+        216
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "489dec48e692",
+      "src": "assets/sprites/packed/world/props/act3_arch_bridge_stairs_east.webp"
+    },
+    "world.prop.act3_arch_bridge_stairs_south": {
+      "anchor": [
+        120,
+        217
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b78deeb29454",
+      "src": "assets/sprites/packed/world/props/act3_arch_bridge_stairs_south.webp"
+    },
+    "world.prop.act3_arch_deckmaterial_material": {
+      "anchor": [
+        128,
+        120
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "4619221dcba3",
+      "src": "assets/sprites/packed/world/props/act3_arch_deckmaterial_material.webp"
+    },
+    "world.prop.act3_arch_palace_broken": {
+      "anchor": [
+        60,
+        134
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f62abcfe8c0d",
+      "src": "assets/sprites/packed/world/props/act3_arch_palace_broken.webp"
+    },
+    "world.prop.act3_arch_palace_buttress": {
+      "anchor": [
+        32,
+        79
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3a9c016d8116",
+      "src": "assets/sprites/packed/world/props/act3_arch_palace_buttress.webp"
+    },
+    "world.prop.act3_arch_palace_door": {
+      "anchor": [
+        75,
+        161
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9188af3d538b",
+      "src": "assets/sprites/packed/world/props/act3_arch_palace_door.webp"
+    },
+    "world.prop.act3_arch_palace_east": {
+      "anchor": [
+        60,
+        123
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9d01d2753543",
+      "src": "assets/sprites/packed/world/props/act3_arch_palace_east.webp"
+    },
+    "world.prop.act3_arch_palace_inner": {
+      "anchor": [
+        75,
+        132
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "165e9b43fcea",
+      "src": "assets/sprites/packed/world/props/act3_arch_palace_inner.webp"
+    },
+    "world.prop.act3_arch_palace_outer": {
+      "anchor": [
+        75,
+        144
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e6d8eb078869",
+      "src": "assets/sprites/packed/world/props/act3_arch_palace_outer.webp"
+    },
+    "world.prop.act3_arch_palace_pillar": {
+      "anchor": [
+        32,
+        119
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ff936f622235",
+      "src": "assets/sprites/packed/world/props/act3_arch_palace_pillar.webp"
+    },
+    "world.prop.act3_arch_palace_south": {
+      "anchor": [
+        60,
+        113
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f12252ffdd4b",
+      "src": "assets/sprites/packed/world/props/act3_arch_palace_south.webp"
+    },
+    "world.prop.act3_arch_rock_east": {
+      "anchor": [
+        60,
+        76
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f6a98054ec13",
+      "src": "assets/sprites/packed/world/props/act3_arch_rock_east.webp"
+    },
+    "world.prop.act3_arch_rock_outer": {
+      "anchor": [
+        75,
+        98
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f733bc38f00d",
+      "src": "assets/sprites/packed/world/props/act3_arch_rock_outer.webp"
+    },
+    "world.prop.act3_arch_rock_retaining": {
+      "anchor": [
+        75,
+        110
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "183c76c9b1f7",
+      "src": "assets/sprites/packed/world/props/act3_arch_rock_retaining.webp"
+    },
+    "world.prop.act3_arch_rock_south": {
+      "anchor": [
+        60,
+        79
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "658962d39951",
+      "src": "assets/sprites/packed/world/props/act3_arch_rock_south.webp"
+    },
+    "world.prop.act3_arch_sandstone_broken": {
+      "anchor": [
+        60,
+        130
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "a35f84e624b8",
+      "src": "assets/sprites/packed/world/props/act3_arch_sandstone_broken.webp"
+    },
+    "world.prop.act3_arch_sandstone_buttress": {
+      "anchor": [
+        32,
+        78
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "5fecb4a5697a",
+      "src": "assets/sprites/packed/world/props/act3_arch_sandstone_buttress.webp"
+    },
+    "world.prop.act3_arch_sandstone_door": {
+      "anchor": [
+        75,
+        156
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9eaef52e0f16",
+      "src": "assets/sprites/packed/world/props/act3_arch_sandstone_door.webp"
+    },
+    "world.prop.act3_arch_sandstone_east": {
+      "anchor": [
+        60,
+        126
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3f4e8f5761ae",
+      "src": "assets/sprites/packed/world/props/act3_arch_sandstone_east.webp"
+    },
+    "world.prop.act3_arch_sandstone_inner": {
+      "anchor": [
+        75,
+        133
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "167b3269948c",
+      "src": "assets/sprites/packed/world/props/act3_arch_sandstone_inner.webp"
+    },
+    "world.prop.act3_arch_sandstone_outer": {
+      "anchor": [
+        75,
+        147
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "27389766fda5",
+      "src": "assets/sprites/packed/world/props/act3_arch_sandstone_outer.webp"
+    },
+    "world.prop.act3_arch_sandstone_pillar": {
+      "anchor": [
+        32,
+        115
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "023aa54d10cb",
+      "src": "assets/sprites/packed/world/props/act3_arch_sandstone_pillar.webp"
+    },
+    "world.prop.act3_arch_sandstone_south": {
+      "anchor": [
+        60,
+        113
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "b30b55acb92a",
+      "src": "assets/sprites/packed/world/props/act3_arch_sandstone_south.webp"
+    },
+    "world.prop.act3_arch_tomb_broken": {
+      "anchor": [
+        60,
+        133
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "aac2ec490547",
+      "src": "assets/sprites/packed/world/props/act3_arch_tomb_broken.webp"
+    },
+    "world.prop.act3_arch_tomb_buttress": {
+      "anchor": [
+        32,
+        79
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "c9f489b490ee",
+      "src": "assets/sprites/packed/world/props/act3_arch_tomb_buttress.webp"
+    },
+    "world.prop.act3_arch_tomb_door": {
+      "anchor": [
+        75,
+        160
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "4bb8a71be0ea",
+      "src": "assets/sprites/packed/world/props/act3_arch_tomb_door.webp"
+    },
+    "world.prop.act3_arch_tomb_east": {
+      "anchor": [
+        60,
+        122
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "7802d9b99ef6",
+      "src": "assets/sprites/packed/world/props/act3_arch_tomb_east.webp"
+    },
+    "world.prop.act3_arch_tomb_inner": {
+      "anchor": [
+        75,
+        131
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "34272eb71aca",
+      "src": "assets/sprites/packed/world/props/act3_arch_tomb_inner.webp"
+    },
+    "world.prop.act3_arch_tomb_outer": {
+      "anchor": [
+        75,
+        144
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9c50e13a89e5",
+      "src": "assets/sprites/packed/world/props/act3_arch_tomb_outer.webp"
+    },
+    "world.prop.act3_arch_tomb_pillar": {
+      "anchor": [
+        32,
+        119
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "52ccab3f9f72",
+      "src": "assets/sprites/packed/world/props/act3_arch_tomb_pillar.webp"
+    },
+    "world.prop.act3_arch_tomb_south": {
+      "anchor": [
+        60,
+        113
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "591e33936885",
+      "src": "assets/sprites/packed/world/props/act3_arch_tomb_south.webp"
+    },
     "world.prop.act3_awning": {
       "anchor": [
         125,
@@ -33203,6 +33553,41 @@ DATA.SPRITE_MANIFEST = {
       "act2_water_edge": "world.prop.act2_water_edge",
       "act3_aqueduct": "world.prop.act3_aqueduct",
       "act3_aqueduct_gate": "world.prop.act3_aqueduct_gate",
+      "act3_arch_bridge_arch": "world.prop.act3_arch_bridge_arch",
+      "act3_arch_bridge_deck_east": "world.prop.act3_arch_bridge_deck_east",
+      "act3_arch_bridge_deck_south": "world.prop.act3_arch_bridge_deck_south",
+      "act3_arch_bridge_parapet": "world.prop.act3_arch_bridge_parapet",
+      "act3_arch_bridge_stairs_east": "world.prop.act3_arch_bridge_stairs_east",
+      "act3_arch_bridge_stairs_south": "world.prop.act3_arch_bridge_stairs_south",
+      "act3_arch_deckmaterial_material": "world.prop.act3_arch_deckmaterial_material",
+      "act3_arch_palace_broken": "world.prop.act3_arch_palace_broken",
+      "act3_arch_palace_buttress": "world.prop.act3_arch_palace_buttress",
+      "act3_arch_palace_door": "world.prop.act3_arch_palace_door",
+      "act3_arch_palace_east": "world.prop.act3_arch_palace_east",
+      "act3_arch_palace_inner": "world.prop.act3_arch_palace_inner",
+      "act3_arch_palace_outer": "world.prop.act3_arch_palace_outer",
+      "act3_arch_palace_pillar": "world.prop.act3_arch_palace_pillar",
+      "act3_arch_palace_south": "world.prop.act3_arch_palace_south",
+      "act3_arch_rock_east": "world.prop.act3_arch_rock_east",
+      "act3_arch_rock_outer": "world.prop.act3_arch_rock_outer",
+      "act3_arch_rock_retaining": "world.prop.act3_arch_rock_retaining",
+      "act3_arch_rock_south": "world.prop.act3_arch_rock_south",
+      "act3_arch_sandstone_broken": "world.prop.act3_arch_sandstone_broken",
+      "act3_arch_sandstone_buttress": "world.prop.act3_arch_sandstone_buttress",
+      "act3_arch_sandstone_door": "world.prop.act3_arch_sandstone_door",
+      "act3_arch_sandstone_east": "world.prop.act3_arch_sandstone_east",
+      "act3_arch_sandstone_inner": "world.prop.act3_arch_sandstone_inner",
+      "act3_arch_sandstone_outer": "world.prop.act3_arch_sandstone_outer",
+      "act3_arch_sandstone_pillar": "world.prop.act3_arch_sandstone_pillar",
+      "act3_arch_sandstone_south": "world.prop.act3_arch_sandstone_south",
+      "act3_arch_tomb_broken": "world.prop.act3_arch_tomb_broken",
+      "act3_arch_tomb_buttress": "world.prop.act3_arch_tomb_buttress",
+      "act3_arch_tomb_door": "world.prop.act3_arch_tomb_door",
+      "act3_arch_tomb_east": "world.prop.act3_arch_tomb_east",
+      "act3_arch_tomb_inner": "world.prop.act3_arch_tomb_inner",
+      "act3_arch_tomb_outer": "world.prop.act3_arch_tomb_outer",
+      "act3_arch_tomb_pillar": "world.prop.act3_arch_tomb_pillar",
+      "act3_arch_tomb_south": "world.prop.act3_arch_tomb_south",
       "act3_awning": "world.prop.act3_awning",
       "act3_checkpoint": "world.prop.act3_checkpoint",
       "act3_colossus": "world.prop.act3_colossus",

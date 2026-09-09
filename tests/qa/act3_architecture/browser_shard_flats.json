@@ -1,0 +1,30 @@
+{
+  "info": {
+    "zone": "shard_flats",
+    "bridge": {
+      "id": "imperial_crossing",
+      "x": 51,
+      "y": 24,
+      "lo": 29,
+      "hi": 74,
+      "y0": 22,
+      "y1": 27,
+      "height": 8,
+      "surfaceId": 1
+    },
+    "walls": 522,
+    "errors": []
+  },
+  "traversal": {
+    "status": "PASS",
+    "picked": {
+      "x": 31,
+      "y": 23
+    },
+    "playerFloor": 1,
+    "companionFloor": 1,
+    "chestOpened": true,
+    "portalRoundTrip": true
+  },
+  "errors": []
+}

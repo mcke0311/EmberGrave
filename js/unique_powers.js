@@ -267,7 +267,7 @@ const UniquePowers = (() => {
   const world = () => typeof Game !== "undefined" ? Game.state : null;
   const stateFor = p => p._unique ||= { active: [], states: new Map(), depth: 0 };
   const color = elem => ({ fire: "#ff9040", cold: "#9fd8ff", light: "#fff080", poison: "#90ff70", shadow: "#c080e0", earth: "#c8ac80", phys: "#dfd1b5" }[elem] || "#d8924a");
-  const living = p => (world()?.minions || []).filter(m => !m.dead && m.owner === p && !m.noAttack);
+  const living = p => (world()?.minions || []).filter(m => TerrainLayers.same(p,m) && !m.dead && m.owner === p && !m.noAttack);
   const isCursed = t => ["curseFrailty", "curseWither", "killMark", "doom"].some(k => t?.[k] && (!t[k].until || t[k].until > now()));
   const burning = t => !!(t?.poisonDot?.fire && t.poisonDot.t > 0 || t?.scorch?.until > now());
   const conditions = {
@@ -288,7 +288,7 @@ const UniquePowers = (() => {
     still: p => now() - (stateFor(p).lastMoved ?? -Infinity) >= 1,
     companion: p => living(p).length > 0, alone: p => living(p).length === 0,
     companionKill: (p,e) => e.source !== p && e.source?.owner === p,
-    nearEnemy: p => (world()?.monsters || []).some(m => !m.dead && U.dist(p.x,p.y,m.x,m.y) <= 4),
+    nearEnemy: p => (world()?.monsters || []).some(m => TerrainLayers.same(p,m) && !m.dead && U.dist(p.x,p.y,m.x,m.y) <= 4),
     melee: (p,e) => !!e.source && U.dist(p.x,p.y,e.source.x,e.source.y) < 2 && (!e.elem || e.elem === "phys"),
     elemental: (p,e) => !!e.elem && e.elem !== "phys",
     eliteSource: (p,e) => !!(e.source?.elite || e.source?.isBoss),
@@ -368,7 +368,7 @@ const UniquePowers = (() => {
           Game.addParticle(target.x,target.y,color(effect.elem));
         } break;
       case "slow": case "nova": case "chain": {
-        const center = target || p, candidates = (world()?.monsters || []).filter(m => !m.dead && U.dist(center.x,center.y,m.x,m.y) <= effect.radius + (m.radius || 0));
+        const center = target || p, candidates = (world()?.monsters || []).filter(m => TerrainLayers.same(center,m) && !m.dead && U.dist(center.x,center.y,m.x,m.y) <= effect.radius + (m.radius || 0));
         if (effect.kind === "chain") candidates.sort((a,b) => U.dist2(center.x,center.y,a.x,a.y)-U.dist2(center.x,center.y,b.x,b.y));
         const hits = effect.kind === "chain" ? candidates.filter(m => m !== target).slice(0,effect.count) : candidates;
         if (effect.kind !== "chain") Game.addNova(center.x,center.y,effect.radius,color(effect.elem));

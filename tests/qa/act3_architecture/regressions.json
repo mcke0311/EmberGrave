@@ -1,0 +1,113 @@
+{
+  "status": "PASS",
+  "results": [
+    {
+      "command": "node tests/terrain_surface_contract.mjs",
+      "exitCode": 0,
+      "seconds": 0.98,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 10734,\n  \"maxWalkHeightDelta\": 0.07500000000000018,\n  \"seedResults\": [\n    {\n      \"seed\": 0,\n      \"ramps\": 2,\n      \"raisedTiles\": 19058,\n      \"targets\": 16,\n      \"ms\": 210\n    },\n    {\n      \"seed\": 1,\n      \"ramps\": 2,\n      \"raisedTiles\": 19284,\n      \"targets\": 16,\n      \"ms\": 108\n    },\n    {\n      \"seed\": 123,\n      \"ramps\": 2,\n      \"raisedTiles\": 19169,\n      \"targets\": 16,\n      \"ms\": 96\n    },\n    {\n      \"seed\": 12345,\n      \"ramps\": 2,\n      \"raisedTiles\": 19445,\n      \"targets\": 16,\n      \"ms\": 93\n    },\n    {\n      \"seed\": 4294967295,\n      \"ramps\": 2,\n      \"raisedTiles\": 19359,\n      \"targets\": 16,\n      \"ms\": 83\n    }\n  ]\n}\n"
+    },
+    {
+      "command": "node tests/navigation_contract.mjs",
+      "exitCode": 0,
+      "seconds": 0.42,
+      "output": "PASS 216 navigation checks; longest seeded query 17.4 ms.\n"
+    },
+    {
+      "command": "node tests/gameplay_input_contract.mjs",
+      "exitCode": 0,
+      "seconds": 0.53,
+      "output": "PASS 153 gameplay checks: tap/hold input, gesture ownership, collision, interruption, jumping, hazards and damage visibility timers.\n"
+    },
+    {
+      "command": "node tests/pathfinding_optimization_contract.mjs",
+      "exitCode": 0,
+      "seconds": 1.48,
+      "output": "PASS 48086 pathfinding equivalence checks: exact routes, caps, edge kinds, footprint boundaries and production maps.\n"
+    },
+    {
+      "command": "node tests/skill_vfx_contract.mjs --current-gameplay",
+      "exitCode": 0,
+      "seconds": 4.48,
+      "output": "PASS 5373 checks, 963 skill/rank/perk scenarios: current gameplay, VFX toggle equivalent, coverage, rejection, respec, bounds and cleanup.\n"
+    },
+    {
+      "command": "node tests/skill_vfx_contract.mjs --layered",
+      "exitCode": 0,
+      "seconds": 5.84,
+      "output": "PASS 5373 checks, 963 skill/rank/perk scenarios: current gameplay, VFX toggle equivalent, coverage, rejection, respec, bounds and cleanup.\n"
+    },
+    {
+      "command": "node tests/unique_powers_contract.mjs",
+      "exitCode": 0,
+      "seconds": 0.3,
+      "output": "PASS 1991 Unique checks: 163 items, 169 distinct powers, real combat, migration and five classes.\n"
+    },
+    {
+      "command": "node tests/act3_layers_contract.mjs --all-seeds",
+      "exitCode": 0,
+      "seconds": 92.77,
+      "output": "desert_wastes 30 seeds PASS\nunderground_market 30 seeds PASS\nsand_tombs 30 seeds PASS\nkhal_palace 30 seeds PASS\nshard_flats 30 seeds PASS\ntomb_sanctum 30 seeds PASS\n{\"status\":\"PASS\",\"checks\":4680,\"seedCount\":30}\n"
+    },
+    {
+      "command": "node tests/act3_navigation_contract.mjs",
+      "exitCode": 0,
+      "seconds": 69.67,
+      "output": "{\n  status: 'PASS',\n  checks: 122100,\n  seeds: 30,\n  areas: 7,\n  liveCompanionRoutes: 7,\n  coverage: 'Thirty seeds: skeletal routes, golem-width authored lanes, every enemy footprint, flat-sweep equivalence. Three seeds: complete golem and encounter paths. Seven live golem routes without teleport fallback.'\n}\n"
+    },
+    {
+      "command": "node tests/act3_quest_contract.mjs",
+      "exitCode": 0,
+      "seconds": 6.22,
+      "output": "{\n  status: 'PASS',\n  checks: 51,\n  coverage: 'Relays and guards, partial saves, scholar rescue and regeneration, boss/map prerequisite, saved recovery, production travel and shrine/portal arrivals.'\n}\n"
+    },
+    {
+      "command": "node tests/act3_combat_contract.mjs",
+      "exitCode": 0,
+      "seconds": 40.81,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 33074,\n  \"enemies\": [\n    {\n      \"id\": \"sand_raider\",\n      \"hits\": 15,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"tomb_guard\",\n      \"hits\": 9,\n      \"attacks\": \"bash\"\n    },\n    {\n      \"id\": \"dune_shade\",\n      \"hits\": 13,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"soul_chained\",\n      \"hits\": 7,\n      \"attacks\": \"bolt\"\n    },\n    {\n      \"id\": \"gilt_construct\",\n      \"hits\": 7,\n      \"attacks\": \"pulse\"\n    },\n    {\n      \"id\": \"shard_construct\",\n      \"hits\": 8,\n      \"attacks\": \"fan\"\n    },\n    {\n      \"id\": \"crystal_marauder\",\n      \"hits\": 12,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"gilded_thrall\",\n      \"hits\": 9,\n      \"attacks\": \"sweep\"\n    },\n    {\n      \"id\": \"prisoned_shade\",\n      \"hits\": 13,\n      \"attacks\": \"bolt\"\n    },\n    {\n      \"id\": \"dune_serpent\",\n      \"hits\": 28,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"stone_gargoyle\",\n      \"hits\": 11,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"chained_sovereign\",\n      \"hits\": 8,\n      \"attacks\": \"pulse\"\n    }\n  ],\n  \"seedCount\": 30\n}\n"
+    },
+    {
+      "command": "node tests/story_campaign_contract.mjs",
+      "exitCode": 0,
+      "seconds": 11.88,
+      "output": "PASS 214 story checks: dialogue, objectives, old saves, boss wards, seeded routes, factions, phases, quest chest states and all endings.\n"
+    },
+    {
+      "command": "node tests/boss_encounter_contract.mjs",
+      "exitCode": 0,
+      "seconds": 27.91,
+      "output": "PASS 85616 boss checks: warning geometry, dodge routes, recovery, phases, ownership, retreat, death, signatures and 192 seeded arenas.\n"
+    },
+    {
+      "command": "node tests/act2_layout_contract.mjs",
+      "exitCode": 0,
+      "seconds": 143.59,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 2073777,\n  \"seedCount\": 30,\n  \"areas\": [\n    {\n      \"zone\": \"weeping_marsh\",\n      \"furthest\": {\n        \"before\": 239,\n        \"after\": 209,\n        \"ratio\": 0.8744769874476988\n      },\n      \"enemies\": {\n        \"before\": 132,\n        \"after\": 137,\n        \"ratio\": 1.0378787878787878\n      }\n    },\n    {\n      \"zone\": \"drowned_crypt\",\n      \"furthest\": {\n        \"before\": 210,\n        \"after\": 207,\n        \"ratio\": 0.9857142857142858\n      },\n      \"enemies\": {\n        \"before\": 95,\n        \"after\": 96,\n        \"ratio\": 1.0105263157894737\n      }\n    },\n    {\n      \"zone\": \"hollow_reeds\",\n      \"furthest\": {\n        \"before\": 212,\n        \"after\": 183,\n        \"ratio\": 0.8632075471698113\n      },\n      \"enemies\": {\n        \"before\": 92,\n        \"after\": 97,\n        \"ratio\": 1.0543478260869565\n      }\n    },\n    {\n      \"zone\": \"spawn_pools\",\n      \"furthest\": {\n        \"before\": 198,\n        \"after\": 184,\n        \"ratio\": 0.9292929292929293\n      },\n      \"enemies\": {\n        \"before\": 93,\n        \"after\": 100,\n        \"ratio\": 1.075268817204301\n      }\n    },\n    {\n      \"zone\": \"ritual_site\",\n      \"furthest\": {\n        \"before\": 210,\n        \"after\": 206,\n        \"ratio\": 0.9809523809523809\n      },\n      \"enemies\": {\n        \"before\": 91,\n        \"after\": 97,\n        \"ratio\": 1.065934065934066\n      }\n    }\n  ]\n}\n"
+    },
+    {
+      "command": "node tests/cathedral_layout_contract.mjs",
+      "exitCode": 0,
+      "seconds": 21.77,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 3268737,\n  \"seedsPerZone\": 100,\n  \"zones\": [\n    \"cathedral1\",\n    \"cathedral2\",\n    \"cathedral_cinderwatch\",\n    \"cathedral_bastion\"\n  ]\n}\n"
+    },
+    {
+      "command": "node tests/cinders_layout_contract.mjs",
+      "exitCode": 0,
+      "seconds": 17.03,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 81366,\n  \"seedCount\": 30,\n  \"zones\": [\n    \"ash_wastes\",\n    \"cinder_bastion\",\n    \"throne\"\n  ]\n}\n"
+    },
+    {
+      "command": "node tests/frontier_layout_contract.mjs",
+      "exitCode": 0,
+      "seconds": 10.17,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 118293,\n  \"seedCount\": 30,\n  \"areas\": [\n    {\n      \"zone\": \"north_wild\",\n      \"minMonsters\": 79,\n      \"minBuildings\": 9,\n      \"maxBuildings\": 9\n    },\n    {\n      \"zone\": \"mines\",\n      \"minMonsters\": 60,\n      \"minBuildings\": 7,\n      \"maxBuildings\": 7\n    },\n    {\n      \"zone\": \"shattered_temple\",\n      \"minMonsters\": 52,\n      \"minBuildings\": 5,\n      \"maxBuildings\": 5\n    },\n    {\n      \"zone\": \"shardpeak_shrine\",\n      \"minMonsters\": 52,\n      \"minBuildings\": 6,\n      \"maxBuildings\": 6\n    },\n    {\n      \"zone\": \"deepfreeze_cavern\",\n      \"minMonsters\": 57,\n      \"minBuildings\": 6,\n      \"maxBuildings\": 6\n    }\n  ]\n}\n"
+    },
+    {
+      "command": "python tests/act3_architecture_sprites.py",
+      "exitCode": 0,
+      "seconds": 94.33,
+      "output": "{\"status\": \"PASS\", \"assets\": 35, \"checks\": 245, \"newDiagnostics\": [], \"baselineExitCode\": 1, \"currentExitCode\": 1, \"note\": \"Existing global validator failures retained in paired diagnostic files.\"}\n"
+    }
+  ]
+}

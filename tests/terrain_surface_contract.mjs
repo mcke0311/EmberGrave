@@ -72,7 +72,7 @@ const seedResults=[];
 // Real click, hold and jump handlers must leave intent intact when picking a
 // cliff returns null. These are production function bodies, not copies.
 const gameSource=fs.readFileSync(new URL('../js/game.js',import.meta.url),'utf8');
-const input=vm.createContext({state:{time:1,player:{dead:false,skillL:'basic',skillR:'basic',command:{type:'move'},path:[{cx:1,cy:1}]}},
+const input=vm.createContext({TerrainLayers,state:{time:1,player:{dead:false,skillL:'basic',skillR:'basic',command:{type:'move'},path:[{cx:1,cy:1}]}},
  mouse:{x:100,y:100,l:true,r:false,shift:false},performance:{now:()=>0},groundHold:null,UI:{cursorItem:null},options:{leftClickMove:true},
  DATA:{BASIC_ATTACK:{type:'melee'},SKILLS:{}},screenToWorld:()=>null,updateHover(){},
  hoverPortal:null,hoverExit:null,hoverNpc:null,hoverLabel:null,hoverProp:null,hoverMon:null,heldTarget:null,

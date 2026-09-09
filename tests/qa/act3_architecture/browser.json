@@ -1,0 +1,30 @@
+{
+  "info": {
+    "zone": "khal_palace",
+    "bridge": {
+      "id": "imperial_crossing",
+      "x": 39,
+      "y": 56,
+      "lo": 17,
+      "hi": 62,
+      "y0": 54,
+      "y1": 59,
+      "height": 8,
+      "surfaceId": 1
+    },
+    "walls": 304,
+    "errors": []
+  },
+  "traversal": {
+    "status": "PASS",
+    "picked": {
+      "x": 21,
+      "y": 55
+    },
+    "playerFloor": 1,
+    "companionFloor": 1,
+    "chestOpened": true,
+    "portalRoundTrip": true
+  },
+  "errors": []
+}

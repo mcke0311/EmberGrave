@@ -351,3 +351,61 @@ const TerrainSurface = (() => {
   }
   return {LIFT,directions,heightAt,tileHeight,rebuild,addRamp,connected,supported,tileGeometry,sample,pick,inFront};
 })();
+
+{
+  const {heightAt,tileHeight,supported,connected,tileGeometry}=TerrainSurface;
+  // Keep these hot queries monomorphic; rest-argument wrappers allocate in
+  // every collision sample and prevent the small terrain routines inlining.
+  TerrainSurface.heightAt=(m,x,y,id)=>heightAt(m.layers?TerrainLayers.view(m,id):m,x,y);
+  TerrainSurface.tileHeight=(m,x,y,wx,wy,id)=>tileHeight(m.layers?TerrainLayers.view(m,id):m,x,y,wx,wy);
+  TerrainSurface.supported=(m,x,y,r,id)=>supported(m.layers?TerrainLayers.view(m,id):m,x,y,r);
+  TerrainSurface.connected=(m,x,y,nx,ny,id)=>connected(m.layers?TerrainLayers.view(m,id):m,x,y,nx,ny);
+  TerrainSurface.tileGeometry=(m,x,y,id)=>tileGeometry(m.layers?TerrainLayers.view(m,id):m,x,y);
+}
+{
+  const original=TerrainSurface.pick;
+  TerrainSurface.pick=function(m,sx,sy,preferred=0){
+    if(!m.layers)return original(m,sx,sy);
+    const hits=[];
+    for(const surfaceId of [0,1]){
+      const v=TerrainLayers.view(m,surfaceId),hit=original(v,sx,sy);
+      if(hit?.kind==='ground'&&!v.blocked[hit.tx+hit.ty*m.w])hits.push({...hit,surfaceId});
+    }
+    return hits.find(h=>h.surfaceId===preferred)||hits.sort((a,b)=>b.depth-a.depth)[0]||null;
+  };
+}
+
+/* Optional second walking surface. A view reuses the established terrain math;
+   each floor owns its blockers, ramps and geometry. Scope is synchronous and
+   restored even when an effect throws. Delayed effects capture their own ID. */
+const TerrainLayers = (() => {
+  let active = null;
+  const id = p => p?.surfaceId ?? 0;
+  const current = m => active?.map === m ? active.surfaceId : 0;
+  function view(m, surfaceId = current(m)) {
+    return surfaceId && m.layers ? m.layers[surfaceId] || m : m;
+  }
+  function scope(m, owner, fn) {
+    if (!m?.layers) return fn();
+    const previous = active; active = {map:m,surfaceId:typeof owner==='number'?owner:id(owner),targets:new WeakMap()};
+    try { return fn(); } finally { active = previous; }
+  }
+  function same(a,b) { return id(a) === id(b); }
+  function affects(m,target,source) {
+    return !m?.layers || id(target) === (active?.map===m ? active.surfaceId : id(source));
+  }
+  function targets(list,owner) {
+    if (!active && !owner) return list;
+    const surfaceId=owner?id(owner):active.surfaceId;
+    const cached=!owner&&active.targets.get(list);
+    if(cached&&cached.length===list.length)return cached.items;
+    const items=list.filter(p=>id(p)===surfaceId);
+    if(!owner)active.targets.set(list,{length:list.length,items});
+    return items;
+  }
+  function connectAt(m,x,y,from,to,radius=.36) {
+    return (m.surfaceLinks||[]).some(p=>((p.from===from&&p.to===to)||(p.from===to&&p.to===from))&&
+      Math.hypot(x-p.x,y-p.y)<.08&&TerrainSurface.supported(view(m,from),x,y,radius)&&TerrainSurface.supported(view(m,to),x,y,radius));
+  }
+  return {id,current,view,scope,same,affects,targets,connectAt};
+})();

@@ -1,0 +1,488 @@
+{
+  "status": "PERFORMANCE_TARGET_MISSED",
+  "zones": [
+    "khalcamp",
+    "desert_wastes",
+    "underground_market",
+    "sand_tombs",
+    "khal_palace",
+    "shard_flats",
+    "tomb_sanctum"
+  ],
+  "widths": [
+    1920,
+    3840
+  ],
+  "runs": 52,
+  "comparisons": [
+    {
+      "zone": "khalcamp",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 2.2,
+        "p95": 3,
+        "max": 6
+      },
+      "after": {
+        "median": 2,
+        "p95": 3,
+        "max": 5.6
+      },
+      "medianRegressionPct": -9.1,
+      "p95RegressionPct": 0,
+      "withinTarget": true
+    },
+    {
+      "zone": "desert_wastes",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 3.4,
+        "p95": 4.7,
+        "max": 6.9
+      },
+      "after": {
+        "median": 4.9,
+        "p95": 6.8,
+        "max": 7.4
+      },
+      "medianRegressionPct": 44.1,
+      "p95RegressionPct": 44.7,
+      "withinTarget": false
+    },
+    {
+      "zone": "desert_wastes",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 4.9,
+        "p95": 6.8,
+        "max": 8.6
+      },
+      "after": {
+        "median": 5.8,
+        "p95": 7.3,
+        "max": 9.7
+      },
+      "medianRegressionPct": 18.4,
+      "p95RegressionPct": 7.4,
+      "withinTarget": false
+    },
+    {
+      "zone": "underground_market",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 3,
+        "p95": 4.1,
+        "max": 21.4
+      },
+      "after": {
+        "median": 3.3,
+        "p95": 4.5,
+        "max": 20.5
+      },
+      "medianRegressionPct": 10,
+      "p95RegressionPct": 9.8,
+      "withinTarget": true
+    },
+    {
+      "zone": "underground_market",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 4,
+        "p95": 4.9,
+        "max": 6.8
+      },
+      "after": {
+        "median": 5.1,
+        "p95": 6.5,
+        "max": 8.5
+      },
+      "medianRegressionPct": 27.5,
+      "p95RegressionPct": 32.7,
+      "withinTarget": false
+    },
+    {
+      "zone": "sand_tombs",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 4.2,
+        "p95": 6.8,
+        "max": 11.7
+      },
+      "after": {
+        "median": 5.1,
+        "p95": 6.6,
+        "max": 8.9
+      },
+      "medianRegressionPct": 21.4,
+      "p95RegressionPct": -2.9,
+      "withinTarget": false
+    },
+    {
+      "zone": "sand_tombs",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 4.2,
+        "p95": 5.4,
+        "max": 6.2
+      },
+      "after": {
+        "median": 6.1,
+        "p95": 9.6,
+        "max": 28.9
+      },
+      "medianRegressionPct": 45.2,
+      "p95RegressionPct": 77.8,
+      "withinTarget": false
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 3,
+        "p95": 4,
+        "max": 5.7
+      },
+      "after": {
+        "median": 3.7,
+        "p95": 5.3,
+        "max": 6.2
+      },
+      "medianRegressionPct": 23.3,
+      "p95RegressionPct": 32.5,
+      "withinTarget": false
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 4.6,
+        "p95": 6.2,
+        "max": 13.7
+      },
+      "after": {
+        "median": 4.5,
+        "p95": 5.9,
+        "max": 7.6
+      },
+      "medianRegressionPct": -2.2,
+      "p95RegressionPct": -4.8,
+      "withinTarget": true
+    },
+    {
+      "zone": "shard_flats",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 3.4,
+        "p95": 4.6,
+        "max": 28.8
+      },
+      "after": {
+        "median": 3.7,
+        "p95": 6,
+        "max": 25.7
+      },
+      "medianRegressionPct": 8.8,
+      "p95RegressionPct": 30.4,
+      "withinTarget": false
+    },
+    {
+      "zone": "shard_flats",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 4,
+        "p95": 5.4,
+        "max": 8.4
+      },
+      "after": {
+        "median": 5,
+        "p95": 6.4,
+        "max": 12.8
+      },
+      "medianRegressionPct": 25,
+      "p95RegressionPct": 18.5,
+      "withinTarget": false
+    },
+    {
+      "zone": "tomb_sanctum",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 3.9,
+        "p95": 4.8,
+        "max": 15.8
+      },
+      "after": {
+        "median": 4.7,
+        "p95": 7.1,
+        "max": 11.9
+      },
+      "medianRegressionPct": 20.5,
+      "p95RegressionPct": 47.9,
+      "withinTarget": false
+    },
+    {
+      "zone": "tomb_sanctum",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 5.2,
+        "p95": 7.4,
+        "max": 9.3
+      },
+      "after": {
+        "median": 7.1,
+        "p95": 9.8,
+        "max": 11.7
+      },
+      "medianRegressionPct": 36.5,
+      "p95RegressionPct": 32.4,
+      "withinTarget": false
+    },
+    {
+      "zone": "khalcamp",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 2.5,
+        "p95": 3.5,
+        "max": 5.4
+      },
+      "after": {
+        "median": 2.7,
+        "p95": 3.4,
+        "max": 4.9
+      },
+      "medianRegressionPct": 8,
+      "p95RegressionPct": -2.9,
+      "withinTarget": true
+    },
+    {
+      "zone": "desert_wastes",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 6,
+        "p95": 7.5,
+        "max": 9.7
+      },
+      "after": {
+        "median": 7.8,
+        "p95": 10.5,
+        "max": 13
+      },
+      "medianRegressionPct": 30,
+      "p95RegressionPct": 40,
+      "withinTarget": false
+    },
+    {
+      "zone": "desert_wastes",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 7.5,
+        "p95": 10,
+        "max": 15.5
+      },
+      "after": {
+        "median": 10.5,
+        "p95": 12.9,
+        "max": 15.8
+      },
+      "medianRegressionPct": 40,
+      "p95RegressionPct": 29,
+      "withinTarget": false
+    },
+    {
+      "zone": "underground_market",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 6.3,
+        "p95": 9.5,
+        "max": 50.9
+      },
+      "after": {
+        "median": 6.9,
+        "p95": 9.1,
+        "max": 37.6
+      },
+      "medianRegressionPct": 9.5,
+      "p95RegressionPct": -4.2,
+      "withinTarget": true
+    },
+    {
+      "zone": "underground_market",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 6.9,
+        "p95": 9.2,
+        "max": 10.6
+      },
+      "after": {
+        "median": 7.4,
+        "p95": 10.8,
+        "max": 16.5
+      },
+      "medianRegressionPct": 7.2,
+      "p95RegressionPct": 17.4,
+      "withinTarget": false
+    },
+    {
+      "zone": "sand_tombs",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 5.7,
+        "p95": 7.2,
+        "max": 9
+      },
+      "after": {
+        "median": 7.3,
+        "p95": 9.6,
+        "max": 14
+      },
+      "medianRegressionPct": 28.1,
+      "p95RegressionPct": 33.3,
+      "withinTarget": false
+    },
+    {
+      "zone": "sand_tombs",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 7.2,
+        "p95": 8.8,
+        "max": 11.3
+      },
+      "after": {
+        "median": 8.6,
+        "p95": 11.8,
+        "max": 16.3
+      },
+      "medianRegressionPct": 19.4,
+      "p95RegressionPct": 34.1,
+      "withinTarget": false
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 4.5,
+        "p95": 6.3,
+        "max": 8.6
+      },
+      "after": {
+        "median": 5.4,
+        "p95": 6.8,
+        "max": 9.9
+      },
+      "medianRegressionPct": 20,
+      "p95RegressionPct": 7.9,
+      "withinTarget": false
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 5.3,
+        "p95": 6.5,
+        "max": 7.9
+      },
+      "after": {
+        "median": 6.4,
+        "p95": 8.9,
+        "max": 11.5
+      },
+      "medianRegressionPct": 20.8,
+      "p95RegressionPct": 36.9,
+      "withinTarget": false
+    },
+    {
+      "zone": "shard_flats",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 4.7,
+        "p95": 5.8,
+        "max": 26.9
+      },
+      "after": {
+        "median": 6.1,
+        "p95": 8.2,
+        "max": 27.1
+      },
+      "medianRegressionPct": 29.8,
+      "p95RegressionPct": 41.4,
+      "withinTarget": false
+    },
+    {
+      "zone": "shard_flats",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 5.9,
+        "p95": 7.3,
+        "max": 9.5
+      },
+      "after": {
+        "median": 7.3,
+        "p95": 10,
+        "max": 14.6
+      },
+      "medianRegressionPct": 23.7,
+      "p95RegressionPct": 37,
+      "withinTarget": false
+    },
+    {
+      "zone": "tomb_sanctum",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 5.4,
+        "p95": 7.2,
+        "max": 34.2
+      },
+      "after": {
+        "median": 6.7,
+        "p95": 9.1,
+        "max": 33.3
+      },
+      "medianRegressionPct": 24.1,
+      "p95RegressionPct": 26.4,
+      "withinTarget": false
+    },
+    {
+      "zone": "tomb_sanctum",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 6.6,
+        "p95": 9.7,
+        "max": 13.2
+      },
+      "after": {
+        "median": 8.3,
+        "p95": 10.5,
+        "max": 15.1
+      },
+      "medianRegressionPct": 25.8,
+      "p95RegressionPct": 8.2,
+      "withinTarget": false
+    }
+  ],
+  "errors": []
+}

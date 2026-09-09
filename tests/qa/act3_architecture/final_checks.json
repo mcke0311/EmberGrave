@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "results": [
+    {
+      "command": "node tests/terrain_surface_contract.mjs",
+      "exitCode": 0,
+      "seconds": 0.98,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 10734,\n  \"maxWalkHeightDelta\": 0.07500000000000018,\n  \"seedResults\": [\n    {\n      \"seed\": 0,\n      \"ramps\": 2,\n      \"raisedTiles\": 19058,\n      \"targets\": 16,\n      \"ms\": 170\n    },\n    {\n      \"seed\": 1,\n      \"ramps\": 2,\n      \"raisedTiles\": 19284,\n      \"targets\": 16,\n      \"ms\": 99\n    },\n    {\n      \"seed\": 123,\n      \"ramps\": 2,\n      \"raisedTiles\": 19169,\n      \"targets\": 16,\n      \"ms\": 85\n    },\n    {\n      \"seed\": 12345,\n      \"ramps\": 2,\n      \"raisedTiles\": 19445,\n      \"targets\": 16,\n      \"ms\": 81\n    },\n    {\n      \"seed\": 4294967295,\n      \"ramps\": 2,\n      \"raisedTiles\": 19359,\n      \"targets\": 16,\n      \"ms\": 75\n    }\n  ]\n}\n"
+    },
+    {
+      "command": "node tests/navigation_contract.mjs",
+      "exitCode": 0,
+      "seconds": 0.41,
+      "output": "PASS 216 navigation checks; longest seeded query 15.6 ms.\n"
+    },
+    {
+      "command": "node tests/gameplay_input_contract.mjs",
+      "exitCode": 0,
+      "seconds": 0.53,
+      "output": "PASS 153 gameplay checks: tap/hold input, gesture ownership, collision, interruption, jumping, hazards and damage visibility timers.\n"
+    },
+    {
+      "command": "node tests/skill_vfx_contract.mjs --layered",
+      "exitCode": 0,
+      "seconds": 6.09,
+      "output": "PASS 5373 checks, 963 skill/rank/perk scenarios: current gameplay, VFX toggle equivalent, coverage, rejection, respec, bounds and cleanup.\n"
+    },
+    {
+      "command": "node tests/act3_layers_contract.mjs",
+      "exitCode": 0,
+      "seconds": 2.88,
+      "output": "desert_wastes 1 seeds PASS\nunderground_market 1 seeds PASS\nsand_tombs 1 seeds PASS\nkhal_palace 1 seeds PASS\nshard_flats 1 seeds PASS\ntomb_sanctum 1 seeds PASS\n{\"status\":\"PASS\",\"checks\":320,\"seedCount\":1}\n"
+    },
+    {
+      "command": "node tests/act3_combat_contract.mjs",
+      "exitCode": 0,
+      "seconds": 41.95,
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 33074,\n  \"enemies\": [\n    {\n      \"id\": \"sand_raider\",\n      \"hits\": 15,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"tomb_guard\",\n      \"hits\": 9,\n      \"attacks\": \"bash\"\n    },\n    {\n      \"id\": \"dune_shade\",\n      \"hits\": 13,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"soul_chained\",\n      \"hits\": 7,\n      \"attacks\": \"bolt\"\n    },\n    {\n      \"id\": \"gilt_construct\",\n      \"hits\": 7,\n      \"attacks\": \"pulse\"\n    },\n    {\n      \"id\": \"shard_construct\",\n      \"hits\": 8,\n      \"attacks\": \"fan\"\n    },\n    {\n      \"id\": \"crystal_marauder\",\n      \"hits\": 12,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"gilded_thrall\",\n      \"hits\": 9,\n      \"attacks\": \"sweep\"\n    },\n    {\n      \"id\": \"prisoned_shade\",\n      \"hits\": 13,\n      \"attacks\": \"bolt\"\n    },\n    {\n      \"id\": \"dune_serpent\",\n      \"hits\": 28,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"stone_gargoyle\",\n      \"hits\": 11,\n      \"attacks\": \"melee\"\n    },\n    {\n      \"id\": \"chained_sovereign\",\n      \"hits\": 8,\n      \"attacks\": \"pulse\"\n    }\n  ],\n  \"seedCount\": 30\n}\n"
+    }
+  ]
+}
