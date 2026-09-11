@@ -105,6 +105,7 @@ const Game = (() => {
   let mouse = { x: 0, y: 0, l: false, r: false, shift: false, alt: false };
   let heldTarget = null;
   let groundHold = null;     // one ground-started LMB gesture; never saved
+  const touch = { x: 0, y: 0, side: null, nextCast: 0, castOnce: false };
   let hoverMon = null, hoverLabel = null, hoverProp = null, hoverNpc = null, hoverPortal = null, hoverExit = null;
   let labelRects = [];        // ground-loot label hitboxes (rebuilt per frame)
   let lootFilterVersion = 0;  // last LootFilter version applied to ground items (re-eval on change)
@@ -216,6 +217,7 @@ const Game = (() => {
       if (!await requireSpriteBundle("core", "LOADING CORE SPRITES")) return;
       UI.init();
       bindInput();
+      if (typeof MobileControls !== "undefined") MobileControls.init(canvas);
       UI.showTitle();
       requestAnimationFrame(tick);
     } catch (err) {
@@ -512,6 +514,12 @@ const Game = (() => {
       else if(o.stage==="gate")hint="Click the gate to enter";
       else if(!o.hints.move)hint="Left-click the road to move · hold to keep walking";
       else if(fights.includes(o.stage)&&!o.hints.attack)hint=options.leftClickMove?"Shift + left-click an enemy to attack":"Left-click an enemy to attack · hold to keep fighting";
+      if (typeof MobileControls !== "undefined" && MobileControls.enabled) {
+        hint=hint.replace(/Left-click|Click/g,"Tap");
+        if(onRoad()&&p.hp<p.stats.maxHp*.55&&potion>=0)hint=`Tap draught ${potion+1} to heal`;
+        else if(!o.hints.move)hint="Drag the thumbstick to move · tap people and objects to interact";
+        else if(fights.includes(o.stage)&&!o.hints.attack)hint="Hold Attack near an enemy to fight · Skill uses your assigned ability";
+      }
       UI.openingObjective(o.rescueBypassed&&o.stage==="road"?"Follow the old road to the gate":objectives[o.stage]||"Reach Frosthaven",hint,o.stage);
     }
     function interact(npc) {
@@ -617,6 +625,7 @@ const Game = (() => {
       UI.openingCaption("Bryn",["provision","bossIntro","boss"].includes(s)?"The captain still holds the gate. We have to end his watch.":["rescue","rescueTalk","road"].includes(s)?"There are people stranded on the road. We can’t leave them here.":"The risen are still on the road. Clear them first."); return false;
     }
     const enteringState=state, transition=++mapTransitionSeq;
+    resetTouch();
     cancelGroundHold();
     Sfx.stopDeath(); Sfx.stopSkills?.(); // A death cry must not carry into the respawned hero's town.
     const resumeRunning = running;
@@ -985,6 +994,7 @@ const Game = (() => {
     if (state && DATA.CAMPAIGN.bossDead(state,"vethriss") && !state.flags.ending) UI.openFinalChoice();
   }
   function saveAndQuit() {
+    resetTouch();
     cancelGroundHold();
     Sfx.stopDeath(); Sfx.stopSkills?.();
     playerLoadoutSeq++;
@@ -1361,12 +1371,12 @@ const Game = (() => {
   }
 
   /* traversal jump: arc toward the cursor (clamped), clearing gaps/cliffs, landing on walkable ground */
-  function tryJump() {
+  function tryJump(point = null) {
     const p = state.player;
     if (!p || p.dead || p.jumping || p.leaping || p.dashing || p.charging || p.spinning) return;
     if (state.time < (p.jumpCdUntil || 0)) return;
     if (UI.anyOpen && UI.anyOpen()) return;
-    const w = screenToWorld(mouse.x, mouse.y);
+    const w = point || screenToWorld(mouse.x, mouse.y);
     if(!w||(w.surfaceId??0)!==(p.surfaceId??0))return;
     const d = U.dist(p.x, p.y, w.x, w.y) || 0.001, maxR = 4.2;
     let tx = w.x, ty = w.y;
@@ -1869,6 +1879,7 @@ const Game = (() => {
     UI.playVideo(src, () => {});   // pauses the game; resumes when the clip ends/skips
   }
   function onPlayerDeath(source) {
+    resetTouch();
     if(typeof EnemySkills!=="undefined")EnemySkills.cancelAll();
     if(typeof Act2EnemyCombat!=="undefined")Act2EnemyCombat.cancelAll();
     if(typeof SkillVFX!=='undefined')SkillVFX.reset();
@@ -2040,6 +2051,7 @@ const Game = (() => {
     };
     canvas.addEventListener("contextmenu", e => e.preventDefault());
     canvas.addEventListener("mousedown", e => {
+      if (e.sourceCapabilities?.firesTouchEvents) return;
       if (!running || !state) return;
       if (UI.escOpen() || UI.cinematicActive()) return;
       Sfx.init();
@@ -2057,11 +2069,12 @@ const Game = (() => {
     });
     canvas.addEventListener("mousemove", updateMouse);
     window.addEventListener("keydown", e => {
+      const k = e.key.toLowerCase();
+      if (k === "escape" && e.repeat) { e.preventDefault(); return; }
+      if (UI.escOpen()) return;
       if (!running || !state || state.player.dead) return;
       if (e.key === "Shift") { cancelGroundHold(); mouse.shift = true; }
       if (e.key === "Alt") { mouse.alt = true; e.preventDefault(); }
-      const k = e.key.toLowerCase();
-      if (UI.escOpen()) { if (k === "escape") UI.closeEsc(); return; }
       if (document.activeElement && ["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)) { if (k === "escape" && UI.anyOpen()) { UI.closeAll(); e.preventDefault(); } return; }
       if (k === LootFilter.config.revealKey) LootFilter.setReveal(true);   // hold to reveal hidden loot (faded)
       if(['f1','f2','f3','f4',' ','spacebar','escape'].includes(k))PropInteractions.cancel(state);
@@ -2134,6 +2147,19 @@ const Game = (() => {
     groundHold = null;
   }
 
+  // Dismissing a menu must not replay a held gesture or release a charged shot.
+  function cancelMenuInput() {
+    resetTouch(); cancelGroundHold();
+    heldTarget = null; mouse.l = mouse.r = mouse.shift = mouse.alt = false;
+    LootFilter.setReveal(false);
+    const p = state?.player;
+    if (!p) return;
+    PropInteractions.cancel(state);
+    p.command = null; p.path = null; p.drawing = null;
+    p._navGoal = null; p._navCache = null; p._navPendingGoal = null; p._pendingClick = null;
+    if (!p.jumping) { p.moving = false; p.curSpeed = 0; }
+  }
+
   /* attacks repeat while you hold the button on a target; summons, transforms,
      buffs, totems and toggles must fire ONCE per click (never auto-repeat). */
   const NO_REPEAT_SKILL = new Set(["summon", "summon_golem", "form", "minionbuff", "buff", "totem", "ward",
@@ -2143,6 +2169,126 @@ const Game = (() => {
   function repeatSkill(skillId) {
     const sk = skillId === "basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[skillId];
     return !(sk && NO_REPEAT_SKILL.has(sk.type));
+  }
+
+  // Touch input is separate from the mouse so a second finger cannot steal
+  // the movement gesture or move the aim underneath a held skill.
+  function touchReady() {
+    return !!(running && state && !state.player.dead && !UI.escOpen() &&
+      !UI.cinematicActive() && !UI.anyOpen() && !UI.cursorItem);
+  }
+  function stopTouchMovement() {
+    const p = state?.player;
+    if (!p?.command?.touch) return;
+    p.command = null; p.path = null; p._navGoal = null; p._navCache = null;
+    p._navPendingGoal = null; p._pendingClick = null;
+    if (!p.jumping) { p.moving = false; p.curSpeed = 0; }
+  }
+  function resetTouch() {
+    touch.x = touch.y = 0; touch.side = null; touch.castOnce = false;
+    stopTouchMovement();
+    // Cancellation must not fire a charged shot into a menu or a new map.
+    if (state?.player?.drawing?.touch) state.player.drawing = null;
+    if (typeof MobileControls !== 'undefined') MobileControls.releasePointers();
+  }
+  function touchMove(x, y) {
+    if (!touchReady() || !Number.isFinite(x) || !Number.isFinite(y)) return;
+    cancelGroundHold(); mouse.l = mouse.r = false; heldTarget = null;
+    const wx = U.unisoX(x, y), wy = U.unisoY(x, y), length = Math.hypot(wx, wy);
+    touch.x = length ? wx / length : 0; touch.y = length ? wy / length : 0;
+    if (!length) {
+      const p = state.player;
+      if (p.command) p.command.touch = true;
+      stopTouchMovement();
+    }
+    else { PropInteractions.cancel(state); touchUpdate(); }
+  }
+  function touchAim() {
+    const p = state.player, moving = touch.x || touch.y;
+    const [x,y] = moving ? [touch.x,touch.y] : U.screenVecToWorld(p.visAng);
+    return {x:p.x + x * 4.2, y:p.y + y * 4.2, surfaceId:p.surfaceId};
+  }
+  function castTouchSkill() {
+    const p = state.player, id = p['skill' + touch.side], sk = p.resolveSkill(id);
+    if (!sk || p.action || p.jumping || p.drawing || p.stunT > 0 || p.leaping || p.dashing || p.charging || p.spinning) return;
+    if (touch.castOnce && !repeatSkill(id)) return;
+    if (state.time < touch.nextCast || state.time < (p.skillCd[id] || 0)) return;
+    touch.nextCast = state.time + .2;
+    if (id !== 'basic' && p.effRank(id) <= 0) return;
+    // Avoid repeating error sounds every frame while a button is held.
+    const turningOff = sk.type === 'form' ? p.buffs.some(b=>b.id === 'form_'+sk.form)
+      : ['combat_stance','parry_stance'].includes(sk.type) && p.stance === sk.stanceId;
+    if (!p.canUseSkillWeapon(id) || (id !== 'basic' && !turningOff && !p.canPay(sk,p.effRank(id)))) return;
+    TerrainLayers.scope(state.map, p, () => {
+      const cam = camera(), walk = (x,y) => MapGen.walkable(state.map,x,y);
+      let target = null, nearest = Infinity;
+      for (const mon of state.monsters) {
+        if (mon.dead || mon.husk || !TerrainLayers.same(mon,p)) continue;
+        const distance = U.dist(p.x,p.y,mon.x,mon.y);
+        const reach = p.skillTargetRange(id,mon) ?? (sk.type === 'melee'
+          ? (p.stats.ranged ? 9 : p.stats.range + mon.radius + .25)
+          : sk.type === 'spellnova' ? Math.max(1.2,sk.radius(Math.max(1,p.effRank(id))) - .3) : 8.5);
+        if (distance > reach || distance >= nearest) continue;
+        const sx=U.isoX(mon.x,mon.y)-cam.x, sy=U.isoY(mon.x,mon.y)-cam.y-elevLift(mon.x,mon.y,mon.surfaceId);
+        if (sx < 0 || sy < 0 || sx > canvas.width || sy > canvas.height || !U.los(walk,p.x,p.y,mon.x,mon.y)) continue;
+        target=mon; nearest=distance;
+      }
+      if (sk.type === 'melee' && !target) return;
+      PropInteractions.cancel(state);
+      p.command = null; p.path = null; p._pendingClick = null; p._navPendingGoal = null;
+      if (p.performSkill(id,target,touchAim())) touch.castOnce = true;
+      if (p.drawing) p.drawing.touch = true;
+    });
+  }
+  function touchSkill(side, down) {
+    if (!['L','R'].includes(side)) return;
+    if (!down) {
+      if (touch.side !== side) return;
+      touch.side = null;
+      if (state?.player?.drawing?.touch) state.player.releaseDraw();
+      return;
+    }
+    if (!touchReady()) return;
+    cancelGroundHold(); mouse.l = mouse.r = false; heldTarget = null;
+    state.player.command = null; state.player.path = null;
+    state.player._pendingClick = null; state.player._navPendingGoal = null;
+    touch.side = side; touch.castOnce = false; touch.nextCast = 0;
+    castTouchSkill();
+  }
+  function touchUpdate() {
+    if (!touch.x && !touch.y && !touch.side) return false;
+    if (!touchReady()) { resetTouch(); return false; }
+    const p = state.player;
+    if (touch.x || touch.y) {
+      p.path = null; p._navGoal = null; p._navCache = null; p._navStall = 0;
+      p._pendingClick = null; p._navPendingGoal = null;
+      p.command = {type:'steer', point:touchAim(), touch:true};
+    }
+    if (touch.side) castTouchSkill();
+    return true;
+  }
+  function touchTap(clientX, clientY) {
+    if (!touchReady()) return;
+    resetTouch(); cancelGroundHold();
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = (clientX-rect.left)*canvas.width/rect.width;
+    mouse.y = (clientY-rect.top)*canvas.height/rect.height;
+    mouse.l = mouse.r = mouse.shift = false; heldTarget = null;
+    handleClick(false);
+    if (state.player.command?.type === 'attack') state.player.command.hold = false;
+  }
+  function touchAction(action) {
+    if (!running || !state || state.player.dead || UI.cinematicActive()) return;
+    if (action === 'menu') {
+      resetTouch();
+      if (UI.escOpen()) UI.closeEsc();
+      else if (UI.anyOpen()) UI.closeAll();
+      else UI.openEsc();
+    } else if (touchReady()) {
+      if (action === 'jump') { PropInteractions.cancel(state); tryJump(touchAim()); }
+      if (action === 'map') mapOverlay = !mapOverlay;
+      if (action === 'loot') { options.alwaysLabels = !options.alwaysLabels; saveOptions(); }
+    }
   }
   function handleClick(rightBtn) {
     return TerrainLayers.scope(state.map,state.player,()=>handleSurfaceClick(rightBtn));
@@ -2254,6 +2400,7 @@ const Game = (() => {
   /* continuous hold behaviour */
   function heldUpdate() {
     const p = state.player;
+    if (touchUpdate()) return;
     if (p.dead || UI.cursorItem) { cancelGroundHold(); return; }
     if (groundHold) {
       if (!mouse.l || mouse.r || mouse.shift) cancelGroundHold();
@@ -4284,6 +4431,7 @@ const Game = (() => {
     requestAnimationFrame(tick);
     const dtRaw = Math.min(0.05, (t - lastT) / 1000 || 0.016);
     lastT = t;
+    if (typeof MobileControls !== "undefined") MobileControls.sync();
     if (!running || !state) return;
     if(typeof SkillAudio!=='undefined')SkillAudio.setPaused(UI.escOpen()||UI.cinematicActive());
     let dt = dtRaw;
@@ -4334,6 +4482,7 @@ const Game = (() => {
     debugDrop, debugSpawnElites, debugGotoBoss,
     recordEnding,
     msg, centerMsg, saveOptions,
+    touchReady, touchMove, touchSkill, touchTap, touchAction, resetTouch, cancelMenuInput,
     fx, options, debugFlags,
     get state() { return state; },
   };

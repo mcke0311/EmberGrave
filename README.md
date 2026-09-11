@@ -173,6 +173,24 @@ A quick ground click follows a route. Holding it for 150 ms switches to direct
 steering, retains movement when crossing enemies or objects, and stops on release.
 Run `node tests/gameplay_input_contract.mjs` for input and combat regressions.
 
+On phones and tablets, touch controls appear automatically. Drag the left
+thumbstick to move and release it to stop. Hold **Attack** or **Skill** with a
+second finger to use the assigned ability against the nearest visible enemy in
+range; melee requires moving close. Buffs, summons and other single-use abilities
+activate once per press. **Jump** follows the stick direction or the hero's facing.
+Tap the world to walk, talk, collect loot or use a gate. Tap numbered draughts to
+drink, a ready skill to select it, and **Assign** to change the secondary skill.
+Talents also lets you bind the primary attack (L) and secondary skill (R).
+The bottom buttons open character, inventory, talents and quests; **Menu**, **Map**
+and **Loot** provide the remaining common controls. Tap an inventory item for
+details and actions such as Equip, Move to belt, Use or Carry. Both orientations support
+safe-area insets. Use `?touch=1` to preview the layout with a mouse or `?touch=0`
+to hide the overlay. Run `node tests/mobile_controls_contract.mjs` for touch
+movement, targeting, multitouch ownership and interruption regressions.
+With the local server, Playwright and Chrome available, run
+`node tests/mobile_controls_browser.cjs` for trusted multitouch, combat, potion,
+inventory and layout checks. Screenshots are written to `tmp/mobile-controls/`.
+
 ## Towns
 Town art and layouts were rebuilt for Cinderwatch, Frosthaven, Greywater Landing,
 the Dig Camp and the Breach. Each has its own architecture, paving, market,
@@ -457,15 +475,28 @@ terrain rendering also works when `index.html` is opened directly from disk.
 | **Shift + click** | Attack in place without moving |
 | **1–4** | Drink belt potions |
 | **F1–F4** | Select an assigned right-click skill; empty slots open the skill picker |
-| **Alt** (hold) / **L** (toggle) | Show loot labels on the ground |
-| **I / C / T / Q** | Inventory · Character · Talents · Quest log |
+| **Space** | Jump toward the cursor |
+| **Alt** (hold) | Temporarily reveal loot hidden by the filter; the filter workshop also lets you configure a reveal key |
+| **L** | Toggle the loot filter on or off |
+| **I / C / T or S / Q** | Inventory · Character · Talents · Quest log |
 | **M** | Full-map overlay |
-| **Esc** | Close panels / game menu (settings, save & quit) |
+| **Esc** | Close panels / open the pause menu; go back within Settings & Controls |
 | **`** (backtick) | Debug console (spawn elites, drop rares, level up, reveal map…) |
 
 In the inventory: **right-click** equips gear, drinks/belts potions, reads scrolls, and
 **sells items while a vendor is open**. Rare and Unique items drop **unidentified** —
 right-click them with a Scroll of Insight in your pack, or pay Old Maesa to identify everything.
+
+Open **Settings & Controls** from the title screen, or **Settings** / **Controls**
+from the pause menu. Audio, Gameplay, Display, and Controls share one window;
+the controls guide has separate Keyboard & Mouse and Touch views. Changes apply
+immediately and persist on this device, independently of hero saves. Left-click
+move-only preserves talking, collecting, and interacting; hold **Shift** to attack.
+**Back** / **Esc** returns to the menu you came from, and **Close** returns directly
+to the game or title. Arrow keys, Home, and End navigate the settings tabs.
+Run `node tests/settings_menu_browser.cjs` with `python serve.py` running for
+isolated navigation, persistence, input, and responsive-layout checks. Review
+screenshots are written to `tmp/settings-menu/`.
 
 ### Class disciplines and combat HUD
 

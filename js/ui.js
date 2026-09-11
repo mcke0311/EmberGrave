@@ -20,6 +20,7 @@ const UI = (() => {
   let inventoryQuery = "", managementHero = null, questFilter = "all", forgeRecipe = "glyph";
   const textNode = (tag, cls, text) => { const el = document.createElement(tag); el.className = cls; if (text !== undefined) el.textContent = text; return el; };
   const itemName = it => (it.identified ? it.name : it.baseName) || it.name || "Item";
+  const bindTap = (el, fn) => typeof MobileControls !== 'undefined' ? MobileControls.bindTap(el,fn) : el.addEventListener('click',fn);
   function actionButton(label, fn, cls = "manage-button") { const b = textNode("button", cls, label); b.type = "button"; b.addEventListener("click", fn); return b; }
   function syncWorkspace() {
     const host = document.getElementById("panelWorkspace"); if (!host) return;
@@ -80,7 +81,7 @@ const UI = (() => {
       els.backToTown.focus();
     });
     for (const el of document.querySelectorAll(".hbtn"))
-      el.addEventListener("click", () => {  togglePanel(el.dataset.panel); });
+      bindTap(el, () => { togglePanel(el.dataset.panel); });
     els.skillL.addEventListener("click", e => { e.stopPropagation(); openSkillPick("L"); });
     els.skillR.addEventListener("click", e => { e.stopPropagation(); openSkillPick("R"); });
     els.skillL.addEventListener("contextmenu", e => e.preventDefault());
@@ -92,6 +93,10 @@ const UI = (() => {
     }
     document.addEventListener("click", e => { if (!els.skillPick.contains(e.target)) els.skillPick.classList.add("hidden"); });
     document.addEventListener("keydown", e => {
+      if (escOpen()) {
+        if (!els.escmenu.contains(e.target)) menuKeydown(e);
+        return;
+      }
       /* Space/Enter activate a focused control; they must not also jump or
          trigger world input underneath the interface. */
       if ((e.key === " " || e.key === "Enter") && e.target.closest("button")) e.stopPropagation();
@@ -242,7 +247,7 @@ const UI = (() => {
         q.setAttribute("aria-label", `F${i + 1}: ${sk.name}. Select for right mouse; right-click to reassign.`);
         q.title = `${sk.name} · F${i + 1}\nClick to select · Right-click to reassign`;
         if (p.skillR === id || p.skillL === id) q.classList.add("qbound");
-        q.addEventListener("click", e => { e.stopPropagation(); p.skillR = id; refreshHUD(); renderIfOpen("skills");  });
+        bindTap(q, e => { e.stopPropagation(); p.skillR = id; refreshHUD(); renderIfOpen("skills"); });
         q.addEventListener("mouseenter", e => { const r = q.getBoundingClientRect(); showSkillTooltip(id, r.left + r.width / 2, r.top); });
         q.addEventListener("mouseleave", hideTooltip);
         q.addEventListener("focus", () => { const r = q.getBoundingClientRect(); showSkillTooltip(id, r.left + r.width / 2, r.top); });
@@ -251,7 +256,7 @@ const UI = (() => {
         q.setAttribute("aria-label", `Assign a skill to F${i + 1}`);
         const plus = document.createElement("div"); plus.className = "qadd"; plus.textContent = "+";
         q.appendChild(plus);
-        q.addEventListener("click", e => { e.stopPropagation(); openSkillPick("Q" + i); });
+        bindTap(q, e => { e.stopPropagation(); openSkillPick("Q" + i); });
       }
       q.addEventListener("contextmenu", e => { e.preventDefault(); openSkillPick("Q" + i); });
       const k = document.createElement("div"); k.className = "key"; k.textContent = "F" + (i + 1);
@@ -301,7 +306,7 @@ const UI = (() => {
       const s = document.createElement("button"); s.type = "button"; s.className = "beltslot"; s.dataset.i = i;
       const k = document.createElement("div"); k.className = "key"; k.textContent = i + 1;
       s.appendChild(k);
-      s.addEventListener("click", () => { Game.state.player.quaff(i); refreshHUD(); });
+      bindTap(s, () => { Game.state.player.quaff(i); refreshHUD(); });
       s.addEventListener("contextmenu", e => {
         e.preventDefault();
         const p = Game.state.player, slot = p.belt[i];
@@ -510,6 +515,7 @@ const UI = (() => {
   /* ================================================== panels */
   function panelEl(side) { return side === "left" ? els.panelLeft : side === "right" ? els.panelRight : els.panelCenter; }
   function closePanel(side) {
+    document.getElementById('touchItemMenu')?.remove();
     if (side === "center" && openPanels.center === "forge") { returnForgeItems(); renderIfOpen("inv"); }
     const el = panelEl(side);
     el.classList.add("hidden"); el.innerHTML = "";
@@ -527,6 +533,7 @@ const UI = (() => {
   function togglePanel(name) {
     const side = name === "inv" ? "right" : "left";
     if (openPanels[side] === name) { closePanel(side); return; }
+    if (typeof MobileControls !== "undefined" && MobileControls.enabled) closeAll();
     if (["skills","quest"].includes(name) && openPanels.right) closePanel("right");
     if (name === "inv" && ["skills","quest"].includes(openPanels.left)) closePanel("left");
     closePanel(side);
@@ -581,7 +588,11 @@ const UI = (() => {
       if (it.count > 1) { const s = document.createElement("div"); s.className = "stk"; s.textContent = it.count; d.appendChild(s); }
       d.addEventListener("mouseenter", e => { const r = d.getBoundingClientRect(); showItemTooltip(it, r.left + r.width / 2, r.top, ctxName); });
       d.addEventListener("mouseleave", hideTooltip);
-      d.addEventListener("click", e => { e.stopPropagation(); gridItemClick(grid, it, ctxName); });
+      d.addEventListener("click", e => {
+        e.stopPropagation();
+        if (typeof MobileControls !== "undefined" && MobileControls.enabled && !cursorItem) openTouchItemMenu(grid,it,ctxName,e);
+        else gridItemClick(grid, it, ctxName);
+      });
       d.addEventListener("contextmenu", e => { e.preventDefault(); e.stopPropagation(); gridItemRClick(grid, it, ctxName); });
       g.appendChild(d);
     }
@@ -609,8 +620,36 @@ const UI = (() => {
         }
       }
     });
-    container.appendChild(g);
+    const scroll = textNode('div','item-grid-scroll'); scroll.appendChild(g); container.appendChild(scroll);
     return g;
+  }
+  function openTouchItemMenu(grid, it, ctxName, event) {
+    document.getElementById('touchItemMenu')?.remove();
+    const dialog=textNode('dialog','gframe'); dialog.id='touchItemMenu';
+    dialog.setAttribute('aria-label',itemName(it));
+    const details=textNode('div','touch-item-details'); details.innerHTML=itemTooltipHTML(it,ctxName);
+    addItemPreview(details,it);
+    for (const line of details.querySelectorAll('.tt-base,.tt-gold')) {
+      if (/right-click/i.test(line.textContent)) {
+        if (line.classList.contains('tt-gold')) line.textContent=line.textContent.replace(/ \(right-click\)/i,'');
+        else line.remove();
+      }
+    }
+    hideTooltip(); dialog.appendChild(details);
+    const actions=textNode('div','touch-item-actions'); dialog.appendChild(actions);
+    const close=()=>{dialog.close();dialog.remove();hideTooltip();};
+    const p=Game.state.player,c=DATA.CONSUMABLES[it.baseId];
+    const label=vendorCtx&&grid===p.inv?'Sell':it.kind==='gear'?(it.identified?'Equip':'Identify'):
+      c?.belt?'Move to belt':c&&(c.respec||it.baseId==='tp')?'Use':null;
+    if(label)actions.appendChild(actionButton(label,()=>{close();gridItemRClick(grid,it,ctxName);},'manage-primary'));
+    actions.appendChild(actionButton('Carry',()=>{
+      close();gridItemClick(grid,it,ctxName);
+      els.cursorItem.style.left=(event.clientX-it.w*CELL/2)+'px';
+      els.cursorItem.style.top=(event.clientY-it.h*CELL/2)+'px';
+    }));
+    actions.appendChild(actionButton('Cancel',close));
+    dialog.addEventListener('cancel',e=>{e.preventDefault();close();});
+    document.getElementById('game').appendChild(dialog); dialog.showModal();
   }
   function gridItemClick(grid, it, ctxName) {
     if (cursorItem) {
@@ -902,7 +941,10 @@ const UI = (() => {
     const tidy = actionButton("Tidy pack",()=>{ if (cursorItem) return; if (!Items.tidy(p.inv)) msg("This arrangement cannot be tidied. Your items stayed in place.","#c08080"); else Sfx.play("pickup"); renderInventory(); }); tidy.id="inventoryTidy"; tidy.disabled=!!cursorItem;
     toolbar.append(search,tidy); el.appendChild(toolbar);
     renderGrid(el, p.inv, "inv"); highlight();
-    el.appendChild(textNode("div", "pack-help", vendorCtx ? "SELLING MODE · Right-click a pack item to sell it. Equipped items are not sold." : "Click to carry · Right-click / Enter to equip or use · Carry a jewel or glyph to a socket"));
+    const touchMode=typeof MobileControls !== "undefined" && MobileControls.enabled;
+    el.appendChild(textNode("div", "pack-help", touchMode
+      ? (vendorCtx ? "Tap a pack item to inspect it or sell it." : "Tap an item for details, equip or use. Choose Carry, then tap a slot to place it.")
+      : vendorCtx ? "SELLING MODE · Right-click a pack item to sell it. Equipped items are not sold." : "Click to carry · Right-click / Enter to equip or use · Carry a jewel or glyph to a socket"));
   }
 
   /* ---------- character panel ---------- */
@@ -1685,17 +1727,77 @@ const UI = (() => {
   }
 
   /* ================================================== escape menu */
-  function openEsc() {
+  let menuSession = null, menuScreen = "pause", menuBackAction = "Settings";
+  function beginMenu(origin) {
     const el = els.escmenu;
+    if (!menuSession) {
+      menuSession = { origin, focus: document.activeElement, inert: new Map() };
+      for (const sibling of el.parentElement.children) {
+        menuSession.inert.set(sibling, sibling.inert);
+        sibling.inert = sibling !== el;
+      }
+      Game.cancelMenuInput();
+      hideTooltip();
+      els.skillPick.classList.add("hidden");
+    }
+    el.dataset.menuOrigin = menuSession.origin;
     el.classList.remove("hidden");
-    el.innerHTML = "";
-    const box = document.createElement("div"); box.className = "box gframe";
-    box.innerHTML = `<h2>EMBERGRAVE</h2>`;
-    const mk = (label, fn) => { const b = document.createElement("button"); b.className = "menubtn"; b.textContent = label; b.addEventListener("click", fn); box.appendChild(b); };
+    el.onkeydown = menuKeydown;
+    el.onkeyup = e => e.stopPropagation();
+  }
+  function menuKeydown(e) {
+    // Stop before dismissing: the same Escape/Space must never reach world input.
+    e.stopPropagation();
+    if (e.key === "Escape") {
+      e.preventDefault();
+      if (!e.repeat) menuBack();
+      return;
+    }
+    if (["Alt", "F1", "F2", "F3", "F4"].includes(e.key)) e.preventDefault();
+    if (e.key !== "Tab") return;
+    const nodes = [...els.escmenu.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[tabindex="0"]')]
+      .filter(n => n.tabIndex >= 0 && n.getClientRects().length);
+    const first = nodes[0], last = nodes.at(-1);
+    if (!els.escmenu.contains(document.activeElement) || (e.shiftKey && document.activeElement === first)) {
+      e.preventDefault(); (e.shiftKey ? last : first)?.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first?.focus();
+    }
+  }
+  function menuBack() {
+    if (menuSession?.origin === "title" || menuScreen === "pause") closeEsc();
+    else {
+      const action = menuBackAction;
+      openEsc();
+      [...els.escmenu.querySelectorAll("button")].find(b => b.dataset.menuAction === action)?.focus();
+    }
+  }
+  function menuShell(kind, title, subtitle) {
+    const box = textNode("section", "box menu-shell " + kind);
+    box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true");
+    box.setAttribute("aria-labelledby", "menuHeading");
+    const head = textNode("header", "menu-header"), titles = textNode("div", "menu-titles");
+    const heading = textNode("h2", "", title); heading.id = "menuHeading";
+    titles.append(textNode("span", "menu-eyebrow", "EMBERGRAVE / " + (kind === "pause-menu" ? "JOURNEY PAUSED" : "YOUR EXPERIENCE")), heading, textNode("p", "menu-muted", subtitle));
+    const close = actionButton("×", closeEsc, "menu-close"); close.setAttribute("aria-label", "Close menu");
+    head.append(titles, close); box.append(head); els.escmenu.replaceChildren(box);
+    return box;
+  }
+  function openEsc() {
+    beginMenu("pause"); menuScreen = "pause";
+    const box = menuShell("pause-menu", "A moment of respite", "Your journey will be here when you return.");
+    const actions = textNode("div", "pause-actions"); box.append(actions);
+    const mk = (label, fn) => {
+      const b = actionButton(label, fn, "menu-button"); b.dataset.menuAction = label; actions.append(b); return b;
+    };
     mk("Resume", () => closeEsc());
-    mk("Controls", () => renderControls(box));
-    mk("Settings", () => renderSettings(box));
-    mk("Loot Filter", () => renderLootFilter(box));
+    mk("Controls", () => openSettings({ tab: "controls", origin: "pause" }));
+    mk("Settings", () => openSettings({ origin: "pause" }));
+    mk("Loot Filter", () => {
+      menuScreen = "loot"; menuBackAction = "Loot Filter";
+      const workshop = textNode("div", "box gframe"); els.escmenu.replaceChildren(workshop);
+      LootFilterUI.open(workshop, { back: menuBack, close: closeEsc });
+    });
     const st = Game.state;
     if (st && (st.unlockedDiff || 0) > 0) {
       mk(`Difficulty: ${DATA.DIFFICULTIES[st.difficulty].name}  ▸`, async () => {
@@ -1705,85 +1807,157 @@ const UI = (() => {
       });
     }
     mk("Save and Quit to Title", () => { closeEsc(); Game.saveAndQuit(); });
-    el.appendChild(box);
+    const foot = textNode("footer", "menu-footer"); foot.append(textNode("span", "menu-muted", "Esc to resume your journey")); box.append(foot);
+    actions.firstElementChild.focus();
   }
-  function renderSettings(box) {
-    box.innerHTML = `<h2>SETTINGS</h2>`;
-    const addSlider = (label, key) => {
-      const row = document.createElement("div"); row.className = "setrow";
-      row.innerHTML = `<span>${label}</span>`;
-      const inp = document.createElement("input");
-      inp.type = "range"; inp.min = 0; inp.max = 100; inp.value = Sfx.vol[key] * 100;
-      inp.addEventListener("input", () => { Sfx.setVol(key, inp.value / 100); Game.saveOptions(); });
-      row.appendChild(inp); box.appendChild(row);
-    };
-    addSlider("Master volume", "master");
-    addSlider("Effects volume", "sfx");
-    addSlider("Music volume", "music");
-    const addToggle = (label, key) => {
-      const row = document.createElement("div"); row.className = "setrow";
-      row.innerHTML = `<span>${label}</span>`;
-      const inp = document.createElement("input"); inp.type = "checkbox"; inp.checked = Game.options[key];
-      inp.addEventListener("change", () => { Game.options[key] = inp.checked; Game.saveOptions(); });
-      row.appendChild(inp); box.appendChild(row);
-    };
-    addToggle("Left-click: move only (never attack)", "leftClickMove");
-    addToggle("Floating damage numbers", "dmgNumbers");
-    addToggle("Show minion damage numbers", "minionDamage");
-    addToggle("Show monster resistances", "monResist");
-    addToggle("Screen shake", "screenShake");
-    /* minion life bars: always / when hurt / never */
-    {
-      const row = document.createElement("div"); row.className = "setrow";
-      row.innerHTML = `<span>Minion life bars</span>`;
-      const sel = document.createElement("select");
-      for (const [v, label] of [["always", "Always"], ["hit", "When hurt"], ["never", "Never"]]) {
-        const o = document.createElement("option");
-        o.value = v; o.textContent = label;
-        if (Game.options.minionBars === v) o.selected = true;
-        sel.appendChild(o);
+  function openSettings({ tab = "audio", origin = els.title.classList.contains("hidden") ? "pause" : "title" } = {}) {
+    beginMenu(origin); menuScreen = "settings";
+    menuBackAction = tab === "controls" ? "Controls" : "Settings";
+    const box = menuShell("settings-menu", "Settings & Controls", "Make yourself at home in the dark.");
+    const tabs = textNode("div", "settings-tabs"), body = textNode("div", "settings-body");
+    tabs.setAttribute("role", "tablist"); tabs.setAttribute("aria-label", "Settings categories");
+    body.id = "settingsPanel"; body.setAttribute("role", "tabpanel"); body.tabIndex = 0;
+    const categories = [["audio", "Audio"], ["gameplay", "Gameplay"], ["display", "Display"], ["controls", "Controls"]];
+    let device = typeof MobileControls !== "undefined" && MobileControls.enabled ? "touch" : "keyboard";
+    function choose(id, focus = true) {
+      for (const button of tabs.children) {
+        const active = button.dataset.tab === id;
+        button.setAttribute("aria-selected", String(active)); button.tabIndex = active ? 0 : -1;
+        if (active && focus) button.focus();
       }
-      sel.addEventListener("change", () => { Game.options.minionBars = sel.value; Game.saveOptions(); });
-      row.appendChild(sel); box.appendChild(row);
+      body.setAttribute("aria-labelledby", "settingsTab-" + id); body.replaceChildren(); body.scrollTop = 0;
+      if (id === "controls") renderControls(body, device, chooseDevice);
+      else renderSettings(body, id);
     }
-    const b = document.createElement("button"); b.className = "menubtn"; b.textContent = "Back";
-    b.addEventListener("click", () => openEsc());
-    box.appendChild(b);
+    // Guide switching keeps focus on the chosen device and never changes input mode.
+    function chooseDevice(next) {
+      device = next; renderControls(body, device, chooseDevice);
+      body.querySelector('[data-device="' + device + '"]')?.focus();
+    }
+    for (const [id, label] of categories) {
+      const button = actionButton(label, () => choose(id), "settings-tab");
+      button.id = "settingsTab-" + id; button.dataset.tab = id; button.setAttribute("role", "tab");
+      button.setAttribute("aria-controls", body.id);
+      button.onkeydown = e => {
+        const i = categories.findIndex(c => c[0] === id);
+        const next = e.key === "ArrowRight" ? (i + 1) % categories.length : e.key === "ArrowLeft" ? (i + categories.length - 1) % categories.length : e.key === "Home" ? 0 : e.key === "End" ? categories.length - 1 : null;
+        if (next !== null) { e.preventDefault(); tabs.children[next].click(); }
+      };
+      tabs.append(button);
+    }
+    const foot = textNode("footer", "menu-footer");
+    foot.append(actionButton("Back", menuBack, "menu-button menu-back"), textNode("span", "menu-muted", "Changes apply immediately"));
+    box.append(tabs, body, foot);
+    const initial = categories.some(c => c[0] === tab) ? tab : "audio";
+    choose(initial);
   }
-
-  /* ===================================== loot filter panel */
-  function renderLootFilter(box) {
-    LootFilterUI.open(box, { back: openEsc, close: closeEsc });
+  function settingRow(body, key, title, description, input) {
+    const row = textNode("div", "setting-row"), copy = textNode("div", "setting-copy");
+    const label = textNode("label", "setting-label", title); input.id = "setting-" + key; label.htmlFor = input.id;
+    const help = textNode("p", "menu-muted", description); help.id = input.id + "-help"; input.setAttribute("aria-describedby", help.id);
+    copy.append(label, help); row.append(copy, input); body.append(row); return row;
   }
-  function renderControls(box) {
-    box.innerHTML = `<h2>CONTROLS</h2>`;
-    const rows = [
-      ["Left-click", "Move · attack · talk · pick up loot · interact"],
-      ["Right-click", "Use your secondary skill"],
-      ["Hold button", "Keep moving / attacking"],
-      ["Shift + click", "Attack in place without moving"],
-      ["1 – 4", "Drink belt potions"],
-      ["F1 – F4", "Quick-swap your right-click skill"],
-      ["Alt (hold) / L", "Show loot labels on the ground"],
-      ["I · C · T · Q", "Inventory · Character · Talents · Quests"],
-      ["M", "Map overlay"],
-      ["Esc", "This menu / close panels"],
-      ["Inventory", "Click an item to lift it, click a slot to place it; right-click to equip / use / sell"],
+  function renderSettings(body, tab) {
+    const headings = { audio: ["Sound & atmosphere", "Set the balance between the world, its music, and the clash of combat."], gameplay: ["Your way through the world", "Choose how your primary mouse button behaves."], display: ["Clarity in the chaos", "Decide which combat details you see."] };
+    body.append(textNode("h3", "", headings[tab][0]), textNode("p", "settings-intro menu-muted", headings[tab][1]));
+    if (tab === "audio") {
+      for (const [key, label, help] of [["master", "Master volume", "Overall volume for all game audio."], ["sfx", "Sound Effects", "Combat, interactions, and menu sounds."], ["music", "Music", "The soundtrack of your journey."]]) {
+        const input = document.createElement("input"); input.type = "range"; input.min = 0; input.max = 100; input.step = 1; input.value = Math.round(Sfx.vol[key] * 100);
+        const row = settingRow(body, key, label, help, input), control = textNode("div", "setting-volume"), value = textNode("output", "setting-value");
+        value.htmlFor = input.id; value.setAttribute("aria-hidden", "true");
+        const update = () => { value.textContent = input.value + "%"; input.setAttribute("aria-valuetext", value.textContent); input.style.setProperty("--level", value.textContent); };
+        input.addEventListener("input", () => { update(); Sfx.setVol(key, +input.value / 100); Game.saveOptions(); });
+        control.append(input, value); row.append(control); update();
+      }
+      return;
+    }
+    const toggles = tab === "gameplay" ? [["leftClickMove", "Left-click: move only", "Move and interact without attacking. Hold Shift and left-click to attack in place."]] : [
+      ["dmgNumbers", "Player damage numbers", "Show floating damage numbers from your attacks."],
+      ["minionDamage", "Minion damage numbers", "Show your minions’ damage independently of player damage numbers."],
+      ["monResist", "Monster resistances", "Show resistances when you point at a monster."],
+      ["screenShake", "Screen shake", "Let heavy impacts shake the camera."]
     ];
-    const wrap = document.createElement("div");
-    wrap.style.cssText = "text-align:left;max-height:340px;overflow-y:auto;margin:4px 0 12px";
-    for (const [k, v] of rows) {
-      const r = document.createElement("div");
-      r.style.cssText = "display:flex;gap:10px;font-size:13px;margin:6px 2px;line-height:1.4";
-      r.innerHTML = `<span style="flex:0 0 120px;color:#d8b860">${k}</span><span style="color:#a89878">${v}</span>`;
-      wrap.appendChild(r);
+    for (const [key, label, help] of toggles) {
+      const input = document.createElement("input"); input.type = "checkbox"; input.className = "setting-switch"; input.setAttribute("role", "switch"); input.checked = Game.options[key];
+      input.addEventListener("change", () => { Game.options[key] = input.checked; Game.saveOptions(); });
+      settingRow(body, key, label, help, input);
     }
-    box.appendChild(wrap);
-    const b = document.createElement("button"); b.className = "menubtn"; b.textContent = "Back";
-    b.addEventListener("click", () => openEsc());
-    box.appendChild(b);
+    if (tab === "display") {
+      const select = document.createElement("select");
+      for (const [value, label] of [["always", "Always"], ["hit", "When hurt"], ["never", "Never"]]) { const option = textNode("option", "", label); option.value = value; select.append(option); }
+      select.value = Game.options.minionBars;
+      select.addEventListener("change", () => { Game.options.minionBars = select.value; Game.saveOptions(); });
+      settingRow(body, "minionBars", "Minion life bars", "Choose when health bars appear over your minions.", select);
+    }
+    if (tab === "gameplay") body.append(textNode("p", "settings-note", "Looking for the full guide? Open Controls for movement, skills, and shortcuts."));
   }
-  function closeEsc() { els.escmenu.classList.add("hidden"); }
+  function renderControls(body, device, chooseDevice) {
+    body.replaceChildren();
+    const devices = textNode("div", "controls-devices"); devices.setAttribute("role", "group"); devices.setAttribute("aria-label", "Control guide device");
+    for (const [id, label] of [["keyboard", "Keyboard & Mouse"], ["touch", "Touch"]]) {
+      const button = actionButton(label, () => chooseDevice(id), "menu-button"); button.dataset.device = id; button.setAttribute("aria-pressed", String(device === id)); devices.append(button);
+    }
+    body.append(devices);
+    const reveal = LootFilter.config.revealKey;
+    const keyName = key => ({ alt: "Alt", shift: "Shift", control: "Ctrl", " ": "Space", spacebar: "Space" }[key] || key.toUpperCase());
+    const groups = device === "touch" ? [
+      ["Movement & combat", [
+        [["Thumbstick"], "Drag to move; release to stop. You can use a second finger for combat or potions."],
+        [["Tap the world"], "Walk to a point, talk, collect loot, or use a gate or object."],
+        [["Attack", "Skill"], "Hold an assigned skill to fight a nearby visible enemy. Move close for melee. Buffs and summons fire once per press."],
+        [["Jump"], "Jump in the thumbstick direction, or forward while standing still."]]],
+      ["Skills & potions", [
+        [["Assign"], "Change the skill assigned to the Skill button."],
+        [["Talents"], "Select a ready skill and assign it to Attack (L) or Skill (R)."],
+        [["Draughts"], "Tap a numbered bottle to drink a belt potion."]]],
+      ["Panels & interactions", [
+        [["Bottom toolbar"], "Open Inventory, Character, Talents, or Quests."],
+        [["Map"], "Show or hide the map overlay."],
+        [["Menu"], "Close an open panel, or pause and open the game menu."],
+        [["Inventory"], "Tap an item to open its actions, including equip, use, sell, or move to belt."]]]
+    ] : [
+      ["Movement & combat", [
+        [["Left-click"], Game.options.leftClickMove ? "Move, talk, pick up loot, and interact. Move-only is on; hold Shift to attack." : "Move, attack, talk, pick up loot, and interact."],
+        [["Hold left-click"], "Hold on the ground to steer toward the cursor; release to stop. " + (Game.options.leftClickMove ? "Hold Shift and left-click an enemy to keep attacking." : "Hold on an enemy to keep attacking.")],
+        [["Shift", "+", "Left-click"], "Attack in place without moving."],
+        [["Space"], "Jump toward the cursor."]]],
+      ["Skills & potions", [
+        [["Right-click"], "Use your secondary skill. Hold to repeat supported attacks."],
+        [["1", "–", "4"], "Drink the potion in the matching belt slot."],
+        [["F1", "–", "F4"], "Select an assigned right-click skill. Empty slots open the skill picker."],
+        [["Skill icons"], "Click a skill icon on the action bar to change its assignment."]]],
+      ["Panels & interactions", [
+        [["I"], "Inventory"], [["C"], "Character"], [["T", "/", "S"], "Talents"], [["Q"], "Quests"], [["M"], "Show or hide the map overlay."],
+        [["L"], "Toggle the loot filter on or off."],
+        [[keyName(reveal), "(hold)"], "Temporarily reveal loot hidden by the filter."],
+        ...(reveal !== "alt" ? [[["Alt", "(hold)"], "Also temporarily reveals hidden loot."]] : []),
+        [["Esc"], "Close panels or open the pause menu. Within settings, go back."],
+        [["Inventory"], "Click to lift an item, then click a slot to place it. Right-click to equip or use; while trading, right-click to sell."]]]
+    ];
+    for (const [title, rows] of groups) {
+      const section = textNode("section", "controls-group"); section.append(textNode("h3", "", title));
+      const list = textNode("dl", "controls-list");
+      for (const [keys, description] of rows) {
+        const row = textNode("div", "control-row"), term = textNode("dt", "control-keys");
+        for (const key of keys) term.append(textNode(["+", "–", "/", "(hold)"].includes(key) ? "span" : "kbd", "", key));
+        row.append(term, textNode("dd", "", description)); list.append(row);
+      }
+      section.append(list); body.append(section);
+    }
+    body.scrollTop = 0;
+  }
+  function closeEsc() {
+    els.escmenu.classList.add("hidden");
+    const session = menuSession; menuSession = null;
+    if (!session) return;
+    for (const [node, inert] of session.inert) node.inert = inert;
+    delete els.escmenu.dataset.menuOrigin;
+    els.escmenu.onkeydown = els.escmenu.onkeyup = null;
+    const target = session.focus;
+    if (target && target !== document.body && target.isConnected && !target.closest('[inert]') && target.getClientRects().length) target.focus({ preventScroll: true });
+    else if (session.origin === "title") els.title.querySelector("button")?.focus({ preventScroll: true });
+    else $("view").focus({ preventScroll: true });
+  }
   function escOpen() { return !els.escmenu.classList.contains("hidden"); }
 
   /* ================================================== title screen */
@@ -1988,7 +2162,7 @@ const UI = (() => {
     msg, centerMsg, togglePanel, closePanel, closeAll, anyOpen, openPanels: () => openPanels,
     openVendor, openStorage, openDialog, openBoard, openShrine, openSkillPick, openForge, quickCast,
     showItemTooltip, showSkillTooltip, hideTooltip,
-    openEsc, closeEsc, escOpen,
+    openEsc, openSettings, closeEsc, escOpen,
     showTitle, hideTitle, showDeath, hideDeath, toggleDebug,
     get cursorItem() { return cursorItem; },
     setCursorItem,

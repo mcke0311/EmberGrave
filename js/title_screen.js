@@ -182,6 +182,7 @@ window.TitleScreen=(()=>{
     }
     actions.append(button('NEW HERO','title-action '+(!saves.length?'primary':'secondary'),newHero));
     if(saves.length)actions.append(button('CHOOSE HERO','title-action quiet',savedHeroes));
+    actions.append(button('SETTINGS & CONTROLS','title-action quiet',()=>UI.openSettings({origin:'title'})));
     actions.append(button('ITEMS & AFFIXES','title-action quiet',()=>window.open('loot.html','_blank','noopener')));
     const support=el('a','title-action quiet','SUPPORT THE GAME');
     support.href='support.html';support.target='_blank';support.rel='noopener noreferrer';

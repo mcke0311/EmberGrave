@@ -35,9 +35,9 @@ run.onclick=async()=>{
   sfx.setVol('master',.15);sfx.setVol('sfx',.25);sfx.setVol('music',0);
   [...doc.querySelectorAll('#titleMenu button')].find(b=>b.textContent==='NEW HERO').click();
   await until(()=>count()===1&&sfx.ctx.state==='running','first activation playback');
-  await win.eval('SkillAudio.ready');
-  const expectedDecodes=2+win.eval('SkillAudio.snapshot().expected');
-  ok(probe.decoded.length===expectedDecodes,'click, death and skill textures must each decode once');
+  await Promise.all([win.eval('SkillAudio.ready'),sfx.loadInteractionSounds()]);
+  const expectedDecodes=2+win.eval('SkillAudio.snapshot().expected')+Object.keys(sfx.INTERACTIONS).length;
+  ok(probe.decoded.length===expectedDecodes,'click, death, interaction and skill textures must each decode once');
   const buffer=probe.starts[0].buffer;ok(buffer.duration>0&&buffer.length>1000,'MP3 failed to decode');
   const samples=buffer.getChannelData(0);let peak=0;for(let i=0;i<samples.length;i++)peak=Math.max(peak,Math.abs(samples[i]));ok(peak>.001,'decoded sound is silent');
   const soundBus=probe.connections.get(probe.starts[0]),master=probe.connections.get(soundBus);
@@ -62,6 +62,7 @@ run.onclick=async()=>{
   before=count();doc.querySelector('#panelRight .invgrid .invitem').dispatchEvent(new win.KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));ok(count()===before+1,'keyboard item action did not play exactly one click');
   ui.closeAll();ui.openEsc();once([...doc.querySelectorAll('#escmenu button')].find(b=>/Settings/i.test(b.textContent)),'settings');
   const range=doc.querySelector('#escmenu input[type=range]');await once(range,'volume change','change');
+  once(doc.getElementById('settingsTab-display'),'display settings tab');
   const select=doc.querySelector('#escmenu select');await once(select,'select change','change');
   ui.closeAll();ui.closeEsc();before=count();doc.getElementById('view').dispatchEvent(new win.MouseEvent('click',{bubbles:true}));ok(count()===before,'ground click played UI feedback');
   sfx.setVol('music',0);once(doc.querySelector('[data-panel=inv]'),'music mute keeps UI sound');
