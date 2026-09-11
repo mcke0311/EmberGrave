@@ -8,6 +8,11 @@
 
 const DATA = {};
 
+// Outgoing elemental bonuses are separate from flat weapon elements and spell power.
+DATA.DAMAGE_ELEMENTS = Object.freeze({ fire: "Fire", cold: "Cold", light: "Lightning", poison: "Poison", shadow: "Shadow", earth: "Earth" });
+DATA.elementMultiplier = (owner, elem) => 1 + (owner?.stats?.elementPct?.[elem] || 0) / 100;
+DATA.scaleElement = (owner, amount, elem) => amount * DATA.elementMultiplier(owner, elem);
+
 /* New-game equipment is also the minimum strict authored player-art slice.
    Keeping these IDs in data lets the compiler and runtime bind the same five
    starter loadouts without duplicating class-condition heuristics. */
@@ -143,7 +148,7 @@ DATA.BASIC_ATTACK = { id: "basic", name: "Attack", type: "melee", icon: "basic",
       desc: rk => s.curse === "frailty" ? `Hex foes: +${(s.pct || 20) + (s.pctG || 4) * rk}% damage taken for ${(s.dur || 8) + rk}s.` : `Hex foes: ${(s.slow || 0) + (s.slowG || 2) * rk}% slower and ${(s.pct || 15) + (s.pctG || 3) * rk}% weaker for ${(s.dur || 8) + rk}s.` }),
     corpse: s => ({ type: "corpse", mana: gv(s.mana || 8, 0), elem: s.el || "poison", castRange: gv(9, 0), radius: gv(s.rad || 2.3, 0.07), dmg: dR(s),
       desc: rk => `Detonate a nearby corpse for ${R(s.lo + (s.loG || 0) * rk, s.hi + (s.hiG || 0) * rk)} damage.` }),
-    summon: s => ({ type: "summon", mana: gv(s.mana || 6, 0), minion: s.minion, needsCorpse: s.corpse, castRange: gv(9, 0), cap: rk => (s.cap || 1) + Math.floor(rk / (s.capEvery || 5)),
+    summon: s => ({ type: "summon", mana: gv(s.mana || 6, 0), upkeep: rk => Math.max(1, rk), minion: s.minion, needsCorpse: s.corpse, auraRadius: s.auraRadius, auraStats: s.auraRadius ? () => ({}) : undefined, castRange: gv(9, 0), cap: rk => (s.cap || 1) + Math.floor(rk / (s.capEvery || 5)),
       minionStats: rk => ({ hp: s.mhp + (s.mhpG || 0) * rk, dmg: [s.mlo + (s.mloG != null ? s.mloG : 1) * rk, s.mhi + (s.mhiG != null ? s.mhiG : 2) * rk], speed: s.mspeed || 3.2, atkRate: s.matk || 1.0, range: s.ranged ? (s.mrange || 7) : 0.9, projectile: s.ranged ? (s.proj || "venom") : undefined, sprite: s.sprite, name: s.mname, taunt: s.taunt, slamStun: s.slamStun, pdot: s.mpdot, untargetable: s.untargetable, groundImmune: s.groundImmune }),
       desc: rk => `Raise up to ${(s.cap || 1) + Math.floor(rk / (s.capEvery || 5))} ${s.label || "servants"} — ${s.mhp + (s.mhpG || 0) * rk} life, ${Math.round(s.mlo + (s.mloG != null ? s.mloG : 1) * rk)}–${Math.round(s.mhi + (s.mhiG != null ? s.mhiG : 2) * rk)} damage${s.corpse ? ", consuming a corpse" : ""}.` }),
     minionbuff: s => ({ type: "minionbuff", mana: gv(s.mana || 9, 0), dur: gv(s.dur || 10, 1), dmgBuff: gv(s.dmgBuff || 25, s.dmgBuffG || 5), heal: gv(s.heal || 100, s.healG || 0), cd: s.cd ? gv(s.cd, 0) : undefined,
@@ -231,12 +236,22 @@ DATA.BASIC_ATTACK = { id: "basic", name: "Attack", type: "melee", icon: "basic",
       desc: rk => `Stitch corpses into a Bone Golem — re-cast on nearby corpses to feed & grow it (bigger, tougher, harder slam). Max stitches ${(s.maxCorpses || 3) + Math.floor(rk / 5)} (+1 per 5 ranks); each cast needs a corpse.` }),
 
     /* ===== Veil Ranger ===== */
+    umbral_knife: s => ({type:"umbral_knife",mana:gv(3,0),dmgMult:r=>1.2+.10*(r-1),castRange:()=>8,exposeDuration:()=>4,attackCycle:()=>1,
+      desc:r=>`Throw a blade: ${Math.round((1.2+.1*(r-1))*100)}% physical weapon damage; exposes the first enemy hit for 4s. Works with any weapon.`}),
+    dusk_cleave: s => ({type:"dusk_cleave",mana:gv(5,0),dmgMult:r=>1.5+.12*(r-1),range:()=>3,arc:()=>140*Math.PI/180,exposedBonus:()=>30,cd:()=>3,
+      desc:r=>`Sweep a 140° cone: ${Math.round((1.5+.12*(r-1))*100)}% physical weapon damage, +30% against Exposed. Works with any weapon.`}),
+    shadow_flurry: s => ({type:"shadow_flurry",mana:gv(7,0),dmgMult:r=>.45+.04*(r-1),castRange:()=>7,radius:()=>3,count:()=>5,exposedBonus:()=>30,cd:()=>5,
+      desc:r=>`Release 5 blades into a 3y area: ${Math.round((.45+.04*(r-1))*100)}% physical weapon damage each, +30% against Exposed. Blades visit each enemy before repeating. Works with any weapon.`}),
+    deathblow: s => ({type:"deathblow",mana:gv(10,0),dmgMult:r=>2.2+.18*(r-1),castRange:()=>8,exposedBonus:()=>30,missingHpBonus:()=>.75,cd:()=>8,
+      desc:r=>`Throw a heavy blade: ${Math.round((2.2+.18*(r-1))*100)}% physical weapon damage, +30% against Exposed and up to +75% with missing life. A damaging hit detonates Killing Mark. Works with any weapon.`}),
     charge_shot: s => ({ type: "charge_shot", mana: gv(s.mana || 5, 0), maxDraw: gv(s.maxDraw || 1.1, 0), dmgMin: wMpct(s, "min"), dmgMax: wMpct(s, "max"), quarryBonus: gv(s.quarryBonus || 20, 0),
       desc: rk => `Hold to draw: ${pct(s.min)}%–${pct((s.max || 3.2) + (s.maxG || 0) * rk)}% weapon damage, deep pierce at full; consumes Quarry for bonus.` }),
     ricochet: s => ({ type: "ricochet", mana: gv(s.mana || 6, 0), dmgMult: wM(s), bounces: rk => (s.bounces || 3) + Math.floor(rk / 2),
       desc: rk => `An arrow that bounces between ${(s.bounces || 3) + Math.floor(rk / 2)} foes (−12%/bounce) and ricochets off walls.` }),
     rain: s => ({ type: "rain", mana: gv(s.mana || 12, 0), castRange: gv(9, 0), radius: gv(s.rad || 3, s.radG || 0.06), dur: gv(s.dur || 4, s.durG || 0.2), dmgMult: wM(s),
-      desc: rk => `Rain arrows over ${((s.rad || 3) + (s.radG || 0.06) * rk).toFixed(1)}y for ${((s.dur || 4) + (s.durG || 0.2) * rk).toFixed(1)}s (${pct(s.base + (s.grow || 0) * rk)}%/tick); +25% on Quarry.` }),
+      desc: rk => `Rain arrows over ${((s.rad || 3) + (s.radG || 0.06) * rk).toFixed(1)}y for ${((s.dur || 4) + (s.durG || 0.2) * rk).toFixed(1)}s (${pct(s.base + (s.grow || 0) * rk)}%/tick); +25% on Quarry. Recasting replaces the previous Arrowfall zone.` }),
+    dragnet: s => ({ type: "dragnet", mana: gv(s.mana || 6, 0), castRange: ()=>7, radius: rk=>3+.08*(rk-1), dmg: rk=>[10+5*(rk-1),16+6*(rk-1)], root: rk=>Math.min(3,1.25+.08*(rk-1)), cd: ()=>6,
+      desc: rk=>`Throw a net within 7y: ${10+5*(rk-1)}–${16+6*(rk-1)} physical trap damage in ${(3+.08*(rk-1)).toFixed(2)}y. Pull foes together over 0.3s, then root for ${Math.min(3,1.25+.08*(rk-1)).toFixed(2)}s. Bosses are slowed 40% instead. 6s cooldown. Works with any weapon.` }),
     tripwire: s => ({ type: "tripwire", mana: gv(s.mana || 6, 0), length: gv(s.len || 4, s.lenG || 0.2), dmg: dR(s), bleed: gv(s.bleed || 4, s.bleedG || 0.8), root: gv(s.root || 0.8, 0), ttl: gv(s.ttl || 20, 0),
       desc: rk => `String a wire: the first crosser is rooted and every foe on it bleeds (${R(s.lo + (s.loG || 0) * rk, s.hi + (s.hiG || 0) * rk)}).` }),
     decoy: s => ({ type: "decoy", mana: gv(s.mana || 8, 0), hp: gv(s.hp || 40, s.hpG || 18), taunt: gv(s.taunt || 5, s.tauntG || 0.2), lifetime: gv(s.life || 8, s.lifeG || 0.4),
@@ -359,37 +374,37 @@ DATA.BASIC_ATTACK = { id: "basic", name: "Attack", type: "melee", icon: "basic",
         { nm: "Drawn Shot", tag: "charge_shot", row: 1, pre: "Aimed Shot", icon: "@phys/bow", min: 0.6, max: 3.2, maxDraw: 1.1, quarryBonus: 20, mana: 5, fl: "Patience, then violence." },
         { nm: "Eagle Eye", tag: "passive", row: 2, pre: "Split Volley", icon: "@light/eye", stats: { critChance: 2, critDmg: 12, projRange: 6 }, fl: "She counts feathers at half a league." },
         { nm: "Ricochet Shard", tag: "ricochet", row: 2, pre: "Drawn Shot", icon: "@steel/zigzag", base: 1.1, grow: 0.12, bounces: 3, mana: 6, fl: "Around the corner, into the throat." },
-        { nm: "Skewering Bolt", tag: "wpierce", row: 3, pre: "Eagle Eye", icon: "@phys/spear", base: 1.2, grow: 0.15, mana: 6, fl: "One arrow, several invoices." },
+        { nm: "Master of the Hunt", tag: "passive", row: 3, pre: "Eagle Eye", icon: "@blood/fang", stats: { bleedDps: 3 }, note: "All damaging attacks apply physical bleed for 3s. Repeated hits refresh the strongest bleed; bleed does not stack.", fl: "Every wound leaves a trail." },
         { nm: "Arrowfall", tag: "rain", row: 3, pre: "Ricochet Shard", icon: "@phys/rune", base: 0.28, grow: 0.012, rad: 3, radG: 0.06, dur: 4, durG: 0.2, mana: 12, fl: "Sky, briefly made of arrows." },
       ],
       [ /* Snares */
         { nm: "Barbed Trap", tag: "trap", row: 0, icon: "@steel/fang", trapKind: "barbed", lo: 6, loG: 3, hi: 10, hiG: 4, rad: 1.6, slow: 30, slowDur: 2.5, mana: 4, fl: "The fen keeps what steps wrong." },
         { nm: "Tinker's Eye", tag: "passive", row: 1, pre: "Barbed Trap", icon: "@steel/rune", stats: { trapPct: 12 }, fl: "Springs, teeth, and spite." },
         { nm: "Frostbite Trap", tag: "trap", row: 1, pre: "Barbed Trap", icon: "@cold/snowflake", trapKind: "frost", el: "cold", lo: 5, loG: 3, hi: 9, hiG: 4, rad: 2.2, slow: 55, slowDur: 3, mana: 5, fl: "Bottled winter, badly corked." },
-        { nm: "Tripwire", tag: "tripwire", row: 2, pre: "Frostbite Trap", icon: "@steel/net", len: 4, lenG: 0.2, lo: 10, loG: 5, hi: 16, hiG: 6, bleed: 4, bleedG: 0.8, root: 0.8, mana: 6, fl: "A wall, not a point." },
+        { nm: "Dragnet", tag: "dragnet", row: 2, pre: "Frostbite Trap", icon: "@steel/net", mana: 6, fl: "Bring the hunt to the teeth." },
         { nm: "Caltrop Field", tag: "groundfield", row: 2, pre: "Tinker's Eye", icon: "@steel/burst", fieldKind: "caltrop", rad: 2.4, radG: 0.06, lo: 5, loG: 2, hi: 8, hiG: 3, slow: 40, dur: 6, durG: 0.3, tick: 0.4, mana: 7, fdesc: "A carpet of caltrops: bleed + slow while inside" },
-        { nm: "Powder Trap", tag: "trap", row: 3, pre: "Tripwire", icon: "@fire/comet", trapKind: "powder", el: "fire", lo: 14, loG: 6, hi: 24, hiG: 8, rad: 2.6, mana: 7, fl: "Step. Boom. No repeat business." },
-        { nm: "Snare Decoy", tag: "decoy", row: 3, pre: "Caltrop Field", icon: "@steel/totem", hp: 40, hpG: 18, taunt: 5, life: 8, lifeG: 0.4, mana: 8, fl: "A lure with terrible aim and great timing." },
+        { nm: "Powder Trap", tag: "trap", row: 3, pre: "Dragnet", icon: "@fire/comet", trapKind: "powder", el: "fire", lo: 14, loG: 6, hi: 24, hiG: 8, rad: 2.6, mana: 7, fl: "Step. Boom. No repeat business." },
+        { nm: "Exploit Weakness", tag: "passive", row: 3, pre: "Caltrop Field", icon: "@blood/eye", stats: { snareConditionPct: 3 }, note: "Each distinct slow, root, and physical bleed adds its own bonus to traps, caltrops, and Dragnet. Conditions are checked before each hit; damage-over-time ticks are excluded.", fl: "First the footing. Then the flesh." },
       ],
       [ /* Veil */
         { nm: "Shadowstep", tag: "blink", row: 0, icon: "@shadow/crescent", range: 5, mana: 4, fl: "She was here. Briefly." },
-        { nm: "Smoke Bomb", tag: "groundfield", row: 1, pre: "Shadowstep", icon: "@shadow/cloud", fieldKind: "smoke", rad: 2.8, radG: 0.06, dur: 5, durG: 0.3, selfDodge: 30, tick: 0.4, mana: 6, fdesc: "A cloud that blinds foes & shrouds you" },
+        { nm: "Umbral Knife", tag: "umbral_knife", row: 1, pre: "Shadowstep", icon: "@shadow/lance", fl: "Find the opening. Leave it open." },
         { nm: "Quickening", tag: "passive", row: 1, pre: "Shadowstep", icon: "@light/wing", stats: { frw: 2, ias: 3, dodge: 1 }, fl: "Slow rangers are a contradiction." },
-        { nm: "Serrated Arrows", tag: "weapon_coat", row: 2, pre: "Quickening", icon: "@poison/droplet", dur: 14, durG: 0.8, pdot: 3, pdotG: 1, mana: 5, fl: "Every shot leaves a grudge." },
-        { nm: "Killing Mark", tag: "deathmark", row: 2, pre: "Smoke Bomb", icon: "@shadow/eye", dur: 5, durG: 0.3, amp: 20, ampG: 2, detDmg: 12, detG: 6, mana: 7, fl: "She decides who is already dead." },
-        { nm: "After-Image", tag: "afterimage", row: 3, pre: "Serrated Arrows", icon: "@shadow/twin", range: 4.5, hp: 30, taunt: 5, life: 2.5, mana: 6, fl: "Strike the echo, not the archer." },
-        { nm: "Hemorrhage", tag: "detonate_dots", row: 3, pre: "Killing Mark", icon: "@blood/burst", dotMult: 3, dotG: 0.2, perQuarry: 15, markBonus: 60, markG: 6, mana: 14, fl: "Open every wound at once." },
+        { nm: "Dusk Cleave", tag: "dusk_cleave", row: 2, pre: "Quickening", icon: "@shadow/cleave", fl: "Night falls in one stroke." },
+        { nm: "Killing Mark", tag: "deathmark", row: 2, pre: "Umbral Knife", icon: "@shadow/eye", dur: 5, durG: 0.3, amp: 20, ampG: 2, detDmg: 12, detG: 6, mana: 7, fl: "She decides who is already dead." },
+        { nm: "Shadow Flurry", tag: "shadow_flurry", row: 3, pre: "Dusk Cleave", icon: "@shadow/fan", fl: "A blade for each shadow." },
+        { nm: "Deathblow", tag: "deathblow", row: 3, pre: "Killing Mark", icon: "@shadow/fang", fl: "The last opening is all she needs." },
       ],
     ],
     wildkeeper: [
       [ /* Wildkin — pack */
-        { id: "call_wolf", nm: "Call of the Wolf", tag: "summon", row: 0, icon: "@nature/fang", minion: "wolf", label: "wolves", cap: 1, capEvery: 4, mhp: 26, mhpG: 8, mlo: 3, mhi: 6, mspeed: 3.8, matk: 1.3, sprite: "wolf", mname: "Grey Companion", mana: 7, fl: "An understanding, not a leash." },
-        { id: "thornback_boar", nm: "Thornback Boar", tag: "summon", row: 1, pre: "Call of the Wolf", icon: "@earth/spike", minion: "boar", label: "boars", cap: 1, mhp: 60, mhpG: 16, mlo: 4, mhi: 8, mspeed: 2.6, matk: 0.9, sprite: "boar", taunt: 5, mname: "Thornback Boar", mana: 10, fl: "Stubborn as a landslide." },
-        { nm: "Spirit Hawk", tag: "summon", row: 1, pre: "Call of the Wolf", icon: "@nature/wing", minion: "hawk", label: "hawks", cap: 1, mhp: 18, mhpG: 5, mlo: 4, mhi: 8, mspeed: 4.2, matk: 0.7, ranged: true, proj: "arrow", mrange: 6, sprite: "hawk", mname: "Spirit Hawk", untargetable: true, groundImmune: true, mana: 9, fl: "It never lands where you look — only AoE can clip it." },
-        { nm: "Guardian Bear", tag: "summon", row: 2, pre: "Thornback Boar", icon: "@earth/paw", minion: "bear", label: "bears", cap: 1, mhp: 110, mhpG: 24, mlo: 8, mhi: 14, mspeed: 2.4, matk: 0.8, sprite: "bear", taunt: 5, slamStun: 0.6, mname: "Guardian Bear", mana: 14, fl: "A wall that loves you." },
+        { id: "call_wolf", nm: "Call of the Wolf", tag: "summon", row: 0, icon: "@nature/fang", minion: "wolf", label: "wolves", cap: 1, capEvery: 4, mhp: 78, mhpG: 24, mlo: 3, mhi: 6, mspeed: 3.8, matk: 1.3, sprite: "wolf", mname: "Grey Companion", mana: 7, fl: "An understanding, not a leash." },
+        { id: "thornback_boar", nm: "Thornback Boar", tag: "summon", row: 1, pre: "Call of the Wolf", icon: "@earth/spike", minion: "boar", label: "boars", cap: 1, mhp: 180, mhpG: 48, mlo: 4, mhi: 8, mspeed: 2.6, matk: 0.9, sprite: "boar", taunt: 5, mname: "Thornback Boar", mana: 10, fl: "Stubborn as a landslide." },
+        { nm: "Spirit Hawk", tag: "summon", row: 1, pre: "Call of the Wolf", icon: "@nature/wing", minion: "hawk", label: "hawks", cap: 1, mhp: 54, mhpG: 15, mlo: 4, mhi: 8, mspeed: 4.2, matk: 0.7, sprite: "hawk", mname: "Spirit Hawk", untargetable: true, groundImmune: true, mana: 9, fl: "Wings circle the keeper; talons rake anything in their path." },
+        { nm: "Guardian Bear", tag: "summon", row: 2, pre: "Thornback Boar", icon: "@earth/paw", minion: "bear", label: "bears", cap: 1, mhp: 330, mhpG: 72, mlo: 8, mhi: 14, mspeed: 2.4, matk: 0.8, sprite: "bear", taunt: 5, slamStun: 0.6, mname: "Guardian Bear", mana: 14, fl: "A wall that loves you." },
         { id: "kinship", nm: "Kindred Bond", tag: "passive", row: 2, pre: "Spirit Hawk", icon: "@nature/heart", stats: { pShare: 8, pManaPerBeast: 0.4 }, fl: "The pack carries what you cannot." },
         { id: "feral_howl", nm: "Feral Howl", tag: "minionbuff", row: 3, pre: "Guardian Bear", icon: "@nature/crescent", heal: 100, dmgBuff: 20, dmgBuffG: 5, dur: 10, cd: 11, mana: 9, fl: "Every hackle within a league stands up." },
-        { nm: "Blood of the Pack", tag: "sacrifice", row: 3, pre: "Kindred Bond", icon: "@blood/spiral", mode: "one", healPct: 18, healG: 3, castRange: 9, fieldRadius: 2.6, fieldTtl: 6, fieldHeal: 3, mana: 6, fl: "One gives, so the rest may run." },
+        { nm: "Call of the Ent", tag: "summon", row: 3, pre: "Kindred Bond", icon: "@nature/heart", minion: "ent", label: "ents", cap: 1, capEvery: 10, mhp: 450, mhpG: 90, mlo: 10, mhi: 18, mspeed: 2.0, matk: 0.7, sprite: "ent", mname: "Ent Guardian", taunt: 5, auraRadius: 6, mana: 16, fl: "The oldest roots rise to shelter the living." },
       ],
       [ /* Stormcall — totems/weather */
         { nm: "Storm Totem", tag: "totem", row: 0, icon: "@light/totem", totemKind: "storm", cap: 2, capEvery: 6, ttl: 14, rad: 4.5, zapCd: 1.1, lo: 4, loG: 2, hi: 9, hiG: 3, mana: 8, fl: "Storm comes from the ground here." },
@@ -432,6 +447,7 @@ DATA.BASIC_ATTACK = { id: "basic", name: "Attack", type: "melee", icon: "basic",
           reqLvl: s.reqLvl || REQ[s.row] || 1, prereq: s.pre ? nameToId[s.pre] : undefined,
           maxRank: 10, icon: s.icon, flavor: s.fl || "", synergy: s.synergy,
         }, made);
+        if (sk.type === "summon_golem") sk.upkeep = rank => Math.max(1,rank);
         // Rank one remains the balance anchor; perks modify this shared curve.
         if (sk.mana) {
           sk.baseMana = sk.mana(1);
@@ -506,6 +522,21 @@ DATA.CONSUMABLES = {
    kind: p = prefix, s = suffix. stat keys are summed by computeStats.
    tiers: [maxIlvlOfTier..] each tier {ilvl, min, max, name} */
 DATA.AFFIXES = [
+  ...[
+    ["minionDmgPct", ["Beastmaster's", "Packleader's", "Commander's", "Warcaller's", "Overlord's", "Legionmaster's"]],
+    ["minionHpPct", ["Nurturing", "Sheltering", "Fortifying", "Bolstering", "Undying", "Immortal"]]
+  ].map(([stat, names]) => ({
+    stat, kind: "p", group: stat, weight: 1, fixedTiers: true,
+    slots: ["main", "head", "gloves"],
+    tiers: [[2,5,10],[15,11,20],[30,21,35],[50,36,50],[70,51,65],[90,66,80]].map(([ilvl,min,max], i) =>
+      ({ ilvl, min, max, name: names[i] }))
+  })),
+  ...Object.entries(DATA.DAMAGE_ELEMENTS).map(([elem, name]) => ({
+    stat: elem + "DmgPct", kind: "p", group: elem + "DmgPct", weight: 1, fixedTiers: true,
+    slots: ["main", "off", "head", "gloves", "ring", "amulet"],
+    tiers: [[2,5,10],[15,11,20],[30,21,35],[50,36,50],[70,51,65],[90,66,80]].map(([ilvl,min,max], i) =>
+      ({ ilvl, min, max, name: ["Kindled", "Attuned", "Potent", "Exalted", "Sovereign", "Transcendent"][i] + " " + name }))
+  })),
   /* ---------- PREFIXES (weapon offense) ---------- */
   { stat:"dmgPct", kind:"p", slots:["main"], group:"dmgPct", tiers:[
       {ilvl:1,min:10,max:20,name:"Jagged"}, {ilvl:5,min:21,max:30,name:"Deadly"}, {ilvl:8,min:31,max:40,name:"Vicious"},
@@ -683,6 +714,7 @@ DATA.CHARM_STATS = new Set([
    and apply their affixes on either side. Premium — they may roll the stronger
    combat stats glyphs/charms cannot. */
 DATA.JEWEL_STATS = new Set([
+  ...Object.keys(DATA.DAMAGE_ELEMENTS).map(e => e + "DmgPct"),
   "dmgPct", "ar", "minDmg", "maxDmg", "fireDmg", "coldDmg", "lightDmg", "poisonDmg",
   "resFire", "resCold", "resLight", "resPoison", "resAll",
   "hp", "mana", "str", "dex", "vit", "wil", "ias", "mf", "goldFind",
@@ -739,9 +771,12 @@ DATA.STAT_TEXT = {
   dmgTakenPct: v => `${v}% more Damage Taken`, dmgReducePct: v => `${v}% Damage Reduction`,
   scorchPct: v => `+${v}% Scorch Damage`, scorchSpread: () => "Scorched enemies spread Scorch when killed",
   coldVsFrozenPct: v => `+${v}% Cold Damage against Frozen Enemies`, shatterRank: v => `Frozen enemies shatter on death for ${6 + 3 * v} Cold Damage`,
-  minionHpPct: v => `+${v}% Minion Life`, minionThorns: v => `Minion attackers take ${v} Damage`,
+  minionDmgPct: v => `+${v}% Summon Damage`, minionHpPct: v => `+${v}% Summon Life`,
+  minionThorns: v => `Minion attackers take ${v} Damage`,
   curseDurPct: v => `+${v}% Curse Duration`, curseRadiusPct: v => `+${v}% Curse Radius`, curseSpread: () => "Curses spread to a nearby enemy on death",
   soulCharge: v => `Cursed kills grant +${v}% Spell Power for 5s (stacks up to 5 times)`,
+  snareConditionPct: v => `+${v}% Snare Hit Damage per Slow, Root, or Bleed`,
+  bleedDps: v => `+${v} Physical Bleed Damage/s on All Attacks (3s)`,
   poisonDotPct: v => `+${v}% Poison Damage over Time`, plagueSpreadPct: v => `+${v}% Plague Spread`,
   projRange: v => `+${v} Projectile Range`, trapPct: v => `+${v}% Trap Damage`,
   pShare: v => `The pack absorbs ${Math.min(50, v)}% of your incoming damage`, pManaPerBeast: v => `Regenerate ${v} Aether per second per living beast`,
@@ -766,6 +801,9 @@ DATA.STAT_TEXT = {
   hpPct: v => `+${v}% Maximum Life`,
 };
 /* +to class / +to tree skill affixes get auto-generated render lines */
+for (const [elem, name] of Object.entries(DATA.DAMAGE_ELEMENTS)) {
+  DATA.STAT_TEXT[elem + "DmgPct"] = v => `+${v}% ${name} Damage`;
+}
 for (const cId in DATA.CLASSES) {
   const c = DATA.CLASSES[cId];
   DATA.STAT_TEXT["skillClass_" + cId] = v => `+${v} to ${c.name} Talents`;
@@ -872,7 +910,7 @@ DATA.GLYPHS = {
   /* deepen the affix ladder: every affix gains higher tiers scaling to ilvl ~95,
      so items at level 50–100 roll meaningfully bigger numbers */
   for (const af of DATA.AFFIXES) {
-    if (af.proc || af.perLevel) continue;         // procs/per-level affixes aren't tier-deepened
+    if (af.proc || af.perLevel || af.fixedTiers) continue;
     const top = af.tiers[af.tiers.length - 1];
     if (top.ilvl >= 60) continue;                 // already deep
     const addAt = [ Math.min(95, top.ilvl + 12), Math.min(99, top.ilvl + 26) ];
@@ -928,23 +966,23 @@ DATA.RARE_SUF = ["Bite","Mark","Song","Veil","Brand","Grasp","Howl","Ward","Edge
 /* =====================  UNIQUE ITEMS  ===================== */
 DATA.UNIQUES = [
   { id:"u_gravebite", base:"handaxe", name:"Gravebite", ilvl:3,
-    stats:{ dmgPct:60, lifeSteal:4, dmgUndead:80 }, flavor:"It has tasted more coffins than trees." },
+    stats:{}, flavor:"It has tasted more coffins than trees." },
   { id:"u_widow", base:"dirk", name:"Widow's Lament", ilvl:3,
-    stats:{ poisonDmg:12, dex:6, ias:15 }, flavor:"Quiet as the grief that follows." },
+    stats:{}, flavor:"Quiet as the grief that follows." },
   { id:"u_cinder", base:"quiltvest", name:"Cindershroud", ilvl:4,
-    stats:{ armorPct:50, resFire:30, thorns:4 }, flavor:"Woven from the hems of burned banners." },
+    stats:{}, flavor:"Woven from the hems of burned banners." },
   { id:"u_oath", base:"kiteshield", name:"Oathkeeper's Wall", ilvl:6,
-    stats:{ block:15, resAll:12, hp:25 }, flavor:"The oath outlived the keeper." },
+    stats:{}, flavor:"The oath outlived the keeper." },
   { id:"u_crown", base:"cap", name:"Hollow Crown", ilvl:5,
-    stats:{ skillAll:1, mana:20, mf:20 }, flavor:"Whoever wore it first is still missing." },
+    stats:{}, flavor:"Whoever wore it first is still missing." },
   { id:"u_marrow", base:"ring", name:"Marrow Band", ilvl:4,
-    stats:{ hp:30, lifeSteal:3 }, flavor:"Warm to the touch. Always." },
+    stats:{}, flavor:"Warm to the touch. Always." },
   { id:"u_stormknot", base:"amulet", name:"Stormcaller's Knot", ilvl:5,
-    stats:{ lightDmg:18, fcr:10, resLight:25 }, flavor:"Tied during a thunderclap, or so the peddler swore." },
+    stats:{}, flavor:"Tied during a thunderclap, or so the peddler swore." },
   { id:"u_stride", base:"warboots", name:"Stridewraith", ilvl:5,
-    stats:{ frw:25, dex:8, resCold:20 }, flavor:"The footprints arrive a moment late." },
+    stats:{}, flavor:"The footprints arrive a moment late." },
   { id:"u_kingsplit", base:"waraxe", name:"Kingsplitter", ilvl:8,
-    stats:{ dmgPct:90, critChance:8, str:10 }, flavor:"Crowns are softer than they look." },
+    stats:{}, flavor:"Crowns are softer than they look." },
 ];
 
 /* =====================  ENEMIES  ===================== */
@@ -1528,17 +1566,8 @@ DATA._buildRoster = (function () { return function buildRoster() {
     DATA.ENEMIES[id] = d;
     roster.push(d);
   }
-  /* drop them into level-appropriate zone spawn pools */
-  for (const z of Object.values(DATA.ZONES)) {
-    if (!z.spawns || z.kind === "town" || z.kind === "camp" || DATA.ACT3_ROSTERS?.[z.id]) continue;
-    for (const d of roster) if (Math.abs((z.lvl || 1) - d.lvl) <= 4) z.spawns.push(d.id);
-  }
-  /* sprinkle the hand-authored signature beasts (dragons / serpents / gargoyles / axe-demons) by level */
-  const SIG = ["frost_wyrm", "cave_python", "ash_drake", "bone_dragon", "marsh_serpent", "dune_serpent", "stone_gargoyle", "chapel_grotesque", "void_gargoyle", "brimstone_brute", "ashfiend_reaver", "infernal_warlord", "flesh_engine", "grave_wraith", "frost_wraith", "void_wraith", "caustic_ooze", "sludge_horror", "cinder_imp", "hex_imp", "gnarl_treant", "blight_treant"];
-  for (const z of Object.values(DATA.ZONES)) {
-    if (!z.spawns || z.kind === "town" || z.kind === "camp" || DATA.ACT3_ROSTERS?.[z.id]) continue;
-    for (const id of SIG) { const e = DATA.ENEMIES[id]; if (e && Math.abs((z.lvl || 1) - e.lvl) <= 4) z.spawns.push(id); }
-  }
+  // Keep the generated bestiary available to the editor. Campaign populations
+  // come from authored habitats, never from proximity to a creature's level.
   DATA.ROSTER_IDS = roster.map(d => d.id);
 }; })();
 
@@ -1593,120 +1622,76 @@ DATA.SET_ITEMS = [
    Curated-feeling uniques and sets across the whole range so high-level unique
    drops are level-appropriate, not just the early act-I relics. */
 (function expandUniques() {
-  const rd = n => Math.round(n);
   /* a tier index helper: nearest weapon/armor base id for an ilvl */
   const TI = [1, 4, 8, 13, 19, 26, 34, 43, 52, 61, 70, 80, 90, 99];
   const tierFor = ilvl => { let t = 0; for (let i = 0; i < TI.length; i++) if (TI[i] <= ilvl) t = i; return t; };
-  /* unique archetypes: each defines a base line + a stat recipe scaling with ilvl */
-  const fl = Math.floor;
-  /* Each archetype now carries 4 distinct BUILDS (paired 1:1 with its 4 names) instead of one
-     shared recipe, so every named unique has its own stat identity — never a recolored clone.
-     A global de-dup pass (below) then guarantees no two uniques anywhere share a stat key-set. */
+  /* Archetypes preserve authored identities, base lines and art. UniquePowers
+     supplies the sole canonical support-stat budget and class power catalog. */
   const ARCH = [
     /* ai 0–11 : the original lines (each carries hand-tuned `art` for inventory + on-body look) */
     { base: ilvl => `sword2h_t${tierFor(ilvl)}`, name: ["Dawnbreaker","Sunder","Kingsbane","Worldcleaver"], flavor: "Forged to end something larger than a man.",
       art: { glow: "#ffd98a", metal: "#f1ebd2", wood: "#6a4a2a", trim: "#e6c868" },
-      builds: [ L=>({dmgPct:40+L*1.4, critChance:6+L*0.1, critDmg:20+L*0.3, str:8+L*0.2}), L=>({dmgPct:55+L*1.6, str:12+L*0.3, arPct:30}), L=>({dmgPct:45+L*1.4, lifeSteal:5, hp:20+L*0.8, dmgUndead:50}), L=>({dmgPct:60+L*1.8, ias:14, skillAll:1+fl(L/40)}) ] },
+      },
     { base: ilvl => `axe2h_t${tierFor(ilvl)}`, name: ["Gorewake","Reaver's End","Skullsplit","Ruin"], flavor: "It drinks first and asks never.",
       art: { glow: "#ff6a5a", metal: "#dcc4b2", wood: "#4a2e1e", trim: "#b08040" },
-      builds: [ L=>({dmgPct:55+L*1.6, dmgUndead:60, str:10+L*0.25}), L=>({dmgPct:50+L*1.5, lifeSteal:6, vit:8+L*0.2}), L=>({dmgPct:58+L*1.6, critChance:7+L*0.1, frw:10}), L=>({dmgPct:52+L*1.5, thorns:8+L*0.4, hp:25+L*0.9}) ] },
+      },
     { base: ilvl => `dagger_t${tierFor(ilvl)}`, name: ["Whisperfang","Nightkiss","Quietus","Severance"], flavor: "The last thing many never heard.",
       art: { glow: "#8ef060", metal: "#cfe6c0", wood: "#2a2a2a", trim: "#88c060" },
-      builds: [ L=>({poisonDmg:8+L*0.6, ias:18, dex:8+L*0.25}), L=>({critChance:9+L*0.12, critDmg:25+L*0.4, dex:8+L*0.2}), L=>({dmgPct:35+L*1.2, ias:20, lifeSteal:4}), L=>({poisonDmg:10+L*0.7, frw:12, dodge:8+L*0.2}) ] },
+      },
     { base: ilvl => `bow2h_t${tierFor(ilvl)}`, name: ["Wintershot","Stormstring","Farsong","Hawkeye"], flavor: "Looses true across impossible distance.",
       art: { glow: "#9fe0ff", metal: "#d8ecf6", wood: "#5a6a72", trim: "#bcd0dc" },
-      builds: [ L=>({dmgPct:35+L*1.3, coldDmg:6+L*0.5, dex:10+L*0.3}), L=>({dmgPct:38+L*1.4, lightDmg:10+L*0.6, ias:15}), L=>({dmgPct:34+L*1.3, critChance:8+L*0.12, frw:14}), L=>({dmgPct:36+L*1.3, fireDmg:8+L*0.5, dex:8+L*0.2, arPct:35}) ] },
+      },
     { base: ilvl => `staff2h_t${tierFor(ilvl)}`, name: ["Tempest","Emberheart","Frostward Rod","Stormcrown"], flavor: "Hums with a weather of its own.",
       art: { glow: "#fff070", metal: "#e8e0b0", wood: "#6a5230", trim: "#f2e26a" },
-      builds: [ L=>({spellPct:30+L*1.5, fcr:15, lightDmg:8+L*0.6}), L=>({spellPct:32+L*1.5, fireDmg:10+L*0.7, mana:20+L*0.6}), L=>({spellPct:28+L*1.4, coldDmg:8+L*0.6, skillAll:1+fl(L/40)}), L=>({spellPct:30+L*1.5, fcr:18, manaRegen:25, wil:8+L*0.2}) ] },
+      },
     { base: ilvl => `wand_t${tierFor(ilvl)}`, name: ["Hexfinger","Soulwhisper","Gravewand","Rotcaller"], flavor: "It points where the dead should rise.",
       art: { glow: "#c89cff", metal: "#cabcd8", wood: "#3a2e3a", trim: "#9a70c0" },
-      builds: [ L=>({spellPct:25+L*1.3, mana:20+L*0.6, manaRegen:25}), L=>({spellPct:28+L*1.4, fcr:14, skillAll:1+fl(L/35)}), L=>({spellPct:24+L*1.3, poisonDmg:8+L*0.6, wil:8+L*0.2}), L=>({spellPct:26+L*1.3, lightDmg:10+L*0.6, mana:18+L*0.5, fcr:10}) ] },
+      },
     { base: ilvl => `chest_t${tierFor(ilvl)}`, name: ["Aegis of Ash","Dragonscale","Bulwark","Cindermail"], flavor: "Soaks more than it shows.",
       art: { glow: "#ff8a4a", metal: "#d8b89a", wood: "#5a3a24", trim: "#c08040" },
-      builds: [ L=>({armorPct:50+L*1.2, hp:25+L*1.0, resAll:8+fl(L/12)}), L=>({armorPct:55+L*1.3, resFire:30, vit:10+L*0.25}), L=>({armorPct:48+L*1.1, hpPct:8+fl(L/20), thorns:10+L*0.4}), L=>({armorPct:52+L*1.2, hp:30+L*1.1, dmgPct:15+L*0.4}) ] },
+      },
     { base: ilvl => `helm_t${tierFor(ilvl)}`, name: ["Crown of Cinders","Skullhelm","Visage","Doomcap"], flavor: "Heavy is the head it keeps.",
       art: { glow: "#ffcf70", metal: "#e0d2a8", wood: "#5a432a", trim: "#e6c868" },
-      builds: [ L=>({skillAll:1+fl(L/35), mana:18+L*0.5, mf:20}), L=>({armorPct:30+L*0.8, resAll:6+fl(L/14), hp:20+L*0.8}), L=>({skillAll:1+fl(L/40), fcr:12, spellPct:12+L*0.4}), L=>({dex:8+L*0.2, critChance:6+L*0.1, mf:25, goldFind:25}) ] },
+      },
     { base: ilvl => `boots_t${tierFor(ilvl)}`, name: ["Stridewraith","Windsole","Ghoststep","Swiftmarch"], flavor: "The footprints arrive a moment late.",
       art: { glow: "#bfe8ff", metal: "#cfe0ea", wood: "#4a4640", trim: "#9ab8c8" },
-      builds: [ L=>({frw:25+fl(L/6), dex:8+L*0.2, resAll:6+fl(L/14)}), L=>({frw:28+fl(L/5), vit:8+L*0.2, hp:20+L*0.8}), L=>({frw:24+fl(L/6), dodge:8+L*0.2, resCold:25}), L=>({frw:26+fl(L/6), ias:10, str:6+L*0.15}) ] },
+      },
     { base: ilvl => `amulet_t${tierFor(ilvl)}`, name: ["Stormknot","Heart of the Marsh","Soulglass","Eye of the Vigil"], flavor: "Warm, and not from your skin.",
       art: { glow: "#9fe8d8", metal: "#cfe6e0", wood: "#3a4a46", trim: "#7fd8c0" },
-      builds: [ L=>({skillAll:1+fl(L/30), resAll:8+fl(L/14), spellPct:12+L*0.4}), L=>({hp:25+L*1.0, mana:25+L*0.8, resAll:6+fl(L/16)}), L=>({dmgPct:18+L*0.5, critChance:6+L*0.1, str:8+L*0.2}), L=>({spellPct:18+L*0.5, fcr:12, manaRegen:25, wil:8+L*0.2}) ] },
+      },
     { base: ilvl => `ring_t${tierFor(ilvl)}`, name: ["Sanguine Coil","Bloodloop","Ring of Ruin","Coilfire"], flavor: "It tightens, very slightly, when prey is near.",
       art: { glow: "#ff9a5a", metal: "#e0c0a0", wood: "#4a3326", trim: "#d4a050" },
-      builds: [ L=>({lifeSteal:3, critChance:5+L*0.08, str:6+L*0.15}), L=>({hp:25+L*1.0, vit:6+L*0.15, resAll:5+fl(L/16)}), L=>({dmgPct:15+L*0.4, fireDmg:6+L*0.4, ias:8}), L=>({mana:18+L*0.6, fcr:10, spellPct:10+L*0.3}) ] },
+      },
     { base: ilvl => `mace2h_t${tierFor(ilvl)}`, name: ["Earthshaker","Worldhammer","Tollbringer","Cataclysm"], flavor: "The ground forgives nothing it strikes.",
       art: { glow: "#e6b86a", metal: "#d0c2a0", wood: "#5a4226", trim: "#c6a45a" },
-      builds: [ L=>({dmgPct:60+L*1.7, str:12+L*0.3, ccReduce:20}), L=>({dmgPct:55+L*1.6, hp:25+L*1.0, thorns:10+L*0.4}), L=>({dmgPct:58+L*1.7, armorPct:25+L*0.6, vit:8+L*0.2}), L=>({dmgPct:62+L*1.8, critDmg:25+L*0.4, str:10+L*0.25}) ] },
+      },
     /* ai 12–19 : the categories that previously had no unique — every weapon type & armor slot now covered */
     { base: ilvl => `sword_t${tierFor(ilvl)}`, name: ["Edge of Vows","Lightbrand","Kingsblade","Vowkeeper"], flavor: "Sworn before it was sharpened.",
       art: { glow: "#cfe0ff", metal: "#e8f0fa", wood: "#5a4226", trim: "#c0a050" },
-      builds: [ L=>({dmgPct:35+L*1.3, critChance:6+L*0.1, dex:6+L*0.18, ias:12}), L=>({dmgPct:38+L*1.4, lightDmg:8+L*0.5, str:6+L*0.15}), L=>({dmgPct:34+L*1.3, lifeSteal:4, hp:18+L*0.7}), L=>({dmgPct:36+L*1.3, critDmg:22+L*0.35, dex:8+L*0.2}) ] },
+      },
     { base: ilvl => `axe_t${tierFor(ilvl)}`, name: ["Tusk","Cleaver's Joy","Bonereaver","Wolfsplit"], flavor: "Light enough to swing all day. It rarely needs to.",
       art: { glow: "#ffc46a", metal: "#d8caac", wood: "#4a3320", trim: "#b89050" },
-      builds: [ L=>({dmgPct:42+L*1.4, lifeSteal:4, str:8+L*0.2}), L=>({dmgPct:44+L*1.5, dmgUndead:50, critChance:6+L*0.1}), L=>({dmgPct:40+L*1.4, ias:14, frw:8}), L=>({dmgPct:43+L*1.4, thorns:8+L*0.4, vit:8+L*0.2}) ] },
+      },
     { base: ilvl => `mace_t${tierFor(ilvl)}`, name: ["Vesper","Bellringer","Knell","Sanctus"], flavor: "Every toll is a verdict.",
       art: { glow: "#ffe39a", metal: "#e2d6b2", wood: "#5a4630", trim: "#ffcf5a" },
-      builds: [ L=>({dmgPct:40+L*1.35, ccReduce:15, str:8+L*0.2}), L=>({dmgPct:38+L*1.3, dmgUndead:60, hp:18+L*0.7}), L=>({dmgPct:42+L*1.4, armorPct:20+L*0.5, vit:6+L*0.15}), L=>({dmgPct:39+L*1.35, critChance:6+L*0.1, resAll:5+fl(L/16)}) ] },
+      },
     { base: ilvl => `spear2h_t${tierFor(ilvl)}`, name: ["Skyfall Pike","Stormlance","Heaven's Reach","Thunderpike"], flavor: "It comes down like weather.",
       art: { glow: "#aee0ff", metal: "#dcecf6", wood: "#6a5238", trim: "#bcd0dc" },
-      builds: [ L=>({dmgPct:45+L*1.4, dex:8+L*0.2, frw:10, critChance:5}), L=>({dmgPct:48+L*1.5, lightDmg:10+L*0.6, str:8+L*0.2}), L=>({dmgPct:44+L*1.4, ias:14, arPct:30}), L=>({dmgPct:46+L*1.4, coldDmg:8+L*0.5, dex:8+L*0.2, frw:8}) ] },
+      },
     { base: ilvl => `crossbow2h_t${tierFor(ilvl)}`, name: ["Heartseeker","Repeater","Boltwidow","Killshot"], flavor: "It does not miss the second time.",
       art: { glow: "#ff7a6a", metal: "#c8ccd2", wood: "#4a3526", trim: "#9a7a4a" },
-      builds: [ L=>({dmgPct:50+L*1.5, fireDmg:8+L*0.5, dex:8+L*0.2}), L=>({dmgPct:48+L*1.5, critChance:8+L*0.12, critDmg:25+L*0.4}), L=>({dmgPct:52+L*1.5, ias:14, frw:8}), L=>({dmgPct:49+L*1.5, poisonDmg:8+L*0.5, dex:8+L*0.2, ccReduce:15}) ] },
+      },
     { base: ilvl => `shield_t${tierFor(ilvl)}`, name: ["Wardlight","Bastion","Sanctuary","Aegis Eternal"], flavor: "Behind it, you are briefly immortal.",
       art: { glow: "#ffe09a", metal: "#d6cba6", wood: "#4a3a26", trim: "#e6c868" },
-      builds: [ L=>({armorPct:45+L*1.1, resAll:8+fl(L/12), hp:20+L*0.8}), L=>({block:15, armorPct:40+L*1.0, vit:10+L*0.25}), L=>({armorPct:48+L*1.2, thorns:12+L*0.5, resFire:25}), L=>({armorPct:42+L*1.0, hpPct:8+fl(L/20), resAll:6+fl(L/16)}) ] },
+      },
     { base: ilvl => `gloves_t${tierFor(ilvl)}`, name: ["Gravewrought Grips","Throttle","Vise","Deadhand"], flavor: "Grip first. Mercy never.",
       art: { glow: "#c8a0ff", metal: "#cabcc8", wood: "#3a2e3a", trim: "#9a70c0" },
-      builds: [ L=>({ias:15, critChance:6+L*0.1, str:6+L*0.18, dmgPct:12+L*0.4}), L=>({ias:18, dex:8+L*0.2, lifeSteal:3}), L=>({dmgPct:15+L*0.5, critDmg:22+L*0.35, str:6+L*0.15}), L=>({ias:14, frw:8, hp:18+L*0.7, thorns:6+L*0.3}) ] },
+      },
     { base: ilvl => `belt_t${tierFor(ilvl)}`, name: ["Serpentcoil","Girdle of Spite","Venomwind","Coilbind"], flavor: "It tightens when you bleed, and tightens more when they do.",
       art: { glow: "#9ee06a", metal: "#cfe0b8", wood: "#3a3326", trim: "#88c060" },
-      builds: [ L=>({hp:25+L*1.0, resAll:5+fl(L/14), str:6+L*0.15}), L=>({hp:28+L*1.1, poisonDmg:8+L*0.5, vit:8+L*0.2}), L=>({hpPct:8+fl(L/18), resFire:25, resCold:25}), L=>({hp:24+L*1.0, frw:10, dodge:6+L*0.2}) ] },
+      },
   ];
   const ILVLS = [5, 9, 13, 18, 24, 31, 39, 47, 56, 65, 74, 84, 93];
-  /* signature stat(s) per archetype (index-aligned with ARCH) — preserves each
-     unique's thematic identity; the REST of its stats are now sampled from the
-     LIVE affix pool, so regenerated uniques use the current, modern stat
-     vocabulary (leech, vs-demon/undead, flat DR, etc.) at present-day scales.
-     (ARCH[].builds above are legacy/unused — kept only for their names+art.) */
-  const SIG = [
-    ["dmgPct"], ["dmgPct", "lifeSteal"], ["ias", "critChance"], ["dmgPct", "dex"],
-    ["spellPct", "fcr"], ["spellPct"], ["armorPct", "hp"], ["skillAll"],
-    ["frw"], ["skillAll"], ["lifeSteal"], ["dmgPct"],
-    ["dmgPct"], ["dmgPct"], ["dmgPct"], ["dmgPct"],
-    ["dmgPct", "critChance"], ["armorPct", "resAll"], ["ias"], ["hp"],
-  ];
-  /* a thematic +class / +tree skill bonus per archetype (index-aligned). Each unique
-     of that line carries this skill stat — only the matching class benefits (D2-style).
-     null = no skill (armor slots that don't traditionally carry skills). */
-  const USKILL = [
-    "skillTree_vanguard_2",   // 0  2H sword  → Assault
-    "skillClass_vanguard",    // 1  2H axe
-    "skillTree_veilranger_2", // 2  dagger    → Veil
-    "skillTree_veilranger_0", // 3  bow       → Precision
-    "skillClass_emberwitch",  // 4  staff
-    "skillClass_gravebinder", // 5  wand
-    null,                     // 6  chest
-    "skillClass_emberwitch",  // 7  helm
-    null,                     // 8  boots
-    "skillTree_emberwitch_2", // 9  amulet    → Tempest
-    "skillClass_wildkeeper",  // 10 ring? no — 11 below; index 10 is ring
-    "skillClass_wildkeeper",  // 11 2H mace   → (note: idx 10 ring gets the first of these; see remap)
-    "skillTree_vanguard_0",   // 12 1H sword  → Arms
-    "skillTree_wildkeeper_2", // 13 1H axe    → Wildshape
-    "skillTree_vanguard_1",   // 14 1H mace   → Warcries
-    "skillTree_wildkeeper_1", // 15 spear     → Stormcall
-    "skillClass_veilranger",  // 16 crossbow
-    null,                     // 17 shield
-    "skillTree_gravebinder_0",// 18 gloves    → Bonecraft
-    "skillTree_gravebinder_2",// 19 belt      → Rot
-  ];
-  USKILL[10] = null;          // ring: no class skill (keep rings stat-only)
-  /* 7 distinct, themed names per archetype (authored via the unique-name-forge workflow) —
-     enough for every emitted ilvl so no two uniques share a name. */
   const NAMES = [
     ["Dawnbreaker", "Sunder", "Kingsbane", "Worldcleaver", "Mornsplitter", "Heaven's Edge", "Aurora's Reckoning"],
     ["Gorewake", "Reaver's End", "Skullsplit", "Ruin", "Marrowhunger", "The Crimson Tithe", "Butcher's Verdict"],
@@ -1729,72 +1714,14 @@ DATA.SET_ITEMS = [
     ["Gravewrought Grips", "Throttle", "Vise", "Deadhand", "Sepulcher's Clutch", "Stranglemourn", "Palms of the Pit"],
     ["Serpentcoil", "Girdle of Spite", "Venomwind", "Coilbind", "The Tightening Hiss", "Fangknot", "Spitebound Coil"],
   ];
-  const SKILL_RE = /^skill(Class|Tree)_/;
-  const STAT_CAP = s => {
-    if (/^res/.test(s)) return 45;
-    if (s === "skillAll") return 2;
-    if (/^skillTree_/.test(s)) return 3;
-    if (/^skillClass_/.test(s)) return 2;
-    if (s === "critDmg") return 120;
-    if (["dmgPct", "armorPct", "spellPct", "arPct", "dmgUndead", "dmgDemon"].includes(s)) return 220;
-    if (["ar", "arUndead", "arDemon"].includes(s)) return 320;
-    if (["str", "dex", "vit", "wil"].includes(s)) return 35;
-    if (["ias", "fcr", "frw", "critChance", "dodge", "ccReduce", "block", "lifeSteal", "manaSteal", "mf", "goldFind", "monsterFlee"].includes(s)) return 50;
-    if (["hp", "mana"].includes(s)) return 160;
-    if (["fireDmg", "coldDmg", "lightDmg", "poisonDmg"].includes(s)) return 95;
-    if (["minDmg", "maxDmg"].includes(s)) return 42;
-    if (["knockback", "preventHeal"].includes(s)) return 1;
-    return 60;   // dmgReduceFlat, magicReduceFlat, lifeRegen, manaAfterKill, dmgToMana, thorns, manaRegen, hpPct…
-  };
-  const SIG_DEFAULT = (s, L) => {
-    const d = { dmgPct: 45 + L * 1.4, spellPct: 32 + L * 1.3, armorPct: 48 + L * 1.1, frw: 25 + fl(L / 6),
-      skillAll: 1 + fl(L / 40), lifeSteal: 4 + fl(L / 25), ias: 12 + fl(L / 8), critChance: 6 + fl(L / 12),
-      hp: 25 + L * 0.9, resAll: 8 + fl(L / 12), dex: 8 + L * 0.25 }[s];
-    return d != null ? d : 20;
-  };
-  /* {stat:maxValue} eligible for a base's slot/cat at an ilvl, from the LIVE pool */
-  const poolMapFor = (slot, cat, ilvl) => {
-    const m = {};
-    const add = (st, mx) => { if (!st || SKILL_RE.test(st) || mx == null || !DATA.STAT_TEXT[st]) return; if (m[st] == null || mx > m[st]) m[st] = mx; };
-    for (const a of DATA.AFFIXES) {
-      if (a.proc || a.perLevel) continue;
-      const elig = a.slots && (a.slots.includes("any") || a.slots.includes(slot)) && (!a.cats || a.cats.includes(cat));
-      if (!elig) continue;
-      const tiers = a.tiers.filter(t => t.ilvl <= ilvl);
-      if (!tiers.length) continue;
-      const top = tiers[tiers.length - 1];
-      if (top.mods) for (const md of top.mods) add(md.stat, md.max);
-      else add(a.stat, top.max);
-    }
-    return m;
-  };
-  const UNIQUE_MULT = 1.25;
   ARCH.forEach((A, ai) => {
     let emitted = 0;
     ILVLS.forEach((ilvl, k) => {
-      if ((ai + k) % 2 !== 0) return;                 // spread ~half across levels (curated, not bloated)
-      const base = A.base(ilvl), bdef = DATA.BASES[base];
-      if (!bdef) return;
-      const id = `u_gen_${ai}_${k}`;
-      const rng = U.rng(U.hash(id));                  // deterministic per-unique → stable across loads
-      const pm = poolMapFor(bdef.slot, bdef.cat, ilvl);
-      const stats = {};
-      for (const sg of (SIG[ai] || ["hp"])) {         // signature: thematic, guaranteed, a touch stronger
-        const v = pm[sg] != null ? pm[sg] * 1.4 : SIG_DEFAULT(sg, ilvl);
-        stats[sg] = Math.max(1, Math.min(rd(v), STAT_CAP(sg)));
-      }
-      const usk = USKILL[ai];                          // thematic +class / +tree skills, scaling with ilvl
-      if (usk) {
-        const v = /^skillTree_/.test(usk) ? (1 + (ilvl >= 35 ? 1 : 0) + (ilvl >= 60 ? 1 : 0)) : (1 + (ilvl >= 55 ? 1 : 0));
-        stats[usk] = Math.min(v, STAT_CAP(usk));
-      }
-      const cand = Object.keys(pm).filter(s => stats[s] == null);
-      for (let i = cand.length - 1; i > 0; i--) { const j = fl(rng() * (i + 1)), t = cand[i]; cand[i] = cand[j]; cand[j] = t; }
-      const nExtra = Math.min(cand.length, 2 + fl(tierFor(ilvl) / 4));   // 2..~5 pool-sampled stats
-      for (let i = 0; i < nExtra; i++) { const s = cand[i]; stats[s] = Math.max(1, Math.min(rd(pm[s] * UNIQUE_MULT), STAT_CAP(s))); }
-      const nameRow = NAMES[ai] || A.name;
-      DATA.UNIQUES.push({ id, base, name: nameRow[emitted % nameRow.length], ilvl, stats, flavor: A.flavor, art: A.art });
-      emitted++;
+      if ((ai + k) % 2 !== 0) return;
+      const base = A.base(ilvl);
+      if (!DATA.BASES[base]) return;
+      const id = `u_gen_${ai}_${k}`, names = NAMES[ai] || A.name;
+      DATA.UNIQUES.push({ id, base, name: names[emitted++ % names.length], ilvl, stats: {}, flavor: A.flavor, art: A.art });
     });
   });
 
@@ -1808,31 +1735,6 @@ DATA.SET_ITEMS = [
       let nm = u.name, key = nm.toLowerCase();
       while (seen.has(key)) { nm = u.name + " " + EPI[ep % EPI.length]; ep++; key = nm.toLowerCase(); }
       u.name = nm; seen.add(key);
-    }
-  })();
-
-  /* ---- GUARANTEE: no two uniques anywhere share the same stat key-set ----
-     Hand-authored uniques (listed first) keep their curated stats; any later unique whose
-     stat combination already exists gains slot-useful filler stats until its set is novel. */
-  (function dedupeUniqueStats() {
-    const FILLERS = ["resAll","hp","mana","vit","str","dex","frw","mf","goldFind","dodge","critChance","ias","lifeSteal","thorns","manaRegen","critDmg","resFire","resCold","resLight","armor","arPct"];
-    const keyset = s => Object.keys(s).sort().join(",");
-    const seen = new Set();
-    let fp = 0;   // rotating start so colliding items pick DIFFERENT fillers and diverge in one step (low bloat)
-    for (const u of DATA.UNIQUES) {
-      if (!u.stats) continue;
-      let ks = keyset(u.stats);
-      /* Each pass adds a slot-useful stat the item lacks (scanning from the rotating pointer) — so
-         the key-set STRICTLY grows and is guaranteed to become novel (uniques have ≤5 stats; FILLERS
-         has 21, so a free filler always exists). The f==null break is a theoretical backstop only. */
-      while (seen.has(ks)) {
-        let f = null;
-        for (let j = 0; j < FILLERS.length; j++) { const cand = FILLERS[(fp + j) % FILLERS.length]; if (u.stats[cand] == null) { f = cand; fp = (fp + j + 1) % FILLERS.length; break; } }
-        if (f == null) break;
-        u.stats[f] = Math.max(1, rd((u.ilvl || 10) * 0.14) + (f === "resAll" ? 3 : /^res/.test(f) ? 8 : (f === "critChance" || f === "dodge") ? 3 : 6));
-        ks = keyset(u.stats);
-      }
-      seen.add(ks);
     }
   })();
 
@@ -2327,11 +2229,11 @@ DATA.ZONES = {
    previous act's boss room and via any attuned travel shrine. */
 DATA.ACTS = [
   { id:1, rn:"I",  name:"The Fallen North",  camp:"frosthaven",  boss:"korvath",        next:"marshcamp",  intro:["THE FALLEN NORTH","Frosthaven — Act I"],
-    zones:["frosthaven","north_wild","mines","shattered_temple"] },
+    zones:["frosthaven","north_wild","mines","shardpeak_shrine","deepfreeze_cavern","shattered_temple"] },
   { id:2, rn:"II", name:"The Weeping Marsh", camp:"marshcamp",   boss:"mire_mother",    next:"khalcamp",   intro:["THE WEEPING MARSH","Greywater Landing — Act II"],
-    zones:["marshcamp","weeping_marsh","drowned_crypt","ritual_site"] },
+    zones:["marshcamp","weeping_marsh","drowned_crypt","hollow_reeds","spawn_pools","ritual_site"] },
   { id:3, rn:"III",name:"The City Beneath the Sand", camp:"khalcamp", boss:"azram",     next:"cathedral1", intro:["THE CITY BENEATH THE SAND","Khal-Zahir — Act III"],
-    zones:["khalcamp","desert_wastes","underground_market","sand_tombs","khal_palace"] },
+    zones:["khalcamp","desert_wastes","underground_market","sand_tombs","shard_flats","tomb_sanctum","khal_palace"] },
   { id:4, rn:"IV", name:"The Shattered Cathedral", camp:"cathedral1", boss:"malthoron", next:"hellgate",   intro:["THE SHATTERED CATHEDRAL","The Drifting Cathedral — Act IV"],
     zones:["cathedral1","cathedral_cinderwatch","cathedral2","cathedral_bastion"] },
   { id:5, rn:"V",  name:"The Throne of Cinders", camp:"hellgate",  boss:"vethriss",     next:null,         intro:["THE THRONE OF CINDERS","The Burning Hells — Act V"],
@@ -3947,6 +3849,21 @@ DATA.ACT3_ENEMY_PROFILES = {
   stone_gargoyle:{act3Combat:{role:'flanker',sound:'hit',special:{kind:'leap',range:8,radius:2.2,cd:6,mult:1.6,elem:'phys'}}},
   chained_sovereign:{act3Combat:{role:'boss',sound:'hit',special:{kind:'pulse',radius:3,cd:6,mult:1.5,windup:.55,recovery:.25,elem:'phys'}}},
 };
+/* The northern pass changes resolved instances, never the shared catalog. */
+DATA.ACT1_ZONES = ['frosthaven_approach','north_wild','mines','shattered_temple','shardpeak_shrine','deepfreeze_cavern'];
+DATA.ACT1_ENEMY_PROFILES = {
+  frost_archer:{projectile:{elem:'cold'}}, ice_lurker:{meleeElem:'cold'},
+  rimebound_guardian:{meleeElem:'cold'}, shatter_wasp:{meleeElem:'cold'},
+  glacial_crawler:{meleeElem:'cold'}, grave_wraith:{meleeElem:'shadow'},
+  caustic_ooze:{meleeElem:'poison'}, barb_sword:{whirl:{elem:'light'}},
+  hoarfang:{slam:{elem:'cold'}},
+  frost_wyrm:{name:'Frostmaw Yeti',family:'beast',sprite:'brute',artId:'identity_frostmaw_yeti',
+    weapon:'none',meleeElem:'phys',projectile:null,keepDist:null,chillOnHit:null,
+    title:'of the White Reach',
+    breath:{cd:6,range:5,radius:5,arc:Math.PI/3,windup:.8,recovery:.65,mult:1,elem:'cold'},
+    slam:{cd:8,radius:2.6,mult:1.3,windup:.8,recovery:.7,elem:'cold'},
+    artReview:{anatomy:'shaggy alpine ape',weapon:'none',element:'cold',note:'Frostmaw Yeti: physical claws, cold breath and slam.'}},
+};
 DATA.resolveEnemy = function(id,zoneId) {
   const d=JSON.parse(JSON.stringify(DATA.ENEMIES[id]));
   const p=DATA.ACT3_ROSTERS[zoneId]&&DATA.ACT3_ENEMY_PROFILES[id];
@@ -3954,7 +3871,93 @@ DATA.resolveEnemy = function(id,zoneId) {
     if(d.act3Combat.meleeElem)d.artReview.element=d.act3Combat.meleeElem;
     if(d.act3Combat.special)d.act3Combat.special={windup:.75,recovery:.85,cd:7,mult:1.2,...d.act3Combat.special};
   }
+  if(DATA.ACT1_ZONES.includes(zoneId)) {
+    for(const [key,value] of Object.entries(DATA.ACT1_ENEMY_PROFILES[id]||{})) {
+      if(value===null)delete d[key];
+      else if(value&&typeof value==='object'&&!Array.isArray(value))d[key]={...(d[key]||{}),...JSON.parse(JSON.stringify(value))};
+      else d[key]=value;
+    }
+    d.meleeElem ||= 'phys';
+  }
   return d;
+};
+
+/* Monster societies are separate from damage types (undead/beast/etc.). A
+   family shares territory and answers its own pack; it does not change art,
+   resistances, or the rival factions of the Cinderdeep. */
+DATA.MONSTER_FAMILIES = {
+  rimebound:{name:'Rimebound Watch',routine:'patrol',habitat:'watch|burial|forecourt|vigil|court|procession|shelter',members:['frost_risen','frost_archer','barb_guard','rimebound_guardian'],site:'camp'},
+  shardbound:{name:'Shardbound',routine:'ritual',habitat:'mine|ore|haul|quarry|summit|reliquary|cache|refuge',members:['shard_thrall','shard_sentinel'],site:'ritual'},
+  icefang:{name:'Icefang Pack',routine:'prowl',habitat:'caravan|deep|narrows|lee|shelf|spring',members:['ice_lurker','glacial_crawler'],site:'den'},
+  white_reach:{name:'White Reach Yeti',routine:'guard',habitat:'windward|overlook|basin',members:['frost_wyrm'],site:'den'},
+  icebrood:{name:'Glacial Brood',routine:'nest',habitat:'gallery|shelf|basin',members:['shatter_wasp'],site:'nest'},
+  grave_host:{name:'Grave Host',routine:'patrol',habitat:'grave|crypt|vigil|tomb',members:['risen','bone_archer','tomb_husk','fallen_blade','grave_wraith'],site:'camp'},
+  ashen_cult:{name:'Ashen Covenant',routine:'ritual',habitat:'chapel|altar|sanctum|cloister',members:['cult_acolyte','cult_zealot','gloom_shade'],site:'ritual'},
+  gravefang:{name:'Gravefang Pack',routine:'prowl',habitat:'field|wood|trail',members:['grave_hound'],site:'den'},
+  webbrood:{name:'Crypt Brood',routine:'nest',habitat:'crypt|cave|hollow',members:['crypt_widow','blight_wasp','cave_python'],site:'nest'},
+  rotroot:{name:'Rotroot Kin',routine:'guard',habitat:'root|grove|reed|procession|garden',members:['fen_stalker','thorn_shambler','gnarl_treant','blight_treant'],site:'den'},
+  drowned:{name:'Drowned Host',routine:'guard',habitat:'grave|ossuary|hamlet|wreck|stores',members:['drowned_dead','lure_child'],site:'barrow'},
+  silent_choir:{name:'Silent Choir',routine:'ritual',habitat:'bell|nave|monastery|aisle|choir|procession|shrine',members:['silent_cultist','song_thrall','choir_herald'],site:'ritual'},
+  mirebrood:{name:'Mire Brood',routine:'nest',habitat:'pool|sluice|brood|cistern|nursery|basin',members:['bog_bloat','marsh_larvae','sludge_horror','caustic_ooze'],site:'nest'},
+  mirefang:{name:'Mirefang Pack',routine:'prowl',habitat:'reed|fork|wreck|bank|hunt',members:['marsh_wretch','marsh_serpent'],site:'den'},
+  stonewing:{name:'Stonewing Sentinels',routine:'guard',habitat:'cloister|reliquary|gate|terrace',members:['stone_gargoyle','chapel_grotesque','void_gargoyle'],site:'sigil'},
+  duneclan:{name:'Duneclan',routine:'patrol',habitat:'caravan|road|camp|market|well',members:['sand_raider'],site:'camp'},
+  sandcoil:{name:'Sandcoil Nest',routine:'nest',habitat:'dune|waste|basin|cut',members:['dune_serpent'],site:'nest'},
+  gilded_host:{name:'Gilded Host',routine:'patrol',habitat:'tomb|court|palace|guard|procession',members:['tomb_guard','gilded_thrall','soul_chained'],site:'camp'},
+  bound_souls:{name:'Unquiet Souls',routine:'guard',habitat:'prison|crypt|sanctum|binding',members:['prisoned_shade','dune_shade'],site:'barrow'},
+  shardforged:{name:'Shardforged',routine:'guard',habitat:'engine|relay|quarry|aqueduct|flats|forge',members:['gilt_construct','shard_construct','crystal_marauder'],site:'sigil'},
+  hollow_order:{name:'Hollow Order',routine:'patrol',habitat:'nave|bastion|sanctuary|ritual',members:['hollow_knight','choir_priest'],site:'camp'},
+  lost_memory:{name:'Lost Memories',routine:'guard',habitat:'memory|cinderwatch|karrhal|flank',members:['memory_wraith','soul_eater'],site:'sigil'},
+  ash_legion:{name:'Ash Legion',routine:'patrol',habitat:'gate|forge|barrack|causeway|forecourt|wall',members:['ash_fiend','impaler','ashfiend_reaver','infernal_warlord','r50_knight','r55_knight','r59_robed','r64_robed','r84_warlord'],site:'camp'},
+  cinder_brood:{name:'Cinder Brood',routine:'prowl',habitat:'pit|brood|waste|furnace|treasury',members:['cinder_hound','pit_brute','wretch_lord','brimstone_brute','cinder_imp','hex_imp','flesh_engine','ash_drake','r53_imp'],site:'den'},
+  ashen_dead:{name:'Ashen Dead',routine:'guard',habitat:'monument|kings|crypt',members:['bone_dragon','void_wraith','r47_skeleton','r56_wraith','r66_wraith','r75_wraith'],site:'barrow'},
+};
+DATA.MONSTER_FAMILY_BY_ID = {};
+for(const [family,def] of Object.entries(DATA.MONSTER_FAMILIES))for(const id of def.members)DATA.MONSTER_FAMILY_BY_ID[id]=family;
+// Signature wildlife lives in specific habitats. No level-based cross-act spill.
+for(const [zone,ids] of Object.entries({
+  north_wild:['shard_sentinel'],mines:['frost_archer','shard_sentinel'],
+  shattered_temple:['shard_sentinel','rimebound_guardian'],
+  shardpeak_shrine:['shard_thrall','frost_wyrm'],deepfreeze_cavern:['frost_wyrm'],
+  crypt1:['grave_wraith'],crypt2:['grave_wraith'],forest:['gnarl_treant'],
+  ash_wastes:['infernal_warlord','r50_knight','r59_robed','r53_imp','r47_skeleton','void_wraith'],
+  cinder_bastion:['infernal_warlord','r55_knight','r64_robed','flesh_engine','cinder_hound','r53_imp'],
+  throne:['r55_knight','r64_robed','r84_warlord','bone_dragon','r47_skeleton','r66_wraith','r75_wraith'],
+}))DATA.ZONES[zone].spawns=[...new Set([...DATA.ZONES[zone].spawns,...ids])];
+DATA.monsterFamily = id => DATA.MONSTER_FAMILY_BY_ID[id] || null;
+DATA.FAMILY_TERRITORIES = {
+  north_wild:{watch:'rimebound',mine:'shardbound',watch_beacon:'rimebound',burial_beacon:'rimebound',quarry_beacon:'shardbound',forecourt:'rimebound',caravan:'icefang',overlook:'icefang',shardpeak:'rimebound',deepfreeze:'icefang'},
+  mines:{haul:'shardbound',ore:'shardbound',refuge_0:'rimebound',refuge_1:'rimebound',refuge_2:'rimebound',deep:'icefang',cache:'shardbound'},
+  deepfreeze_cavern:{gallery:'icebrood',narrows:'icefang',basin:'white_reach',shelf:'icebrood',cache:'shardbound'},
+  sand_tombs:{burial:'gilded_host',engine:'shardforged',prison:'bound_souls',vault:'gilded_host',reliquary:'stonewing'},
+  shard_flats:{basin:'sandcoil',causeway:'duneclan',quarry:'shardforged',lowroad:'bound_souls',overlook:'shardforged'},
+  khal_palace:{avenue:'gilded_host',audience:'gilded_host',west:'bound_souls',east:'shardforged',approach:'gilded_host'},
+  cathedral2:{ritual_0:'hollow_order',ritual_1:'lost_memory',ritual_2:'hollow_order',bastion:'hollow_order'},
+  ash_wastes:{siege:'ash_legion',crossing:'cinder_brood',crossroads:'cinder_brood',monument:'ashen_dead',forecourt:'ash_legion',bastion:'ash_legion'},
+  cinder_bastion:{muster:'ash_legion',furnace:'cinder_brood',battlement:'ash_legion',command:'ash_legion',treasury:'cinder_brood'},
+  throne:{kings:'ashen_dead',guard:'cinder_brood',causeway:'ash_legion'},
+};
+DATA.familyPools = function(zoneId) {
+  const pools={};
+  for(const id of DATA.ZONES[zoneId]?.spawns||[]){
+    if(DATA.ENEMIES[id]?.boss)continue;
+    const family=DATA.monsterFamily(id);if(family)(pools[family] ||= []).push(id);
+  }
+  return pools;
+};
+DATA.familyAt = function(zoneId,place) {
+  const pools=DATA.familyPools(zoneId),families=Object.keys(pools),label=place.id+' '+(place.label||'');
+  const authored=DATA.FAMILY_TERRITORIES[zoneId]?.[place.id];if(pools[authored])return authored;
+  const matches=families.filter(id=>new RegExp(DATA.MONSTER_FAMILIES[id].habitat,'i').test(label));
+  const choices=matches.length?matches:families;
+  return choices[U.hash(zoneId+':'+place.id)%choices.length]||null;
+};
+DATA.familyMembers = function(zoneId,place,random) {
+  const pool=DATA.familyPools(zoneId)[DATA.familyAt(zoneId,place)]||DATA.ZONES[zoneId].spawns;
+  const melee=pool.filter(id=>!DATA.resolveEnemy(id,zoneId).projectile),ranged=pool.filter(id=>DATA.resolveEnemy(id,zoneId).projectile);
+  // Screen a bow/caster with its own kin. Rotate the available melee variants.
+  const front=U.pickR(random,melee.length?melee:pool),back=ranged.length?U.pickR(random,ranged):front;
+  return [front,back,...pool.filter(id=>id!==front&&id!==back),front];
 };
 
 /* =====================  DEV-TOOL DATA OVERRIDES  =====================

@@ -1,0 +1,142 @@
+{
+  "method": "Exact pre-pass workspace JS snapshot versus current code; three alternating pairs; 24 enemies, eight tinted, six deaths; 90 warmup and 240 measured update/render frames. CPU submission timing, not display latency.",
+  "browser": "152.0.7977.83",
+  "results": [
+    {
+      "width": 1920,
+      "beforeP95": 3.0999999940395355,
+      "afterP95": 3.7999999970197678,
+      "p95ChangePercent": 22.580645300843337,
+      "withinTarget": false
+    },
+    {
+      "width": 3840,
+      "beforeP95": 3.5,
+      "afterP95": 3.699999988079071,
+      "p95ChangePercent": 5.714285373687744,
+      "withinTarget": true
+    }
+  ],
+  "runs": [
+    {
+      "width": 1920,
+      "pair": 0,
+      "version": "before",
+      "median": 2.699999988079071,
+      "p95": 4.299999997019768,
+      "animated": 0,
+      "deaths": 0,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "pair": 0,
+      "version": "after",
+      "median": 2.7999999970197678,
+      "p95": 5,
+      "animated": 2525,
+      "deaths": 780,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "pair": 1,
+      "version": "after",
+      "median": 2.4000000059604645,
+      "p95": 3.2999999970197678,
+      "animated": 780,
+      "deaths": 780,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "pair": 1,
+      "version": "before",
+      "median": 2.5999999940395355,
+      "p95": 3.0999999940395355,
+      "animated": 0,
+      "deaths": 0,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "pair": 2,
+      "version": "before",
+      "median": 2.7000000029802322,
+      "p95": 3.0999999940395355,
+      "animated": 0,
+      "deaths": 0,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "pair": 2,
+      "version": "after",
+      "median": 2.699999988079071,
+      "p95": 3.7999999970197678,
+      "animated": 780,
+      "deaths": 780,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "pair": 0,
+      "version": "before",
+      "median": 3.0999999940395355,
+      "p95": 3.8999999910593033,
+      "animated": 0,
+      "deaths": 0,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "pair": 0,
+      "version": "after",
+      "median": 2.5999999940395355,
+      "p95": 3.2000000029802322,
+      "animated": 780,
+      "deaths": 780,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "pair": 1,
+      "version": "after",
+      "median": 2.800000011920929,
+      "p95": 3.699999988079071,
+      "animated": 780,
+      "deaths": 780,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "pair": 1,
+      "version": "before",
+      "median": 2.8999999910593033,
+      "p95": 3.3999999910593033,
+      "animated": 0,
+      "deaths": 0,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "pair": 2,
+      "version": "before",
+      "median": 3,
+      "p95": 3.5,
+      "animated": 0,
+      "deaths": 0,
+      "errors": []
+    },
+    {
+      "width": 3840,
+      "pair": 2,
+      "version": "after",
+      "median": 2.699999988079071,
+      "p95": 4.0999999940395355,
+      "animated": 780,
+      "deaths": 780,
+      "errors": []
+    }
+  ]
+}

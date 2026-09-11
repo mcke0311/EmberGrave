@@ -9,7 +9,7 @@ fs.mkdirSync(dest,{recursive:true});
  try{
   await page.goto(root+'/index.html');await page.waitForSelector('#titleMenu button',{timeout:90000});
   await page.evaluate(async()=>{Sfx.setVol('master',0);await Game.newGame('Waystone Review','wildkeeper',false);await Game.skipOpening();UI.closeAll();Game.debugFlags.god=true;Game.state.monsters=[];Game.state.shrines.push('north_wild');UI.openShrine();});
-  ok(await page.locator('.wp-tab').count()===6,'six region tabs');
+  ok(await page.locator('.wp-tab').count()===5,'five campaign act tabs');
   ok(await page.locator('.wp-tab[aria-selected=true]').innerText()==='Act I','current act selected');
   ok(await page.locator('.wp-travel').isDisabled(),'current location cannot travel');
   await page.getByRole('button',{name:'The Abandoned Mines, Not attuned',exact:true}).click();

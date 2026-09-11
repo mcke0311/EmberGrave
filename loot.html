@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Items & affixes — Embergrave</title><link rel="stylesheet" href="css/loot-data.css"></head>
+<body>
+<header><div><span class="eyebrow">EMBERGRAVE / DESIGN REFERENCE</span><h1>Items & affixes</h1><p>Explore the loot. See the odds. Find the power.</p></div><nav aria-label="Navigation"><a href="editor.html">Data editor ↗</a><a href="index.html">Back to game ↗</a></nav></header>
+<main>
+<div class="summary" id="summary"></div>
+<div class="toolbar"><div class="tabs" role="tablist" aria-label="Data view"><button id="itemsTab" role="tab" aria-selected="true" aria-controls="itemsView">Items</button><button id="affixesTab" role="tab" aria-selected="false" aria-controls="affixesView" tabindex="-1">Affixes</button></div><button id="export">Export filtered CSV ↓</button></div>
+<section id="itemsView" role="tabpanel" aria-labelledby="itemsTab">
+<div class="controls">
+<label class="search">Search items or brown powers<input id="search" type="search" placeholder="Name, stat, trigger, cooldown…"></label>
+<label>Item type<select id="kind"><option value="uniqueAll">All uniques / brown powers</option><option value="all">All items</option></select></label>
+<label>Slot<select id="slot"><option value="all">All slots</option></select></label>
+<label>Drop source<select id="source"></select></label>
+<label>Source level on Normal<input id="level" type="number" value="5" min="1" max="150"></label>
+<label>Difficulty (sort / filter)<select id="difficulty"></select></label>
+<label>Magic Find %<input id="mf" type="number" value="0" min="0" max="10000"></label>
+<label>Sort by<select id="sort"><option value="level">Item level ↑</option><option value="chance" selected>Drop chance ↓</option><option value="name">Name A–Z</option></select></label>
+</div>
+<p class="explain" id="scenario"></p>
+<div class="split"><div class="results"><div class="resultbar"><span id="count" role="status"></span><label><input id="eligible" type="checkbox"> Can drop on selected difficulty</label></div><div class="table-scroll"><table><thead><tr id="itemHeaders"></tr></thead><tbody id="items"></tbody></table></div><div class="pager"><button id="prev">← Previous</button><span id="page"></span><button id="next">Next →</button></div></div>
+<aside id="detail" aria-label="Selected item details"></aside></div>
+</section>
+<section id="affixesView" role="tabpanel" aria-labelledby="affixesTab" hidden>
+<div class="controls"><label class="search">Search affixes<input id="affixSearch" type="search" placeholder="Name, stat, group…"></label><label>Roll on<select id="affixBase"></select></label><label>Item level<input id="affixLevel" type="number" min="1" max="150" value="20"></label><label>Kind<select id="affixKind"><option value="all">Prefixes & suffixes</option><option>Prefix</option><option>Suffix</option></select></label><label class="check"><input type="checkbox" id="affixEligible"> Eligible tiers only</label></div>
+<p class="explain">Chance is for a specific tier on the <strong>first affix draw</strong> for the selected item. It is not a drop chance or the chance on a completed item. Families use weighted selection; tiers use 60% highest eligible + 40% uniform selection. Later rolls exclude used groups; gear caps each prefix/suffix kind at three.</p>
+<p class="explain" id="affixRules"></p><p id="affixCount" role="status"></p>
+<div class="table-scroll"><table><thead><tr><th>Affix / group</th><th>Kind</th><th>Minimum level</th><th>Stat range</th><th>Allowed gear / weight</th><th>First draw chance</th></tr></thead><tbody id="affixes"></tbody></table></div>
+</section>
+<details class="method"><summary>How to read these numbers</summary><p>Item percentages are the chance of at least one copy per normal monster, elite, boss, chest, or breakable. Gear accounts for all attempts and the source level −1 / 0 / +1 rolls. Base equipment rows combine common, enhanced, and rare outcomes; named uniques and sets have separate rows. Magic Find uses the game's diminishing returns for uniques and adjusted rarity weights.</p><p>Where to find lists standard zone spawn definitions at the selected difficulty, plus container odds where a container exists. It does not measure spawn frequency, clear speed, or container density. Scripted encounters, event caches, rich chests (+40 Magic Find), shops, crafting, and focused glyph rewards can use different rules. Boss-owned reinforcements do not drop loot. Quest rewards listed in item details are one-time chances.</p><p>This page reads the same data, authored unique powers, and saved data overrides as the game. Browsing and changing scenarios do not change balance or hero saves.</p></details>
+</main>
+<script src="js/utils.js"></script><script src="js/data.js"></script><script src="js/unique_powers.js"></script><script src="js/data_overrides.js"></script><script src="js/items.js"></script><script src="js/loot_data.js"></script><script src="js/loot_data_view.js"></script>
+</body></html>

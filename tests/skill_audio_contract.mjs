@@ -53,7 +53,7 @@ const h=harness(),{audio:a,ac,vol}=h;
 const owner={x:5,y:5,skills:{},stats:{ranged:false},form:null,dead:false};
 const ids=Object.keys(a.recipes);
 ok(ids.length===108,'all 107 skills and basic must be explicit');
-ok(ids.filter(id=>a.recipes[id].passive).length===16,'passive coverage changed');
+ok(ids.filter(id=>a.recipes[id].passive).length===18,'passive coverage includes Master of the Hunt and Exploit Weakness');
 ok(a.play('basic','release',{owner})===null,'played before audio init');
 await h.init();await h.init();
 ok(h.counts().fetches===78&&h.counts().decodes===78,'textures not loaded once');

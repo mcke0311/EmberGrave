@@ -83,29 +83,29 @@ veilranger_0_1 gold volley
 veilranger_0_2 gold draw
 veilranger_0_3 gold passive:weapon
 veilranger_0_4 steel ricochet
-veilranger_0_5 steel skewer
+veilranger_0_5 blood passive:weapon
 veilranger_0_6 steel rain
 veilranger_1_0 steel barbed
 veilranger_1_1 steel passive:trap
 veilranger_1_2 frost frosttrap
-veilranger_1_3 steel tripwire
+veilranger_1_3 steel dragnet
 veilranger_1_4 steel caltrop
 veilranger_1_5 fire powder
-veilranger_1_6 shadow decoy
+veilranger_1_6 blood passive:trap
 veilranger_2_0 shadow blink
-veilranger_2_1 shadow smoke
+veilranger_2_1 shadow umbral
 veilranger_2_2 shadow passive:movement
-veilranger_2_3 blood coat
+veilranger_2_3 shadow dusk
 veilranger_2_4 blood mark
-veilranger_2_5 shadow afterimage
-veilranger_2_6 blood hemorrhage
+veilranger_2_5 shadow flurry
+veilranger_2_6 shadow deathblow
 call_wolf nature wolf
 thornback_boar earth boar
 wildkeeper_0_2 storm hawk
 wildkeeper_0_3 earth bear
 kinship nature passive:minion
 feral_howl nature howl
-wildkeeper_0_6 blood packsacrifice
+wildkeeper_0_6 nature ent
 wildkeeper_1_0 storm totem
 totem_mastery storm passive:totem
 ground_fissure earth fissure
@@ -204,6 +204,7 @@ wildkeeper_2_6 fire apexform`;
       burst(r,before,16);burst(r,at(p,18),12);captureGhost(p,before);
     }
     if(sk.type==='form'){push('rise',r,at(p),{dur:.8,radius:1.2});burst(r,at(p,15),22);}
+    if(sk.type==='dragnet')push('netcast',r,at(aim),{owner:p,action:p.action,fromX:p.x,fromY:p.y,tx:aim.x,ty:aim.y,dur:.4,radius:sk.radius(rk)});
     if(sk.type==='grapple'){const end=before.aim||aim;beam(before.x,before.y,end.x,end.y,r,{chain:true,dur:.42});}
     if(['deathmark','doom','plague_seed','taunt_curse'].includes(sk.type))push('sigil',r,at(aim,36),{dur:.7,radius:.65});
     if(['minionbuff','sacrifice'].includes(sk.type))for(const mi of world?.minions||[])if(!mi.dead)push('rise',r,at(mi),{dur:.6,radius:.7});
@@ -214,11 +215,11 @@ wildkeeper_2_6 fire apexform`;
     if(!enabled||p.dead)return;
     const r=get(id);if(!r)return;
     const sk=p.resolveSkill?.(id)||DATA.SKILLS[id],rk=Math.max(1,p.effRank(id));
-    const melee=['combo','combo_finish','execute','bash','rabies','fireclaw','sweep'].includes(sk?.type)||((id==='basic'||sk?.type==='melee')&&!p.stats.ranged);
+    const melee=['combo','combo_finish','execute','bash','rabies','fireclaw','sweep','dusk_cleave'].includes(sk?.type)||((id==='basic'||sk?.type==='melee')&&!p.stats.ranged);
     sampleAnchors(p);
     const a=actors.get(p)||{};a.released=true;a.trail=[];a.trailUntil=melee?now+.25:0;actors.set(p,a);
     if(melee){
-      push('slash',r,at(p,18),{owner:p,angle:p.visAng||0,radius:value(sk,'range',rk,p.stats.range||1.5),dur:sk?.type==='execute'?.36:.24,heavy:['combo_finish','execute','bash'].includes(sk?.type)});
+      push('slash',r,at(p,18),{owner:p,angle:p.visAng||0,radius:value(sk,'range',rk,p.stats.range||1.5),dur:sk?.type==='execute'?.36:.24,heavy:['combo_finish','execute','bash','dusk_cleave'].includes(sk?.type)});
     }else if(!['charge','leap','form'].includes(sk?.type))push('flash',r,anchor(p),{dur:.19,radius:r.motif==='draw'?1.2:.65});
   }
   function hit(p,target,elem,critical=false){
@@ -371,10 +372,26 @@ wildkeeper_2_6 fire apexform`;
     line(c,points,palettes[r.material][1],width*3,.18);line(c,points,palettes[r.material][1],width,.85);line(c,points,palettes[r.material][0],width*.4,1);
     for(let i=2;i<n;i+=4){const p=points[i],side=noise(seed,i)>.5?1:-1;line(c,[p,[p[0]+dx/n-dy/length*side*9,p[1]+dy/n+dx/length*side*9],[p[0]+dx/n*2-dy/length*side*18,p[1]+dy/n*2+dx/length*side*18]],palettes[r.material][1],.7,.5);}
   }
+  function netMesh(c,x,y,radius,alpha=1){
+    c.save();c.translate(x,y);c.scale(1,.5);c.globalAlpha*=alpha;
+    c.beginPath();c.arc(0,0,radius,0,TAU);c.clip();
+    for(let i=-radius*2;i<=radius*2;i+=Math.max(7,radius/5)){
+      line(c,[[i-radius,-radius],[i+radius,radius]],'#e4d6ac',1.5,.85);
+      line(c,[[i-radius,radius],[i+radius,-radius]],'#b69c6b',1.5,.85);
+    }
+    c.restore();c.save();c.strokeStyle='#e4d6ac';c.lineWidth=2;c.globalAlpha*=alpha;c.beginPath();c.ellipse(x,y,radius,radius*.5,0,0,TAU);c.stroke();c.restore();
+  }
   function drawEvent(c,e,cam){
     const r=e.recipe,col=palettes[r.material],k=clamp(e.t/e.dur),fade=Math.pow(1-k,1.3),[x,y]=project(e,cam),rad=e.radius*32;
     c.save();c.globalAlpha*=fade;
-    if(e.kind==='prepare'){
+    if(e.kind==='beam'&&e.veilBlade){
+      const [tx,ty]=project({x:e.tx,y:e.ty,z:e.tz,surfaceId:e.surfaceId},cam),u=Math.min(1,k*2);
+      line(c,[[x,y],[tx,ty]],col[1],2,fade*.65);shard(c,x+(tx-x)*u,y+(ty-y)*u,7,Math.atan2(ty-y,tx-x),col);
+    }else if(e.kind==='netcast'){
+      const [fx,fy]=project({x:e.fromX,y:e.fromY,z:terrain(e.fromX,e.fromY)+24},cam);
+      const u=k*k,px=fx+(x-fx)*u,py=fy+(y-fy)*u-Math.sin(k*Math.PI)*48;
+      c.globalAlpha=1;netMesh(c,px,py,12+rad*k*.75,.85);
+    }else if(e.kind==='prepare'){
       const [hx,hy]=project(anchor(e.owner),cam);glow(c,r,hx,hy,24+36*k,24+36*k,.45);
       for(let i=0;i<5;i++){const a=i*TAU/5+e.t*3,rr=22*(1-k)+3;shard(c,hx+Math.cos(a)*rr,hy+Math.sin(a)*rr*.7,1.8,a,col,r.material==='bone');}
     }else if(e.kind==='slash'){
@@ -430,7 +447,10 @@ wildkeeper_2_6 fire apexform`;
     const arrow=pr.kind==='arrow',wide=['draw','skewer','lance','bonespear'].includes(r.motif);
     ribbon(c,pts,r,arrow?(wide?4:2):r.material==='fire'?11:6,.85);
     if(!arrow)glow(c,r,x,y,pr.kind==='cadaver'?30:r.material==='fire'?48:32,undefined,.6);
-    if(r.material==='storm'&&!arrow){
+    if(pr.veilCast){
+      const heavy=r.motif==='deathblow';shard(c,x,y,heavy?13:8,angle,col);
+      if(heavy)shard(c,x-Math.cos(angle)*14,y-Math.sin(angle)*14,6,angle,col);
+    }else if(r.material==='storm'&&!arrow){
       const dx=Math.cos(angle)*17,dy=Math.sin(angle)*17;lightning(c,r,x-dx,y-dy,x+dx*.4,y+dy*.4,r.seed,now,1.8);
     }else if(r.material==='fire'&&!arrow){
       c.save();c.translate(x,y);c.rotate(angle+Math.PI/2);flame(c,r,0,9,29,r.seed,now);c.restore();
@@ -459,6 +479,8 @@ wildkeeper_2_6 fire apexform`;
           for(let i=0;i<16;i++){const a=i*TAU/16;line(c,[[x+Math.cos(a)*(rr-3),y+Math.sin(a)*(rr-3)*.5],[x+Math.cos(a)*(rr+2),y+Math.sin(a)*(rr+2)*.5]],col[0],1,.35);}
         }
       }
+    }else if(f.type==='dragnet'){
+      const k=clamp(1-f.ttl/f.maxTtl);netMesh(c,x,y,rad*(1-.8*k),1-k);
     }else if(f.type==='groundfield'){
       const n=Math.min(32,Math.max(10,Math.round((f.radius||2)*7)));
       for(let i=0;i<n;i++){
@@ -534,6 +556,7 @@ wildkeeper_2_6 fire apexform`;
     if(!enabled||p.dead)return;const a=actors.get(p),[x,y]=project(at(p),cam);
     if(a?.trailUntil>now&&a.trail?.length>1)ribbon(c,a.trail.map(t=>project(t,cam)),a.recipe,6,clamp((a.trailUntil-now)/.25));
     if(p.drawing){const r=get(p.drawing.sourceSkill);if(r){const k=clamp(p.drawing.t/p.drawing.maxDraw),[hx,hy]=project(anchor(p,'weapon'),cam);glow(c,r,hx,hy,20+k*32,20+k*32,.25+k*.3);for(let i=0;i<3;i++){const ang=i*TAU/3+now*2,rr=16*(1-k)+5;shard(c,hx+Math.cos(ang)*rr,hy+Math.sin(ang)*rr,2,ang,palettes[r.material]);}}}
+    if(p.shadowAmbushUntil>now){const col=palettes.shadow;for(const sign of [-1,1]){shard(c,x+sign*19,y-26,5,sign*.4,col);line(c,[[x+sign*13,y-17],[x+sign*20,y-26],[x+sign*13,y-35]],col[0],1.5,.8);}}
     const wards=p.buffs?.filter(b=>b.sourceSkill&&get(b.sourceSkill)&&(!b.until||b.until>now))||[];
     if(p.boneWard?.hp>0&&p.boneWard.until>now)wards.unshift({sourceSkill:'gravebinder_0_4',until:p.boneWard.until});
     // Buff refresh may recreate objects every tick; presentation follows duration.
@@ -553,6 +576,11 @@ wildkeeper_2_6 fire apexform`;
     else if(m.curseFrailty&&m.curseFrailty.until>now)r=get('mark_of_frailty');
     else if(m.curseWither&&m.curseWither.until>now)r=get('withering_hex');
     if(r){const col=palettes[r.material];c.save();c.globalAlpha=.7;line(c,[[x-5,y-8],[x,y-12],[x+5,y-8],[x,y+1],[x-5,y-8]],col[1],1.3);line(c,[[x,y-14],[x,y+3]],col[0],.8);c.restore();}
+    if(m.veilExposedUntil>now){const col=palettes.shadow;line(c,[[x-12,y-7],[x-17,y],[x-12,y+7]],col[0],2);line(c,[[x+12,y-7],[x+17,y],[x+12,y+7]],col[0],2);line(c,[[x-4,y-4],[x+4,y+4]],col[1],2);line(c,[[x+4,y-4],[x-4,y+4]],col[1],2);}
+    if(m.snarePull||m.snareRootUntil>now){
+      const [nx,ny]=project(at(m,2),cam);netMesh(c,nx,ny,Math.max(17,m.radius*40),.75);
+      line(c,[[nx-12,ny-2],[nx-8,ny-20],[nx+8,ny-20],[nx+12,ny-2]],'#e4d6ac',1,.75);
+    }
     if((m.plague&&m.plague.until>now)||(m.rabies&&m.rabies.until>now)){
       const col=palettes.poison;c.save();c.globalAlpha=.45;
       for(let i=0;i<3;i++){const a=now+i*TAU/3,rr=13+Math.sin(now*2+i)*3;c.strokeStyle=col[1];c.lineWidth=1;c.beginPath();c.arc(x+Math.cos(a)*rr,y+24+Math.sin(a)*5,2,0,TAU);c.stroke();}c.restore();
@@ -562,6 +590,13 @@ wildkeeper_2_6 fire apexform`;
   const visible=(p,cam,w,h,margin=120)=>{const [x,y]=project(p,cam);return x>-margin&&y>-margin&&x<w+margin&&y<h+margin;};
   function drawGround(c,state,cam,surfaceId=0){
     if(!enabled||state.player?.dead)return;
+    for(const mi of state.minions){
+      if(mi.dead || (mi.surfaceId??0)!==surfaceId || !mi.auraRadius || !Object.keys(mi.auraStats||{}).length)continue;
+      const r=get(mi.sourceSkill); if(!r || !visible(mi,cam,c.canvas.width,c.canvas.height,mi.auraRadius*64))continue;
+      const [x,y]=project(at(mi),cam);
+      c.save();LevelTerrain.clipBehind(c,state.map,cam,mi.x,mi.y,mi.surfaceId);
+      rune(c,r,x,y,mi.auraRadius*32*Math.SQRT2,now,.3);c.restore();
+    }
     for(const e of events)if((e.surfaceId??0)===surfaceId&&groundEvent(e)&&visible(e,cam,c.canvas.width,c.canvas.height,e.radius*64+150)){c.save();LevelTerrain.clipBehind(c,state.map,cam,e.x,e.y,e.surfaceId);drawEvent(c,e,cam);c.restore();}
     for(const f of state.fx){
       if((f.surfaceId??0)!==surfaceId)continue;
@@ -598,7 +633,7 @@ wildkeeper_2_6 fire apexform`;
       c.save();LevelTerrain.clipBehind(c,state.map,cam,e.x,e.y,e.surfaceId);const [x,y]=project(e,cam);glow(c,e.recipe,x,y,Math.min(120,35+e.radius*20),30+e.radius*8,.14*(1-e.t/e.dur));c.restore();}
   }
   function diagnostics(){return {enabled,recipes:Object.keys(recipes).length-1,particles:particles.length,events:events.length,ghosts:ghosts.length,peakParticles,peakEvents,dropped,limits:LIMITS};}
-  const hasStatus=m=>enabled&&!m.dead&&!!(m.killMark||m.doom||m.curseFrailty||m.curseWither||m.plague||m.rabies);
+  const hasStatus=m=>enabled&&!m.dead&&!!(m.veilExposedUntil>now||m.snarePull||m.snareRootUntil>now||m.killMark||m.doom||m.curseFrailty||m.curseWither||m.plague||m.rabies);
   return Object.freeze({recipes,palettes,scope,context,activate,release,hit,area,beam,transfer,passive,registerProjectile,projectileContact,update,reset,drawGround,appendDraws,drawItem,drawProjectile,drawTrap,drawActor,drawStatus,drawLights,diagnostics,
     hasStatus,get enabled(){return enabled;},setEnabled(v){enabled=!!v;reset();},isStyled:o=>enabled&&!!fieldRecipe(o)});
 })();

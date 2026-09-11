@@ -51,6 +51,7 @@ function trigger(p,power,e){
  else for(let n=0;n<(['spend','move','overheal'].includes(power.event)?1:power.every||1);n++)Q.emit(p,power.event,e);
 }
 for(const entry of Object.values(Q.catalog))for(const [mode,power]of entry.powers.entries()){
+ if(power.event==='equip')continue; // Equipment is covered by unique_equipment_contract.
  powers++;
  const sig=mechanicSignature(power);ok(!signatures.has(sig),`${entry.id} repeats ${signatures.get(sig)} mechanically`);signatures.set(sig,entry.id);
  const text=Q.describe(entry,power);ok(text.length>40&&!/undefined|NaN/.test(text),`${entry.id}: readable power`);
@@ -83,81 +84,73 @@ for(const entry of Object.values(Q.catalog))for(const [mode,power]of entry.power
  p.equip={};p.inv.items=[];p.computeStats();ok(!p._unique.active.length&&!p.buffs.some(b=>b.uniqueKey),`${entry.id}: removal clears powers`);
  equip(p,entry.id,mode?'arm':'wpn');assert.deepEqual([...p._unique.states.values()].map(s=>s.ready),cooldowns);checks++;
 }
-// Real combat entrypoints and attribution, beyond direct event-unit tests.
+// Real combat entrypoints for the unchanged shared socketable powers.
 {
- const {p,state,target}=fresh();equip(p,'u_widow');p.tryHit=()=>false;p.strike(target,1);ok(!p._unique.states.size,'miss cannot charge power');
- p.tryHit=()=>true;for(let i=0;i<3;i++)p.strike(target,1);ok(p._unique.states.get('u_widow').ready===3,'three real strikes trigger burst');
+ const {p,state,target}=fresh();equip(p,'uj_rage');p.tryHit=()=>false;p.strike(target,1);ok(!p._unique.states.size,'miss cannot charge power');
+ p.tryHit=()=>true;for(let i=0;i<5;i++)p.strike(target,1);ok(p._unique.states.get('uj_rage').ready===5,'five real strikes trigger jewel');
 }
 {
- const {p,state,target}=fresh();equip(p,'u_crown');p.pay({mana:()=>30},1);ok(p.buffs.some(b=>b.uniqueEmpower),'real Aether spending');
- p.spellHit(target,20,'fire',{});ok(!p.buffs.some(b=>b.uniqueEmpower&&b.until>state.time),'real spell consumes empowerment');
+ const {p}=fresh();equip(p,'uc_mystic');p.pay({mana:()=>60},1);ok(p.buffs.some(b=>b.stats.fcr===15),'real Aether spending triggers charm');
 }
 {
- const {p,state,target}=fresh();equip(p,'u_oath');p.stats.block=100;p.tryBlock(target);ok(p.buffs.some(b=>b.uniqueEmpower),'real block');
+ const {p,target}=fresh();equip(p,'uj_seer');for(let i=0;i<4;i++)Q.emit(p,'cast',{skill:D.SKILLS.vanguard_0_0});
+ ok(p.buffs.some(b=>b.uniqueEmpower),'cast jewel grants empowerment');p.spellHit(target,20,'fire',{});ok(!p.buffs.some(b=>b.uniqueEmpower&&b.until>0),'real spell consumes empowerment');
 }
 {
- const {p,state,target}=fresh();equip(p,'u_marrow');p.hp=p.stats.maxHp;p.healLife(5);ok(p.buffs.some(b=>b.uniqueBarrier),'real overheal');
- const hp=p.hp;p.takeDamage(1,target);approx(p.hp,hp,'barrier absorbs a real incoming hit');
+ const {p,target}=fresh();equip(p,'g_titan','arm');p.stats.block=100;p.tryBlock(target);ok(p.buffs.some(b=>b.stats.str===20),'real block activates armor glyph');
 }
 {
- const {p,state}=fresh();equip(p,'u_stride');Q.tick(p);for(let i=0;i<8;i++){state.time+=.1;p.x+=.8;Q.tick(p);}ok(p.buffs.some(b=>b.stats.dodge),'walk distance triggers');
+ const {p,target}=fresh();equip(p,'uj_oak');p.takeDamage(10,target);ok(p.buffs.some(b=>b.uniqueBarrier),'real incoming hit activates barrier');
+ const hp=p.hp;p.takeDamage(1,target);approx(p.hp,hp,'barrier absorbs subsequent damage');
 }
 {
- const {p,state,target}=fresh();equip(p,'u_gen_5_3');const mi=new Minion('wolf',{hp:100,dmg:[2,3],speed:3,atkRate:1,range:1},p);
- target.takeDamage(1e9,mi);ok(p.buffs.some(b=>b.uniqueBarrier),'owned companion kill attributed');
+ const {p,state}=fresh();equip(p,'g_wraith','arm');Q.tick(p);for(let i=0;i<14;i++){state.time+=.1;p.x+=.8;Q.tick(p);}ok(p.buffs.some(b=>b.stats.dodge),'walking triggers armor glyph');
 }
 {
- const {p,state,target}=fresh();equip(p,'u_gen_5_3');target.takeDamage(1e9,state.monsters[1]);ok(!p.buffs.some(b=>b.uniqueKey),'enemy infighting does not grant kill power');
+ const {p,target}=fresh();equip(p,'g_wraith');const mi=new Minion('wolf',{hp:100,dmg:[2,3],speed:3,atkRate:1,range:1},p);
+ target.takeDamage(1e9,mi);ok(p.buffs.some(b=>b.uniqueEmpower),'owned companion kill attributed');
 }
 {
- const {p,state,target}=fresh();equip(p,'u_gravebite');target.type='undead';Q.guarded(p,()=>target.takeDamage(1e9,p));ok(!p.buffs.some(b=>b.uniqueKey),'proc kills cannot recursively trigger powers');
+ const {p,state,target}=fresh();equip(p,'g_wraith');target.takeDamage(1e9,state.monsters[1]);ok(!p.buffs.some(b=>b.uniqueKey),'enemy infighting does not grant kill power');
 }
 {
- const {p,target}=fresh();equip(p,'u_gravebite');target.type='undead';target.hp=1;
- const result=target.takeDamage(1e9,p);approx(result,1,'actual damage excludes overkill');
+ const {p,target}=fresh();equip(p,'g_wraith');Q.guarded(p,()=>target.takeDamage(1e9,p));ok(!p.buffs.some(b=>b.uniqueKey),'proc kills cannot recursively trigger powers');
 }
 {
- const {p,target}=fresh();equip(p,'u_widow');target.encounter={canDamage:()=>false};approx(target.takeDamage(100,p,{uniqueEvent:'strike'}),0,'protected boss damage');ok(!p._unique.states.size,'protected boss grants no hit triggers');
+ const {p,target}=fresh();target.hp=1;approx(target.takeDamage(1e9,p),1,'actual damage excludes overkill');
 }
 {
- const {p}=fresh();equip(p,'uc_quick');equip(p,'uc_quick');ok(Q.collect(p).filter(a=>a.key==='uc_quick').length===1,'duplicate charms');
- p.equip.ring1=item('u_marrow');p.equip.ring2=item('u_marrow');p.computeStats();ok(Q.collect(p).filter(a=>a.key==='u_marrow').length===1,'duplicate rings');
+ const {p,target}=fresh();equip(p,'uj_rage');target.encounter={canDamage:()=>false};approx(target.takeDamage(100,p,{uniqueEvent:'strike'}),0,'protected boss damage');ok(!p._unique.states.size,'protected boss grants no hit triggers');
 }
 {
- const {p,target}=fresh();equip(p,'u_gen_5_3');target.hp=1;
- const mi=new Minion('wolf',{hp:100,dmg:[2,3],speed:3,atkRate:1,range:1},p);
- mi.x=target.x;mi.y=target.y;mi.thornsFlat=10;mi.takeDamage(1,target);
- ok(target.dead&&p.buffs.some(b=>b.uniqueBarrier),'companion reflected-damage kill attributed');
+ const {p}=fresh('wildkeeper');equip(p,'uc_quick');equip(p,'uc_quick');ok(Q.collect(p).filter(a=>a.key==='uc_quick').length===1,'duplicate charms');
+ p.equip.ring1=item('u_marrow');p.equip.ring2=item('u_marrow');p.computeStats();ok(Q.collect(p).filter(a=>a.key==='u_marrow').length===1,'duplicate class powers');
 }
-// Every saved Unique and glyph mode survives repeated hydration without added stats.
+{
+ const {p,target}=fresh();equip(p,'g_wraith');target.hp=1;
+ const mi=new Minion('wolf',{hp:100,dmg:[2,3],speed:3,atkRate:1,range:1},p);mi.x=target.x;mi.y=target.y;mi.thornsFlat=10;mi.takeDamage(1,target);
+ ok(target.dead&&p.buffs.some(b=>b.uniqueEmpower),'companion reflected-damage kill attributed');
+}
 for(const id of expected){
  const original=item(id);original.gx=2;original.gy=3;
  const once=G.reviveItem(plain(G.serializeItem(original))),twice=G.reviveItem(plain(G.serializeItem(once)));
  assert.deepEqual(plain(G.serializeItem(once)),plain(G.serializeItem(twice)));checks++;
  ok(once.uniqueId===original.uniqueId&&once.gx===2&&once.gy===3,`${id}: save identity`);
-  assert.deepEqual(plain(once.affixes),plain(original.affixes));checks++;
+ assert.deepEqual(plain(once.affixes),plain(original.affixes));checks++;
 }
 {
- const {p,state,target}=fresh();equip(p,'u_crown');p.pay({mana:()=>30},1);target.encounter={canDamage:()=>false};
+ const {p,target}=fresh();equip(p,'uj_seer');for(let i=0;i<4;i++)Q.emit(p,'cast',{});target.encounter={canDamage:()=>false};
  p.spellHit(target,100,'fire',{});ok(p.buffs.some(b=>b.uniqueEmpower&&b.until>0),'protected boss does not consume empowered hit');
 }
 {
- const {p,state,target}=fresh();equip(p,'u_gen_2_0');
- Q.emit(p,'strike',{target,targetHpBefore:target.maxHp,damage:1});
- const dot=target.uniqueDots[0],hp=target.hp,expected=dot.dps*3*(1-target.elemRes(dot.elem)/100);
- for(let i=1;i<=180;i++){state.time=i/60;Q.tickDots(target,1/60);}
- approx(hp-target.hp,expected,'small damage-over-time values are not rounded up each frame');
+ const {p,state,target}=fresh();equip(p,'g_doom');target.type='demon';Q.emit(p,'strike',{target,damage:1});
+ const dot=target.uniqueDots[0],hp=target.hp,damage=dot.dps*3*(1-target.elemRes(dot.elem)/100);
+ for(let i=1;i<=180;i++){state.time=i/60;Q.tickDots(target,1/60);}approx(hp-target.hp,damage,'small DoT values are not rounded up each frame');
 }
 {
- const {p,state,target}=fresh();equip(p,'u_gen_18_0');
- const mi=new Minion('wolf',{hp:100,dmg:[10,10],speed:3,atkRate:1,range:1},p),before=mi.dmgRoll();
- Q.emit(p,'strike',{target,crit:true,damage:20});ok(mi.dmgRoll()>before,'existing companions receive temporary damage bonus');
- p.equip={};p.computeStats();approx(mi.dmgRoll(),before,'existing companion bonus ends on unequip');
-}
-{
- const {p,state,target}=fresh();equip(p,'u_gen_5_3');target.hp=1;
+ const {p,state,target}=fresh();equip(p,'g_wraith');target.hp=1;
  const bolt=new Projectile({x:target.x,y:target.y,tx:target.x+1,ty:target.y,speed:1,kind:'venom',minionDmg:10,minionSource:{owner:p}});
- bolt.update(.01,state.map,p,state.monsters);ok(p.buffs.some(b=>b.uniqueBarrier),'companion projectile kill attributed');
+ bolt.update(.01,state.map,p,state.monsters);ok(p.buffs.some(b=>b.uniqueEmpower),'companion projectile kill attributed');
 }
 {
  const old=G.serializeItem(item('u_gravebite'));old.af=[{stat:'hp',val:9999}];old.id=false;
@@ -166,15 +159,14 @@ for(const id of expected){
 }
 {
  const host=I.fromBase('handaxe');host.sockets=[{jewel:true,name:'Prismfire Jewel',jcol:'#c060d0',affixes:[{stat:'resAll',val:12},{stat:'hp',val:25}]}];
- const old=G.serializeItem(host),revived=G.reviveItem(plain(old));ok(revived.sockets[0].uniqueId==='uj_rainbow','legacy jewel recovered');
+ const revived=G.reviveItem(plain(G.serializeItem(host)));ok(revived.sockets[0].uniqueId==='uj_rainbow','legacy jewel recovered');
  const unknown={jewel:true,name:'Unknown',jcol:'#fff',affixes:[{stat:'hp',val:7}]};assert.deepEqual(plain(Q.migrateSocket(plain(unknown))),unknown);checks++;
 }
-// Five class loadouts can recompute and use skills with Unique effects present.
 for(const cls of Object.keys(D.CLASSES)){
- const {p,state,target}=fresh(cls);equip(p,'uc_mystic');equip(p,'u_marrow');equip(p,'uj_rage');
+ const {p,target}=fresh(cls);equip(p,'uc_mystic');equip(p,'u_marrow');equip(p,'uj_rage');
  if(cls==='veilranger'){p.equip.main=I.fromBase('huntbow');p.computeStats();}
  const sk=D.SKILLS[{vanguard:'vanguard_0_0',emberwitch:'emberwitch_0_0',gravebinder:'venom_spit',wildkeeper:'call_wolf',veilranger:'veilranger_0_0'}[cls]];
  p.mana=p.stats.maxMana;ok(p.performSkill(sk.id,target,{x:11,y:10}),`${cls}: skill cast with uniques`);G.__uniqueTest.flush(2);
  ok(Number.isFinite(p.hp)&&Number.isFinite(p.mana),`${cls}: finite resources`);
 }
-console.log(`PASS ${checks} Unique checks: ${expected.length} items, ${powers} distinct powers, real combat, migration and five classes.`);
+console.log(`PASS ${checks} shared Unique checks: ${expected.length} items, ${powers} unchanged socketable powers, combat and migration.`);

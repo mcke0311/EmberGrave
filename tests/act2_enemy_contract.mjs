@@ -105,7 +105,9 @@ for(const zone of Object.keys(D.ACT2_COMBAT.pools)){
  for(const family of ['undead','beast','demon','construct'])ok(G.__bossTest.enemiesByFamily(family,13).every(id=>ids.includes(id)),zone+' event family '+family);
  s.monsters=[];const event={interact:'event',type:'shrine',x:m.x,y:m.y,ev:{name:'Contract ambush',kind:'ambush',fam:'construct',count:6}};
  s.map.props=[...s.map.props,event];G.__bossTest.triggerEvent(event);
- ok(s.monsters.length>=4&&s.monsters.every(a=>a.act2Combat&&ids.includes(a.defId)),zone+' actual event integration');
+ ok(s.monsters.length>=1&&s.monsters.length<=6&&s.monsters.every(a=>a.act2Combat&&ids.includes(a.defId)),zone+' actual event integration');
+ ok(new Set(s.monsters.map(a=>a.monsterFamily)).size===1,zone+' event answers one local family');
+ ok(s.monsters.filter(a=>D.ACT2_COMBAT.role(a.defId)==='ranged').length<=2&&s.monsters.filter(a=>D.ACT2_COMBAT.role(a.defId)==='specialist').length<=1,zone+' actual event pressure caps');
 }
 {
  const {s,m,e}=f.fresh('mire_mother');ok(!m.act2Combat,'Mire controller unchanged');const child=e.spawn('drowned_dead',m.x+3,m.y);

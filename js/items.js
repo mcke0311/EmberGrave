@@ -295,16 +295,18 @@ const Items = (() => {
     return U.wpick(weights);
   }
 
-  /* returns an array of drop entries: {item} or {gold} */
-  function rollDrops(mlvl, source, mf, goldFind) {
-    const out = [];
-    const cfg = {
+  // Shared with the read-only loot data view.
+  const DROP_CONFIG = {
       normal: { itemCh: 0.22, potCh: 0.13, goldCh: 0.3, goldMul: 1, n: 1 },
       elite:  { itemCh: 0.9,  potCh: 0.35, goldCh: 0.8, goldMul: 2.2, n: 2 },
       boss:   { itemCh: 1,    potCh: 0.8,  goldCh: 1,   goldMul: 6, n: 4 },
       chest:  { itemCh: 0.85, potCh: 0.4,  goldCh: 0.9, goldMul: 2.5, n: 2 },
       barrel: { itemCh: 0.07, potCh: 0.1,  goldCh: 0.22, goldMul: 0.6, n: 1 },
-    }[source] || { itemCh: 0.2, potCh: 0.1, goldCh: 0.3, goldMul: 1, n: 1 };
+    };
+  /* returns an array of drop entries: {item} or {gold} */
+  function rollDrops(mlvl, source, mf, goldFind) {
+    const out = [];
+    const cfg = DROP_CONFIG[source] || { itemCh: 0.2, potCh: 0.1, goldCh: 0.3, goldMul: 1, n: 1 };
     const lootSource = source === "chest" || source === "barrel" ? (source === "chest" ? "elite" : "normal") : source;
     for (let i = 0; i < cfg.n; i++) {
       if (Math.random() < cfg.itemCh) {
@@ -357,7 +359,7 @@ const Items = (() => {
   const sellValue = it => Math.max(1, Math.floor(value(it) * 0.25));
 
   /* --------------------------------------------------------- text */
-  function statLines(it) {
+  function statLines(it, viewer = typeof Game !== "undefined" ? Game.state?.player : null) {
     const lines = [];
     if (it.dmg) {
       let lo = it.dmg[0], hi = it.dmg[1];
@@ -375,7 +377,7 @@ const Items = (() => {
     if (it.block) lines.push({ t: `Block Chance: ${it.block}%`, c: "head" });
     if (it.twoHand) lines.push({ t: "Two-Handed", c: "base" });
     if (!it.identified) { lines.push({ t: "Unidentified", c: "reqbad" }); return lines; }
-    if (typeof UniquePowers !== "undefined") lines.push(...UniquePowers.lines(it));
+    if (typeof UniquePowers !== "undefined") lines.push(...UniquePowers.lines(it, undefined, viewer));
     for (const a of (it.affixes || [])) {
       // weapon dmg% / armor% are folded into the Damage/Armor headers above — but only when the
       // item HAS that base stat (charms & jewels show these lines normally)
@@ -558,7 +560,7 @@ const Items = (() => {
   }
 
   return {
-    RARITY_COLOR, RARITY_ORDER,
+    RARITY_COLOR, RARITY_ORDER, DROP_CONFIG,
     fromBase, makeConsumable, makeUnique, makeSetItem, makeGlyph, makeCharm, makeJewel, makeUniqueCharm, makeUniqueJewel, rollGear, rollDrops, rollRarity,
     uniqueMultiplier, rollGlyph, reforgeGlyph, eligibleSocketables,
     rollAffixesOnto, socketGlyph,

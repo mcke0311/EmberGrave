@@ -6,12 +6,12 @@ export const ctx=vm.createContext({console,Math:math,Date,performance,Uint8Array
  window:{addEventListener:noop,matchMedia:()=>({matches:true})},document:{createElement:()=>({getContext:()=>({createImageData:(w,h)=>({data:new Uint8ClampedArray(w*h*4)}),putImageData:noop})})},
  localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v)},Sfx:new Proxy({vol:{}},{get:(t,k)=>t[k]||noop}),
  Player3D:{assets:{},projectileOrigin:()=>null},UI:new Proxy({},{get:()=>noop})});
-for(const f of ['utils','data','unique_powers','data_overrides','skill_perks','sprite_manifest','mapgen','navigation','items','management','entities'])vm.runInContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'),ctx,{filename:f});
+for(const f of ['utils','data','unique_powers','data_overrides','skill_perks','sprite_manifest','mapgen','navigation','prop_interactions','items','management','entities','character_sheet'])vm.runInContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'),ctx,{filename:f});
 let source=fs.readFileSync(new URL('../js/game.js',import.meta.url),'utf8');
-source=source.replace('    init, newGame, loadGame,',`    __uniqueTest:{freshState,triggerEvent,updateFx,setState:s=>{state=s;delayed=[];saveSlotKey='unique-test';},flush:seconds=>{let n=0;while(delayed.length&&n++<1000){delayed.sort((a,b)=>a.t-b.t);if(delayed[0].t>seconds)break;const job=delayed.shift();state.time=job.t;job.fn();}}},
+source=source.replace('    init, newGame, loadGame,',`    __uniqueTest:{freshState,triggerEvent,updateFx,updateTraps,setState:s=>{state=s;delayed=[];saveSlotKey='unique-test';},flush:seconds=>{let n=0;while(delayed.length&&n++<1000){delayed.sort((a,b)=>a.t-b.t);if(delayed[0].t>seconds)break;const job=delayed.shift();state.time=job.t;job.fn();}}},
     init, newGame, loadGame,`);
 vm.runInContext(source,ctx,{filename:'game'});
-export const {DATA:D,Player,Monster,Minion,Projectile,Game:G,UniquePowers:Q,Items:I,SkillPerks:K,MapGen:M,U,ForgeRecipes:F}=vm.runInContext('({DATA,Player,Monster,Minion,Projectile,Game,UniquePowers,Items,SkillPerks,MapGen,U,ForgeRecipes})',ctx);
+export const {DATA:D,Player,Monster,Minion,Projectile,Game:G,UniquePowers:Q,Items:I,SkillPerks:K,CharacterSheet:CS,MapGen:M,U,ForgeRecipes:F}=vm.runInContext('({DATA,Player,Monster,Minion,Projectile,Game,UniquePowers,Items,SkillPerks,CharacterSheet,MapGen,U,ForgeRecipes})',ctx);
 M.walkable=()=>true;
 export const plain=v=>JSON.parse(JSON.stringify(v));
 export function fresh(classId='vanguard') {

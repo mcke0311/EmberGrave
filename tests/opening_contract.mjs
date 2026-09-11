@@ -14,7 +14,7 @@ const ctx=vm.createContext({console,Math,Date,performance,Uint8Array,Uint16Array
   SpriteAssets:{loadBundle:async id=>{if(id===fail.bundle)throw Error('Expected test load failure');if(fail.wait?.bundle===id)await fail.wait.promise;}},
   Player3D:{assets:{resolvePlayerVisual:()=>({}),loadPlayerLoadout:async()=>{},activatePlayerLoadout(){},discardPlayerLoadout(){},deactivatePlayerLoadout(){}}},
 });
-for(const f of ['utils','data','data_overrides','boss_encounters','sprite_manifest','mapgen','navigation','items','entities'])vm.runInContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'),ctx);
+for(const f of ['utils','data','data_overrides','boss_encounters','sprite_manifest','act1_animation_catalog','act1_enemy_animation','prop_interactions','mapgen','navigation','items','entities'])vm.runInContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'),ctx);
 const source=fs.readFileSync(new URL('../js/game.js',import.meta.url),'utf8').replace('    init, newGame, loadGame,','    __openingTest:{opening,freshState,setState:s=>state=s,updateBossEncounter,updateFx,pickupGround,flush:seconds=>{state.time+=seconds;for(let i=delayed.length-1;i>=0;i--)if(state.time>=delayed[i].t){const fn=delayed[i].fn;delayed.splice(i,1);fn();}}},\n    init, newGame, loadGame,');
 vm.runInContext(source,ctx);
 const {Game:G,MapGen:M,DATA:D}=vm.runInContext('({Game,MapGen,DATA})',ctx);
@@ -116,6 +116,10 @@ fail.bundle='zone:frosthaven';
 ok(!await G.skipOpening(),'failed skip is retryable');
 ok(stage()==='arrival'&&G.state.map.id==='frosthaven_approach','failure preserves checkpoint');
 fail.bundle=null;ok(await G.skipOpening(),'retry succeeds');
+fail.bundle='actors:act1';
+ok(!await G.enterMap('north_wild','default',{recoverable:true}),'failed northern animation bundle blocks travel');
+ok(G.state.map.id==='frosthaven','animation load failure preserves the current map');
+fail.bundle=null;ok(await G.enterMap('north_wild','default',{recoverable:true}),'northern animation load retries successfully');
 
 await G.newGame('Ordinary death','vanguard',false);
 G.onPlayerDeath();ok(G.state.player.dead,'normal death');

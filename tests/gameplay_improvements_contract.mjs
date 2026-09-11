@@ -28,11 +28,11 @@ function companion(p,s,id='call_wolf',kind='wolf'){
 for(const sk of Object.values(D.SKILLS).filter(s=>s.mana))for(const rank of [1,2,5,10,14])near(sk.mana(rank),sk.baseMana*rank,sk.id+' cost rank '+rank);
 {
  const {p,s}=fresh();const skills=Object.values(D.SKILLS).filter(sk=>['summon','summon_golem'].includes(sk.type));
- ok(skills.length===7,'seven maintained companion families');
+ ok(skills.length===8,'eight maintained companion families, including the Ent');
  for(const sk of skills){p.skills[sk.id]=2;companion(p,s,sk.id);}
  const other=new P('Other owner','gravebinder');other.skills[skills[0].id]=10;companion(other,s,skills[0].id);
- near(p.companionUpkeep(),14,'all seven families add per-owner upkeep');p.stats.skillAll=12;near(p.companionUpkeep(),98,'effective ranks above ten update live');
- p.spendAether(200);ok(s.minions.filter(m=>m.owner===p).every(m=>m.dead),'all seven families die at zero');ok(!s.minions.find(m=>m.owner===other).dead,'other owner retains companions');
+ near(p.companionUpkeep(),16,'all eight families add per-owner upkeep');p.stats.skillAll=12;near(p.companionUpkeep(),112,'effective ranks above ten update live');
+ p.spendAether(200);ok(s.minions.filter(m=>m.owner===p).every(m=>m.dead),'all eight families die at zero');ok(!s.minions.find(m=>m.owner===other).dead,'other owner retains companions');
 }
 {
  fresh();const record=D.CAMPAIGN.record;let ready=[{name:'Sound test',giver:'sera'}];D.CAMPAIGN.record=()=>ready.splice(0);
@@ -65,14 +65,14 @@ for(const fps of [20,30,60,120]){
  ok(p.performSkill(form.id,null,{x:p.x,y:p.y}),'free shape deactivation');ok(!p.form,'reverted at zero');
 }
 const arrows=Object.values(D.SKILLS).filter(sk=>sk.requiredWeapons);
-ok(arrows.length===7,'seven arrow requirements');
+ok(arrows.length===5,'five Precision arrow requirements; the rebuilt Veil works with any weapon');
 for(const cat of ['bow','crossbow','sword','axe','mace','dagger','spear','wand','staff',null])for(const sk of arrows){
  const {p,s}=fresh('veilranger');p.equip.main=cat?{kind:'gear',cat,dmg:[1,3],speed:1,ranged:['bow','crossbow','wand','staff'].includes(cat),affixes:[]}:null;
  p.computeStats();p.mana=1000;const allowed=['bow','crossbow'].includes(cat),before=p.mana;
  ok(p.canUseSkillWeapon(sk.id)===allowed,sk.id+' '+cat+' eligibility');
  if(!allowed){ok(!p.performSkill(sk.id,null,{x:p.x+1,y:p.y}),sk.id+' invalid rejected');near(p.mana,before,'no charge for invalid weapon');ok(!p.action&&!p.command,'no invalid action');}
 }
-for(const id of ['veilranger_0_1','veilranger_0_2','veilranger_0_4','veilranger_0_5']){
+for(const id of ['veilranger_0_1','veilranger_0_2','veilranger_0_4']){
  const {p,s}=fresh('veilranger');p.equip.main={kind:'gear',cat:'bow',dmg:[1,3],speed:1,ranged:true,affixes:[]};p.computeStats();p.mana=1000;
  ok(p.performSkill(id,null,{x:p.x+3,y:p.y}),'bow casts '+id);const paid=p.mana;
  p.equip.main={kind:'gear',cat:'sword',dmg:[1,3],speed:1,affixes:[]};p.computeStats();const afterGear=p.mana;G.__test.flush();p.releaseDraw();
@@ -113,4 +113,38 @@ for(const id of ['veilranger_0_1','veilranger_0_2','veilranger_0_4','veilranger_
  const pos=G.__test.safeArrival(map,{x:2.5,y:2.5});ok(M.walkable(map,pos.x,pos.y),'blocked return relocates');M.walkable=old;
  ok(G.canTradeWith({id:'hewn'}),'vendor offers trade');ok(!G.canTradeWith({id:'sera'}),'non-vendor has no marker');ok(!G.canTradeWith({id:'hewn',survivor:true}),'rescued character has no trade');
 }
-console.log('PASS '+checks+' gameplay improvements checks: costs, upkeep, weapons, portal loading, cathedral return, waypoints and trade.');
+{
+ const {p}=fresh('veilranger'),id='veilranger_0_5';p.skills[id]=10;
+ p.chooseSkillPerk(id,5,D.SKILL_PERKS[id][5][0].id);p.computeStats();
+ p.skillL=id;p.skillR=id;p.quickSlots=[id,'veilranger_0_6',null,null];G.saveGame();
+ Object.assign(c.Player3D.assets,{resolvePlayerVisual:()=>({}),loadPlayerLoadout:async()=>{},activatePlayerLoadout:noop,discardPlayerLoadout:noop});
+ await G.loadGame('improvements-test');const restored=G.state.player;
+ ok(restored!==p,'save load creates a restored player');near(restored.skills[id],10,'old skill rank preserved');
+ near(restored.stats.bleedDps,36,'saved milestone maps to new passive');
+ ok(restored.skillL==='basic'&&restored.skillR==='basic'&&restored.quickSlots[0]===null,'passive bindings cleared on load');
+ ok(restored.quickSlots[1]==='veilranger_0_6','active Arrowfall binding retained');
+}
+{
+ const {p}=fresh('veilranger'),net='veilranger_1_3',passive='veilranger_1_6';p.skills[net]=10;p.skills[passive]=10;
+ p.chooseSkillPerk(net,5,D.SKILL_PERKS[net][5][0].id);p.chooseSkillPerk(passive,10,D.SKILL_PERKS[passive][10][0].id);p.computeStats();
+ p.skillL=net;p.skillR=passive;p.quickSlots=[net,passive,'veilranger_2_5',null];G.saveGame();
+ await G.loadGame('improvements-test');const restored=G.state.player;
+ near(restored.skills[net],10,'Tripwire rank preserved as Dragnet');near(restored.skills[passive],10,'Snare Decoy rank preserved as Exploit Weakness');
+ near(restored.resolveSkill(net).radius(10),3.72*1.25,'old rank-five choice maps to net radius');near(restored.stats.snareConditionPct,40,'old rank-ten choice maps to conditional damage');
+ ok(restored.skillL===net&&restored.quickSlots[0]===net,'Tripwire bindings retained as Dragnet');
+ ok(restored.skillR==='basic'&&restored.quickSlots[1]===null,'Snare Decoy bindings cleared');
+ ok(restored.quickSlots[2]==='veilranger_2_5','old After-Image binding retained as Shadow Flurry');
+}
+{
+ const {p}=fresh('veilranger'),ids=['veilranger_2_1','veilranger_2_3','veilranger_2_5','veilranger_2_6'];
+ for(const id of ids){p.skills[id]=10;p.chooseSkillPerk(id,5,D.SKILL_PERKS[id][5][2].id);p.chooseSkillPerk(id,10,D.SKILL_PERKS[id][10][1].id);}
+ p.quickSlots=[...ids];p.skillL=ids[0];p.skillR=ids[3];G.saveGame();await G.loadGame('improvements-test');const loaded=G.state.player;
+ ok(loaded!==p,'Veil save constructs restored player');
+ for(const id of ids){near(loaded.skills[id],10,'Veil rank preserved');ok(JSON.stringify(loaded.skillPerks[id])===JSON.stringify(p.skillPerks[id]),'Veil choices preserved by slot');}
+ ok(JSON.stringify(loaded.quickSlots)===JSON.stringify(ids),'all four replacement hotkeys preserved');
+ ok(loaded.skillL===ids[0]&&loaded.skillR===ids[3],'mouse bindings preserved');
+ near(loaded.resolveSkill(ids[0]).exposeDuration(10),6,'coating-era milestone slot becomes lasting exposure');
+ near(loaded.resolveSkill(ids[1]).exposedBonus(10),45,'Cleave saved milestone');near(loaded.resolveSkill(ids[2]).count(10),7,'Flurry saved milestone');
+ near(loaded.resolveSkill(ids[3]).missingHpBonus(10),1,'Deathblow saved milestone');
+}
+console.log('PASS '+checks+' gameplay improvements checks: costs, upkeep, weapons, portal loading, cathedral return, waypoints, trade and passive save migration.');

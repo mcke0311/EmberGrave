@@ -1,0 +1,2567 @@
+{
+  "equipment": [
+    {
+      "id": "u_gravebite",
+      "name": "Gravebite",
+      "base": "handaxe",
+      "ilvl": 3,
+      "stats": {
+        "dmgPct": 39,
+        "lifeSteal": 3,
+        "dmgUndead": 33
+      }
+    },
+    {
+      "id": "u_widow",
+      "name": "Widow's Lament",
+      "base": "dirk",
+      "ilvl": 3,
+      "stats": {
+        "poisonDmg": 8,
+        "dex": 6,
+        "ias": 10
+      }
+    },
+    {
+      "id": "u_cinder",
+      "name": "Cindershroud",
+      "base": "quiltvest",
+      "ilvl": 4,
+      "stats": {
+        "armorPct": 39,
+        "resFire": 13,
+        "thorns": 5
+      }
+    },
+    {
+      "id": "u_oath",
+      "name": "Oathkeeper's Wall",
+      "base": "kiteshield",
+      "ilvl": 6,
+      "stats": {
+        "block": 8,
+        "resAll": 6,
+        "hp": 20
+      }
+    },
+    {
+      "id": "u_crown",
+      "name": "Hollow Crown",
+      "base": "cap",
+      "ilvl": 5,
+      "stats": {
+        "skillAll": 1,
+        "mana": 19,
+        "mf": 11
+      }
+    },
+    {
+      "id": "u_marrow",
+      "name": "Marrow Band",
+      "base": "ring",
+      "ilvl": 4,
+      "stats": {
+        "hp": 18,
+        "lifeSteal": 3,
+        "vit": 6
+      }
+    },
+    {
+      "id": "u_stormknot",
+      "name": "Stormcaller's Knot",
+      "base": "amulet",
+      "ilvl": 5,
+      "stats": {
+        "lightDmg": 9,
+        "fcr": 11,
+        "resLight": 13
+      }
+    },
+    {
+      "id": "u_stride",
+      "name": "Stridewraith",
+      "base": "warboots",
+      "ilvl": 5,
+      "stats": {
+        "frw": 16,
+        "dex": 6,
+        "resCold": 13
+      }
+    },
+    {
+      "id": "u_kingsplit",
+      "name": "Kingsplitter",
+      "base": "waraxe",
+      "ilvl": 8,
+      "stats": {
+        "dmgPct": 45,
+        "critChance": 4,
+        "str": 7
+      }
+    },
+    {
+      "id": "u_gen_0_0",
+      "name": "Dawnbreaker",
+      "base": "sword2h_t1",
+      "ilvl": 5,
+      "stats": {
+        "dmgPct": 41,
+        "str": 6,
+        "resFire": 13
+      }
+    },
+    {
+      "id": "u_gen_0_2",
+      "name": "Sunder",
+      "base": "sword2h_t3",
+      "ilvl": 13,
+      "stats": {
+        "dmgPct": 51,
+        "ar": 56,
+        "critDmg": 18
+      }
+    },
+    {
+      "id": "u_gen_0_4",
+      "name": "Kingsbane",
+      "base": "sword2h_t4",
+      "ilvl": 24,
+      "stats": {
+        "dmgPct": 64,
+        "str": 10,
+        "lifeSteal": 4
+      }
+    },
+    {
+      "id": "u_gen_0_6",
+      "name": "Worldcleaver",
+      "base": "sword2h_t6",
+      "ilvl": 39,
+      "stats": {
+        "dmgPct": 82,
+        "critChance": 6,
+        "hp": 46
+      }
+    },
+    {
+      "id": "u_gen_0_8",
+      "name": "Mornsplitter",
+      "base": "sword2h_t8",
+      "ilvl": 56,
+      "stats": {
+        "dmgPct": 102,
+        "ias": 16,
+        "resCold": 23
+      }
+    },
+    {
+      "id": "u_gen_0_10",
+      "name": "Heaven's Edge",
+      "base": "sword2h_t10",
+      "ilvl": 74,
+      "stats": {
+        "dmgPct": 124,
+        "dex": 20,
+        "resLight": 27
+      }
+    },
+    {
+      "id": "u_gen_0_12",
+      "name": "Aurora's Reckoning",
+      "base": "sword2h_t12",
+      "ilvl": 93,
+      "stats": {
+        "dmgPct": 147,
+        "critDmg": 38,
+        "resAll": 14
+      }
+    },
+    {
+      "id": "u_gen_1_1",
+      "name": "Gorewake",
+      "base": "axe2h_t2",
+      "ilvl": 9,
+      "stats": {
+        "dmgPct": 46,
+        "lifeSteal": 3,
+        "hp": 22
+      }
+    },
+    {
+      "id": "u_gen_1_3",
+      "name": "Reaver's End",
+      "base": "axe2h_t3",
+      "ilvl": 18,
+      "stats": {
+        "dmgPct": 57,
+        "str": 9,
+        "resAll": 7
+      }
+    },
+    {
+      "id": "u_gen_1_5",
+      "name": "Skullsplit",
+      "base": "axe2h_t5",
+      "ilvl": 31,
+      "stats": {
+        "dmgPct": 72,
+        "critChance": 6,
+        "ar": 92
+      }
+    },
+    {
+      "id": "u_gen_1_7",
+      "name": "Ruin",
+      "base": "axe2h_t7",
+      "ilvl": 47,
+      "stats": {
+        "dmgPct": 91,
+        "fireDmg": 25,
+        "str": 14
+      }
+    },
+    {
+      "id": "u_gen_1_9",
+      "name": "Marrowhunger",
+      "base": "axe2h_t9",
+      "ilvl": 65,
+      "stats": {
+        "dmgPct": 113,
+        "lifeSteal": 5,
+        "vit": 18
+      }
+    },
+    {
+      "id": "u_gen_1_11",
+      "name": "The Crimson Tithe",
+      "base": "axe2h_t11",
+      "ilvl": 84,
+      "stats": {
+        "dmgPct": 136,
+        "hp": 82,
+        "critDmg": 36
+      }
+    },
+    {
+      "id": "u_gen_2_0",
+      "name": "Whisperfang",
+      "base": "dagger_t1",
+      "ilvl": 5,
+      "stats": {
+        "dmgPct": 41,
+        "dex": 6,
+        "ias": 11
+      }
+    },
+    {
+      "id": "u_gen_2_2",
+      "name": "Nightkiss",
+      "base": "dagger_t3",
+      "ilvl": 13,
+      "stats": {
+        "dmgPct": 51,
+        "poisonDmg": 13,
+        "lifeSteal": 3
+      }
+    },
+    {
+      "id": "u_gen_2_4",
+      "name": "Quietus",
+      "base": "dagger_t4",
+      "ilvl": 24,
+      "stats": {
+        "dmgPct": 64,
+        "critChance": 5,
+        "frw": 19
+      }
+    },
+    {
+      "id": "u_gen_2_6",
+      "name": "Severance",
+      "base": "dagger_t6",
+      "ilvl": 39,
+      "stats": {
+        "dmgPct": 82,
+        "ias": 14,
+        "dex": 13
+      }
+    },
+    {
+      "id": "u_gen_2_8",
+      "name": "Venomwhisper",
+      "base": "dagger_t8",
+      "ilvl": 56,
+      "stats": {
+        "dmgPct": 102,
+        "poisonDmg": 34,
+        "ar": 142
+      }
+    },
+    {
+      "id": "u_gen_2_10",
+      "name": "The Silent Thorn",
+      "base": "dagger_t10",
+      "ilvl": 74,
+      "stats": {
+        "dmgPct": 124,
+        "dex": 20,
+        "critDmg": 34
+      }
+    },
+    {
+      "id": "u_gen_2_12",
+      "name": "Last Breath",
+      "base": "dagger_t12",
+      "ilvl": 93,
+      "stats": {
+        "dmgPct": 147,
+        "lifeSteal": 5,
+        "hp": 89
+      }
+    },
+    {
+      "id": "u_gen_3_1",
+      "name": "Wintershot",
+      "base": "bow2h_t2",
+      "ilvl": 9,
+      "stats": {
+        "dmgPct": 46,
+        "dex": 7,
+        "coldDmg": 8
+      }
+    },
+    {
+      "id": "u_gen_3_3",
+      "name": "Stormstring",
+      "base": "bow2h_t3",
+      "ilvl": 18,
+      "stats": {
+        "dmgPct": 57,
+        "lightDmg": 15,
+        "ias": 12
+      }
+    },
+    {
+      "id": "u_gen_3_5",
+      "name": "Farsong",
+      "base": "bow2h_t5",
+      "ilvl": 31,
+      "stats": {
+        "dmgPct": 72,
+        "ar": 92,
+        "mana": 37
+      }
+    },
+    {
+      "id": "u_gen_3_7",
+      "name": "Hawkeye",
+      "base": "bow2h_t7",
+      "ilvl": 47,
+      "stats": {
+        "dmgPct": 91,
+        "critChance": 7,
+        "dex": 14
+      }
+    },
+    {
+      "id": "u_gen_3_9",
+      "name": "Frostpierce",
+      "base": "bow2h_t9",
+      "ilvl": 65,
+      "stats": {
+        "dmgPct": 113,
+        "coldDmg": 33,
+        "critDmg": 31
+      }
+    },
+    {
+      "id": "u_gen_3_11",
+      "name": "The Distant Tempest",
+      "base": "bow2h_t11",
+      "ilvl": 84,
+      "stats": {
+        "dmgPct": 136,
+        "ias": 18,
+        "resLight": 29
+      }
+    },
+    {
+      "id": "u_gen_4_0",
+      "name": "Tempest",
+      "base": "staff2h_t1",
+      "ilvl": 5,
+      "stats": {
+        "spellPct": 23,
+        "fcr": 11,
+        "lightDmg": 9,
+        "mana": 19
+      }
+    },
+    {
+      "id": "u_gen_4_2",
+      "name": "Emberheart",
+      "base": "staff2h_t3",
+      "ilvl": 13,
+      "stats": {
+        "spellPct": 28,
+        "fireDmg": 10,
+        "manaRegen": 18
+      }
+    },
+    {
+      "id": "u_gen_4_4",
+      "name": "Frostward Rod",
+      "base": "staff2h_t4",
+      "ilvl": 24,
+      "stats": {
+        "spellPct": 36,
+        "coldDmg": 15,
+        "resCold": 17
+      }
+    },
+    {
+      "id": "u_gen_4_6",
+      "name": "Stormcrown",
+      "base": "staff2h_t6",
+      "ilvl": 39,
+      "stats": {
+        "spellPct": 45,
+        "fcr": 14,
+        "resLight": 20
+      }
+    },
+    {
+      "id": "u_gen_4_8",
+      "name": "Cinderveil",
+      "base": "staff2h_t8",
+      "ilvl": 56,
+      "stats": {
+        "spellPct": 56,
+        "fireDmg": 29,
+        "hp": 60
+      }
+    },
+    {
+      "id": "u_gen_4_10",
+      "name": "The Glacial Maelstrom",
+      "base": "staff2h_t10",
+      "ilvl": 74,
+      "stats": {
+        "spellPct": 68,
+        "coldDmg": 37,
+        "mana": 67
+      }
+    },
+    {
+      "id": "u_gen_4_12",
+      "name": "Thunderspire",
+      "base": "staff2h_t12",
+      "ilvl": 93,
+      "stats": {
+        "spellPct": 80,
+        "fcr": 19,
+        "wil": 24
+      }
+    },
+    {
+      "id": "u_gen_5_1",
+      "name": "Hexfinger",
+      "base": "wand_t2",
+      "ilvl": 9,
+      "stats": {
+        "spellPct": 26,
+        "mana": 21,
+        "wil": 7
+      }
+    },
+    {
+      "id": "u_gen_5_3",
+      "name": "Soulwhisper",
+      "base": "wand_t3",
+      "ilvl": 18,
+      "stats": {
+        "spellPct": 32,
+        "manaRegen": 19,
+        "hp": 29
+      }
+    },
+    {
+      "id": "u_gen_5_5",
+      "name": "Gravewand",
+      "base": "wand_t5",
+      "ilvl": 31,
+      "stats": {
+        "spellPct": 40,
+        "wil": 11,
+        "resAll": 8
+      }
+    },
+    {
+      "id": "u_gen_5_7",
+      "name": "Rotcaller",
+      "base": "wand_t7",
+      "ilvl": 47,
+      "stats": {
+        "spellPct": 51,
+        "poisonDmg": 30,
+        "mana": 48
+      }
+    },
+    {
+      "id": "u_gen_5_9",
+      "name": "Tombquill",
+      "base": "wand_t9",
+      "ilvl": 65,
+      "stats": {
+        "spellPct": 62,
+        "fcr": 17,
+        "vit": 18
+      }
+    },
+    {
+      "id": "u_gen_5_11",
+      "name": "Wraithsplinter",
+      "base": "wand_t11",
+      "ilvl": 84,
+      "stats": {
+        "spellPct": 75,
+        "wil": 22,
+        "manaRegen": 32
+      }
+    },
+    {
+      "id": "u_gen_6_0",
+      "name": "Aegis of Ash",
+      "base": "chest_t1",
+      "ilvl": 5,
+      "stats": {
+        "armorPct": 40,
+        "hp": 19,
+        "resFire": 13
+      }
+    },
+    {
+      "id": "u_gen_6_2",
+      "name": "Dragonscale",
+      "base": "chest_t3",
+      "ilvl": 13,
+      "stats": {
+        "armorPct": 48,
+        "resFire": 15,
+        "vit": 8
+      }
+    },
+    {
+      "id": "u_gen_6_4",
+      "name": "Bulwark",
+      "base": "chest_t4",
+      "ilvl": 24,
+      "stats": {
+        "armorPct": 59,
+        "hp": 34,
+        "thorns": 11
+      }
+    },
+    {
+      "id": "u_gen_6_6",
+      "name": "Cindermail",
+      "base": "chest_t6",
+      "ilvl": 39,
+      "stats": {
+        "armorPct": 74,
+        "hp": 46,
+        "fireDmg": 22
+      }
+    },
+    {
+      "id": "u_gen_6_8",
+      "name": "Emberweave Carapace",
+      "base": "chest_t8",
+      "ilvl": 56,
+      "stats": {
+        "armorPct": 91,
+        "resFire": 23,
+        "mana": 54
+      }
+    },
+    {
+      "id": "u_gen_6_10",
+      "name": "Scaleforge Vest",
+      "base": "chest_t10",
+      "ilvl": 74,
+      "stats": {
+        "armorPct": 109,
+        "vit": 20,
+        "resAll": 12
+      }
+    },
+    {
+      "id": "u_gen_6_12",
+      "name": "Ashen Bastion",
+      "base": "chest_t12",
+      "ilvl": 93,
+      "stats": {
+        "armorPct": 128,
+        "hp": 89,
+        "dmgReduceFlat": 9
+      }
+    },
+    {
+      "id": "u_gen_7_1",
+      "name": "Crown of Cinders",
+      "base": "helm_t2",
+      "ilvl": 9,
+      "stats": {
+        "skillAll": 1,
+        "mana": 21,
+        "resFire": 14
+      }
+    },
+    {
+      "id": "u_gen_7_3",
+      "name": "Skullhelm",
+      "base": "helm_t3",
+      "ilvl": 18,
+      "stats": {
+        "armorPct": 53,
+        "hp": 29,
+        "resAll": 7
+      }
+    },
+    {
+      "id": "u_gen_7_5",
+      "name": "Visage",
+      "base": "helm_t5",
+      "ilvl": 31,
+      "stats": {
+        "skillAll": 1,
+        "fcr": 13,
+        "mana": 37
+      }
+    },
+    {
+      "id": "u_gen_7_7",
+      "name": "Doomcap",
+      "base": "helm_t7",
+      "ilvl": 47,
+      "stats": {
+        "spellPct": 51,
+        "critChance": 7,
+        "mana": 48
+      }
+    },
+    {
+      "id": "u_gen_7_9",
+      "name": "Diadem of the Drowned King",
+      "base": "helm_t9",
+      "ilvl": 65,
+      "stats": {
+        "skillAll": 1,
+        "mana": 61,
+        "resCold": 25
+      }
+    },
+    {
+      "id": "u_gen_7_11",
+      "name": "Boneward Casque",
+      "base": "helm_t11",
+      "ilvl": 84,
+      "stats": {
+        "armorPct": 119,
+        "hp": 82,
+        "vit": 22
+      }
+    },
+    {
+      "id": "u_gen_8_0",
+      "name": "Hauntpace",
+      "base": "boots_t1",
+      "ilvl": 5,
+      "stats": {
+        "frw": 16,
+        "dex": 6,
+        "resCold": 13
+      }
+    },
+    {
+      "id": "u_gen_8_2",
+      "name": "Windsole",
+      "base": "boots_t3",
+      "ilvl": 13,
+      "stats": {
+        "frw": 17,
+        "vit": 8,
+        "hp": 25
+      }
+    },
+    {
+      "id": "u_gen_8_4",
+      "name": "Ghoststep",
+      "base": "boots_t4",
+      "ilvl": 24,
+      "stats": {
+        "frw": 19,
+        "dex": 10,
+        "resAll": 7
+      }
+    },
+    {
+      "id": "u_gen_8_6",
+      "name": "Swiftmarch",
+      "base": "boots_t6",
+      "ilvl": 39,
+      "stats": {
+        "frw": 21,
+        "ias": 14,
+        "str": 13
+      }
+    },
+    {
+      "id": "u_gen_8_8",
+      "name": "Galeheel",
+      "base": "boots_t8",
+      "ilvl": 56,
+      "stats": {
+        "frw": 23,
+        "dex": 16,
+        "mana": 54
+      }
+    },
+    {
+      "id": "u_gen_8_10",
+      "name": "Pallor Treads",
+      "base": "boots_t10",
+      "ilvl": 74,
+      "stats": {
+        "frw": 26,
+        "resCold": 27,
+        "hp": 74
+      }
+    },
+    {
+      "id": "u_gen_8_12",
+      "name": "Breath of the Hollow Road",
+      "base": "boots_t12",
+      "ilvl": 93,
+      "stats": {
+        "frw": 29,
+        "vit": 24,
+        "resAll": 14
+      }
+    },
+    {
+      "id": "u_gen_9_1",
+      "name": "Stormknot",
+      "base": "amulet_t2",
+      "ilvl": 9,
+      "stats": {
+        "spellPct": 26,
+        "resLight": 14,
+        "mana": 21
+      }
+    },
+    {
+      "id": "u_gen_9_3",
+      "name": "Heart of the Marsh",
+      "base": "amulet_t3",
+      "ilvl": 18,
+      "stats": {
+        "hp": 29,
+        "mana": 28,
+        "resPoison": 16
+      }
+    },
+    {
+      "id": "u_gen_9_5",
+      "name": "Soulglass",
+      "base": "amulet_t5",
+      "ilvl": 31,
+      "stats": {
+        "spellPct": 40,
+        "wil": 11,
+        "resAll": 8
+      }
+    },
+    {
+      "id": "u_gen_9_7",
+      "name": "Eye of the Vigil",
+      "base": "amulet_t7",
+      "ilvl": 47,
+      "stats": {
+        "critChance": 7,
+        "ar": 124,
+        "resAll": 10
+      }
+    },
+    {
+      "id": "u_gen_9_9",
+      "name": "Tempestbinder's Charm",
+      "base": "amulet_t9",
+      "ilvl": 65,
+      "stats": {
+        "spellPct": 62,
+        "fcr": 17,
+        "resLight": 25
+      }
+    },
+    {
+      "id": "u_gen_9_11",
+      "name": "Mirelight Pendant",
+      "base": "amulet_t11",
+      "ilvl": 84,
+      "stats": {
+        "hp": 82,
+        "manaRegen": 32,
+        "resPoison": 29
+      }
+    },
+    {
+      "id": "u_gen_10_0",
+      "name": "Sanguine Coil",
+      "base": "ring_t1",
+      "ilvl": 5,
+      "stats": {
+        "lifeSteal": 3,
+        "critChance": 4,
+        "str": 6
+      }
+    },
+    {
+      "id": "u_gen_10_2",
+      "name": "Bloodloop",
+      "base": "ring_t3",
+      "ilvl": 13,
+      "stats": {
+        "hp": 25,
+        "vit": 8,
+        "resAll": 6
+      }
+    },
+    {
+      "id": "u_gen_10_4",
+      "name": "Ring of Ruin",
+      "base": "ring_t4",
+      "ilvl": 24,
+      "stats": {
+        "dmgPct": 64,
+        "fireDmg": 15,
+        "ias": 12
+      }
+    },
+    {
+      "id": "u_gen_10_6",
+      "name": "Coilfire",
+      "base": "ring_t6",
+      "ilvl": 39,
+      "stats": {
+        "spellPct": 45,
+        "mana": 42,
+        "fcr": 14
+      }
+    },
+    {
+      "id": "u_gen_10_8",
+      "name": "Emberveins",
+      "base": "ring_t8",
+      "ilvl": 56,
+      "stats": {
+        "hp": 60,
+        "fireDmg": 29,
+        "lifeSteal": 4
+      }
+    },
+    {
+      "id": "u_gen_10_10",
+      "name": "Wound of Cinders",
+      "base": "ring_t10",
+      "ilvl": 74,
+      "stats": {
+        "hp": 74,
+        "resFire": 27,
+        "critDmg": 34
+      }
+    },
+    {
+      "id": "u_gen_10_12",
+      "name": "Serpent's Pyre",
+      "base": "ring_t12",
+      "ilvl": 93,
+      "stats": {
+        "poisonDmg": 53,
+        "fireDmg": 46,
+        "dex": 24
+      }
+    },
+    {
+      "id": "u_gen_11_1",
+      "name": "Earthshaker",
+      "base": "mace2h_t2",
+      "ilvl": 9,
+      "stats": {
+        "dmgPct": 46,
+        "str": 7,
+        "ccReduce": 11
+      }
+    },
+    {
+      "id": "u_gen_11_3",
+      "name": "Worldhammer",
+      "base": "mace2h_t3",
+      "ilvl": 18,
+      "stats": {
+        "dmgPct": 57,
+        "hp": 29,
+        "thorns": 9
+      }
+    },
+    {
+      "id": "u_gen_11_5",
+      "name": "Tollbringer",
+      "base": "mace2h_t5",
+      "ilvl": 31,
+      "stats": {
+        "dmgPct": 72,
+        "vit": 11,
+        "armorPct": 66
+      }
+    },
+    {
+      "id": "u_gen_11_7",
+      "name": "Cataclysm",
+      "base": "mace2h_t7",
+      "ilvl": 47,
+      "stats": {
+        "dmgPct": 91,
+        "critDmg": 27,
+        "str": 14
+      }
+    },
+    {
+      "id": "u_gen_11_9",
+      "name": "Doomtoll",
+      "base": "mace2h_t9",
+      "ilvl": 65,
+      "stats": {
+        "dmgPct": 113,
+        "ar": 160,
+        "mana": 61
+      }
+    },
+    {
+      "id": "u_gen_11_11",
+      "name": "The Sunken Peal",
+      "base": "mace2h_t11",
+      "ilvl": 84,
+      "stats": {
+        "dmgPct": 136,
+        "hp": 82,
+        "resCold": 29
+      }
+    },
+    {
+      "id": "u_gen_12_0",
+      "name": "Edge of Vows",
+      "base": "sword_t1",
+      "ilvl": 5,
+      "stats": {
+        "dmgPct": 41,
+        "ias": 11,
+        "dex": 6
+      }
+    },
+    {
+      "id": "u_gen_12_2",
+      "name": "Lightbrand",
+      "base": "sword_t3",
+      "ilvl": 13,
+      "stats": {
+        "dmgPct": 51,
+        "lightDmg": 13,
+        "str": 8
+      }
+    },
+    {
+      "id": "u_gen_12_4",
+      "name": "Kingsblade",
+      "base": "sword_t4",
+      "ilvl": 24,
+      "stats": {
+        "dmgPct": 64,
+        "lifeSteal": 4,
+        "hp": 34
+      }
+    },
+    {
+      "id": "u_gen_12_6",
+      "name": "Vowkeeper",
+      "base": "sword_t6",
+      "ilvl": 39,
+      "stats": {
+        "dmgPct": 82,
+        "critDmg": 25,
+        "dex": 13
+      }
+    },
+    {
+      "id": "u_gen_12_8",
+      "name": "Dawnsworn",
+      "base": "sword_t8",
+      "ilvl": 56,
+      "stats": {
+        "dmgPct": 102,
+        "resFire": 23,
+        "ias": 16
+      }
+    },
+    {
+      "id": "u_gen_12_10",
+      "name": "The Gilded Promise",
+      "base": "sword_t10",
+      "ilvl": 74,
+      "stats": {
+        "dmgPct": 124,
+        "ar": 178,
+        "resAll": 12
+      }
+    },
+    {
+      "id": "u_gen_12_12",
+      "name": "Throneward",
+      "base": "sword_t12",
+      "ilvl": 93,
+      "stats": {
+        "dmgPct": 147,
+        "vit": 24,
+        "hp": 89
+      }
+    },
+    {
+      "id": "u_gen_13_1",
+      "name": "Tusk",
+      "base": "axe_t2",
+      "ilvl": 9,
+      "stats": {
+        "dmgPct": 46,
+        "lifeSteal": 3,
+        "str": 7
+      }
+    },
+    {
+      "id": "u_gen_13_3",
+      "name": "Cleaver's Joy",
+      "base": "axe_t3",
+      "ilvl": 18,
+      "stats": {
+        "dmgPct": 57,
+        "dmgUndead": 48,
+        "critChance": 5
+      }
+    },
+    {
+      "id": "u_gen_13_5",
+      "name": "Bonereaver",
+      "base": "axe_t5",
+      "ilvl": 31,
+      "stats": {
+        "dmgPct": 72,
+        "ias": 13,
+        "frw": 20
+      }
+    },
+    {
+      "id": "u_gen_13_7",
+      "name": "Wolfsplit",
+      "base": "axe_t7",
+      "ilvl": 47,
+      "stats": {
+        "dmgPct": 91,
+        "thorns": 18,
+        "vit": 14
+      }
+    },
+    {
+      "id": "u_gen_13_9",
+      "name": "Huntsmaw",
+      "base": "axe_t9",
+      "ilvl": 65,
+      "stats": {
+        "dmgPct": 113,
+        "lifeSteal": 5,
+        "dex": 18
+      }
+    },
+    {
+      "id": "u_gen_13_11",
+      "name": "Antlershear",
+      "base": "axe_t11",
+      "ilvl": 84,
+      "stats": {
+        "dmgPct": 136,
+        "critChance": 9,
+        "ar": 198
+      }
+    },
+    {
+      "id": "u_gen_14_0",
+      "name": "Vesper",
+      "base": "mace_t1",
+      "ilvl": 5,
+      "stats": {
+        "dmgPct": 41,
+        "str": 6,
+        "ccReduce": 11
+      }
+    },
+    {
+      "id": "u_gen_14_2",
+      "name": "Bellringer",
+      "base": "mace_t3",
+      "ilvl": 13,
+      "stats": {
+        "dmgPct": 51,
+        "dmgUndead": 43,
+        "hp": 25
+      }
+    },
+    {
+      "id": "u_gen_14_4",
+      "name": "Knell",
+      "base": "mace_t4",
+      "ilvl": 24,
+      "stats": {
+        "dmgPct": 64,
+        "armorPct": 59,
+        "vit": 10
+      }
+    },
+    {
+      "id": "u_gen_14_6",
+      "name": "Sanctus",
+      "base": "mace_t6",
+      "ilvl": 39,
+      "stats": {
+        "dmgPct": 82,
+        "critChance": 6,
+        "resAll": 9
+      }
+    },
+    {
+      "id": "u_gen_14_8",
+      "name": "Matins",
+      "base": "mace_t8",
+      "ilvl": 56,
+      "stats": {
+        "dmgPct": 102,
+        "manaRegen": 26,
+        "wil": 16
+      }
+    },
+    {
+      "id": "u_gen_14_10",
+      "name": "Final Tithe",
+      "base": "mace_t10",
+      "ilvl": 74,
+      "stats": {
+        "dmgPct": 124,
+        "lifeSteal": 5,
+        "str": 20
+      }
+    },
+    {
+      "id": "u_gen_14_12",
+      "name": "Choir of Ash",
+      "base": "mace_t12",
+      "ilvl": 93,
+      "stats": {
+        "dmgPct": 147,
+        "resFire": 31,
+        "hp": 89
+      }
+    },
+    {
+      "id": "u_gen_15_1",
+      "name": "Skyfall Pike",
+      "base": "spear2h_t2",
+      "ilvl": 9,
+      "stats": {
+        "dmgPct": 46,
+        "dex": 7,
+        "frw": 16
+      }
+    },
+    {
+      "id": "u_gen_15_3",
+      "name": "Stormlance",
+      "base": "spear2h_t3",
+      "ilvl": 18,
+      "stats": {
+        "dmgPct": 57,
+        "lightDmg": 15,
+        "str": 9
+      }
+    },
+    {
+      "id": "u_gen_15_5",
+      "name": "Heaven's Reach",
+      "base": "spear2h_t5",
+      "ilvl": 31,
+      "stats": {
+        "dmgPct": 72,
+        "ias": 13,
+        "ar": 92
+      }
+    },
+    {
+      "id": "u_gen_15_7",
+      "name": "Thunderpike",
+      "base": "spear2h_t7",
+      "ilvl": 47,
+      "stats": {
+        "dmgPct": 91,
+        "coldDmg": 25,
+        "dex": 14
+      }
+    },
+    {
+      "id": "u_gen_15_9",
+      "name": "Tempest's Descent",
+      "base": "spear2h_t9",
+      "ilvl": 65,
+      "stats": {
+        "dmgPct": 113,
+        "critChance": 8,
+        "resLight": 25
+      }
+    },
+    {
+      "id": "u_gen_15_11",
+      "name": "Cloudpiercer",
+      "base": "spear2h_t11",
+      "ilvl": 84,
+      "stats": {
+        "dmgPct": 136,
+        "ar": 198,
+        "mana": 74
+      }
+    },
+    {
+      "id": "u_gen_16_0",
+      "name": "Heartseeker",
+      "base": "crossbow2h_t1",
+      "ilvl": 5,
+      "stats": {
+        "dmgPct": 41,
+        "dex": 6,
+        "fireDmg": 6
+      }
+    },
+    {
+      "id": "u_gen_16_2",
+      "name": "Repeater",
+      "base": "crossbow2h_t3",
+      "ilvl": 13,
+      "stats": {
+        "dmgPct": 51,
+        "critChance": 5,
+        "critDmg": 18
+      }
+    },
+    {
+      "id": "u_gen_16_4",
+      "name": "Boltwidow",
+      "base": "crossbow2h_t4",
+      "ilvl": 24,
+      "stats": {
+        "dmgPct": 64,
+        "ias": 12,
+        "frw": 19
+      }
+    },
+    {
+      "id": "u_gen_16_6",
+      "name": "Killshot",
+      "base": "crossbow2h_t6",
+      "ilvl": 39,
+      "stats": {
+        "dmgPct": 82,
+        "dex": 13,
+        "poisonDmg": 26
+      }
+    },
+    {
+      "id": "u_gen_16_8",
+      "name": "Pulsebreaker",
+      "base": "crossbow2h_t8",
+      "ilvl": 56,
+      "stats": {
+        "dmgPct": 102,
+        "critChance": 7,
+        "ar": 142
+      }
+    },
+    {
+      "id": "u_gen_16_10",
+      "name": "The Quickening Quarrel",
+      "base": "crossbow2h_t10",
+      "ilvl": 74,
+      "stats": {
+        "dmgPct": 124,
+        "ias": 17,
+        "mana": 67
+      }
+    },
+    {
+      "id": "u_gen_16_12",
+      "name": "Last Heartbeat",
+      "base": "crossbow2h_t12",
+      "ilvl": 93,
+      "stats": {
+        "dmgPct": 147,
+        "critDmg": 38,
+        "hp": 89
+      }
+    },
+    {
+      "id": "u_gen_17_1",
+      "name": "Wardlight",
+      "base": "shield_t2",
+      "ilvl": 9,
+      "stats": {
+        "armorPct": 44,
+        "resAll": 6,
+        "hp": 22
+      }
+    },
+    {
+      "id": "u_gen_17_3",
+      "name": "Bastion",
+      "base": "shield_t3",
+      "ilvl": 18,
+      "stats": {
+        "block": 9,
+        "armorPct": 53,
+        "vit": 9
+      }
+    },
+    {
+      "id": "u_gen_17_5",
+      "name": "Sanctuary",
+      "base": "shield_t5",
+      "ilvl": 31,
+      "stats": {
+        "armorPct": 66,
+        "thorns": 13,
+        "resFire": 18
+      }
+    },
+    {
+      "id": "u_gen_17_7",
+      "name": "Aegis Eternal",
+      "base": "shield_t7",
+      "ilvl": 47,
+      "stats": {
+        "armorPct": 82,
+        "hp": 53,
+        "resAll": 10
+      }
+    },
+    {
+      "id": "u_gen_17_9",
+      "name": "The Unbroken Vow",
+      "base": "shield_t9",
+      "ilvl": 65,
+      "stats": {
+        "block": 12,
+        "hp": 67,
+        "vit": 18
+      }
+    },
+    {
+      "id": "u_gen_17_11",
+      "name": "Refuge of Ash",
+      "base": "shield_t11",
+      "ilvl": 84,
+      "stats": {
+        "armorPct": 119,
+        "resFire": 29,
+        "mana": 74
+      }
+    },
+    {
+      "id": "u_gen_18_0",
+      "name": "Gravewrought Grips",
+      "base": "gloves_t1",
+      "ilvl": 5,
+      "stats": {
+        "ias": 11,
+        "critChance": 4,
+        "str": 6
+      }
+    },
+    {
+      "id": "u_gen_18_2",
+      "name": "Throttle",
+      "base": "gloves_t3",
+      "ilvl": 13,
+      "stats": {
+        "ias": 11,
+        "dex": 8,
+        "lifeSteal": 3
+      }
+    },
+    {
+      "id": "u_gen_18_4",
+      "name": "Vise",
+      "base": "gloves_t4",
+      "ilvl": 24,
+      "stats": {
+        "dmgPct": 64,
+        "critDmg": 21,
+        "str": 10
+      }
+    },
+    {
+      "id": "u_gen_18_6",
+      "name": "Deadhand",
+      "base": "gloves_t6",
+      "ilvl": 39,
+      "stats": {
+        "ias": 14,
+        "frw": 21,
+        "hp": 46
+      }
+    },
+    {
+      "id": "u_gen_18_8",
+      "name": "Sepulcher's Clutch",
+      "base": "gloves_t8",
+      "ilvl": 56,
+      "stats": {
+        "spellPct": 56,
+        "fcr": 16,
+        "mana": 54
+      }
+    },
+    {
+      "id": "u_gen_18_10",
+      "name": "Stranglemourn",
+      "base": "gloves_t10",
+      "ilvl": 74,
+      "stats": {
+        "ias": 17,
+        "poisonDmg": 43,
+        "dex": 20
+      }
+    },
+    {
+      "id": "u_gen_18_12",
+      "name": "Palms of the Pit",
+      "base": "gloves_t12",
+      "ilvl": 93,
+      "stats": {
+        "dmgPct": 147,
+        "str": 24,
+        "resFire": 31
+      }
+    },
+    {
+      "id": "u_gen_19_1",
+      "name": "Serpentcoil",
+      "base": "belt_t2",
+      "ilvl": 9,
+      "stats": {
+        "hp": 22,
+        "resAll": 6,
+        "str": 7
+      }
+    },
+    {
+      "id": "u_gen_19_3",
+      "name": "Girdle of Spite",
+      "base": "belt_t3",
+      "ilvl": 18,
+      "stats": {
+        "hp": 29,
+        "poisonDmg": 15,
+        "vit": 9
+      }
+    },
+    {
+      "id": "u_gen_19_5",
+      "name": "Venomwind",
+      "base": "belt_t5",
+      "ilvl": 31,
+      "stats": {
+        "hp": 40,
+        "resFire": 18,
+        "resCold": 18
+      }
+    },
+    {
+      "id": "u_gen_19_7",
+      "name": "Coilbind",
+      "base": "belt_t7",
+      "ilvl": 47,
+      "stats": {
+        "hp": 53,
+        "frw": 22,
+        "dex": 14
+      }
+    },
+    {
+      "id": "u_gen_19_9",
+      "name": "The Tightening Hiss",
+      "base": "belt_t9",
+      "ilvl": 65,
+      "stats": {
+        "hp": 67,
+        "mana": 61,
+        "resPoison": 25
+      }
+    },
+    {
+      "id": "u_gen_19_11",
+      "name": "Fangknot",
+      "base": "belt_t11",
+      "ilvl": 84,
+      "stats": {
+        "hp": 82,
+        "vit": 22,
+        "poisonDmg": 48
+      }
+    }
+  ],
+  "charms": [
+    {
+      "id": "uc_thief",
+      "name": "Cutpurse Charm",
+      "size": "small",
+      "ilvl": 12,
+      "stats": {
+        "mf": 12,
+        "goldFind": 30
+      },
+      "flavor": "Luck, bottled and slightly used."
+    },
+    {
+      "id": "uc_ember",
+      "name": "Emberheart Charm",
+      "size": "small",
+      "ilvl": 20,
+      "stats": {
+        "fireDmg": 14,
+        "resFire": 14
+      },
+      "flavor": "A coal that refuses to cool."
+    },
+    {
+      "id": "uc_quick",
+      "name": "Hare's Charm",
+      "size": "small",
+      "ilvl": 26,
+      "stats": {
+        "frw": 9,
+        "dex": 6
+      },
+      "flavor": "Found, fittingly, very fast."
+    },
+    {
+      "id": "uc_mystic",
+      "name": "Mystic Orbcharm",
+      "size": "large",
+      "ilvl": 38,
+      "stats": {
+        "spellPct": 16,
+        "mana": 40,
+        "manaRegen": 25
+      },
+      "flavor": "It hums the note between thoughts."
+    },
+    {
+      "id": "uc_grave",
+      "name": "Gravewarden Charm",
+      "size": "large",
+      "ilvl": 40,
+      "stats": {
+        "hp": 45,
+        "resAll": 10,
+        "lifeRegen": 4
+      },
+      "flavor": "The dead keep their distance."
+    },
+    {
+      "id": "uc_vampire",
+      "name": "Sanguine Charm",
+      "size": "large",
+      "ilvl": 50,
+      "stats": {
+        "lifeSteal": 5,
+        "manaSteal": 4,
+        "hp": 35
+      },
+      "flavor": "It feeds so you don't have to."
+    },
+    {
+      "id": "uc_hunt",
+      "name": "Huntress Talisman",
+      "size": "grand",
+      "ilvl": 45,
+      "stats": {
+        "dmgPct": 24,
+        "ar": 120,
+        "ias": 8
+      },
+      "flavor": "Every shot already knows where it lands."
+    },
+    {
+      "id": "uc_warlord",
+      "name": "Warlord's Sigil",
+      "size": "grand",
+      "ilvl": 55,
+      "stats": {
+        "dmgPct": 28,
+        "str": 18,
+        "ccReduce": 20
+      },
+      "flavor": "Carried by the last one standing."
+    },
+    {
+      "id": "uc_wyrm",
+      "name": "Wyrmscale Charm",
+      "size": "grand",
+      "ilvl": 62,
+      "stats": {
+        "resAll": 18,
+        "hp": 55,
+        "dmgReduceFlat": 6
+      },
+      "flavor": "Shed by something far older than you."
+    }
+  ],
+  "jewels": [
+    {
+      "id": "uj_oak",
+      "name": "Old Oak's Heart",
+      "ilvl": 16,
+      "jcol": "#8b5a2b",
+      "affixes": [
+        {
+          "stat": "hp",
+          "val": 20
+        },
+        {
+          "stat": "resPoison",
+          "val": 15
+        }
+      ],
+      "flavor": "A thousand winters sleep inside this polished brown knot."
+    },
+    {
+      "id": "uj_rainbow",
+      "name": "Prismfire Jewel",
+      "ilvl": 22,
+      "jcol": "#c060d0",
+      "affixes": [
+        {
+          "stat": "resAll",
+          "val": 12
+        },
+        {
+          "stat": "hp",
+          "val": 25
+        }
+      ],
+      "flavor": "All colours, one promise."
+    },
+    {
+      "id": "uj_rage",
+      "name": "Jewel of Rage",
+      "ilvl": 28,
+      "jcol": "#d04040",
+      "affixes": [
+        {
+          "stat": "dmgPct",
+          "val": 35
+        },
+        {
+          "stat": "ias",
+          "val": 10
+        }
+      ],
+      "flavor": "It wants you to swing."
+    },
+    {
+      "id": "uj_frost",
+      "name": "Heartfrost Jewel",
+      "ilvl": 34,
+      "jcol": "#40a0d0",
+      "affixes": [
+        {
+          "stat": "coldDmg",
+          "val": 30
+        },
+        {
+          "stat": "resCold",
+          "val": 20
+        }
+      ],
+      "flavor": "Cold enough to bite back."
+    },
+    {
+      "id": "uj_ward",
+      "name": "Wardstone Jewel",
+      "ilvl": 40,
+      "jcol": "#60c060",
+      "affixes": [
+        {
+          "stat": "dmgReduceFlat",
+          "val": 6
+        },
+        {
+          "stat": "resAll",
+          "val": 10
+        }
+      ],
+      "flavor": "A small, stubborn shield."
+    },
+    {
+      "id": "uj_leech",
+      "name": "Bloodthirst Jewel",
+      "ilvl": 46,
+      "jcol": "#a02030",
+      "affixes": [
+        {
+          "stat": "lifeSteal",
+          "val": 5
+        },
+        {
+          "stat": "dmgPct",
+          "val": 24
+        }
+      ],
+      "flavor": "Drink deep."
+    },
+    {
+      "id": "uj_storm",
+      "name": "Stormshard Jewel",
+      "ilvl": 52,
+      "jcol": "#e0c040",
+      "affixes": [
+        {
+          "stat": "lightDmg",
+          "val": 40
+        },
+        {
+          "stat": "ias",
+          "val": 8
+        }
+      ],
+      "flavor": "It remembers a thunderhead."
+    },
+    {
+      "id": "uj_titan",
+      "name": "Titanfall Jewel",
+      "ilvl": 56,
+      "jcol": "#d08040",
+      "affixes": [
+        {
+          "stat": "maxDmg",
+          "val": 18
+        },
+        {
+          "stat": "str",
+          "val": 15
+        }
+      ],
+      "flavor": "Heavy with intent."
+    },
+    {
+      "id": "uj_seer",
+      "name": "Seer's Jewel",
+      "ilvl": 62,
+      "jcol": "#8060e0",
+      "affixes": [
+        {
+          "stat": "spellPct",
+          "val": 25
+        },
+        {
+          "stat": "mana",
+          "val": 40
+        }
+      ],
+      "flavor": "It looks back."
+    }
+  ],
+  "glyphs": [
+    {
+      "id": "g_doom",
+      "name": "Doomglyph",
+      "unique": true,
+      "color": "#ff5050",
+      "wpn": {
+        "dmgPct": 25,
+        "fireDmg": 12
+      },
+      "arm": {
+        "resAll": 12,
+        "hp": 25
+      },
+      "flavor": "Cut from a stone that had seen the end of things.",
+      "dropLevel": 20
+    },
+    {
+      "id": "g_void",
+      "name": "Voidglyph",
+      "unique": true,
+      "color": "#a060e0",
+      "wpn": {
+        "spellPct": 20,
+        "manaSteal": 4
+      },
+      "arm": {
+        "mana": 40,
+        "fcr": 8
+      },
+      "flavor": "It drinks the light around it.",
+      "dropLevel": 28
+    },
+    {
+      "id": "g_titan",
+      "name": "Titanglyph",
+      "unique": true,
+      "color": "#e0a040",
+      "wpn": {
+        "maxDmg": 14,
+        "str": 12
+      },
+      "arm": {
+        "armorPct": 30,
+        "str": 10
+      },
+      "flavor": "Forged for hands larger than yours.",
+      "dropLevel": 36
+    },
+    {
+      "id": "g_wraith",
+      "name": "Wraithglyph",
+      "unique": true,
+      "color": "#80d0c0",
+      "wpn": {
+        "lifeSteal": 5,
+        "critChance": 5
+      },
+      "arm": {
+        "frw": 12,
+        "dodge": 8
+      },
+      "flavor": "Half here, and the better half.",
+      "dropLevel": 24
+    },
+    {
+      "id": "g_aegis",
+      "name": "Aegisglyph",
+      "unique": true,
+      "color": "#f0e090",
+      "wpn": {
+        "dmgUndead": 60,
+        "ar": 80
+      },
+      "arm": {
+        "resAll": 15,
+        "dmgReduceFlat": 4
+      },
+      "flavor": "Blessed against the things that don't stay buried.",
+      "dropLevel": 16
+    },
+    {
+      "id": "g_venom",
+      "name": "Venomglyph",
+      "unique": true,
+      "color": "#90e040",
+      "wpn": {
+        "poisonDmg": 30,
+        "ias": 8
+      },
+      "arm": {
+        "resPoison": 30,
+        "hp": 20
+      },
+      "flavor": "Weeps a single green bead when the moon is wrong.",
+      "dropLevel": 12
+    }
+  ],
+  "socketPowers": {
+    "uc_thief": {
+      "id": "uc_thief",
+      "name": "Cutpurse Charm",
+      "level": 12,
+      "powers": [
+        {
+          "title": "Quick Fingers",
+          "event": "kill",
+          "when": "elite",
+          "effects": [
+            {
+              "kind": "buff",
+              "stats": {
+                "mf": 30,
+                "goldFind": 40
+              },
+              "dur": 8
+            }
+          ],
+          "cd": 5
+        }
+      ]
+    },
+    "uc_ember": {
+      "id": "uc_ember",
+      "name": "Emberheart Charm",
+      "level": 20,
+      "powers": [
+        {
+          "title": "Unfading Coal",
+          "event": "spell",
+          "when": "fire",
+          "effects": [
+            {
+              "kind": "buff",
+              "stats": {
+                "resFire": 20
+              },
+              "dur": 5
+            }
+          ],
+          "cd": 5,
+          "every": 2
+        }
+      ]
+    },
+    "uc_quick": {
+      "id": "uc_quick",
+      "name": "Hare's Charm",
+      "level": 26,
+      "powers": [
+        {
+          "title": "Hare's Start",
+          "event": "hurt",
+          "when": "any",
+          "effects": [
+            {
+              "kind": "buff",
+              "stats": {
+                "frw": 35
+              },
+              "dur": 3
+            }
+          ],
+          "cd": 8
+        }
+      ]
+    },
+    "uc_mystic": {
+      "id": "uc_mystic",
+      "name": "Mystic Orbcharm",
+      "level": 38,
+      "powers": [
+        {
+          "title": "Unspoken Syllable",
+          "event": "spend",
+          "when": "any",
+          "effects": [
+            {
+              "kind": "mana",
+              "pct": 10
+            },
+            {
+              "kind": "buff",
+              "stats": {
+                "fcr": 15
+              },
+              "dur": 4
+            }
+          ],
+          "cd": 8,
+          "every": 60
+        }
+      ]
+    },
+    "uc_grave": {
+      "id": "uc_grave",
+      "name": "Gravewarden Charm",
+      "level": 40,
+      "powers": [
+        {
+          "title": "Keep Your Distance",
+          "event": "kill",
+          "when": "undead",
+          "effects": [
+            {
+              "kind": "slow",
+              "pct": 40,
+              "dur": 3,
+              "radius": 3
+            },
+            {
+              "kind": "heal",
+              "pct": 4
+            }
+          ],
+          "cd": 5
+        }
+      ]
+    },
+    "uc_vampire": {
+      "id": "uc_vampire",
+      "name": "Sanguine Charm",
+      "level": 50,
+      "powers": [
+        {
+          "title": "Sanguine Reserve",
+          "event": "strike",
+          "when": "critical",
+          "effects": [
+            {
+              "kind": "heal",
+              "pct": 3
+            },
+            {
+              "kind": "mana",
+              "pct": 3
+            }
+          ],
+          "cd": 4
+        }
+      ]
+    },
+    "uc_hunt": {
+      "id": "uc_hunt",
+      "name": "Huntress Talisman",
+      "level": 45,
+      "powers": [
+        {
+          "title": "Huntress's Patience",
+          "event": "strike",
+          "when": "still",
+          "effects": [
+            {
+              "kind": "empower",
+              "attack": "strike",
+              "pct": 40,
+              "dur": 6
+            }
+          ],
+          "cd": 5,
+          "every": 3
+        }
+      ]
+    },
+    "uc_warlord": {
+      "id": "uc_warlord",
+      "name": "Warlord's Sigil",
+      "level": 55,
+      "powers": [
+        {
+          "title": "Last One Standing",
+          "event": "kill",
+          "when": "alone",
+          "effects": [
+            {
+              "kind": "barrier",
+              "pct": 8,
+              "dur": 5
+            },
+            {
+              "kind": "buff",
+              "stats": {
+                "ias": 15
+              },
+              "dur": 4
+            }
+          ],
+          "cd": 5
+        }
+      ]
+    },
+    "uc_wyrm": {
+      "id": "uc_wyrm",
+      "name": "Wyrmscale Charm",
+      "level": 62,
+      "powers": [
+        {
+          "title": "Ancient Molt",
+          "event": "hurt",
+          "when": "elemental",
+          "effects": [
+            {
+              "kind": "barrier",
+              "pct": 10,
+              "dur": 5
+            },
+            {
+              "kind": "buff",
+              "stats": {
+                "ccReduce": 25
+              },
+              "dur": 4
+            }
+          ],
+          "cd": 8
+        }
+      ]
+    },
+    "uj_rainbow": {
+      "id": "uj_rainbow",
+      "name": "Prismfire Jewel",
+      "level": 22,
+      "powers": [
+        {
+          "title": "Prismatic Turn",
+          "event": "spell",
+          "when": "any",
+          "effects": [
+            {
+              "kind": "buff",
+              "stats": {
+                "resAll": 12
+              },
+              "dur": 4
+            }
+          ],
+          "cd": 5,
+          "alternateElement": true
+        }
+      ]
+    },
+    "uj_oak": {
+      "id": "uj_oak",
+      "name": "Old Oak's Heart",
+      "level": 16,
+      "powers": [
+        {
+          "title": "Barkskin",
+          "event": "hurt",
+          "when": "melee",
+          "effects": [
+            {
+              "kind": "barrier",
+              "pct": 8,
+              "dur": 4
+            }
+          ],
+          "cd": 8
+        }
+      ]
+    },
+    "uj_rage": {
+      "id": "uj_rage",
+      "name": "Jewel of Rage",
+      "level": 28,
+      "powers": [
+        {
+          "title": "Rising Rage",
+          "event": "strike",
+          "when": "any",
+          "effects": [
+            {
+              "kind": "buff",
+              "stats": {
+                "ias": 20,
+                "critDmg": 20
+              },
+              "dur": 4
+            }
+          ],
+          "cd": 5,
+          "every": 5
+        }
+      ]
+    },
+    "uj_frost": {
+      "id": "uj_frost",
+      "name": "Heartfrost Jewel",
+      "level": 34,
+      "powers": [
+        {
+          "title": "Heart of Winter",
+          "event": "hit",
+          "when": "slowed",
+          "effects": [
+            {
+              "kind": "barrier",
+              "pct": 6,
+              "dur": 5
+            }
+          ],
+          "cd": 5
+        }
+      ]
+    },
+    "uj_ward": {
+      "id": "uj_ward",
+      "name": "Wardstone Jewel",
+      "level": 40,
+      "powers": [
+        {
+          "title": "Stubborn Stone",
+          "event": "hurt",
+          "when": "eliteSource",
+          "effects": [
+            {
+              "kind": "buff",
+              "stats": {
+                "dmgReducePct": 15
+              },
+              "dur": 3
+            }
+          ],
+          "cd": 5
+        }
+      ]
+    },
+    "uj_leech": {
+      "id": "uj_leech",
+      "name": "Bloodthirst Jewel",
+      "level": 46,
+      "powers": [
+        {
+          "title": "Drink Deep",
+          "event": "strike",
+          "when": "exposed",
+          "effects": [
+            {
+              "kind": "heal",
+              "pct": 4
+            },
+            {
+              "kind": "mana",
+              "pct": 4
+            }
+          ],
+          "cd": 5
+        }
+      ]
+    },
+    "uj_storm": {
+      "id": "uj_storm",
+      "name": "Stormshard Jewel",
+      "level": 52,
+      "powers": [
+        {
+          "title": "Remembered Thunder",
+          "event": "spell",
+          "when": "light",
+          "effects": [
+            {
+              "kind": "chain",
+              "elem": "light",
+              "count": 2,
+              "pct": 35,
+              "radius": 5
+            },
+            {
+              "kind": "barrier",
+              "pct": 4,
+              "dur": 5
+            }
+          ],
+          "cd": 5,
+          "every": 4
+        }
+      ]
+    },
+    "uj_titan": {
+      "id": "uj_titan",
+      "name": "Titanfall Jewel",
+      "level": 56,
+      "powers": [
+        {
+          "title": "Heavy Intent",
+          "event": "strike",
+          "when": "critical",
+          "effects": [
+            {
+              "kind": "slow",
+              "pct": 45,
+              "dur": 3,
+              "radius": 3
+            },
+            {
+              "kind": "buff",
+              "stats": {
+                "armorPct": 20
+              },
+              "dur": 4
+            }
+          ],
+          "cd": 5
+        }
+      ]
+    },
+    "uj_seer": {
+      "id": "uj_seer",
+      "name": "Seer's Jewel",
+      "level": 62,
+      "powers": [
+        {
+          "title": "Looking Back",
+          "event": "cast",
+          "when": "any",
+          "effects": [
+            {
+              "kind": "empower",
+              "attack": "spell",
+              "pct": 40,
+              "dur": 6
+            }
+          ],
+          "cd": 5,
+          "every": 4
+        }
+      ]
+    },
+    "g_doom": {
+      "id": "g_doom",
+      "name": "Doomglyph",
+      "level": 20,
+      "powers": [
+        {
+          "title": "Doombrand",
+          "event": "strike",
+          "when": "demon",
+          "effects": [
+            {
+              "kind": "dot",
+              "elem": "fire",
+              "pct": 100,
+              "dur": 3
+            }
+          ],
+          "cd": 5
+        },
+        {
+          "title": "Doomguard",
+          "event": "hurt",
+          "when": "lowLife",
+          "effects": [
+            {
+              "kind": "nova",
+              "elem": "fire",
+              "pct": 50,
+              "radius": 2.5
+            },
+            {
+              "kind": "mana",
+              "pct": 6
+            }
+          ],
+          "cd": 10
+        }
+      ]
+    },
+    "g_void": {
+      "id": "g_void",
+      "name": "Voidglyph",
+      "level": 28,
+      "powers": [
+        {
+          "title": "Void Draw",
+          "event": "spell",
+          "when": "lowMana",
+          "effects": [
+            {
+              "kind": "mana",
+              "pct": 7
+            },
+            {
+              "kind": "expose",
+              "pct": 10,
+              "dur": 4
+            }
+          ],
+          "cd": 5
+        },
+        {
+          "title": "Void Shelter",
+          "event": "spend",
+          "when": "any",
+          "effects": [
+            {
+              "kind": "barrier",
+              "pct": 8,
+              "dur": 5
+            }
+          ],
+          "cd": 5,
+          "every": 35
+        }
+      ]
+    },
+    "g_titan": {
+      "id": "g_titan",
+      "name": "Titanglyph",
+      "level": 36,
+      "powers": [
+        {
+          "title": "Titan's Aftershock",
+          "event": "strike",
+          "when": "elite",
+          "effects": [
+            {
+              "kind": "nova",
+              "elem": "earth",
+              "pct": 60,
+              "radius": 2.5
+            }
+          ],
+          "cd": 5
+        },
+        {
+          "title": "Titan's Resolve",
+          "event": "block",
+          "when": "any",
+          "effects": [
+            {
+              "kind": "buff",
+              "stats": {
+                "str": 20,
+                "dmgReducePct": 10
+              },
+              "dur": 4
+            }
+          ],
+          "cd": 5
+        }
+      ]
+    },
+    "g_wraith": {
+      "id": "g_wraith",
+      "name": "Wraithglyph",
+      "level": 24,
+      "powers": [
+        {
+          "title": "Wraith's Passing",
+          "event": "kill",
+          "when": "any",
+          "effects": [
+            {
+              "kind": "empower",
+              "attack": "spell",
+              "pct": 35,
+              "dur": 6
+            }
+          ],
+          "cd": 5
+        },
+        {
+          "title": "Wraithwalk",
+          "event": "move",
+          "when": "any",
+          "effects": [
+            {
+              "kind": "mana",
+              "pct": 4
+            },
+            {
+              "kind": "buff",
+              "stats": {
+                "dodge": 12
+              },
+              "dur": 4
+            }
+          ],
+          "cd": 5,
+          "every": 10
+        }
+      ]
+    },
+    "g_aegis": {
+      "id": "g_aegis",
+      "name": "Aegisglyph",
+      "level": 16,
+      "powers": [
+        {
+          "title": "Aegis Judgment",
+          "event": "strike",
+          "when": "undead",
+          "effects": [
+            {
+              "kind": "empower",
+              "attack": "spell",
+              "pct": 40,
+              "dur": 6
+            },
+            {
+              "kind": "barrier",
+              "pct": 4,
+              "dur": 5
+            }
+          ],
+          "cd": 5
+        },
+        {
+          "title": "Aegis Vigil",
+          "event": "hurt",
+          "when": "undeadSource",
+          "effects": [
+            {
+              "kind": "barrier",
+              "pct": 8,
+              "dur": 5
+            },
+            {
+              "kind": "buff",
+              "stats": {
+                "resAll": 10
+              },
+              "dur": 4
+            }
+          ],
+          "cd": 5
+        }
+      ]
+    },
+    "g_venom": {
+      "id": "g_venom",
+      "name": "Venomglyph",
+      "level": 12,
+      "powers": [
+        {
+          "title": "Venom's Ripening",
+          "event": "strike",
+          "when": "poisoned",
+          "effects": [
+            {
+              "kind": "nova",
+              "elem": "poison",
+              "pct": 55,
+              "radius": 2.5
+            }
+          ],
+          "cd": 5,
+          "every": 3
+        },
+        {
+          "title": "Venom's Antidote",
+          "event": "hurt",
+          "when": "poison",
+          "effects": [
+            {
+              "kind": "heal",
+              "pct": 5
+            },
+            {
+              "kind": "buff",
+              "stats": {
+                "frw": 20
+              },
+              "dur": 4
+            }
+          ],
+          "cd": 5
+        }
+      ]
+    }
+  }
+}

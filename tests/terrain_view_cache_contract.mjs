@@ -60,7 +60,7 @@ for(const cam of [{x:-960,y:2000},{x:-960.35,y:2000.65}]){
  for(const cached of [false,true]){
   T.beginFrame(map);T.drawSurface(ctx,map,cam,0,map.w-1,0,map.h-1,()=>true,cached);
   const batch=[];
-  for(const [x,y] of actors){trace=[];T.clipBehind(ctx,map,cam,x,y);batch.push(trace);trace=null;}
+  for(const [x,y] of actors){trace=[];T.clipBehind(ctx,map,cam,x,y);const first=trace;trace=[];T.clipBehind(ctx,map,cam,x,y);assert.deepEqual(trace,first,'warm northern candidate cache changed occlusion');checks++;batch.push(trace);trace=null;}
   T.endFrame();commands.push(batch);
  }
  assert.deepEqual(commands[1],commands[0],'indexed occlusion changed clipping paths or their order');checks++;

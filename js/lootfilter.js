@@ -211,6 +211,42 @@ const LootFilter = (() => {
     if (config.preset !== "custom") { config.rules = JSON.parse(JSON.stringify((PRESETS[config.preset] || PRESETS.showall).rules)); config.preset = "custom"; }
     config.rules.forEach(r => { if (!r.id) r.id = uid(); });
   }
+  /* Validate shared filters completely before touching the active configuration. */
+  function importJSON(txt) {
+    try {
+      const o = JSON.parse(txt), object = v => v && typeof v === "object" && !Array.isArray(v);
+      if (!object(o)) return false;
+      const preset = o.preset || "custom", rules = o.rules || [];
+      if (!(preset === "custom" || Object.hasOwn(PRESETS, preset)) || !Array.isArray(rules) || rules.length > 200) return false;
+      if (o.enabled != null && typeof o.enabled !== "boolean") return false;
+      if (o.revealKey != null && (typeof o.revealKey !== "string" || !o.revealKey.trim() || o.revealKey.length > 40)) return false;
+      const numeric = ["rarity", "reqLvl", "power", "phys", "dmg", "armor", "value", "mods", "sockets", "craft"];
+      const textProps = ["name", "type", "slot", "hasMod", "skill"], booleanProps = ["quest", "unique", "legendary"];
+      const normalized = [];
+      for (const rule of rules) {
+        if (!object(rule) || typeof rule.name !== "string" || rule.name.length > 200 || typeof rule.enabled !== "boolean") return false;
+        if (!["AND", "OR"].includes(rule.logic) || !Array.isArray(rule.conditions) || rule.conditions.length > 100 || !object(rule.action)) return false;
+        for (const c of rule.conditions) {
+          if (!object(c) || ![...numeric, ...textProps, ...booleanProps].includes(c.prop) || !Object.hasOwn(OPS, c.op)) return false;
+          if (numeric.includes(c.prop) && !(typeof c.value === "number" && Number.isFinite(c.value)) && !(typeof c.value === "string" && /^(?:-?\d+(?:\.\d+)?|player\s*(?:[-+]\s*\d+)?)$/i.test(c.value))) return false;
+          if (textProps.includes(c.prop) && (typeof c.value !== "string" || c.value.length > 200)) return false;
+          if (booleanProps.includes(c.prop) && typeof c.value !== "boolean") return false;
+          if (c.prop === "skill" && !/^(any|[a-z0-9_]+)$/.test(c.value)) return false;
+          if (c.min != null && (typeof c.min !== "number" || !Number.isFinite(c.min))) return false;
+        }
+        for (const [key, value] of Object.entries(rule.action)) {
+          if (["color", "glow", "beam", "minimap"].includes(key)) { if (value !== null && (typeof value !== "string" || !/^#[0-9a-f]{6}$/i.test(value))) return false; }
+          else if (key === "size") { if (typeof value !== "number" || value < .8 || value > 1.8) return false; }
+          else if (key === "hide") { if (typeof value !== "boolean") return false; }
+          else if (key === "sound") { if (value !== null && !["dropUnique", "dropRare", "drop", "pickup", "forge", "crit"].includes(value)) return false; }
+          else return false;
+        }
+        normalized.push({ ...rule, id: uid() });
+      }
+      Object.assign(config, { preset, rules: normalized, enabled: o.enabled !== false, revealKey: (o.revealKey || "alt").toLowerCase() });
+      bump(); return true;
+    } catch (e) { return false; }
+  }
   return {
     PRESETS, OPS,
     /* read */
@@ -237,6 +273,6 @@ const LootFilter = (() => {
     reset() { config.preset = "standard"; config.rules = []; config.enabled = true; bump(); },
     /* import / export (plain JSON the player can copy out / paste in) */
     exportJSON() { return JSON.stringify({ preset: config.preset, rules: config.rules, enabled: config.enabled, revealKey: config.revealKey }, null, 2); },
-    importJSON(txt) { try { const o = JSON.parse(txt); config.preset = o.preset || "custom"; config.rules = o.rules || []; config.enabled = o.enabled !== false; config.revealKey = o.revealKey || "alt"; config.rules.forEach(r => { if (!r.id) r.id = uid(); }); bump(); return true; } catch (e) { return false; } },
+    importJSON,
   };
 })();

@@ -25,6 +25,8 @@ export function fixture({bossSource,sourceDirectory,reducedMotion=false,gameExpo
   if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'boss_vfx.js')))files.splice(3,0,'boss_vfx');
   if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'enemy_skills.js')))files.splice(files.indexOf('entities'),0,'enemy_skills');
   if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'act5_enemy_animation.js')))files.splice(files.indexOf('entities'),0,'act5_enemy_animation');
+  if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'act1_enemy_animation.js')))files.splice(files.indexOf('entities'),0,'act1_enemy_animation');
+  if(!sourceDirectory||fs.existsSync(path.join(sourceDirectory,'act1_animation_catalog.js')))files.splice(files.indexOf('sprite_manifest')+1,0,'act1_animation_catalog');
   for(const f of files){
     if(f==='data'&&dataSeed!==undefined)vm.runInContext('Math.random=U.rng('+JSON.stringify(dataSeed)+')',ctx);
     vm.runInContext(f==='boss_encounters'&&bossSource!==undefined?bossSource:read(f),ctx);

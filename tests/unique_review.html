@@ -12,13 +12,16 @@ try{
  const win=frame.contentWindow;for(let i=0;i<900&&!win.document.querySelector('#titleMenu button');i++){const fatal=win.document.getElementById('appFatal');if(fatal)throw Error(fatal.textContent);await new Promise(r=>setTimeout(r,30));}
  const api=win.eval('({DATA,Game,UI,Items,UniquePowers,Monster,Minion,Sfx})'),{Game:G,UI,DATA:D,Items:I,UniquePowers:Q}=api;
  api.Sfx.setVol('master',0);await G.newGame('Unique review','vanguard',false);await G.skipOpening();UI.closeAll();G.state.player.lvl=100;
- const p=G.state.player;G.debugFlags.god=false;G.__uniqueReview.updateCamera(10);G.__uniqueReview.render();
+ let p=G.state.player;G.debugFlags.god=false;G.__uniqueReview.updateCamera(10);G.__uniqueReview.render();
  function make(id){const u=D.UNIQUES.find(d=>d.id===id),c=D.UNIQUE_CHARMS.find(d=>d.id===id),j=D.UNIQUE_JEWELS.find(d=>d.id===id);const it=u?I.makeUnique(u):c?I.makeUniqueCharm(c):j?I.makeUniqueJewel(j):I.makeGlyph(id);it.identified=true;return it;}
  function show(id){UI.hideTooltip();const it=make(id);UI.showItemTooltip(it,500,win.innerHeight-10);document.getElementById('item').value=id;return it;}
  for(const e of Object.values(Q.catalog)){const o=document.createElement('option');o.value=e.id;o.textContent=e.name;document.getElementById('item').append(o);}
  document.getElementById('item').onchange=e=>show(e.target.value);
  async function effect(){
-  const id=document.getElementById('item').value,it=make(id);p.inv.items=[];p.equip={};p.buffs=[];p._unique=null;
+  const id=document.getElementById('item').value,it=make(id),selectedPower=Q.catalog[id].powers[0];
+  if(selectedPower.target&&p.classId!==selectedPower.target.classId){await G.newGame('Unique review',selectedPower.target.classId,false);await G.skipOpening();UI.closeAll();p=G.state.player;}
+  p.lvl=100;for(const s of Object.values(D.SKILLS))if(s.cls===p.classId)p.skills[s.id]=1;
+  p.inv.items=[];p.equip={};p.buffs=[];p._unique=null;
   if(it.kind==='charm')I.autoPlace(p.inv,it);else if(it.kind==='gear')p.equip[it.slot==='ring'?'ring1':it.slot]=it;else{const host=I.fromBase('handaxe');host.sockets=[null];I.socketGlyph(host,it);p.equip.main=host;}
   p.computeStats();p.hp=p.stats.maxHp*.3;p.mana=p.stats.maxMana*.2;
   const target=new api.Monster('cave_python',p.x+1,p.y);target.hp=target.maxHp=100000;target.type='undead';target.elite=true;target.slowT=3;target.poisonDot={dps:1,t:4};target.scorch={dps:1,until:G.state.time+10};target.curseFrailty={pct:0,until:G.state.time+10};G.state.monsters=[target,new api.Monster('cave_python',p.x+2,p.y+1)];
@@ -40,9 +43,10 @@ try{
   for(let i=0;i<Math.max(2,power.every||1);i++){if(power.alternate)event.kind=i%2?'spell':'strike';if(power.alternateElement)event.elem=i%2?'cold':'fire';Q.emit(p,power.event,event);}
   const prepared=await G.preparePlayerEquipment(p.equip);G.commitPlayerEquipment(prepared);
   G.__uniqueReview.render();UI.refreshBuffs();UI.refreshHUD();show(id);
-  if(!p._unique.states.size)throw Error('Preview did not activate '+id);
+  if(power.event==='equip'){if(!p._unique.active.some(a=>a.entry.id===id))throw Error('Inactive equipment power '+id);}
+  else if(!p._unique.states.size)throw Error('Preview did not activate '+id);
  }
  document.getElementById('effect').onclick=()=>effect().catch(e=>status.textContent=e.message);
- window.uniqueQA={api,frame,show,make,effect};show('u_widow');status.textContent='Ready — 162 items. Review saves are isolated in memory.';
+ window.uniqueQA={api,frame,show,make,effect};show('u_widow');status.textContent='Ready — '+Object.keys(Q.catalog).length+' items. Review saves are isolated in memory.';
 }catch(e){status.textContent='FAIL: '+e.stack;throw e;}
 </script></html>

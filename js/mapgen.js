@@ -881,12 +881,12 @@ const MapGen = (() => {
     for (let c = 0; c < dn(13, MOB_MUL); c++) {
       const cx = 8 + r() * (m.w - 16), cy = 8 + r() * (m.h - 16);
       if (U.dist(cx, cy, entry.x, entry.y) < 14 || !walkable(m, cx, cy)) continue;
-      const eid = U.pickR(r, zone.spawns);
+      const members=DATA.familyMembers(zone.id,{id:'territory_'+Math.floor(cx/32)+'_'+Math.floor(cy/32)},r),eid=members[0];
       const def = DATA.ENEMIES[eid]; if (!def) continue;
       const count = def.pack ? U.riR(r, def.pack[0], def.pack[1]) : U.riR(r, 2, 4);
       const elite = r() < 0.16;
       for (let i = 0; i < count; i++) {
-        m.monsterSpawns.push({ id: eid, x: cx + (r() - 0.5) * 4, y: cy + (r() - 0.5) * 4, elite: elite && i === 0, minion: elite && i > 0 });
+        m.monsterSpawns.push({ id: members[i%members.length], x: cx + (r() - 0.5) * 4, y: cy + (r() - 0.5) * 4, elite: elite && i === 0, minion: elite && i > 0, packId:zone.id+':camp:'+c });
       }
       if (eid === "cult_acolyte") { addProp(m, "brazier", cx + 1, cy + 1, { light: true }); addLight(m, cx + 1, cy + 1, 4, "#ff9c50"); }
     }
@@ -1094,12 +1094,12 @@ const MapGen = (() => {
     for (let c = 0; c < dn(cfg.camps || 15, MOB_MUL); c++) {
       const cx = 8 + r() * (m.w - 16), cy = 8 + r() * (m.h - 16);
       if (U.dist(cx, cy, entry.x, entry.y) < 13 || !walkable(m, cx, cy)) continue;
-      const eid = U.pickR(r, zone.spawns);
+      const members=DATA.familyMembers(zone.id,{id:'territory_'+Math.floor(cx/32)+'_'+Math.floor(cy/32)},r),eid=members[0];
       const def = DATA.ENEMIES[eid]; if (!def) continue;
       const count = def.pack ? U.riR(r, def.pack[0], def.pack[1]) : U.riR(r, 2, 4);
       const elite = r() < 0.2;
       for (let i = 0; i < count; i++) {
-        m.monsterSpawns.push({ id: eid, x: cx + (r() - 0.5) * 4, y: cy + (r() - 0.5) * 4, elite: elite && i === 0, minion: elite && i > 0 });
+        m.monsterSpawns.push({ id: members[i%members.length], x: cx + (r() - 0.5) * 4, y: cy + (r() - 0.5) * 4, elite: elite && i === 0, minion: elite && i > 0, packId:zone.id+':camp:'+c });
       }
     }
     connectPockets(m, r, entry.x, entry.y, 40);   // dense archetypes never seal off ground
@@ -1212,12 +1212,12 @@ const MapGen = (() => {
     for (let c = 0; c < dn(16, MOB_MUL); c++) {
       const cx = 8 + r() * (m.w - 16), cy = 8 + r() * (m.h - 16);
       if (U.dist(cx, cy, entry.x, entry.y) < 13 || !walkable(m, cx, cy)) continue;
-      const eid = U.pickR(r, zone.spawns);
+      const members=DATA.familyMembers(zone.id,{id:'territory_'+Math.floor(cx/32)+'_'+Math.floor(cy/32)},r),eid=members[0];
       const def = DATA.ENEMIES[eid]; if (!def) continue;
       const count = def.pack ? U.riR(r, def.pack[0], def.pack[1]) : U.riR(r, 2, 4);
       const elite = r() < 0.2;
       for (let i = 0; i < count; i++) {
-        m.monsterSpawns.push({ id: eid, x: cx + (r() - 0.5) * 4, y: cy + (r() - 0.5) * 4, elite: elite && i === 0, minion: elite && i > 0 });
+        m.monsterSpawns.push({ id: members[i%members.length], x: cx + (r() - 0.5) * 4, y: cy + (r() - 0.5) * 4, elite: elite && i === 0, minion: elite && i > 0, packId:zone.id+':camp:'+c });
       }
     }
     connectPockets(m, r, entry.x, entry.y, 30);   // the thicket never seals a glade away
@@ -1506,13 +1506,13 @@ const MapGen = (() => {
       /* monsters — big halls & sparse caverns pack more per room to keep density even */
       const packs = isBossR ? 1 : (arch === "halls" || arch === "cavern" ? U.riR(r, 2, 3) : U.riR(r, 1, 2));
       for (let p = 0; p < packs; p++) {
-        const eid = U.pickR(r, zone.spawns);
+        const members=DATA.familyMembers(zone.id,{id:'room_'+ro.cx+'_'+ro.cy},r),eid=members[0];
         const def = DATA.ENEMIES[eid]; if (!def) continue;
         const count = def.pack ? U.riR(r, def.pack[0], def.pack[1]) : U.riR(r, 2, 4);
         const elite = !isBossR && r() < 0.2;
         for (let i = 0; i < count; i++) {
           const x = ro.x + 1 + r() * (ro.w - 2), y = ro.y + 1 + r() * (ro.h - 2);
-          m.monsterSpawns.push({ id: eid, x, y, elite: elite && i === 0, minion: elite && i > 0 });
+          m.monsterSpawns.push({ id: members[i%members.length], x, y, elite: elite && i === 0, minion: elite && i > 0, packId:zone.id+':room:'+ro.cx+':'+ro.cy+':'+p });
         }
       }
     }
@@ -1786,18 +1786,21 @@ const MapGen = (() => {
       const a=ro.points[k-1],b=ro.points[k],len=Math.hypot(b.x-a.x,b.y-a.y);
       for(let d=4;d<len;d+=4)f.decals.push({type:'frontier_tracks',x:U.lerp(a.x,b.x,d/len),y:U.lerp(a.y,b.y,d/len),scale:1,alpha:.82,turn:a.x===b.x});
     }
-    const combat=f.landmarks.filter(n=>n.id!=='entry'&&n.id!==c.bossNode),ranged=m.zone.spawns.filter(id=>DATA.ENEMIES[id].projectile),melee=m.zone.spawns.filter(id=>!DATA.ENEMIES[id].projectile);
+    const combat=f.landmarks.filter(n=>n.id!=='entry'&&n.id!==c.bossNode);
     for(let k=0;k<c.packs;k++){
       const n=combat[k%combat.length],elite=c.rewards.includes(n.id)&&k<combat.length;
-      const type=U.pickR(r,k%3===1&&ranged.length?ranged:melee.length?melee:m.zone.spawns);
+      const members=DATA.familyMembers(zoneId,n,r),type=members[0];
       const def=DATA.ENEMIES[type],count=def.pack?U.riR(r,def.pack[0],def.pack[1]):U.riR(r,2,4),anchor={x:n.x+(k%2?4:-1),y:n.y+(k%3?2:5)};
-      const group={landmarkId:n.id,role:k%3===1?'ranged':'melee',elite,spawns:[]};
+      const group={landmarkId:n.id,role:'family',elite,spawns:[]};
       for(let i=0;i<count;i++){
+        const id=members[i%members.length],body=.34*(DATA.ENEMIES[id].big||1)*(elite&&i===0?1.18:1);
         let pos=null;for(let attempt=0;attempt<50&&!pos;attempt++){
           const x=Math.floor(anchor.x+U.riR(r,-3,3))+.5,y=Math.floor(anchor.y+U.riR(r,-3,3))+.5;
-          if(safe(x,y)&&!f.anchors.beacons.some(b=>Math.hypot(x-b.x,y-b.y)<2)&&!f.anchors.survivors.some(b=>Math.hypot(x-b.x,y-b.y)<3))pos={x,y};
+          if(safe(x,y)&&TerrainSurface.supported(m,x,y,body)&&
+            !m.monsterSpawns.some(o=>Math.hypot(x-o.x,y-o.y)<body+.34*(DATA.ENEMIES[o.id].big||1)*(o.elite?1.18:1)+.15)&&
+            !f.anchors.beacons.some(b=>Math.hypot(x-b.x,y-b.y)<2)&&!f.anchors.survivors.some(b=>Math.hypot(x-b.x,y-b.y)<3))pos={x,y};
         }
-        if(pos){const sp={id:type,...pos,elite:elite&&i===0,minion:elite&&i>0,landmarkId:n.id};m.monsterSpawns.push(sp);group.spawns.push(sp);}
+        if(pos){const sp={id,...pos,elite:elite&&i===0,minion:elite&&i>0,landmarkId:n.id};m.monsterSpawns.push(sp);group.spawns.push(sp);}
       }
       f.encounters.push(group);
     }
@@ -2016,16 +2019,25 @@ const MapGen = (() => {
       const x=Math.floor(n.x+(j?-1:1)*(n.rx-4)),y=Math.floor(n.y+n.ry-4);
       for(let oy=-1;oy<=1;oy++)for(let ox=-1;ox<=1;ox++)if(walkable(m,x+ox,y+oy)&&!protectedPoint(x+ox+.5,y+oy+.5,1)&&routeDistance(x+ox+.5,y+oy+.5)>4)setHaz(m,x+ox,y+oy,DATA.HAZARD_BY_ID.bog);
     }
-    // Exact individual quotas, then mixed groups with bounded specialist pressure.
+    // Preserve individual quotas and specialist pressure, but keep each brood
+    // together in its own court instead of distributing a sampler everywhere.
     const combat=f.landmarks.filter(n=>n.id!=='entry'&&n!==arenaNode),target=c.population+U.riR(r,-5,5),occupied=[];
     const quotas=DATA.ACT2_COMBAT.quotas(zoneId,target-m.monsterSpawns.length),groups=[];
     f.combatRevision=DATA.ACT2_COMBAT.revision;f.quotas=Object.fromEntries(quotas.map(q=>[q.id,q.count]));
-    const take=role=>{const pool=quotas.filter(q=>q.count>0&&DATA.ACT2_COMBAT.role(q.id)===role);if(!pool.length)return null;const q=U.pickR(r,pool);q.count--;return q.id;};
+    const take=(role,family)=>{const pool=quotas.filter(q=>q.count>0&&DATA.monsterFamily(q.id)===family&&DATA.ACT2_COMBAT.role(q.id)===role);if(!pool.length)return null;const q=U.pickR(r,pool);q.count--;return q.id;};
     while(quotas.some(q=>q.count)){
-      const ids=[];let id=take('specialist');if(id)ids.push(id);
-      for(let i=0;i<2;i++){id=take('ranged');if(id)ids.push(id);}
-      while(ids.length<5){id=take('melee');if(!id)break;ids.push(id);}groups.push(ids);
+      const family=DATA.monsterFamily(quotas.find(q=>q.count).id),ids=[];let id=take('specialist',family);if(id)ids.push(id);
+      for(let i=0;i<2;i++){id=take('ranged',family);if(id)ids.push(id);}
+      while(ids.length<5){id=take('melee',family);if(!id)break;ids.push(id);}groups.push(ids);
     }
+    const families=[...new Set(groups.map(ids=>DATA.monsterFamily(ids[0])))],territories={},available=combat.slice();
+    // Reserve one fitting landmark per family before assigning spare courts.
+    for(const family of families.slice().sort((a,b)=>groups.filter(g=>DATA.monsterFamily(g[0])===b).length-groups.filter(g=>DATA.monsterFamily(g[0])===a).length)){
+      const preferred=available.find(n=>DATA.familyAt(zoneId,n)===family)||available.find(n=>new RegExp(DATA.MONSTER_FAMILIES[family].habitat,'i').test(n.id+' '+n.label))||available[0];
+      territories[family]=[preferred];available.splice(available.indexOf(preferred),1);
+    }
+    for(const n of available){const family=DATA.familyAt(zoneId,n);(territories[family] ||= []).push(n);}
+    const familyVisits={};
     const fits=(x,y,radius)=>{
       for(let yy=Math.floor(y-radius);yy<=Math.floor(y+radius);yy++)for(let xx=Math.floor(x-radius);xx<=Math.floor(x+radius);xx++)if(!walkable(m,xx,yy)||m.hazard[idx(m,xx,yy)])return false;
       return !Object.values(m.spawns).some(s=>Math.hypot(s.x-x,s.y-y)<8+radius)&&
@@ -2033,8 +2045,9 @@ const MapGen = (() => {
         !m.props.some(p=>Math.hypot(p.x-x,p.y-y)<radius+.8)&&!occupied.some(p=>Math.hypot(p.x-x,p.y-y)<p.radius+radius+.25);
     };
     for(let group=0;group<groups.length;group++){
-      const n=combat[group%combat.length],entry=n.entrances[0]||nodes.entry,angle=Math.atan2(n.y-entry.y,n.x-entry.x),forward={x:Math.cos(angle),y:Math.sin(angle)};
-      const ring=Math.floor(group/combat.length),a=ring*2.4+n.x,anchor={x:n.x+Math.cos(a)*5,y:n.y+Math.sin(a)*5};
+      const family=DATA.monsterFamily(groups[group][0]),visit=familyVisits[family]||0;familyVisits[family]=visit+1;
+      const courts=territories[family],n=courts[visit%courts.length],entry=n.entrances[0]||nodes.entry,angle=Math.atan2(n.y-entry.y,n.x-entry.x),forward={x:Math.cos(angle),y:Math.sin(angle)};
+      const ring=Math.floor(visit/courts.length),a=ring*2.4+n.x,anchor={x:n.x+Math.cos(a)*5,y:n.y+Math.sin(a)*5};
       const encounter={id:'act2_'+group,landmarkId:n.id,role:'mixed',forward,spawns:[]};
       const ids=groups[group].sort((a,b)=>({specialist:0,ranged:1,melee:2}[DATA.ACT2_COMBAT.role(a)]-({specialist:0,ranged:1,melee:2}[DATA.ACT2_COMBAT.role(b)])));
       for(let j=0;j<ids.length;j++){
@@ -2253,25 +2266,21 @@ const MapGen = (() => {
       for(let d=5;d<len;d+=9)f.decals.push({type:'act3_'+(zoneId==='desert_wastes'&&ro.from==='entry'?'tracks':c.decal==='mosaic'?'paving':c.decal),x:U.lerp(a.x,b.x,d/len),y:U.lerp(a.y,b.y,d/len),scale:1,alpha:.7,turn:a.x===b.x});
     }
     const combat=f.landmarks.filter(n=>n.id!=='entry'&&n.id!==c.bossNode),defs=Object.fromEntries(m.zone.spawns.map(id=>[id,DATA.resolveEnemy(id,zoneId)]));
-    const pools=role=>m.zone.spawns.filter(id=>defs[id].act3Combat?.role===role);
-    const roles=['defender','ranged','flanker','heavy'].filter(role=>pools(role).length);
     for(let k=0;k<c.packs;k++){
       const n=combat[k%combat.length],elite=c.rewards.includes(n.id)&&k<combat.length;
-      const round=Math.floor(k/combat.length);
-      const preferred=pools('heavy').length&&(elite||/engine|relay|quarry/.test(n.id))&&round%3===0?'heavy':roles[(round+k%combat.length)%roles.length];
-      const pool=pools(preferred),type=U.pickR(r,pool.length?pool:m.zone.spawns),def=defs[type],role=def.act3Combat?.role||'melee';
+      const members=DATA.familyMembers(zoneId,n,r),type=members[0],def=defs[type],role=def.act3Combat?.role||'melee';
       const count=def.pack?U.riR(r,def.pack[0],def.pack[1]):U.riR(r,2,4),group={landmarkId:n.id,role,elite,spawns:[]};
       const incoming=f.routes.find(ro=>ro.to===n.id),previous=f.landmarks.find(p=>p.id===incoming?.from)||f.landmarks[0];
       const angle=Math.atan2(n.y-previous.y,n.x-previous.x),forward=role==='ranged'?3.5:role==='defender'?-2:0,side=role==='flanker'?(k%2?3.5:-3.5):0;
       const center={x:n.x+Math.cos(angle)*forward-Math.sin(angle)*side,y:n.y+Math.sin(angle)*forward+Math.cos(angle)*side};
       for(let i=0;i<count;i++){
-        const radius=.34*(def.big||1)*(elite&&i===0?1.18:1);
+        const id=members[i%members.length],radius=.34*(defs[id].big||1)*(elite&&i===0?1.18:1);
         let p=null;for(let attempt=0;attempt<120&&!p;attempt++){const base=attempt<40?center:n,spread=attempt<40?3:6,x=Math.floor(base.x+U.riR(r,-spread,spread))+.5,y=Math.floor(base.y+U.riR(r,-spread,spread))+.5;
           if(safe(x,y)&&TerrainSurface.supported(m,x,y,radius)&&!m.hazard[idx(m,x|0,y|0)]&&U.los((xx,yy)=>walkable(m,xx,yy),x,y,n.x,n.y)&&
             m.monsterSpawns.every(o=>U.dist(x,y,o.x,o.y)>=radius+.34*(DATA.ENEMIES[o.id].big||1)*(o.elite?1.18:1)+.15))p={x,y};
         }
         if(!p)throw Error('Act III encounter placement failed: '+zoneId+'/'+n.id);
-        const spawn={id:type,...p,elite:elite&&i===0,minion:elite&&i>0,landmarkId:n.id};m.monsterSpawns.push(spawn);group.spawns.push(spawn);
+        const spawn={id,...p,elite:elite&&i===0,minion:elite&&i>0,landmarkId:n.id};m.monsterSpawns.push(spawn);group.spawns.push(spawn);
       }f.encounters.push(group);
     }
     bakeMinimap(m);TerrainSurface.rebuild(m);m.hasElev=m.elev.some(v=>v>0);return m;
@@ -2463,8 +2472,7 @@ const MapGen = (() => {
     let total=0,groupIndex=0;
     while(total<c.budget){
       const n=combat[groupIndex%combat.length],role=groupIndex%3===1?'ranged':'melee';
-      const roster=m.zone.spawns.filter(id=>!!DATA.ENEMIES[id].projectile===(role==='ranged'));
-      const id=U.pickR(r,roster.length?roster:m.zone.spawns),def=DATA.ENEMIES[id];
+      const members=DATA.familyMembers(zoneId,n,r),id=members[0],def=DATA.ENEMIES[id];
       const count=def.pack?U.riR(r,...def.pack):U.riR(r,2,4),elite=n.id==='treasury'&&groupIndex<combat.length||r()<.12;
       const candidates=[];for(let y=n.y-7;y<=n.y+7;y++)for(let x=n.x-8;x<=n.x+8;x++)
         if(safe(x,y)&&!m.monsterSpawns.some(p=>Math.hypot(x-p.x,y-p.y)<.9)&&
@@ -2473,7 +2481,12 @@ const MapGen = (() => {
       candidates.sort((a,b)=>U.dist2(a.x,a.y,ax,ay)-U.dist2(b.x,b.y,ax,ay));
       if(candidates.length<count)throw Error('Cinder encounter space exhausted: '+zoneId+'/'+n.id);
       const group={landmarkId:n.id,role,elite,spawns:[]};
-      for(let k=0;k<count;k++){const p=candidates[k],sp={id,...p,elite:elite&&k===0,minion:elite&&k>0,landmarkId:n.id};m.monsterSpawns.push(sp);group.spawns.push(sp);total++;}
+      for(let k=0;k<count;k++){
+        const member=members[k%members.length],radius=.34*(DATA.ENEMIES[member].big||1)*(elite&&k===0?1.18:1);
+        const p=candidates.find(p=>TerrainSurface.supported(m,p.x,p.y,radius)&&!m.monsterSpawns.some(o=>U.dist(p.x,p.y,o.x,o.y)<radius+.34*(DATA.ENEMIES[o.id].big||1)*(o.elite?1.18:1)+.15));
+        if(!p)throw Error('Cinder family has no supported seat: '+zoneId+'/'+n.id);
+        const sp={id:member,...p,elite:elite&&k===0,minion:elite&&k>0,landmarkId:n.id};m.monsterSpawns.push(sp);group.spawns.push(sp);total++;
+      }
       f.encounters.push(group);groupIndex++;
     }
     bakeMinimap(m);TerrainSurface.rebuild(m);m.hasElev=m.elev.some(v=>v>0);
@@ -2713,9 +2726,14 @@ const MapGen = (() => {
       if(n.landmark?.type==='cathedral_rose_window')addLight(m,n.landmark.x+2,n.landmark.y+3,6,'#759bd0',false);
     }
     function pack(n,ids,count,elite=false,encounter=null,skillProfile=null){
+      if(!encounter){
+        const members=DATA.familyMembers(zoneId,n,r);
+        // Ritual rooms already have a quest-owned priest at the seal.
+        ids=Array.from({length:count},(_,i)=>n.id.startsWith('ritual')&&members[i%members.length]==='choir_priest'?'hollow_knight':members[i%members.length]);
+      }
       for(let i=0;i<count;i++){const x=n.x+(i%3-1)*2,y=n.y+Math.floor(i/3)*2;
         const id=Array.isArray(ids)?ids[i]:ids;
-        if(walkable(m,x,y)&&!inArena(x,y))m.monsterSpawns.push({id,x,y,elite:elite&&i===0,minion:elite&&i>0,cathedralEncounter:encounter,skillProfile:i===0?skillProfile:null});
+        if(walkable(m,x,y)&&!inArena(x,y))m.monsterSpawns.push({id,x,y,elite:elite&&i===0,minion:elite&&i>0,cathedralEncounter:encounter,skillProfile:i===0?skillProfile:null,landmarkId:n.id,packId:zoneId+':'+n.id+':'+n.x+':'+n.y});
       }
     }
     const K='hollow_knight',P='choir_priest',S='soul_eater',W='memory_wraith';
@@ -3493,7 +3511,7 @@ const MapGen = (() => {
     m.thresholds??=[];
     for(const [index,ex] of m.exits.entries()){
       const id='act1_'+m.id+'_'+index;
-      let x=(ex.x0+ex.x1)/2,y=(ex.y0+ex.y1)/2,axis=0,arrival,approach;
+      let x=(ex.x0+ex.x1)/2,y=(ex.y0+ex.y1)/2,axis=0,arrival,approach,backing;
       const node=m.frontier?.landmarks.find(n=>n.exit?.target===ex.target)||m.frontier?.landmarks.find(n=>n.id==='entry');
       const kit=ex.target==='mines'?'mine':ex.target==='shattered_temple'?'temple':ex.target==='deepfreeze_cavern'?'ice':ex.target==='shardpeak_shrine'?'north':
         (m.id==='frosthaven'||ex.target==='frosthaven')?'town':env.kit;
@@ -3502,38 +3520,68 @@ const MapGen = (() => {
         axis=1;
         if(m.id==='frosthaven'){x=m.w-2;approach={x:x-3,y};arrival={x:x-4,y};}
         else if(m.id==='north_wild'){x=2;y=node.y;approach={x:x+3,y};arrival={x:x+4,y};}
-        else {x=94.5;y=6.5;axis=1;approach={x:95.5,y:6.5};arrival={x:96.5,y:6.5};}
+        else {
+          // Face the opening gate toward the courtyard on its south side.
+          x=94.5;y=6.5;axis=0;approach={x,y:y+2};arrival={x,y:y+4};
+        }
         if(m.id!=='frosthaven_approach'){
           for(let yy=Math.floor(y)-3;yy<=y+3;yy++)for(let xx=Math.max(0,Math.floor(x)-4);xx<=Math.min(m.w-1,x+4);xx++)open(xx,yy);
           Object.assign(ex,{x0:x-.7,x1:x+.7,y0:y-1.8,y1:y+1.8});
         }
       }else{
         for(const p of [...m.props])if(p.landmarkId===node.id&&p.building)removeProp(p);
-        let seat;
-        for(const back of [0,3,6])for(const offset of [0,4,-4,7,-7]){
-          if(seat)break;
-          const px=Math.floor(node.x-node.rx-back)+.5,py=Math.floor(node.y+offset)+.5;
-          if(px<=5||px>=m.w-5||py<=3||py>=m.h-8)continue;
-          if(m.frontier.reserved.some(a=>a.kind==='boss'&&px>a.x0-5&&px<a.x1+5&&py>a.y0-4&&py<a.y1+4))continue;
-          if(m.props.some(p=>p.blocks&&Math.abs(p.x-px)<5&&p.y>py-3&&p.y<py+6)||m.ramps.some(r=>Math.hypot(r.x-px,r.y-py)<10))continue;
-          seat={x:px,y:py};
-        }
-        if(!seat)throw Error('Act I threshold has no safe seat: '+m.id+'/'+node.id);
-        ({x,y}=seat);axis=1;approach={x:x+3,y};arrival={x:x+4,y};
         const z=m.elev[idx(m,node.x|0,node.y|0)];
-        for(let xx=Math.floor(x)-2;xx<=node.x;xx++){
-          const cy=U.lerp(y,node.y,U.clamp((xx-x-4)/Math.max(1,node.x-x-4),0,1));
-          for(let yy=Math.floor(cy)-2;yy<=cy+2;yy++){open(xx,yy);m.elev[idx(m,xx,yy)]=z;}
+        let seat;
+        // Recess the doorway into an existing solid bank. Both shoulders and
+        // the rear must already be rock; an isolated pair of piers is not a cave.
+        for(const a of [1,0])for(const back of [0,1,2,3,4,6,8,10,12,16,20])for(const offset of [0,-2,2,-4,4,-6,6,-8,8,-12,12]){
+          const px=Math.floor(a?node.x-node.rx-back:node.x+offset)+.5,py=Math.floor(a?node.y+offset:node.y-node.ry-back)+.5;
+          if(px<(a?4.5:6.5)||py<(a?6.5:4.5)||px>=m.w-6||py>=m.h-6)continue;
+          const point=(t,d)=>({x:px+(a?d:t),y:py+(a?t:d)});
+          const score=Math.hypot(px-node.x,py-node.y)+(a?0:3);
+          if(seat&&score>=seat.score)continue;
+          let safe=true;
+          for(let t=-6;t<=6&&safe;t++)for(let d=-4;d<=0;d++){
+            if(Math.abs(t)<2&&d>-3)continue;
+            const p=point(t,d),xx=p.x|0,yy=p.y|0;
+            if(!inside(xx,yy)||!m.walls[idx(m,xx,yy)]){safe=false;break;}
+          }
+          const front=point(0,4),corridor=[];
+          const steps=Math.ceil(Math.hypot(front.x-node.x,front.y-node.y));
+          for(let step=0;step<=steps&&safe;step++){
+            const cx=U.lerp(front.x,node.x,step/steps),cy=U.lerp(front.y,node.y,step/steps);
+            if(m.ramps.some(r=>Math.hypot(r.x-cx,r.y-cy)<7)){safe=false;break;}
+            for(let dy=-2;dy<=2&&safe;dy++)for(let dx=-2;dx<=2;dx++){
+              const xx=Math.floor(cx)+dx,yy=Math.floor(cy)+dy;
+              if(!inside(xx,yy)){safe=false;break;}
+              const i=idx(m,xx,yy);
+              if((m.blocked[i]&&!m.walls[i])||(!m.walls[i]&&m.elev[i]!==z)||
+                m.frontier.reserved.some(r=>r.kind==='boss'&&xx>=r.x0&&xx<r.x1&&yy>=r.y0&&yy<r.y1)){safe=false;break;}
+              corridor.push({x:xx,y:yy});
+            }
+          }
+          for(let t=-1;t<=1&&safe;t++)for(let d=-2;d<=4;d++){
+            const p=point(t,d),xx=p.x|0,yy=p.y|0;
+            if(!inside(xx,yy)||(m.blocked[idx(m,xx,yy)]&&!m.walls[idx(m,xx,yy)])){safe=false;break;}
+          }
+          if(safe)seat={x:px,y:py,axis:a,point,corridor,score};
         }
-        for(const side of [-1,1]){
-          const a={y0:Math.floor(y)+(side<0?-4:2),y1:Math.floor(y)+(side<0?-1:5),x0:Math.floor(x)-2,x1:Math.floor(x)+1};
-          for(let yy=a.y0;yy<a.y1;yy++)for(let xx=a.x0;xx<a.x1;xx++){setWall(m,xx,yy,1);m.elev[idx(m,xx,yy)]=z;}
+        if(!seat)throw Error('Act I threshold has no solid backing: '+m.id+'/'+node.id+'/'+seed);
+        ({x,y,axis}=seat);approach=seat.point(0,3);arrival=seat.point(0,4);
+        for(const p of seat.corridor){open(p.x,p.y);m.elev[idx(m,p.x,p.y)]=z;}
+        for(let t=-1;t<=1;t++)for(let d=-2;d<=4;d++){
+          const p=seat.point(t,d),xx=p.x|0,yy=p.y|0;open(xx,yy);m.elev[idx(m,xx,yy)]=z;
+        }
+        for(const [lo,hi,near,far] of [[-6,6,-4,-3],[-6,-2,-2,0],[2,6,-2,0]]){
+          const p=seat.point(lo,near),q=seat.point(hi,far),a={x0:p.x|0,y0:p.y|0,x1:(q.x|0)+1,y1:(q.y|0)+1};
+          for(let yy=a.y0;yy<a.y1;yy++)for(let xx=a.x0;xx<a.x1;xx++)m.elev[idx(m,xx,yy)]=z;
           footprints.push(a);
         }
-        Object.assign(ex,{x0:x-.5,x1:x+1.1,y0:y-1.2,y1:y+1.2});
+        backing={halfWidth:6,depth:4,height:z};
+        Object.assign(ex,axis?{x0:x-.5,x1:x+1.1,y0:y-1.2,y1:y+1.2}:{x0:x-1.2,x1:x+1.2,y0:y-.5,y1:y+1.1});
         if(node.exit)Object.assign(node.exit,{x,y});
       }
-      const th={id,act:1,kit,axis,x,y,approach,arrival,footprints,opening:{x,y,halfWidth:1.4,height:kit==='north'?65:100}};
+      const th={id,act:1,kit,axis,x,y,approach,arrival,footprints,backing,opening:{x,y,halfWidth:1.4,height:kit==='north'?65:100}};
       m.thresholds.push(th);ex.thresholdId=id;
       const from=m.id==='north_wild'&&ex.target!=='frosthaven'?FRONTIER.north_wild.gates.find(g=>g[1]===ex.target)?.[2]:
         m.id==='north_wild'?'from_camp':m.id==='frosthaven'?'from_wild':m.frontier?'from_wild':null;
@@ -3561,6 +3609,12 @@ const MapGen = (() => {
       for(const [lo,hi] of [[gate.y-28,gate.y-4],[gate.y+4,gate.y+28]])for(let y=lo;y<hi;y+=6)
         env.facades.push({x:-1.5,y,axis:1,kit:'town',height:0,length:6,variant:0});
     }
+    for(const th of m.thresholds.filter(t=>t.backing)){
+      const point=(t,d)=>({x:th.x+(th.axis?d:t),y:th.y+(th.axis?t:d)});
+      // Matching shoulders join the existing doorway painting to the bank.
+      for(const lo of [-6,2])env.facades.push({...point(lo,0),axis:th.axis,kit:th.kit,
+        height:th.backing.height,length:4,variant:0,thresholdId:th.id});
+    }
     for(let axis=0;axis<2;axis++)for(let line=1;line<(axis?m.w:m.h);line++){
       let start=-1,side=0,kit='',height=0;
       const flush=end=>{
@@ -3575,7 +3629,10 @@ const MapGen = (() => {
       for(let t=0;t<(axis?m.h:m.w);t++){
         const x=axis?line:t,y=axis?t:line,i=idx(m,x,y),j=axis?i-1:i-m.w;
         const a=m.walls[i]&&!m.blocked[j],b=m.walls[j]&&!m.blocked[i];
-        const threshold=m.thresholds.some(th=>th.act===1&&Math.abs(x-th.x)<(th.axis?2.5:4.5)&&Math.abs(y-th.y)<(th.axis?4.5:2.5));
+        const threshold=m.thresholds.some(th=>{
+          const depth=th.backing?3.5:2.5,width=th.backing?6.5:4.5;
+          return th.act===1&&Math.abs(x-th.x)<(th.axis?depth:width)&&Math.abs(y-th.y)<(th.axis?width:depth);
+        });
         const eligible=(a||b)&&!threshold,next=material(x,y),s=a?1:-1,z=Math.min(m.elev[i],m.elev[j]);
         if(!eligible||next!==kit||s!==side||z!==height){flush(t);kit=next;side=s;height=z;}
         if(eligible&&start<0)start=t;
@@ -3611,6 +3668,18 @@ const MapGen = (() => {
     for(const s of env.segments)if(s.kit==='north')for(let t=.8;t<s.length;t+=1.6){
       addNature(s.x+(s.axis?s.side*1.7:t),s.y+(s.axis?t:s.side*1.7),s);
       if(s.variant%2===0)addNature(s.x+(s.axis?s.side*5:t+.9),s.y+(s.axis?t+.9:s.side*5),s,true);
+    }
+    if(m.outdoor)for(const th of m.thresholds.filter(t=>t.backing)){
+      const point=(t,d)=>({x:th.x+(th.axis?d:t),y:th.y+(th.axis?t:d)});
+      // A continuous rocky ridge gives caves depth behind the mouth. Its bases
+      // stay on solid ground, with the approach and surrounding roads untouched.
+      env.natural=env.natural.filter(p=>Math.hypot(p.x-th.x,p.y-th.y)>8);
+      for(const [t,d,part,scale] of [[-6,-1,'crag',1.1],[-4,-4,'crag',1.25],[-1,-4,'crag',1.4],
+        [2,-4,'crag',1.25],[5,-3,'crag',1.15],[6,0,'boulders',1],[-4,-7,'crag',1.3],[1,-7,'crag',1.4],[5,-6,'crag',1.2]]){
+        const p=point(t,d);
+        if(inside(p.x|0,p.y|0)&&m.walls[idx(m,p.x|0,p.y|0)])env.natural.push({...p,axis:th.axis,
+          height:th.backing.height,part,scale,thresholdId:th.id,variant:0});
+      }
     }
     if(m.id==='frosthaven')for(const offset of [4,10])for(let t=-5;t<Math.max(m.w,m.h)+8;t+=5.5){
       for(const [x,y] of [[t,-offset],[-offset,t],[t,m.h+offset],[m.w+offset,t]]){
@@ -3731,8 +3800,49 @@ const MapGen = (() => {
     if(m.surfaceVersion)TerrainSurface.rebuild(m);
     m.hasElev=m.elev.some(v=>v>0);bakeMinimap(m);return m;
   }
+  function settleFamilies(map,seed){
+    if(!map.zone.spawns?.length||map.zone.opening||['town','camp'].includes(map.zone.kind))return map;
+    const composition=map.frontier||map.act2||map.composition||map.cathedral;
+    const encounters=composition?.encounters||[];
+    for(const [i,group] of encounters.entries())for(const sp of group.spawns||[])sp.packId=map.id+':pack:'+i;
+    const packs=new Map(),territories=new Map();
+    for(const [i,sp] of map.monsterSpawns.entries()){
+      if(sp.boss||DATA.ENEMIES[sp.id]?.boss)continue;
+      const family=DATA.monsterFamily(sp.id);if(!family)continue;
+      sp.monsterFamily=family;
+      sp.packId=(sp.packId||map.id+':guard:'+(sp.storyGuardId||sp.landmarkId||i))+':'+family;
+      if(!packs.has(sp.packId))packs.set(sp.packId,{id:sp.packId,family,spawns:[]});
+      packs.get(sp.packId).spawns.push(sp);
+    }
+    for(const pack of packs.values()){
+      pack.x=pack.spawns.reduce((n,s)=>n+s.x,0)/pack.spawns.length;pack.y=pack.spawns.reduce((n,s)=>n+s.y,0)/pack.spawns.length;
+      for(const sp of pack.spawns)sp.familyHome={x:sp.x,y:sp.y,anchorX:pack.x,anchorY:pack.y};
+      const first=pack.spawns[0],key=(first.landmarkId||Math.floor(pack.x/32)+':'+Math.floor(pack.y/32))+':'+pack.family;
+      if(!territories.has(key))territories.set(key,{id:key,family:pack.family,x:pack.x,y:pack.y,packs:[]});
+      territories.get(key).packs.push(pack.id);
+    }
+    map.ecology={revision:1,packs:[...packs.values()],territories:[...territories.values()]};
+    // Small nonblocking signs of habitation reuse installed world art. They
+    // sit outside combat bodies, passages, story objects, and arrival ground.
+    for(const territory of territories.values()){
+      const family=DATA.MONSTER_FAMILIES[territory.family],random=U.rng(seed^U.hash(territory.id));
+      const propFamily=family.site;
+      for(let attempt=0;attempt<20;attempt++){
+        const a=random()*Math.PI*2,x=territory.x+Math.cos(a)*4.5,y=territory.y+Math.sin(a)*4.5;
+        if(!TerrainNavigation.clear(map,x,y,.5)||map.hazard[(x|0)+(y|0)*map.w]||
+          map.props.some(p=>U.dist(x,y,p.x,p.y)<3)||map.monsterSpawns.some(s=>U.dist(x,y,s.x,s.y)<2)||
+          Object.values(map.spawns).some(s=>U.dist(x,y,s.x,s.y)<8)||
+          typeof PropInteractions!=='undefined'&&PropInteractions.nearRamp(map,x,y)||
+          map.exits.some(e=>x>=e.x0-4&&x<=e.x1+4&&y>=e.y0-4&&y<=e.y1+4)||
+          map.bossArena&&BossEncounters.insideArena(map.bossArena,x,y,-3))continue;
+        addProp(map,'family_site',x,y,{blocks:false,propFamily,seed:U.hash(territory.id),territoryId:territory.id,familySite:territory.family,label:family.name});break;
+      }
+    }
+    return map;
+  }
   return { generate:(zoneId,seed)=>{
     const map=act5Environment(act1Environment(generateImperial(zoneId,seed),seed),seed);
+    settleFamilies(map,seed);
     return typeof PropInteractions==='undefined'?map:PropInteractions.prepare(map,seed);
   }, walkable, canStep, elevAt };
 })();

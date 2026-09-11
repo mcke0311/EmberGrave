@@ -1,6 +1,6 @@
 # Skill effects
 
-`js/skill_vfx.js` assigns presentations to all 91 active skills and 16 passives.
+`js/skill_vfx.js` assigns presentations to all 89 active skills and 18 passives.
 The game still runs directly from `index.html` with the existing local server;
 there are no new dependencies, generated build steps, or saved settings.
 
@@ -13,7 +13,7 @@ there are no new dependencies, generated build steps, or saved settings.
 - Gravebinder uses bone gathering, spectral streams, curse glyphs, poison
   splashes, and visible contagion transfers. Bone Armor follows its live shield.
 - Veil Ranger uses tapered arrow wakes, charged releases, falling arrows,
-  mechanical traps, shadow snapshots, and marked-target payoffs.
+  mechanical traps, a thrown Dragnet mesh and rooted-enemy bindings, shadow snapshots, and marked-target payoffs.
 - Wildkeeper uses companion arrivals, totem pulses, cyclone debris, ground
   fractures, and material cues for each of the four forms.
 
@@ -103,3 +103,5 @@ use `node --preserve-symlinks --preserve-symlinks-main tests/<name>.mjs`.
 Measured results and captured comparison sheets are in
 [`tests/qa/skill_vfx/REPORT.md`](../tests/qa/skill_vfx/REPORT.md).
 
+
+Veil uses a narrow Umbral Knife, a broad Dusk Cleave sweep, sequential Shadow Flurry blade tracers, and a heavy two-part Deathblow blade. Exposed uses brackets around a crossed opening; Shadow Ambush uses paired blades beside the player. All presentation remains separate from physical weapon damage.

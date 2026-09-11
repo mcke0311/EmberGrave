@@ -1,0 +1,684 @@
+[
+  {
+    "id": "batch_01",
+    "rows": 7,
+    "groups": [
+      {
+        "id": "imp",
+        "reference": "assets/sprites/packed/actors/monsters/imp.webp",
+        "anatomy": "small horned demon",
+        "weapon": "none",
+        "sequences": [
+          "bolt",
+          "blink",
+          "death",
+          "melee",
+          "slam",
+          "leap"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "spider",
+        "reference": "assets/sprites/packed/actors/monsters/spider.webp",
+        "anatomy": "eight-legged arachnid",
+        "weapon": "none",
+        "sequences": [
+          "leap"
+        ],
+        "rowOffset": 6
+      }
+    ]
+  },
+  {
+    "id": "batch_03",
+    "rows": 7,
+    "groups": [
+      {
+        "id": "brute",
+        "reference": "assets/sprites/packed/actors/monsters/brute.webp",
+        "anatomy": "hulking humanoid",
+        "weapon": "none",
+        "sequences": [
+          "melee",
+          "death",
+          "slam",
+          "charge"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "identity_ash_drake",
+        "reference": "assets/sprites/packed/actors/monsters/identity_ash_drake.webp",
+        "anatomy": "winged dragon",
+        "weapon": "none",
+        "sequences": [
+          "bolt",
+          "charge",
+          "death"
+        ],
+        "rowOffset": 4
+      }
+    ]
+  },
+  {
+    "id": "batch_04",
+    "rows": 7,
+    "groups": [
+      {
+        "id": "demon",
+        "reference": "assets/sprites/packed/actors/monsters/demon.webp",
+        "anatomy": "horned demon",
+        "weapon": "axe",
+        "sequences": [
+          "melee",
+          "slam",
+          "charge",
+          "death"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "identity_barbarian_axe",
+        "reference": "assets/sprites/packed/actors/monsters/identity_barbarian_axe.webp",
+        "anatomy": "hulking humanoid",
+        "weapon": "axe",
+        "sequences": [
+          "bolt",
+          "volley",
+          "death"
+        ],
+        "rowOffset": 4
+      }
+    ]
+  },
+  {
+    "id": "batch_05",
+    "rows": 7,
+    "groups": [
+      {
+        "id": "identity_frost_brute",
+        "reference": "assets/sprites/packed/actors/monsters/identity_frost_brute.webp",
+        "anatomy": "hulking humanoid",
+        "weapon": "none",
+        "sequences": [
+          "melee",
+          "death",
+          "bolt",
+          "slam"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "identity_barbarian_spear",
+        "reference": "assets/sprites/packed/actors/monsters/identity_barbarian_spear.webp",
+        "anatomy": "hulking humanoid",
+        "weapon": "spear",
+        "sequences": [
+          "melee",
+          "leap",
+          "death"
+        ],
+        "rowOffset": 4
+      }
+    ]
+  },
+  {
+    "id": "batch_06",
+    "rows": 6,
+    "groups": [
+      {
+        "id": "hound",
+        "reference": "assets/sprites/packed/actors/monsters/hound.webp",
+        "anatomy": "canine quadruped",
+        "weapon": "none",
+        "sequences": [
+          "melee",
+          "charge",
+          "slam"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "identity_barbarian_sword",
+        "reference": "assets/sprites/packed/actors/monsters/identity_barbarian_sword.webp",
+        "anatomy": "hulking humanoid",
+        "weapon": "sword",
+        "sequences": [
+          "melee",
+          "whirl",
+          "death"
+        ],
+        "rowOffset": 3
+      }
+    ]
+  },
+  {
+    "id": "batch_07",
+    "rows": 7,
+    "groups": [
+      {
+        "id": "grizzly",
+        "reference": "assets/sprites/packed/actors/monsters/grizzly.webp",
+        "anatomy": "bear quadruped",
+        "weapon": "none",
+        "sequences": [
+          "melee",
+          "slam",
+          "summon",
+          "death"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "beacon",
+        "reference": "assets/sprites/packed/world/props/beacon.webp",
+        "anatomy": "ritual structure",
+        "weapon": "none",
+        "sequences": [
+          "summon",
+          "death",
+          "melee"
+        ],
+        "rowOffset": 4
+      }
+    ]
+  },
+  {
+    "id": "batch_08",
+    "rows": 7,
+    "groups": [
+      {
+        "id": "skeleton",
+        "reference": "assets/sprites/packed/actors/monsters/skeleton.webp",
+        "anatomy": "skeletal humanoid",
+        "weapon": "sword",
+        "sequences": [
+          "melee",
+          "death",
+          "charge",
+          "slam"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "robed",
+        "reference": "assets/sprites/packed/actors/monsters/robed.webp",
+        "anatomy": "robed humanoid",
+        "weapon": "wand",
+        "sequences": [
+          "melee",
+          "slam",
+          "leap"
+        ],
+        "rowOffset": 4
+      }
+    ]
+  },
+  {
+    "id": "batch_09",
+    "rows": 7,
+    "groups": [
+      {
+        "id": "identity_frost_soldier",
+        "reference": "assets/sprites/packed/actors/monsters/identity_frost_soldier.webp",
+        "anatomy": "skeletal humanoid",
+        "weapon": "sword and shield",
+        "sequences": [
+          "melee",
+          "death",
+          "slam"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "identity_frost_wraith",
+        "reference": "assets/sprites/packed/actors/monsters/identity_frost_wraith.webp",
+        "anatomy": "spectral form",
+        "weapon": "none",
+        "sequences": [
+          "bolt",
+          "blink",
+          "death"
+        ],
+        "rowOffset": 3
+      },
+      {
+        "id": "knight",
+        "reference": "assets/sprites/packed/actors/monsters/knight.webp",
+        "anatomy": "armored humanoid",
+        "weapon": "sword and shield",
+        "sequences": [
+          "whirl"
+        ],
+        "rowOffset": 6
+      }
+    ]
+  },
+  {
+    "id": "batch_10",
+    "rows": 6,
+    "groups": [
+      {
+        "id": "identity_marauder_mace",
+        "reference": "assets/sprites/packed/actors/monsters/identity_marauder_mace.webp",
+        "anatomy": "humanoid",
+        "weapon": "mace",
+        "sequences": [
+          "leap",
+          "charge",
+          "slam"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "identity_storm_brute",
+        "reference": "assets/sprites/packed/actors/monsters/identity_storm_brute.webp",
+        "anatomy": "hulking humanoid",
+        "weapon": "none",
+        "sequences": [
+          "melee",
+          "slam",
+          "death"
+        ],
+        "rowOffset": 3
+      }
+    ]
+  },
+  {
+    "id": "batch_11",
+    "rows": 7,
+    "groups": [
+      {
+        "id": "identity_ember_knight",
+        "reference": "assets/sprites/packed/actors/monsters/identity_ember_knight.webp",
+        "anatomy": "armored humanoid",
+        "weapon": "sword and shield",
+        "sequences": [
+          "melee",
+          "death",
+          "charge"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "boss",
+        "reference": "assets/sprites/packed/actors/monsters/boss.webp",
+        "anatomy": "armored undead lord",
+        "weapon": "axe",
+        "sequences": [
+          "melee",
+          "death"
+        ],
+        "rowOffset": 3
+      },
+      {
+        "id": "identity_wasp",
+        "reference": "assets/sprites/packed/actors/monsters/identity_wasp.webp",
+        "anatomy": "winged insect",
+        "weapon": "none",
+        "sequences": [
+          "melee",
+          "death"
+        ],
+        "rowOffset": 5
+      }
+    ]
+  },
+  {
+    "id": "batch_12",
+    "rows": 6,
+    "groups": [
+      {
+        "id": "identity_bone_archer",
+        "reference": "assets/sprites/packed/actors/monsters/identity_bone_archer.webp",
+        "anatomy": "skeletal humanoid",
+        "weapon": "bow",
+        "sequences": [
+          "bolt",
+          "death"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "ooze",
+        "reference": "assets/sprites/packed/actors/monsters/ooze.webp",
+        "anatomy": "amorphous slime",
+        "weapon": "none",
+        "sequences": [
+          "leap",
+          "charge"
+        ],
+        "rowOffset": 2
+      },
+      {
+        "id": "identity_ember_robed",
+        "reference": "assets/sprites/packed/actors/monsters/identity_ember_robed.webp",
+        "anatomy": "robed humanoid",
+        "weapon": "wand",
+        "sequences": [
+          "volley",
+          "summon"
+        ],
+        "rowOffset": 4
+      }
+    ]
+  },
+  {
+    "id": "batch_13",
+    "rows": 6,
+    "groups": [
+      {
+        "id": "identity_cinder_hound",
+        "reference": "assets/sprites/packed/actors/monsters/identity_cinder_hound.webp",
+        "anatomy": "canine quadruped",
+        "weapon": "none",
+        "sequences": [
+          "melee",
+          "death"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "wraith",
+        "reference": "assets/sprites/packed/actors/monsters/wraith.webp",
+        "anatomy": "spectral form",
+        "weapon": "none",
+        "sequences": [
+          "slam",
+          "bolt"
+        ],
+        "rowOffset": 2
+      },
+      {
+        "id": "identity_frost_archer",
+        "reference": "assets/sprites/packed/actors/monsters/identity_frost_archer.webp",
+        "anatomy": "skeletal humanoid",
+        "weapon": "bow",
+        "sequences": [
+          "bolt",
+          "death"
+        ],
+        "rowOffset": 4
+      }
+    ]
+  },
+  {
+    "id": "batch_14",
+    "rows": 6,
+    "groups": [
+      {
+        "id": "identity_glacial_crawler",
+        "reference": "assets/sprites/packed/actors/monsters/identity_glacial_crawler.webp",
+        "anatomy": "ice-armored crawling quadruped",
+        "weapon": "none",
+        "sequences": [
+          "melee",
+          "death"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "identity_ice_hound",
+        "reference": "assets/sprites/packed/actors/monsters/identity_ice_hound.webp",
+        "anatomy": "canine quadruped",
+        "weapon": "none",
+        "sequences": [
+          "melee",
+          "death"
+        ],
+        "rowOffset": 2
+      },
+      {
+        "id": "identity_radiant_robed",
+        "reference": "assets/sprites/packed/actors/monsters/identity_radiant_robed.webp",
+        "anatomy": "robed humanoid",
+        "weapon": "wand",
+        "sequences": [
+          "bolt",
+          "death"
+        ],
+        "rowOffset": 4
+      }
+    ]
+  },
+  {
+    "id": "batch_15",
+    "rows": 6,
+    "groups": [
+      {
+        "id": "identity_frost_ooze",
+        "reference": "assets/sprites/packed/actors/monsters/identity_frost_ooze.webp",
+        "anatomy": "amorphous slime",
+        "weapon": "none",
+        "sequences": [
+          "bolt",
+          "death"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "identity_storm_skeleton",
+        "reference": "assets/sprites/packed/actors/monsters/identity_storm_skeleton.webp",
+        "anatomy": "skeletal humanoid",
+        "weapon": "sword and shield",
+        "sequences": [
+          "bolt",
+          "death"
+        ],
+        "rowOffset": 2
+      },
+      {
+        "id": "identity_ember_skeleton",
+        "reference": "assets/sprites/packed/actors/monsters/identity_ember_skeleton.webp",
+        "anatomy": "skeletal humanoid",
+        "weapon": "sword and shield",
+        "sequences": [
+          "bolt",
+          "death"
+        ],
+        "rowOffset": 4
+      }
+    ]
+  },
+  {
+    "id": "batch_16",
+    "rows": 6,
+    "groups": [
+      {
+        "id": "identity_frost_imp",
+        "reference": "assets/sprites/packed/actors/monsters/identity_frost_imp.webp",
+        "anatomy": "small horned demon",
+        "weapon": "none",
+        "sequences": [
+          "bolt",
+          "death"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "identity_gilded_wraith",
+        "reference": "assets/sprites/packed/actors/monsters/identity_gilded_wraith.webp",
+        "anatomy": "spectral form",
+        "weapon": "none",
+        "sequences": [
+          "melee",
+          "death"
+        ],
+        "rowOffset": 2
+      },
+      {
+        "id": "identity_storm_knight",
+        "reference": "assets/sprites/packed/actors/monsters/identity_storm_knight.webp",
+        "anatomy": "armored humanoid",
+        "weapon": "sword and shield",
+        "sequences": [
+          "melee",
+          "death"
+        ],
+        "rowOffset": 4
+      }
+    ]
+  },
+  {
+    "id": "batch_17",
+    "rows": 6,
+    "groups": [
+      {
+        "id": "identity_storm_imp",
+        "reference": "assets/sprites/packed/actors/monsters/identity_storm_imp.webp",
+        "anatomy": "small horned demon",
+        "weapon": "none",
+        "sequences": [
+          "bolt",
+          "death"
+        ],
+        "rowOffset": 0
+      },
+      {
+        "id": "identity_shard_thrall",
+        "reference": "assets/sprites/packed/actors/monsters/identity_shard_thrall.webp",
+        "anatomy": "robed humanoid",
+        "weapon": "wand",
+        "sequences": [
+          "bolt",
+          "death"
+        ],
+        "rowOffset": 2
+      },
+      {
+        "id": "identity_shatter_wasp",
+        "reference": "assets/sprites/packed/actors/monsters/identity_shatter_wasp.webp",
+        "anatomy": "winged crystal insect",
+        "weapon": "none",
+        "sequences": [
+          "melee",
+          "death"
+        ],
+        "rowOffset": 4
+      }
+    ]
+  },
+  {
+    "id": "hound_leap",
+    "rows": 1,
+    "groups": [
+      {
+        "id": "hound",
+        "assetId": "hound_leap",
+        "reference": "assets/sprites/packed/actors/monsters/hound.webp",
+        "anatomy": "canine quadruped",
+        "weapon": "none",
+        "rowOffset": 0,
+        "sequences": [
+          "leap"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ash_drake_bolt",
+    "rows": 1,
+    "groups": [
+      {
+        "id": "identity_ash_drake",
+        "assetId": "ash_drake_bolt",
+        "rowOffset": 0,
+        "reference": "assets/sprites/packed/actors/monsters/identity_ash_drake.webp",
+        "sequences": [
+          "bolt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "korvath_cleave",
+    "rows": 1,
+    "groups": [
+      {
+        "id": "ironlord",
+        "assetId": "korvath_cleave",
+        "reference": "assets/bosses/packed/korvath.webp",
+        "rowOffset": 0,
+        "sequences": [
+          "cleave"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "korvath_fissure",
+    "rows": 1,
+    "groups": [
+      {
+        "id": "ironlord",
+        "assetId": "korvath_fissure",
+        "reference": "assets/bosses/packed/korvath.webp",
+        "rowOffset": 0,
+        "sequences": [
+          "fissure"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "korvath_cleave_1",
+    "rows": 1,
+    "groups": [
+      {
+        "id": "ironlord",
+        "assetId": "korvath_cleave_1",
+        "reference": "assets/bosses/packed/korvath.webp",
+        "rowOffset": 0,
+        "sequences": [
+          "cleave_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "korvath_fissure_1",
+    "rows": 1,
+    "groups": [
+      {
+        "id": "ironlord",
+        "assetId": "korvath_fissure_1",
+        "reference": "assets/bosses/packed/korvath.webp",
+        "rowOffset": 0,
+        "sequences": [
+          "fissure_1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "korvath_death",
+    "rows": 1,
+    "groups": [
+      {
+        "id": "ironlord",
+        "assetId": "korvath_death",
+        "reference": "assets/bosses/packed/korvath.webp",
+        "rowOffset": 0,
+        "sequences": [
+          "death"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "korvath_death_1",
+    "rows": 1,
+    "groups": [
+      {
+        "id": "ironlord",
+        "assetId": "korvath_death_1",
+        "reference": "assets/bosses/packed/korvath.webp",
+        "rowOffset": 0,
+        "sequences": [
+          "death_1"
+        ]
+      }
+    ]
+  }
+]

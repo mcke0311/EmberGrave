@@ -3,7 +3,7 @@
    shared helpers implement mechanics, never choose a power at random. */
 "use strict";
 const UniquePowers = (() => {
-  const VERSION = 1, catalog = Object.create(null);
+  const VERSION = 3, catalog = Object.create(null);
   const clone = x => JSON.parse(JSON.stringify(x));
   const defs = [...DATA.UNIQUES, ...DATA.UNIQUE_CHARMS, ...DATA.UNIQUE_JEWELS];
   const byId = Object.fromEntries(defs.map(d => [d.id, d]));
@@ -20,218 +20,171 @@ const UniquePowers = (() => {
   const D = (elem = "poison", pct = 60, dur = 3) => ({ kind: "dot", elem, pct, dur });
   const K = (skill, path, op, value, dur = 6) => ({ kind: "skill", skill, path, op, value, dur });
   const P = (title, event, when, effects, options = {}) => ({ title, event, when, effects: Array.isArray(effects) ? effects : [effects], cd: 5, ...options });
-  function add(id, power, support) {
+  function add(id, power) {
     if (catalog[id]) throw new Error("Duplicate Unique: " + id);
     const def = byId[id] || DATA.GLYPHS[id];
     if (!def) throw new Error("Unknown Unique: " + id);
     catalog[id] = { id, name: def.name, level: def.ilvl || def.dropLevel || 1, powers: [power] };
-    if (support) {
-      const L = def.ilvl, values = {
-        dmgPct: 35 + L * 1.2, armorPct: 35 + L, hp: 15 + L * .8, mana: 15 + L * .7,
-        str: 5 + L * .2, dex: 5 + L * .2, vit: 5 + L * .2, wil: 5 + L * .2,
-        ias: 10 + L * .1, fcr: 10 + L * .1, frw: 15 + L * .15, critChance: 4 + L * .06,
-        critDmg: 15 + L * .25, lifeSteal: 3 + L * .025, manaSteal: 2 + L * .025,
-        resAll: 5 + L * .1, resFire: 12 + L * .2, resCold: 12 + L * .2,
-        resLight: 12 + L * .2, resPoison: 12 + L * .2, ar: 30 + L * 2,
-        spellPct: 20 + L * .65, fireDmg: 4 + L * .45, coldDmg: 4 + L * .45,
-        lightDmg: 6 + L * .5, poisonDmg: 6 + L * .5, mf: 10 + L * .15,
-        goldFind: 15 + L * .2, thorns: 4 + L * .3, block: 8 + L * .06,
-        lifeRegen: 2 + L * .03, manaRegen: 15 + L * .2, ccReduce: 10 + L * .1,
-        dmgReduceFlat: 2 + L * .07, skillAll: 1, dmgUndead: 30 + L, dmgDemon: 30 + L,
-      };
-      def.stats = Object.fromEntries(support.split(" ").map(s => {
-        if (!Number.isFinite(values[s])) throw new Error("Unknown supporting stat: " + s);
-        return [s, Math.round(values[s])];
-      }));
-    }
   }
-  // The nine original relics retain their established themes.
-  add("u_gravebite", P("Coffin Ward", "kill", "undead", W(8), { cd: 3 }), "dmgPct lifeSteal dmgUndead");
-  add("u_widow", P("The Third Mourning", "strike", "any", N("poison", 55), { every: 3, sameTarget: true, cd: 3 }), "poisonDmg dex ias");
-  add("u_cinder", P("Banked Wrath", "hurt", "any", N("fire", 50, 3), { every: 3, cd: 6 }), "armorPct resFire thorns");
-  add("u_oath", P("Kept Promise", "block", "any", E("strike", 45)), "block resAll hp");
-  add("u_crown", P("Empty Throne", "spend", "any", E("spell", 45), { every: 30, cd: 5 }), "skillAll mana mf");
-  add("u_marrow", P("Living Marrow", "overheal", "any", W(5, 6), { every: 5, cd: 3 }), "hp lifeSteal vit");
-  add("u_stormknot", P("Braided Thunder", "hit", "any", C("light", 3, 40), { alternate: true, cd: 4 }), "lightDmg fcr resLight");
-  add("u_stride", P("The Late Footfall", "move", "any", B({ dodge: 18 }, 3), { every: 6, cd: 6 }), "frw dex resCold");
-  add("u_kingsplit", P("Crowncrack", "strike", "critical", V(18, 5), { every: 2, sameTarget: true, cd: 5 }), "dmgPct critChance str");
-
-  // Each row corresponds to a named entry in the existing level ladder.
-  // Support is deliberately authored alongside the power, not sampled from affixes.
-  function line(family, rows) {
-    rows.forEach(([support, power], i) => add(`u_gen_${family}_${i * 2 + family % 2}`, power, support));
+  // Canonical equipment identities: fixed support choices and explicit class powers.
+  // Support values are historical floors; current affix tiers set the final budget.
+  const equipment = [
+    {"id":"u_gravebite","support":{"dmgPct":39,"lifeSteal":3,"dmgUndead":33},"power":{"title":"First Beat","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_0"},"effects":[{"kind":"modify","path":"tempoGain","op":"add","value":1,"label":"Tempo generated"}],"cd":0}},
+    {"id":"u_widow","support":{"poisonDmg":8,"dex":6,"ias":10,"dmgPct":1},"power":{"title":"Widow's Lesson","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_2_1"},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_cinder","support":{"armorPct":39,"resFire":13,"thorns":5},"power":{"title":"Walking Furnace","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"emberwitch_0_2"},"effects":[{"kind":"modify","path":"pStats.scorchPct","op":"add","value":25,"label":"Scorch damage bonus (%)"}],"cd":0}},
+    {"id":"u_oath","support":{"block":8,"resAll":6,"hp":20},"power":{"title":"Oath Repaid","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_2"},"effects":[{"kind":"modify","path":"parryRefund","op":"add","value":6,"label":"Aether returned per parry"}],"cd":0}},
+    {"id":"u_crown","support":{"skillAll":1,"mana":19,"mf":11,"minionDmgPct":5},"power":{"title":"Crown of Hexes","event":"equip","when":"any","target":{"classId":"gravebinder","tree":1},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_marrow","support":{"hp":18,"lifeSteal":3,"vit":6},"power":{"title":"Blood of the Pack","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"kinship"},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_stormknot","support":{"lightDmg":9,"fcr":11,"resLight":13},"power":{"title":"Braided Totem","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"wildkeeper_1_0"},"effects":[{"kind":"modify","path":"zapCd","op":"multiply","value":0.8,"label":"totem attack interval"}],"cd":0}},
+    {"id":"u_stride","support":{"frw":16,"dex":6,"resCold":13},"power":{"title":"Late Arrival","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_2_0"},"effects":[{"kind":"modify","path":"mana","op":"multiply","value":0.65,"label":"Aether cost"}],"cd":0}},
+    {"id":"u_kingsplit","support":{"dmgPct":45,"critChance":4,"str":7},"power":{"title":"The Falling Crown","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_6"},"effects":[{"kind":"modify","path":"missingHpBonus","op":"multiply","value":1.4,"label":"damage against wounded enemies"}],"cd":0}},
+    {"id":"u_gen_0_0","support":{"dmgPct":41,"str":6,"resFire":13},"power":{"title":"Breaking Dawn","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_2_0"},"effects":[{"kind":"modify","path":"width","op":"multiply","value":1.5,"label":"charge width"}],"cd":0}},
+    {"id":"u_gen_0_2","support":{"dmgPct":51,"ar":56,"critDmg":18},"power":{"title":"Assault Doctrine","event":"equip","when":"any","target":{"classId":"vanguard","tree":2},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_0_4","support":{"dmgPct":64,"str":10,"lifeSteal":4},"power":{"title":"Returning Steel","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_2_2"},"effects":[{"kind":"modify","path":"count","op":"add","value":1,"label":"returning axes"}],"cd":0}},
+    {"id":"u_gen_0_6","support":{"dmgPct":82,"critChance":6,"hp":46},"power":{"title":"Worldfall","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_2_6"},"effects":[{"kind":"modify","path":"radius","op":"multiply","value":1.5,"label":"landing radius"}],"cd":0}},
+    {"id":"u_gen_0_8","support":{"dmgPct":102,"ias":16,"resCold":23},"power":{"title":"Marching Fissure","event":"equip","when":"any","target":{"classId":"vanguard","skill":"ground_slam"},"effects":[{"kind":"modify","path":"range","op":"multiply","value":1.5,"label":"fissure reach"}],"cd":0}},
+    {"id":"u_gen_0_10","support":{"dmgPct":124,"dex":20,"resLight":27},"power":{"title":"Heaven's Lesson","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_2_6"},"effects":[{"kind":"rank","value":3}],"cd":0}},
+    {"id":"u_gen_0_12","support":{"dmgPct":147,"critDmg":38,"resAll":14},"power":{"title":"Chain of Command","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_2_1"},"effects":[{"kind":"modify","path":"mana","op":"multiply","value":0.65,"label":"Aether cost"}],"cd":0}},
+    {"id":"u_gen_1_1","support":{"dmgPct":46,"lifeSteal":3,"hp":22},"power":{"title":"Gore Tempo","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_0"},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_1_3","support":{"dmgPct":57,"str":9,"resAll":7},"power":{"title":"Unspent Fury","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_1"},"effects":[{"kind":"modify","path":"tempoRetain","op":"add","value":1,"label":"Tempo retained after the finisher"}],"cd":0}},
+    {"id":"u_gen_1_5","support":{"dmgPct":72,"critChance":6,"ar":92},"power":{"title":"Skull Frenzy","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_4"},"effects":[{"kind":"modify","path":"stats.ias","op":"add","value":20,"label":"stance attack speed bonus (%)"}],"cd":0}},
+    {"id":"u_gen_1_7","support":{"dmgPct":91,"fireDmg":25,"str":14},"power":{"title":"Ruined Steel","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_3"},"effects":[{"kind":"rank","value":2}],"cd":0}},
+    {"id":"u_gen_1_9","support":{"dmgPct":113,"lifeSteal":5,"vit":18},"power":{"title":"Executioner's Appetite","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_6"},"effects":[{"kind":"modify","path":"baseThresh","op":"add","value":0.04,"label":"execution Life threshold"}],"cd":0}},
+    {"id":"u_gen_1_11","support":{"dmgPct":136,"hp":82,"critDmg":36},"power":{"title":"Crimson Counter","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_2"},"effects":[{"kind":"modify","path":"parryWindow","op":"multiply","value":0.7,"label":"time between parries"}],"cd":0}},
+    {"id":"u_gen_2_0","support":{"dmgPct":41,"dex":6,"ias":11},"power":{"title":"The Unseen Discipline","event":"equip","when":"any","target":{"classId":"veilranger","tree":2},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_2_2","support":{"dmgPct":51,"poisonDmg":13,"lifeSteal":3},"power":{"title":"Lingering Opening","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_2_1"},"effects":[{"kind":"modify","path":"exposeDuration","op":"multiply","value":1.6,"label":"Exposed duration"}],"cd":0}},
+    {"id":"u_gen_2_4","support":{"dmgPct":64,"critChance":5,"frw":19},"power":{"title":"Quiet Crescent","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_2_3"},"effects":[{"kind":"modify","path":"arc","op":"multiply","value":1.3,"label":"cleave angle"}],"cd":0}},
+    {"id":"u_gen_2_6","support":{"dmgPct":82,"ias":14,"dex":13},"power":{"title":"Severing Flurry","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_2_5"},"effects":[{"kind":"modify","path":"count","op":"add","value":2,"label":"blades"}],"cd":0}},
+    {"id":"u_gen_2_8","support":{"dmgPct":102,"poisonDmg":34,"ar":142},"power":{"title":"Whispered Step","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_2_0"},"effects":[{"kind":"rank","value":3}],"cd":0}},
+    {"id":"u_gen_2_10","support":{"dmgPct":124,"dex":20,"critDmg":34},"power":{"title":"Thorn in the Mark","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_2_4"},"effects":[{"kind":"modify","path":"detDmg","op":"multiply","value":1.6,"label":"mark detonation damage"}],"cd":0}},
+    {"id":"u_gen_2_12","support":{"dmgPct":147,"lifeSteal":5,"hp":89},"power":{"title":"Last Breath Taken","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_2_6"},"effects":[{"kind":"modify","path":"missingHpBonus","op":"multiply","value":1.5,"label":"damage against wounded enemies"}],"cd":0}},
+    {"id":"u_gen_3_1","support":{"dmgPct":46,"dex":7,"coldDmg":8},"power":{"title":"Winter Quarry","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_0_0"},"effects":[{"kind":"modify","path":"quarryStacks","op":"add","value":1,"label":"Quarry stacks per arrow"}],"cd":0}},
+    {"id":"u_gen_3_3","support":{"dmgPct":57,"lightDmg":15,"ias":12},"power":{"title":"Storm Volley","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_0_1"},"effects":[{"kind":"modify","path":"count","op":"add","value":2,"label":"arrows"}],"cd":0}},
+    {"id":"u_gen_3_5","support":{"dmgPct":72,"ar":92,"mana":37},"power":{"title":"A Song Already Drawn","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_0_2"},"effects":[{"kind":"modify","path":"maxDraw","op":"multiply","value":0.7,"label":"full-draw time"}],"cd":0}},
+    {"id":"u_gen_3_7","support":{"dmgPct":91,"critChance":7,"dex":14},"power":{"title":"Hawk's Lesson","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_0_3"},"effects":[{"kind":"rank","value":2}],"cd":0}},
+    {"id":"u_gen_3_9","support":{"dmgPct":113,"coldDmg":33,"critDmg":31},"power":{"title":"Winter Ricochet","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_0_4"},"effects":[{"kind":"modify","path":"bounces","op":"add","value":2,"label":"ricochets"}],"cd":0}},
+    {"id":"u_gen_3_11","support":{"dmgPct":136,"ias":18,"resLight":29},"power":{"title":"Distant Aim","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_0_0"},"effects":[{"kind":"rank","value":4}],"cd":0}},
+    {"id":"u_gen_4_0","support":{"spellPct":23,"fcr":11,"mana":19,"lightDmgPct":9},"power":{"title":"Forked Tempest","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"emberwitch_2_2"},"effects":[{"kind":"modify","path":"jumps","op":"add","value":2,"label":"chain targets"}],"cd":0}},
+    {"id":"u_gen_4_2","support":{"spellPct":28,"manaRegen":18,"fireDmgPct":10},"power":{"title":"Heart of Scorch","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"emberwitch_0_0"},"effects":[{"kind":"modify","path":"scorch","op":"multiply","value":2,"label":"Scorch damage per stack"}],"cd":0}},
+    {"id":"u_gen_4_4","support":{"spellPct":36,"resCold":17,"coldDmgPct":15},"power":{"title":"Winter Stillness","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"emberwitch_1_1"},"effects":[{"kind":"modify","path":"freeze","op":"multiply","value":1.4,"label":"freeze duration"}],"cd":0}},
+    {"id":"u_gen_4_6","support":{"spellPct":45,"fcr":14,"resLight":20,"lightDmgPct":5},"power":{"title":"Thunder Sovereign","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"emberwitch_2_2"},"effects":[{"kind":"modify","path":"dmg","op":"multiply","value":1.35,"label":"lightning damage"}],"cd":0}},
+    {"id":"u_gen_4_8","support":{"spellPct":56,"hp":60,"fireDmgPct":29},"power":{"title":"Feeding the Pyre","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"emberwitch_0_5"},"effects":[{"kind":"modify","path":"perStack","op":"multiply","value":1.75,"label":"damage per consumed Scorch stack"}],"cd":0}},
+    {"id":"u_gen_4_10","support":{"spellPct":68,"mana":67,"coldDmgPct":37},"power":{"title":"Glacial Horizon","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"emberwitch_1_6"},"effects":[{"kind":"modify","path":"radius","op":"multiply","value":1.4,"label":"glacier radius"}],"cd":0}},
+    {"id":"u_gen_4_12","support":{"spellPct":80,"fcr":19,"wil":24,"lightDmgPct":5},"power":{"title":"Threefold Witchcraft","event":"equip","when":"any","target":{"classId":"emberwitch"},"effects":[{"kind":"rank","value":2}],"cd":0}},
+    {"id":"u_gen_5_1","support":{"spellPct":26,"mana":21,"wil":7,"shadowDmgPct":5},"power":{"title":"Frailty Written Deep","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"mark_of_frailty"},"effects":[{"kind":"modify","path":"pct","op":"add","value":10,"label":"curse amplification (%)"}],"cd":0}},
+    {"id":"u_gen_5_3","support":{"spellPct":32,"manaRegen":19,"shadowDmgPct":5,"minionDmgPct":5},"power":{"title":"Second Whisper","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"raise_plaguemage"},"effects":[{"kind":"modify","path":"cap","op":"add","value":1,"label":"Plague Mages"}],"cd":0}},
+    {"id":"u_gen_5_5","support":{"spellPct":40,"resAll":8,"shadowDmgPct":5,"minionHpPct":5},"power":{"title":"Bonecraft Testament","event":"equip","when":"any","target":{"classId":"gravebinder","tree":0},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_5_7","support":{"spellPct":51,"mana":48,"poisonDmgPct":30},"power":{"title":"Rot Without Borders","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_2_1"},"effects":[{"kind":"modify","path":"spreadRange","op":"multiply","value":1.6,"label":"Contagion spread reach"}],"cd":0}},
+    {"id":"u_gen_5_9","support":{"spellPct":62,"fcr":17,"vit":18,"shadowDmgPct":5},"power":{"title":"Tomb of Beckoning","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_1_3"},"effects":[{"kind":"rank","value":3}],"cd":0}},
+    {"id":"u_gen_5_11","support":{"spellPct":75,"wil":22,"manaRegen":32,"shadowDmgPct":5},"power":{"title":"A Thrifty Soul","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_1_5"},"effects":[{"kind":"modify","path":"manaPerSec","op":"multiply","value":0.65,"label":"channel Aether drain"}],"cd":0}},
+    {"id":"u_gen_6_0","support":{"armorPct":40,"hp":19,"resFire":13},"power":{"title":"Cinder Discipline","event":"equip","when":"any","target":{"classId":"emberwitch","tree":0},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_6_2","support":{"armorPct":48,"resFire":15,"vit":8},"power":{"title":"Dragonhide Bear","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"stoneform"},"effects":[{"kind":"modify","path":"dur","op":"multiply","value":1.6,"label":"Bear Form duration"}],"cd":0}},
+    {"id":"u_gen_6_4","support":{"armorPct":59,"hp":34,"thorns":11},"power":{"title":"Rooted Bulwark","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_5"},"effects":[{"kind":"modify","path":"rootArmor","op":"multiply","value":1.6,"label":"armor while rooted"}],"cd":0}},
+    {"id":"u_gen_6_6","support":{"armorPct":74,"hp":46,"fireDmg":22},"power":{"title":"Packed Powder","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_1_5"},"effects":[{"kind":"modify","path":"radius","op":"multiply","value":1.5,"label":"trap explosion radius"}],"cd":0}},
+    {"id":"u_gen_6_8","support":{"armorPct":91,"resFire":23,"mana":54},"power":{"title":"Long Burning Weave","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"emberwitch_0_3"},"effects":[{"kind":"modify","path":"dur","op":"multiply","value":1.6,"label":"firewall duration"}],"cd":0}},
+    {"id":"u_gen_6_10","support":{"armorPct":109,"vit":20,"resAll":12},"power":{"title":"Stone Mantle","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"wildkeeper_2_2"},"effects":[{"kind":"modify","path":"formStats.armorPct","op":"add","value":30,"label":"Stone Form armor bonus (%)"}],"cd":0}},
+    {"id":"u_gen_6_12","support":{"armorPct":128,"hp":89,"dmgReduceFlat":9},"power":{"title":"Marrow Bastion","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_0_4"},"effects":[{"kind":"rank","value":4}],"cd":0}},
+    {"id":"u_gen_7_1","support":{"skillAll":1,"mana":21,"resFire":14},"power":{"title":"Cinder Coronation","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"emberwitch_0_1"},"effects":[{"kind":"modify","path":"count","op":"add","value":2,"label":"cinder bolts"}],"cd":0}},
+    {"id":"u_gen_7_3","support":{"armorPct":53,"hp":29,"resAll":7,"minionHpPct":5},"power":{"title":"Audience of Whispers","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_1_4"},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_7_5","support":{"skillAll":1,"fcr":13,"mana":37},"power":{"title":"The Beckoning Face","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_1_3"},"effects":[{"kind":"modify","path":"dur","op":"multiply","value":1.6,"label":"beckoning duration"}],"cd":0}},
+    {"id":"u_gen_7_7","support":{"spellPct":51,"critChance":7,"mana":48},"power":{"title":"Doom Comes Early","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_1_2"},"effects":[{"kind":"modify","path":"timer","op":"multiply","value":0.65,"label":"time to full Doom charge"}],"cd":0}},
+    {"id":"u_gen_7_9","support":{"skillAll":1,"mana":61,"resCold":25},"power":{"title":"Rime Doctrine","event":"equip","when":"any","target":{"classId":"emberwitch","tree":1},"effects":[{"kind":"rank","value":3}],"cd":0}},
+    {"id":"u_gen_7_11","support":{"armorPct":119,"hp":82,"vit":22,"minionHpPct":5},"power":{"title":"The Gravebinder's Crown","event":"equip","when":"any","target":{"classId":"gravebinder"},"effects":[{"kind":"rank","value":2}],"cd":0}},
+    {"id":"u_gen_8_0","support":{"frw":16,"dex":6,"resCold":13},"power":{"title":"Long Shadow","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_2_0"},"effects":[{"kind":"modify","path":"blinkRange","op":"multiply","value":1.5,"label":"Shadowstep reach"}],"cd":0}},
+    {"id":"u_gen_8_2","support":{"frw":17,"vit":8,"hp":25},"power":{"title":"Fleet March","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_2_3"},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_8_4","support":{"frw":19,"dex":10,"resAll":7},"power":{"title":"Wolfwind","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"fangform"},"effects":[{"kind":"modify","path":"formStats.frw","op":"add","value":20,"label":"Wolf Form movement bonus (%)"}],"cd":0}},
+    {"id":"u_gen_8_6","support":{"frw":21,"ias":14,"str":13},"power":{"title":"Unbroken Charge","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_2_0"},"effects":[{"kind":"modify","path":"chargeRange","op":"multiply","value":1.5,"label":"charge reach"}],"cd":0}},
+    {"id":"u_gen_8_8","support":{"frw":23,"dex":16,"mana":54},"power":{"title":"Gale Crossing","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"emberwitch_2_4"},"effects":[{"kind":"modify","path":"blinkRange","op":"multiply","value":1.5,"label":"Arc Teleport reach"}],"cd":0}},
+    {"id":"u_gen_8_10","support":{"frw":26,"resCold":27,"hp":74},"power":{"title":"Pallid Snare","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_1_2"},"effects":[{"kind":"modify","path":"slowDur","op":"multiply","value":1.5,"label":"Frostbite Trap slow duration"}],"cd":0}},
+    {"id":"u_gen_8_12","support":{"frw":29,"vit":24,"resAll":14},"power":{"title":"Quickened Road","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_2_2"},"effects":[{"kind":"rank","value":4}],"cd":0}},
+    {"id":"u_gen_9_1","support":{"spellPct":26,"resLight":14,"mana":21},"power":{"title":"Tempest Doctrine","event":"equip","when":"any","target":{"classId":"emberwitch","tree":2},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_9_3","support":{"hp":29,"mana":28,"resPoison":16},"power":{"title":"Marsh Siphon","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_1_5"},"effects":[{"kind":"modify","path":"maxChannel","op":"multiply","value":1.5,"label":"maximum channel duration"}],"cd":0}},
+    {"id":"u_gen_9_5","support":{"spellPct":40,"wil":11,"resAll":8},"power":{"title":"Static Reflection","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"emberwitch_2_6"},"effects":[{"kind":"modify","path":"perStatic","op":"multiply","value":1.6,"label":"damage per Static charge"}],"cd":0}},
+    {"id":"u_gen_9_7","support":{"critChance":7,"ar":124,"resAll":10},"power":{"title":"Vanguard's Vigil","event":"equip","when":"any","target":{"classId":"vanguard"},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_9_9","support":{"spellPct":62,"fcr":17,"resLight":25},"power":{"title":"Wildkin Covenant","event":"equip","when":"any","target":{"classId":"wildkeeper","tree":0},"effects":[{"kind":"rank","value":3}],"cd":0}},
+    {"id":"u_gen_9_11","support":{"hp":82,"manaRegen":32,"resPoison":29},"power":{"title":"The Ranger's Pendant","event":"equip","when":"any","target":{"classId":"veilranger"},"effects":[{"kind":"rank","value":2}],"cd":0}},
+    {"id":"u_gen_10_0","support":{"lifeSteal":3,"critChance":4,"str":6},"power":{"title":"Circle of the Wild","event":"equip","when":"any","target":{"classId":"wildkeeper"},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_10_2","support":{"hp":25,"vit":8,"resAll":6},"power":{"title":"Bearblood Lesson","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"stoneform"},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_10_4","support":{"dmgPct":64,"fireDmg":15,"ias":12},"power":{"title":"Ruin Rekindled","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"emberwitch_0_5"},"effects":[{"kind":"modify","path":"pyreChance","op":"add","value":0.15,"label":"repeat-Pyre chance per stack"}],"cd":0}},
+    {"id":"u_gen_10_6","support":{"spellPct":45,"mana":42,"fcr":14},"power":{"title":"Endless Inferno","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"emberwitch_0_6"},"effects":[{"kind":"modify","path":"dur","op":"multiply","value":1.5,"label":"Inferno duration"}],"cd":0}},
+    {"id":"u_gen_10_8","support":{"hp":60,"fireDmg":29,"lifeSteal":4},"power":{"title":"Soul-fed Veins","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_1_5"},"effects":[{"kind":"modify","path":"drain","op":"multiply","value":1.5,"label":"Life drained"}],"cd":0}},
+    {"id":"u_gen_10_10","support":{"hp":74,"resFire":27,"critDmg":34},"power":{"title":"Unhealed Mark","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_2_4"},"effects":[{"kind":"modify","path":"dur","op":"multiply","value":1.5,"label":"Killing Mark duration"}],"cd":0}},
+    {"id":"u_gen_10_12","support":{"poisonDmg":53,"fireDmg":46,"dex":24},"power":{"title":"Serpent's Spit","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"venom_spit"},"effects":[{"kind":"modify","path":"pdot","op":"multiply","value":1.75,"label":"poison damage over time"}],"cd":0}},
+    {"id":"u_gen_11_1","support":{"dmgPct":46,"str":7,"ccReduce":11},"power":{"title":"Stormcall Doctrine","event":"equip","when":"any","target":{"classId":"wildkeeper","tree":1},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_11_3","support":{"dmgPct":57,"hp":29,"thorns":9},"power":{"title":"World Fracture","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"ground_fissure"},"effects":[{"kind":"modify","path":"waveWidth","op":"multiply","value":1.6,"label":"fissure width"}],"cd":0}},
+    {"id":"u_gen_11_5","support":{"dmgPct":72,"vit":11,"armorPct":66},"power":{"title":"Toll Beneath the Earth","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"wildkeeper_1_5"},"effects":[{"kind":"modify","path":"radius","op":"multiply","value":1.5,"label":"Earthquake radius"}],"cd":0}},
+    {"id":"u_gen_11_7","support":{"dmgPct":91,"critDmg":27,"str":14},"power":{"title":"Cataclysmic Pull","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"wildkeeper_1_3"},"effects":[{"kind":"modify","path":"pull","op":"multiply","value":1.75,"label":"Cyclone pull"}],"cd":0}},
+    {"id":"u_gen_11_9","support":{"dmgPct":113,"ar":160,"mana":61},"power":{"title":"Wildshape Covenant","event":"equip","when":"any","target":{"classId":"wildkeeper","tree":2},"effects":[{"kind":"rank","value":3}],"cd":0}},
+    {"id":"u_gen_11_11","support":{"dmgPct":136,"hp":82,"resCold":29},"power":{"title":"Second Storm","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"wildkeeper_1_0"},"effects":[{"kind":"modify","path":"cap","op":"add","value":1,"label":"Storm Totems"}],"cd":0}},
+    {"id":"u_gen_12_0","support":{"dmgPct":41,"ias":11,"dex":6},"power":{"title":"Arms Doctrine","event":"equip","when":"any","target":{"classId":"vanguard","tree":0},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_12_2","support":{"dmgPct":51,"lightDmg":13,"str":8},"power":{"title":"Dawn's Rhythm","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_0"},"effects":[{"kind":"modify","path":"tempoDuration","op":"multiply","value":1.5,"label":"Tempo window"}],"cd":0}},
+    {"id":"u_gen_12_4","support":{"dmgPct":64,"lifeSteal":4,"hp":34},"power":{"title":"King's Rally","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_1_0"},"effects":[{"kind":"modify","path":"healPct","op":"multiply","value":1.4,"label":"rally healing"}],"cd":0}},
+    {"id":"u_gen_12_6","support":{"dmgPct":82,"critDmg":25,"dex":13},"power":{"title":"Lingering Sunder","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_1"},"effects":[{"kind":"modify","path":"shredDur","op":"multiply","value":1.75,"label":"armor-shred duration"}],"cd":0}},
+    {"id":"u_gen_12_8","support":{"dmgPct":102,"resFire":23,"ias":16},"power":{"title":"Berserker's Vow","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_4"},"effects":[{"kind":"rank","value":3}],"cd":0}},
+    {"id":"u_gen_12_10","support":{"dmgPct":124,"ar":178,"resAll":12},"power":{"title":"Gilded Riposte","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_2"},"effects":[{"kind":"modify","path":"stunDur","op":"multiply","value":1.6,"label":"counter stun duration"}],"cd":0}},
+    {"id":"u_gen_12_12","support":{"dmgPct":147,"vit":24,"hp":89},"power":{"title":"Standard of Mercy","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_1_5"},"effects":[{"kind":"modify","path":"heal","op":"multiply","value":1.6,"label":"standard healing"}],"cd":0}},
+    {"id":"u_gen_13_1","support":{"dmgPct":46,"lifeSteal":3,"str":7},"power":{"title":"Long Rabies","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"rabies"},"effects":[{"kind":"modify","path":"dur","op":"multiply","value":1.5,"label":"Rabies duration"}],"cd":0}},
+    {"id":"u_gen_13_3","support":{"dmgPct":57,"dmgUndead":48,"critChance":5},"power":{"title":"Cleaving Fire","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"fire_claw"},"effects":[{"kind":"modify","path":"explosions","op":"add","value":1,"label":"fire explosions"}],"cd":0}},
+    {"id":"u_gen_13_5","support":{"dmgPct":72,"ias":13,"frw":20},"power":{"title":"Long Hunt","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"fangform"},"effects":[{"kind":"modify","path":"dur","op":"multiply","value":1.5,"label":"Wolf Form duration"}],"cd":0}},
+    {"id":"u_gen_13_7","support":{"dmgPct":91,"thorns":18,"vit":14,"minionHpPct":5},"power":{"title":"The Pack Shares Pain","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"kinship"},"effects":[{"kind":"modify","path":"pStats.pShare","op":"add","value":5,"label":"damage shared with companions (%)"}],"cd":0}},
+    {"id":"u_gen_13_9","support":{"dmgPct":113,"lifeSteal":5,"dex":18,"minionDmgPct":5},"power":{"title":"Twin Tusks","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"thornback_boar"},"effects":[{"kind":"modify","path":"cap","op":"add","value":1,"label":"Thornback Boars"}],"cd":0}},
+    {"id":"u_gen_13_11","support":{"dmgPct":136,"critChance":9,"ar":198},"power":{"title":"Antlered Wrath","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"wildkeeper_2_6"},"effects":[{"kind":"modify","path":"formStats.dmgPct","op":"add","value":30,"label":"Wrath damage bonus (%)"}],"cd":0}},
+    {"id":"u_gen_14_0","support":{"dmgPct":41,"str":6,"ccReduce":11},"power":{"title":"Warcries Doctrine","event":"equip","when":"any","target":{"classId":"vanguard","tree":1},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_14_2","support":{"dmgPct":51,"dmgUndead":43,"hp":25},"power":{"title":"Far-reaching Rally","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_1_0"},"effects":[{"kind":"modify","path":"radius","op":"multiply","value":1.5,"label":"rally radius"}],"cd":0}},
+    {"id":"u_gen_14_4","support":{"dmgPct":64,"armorPct":59,"vit":10},"power":{"title":"Echo of Terror","event":"equip","when":"any","target":{"classId":"vanguard","skill":"terrifying_bellow"},"effects":[{"kind":"modify","path":"dur","op":"multiply","value":1.5,"label":"fear duration"}],"cd":0}},
+    {"id":"u_gen_14_6","support":{"dmgPct":82,"critChance":6,"resAll":9},"power":{"title":"Crushing Roar","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_1_4"},"effects":[{"kind":"modify","path":"roarSlow","op":"add","value":20,"label":"roar slow (%)"}],"cd":0}},
+    {"id":"u_gen_14_8","support":{"dmgPct":102,"manaRegen":26,"wil":16},"power":{"title":"Morning Standard","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_1_2"},"effects":[{"kind":"modify","path":"dur","op":"multiply","value":1.6,"label":"banner duration"}],"cd":0}},
+    {"id":"u_gen_14_10","support":{"dmgPct":124,"lifeSteal":5,"str":20},"power":{"title":"The Last Congregation","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_1_5"},"effects":[{"kind":"modify","path":"radius","op":"multiply","value":1.5,"label":"standard radius"}],"cd":0}},
+    {"id":"u_gen_14_12","support":{"dmgPct":147,"resFire":31,"hp":89},"power":{"title":"Will of the Choir","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_1_3"},"effects":[{"kind":"rank","value":4}],"cd":0}},
+    {"id":"u_gen_15_1","support":{"dmgPct":46,"dex":7,"frw":16},"power":{"title":"Skyfall Fissure","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"ground_fissure"},"effects":[{"kind":"modify","path":"range","op":"multiply","value":1.5,"label":"fissure reach"}],"cd":0}},
+    {"id":"u_gen_15_3","support":{"dmgPct":57,"lightDmg":15,"str":9},"power":{"title":"Long Storm","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"wildkeeper_1_0"},"effects":[{"kind":"modify","path":"radius","op":"multiply","value":1.5,"label":"totem targeting radius"}],"cd":0}},
+    {"id":"u_gen_15_5","support":{"dmgPct":72,"ias":13,"ar":92},"power":{"title":"Hurrying Wisps","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"wildkeeper_1_6"},"effects":[{"kind":"modify","path":"wispCd","op":"multiply","value":0.65,"label":"wisp interval"}],"cd":0}},
+    {"id":"u_gen_15_7","support":{"dmgPct":91,"coldDmg":25,"dex":14},"power":{"title":"Winter Cyclone","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"wildkeeper_1_3"},"effects":[{"kind":"modify","path":"ttl","op":"multiply","value":1.5,"label":"Cyclone lifetime"}],"cd":0}},
+    {"id":"u_gen_15_9","support":{"dmgPct":113,"critChance":8,"resLight":25},"power":{"title":"Sky-Sap Lesson","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"wildkeeper_1_4"},"effects":[{"kind":"rank","value":3}],"cd":0}},
+    {"id":"u_gen_15_11","support":{"dmgPct":136,"ar":198,"mana":74},"power":{"title":"Restless Earth","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"wildkeeper_1_5"},"effects":[{"kind":"modify","path":"tickEvery","op":"multiply","value":0.75,"label":"Earthquake pulse interval"}],"cd":0}},
+    {"id":"u_gen_16_0","support":{"dmgPct":41,"dex":6,"fireDmg":6},"power":{"title":"Heartseeker's Aim","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_0_0"},"effects":[{"kind":"modify","path":"dmgMult","op":"multiply","value":1.35,"label":"Aimed Shot damage"}],"cd":0}},
+    {"id":"u_gen_16_2","support":{"dmgPct":51,"critChance":5,"critDmg":18},"power":{"title":"Precision Doctrine","event":"equip","when":"any","target":{"classId":"veilranger","tree":0},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_16_4","support":{"dmgPct":64,"ias":12,"frw":19},"power":{"title":"Widow's Rain","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_0_6"},"effects":[{"kind":"modify","path":"radius","op":"multiply","value":1.5,"label":"Arrowfall radius"}],"cd":0}},
+    {"id":"u_gen_16_6","support":{"dmgPct":82,"dex":13,"poisonDmg":26},"power":{"title":"Last Quarry","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_0_2"},"effects":[{"kind":"modify","path":"quarryBonus","op":"multiply","value":1.5,"label":"damage per consumed Quarry stack"}],"cd":0}},
+    {"id":"u_gen_16_8","support":{"dmgPct":102,"critChance":7,"ar":142},"power":{"title":"Broken Ricochet","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_0_4"},"effects":[{"kind":"modify","path":"dmgMult","op":"multiply","value":1.4,"label":"ricochet damage"}],"cd":0}},
+    {"id":"u_gen_16_10","support":{"dmgPct":124,"ias":17,"mana":67},"power":{"title":"Snares Doctrine","event":"equip","when":"any","target":{"classId":"veilranger","tree":1},"effects":[{"kind":"rank","value":3}],"cd":0}},
+    {"id":"u_gen_16_12","support":{"dmgPct":147,"critDmg":38,"hp":89},"power":{"title":"Flurry of Openings","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_2_5"},"effects":[{"kind":"modify","path":"exposedBonus","op":"add","value":20,"label":"damage against Exposed foes (%)"}],"cd":0}},
+    {"id":"u_gen_17_1","support":{"armorPct":44,"resAll":6,"hp":22},"power":{"title":"Bulwark Lesson","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_5"},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_17_3","support":{"block":9,"armorPct":53,"vit":9},"power":{"title":"Bastion's Lesson","event":"equip","when":"any","target":{"classId":"vanguard","skill":"vanguard_0_2"},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_17_5","support":{"armorPct":66,"thorns":13,"resFire":18},"power":{"title":"Winter Sanctuary","event":"equip","when":"any","target":{"classId":"emberwitch","skill":"rimeguard"},"effects":[{"kind":"rank","value":2}],"cd":0}},
+    {"id":"u_gen_17_7","support":{"armorPct":82,"hp":53,"resAll":10},"power":{"title":"Bear's Shelter","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"stoneform"},"effects":[{"kind":"modify","path":"formStats.hpPct","op":"add","value":25,"label":"Bear Form Life bonus (%)"}],"cd":0}},
+    {"id":"u_gen_17_9","support":{"block":12,"hp":67,"vit":18},"power":{"title":"Unbroken Bone","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_0_4"},"effects":[{"kind":"modify","path":"shield","op":"multiply","value":1.6,"label":"bone shield absorption"}],"cd":0}},
+    {"id":"u_gen_17_11","support":{"armorPct":119,"resFire":29,"mana":74},"power":{"title":"Patient Stone","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"wildkeeper_2_2"},"effects":[{"kind":"modify","path":"dur","op":"multiply","value":1.5,"label":"Stone Form duration"}],"cd":0}},
+    {"id":"u_gen_18_0","support":{"ias":11,"critChance":4,"str":6,"minionDmgPct":5},"power":{"title":"One More Grave","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"raise_dead"},"effects":[{"kind":"modify","path":"cap","op":"add","value":1,"label":"raised skeletons"}],"cd":0}},
+    {"id":"u_gen_18_2","support":{"ias":11,"dex":8,"lifeSteal":3},"power":{"title":"Lingering Frailty","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"mark_of_frailty"},"effects":[{"kind":"modify","path":"dur","op":"multiply","value":1.6,"label":"curse duration"}],"cd":0}},
+    {"id":"u_gen_18_4","support":{"dmgPct":64,"critDmg":21,"str":10},"power":{"title":"Unrelenting Dragnet","event":"equip","when":"any","target":{"classId":"veilranger","skill":"veilranger_1_3"},"effects":[{"kind":"modify","path":"radius","op":"multiply","value":1.5,"label":"Dragnet capture radius"}],"cd":0}},
+    {"id":"u_gen_18_6","support":{"ias":14,"frw":21,"hp":46,"minionDmgPct":5},"power":{"title":"Rally the Deadhand","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"feral_howl"},"effects":[{"kind":"modify","path":"dmgBuff","op":"multiply","value":1.5,"label":"companion rally damage bonus"}],"cd":0}},
+    {"id":"u_gen_18_8","support":{"spellPct":56,"fcr":16,"mana":54,"minionHpPct":5},"power":{"title":"Sepulcher's Offering","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_0_7"},"effects":[{"kind":"modify","path":"dmg","op":"multiply","value":1.5,"label":"sacrifice explosion damage"}],"cd":0}},
+    {"id":"u_gen_18_10","support":{"ias":17,"poisonDmg":43,"dex":20},"power":{"title":"Sorrow Spreads","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_2_1"},"effects":[{"kind":"modify","path":"burstRange","op":"multiply","value":1.6,"label":"Contagion death-burst radius"}],"cd":0}},
+    {"id":"u_gen_18_12","support":{"dmgPct":147,"str":24,"resFire":31},"power":{"title":"Bone Through Ruin","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_0_5"},"effects":[{"kind":"modify","path":"dmg","op":"multiply","value":1.45,"label":"Bone Spear damage"}],"cd":0}},
+    {"id":"u_gen_19_1","support":{"hp":22,"resAll":6,"str":7},"power":{"title":"Marrow Lesson","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_0_3"},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_19_3","support":{"hp":29,"poisonDmg":15,"vit":9},"power":{"title":"Rot Doctrine","event":"equip","when":"any","target":{"classId":"gravebinder","tree":2},"effects":[{"kind":"rank","value":1}],"cd":0}},
+    {"id":"u_gen_19_5","support":{"hp":40,"resFire":18,"resCold":18},"power":{"title":"Venom on the Wind","event":"equip","when":"any","target":{"classId":"wildkeeper","skill":"rabies"},"effects":[{"kind":"modify","path":"cloudRad","op":"multiply","value":1.6,"label":"contagious cloud radius"}],"cd":0}},
+    {"id":"u_gen_19_7","support":{"hp":53,"frw":22,"dex":14},"power":{"title":"Binding Miasma","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_2_2"},"effects":[{"kind":"modify","path":"slowPct","op":"add","value":20,"label":"Miasma slow (%)"}],"cd":0}},
+    {"id":"u_gen_19_9","support":{"hp":67,"mana":61,"resPoison":25},"power":{"title":"Carrion's Embrace","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_2_3"},"effects":[{"kind":"modify","path":"pStats.poisonDotPct","op":"add","value":25,"label":"poison damage-over-time bonus (%)"}],"cd":0}},
+    {"id":"u_gen_19_11","support":{"hp":82,"vit":22,"poisonDmg":48},"power":{"title":"Unbound Outbreak","event":"equip","when":"any","target":{"classId":"gravebinder","skill":"gravebinder_2_7"},"effects":[{"kind":"modify","path":"maxR","op":"multiply","value":1.5,"label":"Outbreak radius"}],"cd":0}},
+  ];
+  function supportValue(def, stat, floor) {
+    const base = DATA.BASES[def.base];
+    const families = DATA.AFFIXES.filter(a => !a.proc && !a.perLevel && a.tiers.some(t => t.ilvl <= def.ilvl &&
+      (a.stat === stat || t.mods?.some(m => m.stat === stat))));
+    const local = families.filter(a => (a.slots.includes("any") || a.slots.includes(base.slot)) && (!a.cats || a.cats.includes(base.cat)));
+    const values = (local.length ? local : families).flatMap(a => a.tiers.filter(t => t.ilvl <= def.ilvl).flatMap(tier => {
+      const mod = tier.mods ? tier.mods.find(m => m.stat === stat) : tier;
+      return mod ? [Math.round(mod.min + .9 * (mod.max - mod.min))] : [];
+    }));
+    return Math.max(floor, ...values);
   }
-  line(0, [
-    ["dmgPct str resFire", P("First Light", "strike", "healthyTarget", N("fire"))],
-    ["dmgPct ar critDmg", P("Fault Line", "strike", "elite", V())],
-    ["dmgPct str lifeSteal", P("Royal Tithe", "strike", "boss", H(3))],
-    ["dmgPct critChance hp", P("Cleaving Horizon", "kill", "critical", N("phys", 70, 3))],
-    ["dmgPct ias resCold", P("Morning Pursuit", "strike", "slowed", B({ ias: 20 }))],
-    ["dmgPct dex resLight", P("Heaven's Answer", "strike", "far", C("light"))],
-    ["dmgPct critDmg resAll", P("Aurora Verdict", "strike", "critical", [N("cold"), W(6)], { every: 3 })],
-  ]);
-  line(1, [
-    ["dmgPct lifeSteal hp", P("Red Wake", "kill", "near", B({ frw: 25 }))],
-    ["dmgPct str resAll", P("Reaver's Shelter", "strike", "lowLife", W(10))],
-    ["dmgPct critChance ar", P("Skull Fracture", "strike", "undead", [V(), M(4)])],
-    ["dmgPct fireDmg str", P("Ruin's Echo", "kill", "burning", C("fire", 4))],
-    ["dmgPct lifeSteal vit", P("Marrow Feast", "strike", "exposed", H(5))],
-    ["dmgPct hp critDmg", P("Paid in Crimson", "hurt", "melee", E("strike", 60), { cd: 7 })],
-  ]);
-  line(2, [
-    ["dmgPct dex ias", P("Whispered Opening", "strike", "healthyTarget", D())],
-    ["dmgPct poisonDmg lifeSteal", P("Night's Kiss", "strike", "poisoned", M(6))],
-    ["dmgPct critChance frw", P("Quiet Passing", "kill", "poisoned", B({ dodge: 20 }))],
-    ["dmgPct ias dex", P("Severed Rhythm", "strike", "any", E("spell", 40), { every: 4 })],
-    ["dmgPct poisonDmg ar", P("Whispering Venom", "strike", "critical", [D("poison", 80), S(20)])],
-    ["dmgPct dex critDmg", P("Silent Thorn", "strike", "cursed", V(16))],
-    ["dmgPct lifeSteal hp", P("Borrowed Breath", "kill", "lowLife", [H(8), B({ frw: 20 })], { cd: 8 })],
-  ]);
-  line(3, [
-    ["dmgPct dex coldDmg", P("Winter's Distance", "strike", "far", S(45))],
-    ["dmgPct lightDmg ias", P("Strung Thunder", "strike", "slowed", C("light", 4))],
-    ["dmgPct ar mana", P("Returning Song", "kill", "far", [M(7), E("strike", 25)])],
-    ["dmgPct critChance dex", P("Unblinking Hunt", "strike", "still", V(15))],
-    ["dmgPct coldDmg critDmg", P("Pierced Winter", "strike", "frozen", N("phys", 65))],
-    ["dmgPct ias resLight", P("Distant Weather", "strike", "any", [C("light"), B({ frw: 18 })], { every: 4, sameTarget: true })],
-  ]);
-  line(4, [
-    ["spellPct fcr lightDmg mana", P("Gathering Tempest", "spell", "light", C("light", 3, 35), { every: 3 })],
-    ["spellPct fireDmg manaRegen", P("Heart of the Pyre", "spell", "burning", H(4))],
-    ["spellPct coldDmg resCold", P("Winter Refuge", "spell", "cold", W(8), { every: 3 })],
-    ["spellPct fcr resLight", P("Crowned in Thunder", "cast", "light", K("emberwitch_2_2", "jumps", "add", 1))],
-    ["spellPct fireDmg hp", P("Cinder Curtain", "hurt", "fire", E("spell", 50))],
-    ["spellPct coldDmg mana", P("Glacial Confluence", "kill", "frozen", [M(8), N("cold", 55)])],
-    ["spellPct fcr wil", P("Spire's Reach", "spell", "far", [V(10), C("light", 2)])],
-  ]);
-  line(5, [
-    ["spellPct mana wil", P("Hexed Touch", "spell", "cursed", [H(3), M(4)])],
-    ["spellPct manaRegen hp", P("Whispered Succor", "kill", "companionKill", W(9))],
-    ["spellPct wil resAll", P("Grave Instruction", "cast", "summon", B({ minionDmgPct: 25 }, 6))],
-    ["spellPct poisonDmg mana", P("Rot's Inheritance", "kill", "poisoned", N("poison", 80))],
-    ["spellPct fcr vit", P("Tomb Inscription", "cast", "curse", [E("spell", 35), W(5)])],
-    ["spellPct wil manaRegen", P("Splintered Soul", "spell", "shadow", C("shadow", 3), { every: 3, sameTarget: true })],
-  ]);
-  line(6, [
-    ["armorPct hp resFire", P("Ashen Refuge", "hurt", "lowLife", [W(12), N("fire", 35)], { cd: 10 })],
-    ["armorPct resFire vit", P("Shed the Flame", "hurt", "fire", [H(5), B({ resFire: 15 })])],
-    ["armorPct hp thorns", P("Holding Ground", "hurt", "still", B({ dmgReducePct: 15 }))],
-    ["armorPct hp fireDmg", P("Mail of Embers", "block", "any", N("fire", 55, 3))],
-    ["armorPct resFire mana", P("Woven Cinders", "cast", "fire", B({ armorPct: 30 }, 5))],
-    ["armorPct vit resAll", P("Tempered Scales", "hurt", "eliteSource", [W(8), M(4)])],
-    ["armorPct hp dmgReduceFlat", P("Bastion's Reprisal", "hurt", "any", [V(14), B({ thorns: 25 })], { every: 4 })],
-  ]);
-  line(7, [
-    ["skillAll mana resFire", P("Cinder Coronation", "kill", "burning", B({ fcr: 20 }))],
-    ["armorPct hp resAll", P("Bone Audience", "kill", "undead", [M(6), B({ armorPct: 25 })])],
-    ["skillAll fcr mana", P("Borrowed Face", "cast", "curse", B({ dodge: 16 }))],
-    ["spellPct critChance mana", P("Doom's Toll", "spell", "lowTarget", V(18))],
-    ["skillAll mana resCold", P("Drowned Decree", "hurt", "cold", C("cold", 4))],
-    ["armorPct hp vit", P("Boneward Memory", "kill", "companionKill", [H(4), B({ dmgReducePct: 10 })])],
-  ]);
-  line(8, [
-    ["frw dex resCold", P("Haunted Road", "move", "nearEnemy", S(35), { every: 5, cd: 5 })],
-    ["frw vit hp", P("Wind at Your Back", "kill", "moving", B({ frw: 30 }, 3))],
-    ["frw dex resAll", P("Ghost's Reprieve", "move", "lowLife", W(10), { every: 4, cd: 7 })],
-    ["frw ias str", P("Marching Edge", "move", "any", E("strike", 35), { every: 8 })],
-    ["frw dex mana", P("Gale's Return", "move", "lowMana", M(8), { every: 6 })],
-    ["frw resCold hp", P("Pallid Trail", "move", "nearEnemy", N("cold", 35), { every: 9 })],
-    ["frw vit resAll", P("Road's Last Breath", "move", "any", [H(3), E("spell", 25)], { every: 12, cd: 8 })],
-  ]);
-  line(9, [
-    ["spellPct resLight mana", P("Knotted Current", "spell", "critical", M(8))],
-    ["hp mana resPoison", P("Marsh Pulse", "hurt", "poison", W(12))],
-    ["spellPct wil resAll", P("Soul Reflection", "spell", "shadow", E("strike", 40))],
-    ["critChance ar resAll", P("Vigil's Eye", "strike", "elite", B({ dodge: 18 }))],
-    ["spellPct fcr resLight", P("Bound Tempest", "cast", "light", B({ lightDmg: 25 }, 5))],
-    ["hp manaRegen resPoison", P("Mirelight Rescue", "kill", "cursed", [H(5), W(5)])],
-  ]);
-  line(10, [
-    ["lifeSteal critChance str", P("Sanguine Promise", "strike", "lowTarget", W(6))],
-    ["hp vit resAll", P("Closing the Loop", "overheal", "any", E("strike", 30), { every: 8 })],
-    ["dmgPct fireDmg ias", P("Ruinous Spark", "kill", "elite", N("fire", 90, 3))],
-    ["spellPct mana fcr", P("Coiled Ember", "spend", "any", N("fire", 45), { every: 40 })],
-    ["hp fireDmg lifeSteal", P("Burning Veins", "hurt", "melee", [D("fire", 60), H(3)])],
-    ["hp resFire critDmg", P("Cinder Wound", "strike", "burning", V(14))],
-    ["poisonDmg fireDmg dex", P("Serpent's Kindling", "spell", "poisoned", [N("fire", 45), M(3)])],
-  ]);
-  line(11, [
-    ["dmgPct str ccReduce", P("Seismic Beat", "strike", "any", S(45), { every: 3, sameTarget: true })],
-    ["dmgPct hp thorns", P("World's Rebound", "hurt", "melee", N("earth", 65))],
-    ["dmgPct vit armorPct", P("Toll of Stone", "kill", "near", W(10))],
-    ["dmgPct critDmg str", P("Cataclysmic Fault", "strike", "exposed", N("earth", 65, 3))],
-    ["dmgPct ar mana", P("Doom's Resonance", "strike", "cursed", C("shadow", 4))],
-    ["dmgPct hp resCold", P("Sunken Thunder", "strike", "slowed", [V(12), W(5)])],
-  ]);
-  line(12, [
-    ["dmgPct ias dex", P("Vow of Return", "block", "any", [M(5), B({ ias: 18 })])],
-    ["dmgPct lightDmg str", P("Brand of Dawn", "strike", "undead", N("light", 60))],
-    ["dmgPct lifeSteal hp", P("King's Mercy", "kill", "elite", [H(6), B({ resAll: 10 })])],
-    ["dmgPct critDmg dex", P("Unbroken Vow", "strike", "highLife", W(5), { every: 4 })],
-    ["dmgPct resFire ias", P("Dawnsworn Rhythm", "hit", "any", [E("strike", 25), M(4)], { alternate: true })],
-    ["dmgPct ar resAll", P("Gilded Reversal", "block", "eliteSource", V(20))],
-    ["dmgPct vit hp", P("Guard the Throne", "strike", "boss", B({ dmgReducePct: 12 }))],
-  ]);
-  line(13, [
-    ["dmgPct lifeSteal str", P("Tusk's Hunger", "strike", "lowLife", D("phys", 80))],
-    ["dmgPct dmgUndead critChance", P("Cleaver's Revel", "kill", "undead", B({ ias: 25 }))],
-    ["dmgPct ias frw", P("Bone Reaping", "kill", "near", C("phys", 3, 45))],
-    ["dmgPct thorns vit", P("Split the Pack", "strike", "companion", V(14))],
-    ["dmgPct lifeSteal dex", P("Hunting Maw", "strike", "beast", [H(5), E("strike", 25)])],
-    ["dmgPct critChance ar", P("Antlered Pursuit", "cast", "form", B({ ias: 25, frw: 15 }, 5))],
-  ]);
-  line(14, [
-    ["dmgPct str ccReduce", P("Evening Bell", "strike", "lowTarget", [S(30), M(4)])],
-    ["dmgPct dmgUndead hp", P("Bell of Deliverance", "kill", "undead", C("light", 3))],
-    ["dmgPct armorPct vit", P("Iron Knell", "block", "any", B({ thorns: 30 }, 5))],
-    ["dmgPct critChance resAll", P("Sanctified Blow", "strike", "demon", W(9))],
-    ["dmgPct manaRegen wil", P("Morning Prayer", "cast", "shout", [M(6), W(8)])],
-    ["dmgPct lifeSteal str", P("Final Offering", "kill", "lowLife", E("strike", 65))],
-    ["dmgPct resFire hp", P("Choir's Ashes", "strike", "burning", [C("fire", 2), B({ resAll: 8 })])],
-  ]);
-  line(15, [
-    ["dmgPct dex frw", P("Skyfall Wake", "cast", "mobility", N("light", 60, 3))],
-    ["dmgPct lightDmg str", P("Lance of Storms", "strike", "far", V(16))],
-    ["dmgPct ias ar", P("Heaven's Rhythm", "strike", "any", [C("light", 2), M(4)], { every: 3 })],
-    ["dmgPct coldDmg dex", P("Thunder in Winter", "strike", "slowed", E("spell", 50))],
-    ["dmgPct critChance resLight", P("Tempest's Descent", "cast", "mobility", [W(8), B({ critChance: 12 })])],
-    ["dmgPct ar mana", P("Pierce the Cloud", "strike", "boss", C("light", 4, 45))],
-  ]);
-  line(16, [
-    ["dmgPct dex fireDmg", P("Heart's Beacon", "strike", "healthyTarget", V(14))],
-    ["dmgPct critChance critDmg", P("Repeating Verdict", "strike", "any", E("strike", 45), { every: 3, sameTarget: true })],
-    ["dmgPct ias frw", P("Widow's Escape", "kill", "far", W(9))],
-    ["dmgPct dex poisonDmg", P("One Last Shot", "strike", "lowTarget", D("poison", 100))],
-    ["dmgPct critChance ar", P("Broken Pulse", "strike", "critical", [V(10), M(5)], { every: 2 })],
-    ["dmgPct ias mana", P("Quickened Quarrel", "cast", "trap", E("strike", 55))],
-    ["dmgPct critDmg hp", P("Last Heartbeat", "strike", "lowLife", [C("phys", 2), H(4)])],
-  ]);
-  line(17, [
-    ["armorPct resAll hp", P("Light Behind the Wall", "block", "undeadSource", H(6))],
-    ["block armorPct vit", P("Bastion's Rhythm", "block", "any", W(12), { every: 3 })],
-    ["armorPct thorns resFire", P("Sanctuary Flame", "hurt", "demonSource", N("fire", 75))],
-    ["armorPct hp resAll", P("Eternal Reprieve", "hurt", "lowLife", B({ dmgReducePct: 20 }, 3), { cd: 12 })],
-    ["block hp vit", P("Vow Unbroken", "block", "any", E("spell", 45))],
-    ["armorPct resFire mana", P("Refuge in Ash", "block", "burningSource", [H(5), M(5)])],
-  ]);
-  line(18, [
-    ["ias critChance str", P("Gravewrought Command", "strike", "critical", B({ minionDmgPct: 25 }, 5))],
-    ["ias dex lifeSteal", P("Throttle the Hex", "strike", "cursed", [S(40), H(3)])],
-    ["dmgPct critDmg str", P("Unrelenting Vise", "strike", "any", V(15), { every: 4, sameTarget: true })],
-    ["ias frw hp", P("Deadhand's Gift", "kill", "companionKill", E("strike", 50))],
-    ["spellPct fcr mana", P("Sepulcher's Clutch", "cast", "summon", W(10))],
-    ["ias poisonDmg dex", P("Strangling Sorrow", "strike", "poisoned", [V(10), B({ frw: 20 })])],
-    ["dmgPct str resFire", P("Palms of Ruin", "strike", "demon", [N("phys", 60), M(4)])],
-  ]);
-  line(19, [
-    ["hp resAll str", P("Coiled Defense", "hurt", "melee", S(45))],
-    ["hp poisonDmg vit", P("Spite's Reply", "hurt", "any", D("poison", 90), { every: 2 })],
-    ["hp resFire resCold", P("Venomwind", "move", "nearEnemy", [N("poison", 35), B({ resPoison: 20 })], { every: 8 })],
-    ["hp frw dex", P("Binding Coil", "strike", "poisoned", W(7))],
-    ["hp mana resPoison", P("Tightening Hiss", "cast", "curse", K("gravebinder_2_1", "spreadRange", "multiply", 1.3))],
-    ["hp vit poisonDmg", P("Fang's Knot", "kill", "poisoned", [M(6), E("spell", 35)])],
-  ]);
-
+  for (const row of equipment) {
+    const def = byId[row.id];
+    def.stats = Object.fromEntries(Object.entries(row.support).map(([stat, floor]) => [stat, supportValue(def, stat, floor)]));
+    add(row.id, row.power);
+  }
   add("uc_thief", P("Quick Fingers", "kill", "elite", B({ mf: 30, goldFind: 40 }, 8)));
   add("uc_ember", P("Unfading Coal", "spell", "fire", B({ resFire: 20 }, 5), { every: 2 }));
   add("uc_quick", P("Hare's Start", "hurt", "any", B({ frw: 35 }, 3), { cd: 8 }));
@@ -311,7 +264,10 @@ const UniquePowers = (() => {
   }
   function collect(p) {
     const found = new Map();
-    const add = (item, side) => { for (const a of forItem(item, side)) if (!found.has(a.key)) found.set(a.key, a); };
+    const add = (item, side) => { for (const a of forItem(item, side)) {
+      if (a.power.target && a.power.target.classId !== p.classId) continue;
+      if (!found.has(a.key)) found.set(a.key, a);
+    } };
     for (const slot of Items.EQUIP_SLOTS) {
       const it = p.equip[slot]; if (!it || it.identified === false) continue;
       add(it); for (const socket of it.sockets || []) if (socket) add(socket, slot === "main" ? "wpn" : "arm");
@@ -339,9 +295,14 @@ const UniquePowers = (() => {
     p.computeStats();
     if (typeof UI !== "undefined") UI.refreshBuffs?.();
   }
-  function damageFor(a, effect, e) {
+  function damageFor(p, a, effect, e) {
     // Direct hit payoffs use actual dealt damage; other triggers use item level.
-    return (e.damage > 0 ? e.damage : 12 + a.entry.level * 2) * effect.pct / 100;
+    const amount = (e.damage > 0 ? e.damage : 12 + a.entry.level * 2) * effect.pct / 100;
+    // Remove the matching bonus already present in a player hit before applying
+    // the effect's element. Ratios also handle partially elemental weapon hits.
+    const inherited = e.damage > 0 && e.source === p && ["strike", "spell", "hit", "kill"].includes(a.power.event);
+    const ratio = inherited ? e.elementBaseRatios?.[effect.elem] ?? (e.elem === effect.elem ? 1 / DATA.elementMultiplier(p, effect.elem) : 1) : 1;
+    return DATA.scaleElement(p, amount * ratio, effect.elem);
   }
   function apply(p, a, effect, e) {
     const target = e.target || (e.source?.takeDamage ? e.source : null);
@@ -364,7 +325,7 @@ const UniquePowers = (() => {
       case "dot":
         if (target && !target.dead) {
           target.uniqueDots = (target.uniqueDots || []).filter(x => x.key !== a.key && x.until > now());
-          target.uniqueDots.push({ key: a.key, owner: p, elem: effect.elem, dps: damageFor(a,effect,e) / effect.dur, until: now() + effect.dur });
+          target.uniqueDots.push({ key: a.key, owner: p, elem: effect.elem, dps: damageFor(p,a,effect,e) / effect.dur, until: now() + effect.dur });
           Game.addParticle(target.x,target.y,color(effect.elem));
         } break;
       case "slow": case "nova": case "chain": {
@@ -376,7 +337,7 @@ const UniquePowers = (() => {
         for (const m of hits) {
           if (effect.kind === "slow") { if (!m.isBoss && !Game.bossWard?.(m) && (!m.encounter || m.encounter.canDamage())) m.applySlow(effect.dur,effect.pct); continue; }
           if (effect.kind === "chain") { Game.lightningBolt(last.x,last.y,m.x,m.y,color(effect.elem)); last = m; }
-          m.takeDamage(damageFor(a,effect,e),p,null,effect.elem);
+          m.takeDamage(damageFor(p,a,effect,e),p,{ elementScaled: true },effect.elem);
         }
         if (hits.length && typeof Sfx !== "undefined") Sfx.play(effect.elem === "cold" ? "frost" : effect.elem === "light" ? "zap" : "blast");
         break;
@@ -388,7 +349,8 @@ const UniquePowers = (() => {
     const s = stateFor(p); if (s.depth) return;
     for (const a of s.active) {
       const power = a.power;
-      if (power.event !== event || !conditions[power.when](p,e)) continue;
+      if (power.event !== event || power.event === "equip" || !conditions[power.when](p,e)) continue;
+      if (power.target && !matches(power.target, e.skill || DATA.SKILLS[e.sourceSkill])) continue;
       const st = s.states.get(a.key) || { count: 0, ready: 0 };
       s.states.set(a.key,st);
       if (now() < st.ready) continue;
@@ -406,13 +368,15 @@ const UniquePowers = (() => {
   }
   function hit(p, target, damage, meta, before) {
     if (!damage || !meta?.uniqueEvent) return;
-    const e = { target, damage, targetHpBefore: before, crit: !!meta.crit, kind: meta.uniqueEvent, elem: meta.elem || "phys", source: p };
+    const e = { target, damage, targetHpBefore: before, crit: !!meta.crit, kind: meta.uniqueEvent, elem: meta.elem || "phys", source: p,
+      sourceSkill: meta.sourceSkill, skill: DATA.SKILLS[meta.sourceSkill], elementBaseRatios: meta.elementBaseRatios };
     emit(p,meta.uniqueEvent,e); emit(p,"hit",e);
   }
   function killed(target, source, meta) {
     const p = world()?.player;
     if (!p || source !== p && source?.owner !== p) return;
-    emit(p,"kill",{ target, source, crit: !!meta?.crit, kind: meta?.uniqueEvent || "other", elem: meta?.elem, damage: meta?.damage || 0 });
+    emit(p,"kill",{ target, source, crit: !!meta?.crit, kind: meta?.uniqueEvent || "other", elem: meta?.elem, damage: meta?.damage || 0,
+      sourceSkill: meta?.sourceSkill || source?.sourceSkill, skill: DATA.SKILLS[meta?.sourceSkill || source?.sourceSkill], elementBaseRatios: meta?.elementBaseRatios });
   }
   function empower(p, kind, amount, target) {
     if (stateFor(p).depth) return amount;
@@ -433,7 +397,7 @@ const UniquePowers = (() => {
   function tickDots(target, dt) {
     for (const dot of target.uniqueDots || []) {
       const elapsed = Math.max(0,Math.min(dt,dot.until - now() + dt));
-      if (elapsed && !target.dead) guarded(dot.owner,() => target.takeDamage(dot.dps * elapsed,dot.owner,{ uniqueDot:true },dot.elem));
+      if (elapsed && !target.dead) guarded(dot.owner,() => target.takeDamage(dot.dps * elapsed,dot.owner,{ uniqueDot:true, elementScaled:true },dot.elem));
     }
     if (target.uniqueDots) target.uniqueDots = target.uniqueDots.filter(d => d.until > now());
   }
@@ -448,17 +412,37 @@ const UniquePowers = (() => {
     s.position = { x: p.x, y: p.y, map };
   }
   const copySkill = x => Array.isArray(x) ? x.map(copySkill) : x && typeof x === "object" ? Object.fromEntries(Object.entries(x).map(([k,v]) => [k,copySkill(v)])) : x;
+  function matches(target, skill) {
+    return !!skill && skill.cls === target.classId && (!target.skill || target.skill === skill.id) &&
+      (target.tree == null || target.tree === skill.tree);
+  }
+  function rankBonus(p, id) {
+    if (!(p.skills[id] > 0)) return 0;
+    return stateFor(p).active.reduce((sum, a) => sum + (a.power.target && matches(a.power.target, DATA.SKILLS[id]) ?
+      a.power.effects.reduce((n, e) => n + (e.kind === "rank" ? e.value : 0), 0) : 0), 0);
+  }
+  function modify(result, e) {
+    const [root, ...tail] = e.path.split("."), old = result[root];
+    const change = v => Array.isArray(v) ? v.map(change) : e.op === "add" ? (v || 0) + e.value : v * e.value;
+    const transform = input => {
+      if (!tail.length) return change(input);
+      const out = copySkill(input || {}); let dest = out;
+      tail.forEach((key, i) => { if (i === tail.length - 1) dest[key] = change(dest[key]); else dest = dest[key] ||= {}; });
+      return out;
+    };
+    result[root] = typeof old === "function" ? rank => transform(old(rank)) : transform(old);
+  }
   function modifySkill(p, skill) {
     if (!skill) return skill;
     const effects = p.buffs.filter(b => b.uniqueSkill?.skill === skill.id && b.until > now()).map(b => b.uniqueSkill);
+    for (const a of stateFor(p).active) if (a.power.target && matches(a.power.target, skill)) {
+      effects.push(...a.power.effects.filter(e => e.kind === "modify"));
+    }
     if (!effects.length) return skill;
     const result = copySkill(skill);
-    for (const e of effects) {
-      const old = result[e.path];
-      if (typeof old === "function") result[e.path] = rank => e.op === "add" ? old(rank) + e.value : old(rank) * e.value;
-      else if (typeof old === "number") result[e.path] = e.op === "add" ? old + e.value : old * e.value;
-    }
-    if (typeof SkillPerks !== "undefined") result.desc = rank => SkillPerks.describe(result,rank);
+    for (const e of effects) modify(result, e);
+    if (typeof SkillPerks !== "undefined") result.desc = rank => SkillPerks.describe(result,rank) +
+      " Brown power: " + effects.map(e => modifierText(e)).join("; ") + ".";
     return result;
   }
   const signature = affixes => JSON.stringify((affixes || []).map(a => [a.stat,a.val]).sort((a,b) => a[0].localeCompare(b[0])));
@@ -497,7 +481,14 @@ const UniquePowers = (() => {
     mobility: " using a movement skill", trap: " using a trap skill",
   };
   for (const el of ["fire","cold","light","poison","shadow","earth"]) conditionText[el] = " with " + (el === "light" ? "lightning" : el);
-  const eventText = { strike: "Weapon hits", spell: "Spell hits", hit: "Weapon or spell hits", kill: "Kills", block: "Blocks", hurt: "Damage received", cast: "Skill uses", spend: "Aether spent", overheal: "Healing beyond full Life", move: "Walking" };
+  const eventText = { equip: "While equipped", strike: "Weapon hits", spell: "Spell hits", hit: "Weapon or spell hits", kill: "Kills", block: "Blocks", hurt: "Damage received", cast: "Skill uses", spend: "Aether spent", overheal: "Healing beyond full Life", move: "Walking" };
+  const modifierText = e => e.op === "add" ? `+${e.value} ${e.label || e.path}` :
+    `${Math.round(Math.abs(e.value - 1) * 100)}% ${e.value < 1 ? "less" : "more"} ${e.label || e.path}`;
+  function targetText(target) {
+    const cls = DATA.CLASSES[target.classId];
+    return target.skill ? `${DATA.SKILLS[target.skill].name} (${cls.name})` :
+      target.tree != null ? `${cls.trees[target.tree]} tree (${cls.name})` : `${cls.name} talents`;
+  }
   function effectText(e, level, event) {
     const flat = Math.round((12 + level * 2) * (e.pct || 0) / 100);
     const damage = ["strike","spell","hit"].includes(event) ? `${e.pct}% of hit damage` : event === "hurt" ? `${e.pct}% of damage taken` : event === "kill" ? `${e.pct}% of killing-hit damage (${flat} for kills over time)` : `${flat} damage`;
@@ -517,21 +508,30 @@ const UniquePowers = (() => {
     }
   }
   function describe(entry, power) {
+    if (power.event === "equip") return `${power.title} — ${targetText(power.target)}: ` + power.effects.map(e =>
+      e.kind === "rank" ? `+${e.value} to learned talent ranks; does not unlock talents or perk choices` : modifierText(e)).join("; ") +
+      `. ${DATA.CLASSES[power.target.classId].name} only. Duplicates do not stack.`;
     let trigger = eventText[power.event] + conditionText[power.when];
     if (power.every) trigger += ` (${power.every} ${power.event === "move" ? "yards" : power.event === "spend" ? "Aether" : power.event === "overheal" ? "Life overhealed" : "qualifying events"}${power.sameTarget ? " on the same target" : ""})`;
     if (power.alternate) trigger += "; alternate weapon and spell hits";
     if (power.alternateElement) trigger += "; alternate spell elements";
     return `${power.title} — ${trigger}: ${power.effects.map(e => effectText(e,entry.level,power.event)).join("; ")}. ${power.cd}s cooldown. Duplicates do not stack.`;
   }
-  function lines(item, side) {
+  function lines(item, side, viewer) {
     if (item?.identified === false) return [];
     const entry = catalog[itemId(item)]; if (!entry) return [];
     const powers = side && entry.powers.length === 2 ? [entry.powers[side === "wpn" ? 0 : 1]] : entry.powers;
-    return powers.map((p,i) => ({ t: (entry.powers.length === 2 && !side ? (i ? "In armor: " : "In weapons: ") : "") + describe(entry,p), c: "unique" }));
+    return powers.map((p,i) => {
+      const inactive = viewer && p.target && viewer.classId !== p.target.classId;
+      return { t: (entry.powers.length === 2 && !side ? (i ? "In armor: " : "In weapons: ") : "") + describe(entry,p) +
+        (inactive ? " Inactive for your class; ordinary item stats still apply." : ""), c: inactive ? "reqbad" : "unique" };
+    });
   }
   for (const entry of Object.values(catalog)) for (const p of entry.powers) {
     if (!conditions[p.when] || !eventText[p.event]) throw new Error("Invalid Unique trigger: " + entry.id);
+    if (p.target && (!DATA.CLASSES[p.target.classId] || p.target.skill && DATA.SKILLS[p.target.skill]?.cls !== p.target.classId ||
+      p.target.tree != null && !DATA.CLASSES[p.target.classId].trees[p.target.tree])) throw new Error("Invalid Unique target: " + entry.id);
     for (const e of p.effects) if (e.kind === "skill" && !DATA.SKILLS[e.skill]?.[e.path]) throw new Error("Invalid Unique skill: " + entry.id);
   }
-  return Object.freeze({ VERSION, catalog, collect, sync, emit, guarded, hit, killed, empower, absorb, exposed, tick, tickDots, modifySkill, migrate, migrateSocket, describe, lines });
+  return Object.freeze({ VERSION, catalog, collect, sync, emit, guarded, hit, killed, empower, absorb, exposed, tick, tickDots, rankBonus, modifySkill, migrate, migrateSocket, describe, lines, supportValue });
 })();

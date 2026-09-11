@@ -619,6 +619,10 @@ const Game = (() => {
       return false;
     }
     if(state!==enteringState || transition!==mapTransitionSeq)return false;
+    if(typeof Act1EnemyAnimation!=='undefined'&&Act1EnemyAnimation.hasZone(zoneId)&&!await requireSpriteBundle('actors:act1',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
+      if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
+      return false;
+    }
     if(DATA.ACT2_COMBAT?.pools[zoneId]&&!await requireSpriteBundle('actors:act2',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
       if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
       return false;
@@ -681,6 +685,7 @@ const Game = (() => {
       if (shifting) { state.monstersByMap[zoneId] = null; state.groundByMap[zoneId] = null; }
     }
     for(const mon of state.monsters)mon.imperialCombat?.cancel();
+    state.player.clearVeilState();
     state.map = map;
     /* monsters: restore session set or spawn fresh */
     if (state.monstersByMap[zoneId]) {
@@ -698,11 +703,13 @@ const Game = (() => {
         if (sp.boss && (state.flags[deadKey] || (state.difficulty === 0 && state.flags["dead_" + sp.id]))) continue;
         const extraElite = !sp.boss && !sp.elite && !sp.minion && Math.random() < diff.eliteBoost;
         const pos = sp.boss ? { x: sp.x, y: sp.y } : nearestReach(map, reach, sp.x, sp.y);   // keep hand-placed bosses put
-        const mon = new Monster(sp.id, pos.x, pos.y, { elite: sp.elite || extraElite, minion: sp.minion, skillProfile:sp.skillProfile });
+        const mon = new Monster(sp.id, pos.x, pos.y, { elite: sp.elite || extraElite, minion: sp.minion, skillProfile:sp.skillProfile,
+          packId:sp.packId,monsterFamily:sp.monsterFamily,familyHome:sp.familyHome&&{...sp.familyHome,x:pos.x,y:pos.y} });
         if (sp.cathedralEncounter) mon.cathedralEncounter=sp.cathedralEncounter;
         state.monsters.push(mon);
       }
     }
+    for(const mon of state.monsters)mon.veilExposedUntil=0;
     state.ground = state.groundByMap[zoneId] || [];
     state.projectiles = [];
     state.traps = [];              // planted devices stay behind
@@ -878,9 +885,9 @@ const Game = (() => {
     p.skillL = d.skillL || "basic"; p.skillR = d.skillR || "basic";
     p.quickSlots = (d.quickSlots && d.quickSlots.slice(0, 4)) || [null, null, null, null];
     while (p.quickSlots.length < 4) p.quickSlots.push(null);
-    p.quickSlots = p.quickSlots.map(s => (s && DATA.SKILLS[s]) ? s : null);
-    if (!DATA.SKILLS[p.skillL] && p.skillL !== "basic") p.skillL = "basic";
-    if (!DATA.SKILLS[p.skillR] && p.skillR !== "basic") p.skillR = "basic";
+    p.quickSlots = p.quickSlots.map(s => (s && DATA.SKILLS[s] && DATA.SKILLS[s].type !== "passive") ? s : null);
+    if ((!DATA.SKILLS[p.skillL] && p.skillL !== "basic") || DATA.SKILLS[p.skillL]?.type === "passive") p.skillL = "basic";
+    if ((!DATA.SKILLS[p.skillR] && p.skillR !== "basic") || DATA.SKILLS[p.skillR]?.type === "passive") p.skillR = "basic";
     p.belt = d.belt || [null, null, null, null];
     for (const s of d.inv || []) { const it = reviveItem(s); Items.place(p.inv, it, s.gx, s.gy); }
     for (const s of d.stash || []) { const it = reviveItem(s); Items.place(p.stash, it, s.gx, s.gy); }
@@ -1238,8 +1245,12 @@ const Game = (() => {
     bolts.push({ surfaceId:TerrainLayers.current(state.map), x0, y0, x1, y1, color: color || "#fff080", t: 0, dur: 0.2, seed: 0, straight: true, width: 6.5, styled:typeof SkillVFX!=='undefined'&&SkillVFX.beam(x0,y0,x1,y1) });
   }
   function spawnProjectile(o) {
-    if(typeof SkillAudio!=='undefined'&&(o.fromPlayer||o.minionDmg!==undefined)){
-      o={...o,sourceSkill:o.sourceSkill||SkillAudio.current?.id||state.player._castingSkillId||'basic',visualOwner:o.visualOwner||state.player};
+    if(o.mon&&typeof Act1EnemyAnimation!=='undefined'&&Act1EnemyAnimation.eligible(o.mon)&&o.lift===undefined){
+      const art=DATA.SPRITE_MANIFEST.entries[DATA.SPRITE_MANIFEST.maps.monsters[o.mon.def.artId||o.mon.def.sprite]],bounds=art?.hitShapes?.[0]?.bounds;
+      o={...o,lift:((bounds?bounds[3]-bounds[1]:art?.cell?.[1])||110)*(o.mon.scale||1)*.5*ACTOR_BODY_SCALE*.55};
+    }
+    if(o.fromPlayer||o.minionDmg!==undefined){
+      o={...o,sourceSkill:o.sourceSkill||o.minionSource?.sourceSkill||state.player._castingSkillId||'basic',visualOwner:o.visualOwner||state.player};
     }
     if(o.fromPlayer&&o.kind==='arrow'){
       const p=state.player,origin=Player3D.projectileOrigin?.(p,ACTOR_BODY_SCALE);
@@ -1581,15 +1592,13 @@ const Game = (() => {
     }
   }
   /* ---------------- random world events ---------------- */
-  function enemiesByFamily(fam, lvl) {
-    const marsh=DATA.ACT2_COMBAT.pools[state.map?.id];
-    if(marsh){const pool=Object.keys(marsh),family=pool.filter(id=>DATA.ENEMIES[id].family===fam);return family.length?family:pool;}
-    const authored=DATA.ACT3_ROSTERS[state.map?.id];
-    if(authored){const family=authored.filter(id=>DATA.ENEMIES[id].family===fam);return (family.length?family:authored).slice();}
-    let ids = Object.values(DATA.ENEMIES).filter(d => !d.boss && d.family === fam && Math.abs(d.lvl - lvl) <= 7).map(d => d.id);
-    if (!ids.length) ids = Object.values(DATA.ENEMIES).filter(d => !d.boss && Math.abs(d.lvl - lvl) <= 7).map(d => d.id);
-    if (!ids.length) ids = ["risen"];
-    return ids;
+  function enemiesByFamily(fam, lvl, at=state.player) {
+    const map=state.map,pools=DATA.familyPools(map.id),territories=map.ecology?.territories||[];
+    const home=territories.slice().sort((a,b)=>U.dist2(a.x,a.y,at.x,at.y)-U.dist2(b.x,b.y,at.x,at.y))[0];
+    if(home&&pools[home.family])return pools[home.family].slice();
+    const families=Object.keys(pools),preferred=families.filter(f=>pools[f].some(id=>DATA.ENEMIES[id].family===fam));
+    const family=U.pick(preferred.length?preferred:families);
+    return (pools[family]||map.zone.spawns||[]).filter(id=>!DATA.ENEMIES[id].boss);
   }
   function placeEvents(map) {
     if (map.cathedral) return; // encounters and rewards have reserved places in these compositions
@@ -1618,7 +1627,7 @@ const Game = (() => {
       }
       if (!ok) continue;
       if (ev.kind === "goblin") {
-        const ids = enemiesByFamily("beast", lvl);
+        const ids = enemiesByFamily("beast", lvl,{x,y});
         const m = map.act2?Act2EnemyCombat.eventSpawn(ids,x,y,{},[],random):new Monster(U.pickR(random,ids), x, y, {});
         if(!m)continue;
         m.flee = true; m.eventDrops = ev.drops || 4; m.name = ev.name; m.tint = ev.color;
@@ -1673,13 +1682,13 @@ const Game = (() => {
         break;
       }
       case "ambush": case "curse": {
-        const ids = enemiesByFamily(ev.fam || U.pick(["undead", "demon", "beast"]), lvl);
+        const ids = enemiesByFamily(ev.fam || U.pick(["undead", "demon", "beast"]), lvl,prop);
         const group=[];
         for (let k = 0; k < (ev.count || 4); k++) {
           const a = Math.random() * Math.PI * 2, r = 1.5 + Math.random() * 2.5;
           const x = prop.x + Math.cos(a) * r, y = prop.y + Math.sin(a) * r;
           if (!state.map.act2 && !MapGen.walkable(state.map, x, y)) continue;
-          const options={elite:ev.kind==='curse'&&k===0};
+          const options={elite:ev.kind==='curse'&&k===0,monsterFamily:DATA.monsterFamily(ids[0]),packId:state.map.id+':event:'+prop.x+':'+prop.y};
           const m = state.map.act2?Act2EnemyCombat.eventSpawn(ids,prop.x,prop.y,options,group):new Monster(U.pick(ids),x,y,options);
           if(!m)continue;group.push(m);
           m.aggro = true; state.monsters.push(m);
@@ -1800,6 +1809,7 @@ const Game = (() => {
     const p = state.player;
     if (p.dead) return;
     p.dead = true;
+    p.clearVeilState();
     if(typeof BossEncounters!=="undefined")BossEncounters.cancelAll();
     p.deaths++;
     /* sever every intent the corpse might still be carrying */
@@ -2062,7 +2072,7 @@ const Game = (() => {
   const NO_REPEAT_SKILL = new Set(["summon", "summon_golem", "form", "minionbuff", "buff", "totem", "ward",
     "banner", "banner_ultimate", "sacrifice", "fireclaw", "combat_stance", "parry_stance", "warshout_debuff",
     /* deploy-once skills: holding the cast on a target must NOT re-deploy every frame (drains all aether) */
-    "roamaoe", "groundfield", "firewall", "trap", "decoy", "tripwire", "rain"]);
+    "roamaoe", "groundfield", "firewall", "trap", "dragnet", "decoy", "tripwire", "rain"]);
   function repeatSkill(skillId) {
     const sk = skillId === "basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[skillId];
     return !(sk && NO_REPEAT_SKILL.has(sk.type));
@@ -2211,7 +2221,7 @@ const Game = (() => {
   function monsterGeometry(mon, cam) {
     const x = U.isoX(mon.x, mon.y) - cam.x;
     const y = U.isoY(mon.x, mon.y) - cam.y - elevLift(mon.x, mon.y,mon.surfaceId);
-    if (mon.beacon || mon.defId==="boss_portal") return SpriteAssets.frameGeometry(SpriteAssets.getFrame(SpriteAssets.maps.props.beacon, 0), x, y);
+    if ((mon.beacon || mon.defId==="boss_portal")&&!mon.pose().ex?.act1Animation) return SpriteAssets.frameGeometry(SpriteAssets.getFrame(SpriteAssets.maps.props.beacon, 0), x, y);
     return SpriteAssets.actorGeometry(mon.spriteOpts, mon.pose(), x, y - (mon.jumpZ || 0), ACTOR_BODY_SCALE);
   }
 
@@ -2463,11 +2473,11 @@ const Game = (() => {
         let dmg = U.rf(tr.dmgLo, tr.dmgHi) * tr.mult;
         let crit = false;
         if (Math.random() * 100 < p.stats.critChance) { dmg *= p.stats.critDmg / 100; crit = true; }
-        mon.takeDamage(dmg, p);
+        const actual = p.withSkillSource(tr.skillId, () => p.snareHit(mon, dmg));
         if(typeof SkillVFX!=='undefined')SkillVFX.scope(p,tr.skillId,()=>SkillVFX.hit(p,mon,tr.elem,crit));
-        addFloat(mon.x, mon.y, Math.floor(dmg), crit ? "#ffb030" : col, crit);
+        addFloat(mon.x, mon.y, Math.floor(actual), crit ? "#ffb030" : col, crit);
         if (tr.slowPct) mon.applySlow(tr.slowDur, tr.slowPct);
-        if (tr.burn) mon.poisonDot = { dps: tr.burn, t: 2, fire: true };
+        if (tr.burn) p.withSkillSource(tr.skillId, () => p.applyPoison(mon, tr.burn, 2, { fire: true }));
         bloodBurst(mon.x, mon.y, 4);
       }
     }
@@ -2500,23 +2510,24 @@ const Game = (() => {
     if (MapGen.walkable(state.map, mon.x, ny)) mon.y = ny;
   }
   function detonateMark(mon) {
-    const run=()=>typeof SkillVFX!=='undefined'?SkillVFX.scope(state.player,'veilranger_2_4',()=>detonateMarkEffect(mon)):detonateMarkEffect(mon);
-    return typeof SkillAudio!=='undefined'?SkillAudio.scope('veilranger_2_4',{owner:state.player,emitter:mon},run):run();
+    return state.player.withSkillSource("veilranger_2_4", () => detonateMarkEffect(mon), mon);
   }
   function detonateMarkEffect(mon) {
-    if (!mon.killMark) return; const o = state.player, det = mon.killMark.det || 10, amp = mon.killMark.amp || 25;
+    if (!mon.killMark || mon._detonatingMark) return;
+    const mark=mon.killMark,o=state.player,det=mark.det??10,amp=mark.amp??25;
+    mon._detonatingMark=true;
+    try {
     Sfx.playSkill?.('veilranger_2_4','impact',{owner:o,emitter:mon,elem:'shadow'});
     addNova(mon.x, mon.y, 2.5, "#c080e0");
     for (const m of TerrainLayers.targets(state.monsters)) {
-      if (m.dead || U.dist(mon.x, mon.y, m.x, m.y) > 2.5 + m.radius) continue;
+      if (m.dead || !TerrainLayers.same(mon,m) || U.dist(mon.x, mon.y, m.x, m.y) > 2.5 + m.radius) continue;
       o.spellHit(m, det, "shadow", {});
-      if (m !== mon && !m.killMark) m.killMark = { until: state.time + 3, amp: amp / 2, det: det / 2 };
+      if (m !== mon && !m.dead && !m._detonatingMark && !m.killMark) m.killMark = { until: state.time + 3, amp: amp / 2, det: det / 2 };
     }
-    mon.killMark = null;
+    } finally {if(mon.killMark===mark)mon.killMark=null;mon._detonatingMark=false;}
   }
   function detonateDoom(mon) {
-    const run=()=>typeof SkillVFX!=='undefined'?SkillVFX.scope(state.player,'gravebinder_1_2',()=>detonateDoomEffect(mon)):detonateDoomEffect(mon);
-    return typeof SkillAudio!=='undefined'?SkillAudio.scope('gravebinder_1_2',{owner:state.player,emitter:mon},run):run();
+    return state.player.withSkillSource("gravebinder_1_2", () => detonateDoomEffect(mon), mon);
   }
   function detonateDoomEffect(mon) {
     if (!mon.doom) return; const o = state.player, d = mon.doom, k = 0.5 + 0.5 * (d.charge / d.maxCharge);
@@ -2585,8 +2596,8 @@ const Game = (() => {
     if (f.rabies) {   // contagious rabies cloud left by a dead rabid foe — poisons + infects all inside
       for (const m of TerrainLayers.targets(state.monsters)) {
         if (m.dead || !inR(m)) continue;
-        m.poisonDot = { dps: Math.max((m.poisonDot && m.poisonDot.dps) || 0, f.rdps || 6), t: 3 };
-        if (!m.rabies || m.rabies.until < state.time) { m.rabies = { until: state.time + (f.rdur || 8), dps: f.rdps || 6, cloudRad: f.rcloud || 2.4, owner: f.owner }; for (let i = 0; i < 2; i++) addParticle(m.x, m.y, "#90ff70"); }
+        o.applyPoison(m, f.rdps || 6, 3, { strongest: true, scaled: !!f.elementScaled });
+        if (!m.rabies || m.rabies.until < state.time) { m.rabies = { until: state.time + (f.rdur || 8), dps: f.elementScaled ? f.rdps : DATA.scaleElement(o, f.rdps || 6, "poison"), cloudRad: f.rcloud || 2.4, owner: o, elementScaled: true }; for (let i = 0; i < 2; i++) addParticle(m.x, m.y, "#90ff70"); }
       }
       return;
     }
@@ -2594,11 +2605,16 @@ const Game = (() => {
       case "inferno": for (const m of TerrainLayers.targets(state.monsters)) { if (!m.dead && inR(m)) o.spellHit(m, fieldDmgRoll(f), "fire", { burn: 2 }); } break;
       case "glacier": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; o.spellHit(m, fieldDmgRoll(f), "cold", {}); m.applySlow(0.9, f.slowPct || 60); m.glacierT = (m.glacierT || 0) + (f.tickEvery || 0.5); if (m.glacierT > 1.2) { m.frozen = Math.max(m.frozen || 0, state.time + 1.0); m.stunT = Math.max(m.stunT, 1.0); } } break;
       case "static": { let t = null, bd = 1e9; for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; const dd = U.dist2(f.x, f.y, m.x, m.y); if (dd < bd) { bd = dd; t = m; } } if (t) { const sc = 1 + ((o.staticChg || 0) / 40); o.spellHit(t, fieldDmgRoll(f) * sc, "light", {}); lightningBolt(f.x, f.y, t.x, t.y); } break; }
-      case "caltrop": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; o.spellHit(m, fieldDmgRoll(f), "phys", {}); m.applySlow(0.6, f.slowPct || 40); } break;
+      case "caltrop": for (const m of TerrainLayers.targets(state.monsters)) {
+        if (m.dead || !inR(m)) continue;
+        if(f.snareMult!==undefined){const actual=o.snareHit(m,U.rf(f.lo,f.hi)*f.snareMult);addFloat(m.x,m.y,Math.floor(actual),"#d8c79a");if(typeof SkillVFX!=="undefined")SkillVFX.hit(o,m,"phys",false);}
+        else o.spellHit(m,fieldDmgRoll(f),"phys",{});
+        m.applySlow(0.6, f.slowPct || 40);
+      } break;
       case "smoke": { for (const m of TerrainLayers.targets(state.monsters)) { if (!m.dead && inR(m)) m.blindUntil = state.time + 0.6; } if (TerrainLayers.same(f,state.player) && U.dist(state.player.x, state.player.y, f.x, f.y) < f.radius) refreshBuff(state.player, "smoke_evasion", { dodge: f.selfDodge || 30 }, 0.6); break; }
       case "miasma": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; o.spellHit(m, fieldDmgRoll(f), "poison", {}); m.applySlow(0.7, f.slowPct || 20); } break;
       case "snare": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; m.applySlow(0.8, 95); o.spellHit(m, fieldDmgRoll(f), "poison", {}); } break;
-      case "spore": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; m.poisonDot = { dps: Math.max((m.poisonDot && m.poisonDot.dps) || 0, f.lo || 3), t: 3 }; m.curseWither = { until: state.time + 1.5, pct: f.weakenPct || 12 }; } break;
+      case "spore": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; o.applyPoison(m, f.lo || 3, 3, { strongest: true }); m.curseWither = { until: state.time + 1.5, pct: f.weakenPct || 12 }; } break;
       case "quake": if (Math.random() < 0.7) { const a = Math.random() * 6.283, r = Math.random() * f.radius, qx = f.x + Math.cos(a) * r, qy = f.y + Math.sin(a) * r; addNova(qx, qy, 1.2, "#c0a060"); fx.shake = Math.max(fx.shake, 2); for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead) continue; if (U.dist(qx, qy, m.x, m.y) < 1.4 + m.radius) { o.spellHit(m, fieldDmgRoll(f), "earth", {}); m.applySlow(0.6, f.slowPct || 25); } } } break;
       case "regrowth": { const pl = state.player; if (TerrainLayers.same(f,pl) && U.dist(pl.x, pl.y, f.x, f.y) < f.radius) pl.healLife(pl.stats.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); for (const mi of TerrainLayers.targets(state.minions)) { if (!mi.dead && U.dist(mi.x, mi.y, f.x, f.y) < f.radius) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); } break; }
     }
@@ -2615,14 +2631,14 @@ const Game = (() => {
       if (m.dead) continue;
       if (distToSeg(m.x, m.y, f.x0, f.y0, f.x1, f.y1) < 0.55 + m.radius) {
         f.sprung = true;
-        for (const mm of TerrainLayers.targets(state.monsters)) { if (mm.dead) continue; if (distToSeg(mm.x, mm.y, f.x0, f.y0, f.x1, f.y1) < 0.75 + mm.radius) { o.spellHit(mm, U.rf(f.lo, f.hi), "phys", {}); mm.poisonDot = { dps: f.bleed, t: 3 }; mm.applySlow(f.root || 0.8, 95); } }
+        for (const mm of TerrainLayers.targets(state.monsters)) { if (mm.dead) continue; if (distToSeg(mm.x, mm.y, f.x0, f.y0, f.x1, f.y1) < 0.75 + mm.radius) { o.spellHit(mm, U.rf(f.lo, f.hi), "phys", {}); o.applyPoison(mm, f.bleed, 3); mm.applySlow(f.root || 0.8, 95); } }
         addNova((f.x0 + f.x1) / 2, (f.y0 + f.y1) / 2, 1, "#d8c79a"); Sfx.play("hit"); f.ttl = Math.min(f.ttl, 0.3); break;
       }
     }
   }
   function updateOutbreak(f, o, dt) {
     const prevR = f.r; f.r += (f.maxR / f.dur) * dt;
-    for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || f.hitMon.has(m)) continue; const dm = U.dist(f.x, f.y, m.x, m.y); if (dm >= prevR && dm <= f.r) { f.hitMon.add(m); m.plague = { until: state.time + 5, tick: f.tick, tickT: 0, spreadCd: 1.5, spreadRange: 3.5, burstRange: 2.5 }; o.spellHit(m, f.tick, "poison", {}); } }
+    for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || f.hitMon.has(m)) continue; const dm = U.dist(f.x, f.y, m.x, m.y); if (dm >= prevR && dm <= f.r) { f.hitMon.add(m); o.applyPlague(m, { until: state.time + 5, tick: f.tick, tickT: 0, spreadCd: 1.5, spreadRange: 3.5, burstRange: 2.5 }); o.spellHit(m, f.tick, "poison", {}); } }
     for (const c of TerrainLayers.targets(state.monsters)) { if (!c.dead || !c.corpseT || c.exploded || f.hitMon.has(c)) continue; const dm = U.dist(f.x, f.y, c.x, c.y); if (dm >= prevR && dm <= f.r) { f.hitMon.add(c); c.exploded = true; c.corpseT = 0; addNova(c.x, c.y, 2.2, "#90ff70"); for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || U.dist(c.x, c.y, m.x, m.y) > 2.2 + m.radius) continue; o.spellHit(m, f.corpseDmg, "poison", {}); } } }
     if (f.r >= f.maxR) f.ttl = 0;
   }
@@ -2673,7 +2689,8 @@ const Game = (() => {
         case "wisp": updateWisp(f, o, dt); break;
       }};
       const present=()=>typeof SkillVFX!=='undefined'?SkillVFX.scope(o,f.sourceSkill,runEffect):runEffect();
-      if(typeof SkillAudio!=='undefined')SkillAudio.scope(f.sourceSkill,{owner:o,emitter:f},present);else present();
+      if (o.withSkillSource) o.withSkillSource(f.sourceSkill || "basic", runEffect, f);
+      else if(typeof SkillAudio!=='undefined')SkillAudio.scope(f.sourceSkill,{owner:o,emitter:f},present);else present();
     }
   }
   /* one flickering flame tongue rising from (px,py); layered calls build a fire */
@@ -2759,6 +2776,10 @@ const Game = (() => {
       ctx.fillStyle = f.kindCol || "#d8b84a"; ctx.beginPath(); ctx.moveTo(sx + 2, sy - 36); ctx.lineTo(sx + 18, sy - 31); ctx.lineTo(sx + 2, sy - 24); ctx.fill();
     } else if (f.type === "rain") {
       ctx.globalAlpha = 0.28; ctx.strokeStyle = "#d8c79a"; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(sx, sy, f.radius * 32, f.radius * 16, 0, 0, 6.283); ctx.stroke();
+    } else if (f.type === "dragnet") {
+      const r=f.radius*32*(.2+.8*f.ttl/f.maxTtl);ctx.strokeStyle="#e4d6ac";ctx.globalAlpha=f.ttl/f.maxTtl;ctx.lineWidth=2;
+      ctx.beginPath();ctx.ellipse(sx,sy,r,r*.5,0,0,Math.PI*2);ctx.stroke();
+      for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(sx-r*.7,sy+i*r*.14-r*.25);ctx.lineTo(sx+r*.7,sy+i*r*.14+r*.25);ctx.stroke();ctx.beginPath();ctx.moveTo(sx-r*.7,sy+i*r*.14+r*.25);ctx.lineTo(sx+r*.7,sy+i*r*.14-r*.25);ctx.stroke();}
     } else if (f.type === "tripwire") {
       const x0 = U.isoX(f.x0, f.y0) - cam.x, y0 = U.isoY(f.x0, f.y0) - cam.y - surfaceLift(f.x0,f.y0,f.surfaceId), x1 = U.isoX(f.x1, f.y1) - cam.x, y1 = U.isoY(f.x1, f.y1) - cam.y - surfaceLift(f.x1,f.y1,f.surfaceId);
       ctx.strokeStyle = f.sprung ? "#7a2a2a" : "#b8b0a0"; ctx.globalAlpha = 0.85; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
@@ -2811,6 +2832,7 @@ const Game = (() => {
       ctx.shadowColor = "#ff5a10"; ctx.shadowBlur = 10; stroke("#ff7a20", 3.2);    // molten glow
       ctx.shadowBlur = 0;
     } else if (f.type === 'enemywarning') {
+      if(typeof Act1EnemyAnimation!=='undefined'&&!Act1EnemyAnimation.showsAttackRadius(f.owner||f.projectile?.lob?.owner)){ctx.restore();return;}
       if(f.ttl<=0||state.player.dead||((typeof Act2EnemyAnimation!=='undefined'&&!Act2EnemyAnimation.showsAttackRadius(f.owner))||(typeof Act5EnemyAnimation!=='undefined'&&!Act5EnemyAnimation.showsAttackRadius(f.owner||f.projectile?.lob?.owner)))){ctx.restore();return;}
       const s=f.shape,count=s.kind==='line'?4:48;
       // Static warnings reuse their projected vertices. Camera motion changes
@@ -2829,6 +2851,7 @@ const Game = (() => {
       ctx.globalAlpha=.20;ctx.fillStyle=f.col;ctx.fill();
       ctx.globalAlpha=.96;ctx.lineWidth=3;ctx.strokeStyle=f.col;ctx.stroke();
     } else if (f.type === "slamwarning") {
+      if(typeof Act1EnemyAnimation!=='undefined'&&!Act1EnemyAnimation.showsAttackRadius(f.owner)){ctx.restore();return;}
       if(f.owner.dead||state.player.dead||f.owner.slamWarning!==f||((typeof Act2EnemyAnimation!=='undefined'&&!Act2EnemyAnimation.showsAttackRadius(f.owner))||(typeof Act5EnemyAnimation!=='undefined'&&!Act5EnemyAnimation.showsAttackRadius(f.owner||f.projectile?.lob?.owner)))){ctx.restore();return;}
       // A world-space circle projects to radii sqrt(2)*32 and sqrt(2)*16.
       const rr=f.radius*32*Math.SQRT2,ry=rr*.5,k=1-U.clamp(f.ttl/f.maxTtl,0,1);
@@ -2839,6 +2862,7 @@ const Game = (() => {
       ctx.globalAlpha=.16+k*.25;ctx.fillStyle=f.col;
       ctx.beginPath();ctx.ellipse(sx,sy,rr*k,ry*k,0,0,Math.PI*2);ctx.fill();
     } else if (f.type === "meteorfall") {
+      if(typeof Act1EnemyAnimation!=='undefined'&&!Act1EnemyAnimation.showsAttackRadius(f.owner||f.projectile?.lob?.owner)){ctx.restore();return;}
       if((typeof Act2EnemyAnimation!=='undefined'&&!Act2EnemyAnimation.showsAttackRadius(f.owner))||(typeof Act5EnemyAnimation!=='undefined'&&!Act5EnemyAnimation.showsAttackRadius(f.owner||f.projectile?.lob?.owner))){ctx.restore();return;}
       /* GROUND CUE only (the impact zone); the falling rock is drawn over the actors below */
       const rr = f.radius * 32, ry = rr * 0.5, k = 1 - U.clamp(f.ttl / f.maxTtl, 0, 1);   // 0 → 1 at impact
@@ -3098,6 +3122,7 @@ const Game = (() => {
     if(typeof BossVFX!=='undefined'){BossVFX.drawGround(ctx,state,cam);BossVFX.appendDraws(draws,state,cam,W,H);}
     if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.drawGround(ctx,state,cam);
     if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.drawGround(ctx,state,cam);
+    if(typeof Act1EnemyAnimation!=='undefined')Act1EnemyAnimation.drawGround(ctx,state,cam);
     if(m.layers){
       draws.push({kind:'imperialGroundFx',d:-Infinity});
       for(const gi of state.ground)if(gi.surfaceId)draws.push({kind:'imperialLoot',d:gi.x+gi.y,gi});
@@ -3304,18 +3329,19 @@ const Game = (() => {
           }
           if(typeof BossVFX!=='undefined'&&BossVFX.enabled&&pr.bossVisual){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,pr.x,pr.y,pr.surfaceId);BossVFX.drawProjectile(ctx,pr,cam);ctx.restore();break;}
           if(typeof SkillVFX!=='undefined'&&SkillVFX.enabled&&SkillVFX.recipes[pr.sourceSkill]){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,pr.x,pr.y,pr.surfaceId);SkillVFX.drawProjectile(ctx,pr,cam);ctx.restore();break;}
+          const northernLift=typeof Act1EnemyAnimation!=='undefined'&&Act1EnemyAnimation.eligible(pr.mon)?pr.lift:14;
           const a = pr.kind==='arrow'?Math.atan2(U.isoY(pr.vx,pr.vy),U.isoX(pr.vx,pr.vy)):Math.atan2(pr.vy * 0.5, pr.vx);
           if (pr.kind === "firebolt") {
             ctx.fillStyle = "#ff9040";
             ctx.shadowColor = "#ff7020"; ctx.shadowBlur = 12;
-            ctx.beginPath(); ctx.arc(d.sx, d.sy - 14, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(d.sx, d.sy - northernLift, 5, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = "#ffe0a0";
-            ctx.beginPath(); ctx.arc(d.sx - Math.cos(a) * 1.5, d.sy - 14.5, 2.2, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(d.sx - Math.cos(a) * 1.5, d.sy - northernLift - .5, 2.2, 0, Math.PI * 2); ctx.fill();
             ctx.shadowBlur = 0;
           } else if (pr.kind === "frostshard" || pr.kind === "lance") {
             const L = pr.kind === "lance" ? 16 : 8;
             ctx.save();
-            ctx.translate(d.sx, d.sy - 14); ctx.rotate(a);
+            ctx.translate(d.sx, d.sy - northernLift); ctx.rotate(a);
             ctx.shadowColor = "#9fd8ff"; ctx.shadowBlur = 10;
             ctx.fillStyle = pr.kind === "lance" ? "#cfeaff" : "#9fd8ff";
             ctx.beginPath(); ctx.moveTo(L, 0); ctx.lineTo(-L * 0.6, 3); ctx.lineTo(-L * 0.3, 0); ctx.lineTo(-L * 0.6, -3); ctx.closePath(); ctx.fill();
@@ -3325,19 +3351,19 @@ const Game = (() => {
             const col = pr.kind === "soulbolt" ? "#c080e0" : "#90ff70";
             ctx.fillStyle = col;
             ctx.shadowColor = col; ctx.shadowBlur = 10;
-            ctx.beginPath(); ctx.arc(d.sx, d.sy - 14, 4.2, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(d.sx, d.sy - northernLift, 4.2, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = "rgba(255,255,255,.5)";
-            ctx.beginPath(); ctx.arc(d.sx - 1, d.sy - 15, 1.6, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(d.sx - 1, d.sy - northernLift - 1, 1.6, 0, Math.PI * 2); ctx.fill();
             ctx.shadowBlur = 0;
           } else if (pr.kind === "spark") {
             ctx.strokeStyle = "#fff080"; ctx.lineWidth = 2;
             ctx.shadowColor = "#fff080"; ctx.shadowBlur = 8;
             ctx.beginPath();
-            let jx = d.sx - Math.cos(a) * 9, jy = d.sy - 14 - Math.sin(a) * 9;
+            let jx = d.sx - Math.cos(a) * 9, jy = d.sy - northernLift - Math.sin(a) * 9;
             ctx.moveTo(jx, jy);
             for (let i = 1; i <= 3; i++) {
               jx = d.sx + Math.cos(a) * (i * 6 - 9) + Math.sin(state.time*31+i*8+pr.x)*2.5;
-              jy = d.sy - 14 + Math.sin(a) * (i * 6 - 9) + Math.cos(state.time*29+i*7+pr.y)*2.5;
+              jy = d.sy - northernLift + Math.sin(a) * (i * 6 - 9) + Math.cos(state.time*29+i*7+pr.y)*2.5;
               ctx.lineTo(jx, jy);
             }
             ctx.stroke();
@@ -3345,7 +3371,7 @@ const Game = (() => {
           } else if (pr.kind === "shardbolt") {
             const col = { fire: "#ff5040", cold: "#9fd8ff", light: "#fff080" }[pr.elem] || "#ff5040";
             ctx.save();
-            ctx.translate(d.sx, d.sy - 14); ctx.rotate(a);
+            ctx.translate(d.sx, d.sy - northernLift); ctx.rotate(a);
             ctx.shadowColor = col; ctx.shadowBlur = 10;
             ctx.fillStyle = col;
             ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(0, 3); ctx.lineTo(-4, 0); ctx.lineTo(0, -3); ctx.closePath(); ctx.fill();
@@ -3353,7 +3379,7 @@ const Game = (() => {
             ctx.restore();
           } else if (pr.kind === "axe") {
             ctx.save();
-            ctx.translate(d.sx, d.sy - 14);
+            ctx.translate(d.sx, d.sy - northernLift);
             ctx.rotate((pr.ttl || 0) * 22);   // tumbling through the air
             ctx.strokeStyle = "#6a4a2a"; ctx.lineWidth = 2;
             ctx.beginPath(); ctx.moveTo(0, 7); ctx.lineTo(0, -7); ctx.stroke();
@@ -3362,14 +3388,14 @@ const Game = (() => {
             ctx.strokeStyle = "#6a707c"; ctx.lineWidth = 1; ctx.stroke();
             ctx.restore();
           } else if (pr.kind === "thrownaxe") {
-            ctx.save(); ctx.translate(d.sx, d.sy - 14); ctx.rotate((pr.ttl || 0) * 26);
+            ctx.save(); ctx.translate(d.sx, d.sy - northernLift); ctx.rotate((pr.ttl || 0) * 26);
             ctx.strokeStyle = "#6a4a2a"; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(0, 9); ctx.lineTo(0, -9); ctx.stroke();
             ctx.fillStyle = "#cfd6e0";
             ctx.beginPath(); ctx.moveTo(0, -9); ctx.quadraticCurveTo(11, -10, 9, -1); ctx.quadraticCurveTo(4, -4, 0, -4); ctx.closePath(); ctx.fill();
             ctx.beginPath(); ctx.moveTo(0, 9); ctx.quadraticCurveTo(-11, 10, -9, 1); ctx.quadraticCurveTo(-4, 4, 0, 4); ctx.closePath(); ctx.fill();
             ctx.restore();
           } else if (pr.kind === "cadaver") {
-            ctx.save(); ctx.translate(d.sx, d.sy - 14); ctx.rotate((pr.ttl || 0) * 14);
+            ctx.save(); ctx.translate(d.sx, d.sy - northernLift); ctx.rotate((pr.ttl || 0) * 14);
             ctx.strokeStyle = "#cfd8c0"; ctx.lineWidth = 2;
             ctx.beginPath(); ctx.moveTo(0, -8); ctx.lineTo(0, 8); ctx.stroke();
             for (let i = -2; i <= 2; i++) { ctx.beginPath(); ctx.arc(0, i * 3.5, 5, Math.PI * 0.15, Math.PI * 0.85); ctx.stroke(); }
@@ -3377,13 +3403,14 @@ const Game = (() => {
           } else if (pr.kind === "undeadbody") {
             /* a tumbling flung corpse, lifted by its arc; faint shadow marks where it lands */
             ctx.globalAlpha = 0.35; ctx.fillStyle = "#000"; ctx.beginPath(); ctx.ellipse(d.sx, d.sy, 7, 3.5, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
-            ctx.save(); ctx.translate(d.sx, d.sy - 14 - (pr.jumpZ || 0)); ctx.rotate((pr.lobT || 0) * 7);
+            ctx.save(); ctx.translate(d.sx, d.sy - northernLift - (pr.jumpZ || 0)); ctx.rotate((pr.lobT || 0) * 7);
             ctx.fillStyle = "#cfd8c0"; ctx.strokeStyle = "#5a5045"; ctx.lineWidth = 1.4;
             ctx.beginPath(); ctx.arc(0, -4, 3, 0, Math.PI * 2); ctx.fill();
             ctx.beginPath(); ctx.moveTo(0, -1); ctx.lineTo(0, 6); ctx.moveTo(-5, 1); ctx.lineTo(5, 3); ctx.moveTo(-4, 8); ctx.lineTo(0, 5); ctx.lineTo(5, 9); ctx.stroke();
             ctx.restore();
           } else {
-            ctx.strokeStyle = "#cabd9a"; ctx.lineWidth = 2;
+            ctx.strokeStyle = pr.kind==='arrow'&&typeof Act1EnemyAnimation!=='undefined'&&Act1EnemyAnimation.eligible(pr.mon)
+              ?pr.mon.combatColor(pr.elem||'phys'):"#cabd9a"; ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(d.sx - Math.cos(a) * 8, d.sy - pr.lift - Math.sin(a) * 8);
             ctx.lineTo(d.sx + Math.cos(a) * 8, d.sy - pr.lift + Math.sin(a) * 8);
@@ -3714,7 +3741,7 @@ const Game = (() => {
     /* fast path (the common case): no flash/tint composite needed, so draw the actor
        straight onto the screen — skips a scratch-canvas clear and blit per actor.
        SpriteAssets draw calls save/restore their own state, so this is isolated. */
-    const animation=pose.ex?.act5Animation||pose.ex?.act4Animation||pose.ex?.act3Animation||pose.ex?.act2Animation;
+    const animation=pose.ex?.act1Animation||pose.ex?.act5Animation||pose.ex?.act4Animation||pose.ex?.act3Animation||pose.ex?.act2Animation;
     const animated=animation&&DATA.SPRITE_MANIFEST.entries[animation.asset];
     if (opts.bossArt || animated || (!flash && !tint)) {
       ctx.save();
@@ -3753,7 +3780,7 @@ const Game = (() => {
     let alpha = 1;
     if (e.dead && e.corpseT !== undefined && e.corpseT < 3) alpha = Math.max(0, e.corpseT / 3);
     /* beacons are obelisks, not figures — draw the rune-stone with a barrier glow */
-    if (e.beacon || e.defId==="boss_portal") {
+    if ((e.beacon || e.defId==="boss_portal")&&!e.pose().ex?.act1Animation) {
       if(typeof Act2EnemyAnimation!=='undefined'&&Act2EnemyAnimation.drawRitualRemains(ctx,e,sx,sy,alpha))return;
       const frame = SpriteAssets.getFrame(SpriteAssets.maps.props.beacon, 0);
       const pulse = 0.5 + Math.sin(state.time * 4 + e.x) * 0.5;
@@ -3859,7 +3886,8 @@ const Game = (() => {
   }
   function typeInfoFor(mon) {
     const t = DATA.ENEMY_TYPES[mon.type] || DATA.ENEMY_TYPES.humanoid;
-    return { label: mon.elite ? "Elite " + t.name : t.name, color: t.color };
+    const family=DATA.MONSTER_FAMILIES[mon.monsterFamily];
+    return { label: (family?family.name+' · ':'')+(mon.elite ? "Elite " + t.name : t.name), color: t.color };
   }
   /* monster defensive profile for the hover bar: physical reduction + each element resist (− = vulnerable).
      Each stat is abbreviated and color-coded: P grey, F orange, C blue, L yellow, Ps green. */
@@ -4219,7 +4247,7 @@ const Game = (() => {
     const dmg = U.rf(proc.dmg[0], proc.dmg[1]);
     for (const m of state.monsters) {
       if (m.dead || U.dist(x, y, m.x, m.y) > proc.radius + m.radius) continue;
-      m.takeDamage(dmg, state.player, null, proc.elem);
+      m.takeDamage(dmg, src || state.player, null, proc.elem);
       if (proc.elem === "cold") m.applySlow(2, 40);
     }
   }

@@ -182,6 +182,7 @@ window.TitleScreen=(()=>{
     }
     actions.append(button('NEW HERO','title-action '+(!saves.length?'primary':'secondary'),newHero));
     if(saves.length)actions.append(button('CHOOSE HERO','title-action quiet',savedHeroes));
+    actions.append(button('ITEMS & AFFIXES','title-action quiet',()=>window.open('loot.html','_blank','noopener')));
     m.append(actions);
     const chapter=el('aside','splash-chapter');chapter.append(el('span','title-kicker','ACT I'),el('strong','','The Fallen North'),el('span','chapter-line','Beyond the last warm wall.'));m.append(chapter);
     if(focus)actions.querySelector('button').focus({preventScroll:true});

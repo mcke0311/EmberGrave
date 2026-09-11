@@ -120,11 +120,11 @@ const BossVFX=(()=>{
   }
   function ring(ctx,x,y,r,cam,lift=0){ctx.beginPath();ctx.ellipse(px(x,y,cam),py(x,y,cam)-lift,r*32,r*16,0,0,TAU);ctx.stroke();}
   function area(ctx,s,cam,col,alpha){ctx.fillStyle=col;ctx.globalAlpha=alpha;path(ctx,s,cam);ctx.fill();}
-  function groundStrike(ctx,f,cam){
+  function groundStrike(ctx,f,cam,hideRadius=false){
     const k=1-clamp(f.t/f.dur),p=1-k;
     for(const s of f.shapes||[]){
       // The whole footprint lights immediately, even when secondary accents move.
-      area(ctx,s,cam,f.bright,.2*k);ctx.strokeStyle=f.col;ctx.lineWidth=2;ctx.globalAlpha=.75*k;path(ctx,s,cam);ctx.stroke();
+      if(!hideRadius){area(ctx,s,cam,f.bright,.2*k);ctx.strokeStyle=f.col;ctx.lineWidth=2;ctx.globalAlpha=.75*k;path(ctx,s,cam);ctx.stroke();}
       if(reduced())continue;
       ctx.save();path(ctx,s,cam);ctx.clip();ctx.strokeStyle=f.bright;ctx.globalAlpha=.85*k;
       if(['fissure','chains','light','cross','echoes'].includes(f.kind)&&s.kind==='line'){
@@ -144,10 +144,10 @@ const BossVFX=(()=>{
           if(f.kind==='fissure'){ctx.globalAlpha=.3*k;ctx.lineWidth=9;ctx.stroke();}
         }
       }else if(s.kind==='cone'){
-        for(let i=0;i<3;i++){const r=s.radius*(.55+i*.17+.12*p);ctx.beginPath();
+        for(let i=0;i<(hideRadius?1:3);i++){const r=hideRadius?Math.min(1.6,s.radius*.5)+.12*p:s.radius*(.55+i*.17+.12*p);ctx.beginPath();
           for(let j=0;j<=16;j++){const a=s.angle-s.arc/2+s.arc*j/16,x=s.x+Math.cos(a)*r,y=s.y+Math.sin(a)*r;
             if(j===0)ctx.moveTo(px(x,y,cam),py(x,y,cam));else ctx.lineTo(px(x,y,cam),py(x,y,cam));}ctx.stroke();}
-      }else if(s.kind==='circle'||s.kind==='ring'){
+      }else if(!hideRadius&&(s.kind==='circle'||s.kind==='ring')){
         ring(ctx,s.x,s.y,s.radius*(.7+.3*p),cam);if(s.inner)ring(ctx,s.x,s.y,s.inner+.2*p,cam);
       }
       ctx.restore();
@@ -157,7 +157,7 @@ const BossVFX=(()=>{
     if(!enabled)return;
     ctx.save();
     for(const m of world.monsters){const e=m.encounter;if(!e?.active||m.dead)continue;
-      for(const f of e.visual?.events||[])if(f.kind!=='trail')groundStrike(ctx,f,cam);
+      for(const f of e.visual?.events||[])if(f.kind!=='trail')groundStrike(ctx,f,cam,typeof Act1EnemyAnimation!=='undefined'&&!Act1EnemyAnimation.showsAttackRadius(m));
       for(const pool of e.pools){
         const t=pool.ttl;ctx.strokeStyle='#bbd589';ctx.lineWidth=1;ctx.globalAlpha=.35;
         for(let i=0;i<(reduced()?1:3);i++){const a=i*TAU/3,rad=.15+(reduced()?.2:((6-t)*.8+i*.31)%1)*.32;

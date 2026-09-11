@@ -6,7 +6,7 @@ class Act2EnemyCombat {
     const state=Game.state,map=state.map,combat=DATA.ACT2_COMBAT,pool=combat.pools[map.id];
     const allowed=id=>pool[id]&&(combat.role(id)!=='ranged'||group.filter(m=>combat.role(m.defId)==='ranged').length<2)&&
       (combat.role(id)!=='specialist'||!group.some(m=>combat.role(m.defId)==='specialist'));
-    const preferred=ids.filter(allowed),choices=preferred.length?preferred:Object.keys(pool).filter(allowed);
+    const preferred=ids.filter(allowed),choices=preferred.length?preferred:Object.keys(pool).filter(id=>allowed(id)&&(!opts.monsterFamily||DATA.monsterFamily(id)===opts.monsterFamily));
     if(!choices.length)return null;
     const m=new Monster(U.pickR(random,choices),x,y,opts),angle=Math.atan2(y-state.player.y,x-state.player.x),role=combat.role(m.defId);
     const depth=role==='ranged'?3:role==='melee'?-1.5:0,origin={x:x+Math.cos(angle)*depth,y:y+Math.sin(angle)*depth};
@@ -170,7 +170,7 @@ class Act2EnemyCombat {
     if(m.def.summons&&this.cooldowns.summon<=0&&d<12&&los&&this.summon())return;
     if(m.def.detonateAllies&&this.cooldowns.sacrifice<=0&&d<m.def.detonateAllies.range&&los&&this.sacrifice())return;
     if(m.def.meteorRain&&this.cooldowns.requiem<=0&&d<m.def.meteorRain.range&&los&&this.requiem(t))return;
-    if(m.def.teleports&&this.cooldowns.blink<=0&&d>m.def.teleports.minDist&&los){
+    if(m.def.teleports&&!m.movementLocked()&&this.cooldowns.blink<=0&&d>m.def.teleports.minDist&&los){
       this.cooldowns.blink=m.def.teleports.cd;const a=Math.atan2(t.y-m.y,t.x-m.x)+Math.PI/2,p=this.point(t.x+Math.cos(a)*2.6,t.y+Math.sin(a)*2.6);
       if(p){this.start('blink',[{kind:'circle',...p,radius:m.radius+.3}],.6,.6,()=>{if(this.supported(p.x,p.y)){m.x=p.x;m.y=p.y;m.path=null;this.mon.attackNova(p.x,p.y,.7,this.color('shadow'));}},'shadow');return;}
     }
@@ -178,14 +178,14 @@ class Act2EnemyCombat {
       const s=m.def.slam,shapes=[{kind:'circle',x:m.x,y:m.y,radius:s.radius}];this.cooldowns.slam=s.cd;
       this.start('slam',shapes,s.windup,s.recovery,()=>this.impact(shapes,s.mult,s.elem),s.elem);return;
     }
-    if(m.def.charge&&this.cooldowns.lunge<=0&&d>2.6&&d<m.def.charge.range&&los){
+    if(m.def.charge&&!m.movementLocked()&&this.cooldowns.lunge<=0&&d>2.6&&d<m.def.charge.range&&los){
       const from={x:m.x,y:m.y},length=Math.min(d+1,m.def.charge.range),angle=Math.atan2(t.y-m.y,t.x-m.x),to={x:m.x+Math.cos(angle)*length,y:m.y+Math.sin(angle)*length},width=m.radius*2+.6;
       if(this.supported(to.x,to.y)&&this.clearSegment(from,to)){
         this.cooldowns.lunge=m.def.charge.cd;
         this.start('lunge',[{kind:'line',...from,angle,length,width}],.7,.8,()=>{},'poison',{kind:'lunge',from,to,width,duration:length/(m.def.charge.speed||12),hit:new Set()});return;
       }
     }
-    if(m.def.leap&&this.cooldowns.dive<=0&&d>2.6&&d<m.def.leap.range&&los){
+    if(m.def.leap&&!m.movementLocked()&&this.cooldowns.dive<=0&&d>2.6&&d<m.def.leap.range&&los){
       const from={x:m.x,y:m.y},to=this.point(t.x,t.y);if(to&&this.clearSegment(from,to)){
         this.cooldowns.dive=m.def.leap.cd;this.start('dive',[{kind:'circle',...to,radius:m.def.leap.radius}],.8,1,()=>{if(!this.supported(to.x,to.y)||!this.clearSegment(from,to))this.cancel();},'phys',{kind:'dive',from,to,duration:.55});return;
       }

@@ -634,12 +634,12 @@ const SkillAudioCatalog = (() => {
     "trigger": null
   },
   "veilranger_0_5": {
-    "family": "bow",
-    "motif": "skewer",
-    "weight": 1,
+    "family": "blood",
+    "motif": "passive:weapon",
+    "weight": 0.82,
     "rate": 0.95,
-    "accent": "blade",
-    "passive": false,
+    "accent": null,
+    "passive": true,
     "trigger": null
   },
   "veilranger_0_6": {
@@ -680,10 +680,10 @@ const SkillAudioCatalog = (() => {
   },
   "veilranger_1_3": {
     "family": "trap",
-    "motif": "tripwire",
+    "motif": "dragnet",
     "weight": 1,
     "rate": 1.025,
-    "accent": "latch",
+    "accent": "cloth",
     "passive": false,
     "trigger": null
   },
@@ -706,12 +706,12 @@ const SkillAudioCatalog = (() => {
     "trigger": null
   },
   "veilranger_1_6": {
-    "family": "shadow",
-    "motif": "decoy",
-    "weight": 1,
+    "family": "blood",
+    "motif": "passive:trap",
+    "weight": 0.82,
     "rate": 0.965,
-    "accent": "cloth",
-    "passive": false,
+    "accent": null,
+    "passive": true,
     "trigger": null
   },
   "veilranger_2_0": {
@@ -724,11 +724,11 @@ const SkillAudioCatalog = (() => {
     "trigger": null
   },
   "veilranger_2_1": {
-    "family": "shadow",
-    "motif": "smoke",
+    "family": "steel",
+    "motif": "umbral",
     "weight": 1,
     "rate": 0.995,
-    "accent": "wind",
+    "accent": "breath",
     "passive": false,
     "trigger": null
   },
@@ -742,11 +742,11 @@ const SkillAudioCatalog = (() => {
     "trigger": null
   },
   "veilranger_2_3": {
-    "family": "blood",
-    "motif": "coat",
+    "family": "steel",
+    "motif": "dusk",
     "weight": 1,
     "rate": 1.025,
-    "accent": null,
+    "accent": "blade",
     "passive": false,
     "trigger": null
   },
@@ -760,20 +760,20 @@ const SkillAudioCatalog = (() => {
     "trigger": null
   },
   "veilranger_2_5": {
-    "family": "shadow",
-    "motif": "afterimage",
+    "family": "steel",
+    "motif": "flurry",
     "weight": 1,
     "rate": 0.95,
-    "accent": "blade",
+    "accent": "cloth",
     "passive": false,
     "trigger": null
   },
   "veilranger_2_6": {
-    "family": "blood",
-    "motif": "hemorrhage",
+    "family": "steel",
+    "motif": "deathblow",
     "weight": 1.25,
     "rate": 0.965,
-    "accent": null,
+    "accent": "blood",
     "passive": false,
     "trigger": null
   },
@@ -832,11 +832,11 @@ const SkillAudioCatalog = (() => {
     "trigger": null
   },
   "wildkeeper_0_6": {
-    "family": "blood",
-    "motif": "packsacrifice",
+    "family": "nature",
+    "motif": "ent",
     "weight": 1,
     "rate": 0.965,
-    "accent": null,
+    "accent": "roots",
     "passive": false,
     "trigger": null
   },

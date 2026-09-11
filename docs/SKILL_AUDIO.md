@@ -4,8 +4,10 @@ Embergrave's five classes use recorded material textures: steel and shields;
 combustion, ice and electrical cracks; bone and decay; bow tension and mechanical
 traps; animals, roots and earth. The 78 mono PCM WAV cuts total about 4.7 MB.
 Each skill has an explicit recipe in `js/skill_audio_catalog.js`, including basic
-attacks, all 91 active skills, and all 16 passives. Related skills share textures
+attacks, all 89 active skills, and all 18 passives. Related skills share textures
 and use distinct material accents, weight and constant playback-rate settings.
+
+Dragnet uses mechanical trap textures with a cloth accent. Exploit Weakness is a silent passive.
 
 Stat-only passives are silent. Heat Haze, Brittle Bones, Marrow Pact, Grave
 Whispers, Soul Harvest, Kindred Bond and Primal Surge have small accents at their
@@ -80,3 +82,5 @@ Retain the skill/perk, VFX, animation timing, projectile origin, Wildshape,
 player-death, UI-click, and soundtrack checks. Do not regenerate gameplay
 baselines to accommodate presentation changes. Timbral preference is assessed
 through the studio's listening controls, separately from the numerical checks.
+
+The rebuilt Veil uses four distinct steel attack recipes: Umbral Knife (breath accent), Dusk Cleave (blade), Shadow Flurry (cloth), and heavy Deathblow (blood). Killing Mark retains its own explosion identity and Shadowstep retains its movement identity. Flurry sounds follow actual released blades; cancelled releases are silent.

@@ -1,0 +1,534 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "results": [
+    {
+      "zone": "north_wild",
+      "index": 1,
+      "width": 1920,
+      "click": {
+        "x": 640,
+        "y": 550.6666666666667
+      },
+      "target": "mines",
+      "start": {
+        "x": 36.5,
+        "y": 112.5
+      },
+      "approach": {
+        "x": 33.5,
+        "y": 112.5
+      },
+      "threshold": {
+        "x": 30.5,
+        "y": 112.5,
+        "axis": 1
+      },
+      "returnKey": "from_wild",
+      "arrived": {
+        "zone": "mines",
+        "supported": true,
+        "position": {
+          "x": 13.5,
+          "y": 24.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "north_wild",
+      "index": 2,
+      "width": 1920,
+      "click": {
+        "x": 960,
+        "y": 550.6666666666667
+      },
+      "target": "shattered_temple",
+      "start": {
+        "x": 148.5,
+        "y": 75.5
+      },
+      "approach": {
+        "x": 148.5,
+        "y": 72.5
+      },
+      "threshold": {
+        "x": 148.5,
+        "y": 69.5,
+        "axis": 0
+      },
+      "returnKey": "from_wild",
+      "arrived": {
+        "zone": "shattered_temple",
+        "supported": true,
+        "position": {
+          "x": 11.5,
+          "y": 25.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "north_wild",
+      "index": 3,
+      "width": 1920,
+      "click": {
+        "x": 640,
+        "y": 579.8333333333334
+      },
+      "target": "shardpeak_shrine",
+      "start": {
+        "x": 68.5,
+        "y": 20.5
+      },
+      "approach": {
+        "x": 65.5,
+        "y": 20.5
+      },
+      "threshold": {
+        "x": 62.5,
+        "y": 20.5,
+        "axis": 1
+      },
+      "returnKey": "from_wild",
+      "arrived": {
+        "zone": "shardpeak_shrine",
+        "supported": true,
+        "position": {
+          "x": 8.5,
+          "y": 64.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "north_wild",
+      "index": 4,
+      "width": 1920,
+      "click": {
+        "x": 960,
+        "y": 550.6666666666667
+      },
+      "target": "deepfreeze_cavern",
+      "start": {
+        "x": 124.5,
+        "y": 114.5
+      },
+      "approach": {
+        "x": 124.5,
+        "y": 111.5
+      },
+      "threshold": {
+        "x": 124.5,
+        "y": 108.5,
+        "axis": 0
+      },
+      "returnKey": "from_wild",
+      "arrived": {
+        "zone": "deepfreeze_cavern",
+        "supported": true,
+        "position": {
+          "x": 14.5,
+          "y": 24.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "mines",
+      "index": 0,
+      "width": 1920,
+      "click": {
+        "x": 640,
+        "y": 550.6666666666667
+      },
+      "target": "north_wild",
+      "start": {
+        "x": 15.5,
+        "y": 24.5
+      },
+      "approach": {
+        "x": 12.5,
+        "y": 24.5
+      },
+      "threshold": {
+        "x": 9.5,
+        "y": 24.5,
+        "axis": 1
+      },
+      "returnKey": "from_mines",
+      "arrived": {
+        "zone": "north_wild",
+        "supported": true,
+        "position": {
+          "x": 34.5,
+          "y": 112.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "shattered_temple",
+      "index": 0,
+      "width": 1920,
+      "click": {
+        "x": 640,
+        "y": 550.6666666666667
+      },
+      "target": "north_wild",
+      "start": {
+        "x": 13.5,
+        "y": 25.5
+      },
+      "approach": {
+        "x": 10.5,
+        "y": 25.5
+      },
+      "threshold": {
+        "x": 7.5,
+        "y": 25.5,
+        "axis": 1
+      },
+      "returnKey": "from_temple",
+      "arrived": {
+        "zone": "north_wild",
+        "supported": true,
+        "position": {
+          "x": 148.5,
+          "y": 73.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "shardpeak_shrine",
+      "index": 0,
+      "width": 1920,
+      "click": {
+        "x": 640,
+        "y": 579.8333333333334
+      },
+      "target": "north_wild",
+      "start": {
+        "x": 10.5,
+        "y": 64.5
+      },
+      "approach": {
+        "x": 7.5,
+        "y": 64.5
+      },
+      "threshold": {
+        "x": 4.5,
+        "y": 64.5,
+        "axis": 1
+      },
+      "returnKey": "from_shardpeak",
+      "arrived": {
+        "zone": "north_wild",
+        "supported": true,
+        "position": {
+          "x": 66.5,
+          "y": 20.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "deepfreeze_cavern",
+      "index": 0,
+      "width": 1920,
+      "click": {
+        "x": 640,
+        "y": 550.6666666666667
+      },
+      "target": "north_wild",
+      "start": {
+        "x": 16.5,
+        "y": 24.5
+      },
+      "approach": {
+        "x": 13.5,
+        "y": 24.5
+      },
+      "threshold": {
+        "x": 10.5,
+        "y": 24.5,
+        "axis": 1
+      },
+      "returnKey": "from_deepfreeze",
+      "arrived": {
+        "zone": "north_wild",
+        "supported": true,
+        "position": {
+          "x": 124.5,
+          "y": 112.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "north_wild",
+      "index": 1,
+      "width": 3840,
+      "click": {
+        "x": 720,
+        "y": 629.8333333333334
+      },
+      "target": "mines",
+      "start": {
+        "x": 36.5,
+        "y": 112.5
+      },
+      "approach": {
+        "x": 33.5,
+        "y": 112.5
+      },
+      "threshold": {
+        "x": 30.5,
+        "y": 112.5,
+        "axis": 1
+      },
+      "returnKey": "from_wild",
+      "arrived": {
+        "zone": "mines",
+        "supported": true,
+        "position": {
+          "x": 13.5,
+          "y": 24.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "north_wild",
+      "index": 2,
+      "width": 3840,
+      "click": {
+        "x": 880,
+        "y": 629.8333333333334
+      },
+      "target": "shattered_temple",
+      "start": {
+        "x": 148.5,
+        "y": 75.5
+      },
+      "approach": {
+        "x": 148.5,
+        "y": 72.5
+      },
+      "threshold": {
+        "x": 148.5,
+        "y": 69.5,
+        "axis": 0
+      },
+      "returnKey": "from_wild",
+      "arrived": {
+        "zone": "shattered_temple",
+        "supported": true,
+        "position": {
+          "x": 11.5,
+          "y": 25.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "north_wild",
+      "index": 3,
+      "width": 3840,
+      "click": {
+        "x": 720,
+        "y": 644.4166666666667
+      },
+      "target": "shardpeak_shrine",
+      "start": {
+        "x": 68.5,
+        "y": 20.5
+      },
+      "approach": {
+        "x": 65.5,
+        "y": 20.5
+      },
+      "threshold": {
+        "x": 62.5,
+        "y": 20.5,
+        "axis": 1
+      },
+      "returnKey": "from_wild",
+      "arrived": {
+        "zone": "shardpeak_shrine",
+        "supported": true,
+        "position": {
+          "x": 8.5,
+          "y": 64.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "north_wild",
+      "index": 4,
+      "width": 3840,
+      "click": {
+        "x": 880,
+        "y": 629.8333333333334
+      },
+      "target": "deepfreeze_cavern",
+      "start": {
+        "x": 124.5,
+        "y": 114.5
+      },
+      "approach": {
+        "x": 124.5,
+        "y": 111.5
+      },
+      "threshold": {
+        "x": 124.5,
+        "y": 108.5,
+        "axis": 0
+      },
+      "returnKey": "from_wild",
+      "arrived": {
+        "zone": "deepfreeze_cavern",
+        "supported": true,
+        "position": {
+          "x": 14.5,
+          "y": 24.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "mines",
+      "index": 0,
+      "width": 3840,
+      "click": {
+        "x": 720,
+        "y": 629.8333333333334
+      },
+      "target": "north_wild",
+      "start": {
+        "x": 15.5,
+        "y": 24.5
+      },
+      "approach": {
+        "x": 12.5,
+        "y": 24.5
+      },
+      "threshold": {
+        "x": 9.5,
+        "y": 24.5,
+        "axis": 1
+      },
+      "returnKey": "from_mines",
+      "arrived": {
+        "zone": "north_wild",
+        "supported": true,
+        "position": {
+          "x": 34.5,
+          "y": 112.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "shattered_temple",
+      "index": 0,
+      "width": 3840,
+      "click": {
+        "x": 720,
+        "y": 629.8333333333334
+      },
+      "target": "north_wild",
+      "start": {
+        "x": 13.5,
+        "y": 25.5
+      },
+      "approach": {
+        "x": 10.5,
+        "y": 25.5
+      },
+      "threshold": {
+        "x": 7.5,
+        "y": 25.5,
+        "axis": 1
+      },
+      "returnKey": "from_temple",
+      "arrived": {
+        "zone": "north_wild",
+        "supported": true,
+        "position": {
+          "x": 148.5,
+          "y": 73.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "shardpeak_shrine",
+      "index": 0,
+      "width": 3840,
+      "click": {
+        "x": 720,
+        "y": 644.4166666666667
+      },
+      "target": "north_wild",
+      "start": {
+        "x": 10.5,
+        "y": 64.5
+      },
+      "approach": {
+        "x": 7.5,
+        "y": 64.5
+      },
+      "threshold": {
+        "x": 4.5,
+        "y": 64.5,
+        "axis": 1
+      },
+      "returnKey": "from_shardpeak",
+      "arrived": {
+        "zone": "north_wild",
+        "supported": true,
+        "position": {
+          "x": 66.5,
+          "y": 20.5
+        },
+        "errors": []
+      }
+    },
+    {
+      "zone": "deepfreeze_cavern",
+      "index": 0,
+      "width": 3840,
+      "click": {
+        "x": 720,
+        "y": 629.8333333333334
+      },
+      "target": "north_wild",
+      "start": {
+        "x": 16.5,
+        "y": 24.5
+      },
+      "approach": {
+        "x": 13.5,
+        "y": 24.5
+      },
+      "threshold": {
+        "x": 10.5,
+        "y": 24.5,
+        "axis": 1
+      },
+      "returnKey": "from_deepfreeze",
+      "arrived": {
+        "zone": "north_wild",
+        "supported": true,
+        "position": {
+          "x": 124.5,
+          "y": 112.5
+        },
+        "errors": []
+      }
+    }
+  ]
+}

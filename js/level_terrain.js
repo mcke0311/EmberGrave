@@ -538,24 +538,33 @@ const LevelTerrain = (() => {
     }
     return {cells,seen:new Uint32Array(polygons.length),stamp:0};
   }
-  function nearbyPolygons(sx,sy){
+  function nearbyPolygons(sx,sy,cacheCandidates=false){
     if(!surfaceIndex)return surfacePolygons;
     const index=surfaceIndex,ids=[];
+    const x0=Math.floor((sx-160)/POLYGON_CELL),x1=Math.floor((sx+160)/POLYGON_CELL),y0=Math.floor((sy-252)/POLYGON_CELL),y1=Math.floor((sy+68)/POLYGON_CELL);
+    // Northern crowds repeatedly query the same spatial cells for bodies,
+    // weapon effects and overhead geometry. Keep their ordered candidates;
+    // exact per-actor occlusion is still evaluated below. The cache belongs
+    // to this geometry index and is discarded when the terrain view changes.
+    const key=cacheCandidates?[x0,x1,y0,y1].join(':'):null;
+    if(key&&index.queries?.has(key))return index.queries.get(key);
     if(++index.stamp===0xffffffff){index.seen.fill(0);index.stamp=1;}
-    for(let y=Math.floor((sy-252)/POLYGON_CELL);y<=Math.floor((sy+68)/POLYGON_CELL);y++)
-      for(let x=Math.floor((sx-160)/POLYGON_CELL);x<=Math.floor((sx+160)/POLYGON_CELL);x++){
+    for(let y=y0;y<=y1;y++)
+      for(let x=x0;x<=x1;x++){
         for(const id of index.cells.get(x+':'+y)||[]){
           if(index.seen[id]===index.stamp)continue;index.seen[id]=index.stamp;ids.push(id);
         }
       }
     // Retain the original clipping order and apply each polygon only once,
     // even when it straddles multiple spatial cells.
-    ids.sort((a,b)=>a-b);return ids.map(id=>surfacePolygons[id]);
+    ids.sort((a,b)=>a-b);const result=ids.map(id=>surfacePolygons[id]);
+    if(key){index.queries??=new Map();if(index.queries.size>=128)index.queries.clear();index.queries.set(key,result);}
+    return result;
   }
   function clipBehind(ctx,m,cam,x,y,surfaceId=0){
     if(!m.surfaceVersion)return;
     const sx=U.isoX(x,y),sy=U.isoY(x,y)-TerrainSurface.heightAt(m,x,y,surfaceId)*14,h=TerrainSurface.heightAt(m,x,y,surfaceId);
-    for(const poly of nearbyPolygons(sx,sy)) {
+    for(const poly of nearbyPolygons(sx,sy,DATA.ACT1_ZONES?.includes(m.id))) {
       if(poly.right<sx-160||poly.left>sx+160||poly.bottom<sy-252||poly.top>sy+68||!poly.points.some(p=>p.z>h+1e-7))continue;
       if(poly.kind==='ground'&&poly.tx===Math.floor(x)&&poly.ty===Math.floor(y))continue;
       const points=TerrainSurface.inFront(poly,x+y);
@@ -596,7 +605,8 @@ const Act1Environment=(()=>{
       const part=short?'end_'+direction:direction+(s.variant===1?'_alt':'');
       const f=frame(s.kit,part),fx=s.x+(s.axis?0:span/2),fy=s.y+(s.axis?span/2:0);
       const cx=U.isoX(x,y),cy=U.isoY(x,y)-s.height*14;
-      walls.push({kind:'act1Boundary',d:x+y+.01,x,y,s,f,wx:U.isoX(fx,fy),wy:U.isoY(fx,fy)-s.height*14,cx,cy});
+      const th=s.thresholdId&&m.thresholds.find(t=>t.id===s.thresholdId);
+      walls.push({kind:'act1Boundary',d:th?Math.min(x+y+.01,th.x+th.y-.1):x+y+.01,x,y,s,f,wx:U.isoX(fx,fy),wy:U.isoY(fx,fy)-s.height*14,cx,cy});
       if(s.length>=3)ground.push({f:frame(s.kit,'ground'),x:cx,y:cy,scale:.48});
     }
     for(const c of env.corners)if(c.kit!=='north'){
@@ -607,7 +617,8 @@ const Act1Environment=(()=>{
     }
     for(const c of env.natural){
       const f=nature(c.part),scale=c.scale;
-      walls.push({kind:'act1Boundary',d:c.x+c.y,x:c.x,y:c.y,s:{kit:'north',length:5},f,
+      const th=c.thresholdId&&m.thresholds.find(t=>t.id===c.thresholdId);
+      walls.push({kind:'act1Boundary',d:th?Math.min(c.x+c.y,th.x+th.y-.2):c.x+c.y,x:c.x,y:c.y,s:{kit:'north',length:5},f,
         wx:U.isoX(c.x,c.y),wy:U.isoY(c.x,c.y)-c.height*14,cx:U.isoX(c.x,c.y),cy:U.isoY(c.x,c.y)-c.height*14,scale});
       ground.push({f:contactShadow(),x:U.isoX(c.x,c.y)+15,y:U.isoY(c.x,c.y)-c.height*14,scale});
     }

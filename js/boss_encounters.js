@@ -247,11 +247,12 @@ const BossEncounters = (() => {
       this.pose="recovery";this.label=label;this.setArt();
     }
     statusText() {
+      const time=typeof Act1EnemyAnimation!=='undefined'&&!Act1EnemyAnimation.showsAttackRadius(this.mon)?'':" · "+this.timer.toFixed(1)+"s";
       if(this.stage==="transition")return "Changing form";
-      if(this.stage==="recovery")return (this.mon.defId==="mire_mother"&&this.phase>0?(this.phase===1?this.config.phases[1]:"Shard exposed")+" · +25% damage":this.label)+" · "+this.timer.toFixed(1)+"s";
+      if(this.stage==="recovery")return (this.mon.defId==="mire_mother"&&this.phase>0?(this.phase===1?this.config.phases[1]:"Shard exposed")+" · +25% damage":this.label)+time;
       if(this.stage==="idle")return this.pose==="movement"?"Closing distance":"Stand ready";
       const a=this.attack;
-      return a?a.label+(a.stepCount>1?" · "+(a.stepIndex+1)+"/"+a.stepCount:"")+(this.stage==="windup"?" · "+this.timer.toFixed(1)+"s":a.id==="portals"?" · Portals open":a.id==="decoys"?" · Illusions forming":" · Strike"):"";
+      return a?a.label+(a.stepCount>1?" · "+(a.stepIndex+1)+"/"+a.stepCount:"")+(this.stage==="windup"?time:a.id==="portals"?" · Portals open":a.id==="decoys"?" · Illusions forming":" · Strike"):"";
     }
     execute() {
       const a=this.attack,m=this.mon;
@@ -383,7 +384,7 @@ const BossEncounters = (() => {
         ctx.fillStyle=e.config.color;ctx.font="12px sans-serif";ctx.textAlign="center";ctx.fillText(label,x,y+2);ctx.textAlign="left";
       }
       const attack=e.attack;
-      if(attack&&(e.stage==="windup"||e.stage==="execute"))for(const s of attack.shapes) {
+      if(attack&&(typeof Act1EnemyAnimation==='undefined'||Act1EnemyAnimation.showsAttackRadius(m))&&(e.stage==="windup"||e.stage==="execute"))for(const s of attack.shapes) {
         ctx.fillStyle=e.config.color;ctx.lineWidth=e.stage==="windup"?2.5:4;
         trace(ctx,s,cam);ctx.globalAlpha=e.stage==="windup"?.14+.18*(1-e.timer/attack.windup):(typeof BossVFX!=='undefined'&&BossVFX.enabled?.18:.52);ctx.fill();ctx.globalAlpha=.95;ctx.stroke();
         if(attack.id==="beam") {

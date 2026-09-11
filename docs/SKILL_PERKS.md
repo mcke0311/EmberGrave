@@ -685,14 +685,18 @@ Verification: `node tests/skill_perks_contract.mjs` checks all 642 definitions, 
 | 5 | **Honed Power** — +20% weapon damage. | **Measured Breath** — −25% aether cost. | **Trick Shot** — +1 ricochets. |
 | 10 | **Unbound Power** — +35% weapon damage; +15% aether cost. | **Never Miss a Turn** — +2 ricochets. | **Ricochet Rhythm** — +20% Attack Speed for 3s after using this skill. |
 
-#### Skewering Bolt
+#### Master of the Hunt
+
+Passive: all damaging attacks apply 3 physical bleed damage per second per rank for 3 seconds, with any weapon. Repeated hits refresh the strongest bleed without stacking. Bleed is reduced by armor, remains separate from poison, and is refreshed by the rebuilt Veil attacks. Replaces Skewering Bolt while preserving invested ranks and mapping existing milestone choices by their slot.
 
 | Rank | Choice 1 | Choice 2 | Choice 3 |
 | --- | --- | --- | --- |
-| 5 | **Honed Power** — +20% weapon damage. | **Measured Breath** — −25% aether cost. | **Long Skewer** — +35% arrow lifetime. |
-| 10 | **Unbound Power** — +35% weapon damage; +15% aether cost. | **Hunter's Tempo** — +20% Attack Speed for 3s after using this skill. | **Skirmisher's Guard** — +15% Evasion for 3s after using this skill. |
+| 5 | **Deep Wounds** — +6 physical bleed damage/s. | **Hunter's Pace** — +8% Attack Speed. | **Blood Trail** — +8% Movement Speed. |
+| 10 | **Relentless Wounds** — +12 physical bleed damage/s. | **Killing Instinct** — +5% Critical Chance. | **Hunter's Reward** — +4 Aether after each kill. |
 
 #### Arrowfall
+
+Only one zone can be active per caster. Recasting replaces the previous zone, so damage zones cannot stack.
 
 | Rank | Choice 1 | Choice 2 | Choice 3 |
 | --- | --- | --- | --- |
@@ -722,14 +726,20 @@ Verification: `node tests/skill_perks_contract.mjs` checks all 642 definitions, 
 | 5 | **Honed Power** — +20% damage. | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
 | 10 | **Unbound Power** — +35% damage; +15% aether cost. | **Hair Trigger** — −50% arming time; +25% trigger radius. | **Patient Snare** — +50% trap lifetime. |
 
-#### Tripwire
+#### Dragnet
+
+Replaces Tripwire, retaining its ID, ranks, prerequisite position, hotkeys, and milestone slots. Throw a net within 7 yards after a 0.4s wind-up. It deals 10–16 physical damage at rank 1 (+5 minimum / +6 maximum per additional effective rank), scaled by Dexterity and Trap Damage. Radius is 3 yards (+0.08 per additional rank).
+
+Enemies are pulled toward the center over 0.3s, stopping before walls, then rooted for 1.25s (+0.08 per additional rank, capped at 3s including perks). Roots prevent movement abilities and walking but allow stationary attacks. Bosses receive a 40% slow instead. Cooldown is 6s; cost is 6 Aether per effective rank. It works with any weapon and consumes no trap slot.
 
 | Rank | Choice 1 | Choice 2 | Choice 3 |
 | --- | --- | --- | --- |
-| 5 | **Honed Power** — +20% damage; +20% bleeding damage per second. | **Measured Breath** — −25% aether cost. | **Far Reach** — +25% wire length. |
-| 10 | **Unbound Power** — +35% damage; +35% bleeding damage per second; +15% aether cost. | **Grasping Wire** — +35% root duration. | **Patient Wire** — +35% lifetime. |
+| 5 | **Widening Circle** — +25% radius. | **Measured Breath** — −25% Aether cost. | **Honed Power** — +20% damage. |
+| 10 | **Binding Mesh** — +35% root/slow duration, capped at 3s. | **Quick Retrieval** — −25% cooldown. | **Unbound Power** — +35% damage; +15% Aether cost. |
 
 #### Caltrop Field
+
+Damage now scales with Dexterity, Trap Damage, and its skill synergies, rather than Spell Damage. Exploit Weakness applies to each hit; its newly applied slow or bleed benefits subsequent hits.
 
 | Rank | Choice 1 | Choice 2 | Choice 3 |
 | --- | --- | --- | --- |
@@ -743,14 +753,20 @@ Verification: `node tests/skill_perks_contract.mjs` checks all 642 definitions, 
 | 5 | **Honed Power** — +20% damage. | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
 | 10 | **Unbound Power** — +35% damage; +15% aether cost. | **Hair Trigger** — −50% arming time; +25% trigger radius. | **Patient Snare** — +50% trap lifetime. |
 
-#### Snare Decoy
+#### Exploit Weakness
+
+Replaces Snare Decoy as a passive, preserving invested ranks and milestone slots. Old Snare Decoy hotkeys are cleared on load. The later Veil rebuild replaces After-Image with Shadow Flurry.
+
+Each distinct active **slow, root, and physical bleed** grants +3% snare hit damage per effective rank. These bonuses add: rank 10 grants +30% for one condition, +60% for two, or +90% for all three. Applies to Barbed Trap, Frostbite Trap, Powder Trap, Caltrop Field, and Dragnet, multiplying their normal damage scaling. Check conditions before each hit. Duplicate conditions and poison alone do not add bonuses; bleed/burn ticks are never amplified by this passive. Damage previews show the conditional bonus separately from baseline damage.
 
 | Rank | Choice 1 | Choice 2 | Choice 3 |
 | --- | --- | --- | --- |
-| 5 | **Sturdy Lure** — +20% lure life. | **Measured Breath** — −25% aether cost. | **Far Reach** — +25% taunt radius. |
-| 10 | **Convincing Lure** — +50% lure life. | **Lingering Presence** — +35% lure lifetime. | **Hidden Hunter** — +15% Evasion for 3s after using this skill. |
+| 5 | **Open Wounds** — +5 percentage points per condition. | **Sharpened Snares** — +10% Trap Damage. | **Quick Hands** — +8% Attack Speed. |
+| 10 | **Merciless Setup** — +10 percentage points per condition. | **Deadly Snares** — +20% Trap Damage. | **Hunter's Pursuit** — +15% Movement Speed. |
 
 ### Veil
+
+All four attacks use physical weapon damage with any weapon, including critical strikes, on-hit effects, leech, and Master of the Hunt bleed. Quickening accelerates their attack cycles. Shadowstep grants a non-stacking 3s Shadow Ambush: the next Veil attack gains +25% damage for its entire cast, consumed at its first release. Exposed, Ambush, and missing-health bonuses multiply; Exposed is checked before each hit and is not consumed. These bonuses never amplify bleed ticks or Killing Mark explosions. Existing IDs, ranks, prerequisites, hotkeys, and milestone choice positions are preserved.
 
 #### Shadowstep
 
@@ -759,12 +775,15 @@ Verification: `node tests/skill_perks_contract.mjs` checks all 642 definitions, 
 | 5 | **Far Reach** — +25% blink reach. | **Measured Breath** — −25% aether cost. | **Hidden Step** — +10% Evasion for 3s after using this skill. |
 | 10 | **Far Beyond** — +50% blink reach; +15% aether cost. | **Ambush** — +30% Damage for 3s after using this skill. | **Fleet Shadow** — +30% Movement Speed for 3s after using this skill. |
 
-#### Smoke Bomb
+#### Umbral Knife
+
+Throw a first-contact blade within 8 yards for 120% weapon damage, +10 percentage points per additional effective rank. A damaging hit applies non-stacking Exposed for 4s. Cost: 3 Aether × effective rank; no cooldown.
 
 | Rank | Choice 1 | Choice 2 | Choice 3 |
 | --- | --- | --- | --- |
-| 5 | **Lingering Presence** — +35% duration. | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
-| 10 | **Thick Shroud** — +10 evasion inside smoke (%). | **Enveloping Night** — +50% radius; +15% aether cost. | **Ambusher's Step** — +25% Movement Speed for 3s after using this skill. |
+| 5 | Honed Power — +20% damage. | Measured Breath — −25% cost. | Far Reach — +25% range. |
+| 10 | Unbound Power — +35% damage; +15% cost. | Lasting Opening — +50% Exposed duration. | Fleeting Blade — −15% attack-cycle duration. |
+
 
 #### Quickening
 
@@ -773,12 +792,15 @@ Verification: `node tests/skill_perks_contract.mjs` checks all 642 definitions, 
 | 5 | **Quick Feet** — +8% Movement Speed. | **Fast Hands** — +8% Attack Speed. | **Dancing Shadow** — +5% Evasion. |
 | 10 | **Blur** — +10% Evasion. | **Killing Rhythm** — +15% Attack Speed. | **Windrunner** — +15% Movement Speed. |
 
-#### Serrated Arrows
+#### Dusk Cleave
+
+Sweep a 140° cone reaching 3 yards for 150% weapon damage, +12 percentage points per additional effective rank. Exposed grants +30% damage. Cost: 5 Aether × effective rank; 3s cooldown.
 
 | Rank | Choice 1 | Choice 2 | Choice 3 |
 | --- | --- | --- | --- |
-| 5 | **Honed Power** — +20% poison damage. | **Measured Breath** — −25% aether cost. | **Lingering Presence** — +35% duration. |
-| 10 | **Unbound Power** — +35% poison damage; +15% aether cost. | **Deep Wounds** — +50% wound duration. | **Serrated Rhythm** — +20% Attack Speed for 3s after using this skill. |
+| 5 | Honed Power — +20% damage. | Measured Breath — −25% cost. | Far Reach — +25% reach. |
+| 10 | Unbound Power — +35% damage; +15% cost. | Open Guard — Exposed bonus becomes 45%. | Returning Dusk — −25% cooldown. |
+
 
 #### Killing Mark
 
@@ -787,17 +809,22 @@ Verification: `node tests/skill_perks_contract.mjs` checks all 642 definitions, 
 | 5 | **Honed Power** — +20% mark detonation damage. | **Measured Breath** — −25% aether cost. | **Lingering Presence** — +35% duration. |
 | 10 | **Fatal Verdict** — +10 marked damage taken (%). | **Unbound Power** — +35% mark detonation damage; +15% aether cost. | **Marked Pursuit** — +25% Movement Speed for 3s after using this skill. |
 
-#### After-Image
+#### Shadow Flurry
+
+Release 5 blades into a 3-yard area within 7 yards, each dealing 45% weapon damage, +4 percentage points per additional effective rank. Visit every eligible enemy before repeating; a lone enemy receives all blades. Exposed grants +30% damage. Cost: 7 Aether × effective rank; 5s cooldown.
 
 | Rank | Choice 1 | Choice 2 | Choice 3 |
 | --- | --- | --- | --- |
-| 5 | **Lingering Presence** — +35% lure lifetime. | **Measured Breath** — −25% aether cost. | **Far Reach** — +25% reach. |
-| 10 | **Solid Echo** — +100% lure life. | **Irresistible Echo** — +25% taunt radius. | **Hidden in Motion** — +15% Evasion for 3s after using this skill. |
+| 5 | Honed Power — +20% damage per blade. | Measured Breath — −25% cost. | Widening Circle — +25% area radius. |
+| 10 | Unbound Power — +35% damage per blade; +15% cost. | Seven Shadows — +2 blades. | Relentless Flurry — −25% cooldown. |
 
-#### Hemorrhage
+
+#### Deathblow
+
+Throw a first-contact blade within 8 yards for 220% weapon damage, +18 percentage points per additional effective rank. Exposed grants +30% damage; missing health grants up to +75%. A damaging hit detonates Killing Mark exactly once, including lethal hits. Wounds and Quarry are not consumed. Cost: 10 Aether × effective rank; 8s cooldown.
 
 | Rank | Choice 1 | Choice 2 | Choice 3 |
 | --- | --- | --- | --- |
-| 5 | **Honed Power** — +20% remaining-wound damage multiplier. | **Measured Breath** — −25% aether cost. | **Quarry's Wound** — +20% weapon damage per Quarry (%). |
-| 10 | **Unbound Power** — +35% remaining-wound damage multiplier; +15% aether cost. | **Final Verdict** — +50% weapon damage per Killing Mark (%). | **Blood Rush** — +20% Attack Speed for 3s after using this skill. |
+| 5 | Honed Power — +20% damage. | Measured Breath — −25% cost. | Far Reach — +25% range. |
+| 10 | Unbound Power — +35% damage; +15% cost. | Final Opening — maximum missing-health bonus becomes 100%. | Swift Verdict — −25% cooldown. |
 

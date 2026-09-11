@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Act I · Enemy animation review</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101a20;color:#dce3df;font:14px/1.5 system-ui}header{padding:18px 24px;border-bottom:1px solid #41545e}h1{font:28px Georgia;margin:0;color:#dfd4b8}p{margin:8px 0}label{display:inline-block;margin:5px 12px 5px 0}select,button{background:#263740;color:#eef0e7;border:1px solid #637984;padding:7px;font:inherit;border-radius:3px}button{cursor:pointer;margin:4px 8px 4px 0}#status{color:#a5d4bd}#error{color:#ffad9d;white-space:pre-wrap}iframe{border:0;display:block;transform-origin:top left}#host{overflow:hidden}#info{font:12px monospace;color:#a6bcc5}
+</style>
+<header><h1>Act I · Enemy attacks and deaths</h1><p>Temporary heroes and isolated saves. Inspect every attack frame, or play the enemy’s actual combat behavior.</p>
+<label>Enemy <select id="enemy"></select></label><label>Action <select id="action"></select></label>
+<label>Facing <select id="facing"><option value="0">Right</option><option value="3.141592653589793">Left</option></select></label>
+<label>Canvas <select id="width"><option value="1920">1080p</option><option value="3840">4K</option></select></label>
+<label><input type="checkbox" id="debug"> Show diagnostic attack areas</label>
+<div><button id="preview">Restart animation</button><button id="play">Play</button><button id="step">Step 1/60 second</button><button id="encounter">Play actual encounter</button><button id="mixed">Restore mixed zone</button></div>
+<p id="status">Loading isolated game…</p><div id="info"></div><pre id="error"></pre></header><div id="host"></div>
+<script type="module">
+const el=id=>document.getElementById(id),delay=ms=>new Promise(r=>setTimeout(r,ms));window.act1Store=new Map();
+let frame,win,api,game,mon,playing=false,manual=true,elapsed=0,kind='melee',last=0;
+function resize(){if(!frame)return;const width=+el('width').value,height=width*9/16,scale=Math.min(1,innerWidth/width);Object.assign(frame.style,{width:width+'px',height:height+'px',transform:`scale(${scale})`});el('host').style.height=height*scale+'px';win?.dispatchEvent(new win.Event('resize'));}
+function fail(e){el('error').textContent=e.stack||String(e);document.body.dataset.testStatus='failed';}
+try{
+ const baseline=new URLSearchParams(location.search).has('baseline'),root=baseline?'../tmp/act1_animation/before/':'../';
+ const [html,source]=await Promise.all([root+'index.html',root+'js/game.js'].map(p=>fetch(p,{cache:'no-store'}).then(r=>r.text())));
+ const hooked=source.replace('    init, newGame, loadGame,','    __act1Review:{update,updateCamera,updateBossEncounter,render,clear:()=>{delayed=[];particles=[];novas=[];floats=[];}},\n    init, newGame, loadGame,');
+ const injection=`<base href="${new URL(root+'index.html',location.href)}"><script>let reviewSeed=7331;Math.random=()=>{reviewSeed=(Math.imul(reviewSeed,1664525)+1013904223)>>>0;return reviewSeed/4294967296;};const store=parent.act1Store;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k)}});window.requestAnimationFrame=()=>0;window.act1Errors=[];window.addEventListener('error',e=>act1Errors.push(e.message));window.addEventListener('unhandledrejection',e=>act1Errors.push(String(e.reason)));<\/script>`;
+ frame=document.createElement('iframe');frame.title='Act I isolated combat preview';frame.srcdoc=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>'+hooked+'<\/script>');el('host').append(frame);await new Promise(r=>frame.onload=r);win=frame.contentWindow;resize();
+ for(let i=0;i<1200&&!win.document.querySelector('#titleMenu button');i++){if(win.document.getElementById('appFatal'))throw Error(win.document.getElementById('appFatal').textContent);await delay(50);}
+ api=win.eval('({DATA,Game,UI,Monster,Player,MapGen,SpriteAssets,Act1EnemyAnimation:typeof Act1EnemyAnimation===\'undefined\'?null:Act1EnemyAnimation,BossEncounters,U})');game=api.Game;win.eval('Sfx').setVol('master',0);game.firstSightCutscene=()=>{};
+ if(baseline){api.DATA.ACT1_ANIMATIONS=(await(await fetch('../assets/act1_animations/catalog.json')).json()).roster;api.Act1EnemyAnimation={deferred(){},cancel(){},release(){},tick(){}};}
+ win.Math.random=api.U.rng(7331);await game.newGame('Northern animation review','vanguard',false);await game.skipOpening();await game.enterMap('north_wild','default');api.UI.closeAll();
+ const s=game.state,p=s.player;p.stats.maxHp=p.hp=1e7;s.map.explored.fill(1);s.map.bossArena=null;
+ for(const id of Object.keys(api.DATA.ACT1_ANIMATIONS).sort((a,b)=>api.DATA.ENEMIES[a].name.localeCompare(api.DATA.ENEMIES[b].name))){const o=document.createElement('option');o.value=id;o.textContent=api.DATA.resolveEnemy(id,'north_wild').name;el('enemy').append(o);}el('enemy').value='frost_wyrm';
+ function actions(){el('action').replaceChildren();const spec=api.DATA.ACT1_ANIMATIONS[el('enemy').value];for(const k of ['idle','walk',...(spec.rests?.idle_1?['idle_1','walk_1']:[]),...spec.sequences]){const o=document.createElement('option');o.value=k;o.textContent=k.replace('_1',' · Oathfire');el('action').append(o);}}
+ function render(){game.__act1Review.updateBossEncounter();game.__act1Review.updateCamera(.2);game.__act1Review.render();if(mon){const a=mon.pose().ex.act1Animation;el('info').textContent=`${mon.name} · ${a?.id||'idle'} · ${a?.rest?'ready pose':`frame ${a? a.frame+1:'—'}/6`} · ${a?.asset||mon.def.artId}`;}}
+ function preview(id=el('enemy').value,action=el('action').value,facing=+el('facing').value){
+  playing=false;manual=true;elapsed=0;kind=action;el('play').textContent='Play';game.__act1Review.clear();s.monsters=[];s.minions=[];s.projectiles=[];s.fx=[];s.ground=[];
+  mon=new api.Monster(id,p.x+1.8,p.y+1.8);mon.aggro=true;mon.encounter=null;mon.x=p.x+1.8;mon.y=p.y+1.8;mon.visAng=mon.angT=mon.ang=facing;mon.maxHp=mon.hp=1e6;s.monsters=[mon];
+  if(id==='korvath'){mon.spriteOpts.bossArt='korvath';mon.spriteOpts.bossPhase=action.endsWith('_1')?1:0;}
+  if(action.startsWith('idle')||action.startsWith('walk')){mon.action=null;mon.moving=action.startsWith('walk');mon.curSpeed=mon.moving?mon.def.speed:0;}
+  else if(action.startsWith('death')){mon.dead=true;mon.corpseT=12;mon.startAction('death',.6);}
+  else{mon.startAction('attack',1.2,{enemySkill:action.replace('_1','')});api.Act1EnemyAnimation.deferred(mon,.6);}
+  render();return mon;
+ }
+ function step(dt=1/60){
+  if(manual&&mon){s.time+=dt;elapsed+=dt;mon.updateAnim(dt);if(mon.moving)mon.stride+=mon.curSpeed*dt;if(mon.dead)mon.corpseT-=dt;else if(elapsed>=.6&&!mon.act1Visual?.released)api.Act1EnemyAnimation.release(mon,mon.act1Visual);api.Act1EnemyAnimation.tick(mon);}
+  else game.__act1Review.update(dt);render();
+ }
+ async function encounter(){preview();manual=false;mon.dead=false;mon.corpseT=0;mon.action=null;api.Act1EnemyAnimation.cancel(mon);mon.hp=mon.maxHp=1e6;
+  if(mon.defId==='korvath'){
+   playing=false;s.quests.q8b={state:'done'};await game.enterMap(api.BossEncounters.definitions.korvath.zone,'default');api.UI.closeAll();game.__act1Review.clear();
+   const a=s.map.bossArena;Object.assign(p,{x:a.cx+2,y:a.cy,hp:1e7});mon=new api.Monster('korvath',a.cx,a.cy);s.monsters=[mon];mon.aggro=true;
+   if(el('action').value.endsWith('_1'))mon.hp=mon.maxHp*.45;
+  }
+  for(const key of ['attack','slam','breath','leap','whirl','volley','summon','tele','heal'])mon[key+'Cd']=0;
+  playing=true;el('play').textContent='Pause';
+ }
+ el('enemy').onchange=()=>{actions();preview();};el('action').onchange=()=>preview();el('facing').onchange=()=>preview();el('preview').onclick=()=>preview();el('step').onclick=()=>{playing=false;step();};el('play').onclick=()=>{playing=!playing;el('play').textContent=playing?'Pause':'Play';};el('encounter').onclick=encounter;
+ el('mixed').onclick=async()=>{playing=false;await game.enterMap('north_wild','default');api.UI.closeAll();manual=false;playing=true;};el('width').onchange=resize;el('debug').onchange=()=>{game.debugFlags.act1Combat=el('debug').checked;render();};window.addEventListener('resize',resize);
+ actions();preview();window.act1Review={api,win,game,preview,step,render,encounter,baseline,simulate:dt=>{game.__act1Review.update(dt);render();},get mon(){return mon;},set playing(v){playing=v;},get playing(){return playing;}};
+ el('status').textContent=`Ready · ${Object.keys(api.DATA.ACT1_ANIMATIONS).length} enemies · six authored frames per action`;document.body.dataset.testStatus='passed';
+ function loop(t){if(playing)step(Math.min(.04,(t-last)/1000||1/60));last=t;requestAnimationFrame(loop);}requestAnimationFrame(loop);
+}catch(e){fail(e);}
+</script></html>
+

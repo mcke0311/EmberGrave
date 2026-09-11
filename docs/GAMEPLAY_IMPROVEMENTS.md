@@ -8,7 +8,9 @@ Implemented in the existing working tree without a save-format change. Portals a
 - `enterMap` accepts arrival, cached-instance reuse, and recoverable-loading options. Portal and waypoint methods return `Promise<boolean>`, share a pending-travel guard, preserve the source on load failure, and emit one travel sound after success.
 - Skill aether costs use the original rank-one cost multiplied by effective rank, including equipment ranks, before existing cost modifiers. Talent ranks still cost one point. Free attacks, free skills, toggle deactivation, and existing channel/stance rates retain their rules.
 - Each living maintained companion costs its summoning skill's effective rank in aether per simulation second. Costs add across skeletons, plague mages, bone golems, wolves, boars, hawks, and bears, using each companion's owner and `sourceSkill`. Gear changes take effect immediately. Regeneration and potions offset drain; depletion from upkeep, casting, or channels runs the normal companion death lifecycle once. Delayed summons created at zero also die. Upkeep does not emit spend-item procs. The HUD and skill details show upkeep.
-- Aimed Shot, Split Volley, Drawn Shot, Ricochet Shard, Skewering Bolt, Arrowfall, and Serrated Arrows require a bow or crossbow. Casting, tooltips, and action slots share the restriction. Incompatible weapon swaps cancel unreleased shots without refund; released arrows retain their weapon identity. Serrated Arrows applies only to bow/crossbow hits.
+- Aimed Shot, Split Volley, Drawn Shot, Ricochet Shard, and Arrowfall require a bow or crossbow. Casting, tooltips, and action slots share the restriction. Incompatible weapon swaps cancel unreleased shots without refund; released arrows retain their weapon identity.
+- Master of the Hunt replaces Skewering Bolt as a passive: all damaging attacks, including spells and traps, apply physical bleed with any weapon. Each rank adds 3 damage/s for 3 seconds; repeated hits refresh the strongest bleed without stacking. Existing ranks and milestone slots carry over, and old action-bar bindings are cleared on load.
+- Arrowfall supports one active zone per caster. Recasting replaces the previous zone.
 
 ## Interface and sound
 
@@ -67,3 +69,22 @@ The complete historical suite is **not fully green**:
 - `tools/validate_sprite_assets.py --source-only` reports older fixed role counts/source-string expectations and unfinished source provenance in other regional artwork being edited in this working tree. The new enemy-specific contract verifies all 40 imported sprites against the production descriptor and mask formats. It does not replace the global validator.
 
 On this Windows host, Node was run with `--preserve-symlinks --preserve-symlinks-main`. Browser scripts require Playwright and Chrome, and default to `http://127.0.0.1:8755`; set `GAME_REVIEW_URL` to use another local HTTP server. Production script URLs include an `improvements=1` cache revision alongside existing revisions.
+
+## Snare combo replacements
+
+- Dragnet replaces Tripwire: pull enemies into prepared traps, then root them. Bosses receive a slow instead. Pulls respect walls and terrain surfaces, and roots block movement abilities while allowing stationary attacks.
+- Exploit Weakness replaces Snare Decoy: each distinct slow/root/physical bleed adds 3% snare hit damage per effective rank, up to three conditions. First-hit conditions affect subsequent hits; damage-over-time ticks are excluded.
+- Caltrop Field now uses Dexterity and Trap Damage scaling. All five snare attacks share the same conditional multiplier; Master of the Hunt supplies physical bleed.
+- Existing skill IDs, investments and milestone slots carry over. Tripwire bindings become Dragnet; Snare Decoy bindings clear. The later Veil rebuild replaces After-Image with Shadow Flurry, preserving its skill ID and binding.
+- Validation: `tests/snare_tree_contract.mjs` covers conditions, damage paths, interrupts, pulls, roots, mobility, bosses and perks; `tests/gameplay_improvements_contract.mjs` checks save migration. `tests/snare_tree_browser.cjs` captures the net, gathered/rooted enemies, and the new tree in `tests/qa/snare_tree`.
+
+The broader Act III combat contract currently fails the unrelated `desert_wastes/caravan mixed court roles` map-generation assertion; the isolated roster check reproduces with the original HEAD entity implementation.
+
+## Veil: expose and punish
+
+- Smoke Bomb → Umbral Knife; Serrated Arrows → Dusk Cleave; After-Image → Shadow Flurry; Hemorrhage → Deathblow. All four are damaging physical weapon attacks usable with any weapon.
+- Knife applies a 4s non-stacking Exposed debuff. The other three attacks gain +30% damage against it without consuming it. Exposed works on bosses and is not a snare condition.
+- Shadowstep grants a 3s Shadow Ambush, consumed at the next Veil attack’s first release and empowering that entire cast by 25%. Quickening accelerates attack cycles, including all Flurry releases.
+- Flurry visits each eligible enemy before repeating; Deathblow scales with missing life and detonates Killing Mark once. Bleed, poison, and Quarry remain intact. Existing weapon effects, critical strikes, guard, leech, and Hunt bleed still apply.
+- Ranks, tree positions, prerequisites, all four old active bindings, and milestone selection indices survive loading. Transient states and pending releases clear on lifecycle changes.
+- `tests/veil_tree_contract.mjs` covers standalone damage, bonuses, milestones, timing, target distribution, walls, floors, interruption, guard, leech, and mark re-entry. Save migration is covered by `tests/gameplay_improvements_contract.mjs`; visual captures are produced by `tests/veil_tree_browser.cjs`.

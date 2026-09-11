@@ -77,6 +77,7 @@ const EnemySkills=(()=>{
     }
     start(id,target){
       const m=this.mon,s=this.profile.skills[id];if(!s||!this.valid()||this.active||this.cooldowns[id]>0)return false;
+      if(['rush','blink'].includes(id)&&m.movementLocked())return false;
       let shape,point;
       const d=target?U.dist(m.x,m.y,target.x,target.y):Infinity;
       if(id==='heal'){target=this.patient(s);if(!target)return false;shape=circle(target,.75);}

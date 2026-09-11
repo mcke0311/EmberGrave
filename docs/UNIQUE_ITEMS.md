@@ -1,6 +1,33 @@
 # Unique items
 
-162 named brown items, with 168 signature powers including both glyph modes. Generated from the authored runtime catalogue by `node tools/export_unique_catalog.mjs`.
+163 named brown items, with 169 signature powers including both glyph modes. Generated from the authored runtime catalogue by `node tools/export_unique_catalog.mjs`.
+
+## Equipment balance and class powers
+
+All 139 equipment identities have fresh class, tree or talent powers. Only the named class receives the power; other classes may equip the item for its ordinary stats. Learned ranks increase without unlocking talents or perk choices. Skill modifiers compose after selected perks and are captured for each cast.
+
+Equipment carries three to four fixed thematic support stats. Values reach the upper 90% point of the strongest eligible live affix range at the item’s authored level, retaining stronger historical values. Names, bases, art and drop levels remain stable. Brown charms, jewels and glyphs retain their stats and powers.
+
+## Elemental damage affixes
+
+Fire, Cold, Lightning, Poison, Shadow and Earth each have a percentage-damage prefix. They roll on weapons, off-hands, helms, gloves, rings, amulets and jewels; charms are excluded. Jewels retain their 70% stat scaling.
+
+| Minimum item level | Bonus |
+|---|---|
+| 2 | 5–10% |
+| 15 | 11–20% |
+| 30 | 21–35% |
+| 50 | 36–50% |
+| 70 | 51–65% |
+| 90 | 66–80% |
+
+Matching bonuses add together and multiply player damage after conversion, alongside existing spell and weapon scaling. Player spells, added weapon elements, fields, item effects and damage over time benefit. Summons use their own bonuses. Damage over time captures the bonus when applied; spreads and same-element hit-derived effects inherit it without applying it again. Existing physical trap impacts and enemy mitigation remain unchanged; elemental trap burns benefit.
+
+## Summon affixes
+
+Summon Damage and Summon Life are independent, normal-weight prefixes on all weapons, gloves and helmets. They use the same six level thresholds and percentage ranges as the elemental affixes above, and do not roll on other slots, charms or jewels. Matching bonuses add across equipment. Damage increases companion attacks using their current owner bonus; Life increases maximum Life when summoned or when a golem is rebuilt, without healing existing companions on equipment swaps.
+
+Ten brown items carry these support stats at their level-appropriate upper-90% roll: Hollow Crown, Soulwhisper, Gravewand, Skullhelm, Boneward Casque, Wolfsplit, Huntsmaw, Gravewrought Grips, Deadhand and Sepulcher’s Clutch. Their powers and identities are preserved; saved copies receive the new stats on load.
 
 ## Drop rules
 
@@ -22,177 +49,177 @@ Existing saved Uniques receive canonical stats and powers on load; identity, ide
 
 `u_gravebite` · Item level 3
 
-Supporting stats: +39% Damage; 3% Life Stolen per Hit; +33% Damage to Undead.
+Supporting stats: +39% Damage; 3% Life Stolen per Hit; +70% Damage to Undead.
 
-Coffin Ward — Kills against undead: gain a barrier worth 8% of maximum Life for 5s; refreshes, never accumulates. 3s cooldown. Duplicates do not stack.
+First Beat — Tempo Strike (Vanguard): +1 Tempo generated. Vanguard only. Duplicates do not stack.
 
 ### Widow's Lament
 
 `u_widow` · Item level 3
 
-Supporting stats: Adds 8 Poison Damage over 3s; +6 Dexterity; +10% Attack Speed.
+Supporting stats: Adds 14 Poison Damage over 3s; +6 Dexterity; +10% Attack Speed; +19% Damage.
 
-The Third Mourning — Weapon hits (3 qualifying events on the same target): erupt within 2.5 yards for 55% of hit damage as poison damage. 3s cooldown. Duplicates do not stack.
+Widow's Lesson — Umbral Knife (Veil Ranger): +1 to learned talent ranks; does not unlock talents or perk choices. Veil Ranger only. Duplicates do not stack.
 
 ### Cindershroud
 
 `u_cinder` · Item level 4
 
-Supporting stats: +39% Armor; Fire Resist +13%; Attackers take 5 Damage.
+Supporting stats: +39% Armor; Fire Resist +17%; Attackers take 5 Damage.
 
-Banked Wrath — Damage received (3 qualifying events): erupt within 3 yards for 50% of damage taken as fire damage. 6s cooldown. Duplicates do not stack.
+Walking Furnace — Heat Haze (Ember Witch): +25 Scorch damage bonus (%). Ember Witch only. Duplicates do not stack.
 
 ### Oathkeeper's Wall
 
 `u_oath` · Item level 6
 
-Supporting stats: +8% Block Chance; All Resistances +6%; +20 to Life.
+Supporting stats: +10% Block Chance; All Resistances +9%; +29 to Life.
 
-Kept Promise — Blocks: your next weapon hit within 6s deals 45% more damage. 5s cooldown. Duplicates do not stack.
+Oath Repaid — Riposte Stance (Vanguard): +6 Aether returned per parry. Vanguard only. Duplicates do not stack.
 
 ### Hollow Crown
 
 `u_crown` · Item level 5
 
-Supporting stats: +1 to All Talents; +19 to Aether; +11% Better Chance of Rare Loot.
+Supporting stats: +1 to All Talents; +19 to Aether; +14% Better Chance of Rare Loot; +10% Summon Damage.
 
-Empty Throne — Aether spent (30 Aether): your next spell hit within 6s deals 45% more damage. 5s cooldown. Duplicates do not stack.
+Crown of Hexes — Hex tree (Gravebinder): +1 to learned talent ranks; does not unlock talents or perk choices. Gravebinder only. Duplicates do not stack.
 
 ### Marrow Band
 
 `u_marrow` · Item level 4
 
-Supporting stats: +18 to Life; 3% Life Stolen per Hit; +6 Vitality.
+Supporting stats: +18 to Life; 4% Life Stolen per Hit; +6 Vitality.
 
-Living Marrow — Healing beyond full Life (5 Life overhealed): gain a barrier worth 5% of maximum Life for 6s; refreshes, never accumulates. 3s cooldown. Duplicates do not stack.
+Blood of the Pack — Kindred Bond (Wildkeeper): +1 to learned talent ranks; does not unlock talents or perk choices. Wildkeeper only. Duplicates do not stack.
 
 ### Stormcaller's Knot
 
 `u_stormknot` · Item level 5
 
-Supporting stats: Adds 1-9 Lightning Damage; +11% Cast Speed; Lightning Resist +13%.
+Supporting stats: Adds 1-10 Lightning Damage; +11% Cast Speed; Lightning Resist +17%.
 
-Braided Thunder — Weapon or spell hits; alternate weapon and spell hits: arc to 3 other enemies within 5 yards for 40% of hit damage as light damage. 4s cooldown. Duplicates do not stack.
+Braided Totem — Storm Totem (Wildkeeper): 20% less totem attack interval. Wildkeeper only. Duplicates do not stack.
 
 ### Stridewraith
 
 `u_stride` · Item level 5
 
-Supporting stats: +16% Movement Speed; +6 Dexterity; Cold Resist +13%.
+Supporting stats: +16% Movement Speed; +6 Dexterity; Cold Resist +17%.
 
-The Late Footfall — Walking (6 yards): +18% Evasion for 3s. 6s cooldown. Duplicates do not stack.
+Late Arrival — Shadowstep (Veil Ranger): 35% less Aether cost. Veil Ranger only. Duplicates do not stack.
 
 ### Kingsplitter
 
 `u_kingsplit` · Item level 8
 
-Supporting stats: +45% Damage; +4% Critical Strike Chance; +7 Strength.
+Supporting stats: +45% Damage; +5% Critical Strike Chance; +7 Strength.
 
-Crowncrack — Weapon hits that critically strike (2 qualifying events on the same target): the target takes 18% more damage for 5s; strongest exposure applies. 5s cooldown. Duplicates do not stack.
+The Falling Crown — Headtaker (Vanguard): 40% more damage against wounded enemies. Vanguard only. Duplicates do not stack.
 
 ### Dawnbreaker
 
 `u_gen_0_0` · Item level 5
 
-Supporting stats: +41% Damage; +6 Strength; Fire Resist +13%.
+Supporting stats: +41% Damage; +6 Strength; Fire Resist +17%.
 
-First Light — Weapon hits against enemies at or above 80% Life: erupt within 2.5 yards for 40% of hit damage as fire damage. 5s cooldown. Duplicates do not stack.
+Breaking Dawn — Bull Charge (Vanguard): 50% more charge width. Vanguard only. Duplicates do not stack.
 
 ### Sunder
 
 `u_gen_0_2` · Item level 13
 
-Supporting stats: +51% Damage; +56 Attack Rating; +18% Critical Damage.
+Supporting stats: +51% Damage; +78 Attack Rating; +24% Critical Damage.
 
-Fault Line — Weapon hits against elites or bosses: the target takes 12% more damage for 4s; strongest exposure applies. 5s cooldown. Duplicates do not stack.
+Assault Doctrine — Assault tree (Vanguard): +1 to learned talent ranks; does not unlock talents or perk choices. Vanguard only. Duplicates do not stack.
 
 ### Kingsbane
 
 `u_gen_0_4` · Item level 24
 
-Supporting stats: +64% Damage; +10 Strength; 4% Life Stolen per Hit.
+Supporting stats: +64% Damage; +13 Strength; 7% Life Stolen per Hit.
 
-Royal Tithe — Weapon hits against bosses: restore 3% of maximum Life. 5s cooldown. Duplicates do not stack.
+Returning Steel — Returning Axe (Vanguard): +1 returning axes. Vanguard only. Duplicates do not stack.
 
 ### Worldcleaver
 
 `u_gen_0_6` · Item level 39
 
-Supporting stats: +82% Damage; +6% Critical Strike Chance; +46 to Life.
+Supporting stats: +98% Damage; +18% Critical Strike Chance; +107 to Life.
 
-Cleaving Horizon — Kills that critically strike: erupt within 3 yards for 70% of killing-hit damage (63 for kills over time) as phys damage. 5s cooldown. Duplicates do not stack.
+Worldfall — Skyfall Leap (Vanguard): 50% more landing radius. Vanguard only. Duplicates do not stack.
 
 ### Mornsplitter
 
 `u_gen_0_8` · Item level 56
 
-Supporting stats: +102% Damage; +16% Attack Speed; Cold Resist +23%.
+Supporting stats: +195% Damage; +67% Attack Speed; Cold Resist +125%.
 
-Morning Pursuit — Weapon hits against slowed enemies: +20% Attack Speed for 4s. 5s cooldown. Duplicates do not stack.
+Marching Fissure — Seismic Slam (Vanguard): 50% more fissure reach. Vanguard only. Duplicates do not stack.
 
 ### Heaven's Edge
 
 `u_gen_0_10` · Item level 74
 
-Supporting stats: +124% Damage; +20 Dexterity; Lightning Resist +27%.
+Supporting stats: +328% Damage; +70 Dexterity; Lightning Resist +125%.
 
-Heaven's Answer — Weapon hits at least 5 yards away: arc to 3 other enemies within 5 yards for 35% of hit damage as light damage. 5s cooldown. Duplicates do not stack.
+Heaven's Lesson — Skyfall Leap (Vanguard): +3 to learned talent ranks; does not unlock talents or perk choices. Vanguard only. Duplicates do not stack.
 
 ### Aurora's Reckoning
 
 `u_gen_0_12` · Item level 93
 
-Supporting stats: +147% Damage; +38% Critical Damage; All Resistances +14%.
+Supporting stats: +548% Damage; +152% Critical Damage; All Resistances +82%.
 
-Aurora Verdict — Weapon hits that critically strike (3 qualifying events): erupt within 2.5 yards for 40% of hit damage as cold damage; gain a barrier worth 6% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Chain of Command — Harpoon Chain (Vanguard): 35% less Aether cost. Vanguard only. Duplicates do not stack.
 
 ### Gorewake
 
 `u_gen_1_1` · Item level 9
 
-Supporting stats: +46% Damage; 3% Life Stolen per Hit; +22 to Life.
+Supporting stats: +46% Damage; 4% Life Stolen per Hit; +48 to Life.
 
-Red Wake — Kills within 3 yards: +25% Movement Speed for 4s. 5s cooldown. Duplicates do not stack.
+Gore Tempo — Tempo Strike (Vanguard): +1 to learned talent ranks; does not unlock talents or perk choices. Vanguard only. Duplicates do not stack.
 
 ### Reaver's End
 
 `u_gen_1_3` · Item level 18
 
-Supporting stats: +57% Damage; +9 Strength; All Resistances +7%.
+Supporting stats: +57% Damage; +9 Strength; All Resistances +15%.
 
-Reaver's Shelter — Weapon hits while at or below 40% Life: gain a barrier worth 10% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Unspent Fury — Sunder Combo (Vanguard): +1 Tempo retained after the finisher. Vanguard only. Duplicates do not stack.
 
 ### Skullsplit
 
 `u_gen_1_5` · Item level 31
 
-Supporting stats: +72% Damage; +6% Critical Strike Chance; +92 Attack Rating.
+Supporting stats: +79% Damage; +10% Critical Strike Chance; +156 Attack Rating.
 
-Skull Fracture — Weapon hits against undead: the target takes 12% more damage for 4s; strongest exposure applies; restore 4% of maximum Aether. 5s cooldown. Duplicates do not stack.
+Skull Frenzy — Berserker Stance (Vanguard): +20 stance attack speed bonus (%). Vanguard only. Duplicates do not stack.
 
 ### Ruin
 
 `u_gen_1_7` · Item level 47
 
-Supporting stats: +91% Damage; Adds 15-25 Fire Damage; +14 Strength.
+Supporting stats: +145% Damage; Adds 52-86 Fire Damage; +24 Strength.
 
-Ruin's Echo — Kills against burning enemies: arc to 4 other enemies within 5 yards for 35% of killing-hit damage (37 for kills over time) as fire damage. 5s cooldown. Duplicates do not stack.
+Ruined Steel — Weapon Mastery (Vanguard): +2 to learned talent ranks; does not unlock talents or perk choices. Vanguard only. Duplicates do not stack.
 
 ### Marrowhunger
 
 `u_gen_1_9` · Item level 65
 
-Supporting stats: +113% Damage; 5% Life Stolen per Hit; +18 Vitality.
+Supporting stats: +328% Damage; 15% Life Stolen per Hit; +41 Vitality.
 
-Marrow Feast — Weapon hits against enemies exposed by a Unique power: restore 5% of maximum Life. 5s cooldown. Duplicates do not stack.
+Executioner's Appetite — Headtaker (Vanguard): +0.04 execution Life threshold. Vanguard only. Duplicates do not stack.
 
 ### The Crimson Tithe
 
 `u_gen_1_11` · Item level 84
 
-Supporting stats: +136% Damage; +82 to Life; +36% Critical Damage.
+Supporting stats: +548% Damage; +443 to Life; +152% Critical Damage.
 
-Paid in Crimson — Damage received from melee attacks: your next weapon hit within 6s deals 60% more damage. 7s cooldown. Duplicates do not stack.
+Crimson Counter — Riposte Stance (Vanguard): 30% less time between parries. Vanguard only. Duplicates do not stack.
 
 ### Whisperfang
 
@@ -200,519 +227,519 @@ Paid in Crimson — Damage received from melee attacks: your next weapon hit wit
 
 Supporting stats: +41% Damage; +6 Dexterity; +11% Attack Speed.
 
-Whispered Opening — Weapon hits against enemies at or above 80% Life: inflict 60% of hit damage as poison damage over 3s. 5s cooldown. Duplicates do not stack.
+The Unseen Discipline — Veil tree (Veil Ranger): +1 to learned talent ranks; does not unlock talents or perk choices. Veil Ranger only. Duplicates do not stack.
 
 ### Nightkiss
 
 `u_gen_2_2` · Item level 13
 
-Supporting stats: +51% Damage; Adds 13 Poison Damage over 3s; 3% Life Stolen per Hit.
+Supporting stats: +51% Damage; Adds 38 Poison Damage over 3s; 4% Life Stolen per Hit.
 
-Night's Kiss — Weapon hits against poisoned enemies: restore 6% of maximum Aether. 5s cooldown. Duplicates do not stack.
+Lingering Opening — Umbral Knife (Veil Ranger): 60% more Exposed duration. Veil Ranger only. Duplicates do not stack.
 
 ### Quietus
 
 `u_gen_2_4` · Item level 24
 
-Supporting stats: +64% Damage; +5% Critical Strike Chance; +19% Movement Speed.
+Supporting stats: +64% Damage; +10% Critical Strike Chance; +19% Movement Speed.
 
-Quiet Passing — Kills against poisoned enemies: +20% Evasion for 4s. 5s cooldown. Duplicates do not stack.
+Quiet Crescent — Dusk Cleave (Veil Ranger): 30% more cleave angle. Veil Ranger only. Duplicates do not stack.
 
 ### Severance
 
 `u_gen_2_6` · Item level 39
 
-Supporting stats: +82% Damage; +14% Attack Speed; +13 Dexterity.
+Supporting stats: +98% Damage; +29% Attack Speed; +13 Dexterity.
 
-Severed Rhythm — Weapon hits (4 qualifying events): your next spell hit within 6s deals 40% more damage. 5s cooldown. Duplicates do not stack.
+Severing Flurry — Shadow Flurry (Veil Ranger): +2 blades. Veil Ranger only. Duplicates do not stack.
 
 ### Venomwhisper
 
 `u_gen_2_8` · Item level 56
 
-Supporting stats: +102% Damage; Adds 34 Poison Damage over 3s; +142 Attack Rating.
+Supporting stats: +195% Damage; Adds 264 Poison Damage over 3s; +539 Attack Rating.
 
-Whispering Venom — Weapon hits that critically strike: inflict 80% of hit damage as poison damage over 3s; slow non-boss enemies within 3 yards by 20% for 3s. 5s cooldown. Duplicates do not stack.
+Whispered Step — Shadowstep (Veil Ranger): +3 to learned talent ranks; does not unlock talents or perk choices. Veil Ranger only. Duplicates do not stack.
 
 ### The Silent Thorn
 
 `u_gen_2_10` · Item level 74
 
-Supporting stats: +124% Damage; +20 Dexterity; +34% Critical Damage.
+Supporting stats: +328% Damage; +70 Dexterity; +152% Critical Damage.
 
-Silent Thorn — Weapon hits against cursed or marked enemies: the target takes 16% more damage for 4s; strongest exposure applies. 5s cooldown. Duplicates do not stack.
+Thorn in the Mark — Killing Mark (Veil Ranger): 60% more mark detonation damage. Veil Ranger only. Duplicates do not stack.
 
 ### Last Breath
 
 `u_gen_2_12` · Item level 93
 
-Supporting stats: +147% Damage; 5% Life Stolen per Hit; +89 to Life.
+Supporting stats: +548% Damage; 25% Life Stolen per Hit; +443 to Life.
 
-Borrowed Breath — Kills while at or below 40% Life: restore 8% of maximum Life; +20% Movement Speed for 4s. 8s cooldown. Duplicates do not stack.
+Last Breath Taken — Deathblow (Veil Ranger): 50% more damage against wounded enemies. Veil Ranger only. Duplicates do not stack.
 
 ### Wintershot
 
 `u_gen_3_1` · Item level 9
 
-Supporting stats: +46% Damage; +7 Dexterity; Adds 5-8 Cold Damage.
+Supporting stats: +46% Damage; +7 Dexterity; Adds 7-11 Cold Damage.
 
-Winter's Distance — Weapon hits at least 5 yards away: slow non-boss enemies within 3 yards by 45% for 3s. 5s cooldown. Duplicates do not stack.
+Winter Quarry — Aimed Shot (Veil Ranger): +1 Quarry stacks per arrow. Veil Ranger only. Duplicates do not stack.
 
 ### Stormstring
 
 `u_gen_3_3` · Item level 18
 
-Supporting stats: +57% Damage; Adds 1-15 Lightning Damage; +12% Attack Speed.
+Supporting stats: +57% Damage; Adds 1-55 Lightning Damage; +19% Attack Speed.
 
-Strung Thunder — Weapon hits against slowed enemies: arc to 4 other enemies within 5 yards for 35% of hit damage as light damage. 5s cooldown. Duplicates do not stack.
+Storm Volley — Split Volley (Veil Ranger): +2 arrows. Veil Ranger only. Duplicates do not stack.
 
 ### Farsong
 
 `u_gen_3_5` · Item level 31
 
-Supporting stats: +72% Damage; +92 Attack Rating; +37 to Aether.
+Supporting stats: +79% Damage; +156 Attack Rating; +43 to Aether.
 
-Returning Song — Kills at least 5 yards away: restore 7% of maximum Aether; your next weapon hit within 6s deals 25% more damage. 5s cooldown. Duplicates do not stack.
+A Song Already Drawn — Drawn Shot (Veil Ranger): 30% less full-draw time. Veil Ranger only. Duplicates do not stack.
 
 ### Hawkeye
 
 `u_gen_3_7` · Item level 47
 
-Supporting stats: +91% Damage; +7% Critical Strike Chance; +14 Dexterity.
+Supporting stats: +145% Damage; +33% Critical Strike Chance; +24 Dexterity.
 
-Unblinking Hunt — Weapon hits after standing still for 1s: the target takes 15% more damage for 4s; strongest exposure applies. 5s cooldown. Duplicates do not stack.
+Hawk's Lesson — Eagle Eye (Veil Ranger): +2 to learned talent ranks; does not unlock talents or perk choices. Veil Ranger only. Duplicates do not stack.
 
 ### Frostpierce
 
 `u_gen_3_9` · Item level 65
 
-Supporting stats: +113% Damage; Adds 20-33 Cold Damage; +31% Critical Damage.
+Supporting stats: +328% Damage; Adds 79-131 Cold Damage; +152% Critical Damage.
 
-Pierced Winter — Weapon hits against frozen enemies: erupt within 2.5 yards for 65% of hit damage as phys damage. 5s cooldown. Duplicates do not stack.
+Winter Ricochet — Ricochet Shard (Veil Ranger): +2 ricochets. Veil Ranger only. Duplicates do not stack.
 
 ### The Distant Tempest
 
 `u_gen_3_11` · Item level 84
 
-Supporting stats: +136% Damage; +18% Attack Speed; Lightning Resist +29%.
+Supporting stats: +548% Damage; +114% Attack Speed; Lightning Resist +125%.
 
-Distant Weather — Weapon hits (4 qualifying events on the same target): arc to 3 other enemies within 5 yards for 35% of hit damage as light damage; +18% Movement Speed for 4s. 5s cooldown. Duplicates do not stack.
+Distant Aim — Aimed Shot (Veil Ranger): +4 to learned talent ranks; does not unlock talents or perk choices. Veil Ranger only. Duplicates do not stack.
 
 ### Tempest
 
 `u_gen_4_0` · Item level 5
 
-Supporting stats: +23% Spell Power; +11% Cast Speed; Adds 1-9 Lightning Damage; +19 to Aether.
+Supporting stats: +23% Spell Power; +11% Cast Speed; +19 to Aether; +10% Lightning Damage.
 
-Gathering Tempest — Spell hits with lightning (3 qualifying events): arc to 3 other enemies within 5 yards for 35% of hit damage as light damage. 5s cooldown. Duplicates do not stack.
+Forked Tempest — Chain Lightning (Ember Witch): +2 chain targets. Ember Witch only. Duplicates do not stack.
 
 ### Emberheart
 
 `u_gen_4_2` · Item level 13
 
-Supporting stats: +28% Spell Power; Adds 6-10 Fire Damage; +18% Aether Regeneration.
+Supporting stats: +28% Spell Power; +29% Aether Regeneration; +10% Fire Damage.
 
-Heart of the Pyre — Spell hits against burning enemies: restore 4% of maximum Life. 5s cooldown. Duplicates do not stack.
+Heart of Scorch — Emberbolt (Ember Witch): 100% more Scorch damage per stack. Ember Witch only. Duplicates do not stack.
 
 ### Frostward Rod
 
 `u_gen_4_4` · Item level 24
 
-Supporting stats: +36% Spell Power; Adds 9-15 Cold Damage; Cold Resist +17%.
+Supporting stats: +36% Spell Power; Cold Resist +29%; +19% Cold Damage.
 
-Winter Refuge — Spell hits with cold (3 qualifying events): gain a barrier worth 8% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Winter Stillness — Frost Nova (Ember Witch): 40% more freeze duration. Ember Witch only. Duplicates do not stack.
 
 ### Stormcrown
 
 `u_gen_4_6` · Item level 39
 
-Supporting stats: +45% Spell Power; +14% Cast Speed; Lightning Resist +20%.
+Supporting stats: +45% Spell Power; +36% Cast Speed; Lightning Resist +71%; +34% Lightning Damage.
 
-Crowned in Thunder — Skill uses with lightning: for 6s, Chain Lightning gains +1 chain targets. 5s cooldown. Duplicates do not stack.
+Thunder Sovereign — Chain Lightning (Ember Witch): 35% more lightning damage. Ember Witch only. Duplicates do not stack.
 
 ### Cinderveil
 
 `u_gen_4_8` · Item level 56
 
-Supporting stats: +56% Spell Power; Adds 18-29 Fire Damage; +60 to Life.
+Supporting stats: +75% Spell Power; +155 to Life; +49% Fire Damage.
 
-Cinder Curtain — Damage received with fire: your next spell hit within 6s deals 50% more damage. 5s cooldown. Duplicates do not stack.
+Feeding the Pyre — Pyre (Ember Witch): 75% more damage per consumed Scorch stack. Ember Witch only. Duplicates do not stack.
 
 ### The Glacial Maelstrom
 
 `u_gen_4_10` · Item level 74
 
-Supporting stats: +68% Spell Power; Adds 23-37 Cold Damage; +67 to Aether.
+Supporting stats: +75% Spell Power; +214 to Aether; +64% Cold Damage.
 
-Glacial Confluence — Kills against frozen enemies: restore 8% of maximum Aether; erupt within 2.5 yards for 55% of killing-hit damage (88 for kills over time) as cold damage. 5s cooldown. Duplicates do not stack.
+Glacial Horizon — Glacier (Ember Witch): 40% more glacier radius. Ember Witch only. Duplicates do not stack.
 
 ### Thunderspire
 
 `u_gen_4_12` · Item level 93
 
-Supporting stats: +80% Spell Power; +19% Cast Speed; +24 Willpower.
+Supporting stats: +80% Spell Power; +65% Cast Speed; +70 Willpower; +79% Lightning Damage.
 
-Spire's Reach — Spell hits at least 5 yards away: the target takes 10% more damage for 4s; strongest exposure applies; arc to 2 other enemies within 5 yards for 35% of hit damage as light damage. 5s cooldown. Duplicates do not stack.
+Threefold Witchcraft — Ember Witch talents: +2 to learned talent ranks; does not unlock talents or perk choices. Ember Witch only. Duplicates do not stack.
 
 ### Hexfinger
 
 `u_gen_5_1` · Item level 9
 
-Supporting stats: +26% Spell Power; +21 to Aether; +7 Willpower.
+Supporting stats: +26% Spell Power; +24 to Aether; +7 Willpower; +10% Shadow Damage.
 
-Hexed Touch — Spell hits against cursed or marked enemies: restore 3% of maximum Life; restore 4% of maximum Aether. 5s cooldown. Duplicates do not stack.
+Frailty Written Deep — Mark of Frailty (Gravebinder): +10 curse amplification (%). Gravebinder only. Duplicates do not stack.
 
 ### Soulwhisper
 
 `u_gen_5_3` · Item level 18
 
-Supporting stats: +32% Spell Power; +19% Aether Regeneration; +29 to Life.
+Supporting stats: +32% Spell Power; +29% Aether Regeneration; +19% Shadow Damage; +19% Summon Damage.
 
-Whispered Succor — Kills by your companions: gain a barrier worth 9% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Second Whisper — Raise Plague Mage (Gravebinder): +1 Plague Mages. Gravebinder only. Duplicates do not stack.
 
 ### Gravewand
 
 `u_gen_5_5` · Item level 31
 
-Supporting stats: +40% Spell Power; +11 Willpower; All Resistances +8%.
+Supporting stats: +40% Spell Power; All Resistances +15%; +34% Shadow Damage; +34% Summon Life.
 
-Grave Instruction — Skill uses using a summon skill: +25% Minion Damage for 6s. 5s cooldown. Duplicates do not stack.
+Bonecraft Testament — Bonecraft tree (Gravebinder): +1 to learned talent ranks; does not unlock talents or perk choices. Gravebinder only. Duplicates do not stack.
 
 ### Rotcaller
 
 `u_gen_5_7` · Item level 47
 
-Supporting stats: +51% Spell Power; Adds 30 Poison Damage over 3s; +48 to Aether.
+Supporting stats: +51% Spell Power; +72 to Aether; +34% Poison Damage.
 
-Rot's Inheritance — Kills against poisoned enemies: erupt within 2.5 yards for 80% of killing-hit damage (85 for kills over time) as poison damage. 5s cooldown. Duplicates do not stack.
+Rot Without Borders — Contagion (Gravebinder): 60% more Contagion spread reach. Gravebinder only. Duplicates do not stack.
 
 ### Tombquill
 
 `u_gen_5_9` · Item level 65
 
-Supporting stats: +62% Spell Power; +17% Cast Speed; +18 Vitality.
+Supporting stats: +75% Spell Power; +65% Cast Speed; +41 Vitality; +49% Shadow Damage.
 
-Tomb Inscription — Skill uses using a curse or Contagion: your next spell hit within 6s deals 35% more damage; gain a barrier worth 5% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Tomb of Beckoning — Hex of Beckoning (Gravebinder): +3 to learned talent ranks; does not unlock talents or perk choices. Gravebinder only. Duplicates do not stack.
 
 ### Wraithsplinter
 
 `u_gen_5_11` · Item level 84
 
-Supporting stats: +75% Spell Power; +22 Willpower; +32% Aether Regeneration.
+Supporting stats: +75% Spell Power; +70 Willpower; +192% Aether Regeneration; +64% Shadow Damage.
 
-Splintered Soul — Spell hits with shadow (3 qualifying events on the same target): arc to 3 other enemies within 5 yards for 35% of hit damage as shadow damage. 5s cooldown. Duplicates do not stack.
+A Thrifty Soul — Soul Siphon (Gravebinder): 35% less channel Aether drain. Gravebinder only. Duplicates do not stack.
 
 ### Aegis of Ash
 
 `u_gen_6_0` · Item level 5
 
-Supporting stats: +40% Armor; +19 to Life; Fire Resist +13%.
+Supporting stats: +40% Armor; +29 to Life; Fire Resist +17%.
 
-Ashen Refuge — Damage received while at or below 40% Life: gain a barrier worth 12% of maximum Life for 5s; refreshes, never accumulates; erupt within 2.5 yards for 35% of damage taken as fire damage. 10s cooldown. Duplicates do not stack.
+Cinder Discipline — Cinder tree (Ember Witch): +1 to learned talent ranks; does not unlock talents or perk choices. Ember Witch only. Duplicates do not stack.
 
 ### Dragonscale
 
 `u_gen_6_2` · Item level 13
 
-Supporting stats: +48% Armor; Fire Resist +15%; +8 Vitality.
+Supporting stats: +48% Armor; Fire Resist +29%; +8 Vitality.
 
-Shed the Flame — Damage received with fire: restore 5% of maximum Life; Fire Resist +15% for 4s. 5s cooldown. Duplicates do not stack.
+Dragonhide Bear — Bear Form (Wildkeeper): 60% more Bear Form duration. Wildkeeper only. Duplicates do not stack.
 
 ### Bulwark
 
 `u_gen_6_4` · Item level 24
 
-Supporting stats: +59% Armor; +34 to Life; Attackers take 11 Damage.
+Supporting stats: +59% Armor; +73 to Life; Attackers take 11 Damage.
 
-Holding Ground — Damage received after standing still for 1s: 15% Damage Reduction for 4s. 5s cooldown. Duplicates do not stack.
+Rooted Bulwark — Bulwark Stance (Vanguard): 60% more armor while rooted. Vanguard only. Duplicates do not stack.
 
 ### Cindermail
 
 `u_gen_6_6` · Item level 39
 
-Supporting stats: +74% Armor; +46 to Life; Adds 14-22 Fire Damage.
+Supporting stats: +98% Armor; +107 to Life; Adds 29-48 Fire Damage.
 
-Mail of Embers — Blocks: erupt within 3 yards for 50 damage as fire damage. 5s cooldown. Duplicates do not stack.
+Packed Powder — Powder Trap (Veil Ranger): 50% more trap explosion radius. Veil Ranger only. Duplicates do not stack.
 
 ### Emberweave Carapace
 
 `u_gen_6_8` · Item level 56
 
-Supporting stats: +91% Armor; Fire Resist +23%; +54 to Aether.
+Supporting stats: +154% Armor; Fire Resist +125%; +125 to Aether.
 
-Woven Cinders — Skill uses with fire: +30% Armor for 5s. 5s cooldown. Duplicates do not stack.
+Long Burning Weave — Wall of Fire (Ember Witch): 60% more firewall duration. Ember Witch only. Duplicates do not stack.
 
 ### Scaleforge Vest
 
 `u_gen_6_10` · Item level 74
 
-Supporting stats: +109% Armor; +20 Vitality; All Resistances +12%.
+Supporting stats: +440% Armor; +70 Vitality; All Resistances +49%.
 
-Tempered Scales — Damage received from elites or bosses: gain a barrier worth 8% of maximum Life for 5s; refreshes, never accumulates; restore 4% of maximum Aether. 5s cooldown. Duplicates do not stack.
+Stone Mantle — Stone Form (Wildkeeper): +30 Stone Form armor bonus (%). Wildkeeper only. Duplicates do not stack.
 
 ### Ashen Bastion
 
 `u_gen_6_12` · Item level 93
 
-Supporting stats: +128% Armor; +89 to Life; Physical Damage Reduced by 9.
+Supporting stats: +440% Armor; +443 to Life; Physical Damage Reduced by 40.
 
-Bastion's Reprisal — Damage received (4 qualifying events): the target takes 14% more damage for 4s; strongest exposure applies; Attackers take 25 Damage for 4s. 5s cooldown. Duplicates do not stack.
+Marrow Bastion — Bone Armor (Gravebinder): +4 to learned talent ranks; does not unlock talents or perk choices. Gravebinder only. Duplicates do not stack.
 
 ### Crown of Cinders
 
 `u_gen_7_1` · Item level 9
 
-Supporting stats: +1 to All Talents; +21 to Aether; Fire Resist +14%.
+Supporting stats: +1 to All Talents; +24 to Aether; Fire Resist +29%.
 
-Cinder Coronation — Kills against burning enemies: +20% Cast Speed for 4s. 5s cooldown. Duplicates do not stack.
+Cinder Coronation — Fan of Cinders (Ember Witch): +2 cinder bolts. Ember Witch only. Duplicates do not stack.
 
 ### Skullhelm
 
 `u_gen_7_3` · Item level 18
 
-Supporting stats: +53% Armor; +29 to Life; All Resistances +7%.
+Supporting stats: +53% Armor; +48 to Life; All Resistances +15%; +19% Summon Life.
 
-Bone Audience — Kills against undead: restore 6% of maximum Aether; +25% Armor for 4s. 5s cooldown. Duplicates do not stack.
+Audience of Whispers — Grave Whispers (Gravebinder): +1 to learned talent ranks; does not unlock talents or perk choices. Gravebinder only. Duplicates do not stack.
 
 ### Visage
 
 `u_gen_7_5` · Item level 31
 
-Supporting stats: +1 to All Talents; +13% Cast Speed; +37 to Aether.
+Supporting stats: +1 to All Talents; +19% Cast Speed; +43 to Aether.
 
-Borrowed Face — Skill uses using a curse or Contagion: +16% Evasion for 4s. 5s cooldown. Duplicates do not stack.
+The Beckoning Face — Hex of Beckoning (Gravebinder): 60% more beckoning duration. Gravebinder only. Duplicates do not stack.
 
 ### Doomcap
 
 `u_gen_7_7` · Item level 47
 
-Supporting stats: +51% Spell Power; +7% Critical Strike Chance; +48 to Aether.
+Supporting stats: +51% Spell Power; +33% Critical Strike Chance; +72 to Aether.
 
-Doom's Toll — Spell hits against enemies at or below 35% Life: the target takes 18% more damage for 4s; strongest exposure applies. 5s cooldown. Duplicates do not stack.
+Doom Comes Early — Doom (Gravebinder): 35% less time to full Doom charge. Gravebinder only. Duplicates do not stack.
 
 ### Diadem of the Drowned King
 
 `u_gen_7_9` · Item level 65
 
-Supporting stats: +1 to All Talents; +61 to Aether; Cold Resist +25%.
+Supporting stats: +2 to All Talents; +214 to Aether; Cold Resist +125%.
 
-Drowned Decree — Damage received with cold: arc to 4 other enemies within 5 yards for 35% of damage taken as cold damage. 5s cooldown. Duplicates do not stack.
+Rime Doctrine — Rime tree (Ember Witch): +3 to learned talent ranks; does not unlock talents or perk choices. Ember Witch only. Duplicates do not stack.
 
 ### Boneward Casque
 
 `u_gen_7_11` · Item level 84
 
-Supporting stats: +119% Armor; +82 to Life; +22 Vitality.
+Supporting stats: +440% Armor; +443 to Life; +70 Vitality; +64% Summon Life.
 
-Boneward Memory — Kills by your companions: restore 4% of maximum Life; 10% Damage Reduction for 4s. 5s cooldown. Duplicates do not stack.
+The Gravebinder's Crown — Gravebinder talents: +2 to learned talent ranks; does not unlock talents or perk choices. Gravebinder only. Duplicates do not stack.
 
 ### Hauntpace
 
 `u_gen_8_0` · Item level 5
 
-Supporting stats: +16% Movement Speed; +6 Dexterity; Cold Resist +13%.
+Supporting stats: +16% Movement Speed; +6 Dexterity; Cold Resist +17%.
 
-Haunted Road — Walking within 4 yards of an enemy (5 yards): slow non-boss enemies within 3 yards by 35% for 3s. 5s cooldown. Duplicates do not stack.
+Long Shadow — Shadowstep (Veil Ranger): 50% more Shadowstep reach. Veil Ranger only. Duplicates do not stack.
 
 ### Windsole
 
 `u_gen_8_2` · Item level 13
 
-Supporting stats: +17% Movement Speed; +8 Vitality; +25 to Life.
+Supporting stats: +19% Movement Speed; +8 Vitality; +48 to Life.
 
-Wind at Your Back — Kills while moving: +30% Movement Speed for 3s. 5s cooldown. Duplicates do not stack.
+Fleet March — Fleet of Foot (Vanguard): +1 to learned talent ranks; does not unlock talents or perk choices. Vanguard only. Duplicates do not stack.
 
 ### Ghoststep
 
 `u_gen_8_4` · Item level 24
 
-Supporting stats: +19% Movement Speed; +10 Dexterity; All Resistances +7%.
+Supporting stats: +19% Movement Speed; +13 Dexterity; All Resistances +15%.
 
-Ghost's Reprieve — Walking while at or below 40% Life (4 yards): gain a barrier worth 10% of maximum Life for 5s; refreshes, never accumulates. 7s cooldown. Duplicates do not stack.
+Wolfwind — Wolf Form (Wildkeeper): +20 Wolf Form movement bonus (%). Wildkeeper only. Duplicates do not stack.
 
 ### Swiftmarch
 
 `u_gen_8_6` · Item level 39
 
-Supporting stats: +21% Movement Speed; +14% Attack Speed; +13 Strength.
+Supporting stats: +29% Movement Speed; +29% Attack Speed; +13 Strength.
 
-Marching Edge — Walking (8 yards): your next weapon hit within 6s deals 35% more damage. 5s cooldown. Duplicates do not stack.
+Unbroken Charge — Bull Charge (Vanguard): 50% more charge reach. Vanguard only. Duplicates do not stack.
 
 ### Galeheel
 
 `u_gen_8_8` · Item level 56
 
-Supporting stats: +23% Movement Speed; +16 Dexterity; +54 to Aether.
+Supporting stats: +67% Movement Speed; +41 Dexterity; +125 to Aether.
 
-Gale's Return — Walking while at or below 35% Aether (6 yards): restore 8% of maximum Aether. 5s cooldown. Duplicates do not stack.
+Gale Crossing — Arc Teleport (Ember Witch): 50% more Arc Teleport reach. Ember Witch only. Duplicates do not stack.
 
 ### Pallor Treads
 
 `u_gen_8_10` · Item level 74
 
-Supporting stats: +26% Movement Speed; Cold Resist +27%; +74 to Life.
+Supporting stats: +114% Movement Speed; Cold Resist +125%; +443 to Life.
 
-Pallid Trail — Walking within 4 yards of an enemy (9 yards): erupt within 2.5 yards for 56 damage as cold damage. 5s cooldown. Duplicates do not stack.
+Pallid Snare — Frostbite Trap (Veil Ranger): 50% more Frostbite Trap slow duration. Veil Ranger only. Duplicates do not stack.
 
 ### Breath of the Hollow Road
 
 `u_gen_8_12` · Item level 93
 
-Supporting stats: +29% Movement Speed; +24 Vitality; All Resistances +14%.
+Supporting stats: +114% Movement Speed; +70 Vitality; All Resistances +82%.
 
-Road's Last Breath — Walking (12 yards): restore 3% of maximum Life; your next spell hit within 6s deals 25% more damage. 8s cooldown. Duplicates do not stack.
+Quickened Road — Quickening (Veil Ranger): +4 to learned talent ranks; does not unlock talents or perk choices. Veil Ranger only. Duplicates do not stack.
 
 ### Stormknot
 
 `u_gen_9_1` · Item level 9
 
-Supporting stats: +26% Spell Power; Lightning Resist +14%; +21 to Aether.
+Supporting stats: +26% Spell Power; Lightning Resist +29%; +24 to Aether.
 
-Knotted Current — Spell hits that critically strike: restore 8% of maximum Aether. 5s cooldown. Duplicates do not stack.
+Tempest Doctrine — Tempest tree (Ember Witch): +1 to learned talent ranks; does not unlock talents or perk choices. Ember Witch only. Duplicates do not stack.
 
 ### Heart of the Marsh
 
 `u_gen_9_3` · Item level 18
 
-Supporting stats: +29 to Life; +28 to Aether; Poison Resist +16%.
+Supporting stats: +48 to Life; +28 to Aether; Poison Resist +29%.
 
-Marsh Pulse — Damage received with poison: gain a barrier worth 12% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Marsh Siphon — Soul Siphon (Gravebinder): 50% more maximum channel duration. Gravebinder only. Duplicates do not stack.
 
 ### Soulglass
 
 `u_gen_9_5` · Item level 31
 
-Supporting stats: +40% Spell Power; +11 Willpower; All Resistances +8%.
+Supporting stats: +40% Spell Power; +13 Willpower; All Resistances +15%.
 
-Soul Reflection — Spell hits with shadow: your next weapon hit within 6s deals 40% more damage. 5s cooldown. Duplicates do not stack.
+Static Reflection — Overload (Ember Witch): 60% more damage per Static charge. Ember Witch only. Duplicates do not stack.
 
 ### Eye of the Vigil
 
 `u_gen_9_7` · Item level 47
 
-Supporting stats: +7% Critical Strike Chance; +124 Attack Rating; All Resistances +10%.
+Supporting stats: +33% Critical Strike Chance; +312 Attack Rating; All Resistances +20%.
 
-Vigil's Eye — Weapon hits against elites or bosses: +18% Evasion for 4s. 5s cooldown. Duplicates do not stack.
+Vanguard's Vigil — Vanguard talents: +1 to learned talent ranks; does not unlock talents or perk choices. Vanguard only. Duplicates do not stack.
 
 ### Tempestbinder's Charm
 
 `u_gen_9_9` · Item level 65
 
-Supporting stats: +62% Spell Power; +17% Cast Speed; Lightning Resist +25%.
+Supporting stats: +75% Spell Power; +65% Cast Speed; Lightning Resist +125%.
 
-Bound Tempest — Skill uses with lightning: Adds 1-25 Lightning Damage for 5s. 5s cooldown. Duplicates do not stack.
+Wildkin Covenant — Wildkin tree (Wildkeeper): +3 to learned talent ranks; does not unlock talents or perk choices. Wildkeeper only. Duplicates do not stack.
 
 ### Mirelight Pendant
 
 `u_gen_9_11` · Item level 84
 
-Supporting stats: +82 to Life; +32% Aether Regeneration; Poison Resist +29%.
+Supporting stats: +443 to Life; +192% Aether Regeneration; Poison Resist +125%.
 
-Mirelight Rescue — Kills against cursed or marked enemies: restore 5% of maximum Life; gain a barrier worth 5% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+The Ranger's Pendant — Veil Ranger talents: +2 to learned talent ranks; does not unlock talents or perk choices. Veil Ranger only. Duplicates do not stack.
 
 ### Sanguine Coil
 
 `u_gen_10_0` · Item level 5
 
-Supporting stats: 3% Life Stolen per Hit; +4% Critical Strike Chance; +6 Strength.
+Supporting stats: 4% Life Stolen per Hit; +5% Critical Strike Chance; +6 Strength.
 
-Sanguine Promise — Weapon hits against enemies at or below 35% Life: gain a barrier worth 6% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Circle of the Wild — Wildkeeper talents: +1 to learned talent ranks; does not unlock talents or perk choices. Wildkeeper only. Duplicates do not stack.
 
 ### Bloodloop
 
 `u_gen_10_2` · Item level 13
 
-Supporting stats: +25 to Life; +8 Vitality; All Resistances +6%.
+Supporting stats: +48 to Life; +8 Vitality; All Resistances +9%.
 
-Closing the Loop — Healing beyond full Life (8 Life overhealed): your next weapon hit within 6s deals 30% more damage. 5s cooldown. Duplicates do not stack.
+Bearblood Lesson — Bear Form (Wildkeeper): +1 to learned talent ranks; does not unlock talents or perk choices. Wildkeeper only. Duplicates do not stack.
 
 ### Ring of Ruin
 
 `u_gen_10_4` · Item level 24
 
-Supporting stats: +64% Damage; Adds 9-15 Fire Damage; +12% Attack Speed.
+Supporting stats: +64% Damage; Adds 17-27 Fire Damage; +29% Attack Speed.
 
-Ruinous Spark — Kills against elites or bosses: erupt within 3 yards for 90% of killing-hit damage (54 for kills over time) as fire damage. 5s cooldown. Duplicates do not stack.
+Ruin Rekindled — Pyre (Ember Witch): +0.15 repeat-Pyre chance per stack. Ember Witch only. Duplicates do not stack.
 
 ### Coilfire
 
 `u_gen_10_6` · Item level 39
 
-Supporting stats: +45% Spell Power; +42 to Aether; +14% Cast Speed.
+Supporting stats: +45% Spell Power; +72 to Aether; +36% Cast Speed.
 
-Coiled Ember — Aether spent (40 Aether): erupt within 2.5 yards for 41 damage as fire damage. 5s cooldown. Duplicates do not stack.
+Endless Inferno — Inferno (Ember Witch): 50% more Inferno duration. Ember Witch only. Duplicates do not stack.
 
 ### Emberveins
 
 `u_gen_10_8` · Item level 56
 
-Supporting stats: +60 to Life; Adds 18-29 Fire Damage; 4% Life Stolen per Hit.
+Supporting stats: +155 to Life; Adds 89-147 Fire Damage; 9% Life Stolen per Hit.
 
-Burning Veins — Damage received from melee attacks: inflict 60% of damage taken as fire damage over 3s; restore 3% of maximum Life. 5s cooldown. Duplicates do not stack.
+Soul-fed Veins — Soul Siphon (Gravebinder): 50% more Life drained. Gravebinder only. Duplicates do not stack.
 
 ### Wound of Cinders
 
 `u_gen_10_10` · Item level 74
 
-Supporting stats: +74 to Life; Fire Resist +27%; +34% Critical Damage.
+Supporting stats: +443 to Life; Fire Resist +125%; +152% Critical Damage.
 
-Cinder Wound — Weapon hits against burning enemies: the target takes 14% more damage for 4s; strongest exposure applies. 5s cooldown. Duplicates do not stack.
+Unhealed Mark — Killing Mark (Veil Ranger): 50% more Killing Mark duration. Veil Ranger only. Duplicates do not stack.
 
 ### Serpent's Pyre
 
 `u_gen_10_12` · Item level 93
 
-Supporting stats: Adds 53 Poison Damage over 3s; Adds 28-46 Fire Damage; +24 Dexterity.
+Supporting stats: Adds 743 Poison Damage over 3s; Adds 151-251 Fire Damage; +70 Dexterity.
 
-Serpent's Kindling — Spell hits against poisoned enemies: erupt within 2.5 yards for 45% of hit damage as fire damage; restore 3% of maximum Aether. 5s cooldown. Duplicates do not stack.
+Serpent's Spit — Venom Spit (Gravebinder): 75% more poison damage over time. Gravebinder only. Duplicates do not stack.
 
 ### Earthshaker
 
 `u_gen_11_1` · Item level 9
 
-Supporting stats: +46% Damage; +7 Strength; 11% Reduced Slow/Stun Duration.
+Supporting stats: +46% Damage; +7 Strength; 24% Reduced Slow/Stun Duration.
 
-Seismic Beat — Weapon hits (3 qualifying events on the same target): slow non-boss enemies within 3 yards by 45% for 3s. 5s cooldown. Duplicates do not stack.
+Stormcall Doctrine — Stormcall tree (Wildkeeper): +1 to learned talent ranks; does not unlock talents or perk choices. Wildkeeper only. Duplicates do not stack.
 
 ### Worldhammer
 
 `u_gen_11_3` · Item level 18
 
-Supporting stats: +57% Damage; +29 to Life; Attackers take 9 Damage.
+Supporting stats: +57% Damage; +48 to Life; Attackers take 9 Damage.
 
-World's Rebound — Damage received from melee attacks: erupt within 2.5 yards for 65% of damage taken as earth damage. 5s cooldown. Duplicates do not stack.
+World Fracture — Fissure (Wildkeeper): 60% more fissure width. Wildkeeper only. Duplicates do not stack.
 
 ### Tollbringer
 
 `u_gen_11_5` · Item level 31
 
-Supporting stats: +72% Damage; +11 Vitality; +66% Armor.
+Supporting stats: +79% Damage; +13 Vitality; +79% Armor.
 
-Toll of Stone — Kills within 3 yards: gain a barrier worth 10% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Toll Beneath the Earth — Earthquake (Wildkeeper): 50% more Earthquake radius. Wildkeeper only. Duplicates do not stack.
 
 ### Cataclysm
 
 `u_gen_11_7` · Item level 47
 
-Supporting stats: +91% Damage; +27% Critical Damage; +14 Strength.
+Supporting stats: +145% Damage; +87% Critical Damage; +24 Strength.
 
-Cataclysmic Fault — Weapon hits against enemies exposed by a Unique power: erupt within 3 yards for 65% of hit damage as earth damage. 5s cooldown. Duplicates do not stack.
+Cataclysmic Pull — Cyclone (Wildkeeper): 75% more Cyclone pull. Wildkeeper only. Duplicates do not stack.
 
 ### Doomtoll
 
 `u_gen_11_9` · Item level 65
 
-Supporting stats: +113% Damage; +160 Attack Rating; +61 to Aether.
+Supporting stats: +328% Damage; +921 Attack Rating; +214 to Aether.
 
-Doom's Resonance — Weapon hits against cursed or marked enemies: arc to 4 other enemies within 5 yards for 35% of hit damage as shadow damage. 5s cooldown. Duplicates do not stack.
+Wildshape Covenant — Wildshape tree (Wildkeeper): +3 to learned talent ranks; does not unlock talents or perk choices. Wildkeeper only. Duplicates do not stack.
 
 ### The Sunken Peal
 
 `u_gen_11_11` · Item level 84
 
-Supporting stats: +136% Damage; +82 to Life; Cold Resist +29%.
+Supporting stats: +548% Damage; +443 to Life; Cold Resist +125%.
 
-Sunken Thunder — Weapon hits against slowed enemies: the target takes 12% more damage for 4s; strongest exposure applies; gain a barrier worth 5% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Second Storm — Storm Totem (Wildkeeper): +1 Storm Totems. Wildkeeper only. Duplicates do not stack.
 
 ### Edge of Vows
 
@@ -720,159 +747,159 @@ Sunken Thunder — Weapon hits against slowed enemies: the target takes 12% more
 
 Supporting stats: +41% Damage; +11% Attack Speed; +6 Dexterity.
 
-Vow of Return — Blocks: restore 5% of maximum Aether; +18% Attack Speed for 4s. 5s cooldown. Duplicates do not stack.
+Arms Doctrine — Arms tree (Vanguard): +1 to learned talent ranks; does not unlock talents or perk choices. Vanguard only. Duplicates do not stack.
 
 ### Lightbrand
 
 `u_gen_12_2` · Item level 13
 
-Supporting stats: +51% Damage; Adds 1-13 Lightning Damage; +8 Strength.
+Supporting stats: +51% Damage; Adds 1-25 Lightning Damage; +8 Strength.
 
-Brand of Dawn — Weapon hits against undead: erupt within 2.5 yards for 60% of hit damage as light damage. 5s cooldown. Duplicates do not stack.
+Dawn's Rhythm — Tempo Strike (Vanguard): 50% more Tempo window. Vanguard only. Duplicates do not stack.
 
 ### Kingsblade
 
 `u_gen_12_4` · Item level 24
 
-Supporting stats: +64% Damage; 4% Life Stolen per Hit; +34 to Life.
+Supporting stats: +64% Damage; 7% Life Stolen per Hit; +73 to Life.
 
-King's Mercy — Kills against elites or bosses: restore 6% of maximum Life; All Resistances +10% for 4s. 5s cooldown. Duplicates do not stack.
+King's Rally — Rallying Cry (Vanguard): 40% more rally healing. Vanguard only. Duplicates do not stack.
 
 ### Vowkeeper
 
 `u_gen_12_6` · Item level 39
 
-Supporting stats: +82% Damage; +25% Critical Damage; +13 Dexterity.
+Supporting stats: +98% Damage; +87% Critical Damage; +13 Dexterity.
 
-Unbroken Vow — Weapon hits while at or above 80% Life (4 qualifying events): gain a barrier worth 5% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Lingering Sunder — Sunder Combo (Vanguard): 75% more armor-shred duration. Vanguard only. Duplicates do not stack.
 
 ### Dawnsworn
 
 `u_gen_12_8` · Item level 56
 
-Supporting stats: +102% Damage; Fire Resist +23%; +16% Attack Speed.
+Supporting stats: +195% Damage; Fire Resist +125%; +67% Attack Speed.
 
-Dawnsworn Rhythm — Weapon or spell hits; alternate weapon and spell hits: your next weapon hit within 6s deals 25% more damage; restore 4% of maximum Aether. 5s cooldown. Duplicates do not stack.
+Berserker's Vow — Berserker Stance (Vanguard): +3 to learned talent ranks; does not unlock talents or perk choices. Vanguard only. Duplicates do not stack.
 
 ### The Gilded Promise
 
 `u_gen_12_10` · Item level 74
 
-Supporting stats: +124% Damage; +178 Attack Rating; All Resistances +12%.
+Supporting stats: +328% Damage; +921 Attack Rating; All Resistances +49%.
 
-Gilded Reversal — Blocks from elites or bosses: the target takes 20% more damage for 4s; strongest exposure applies. 5s cooldown. Duplicates do not stack.
+Gilded Riposte — Riposte Stance (Vanguard): 60% more counter stun duration. Vanguard only. Duplicates do not stack.
 
 ### Throneward
 
 `u_gen_12_12` · Item level 93
 
-Supporting stats: +147% Damage; +24 Vitality; +89 to Life.
+Supporting stats: +548% Damage; +70 Vitality; +443 to Life.
 
-Guard the Throne — Weapon hits against bosses: 12% Damage Reduction for 4s. 5s cooldown. Duplicates do not stack.
+Standard of Mercy — Standard of the Last Stand (Vanguard): 60% more standard healing. Vanguard only. Duplicates do not stack.
 
 ### Tusk
 
 `u_gen_13_1` · Item level 9
 
-Supporting stats: +46% Damage; 3% Life Stolen per Hit; +7 Strength.
+Supporting stats: +46% Damage; 4% Life Stolen per Hit; +7 Strength.
 
-Tusk's Hunger — Weapon hits while at or below 40% Life: inflict 80% of hit damage as phys damage over 3s. 5s cooldown. Duplicates do not stack.
+Long Rabies — Rabies (Wildkeeper): 50% more Rabies duration. Wildkeeper only. Duplicates do not stack.
 
 ### Cleaver's Joy
 
 `u_gen_13_3` · Item level 18
 
-Supporting stats: +57% Damage; +48% Damage to Undead; +5% Critical Strike Chance.
+Supporting stats: +57% Damage; +120% Damage to Undead; +5% Critical Strike Chance.
 
-Cleaver's Revel — Kills against undead: +25% Attack Speed for 4s. 5s cooldown. Duplicates do not stack.
+Cleaving Fire — Fire Claw (Wildkeeper): +1 fire explosions. Wildkeeper only. Duplicates do not stack.
 
 ### Bonereaver
 
 `u_gen_13_5` · Item level 31
 
-Supporting stats: +72% Damage; +13% Attack Speed; +20% Movement Speed.
+Supporting stats: +79% Damage; +29% Attack Speed; +29% Movement Speed.
 
-Bone Reaping — Kills within 3 yards: arc to 3 other enemies within 5 yards for 45% of killing-hit damage (33 for kills over time) as phys damage. 5s cooldown. Duplicates do not stack.
+Long Hunt — Wolf Form (Wildkeeper): 50% more Wolf Form duration. Wildkeeper only. Duplicates do not stack.
 
 ### Wolfsplit
 
 `u_gen_13_7` · Item level 47
 
-Supporting stats: +91% Damage; Attackers take 18 Damage; +14 Vitality.
+Supporting stats: +145% Damage; Attackers take 29 Damage; +24 Vitality; +34% Summon Life.
 
-Split the Pack — Weapon hits while a fighting companion lives: the target takes 14% more damage for 4s; strongest exposure applies. 5s cooldown. Duplicates do not stack.
+The Pack Shares Pain — Kindred Bond (Wildkeeper): +5 damage shared with companions (%). Wildkeeper only. Duplicates do not stack.
 
 ### Huntsmaw
 
 `u_gen_13_9` · Item level 65
 
-Supporting stats: +113% Damage; 5% Life Stolen per Hit; +18 Dexterity.
+Supporting stats: +328% Damage; 15% Life Stolen per Hit; +41 Dexterity; +49% Summon Damage.
 
-Hunting Maw — Weapon hits against beasts: restore 5% of maximum Life; your next weapon hit within 6s deals 25% more damage. 5s cooldown. Duplicates do not stack.
+Twin Tusks — Thornback Boar (Wildkeeper): +1 Thornback Boars. Wildkeeper only. Duplicates do not stack.
 
 ### Antlershear
 
 `u_gen_13_11` · Item level 84
 
-Supporting stats: +136% Damage; +9% Critical Strike Chance; +198 Attack Rating.
+Supporting stats: +548% Damage; +33% Critical Strike Chance; +921 Attack Rating.
 
-Antlered Pursuit — Skill uses when changing form: +25% Attack Speed, +15% Movement Speed for 5s. 5s cooldown. Duplicates do not stack.
+Antlered Wrath — Wrath of the Wild (Wildkeeper): +30 Wrath damage bonus (%). Wildkeeper only. Duplicates do not stack.
 
 ### Vesper
 
 `u_gen_14_0` · Item level 5
 
-Supporting stats: +41% Damage; +6 Strength; 11% Reduced Slow/Stun Duration.
+Supporting stats: +41% Damage; +6 Strength; 24% Reduced Slow/Stun Duration.
 
-Evening Bell — Weapon hits against enemies at or below 35% Life: slow non-boss enemies within 3 yards by 30% for 3s; restore 4% of maximum Aether. 5s cooldown. Duplicates do not stack.
+Warcries Doctrine — Warcries tree (Vanguard): +1 to learned talent ranks; does not unlock talents or perk choices. Vanguard only. Duplicates do not stack.
 
 ### Bellringer
 
 `u_gen_14_2` · Item level 13
 
-Supporting stats: +51% Damage; +43% Damage to Undead; +25 to Life.
+Supporting stats: +51% Damage; +70% Damage to Undead; +48 to Life.
 
-Bell of Deliverance — Kills against undead: arc to 3 other enemies within 5 yards for 35% of killing-hit damage (13 for kills over time) as light damage. 5s cooldown. Duplicates do not stack.
+Far-reaching Rally — Rallying Cry (Vanguard): 50% more rally radius. Vanguard only. Duplicates do not stack.
 
 ### Knell
 
 `u_gen_14_4` · Item level 24
 
-Supporting stats: +64% Damage; +59% Armor; +10 Vitality.
+Supporting stats: +64% Damage; +59% Armor; +13 Vitality.
 
-Iron Knell — Blocks: Attackers take 30 Damage for 5s. 5s cooldown. Duplicates do not stack.
+Echo of Terror — Terrifying Bellow (Vanguard): 50% more fear duration. Vanguard only. Duplicates do not stack.
 
 ### Sanctus
 
 `u_gen_14_6` · Item level 39
 
-Supporting stats: +82% Damage; +6% Critical Strike Chance; All Resistances +9%.
+Supporting stats: +98% Damage; +18% Critical Strike Chance; All Resistances +20%.
 
-Sanctified Blow — Weapon hits against demons: gain a barrier worth 9% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Crushing Roar — Sundering Roar (Vanguard): +20 roar slow (%). Vanguard only. Duplicates do not stack.
 
 ### Matins
 
 `u_gen_14_8` · Item level 56
 
-Supporting stats: +102% Damage; +26% Aether Regeneration; +16 Willpower.
+Supporting stats: +195% Damage; +192% Aether Regeneration; +41 Willpower.
 
-Morning Prayer — Skill uses using a shout or banner: restore 6% of maximum Aether; gain a barrier worth 8% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Morning Standard — War Banner (Vanguard): 60% more banner duration. Vanguard only. Duplicates do not stack.
 
 ### Final Tithe
 
 `u_gen_14_10` · Item level 74
 
-Supporting stats: +124% Damage; 5% Life Stolen per Hit; +20 Strength.
+Supporting stats: +328% Damage; 25% Life Stolen per Hit; +70 Strength.
 
-Final Offering — Kills while at or below 40% Life: your next weapon hit within 6s deals 65% more damage. 5s cooldown. Duplicates do not stack.
+The Last Congregation — Standard of the Last Stand (Vanguard): 50% more standard radius. Vanguard only. Duplicates do not stack.
 
 ### Choir of Ash
 
 `u_gen_14_12` · Item level 93
 
-Supporting stats: +147% Damage; Fire Resist +31%; +89 to Life.
+Supporting stats: +548% Damage; Fire Resist +125%; +443 to Life.
 
-Choir's Ashes — Weapon hits against burning enemies: arc to 2 other enemies within 5 yards for 35% of hit damage as fire damage; All Resistances +8% for 4s. 5s cooldown. Duplicates do not stack.
+Will of the Choir — Iron Will (Vanguard): +4 to learned talent ranks; does not unlock talents or perk choices. Vanguard only. Duplicates do not stack.
 
 ### Skyfall Pike
 
@@ -880,47 +907,47 @@ Choir's Ashes — Weapon hits against burning enemies: arc to 2 other enemies wi
 
 Supporting stats: +46% Damage; +7 Dexterity; +16% Movement Speed.
 
-Skyfall Wake — Skill uses using a movement skill: erupt within 3 yards for 18 damage as light damage. 5s cooldown. Duplicates do not stack.
+Skyfall Fissure — Fissure (Wildkeeper): 50% more fissure reach. Wildkeeper only. Duplicates do not stack.
 
 ### Stormlance
 
 `u_gen_15_3` · Item level 18
 
-Supporting stats: +57% Damage; Adds 1-15 Lightning Damage; +9 Strength.
+Supporting stats: +57% Damage; Adds 1-55 Lightning Damage; +9 Strength.
 
-Lance of Storms — Weapon hits at least 5 yards away: the target takes 16% more damage for 4s; strongest exposure applies. 5s cooldown. Duplicates do not stack.
+Long Storm — Storm Totem (Wildkeeper): 50% more totem targeting radius. Wildkeeper only. Duplicates do not stack.
 
 ### Heaven's Reach
 
 `u_gen_15_5` · Item level 31
 
-Supporting stats: +72% Damage; +13% Attack Speed; +92 Attack Rating.
+Supporting stats: +79% Damage; +29% Attack Speed; +156 Attack Rating.
 
-Heaven's Rhythm — Weapon hits (3 qualifying events): arc to 2 other enemies within 5 yards for 35% of hit damage as light damage; restore 4% of maximum Aether. 5s cooldown. Duplicates do not stack.
+Hurrying Wisps — Tempest Totem (Wildkeeper): 35% less wisp interval. Wildkeeper only. Duplicates do not stack.
 
 ### Thunderpike
 
 `u_gen_15_7` · Item level 47
 
-Supporting stats: +91% Damage; Adds 15-25 Cold Damage; +14 Dexterity.
+Supporting stats: +145% Damage; Adds 47-77 Cold Damage; +24 Dexterity.
 
-Thunder in Winter — Weapon hits against slowed enemies: your next spell hit within 6s deals 50% more damage. 5s cooldown. Duplicates do not stack.
+Winter Cyclone — Cyclone (Wildkeeper): 50% more Cyclone lifetime. Wildkeeper only. Duplicates do not stack.
 
 ### Tempest's Descent
 
 `u_gen_15_9` · Item level 65
 
-Supporting stats: +113% Damage; +8% Critical Strike Chance; Lightning Resist +25%.
+Supporting stats: +328% Damage; +33% Critical Strike Chance; Lightning Resist +125%.
 
-Tempest's Descent — Skill uses using a movement skill: gain a barrier worth 8% of maximum Life for 5s; refreshes, never accumulates; +12% Critical Strike Chance for 4s. 5s cooldown. Duplicates do not stack.
+Sky-Sap Lesson — Sky-Sap (Wildkeeper): +3 to learned talent ranks; does not unlock talents or perk choices. Wildkeeper only. Duplicates do not stack.
 
 ### Cloudpiercer
 
 `u_gen_15_11` · Item level 84
 
-Supporting stats: +136% Damage; +198 Attack Rating; +74 to Aether.
+Supporting stats: +548% Damage; +921 Attack Rating; +214 to Aether.
 
-Pierce the Cloud — Weapon hits against bosses: arc to 4 other enemies within 5 yards for 45% of hit damage as light damage. 5s cooldown. Duplicates do not stack.
+Restless Earth — Earthquake (Wildkeeper): 25% less Earthquake pulse interval. Wildkeeper only. Duplicates do not stack.
 
 ### Heartseeker
 
@@ -928,207 +955,207 @@ Pierce the Cloud — Weapon hits against bosses: arc to 4 other enemies within 5
 
 Supporting stats: +41% Damage; +6 Dexterity; Adds 4-6 Fire Damage.
 
-Heart's Beacon — Weapon hits against enemies at or above 80% Life: the target takes 14% more damage for 4s; strongest exposure applies. 5s cooldown. Duplicates do not stack.
+Heartseeker's Aim — Aimed Shot (Veil Ranger): 35% more Aimed Shot damage. Veil Ranger only. Duplicates do not stack.
 
 ### Repeater
 
 `u_gen_16_2` · Item level 13
 
-Supporting stats: +51% Damage; +5% Critical Strike Chance; +18% Critical Damage.
+Supporting stats: +51% Damage; +5% Critical Strike Chance; +24% Critical Damage.
 
-Repeating Verdict — Weapon hits (3 qualifying events on the same target): your next weapon hit within 6s deals 45% more damage. 5s cooldown. Duplicates do not stack.
+Precision Doctrine — Precision tree (Veil Ranger): +1 to learned talent ranks; does not unlock talents or perk choices. Veil Ranger only. Duplicates do not stack.
 
 ### Boltwidow
 
 `u_gen_16_4` · Item level 24
 
-Supporting stats: +64% Damage; +12% Attack Speed; +19% Movement Speed.
+Supporting stats: +64% Damage; +29% Attack Speed; +19% Movement Speed.
 
-Widow's Escape — Kills at least 5 yards away: gain a barrier worth 9% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Widow's Rain — Arrowfall (Veil Ranger): 50% more Arrowfall radius. Veil Ranger only. Duplicates do not stack.
 
 ### Killshot
 
 `u_gen_16_6` · Item level 39
 
-Supporting stats: +82% Damage; +13 Dexterity; Adds 26 Poison Damage over 3s.
+Supporting stats: +98% Damage; +13 Dexterity; Adds 153 Poison Damage over 3s.
 
-One Last Shot — Weapon hits against enemies at or below 35% Life: inflict 100% of hit damage as poison damage over 3s. 5s cooldown. Duplicates do not stack.
+Last Quarry — Drawn Shot (Veil Ranger): 50% more damage per consumed Quarry stack. Veil Ranger only. Duplicates do not stack.
 
 ### Pulsebreaker
 
 `u_gen_16_8` · Item level 56
 
-Supporting stats: +102% Damage; +7% Critical Strike Chance; +142 Attack Rating.
+Supporting stats: +195% Damage; +33% Critical Strike Chance; +539 Attack Rating.
 
-Broken Pulse — Weapon hits that critically strike (2 qualifying events): the target takes 10% more damage for 4s; strongest exposure applies; restore 5% of maximum Aether. 5s cooldown. Duplicates do not stack.
+Broken Ricochet — Ricochet Shard (Veil Ranger): 40% more ricochet damage. Veil Ranger only. Duplicates do not stack.
 
 ### The Quickening Quarrel
 
 `u_gen_16_10` · Item level 74
 
-Supporting stats: +124% Damage; +17% Attack Speed; +67 to Aether.
+Supporting stats: +328% Damage; +114% Attack Speed; +214 to Aether.
 
-Quickened Quarrel — Skill uses using a trap skill: your next weapon hit within 6s deals 55% more damage. 5s cooldown. Duplicates do not stack.
+Snares Doctrine — Snares tree (Veil Ranger): +3 to learned talent ranks; does not unlock talents or perk choices. Veil Ranger only. Duplicates do not stack.
 
 ### Last Heartbeat
 
 `u_gen_16_12` · Item level 93
 
-Supporting stats: +147% Damage; +38% Critical Damage; +89 to Life.
+Supporting stats: +548% Damage; +152% Critical Damage; +443 to Life.
 
-Last Heartbeat — Weapon hits while at or below 40% Life: arc to 2 other enemies within 5 yards for 35% of hit damage as phys damage; restore 4% of maximum Life. 5s cooldown. Duplicates do not stack.
+Flurry of Openings — Shadow Flurry (Veil Ranger): +20 damage against Exposed foes (%). Veil Ranger only. Duplicates do not stack.
 
 ### Wardlight
 
 `u_gen_17_1` · Item level 9
 
-Supporting stats: +44% Armor; All Resistances +6%; +22 to Life.
+Supporting stats: +44% Armor; All Resistances +9%; +48 to Life.
 
-Light Behind the Wall — Blocks from undead: restore 6% of maximum Life. 5s cooldown. Duplicates do not stack.
+Bulwark Lesson — Bulwark Stance (Vanguard): +1 to learned talent ranks; does not unlock talents or perk choices. Vanguard only. Duplicates do not stack.
 
 ### Bastion
 
 `u_gen_17_3` · Item level 18
 
-Supporting stats: +9% Block Chance; +53% Armor; +9 Vitality.
+Supporting stats: +19% Block Chance; +53% Armor; +9 Vitality.
 
-Bastion's Rhythm — Blocks (3 qualifying events): gain a barrier worth 12% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Bastion's Lesson — Riposte Stance (Vanguard): +1 to learned talent ranks; does not unlock talents or perk choices. Vanguard only. Duplicates do not stack.
 
 ### Sanctuary
 
 `u_gen_17_5` · Item level 31
 
-Supporting stats: +66% Armor; Attackers take 13 Damage; Fire Resist +18%.
+Supporting stats: +79% Armor; Attackers take 15 Damage; Fire Resist +39%.
 
-Sanctuary Flame — Damage received from demons: erupt within 2.5 yards for 75% of damage taken as fire damage. 5s cooldown. Duplicates do not stack.
+Winter Sanctuary — Rimeguard (Ember Witch): +2 to learned talent ranks; does not unlock talents or perk choices. Ember Witch only. Duplicates do not stack.
 
 ### Aegis Eternal
 
 `u_gen_17_7` · Item level 47
 
-Supporting stats: +82% Armor; +53 to Life; All Resistances +10%.
+Supporting stats: +154% Armor; +155 to Life; All Resistances +20%.
 
-Eternal Reprieve — Damage received while at or below 40% Life: 20% Damage Reduction for 3s. 12s cooldown. Duplicates do not stack.
+Bear's Shelter — Bear Form (Wildkeeper): +25 Bear Form Life bonus (%). Wildkeeper only. Duplicates do not stack.
 
 ### The Unbroken Vow
 
 `u_gen_17_9` · Item level 65
 
-Supporting stats: +12% Block Chance; +67 to Life; +18 Vitality.
+Supporting stats: +77% Block Chance; +263 to Life; +41 Vitality.
 
-Vow Unbroken — Blocks: your next spell hit within 6s deals 45% more damage. 5s cooldown. Duplicates do not stack.
+Unbroken Bone — Bone Armor (Gravebinder): 60% more bone shield absorption. Gravebinder only. Duplicates do not stack.
 
 ### Refuge of Ash
 
 `u_gen_17_11` · Item level 84
 
-Supporting stats: +119% Armor; Fire Resist +29%; +74 to Aether.
+Supporting stats: +440% Armor; Fire Resist +125%; +214 to Aether.
 
-Refuge in Ash — Blocks from burning enemies: restore 5% of maximum Life; restore 5% of maximum Aether. 5s cooldown. Duplicates do not stack.
+Patient Stone — Stone Form (Wildkeeper): 50% more Stone Form duration. Wildkeeper only. Duplicates do not stack.
 
 ### Gravewrought Grips
 
 `u_gen_18_0` · Item level 5
 
-Supporting stats: +11% Attack Speed; +4% Critical Strike Chance; +6 Strength.
+Supporting stats: +11% Attack Speed; +5% Critical Strike Chance; +6 Strength; +10% Summon Damage.
 
-Gravewrought Command — Weapon hits that critically strike: +25% Minion Damage for 5s. 5s cooldown. Duplicates do not stack.
+One More Grave — Raise Dead (Gravebinder): +1 raised skeletons. Gravebinder only. Duplicates do not stack.
 
 ### Throttle
 
 `u_gen_18_2` · Item level 13
 
-Supporting stats: +11% Attack Speed; +8 Dexterity; 3% Life Stolen per Hit.
+Supporting stats: +19% Attack Speed; +8 Dexterity; 4% Life Stolen per Hit.
 
-Throttle the Hex — Weapon hits against cursed or marked enemies: slow non-boss enemies within 3 yards by 40% for 3s; restore 3% of maximum Life. 5s cooldown. Duplicates do not stack.
+Lingering Frailty — Mark of Frailty (Gravebinder): 60% more curse duration. Gravebinder only. Duplicates do not stack.
 
 ### Vise
 
 `u_gen_18_4` · Item level 24
 
-Supporting stats: +64% Damage; +21% Critical Damage; +10 Strength.
+Supporting stats: +64% Damage; +24% Critical Damage; +13 Strength.
 
-Unrelenting Vise — Weapon hits (4 qualifying events on the same target): the target takes 15% more damage for 4s; strongest exposure applies. 5s cooldown. Duplicates do not stack.
+Unrelenting Dragnet — Dragnet (Veil Ranger): 50% more Dragnet capture radius. Veil Ranger only. Duplicates do not stack.
 
 ### Deadhand
 
 `u_gen_18_6` · Item level 39
 
-Supporting stats: +14% Attack Speed; +21% Movement Speed; +46 to Life.
+Supporting stats: +29% Attack Speed; +29% Movement Speed; +107 to Life; +34% Summon Damage.
 
-Deadhand's Gift — Kills by your companions: your next weapon hit within 6s deals 50% more damage. 5s cooldown. Duplicates do not stack.
+Rally the Deadhand — Feral Howl (Wildkeeper): 50% more companion rally damage bonus. Wildkeeper only. Duplicates do not stack.
 
 ### Sepulcher's Clutch
 
 `u_gen_18_8` · Item level 56
 
-Supporting stats: +56% Spell Power; +16% Cast Speed; +54 to Aether.
+Supporting stats: +75% Spell Power; +65% Cast Speed; +125 to Aether; +49% Summon Life.
 
-Sepulcher's Clutch — Skill uses using a summon skill: gain a barrier worth 10% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Sepulcher's Offering — Sacrificial Pyre (Gravebinder): 50% more sacrifice explosion damage. Gravebinder only. Duplicates do not stack.
 
 ### Stranglemourn
 
 `u_gen_18_10` · Item level 74
 
-Supporting stats: +17% Attack Speed; Adds 43 Poison Damage over 3s; +20 Dexterity.
+Supporting stats: +114% Attack Speed; Adds 444 Poison Damage over 3s; +70 Dexterity.
 
-Strangling Sorrow — Weapon hits against poisoned enemies: the target takes 10% more damage for 4s; strongest exposure applies; +20% Movement Speed for 4s. 5s cooldown. Duplicates do not stack.
+Sorrow Spreads — Contagion (Gravebinder): 60% more Contagion death-burst radius. Gravebinder only. Duplicates do not stack.
 
 ### Palms of the Pit
 
 `u_gen_18_12` · Item level 93
 
-Supporting stats: +147% Damage; +24 Strength; Fire Resist +31%.
+Supporting stats: +548% Damage; +70 Strength; Fire Resist +125%.
 
-Palms of Ruin — Weapon hits against demons: erupt within 2.5 yards for 60% of hit damage as phys damage; restore 4% of maximum Aether. 5s cooldown. Duplicates do not stack.
+Bone Through Ruin — Bone Spear (Gravebinder): 45% more Bone Spear damage. Gravebinder only. Duplicates do not stack.
 
 ### Serpentcoil
 
 `u_gen_19_1` · Item level 9
 
-Supporting stats: +22 to Life; All Resistances +6%; +7 Strength.
+Supporting stats: +48 to Life; All Resistances +9%; +7 Strength.
 
-Coiled Defense — Damage received from melee attacks: slow non-boss enemies within 3 yards by 45% for 3s. 5s cooldown. Duplicates do not stack.
+Marrow Lesson — Marrow Pact (Gravebinder): +1 to learned talent ranks; does not unlock talents or perk choices. Gravebinder only. Duplicates do not stack.
 
 ### Girdle of Spite
 
 `u_gen_19_3` · Item level 18
 
-Supporting stats: +29 to Life; Adds 15 Poison Damage over 3s; +9 Vitality.
+Supporting stats: +48 to Life; Adds 38 Poison Damage over 3s; +9 Vitality.
 
-Spite's Reply — Damage received (2 qualifying events): inflict 90% of damage taken as poison damage over 3s. 5s cooldown. Duplicates do not stack.
+Rot Doctrine — Rot tree (Gravebinder): +1 to learned talent ranks; does not unlock talents or perk choices. Gravebinder only. Duplicates do not stack.
 
 ### Venomwind
 
 `u_gen_19_5` · Item level 31
 
-Supporting stats: +40 to Life; Fire Resist +18%; Cold Resist +18%.
+Supporting stats: +107 to Life; Fire Resist +39%; Cold Resist +39%.
 
-Venomwind — Walking within 4 yards of an enemy (8 yards): erupt within 2.5 yards for 26 damage as poison damage; Poison Resist +20% for 4s. 5s cooldown. Duplicates do not stack.
+Venom on the Wind — Rabies (Wildkeeper): 60% more contagious cloud radius. Wildkeeper only. Duplicates do not stack.
 
 ### Coilbind
 
 `u_gen_19_7` · Item level 47
 
-Supporting stats: +53 to Life; +22% Movement Speed; +14 Dexterity.
+Supporting stats: +155 to Life; +39% Movement Speed; +24 Dexterity.
 
-Binding Coil — Weapon hits against poisoned enemies: gain a barrier worth 7% of maximum Life for 5s; refreshes, never accumulates. 5s cooldown. Duplicates do not stack.
+Binding Miasma — Miasma (Gravebinder): +20 Miasma slow (%). Gravebinder only. Duplicates do not stack.
 
 ### The Tightening Hiss
 
 `u_gen_19_9` · Item level 65
 
-Supporting stats: +67 to Life; +61 to Aether; Poison Resist +25%.
+Supporting stats: +263 to Life; +214 to Aether; Poison Resist +125%.
 
-Tightening Hiss — Skill uses using a curse or Contagion: for 6s, Contagion gains +30% spread range. 5s cooldown. Duplicates do not stack.
+Carrion's Embrace — Carrion Bloom (Gravebinder): +25 poison damage-over-time bonus (%). Gravebinder only. Duplicates do not stack.
 
 ### Fangknot
 
 `u_gen_19_11` · Item level 84
 
-Supporting stats: +82 to Life; +22 Vitality; Adds 48 Poison Damage over 3s.
+Supporting stats: +443 to Life; +70 Vitality; Adds 743 Poison Damage over 3s.
 
-Fang's Knot — Kills against poisoned enemies: restore 6% of maximum Aether; your next spell hit within 6s deals 35% more damage. 5s cooldown. Duplicates do not stack.
+Unbound Outbreak — Outbreak (Gravebinder): 50% more Outbreak radius. Gravebinder only. Duplicates do not stack.
 
 ## Charms
 
@@ -1205,6 +1232,14 @@ Supporting stats: All Resistances +18%; +55 to Life; Physical Damage Reduced by 
 Ancient Molt — Damage received from elemental damage: gain a barrier worth 10% of maximum Life for 5s; refreshes, never accumulates; 25% Reduced Slow/Stun Duration for 4s. 8s cooldown. Duplicates do not stack.
 
 ## Jewels
+
+### Old Oak's Heart
+
+`uj_oak` · Item level 16
+
+Supporting stats: +20 to Life; Poison Resist +15%.
+
+Barkskin — Damage received from melee attacks: gain a barrier worth 8% of maximum Life for 4s; refreshes, never accumulates. 8s cooldown. Duplicates do not stack.
 
 ### Prismfire Jewel
 

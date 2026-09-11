@@ -1,0 +1,57 @@
+{
+  "reports": [
+    {
+      "weapon": "bow",
+      "monsters": [
+        {
+          "damage": 198.4005691866405,
+          "bleeding": true,
+          "marked": false
+        },
+        {
+          "damage": 111.72347230408377,
+          "bleeding": true,
+          "marked": true
+        },
+        {
+          "damage": 100.85104530169338,
+          "bleeding": true,
+          "marked": true
+        }
+      ],
+      "ambushConsumed": true,
+      "preview": {
+        "exposed": 30,
+        "shadowAmbush": 25,
+        "missingHealthMax": 75
+      }
+    },
+    {
+      "weapon": "sword",
+      "monsters": [
+        {
+          "damage": 200.00911749834995,
+          "bleeding": true,
+          "marked": false
+        },
+        {
+          "damage": 112.61643540182195,
+          "bleeding": true,
+          "marked": true
+        },
+        {
+          "damage": 100.84347940803127,
+          "bleeding": true,
+          "marked": true
+        }
+      ],
+      "ambushConsumed": true,
+      "preview": {
+        "exposed": 30,
+        "shadowAmbush": 25,
+        "missingHealthMax": 75
+      }
+    }
+  ],
+  "errors": []
+}

@@ -2574,6 +2574,8 @@ def main() -> None:
     install_act4_animations(entries, maps)
     from import_act5_animations import install as install_act5_animations
     install_act5_animations(entries, maps)
+    from import_act1_animations import install as install_act1_animations
+    install_act1_animations(entries, maps)
     from import_prop_interactions import install as install_prop_interactions
     install_prop_interactions(entries, maps)
     emit_manifest(entries, maps, player_rig_report)

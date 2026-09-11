@@ -15,7 +15,7 @@ function harness({before=false,enabled=true}={}){
   const ctx=vm.createContext({console,Math:math,Date,performance,Uint8Array,Uint16Array,Uint32Array,Float32Array,Uint8ClampedArray,Set,Map,JSON,setTimeout,clearTimeout,
     document:{createElement:()=>canvas},window:{addEventListener:noop,matchMedia:()=>({matches:false})},localStorage:{getItem:()=>null,setItem:noop},
     Sfx:new Proxy({vol:{}},{get:(t,k)=>t[k]||noop}),Player3D:{assets:{},projectileOrigin:()=>null,update:noop},UI:new Proxy({},{get:()=>noop}),LevelTerrain:{clipBehind:noop}});
-  for(const f of ['utils','data','data_overrides','boss_encounters','skill_perks','sprite_manifest','mapgen','navigation','items','lootfilter','skill_vfx'])vm.runInContext(read('js/'+f+'.js'),ctx,{filename:f});
+  for(const f of ['utils','data','data_overrides','boss_encounters','skill_perks','sprite_manifest','mapgen','navigation','prop_interactions','items','lootfilter','skill_vfx'])vm.runInContext(read('js/'+f+'.js'),ctx,{filename:f});
   vm.runInContext(read((before?'tests/fixtures/skill_vfx_before/':'')+'js/entities.js'),ctx,{filename:'entities'});
   let source=read((before?'tests/fixtures/skill_vfx_before/':'')+'js/game.js');
   source=source.replace('    init, newGame, loadGame,',`    __test:{freshState,setState:s=>{state=s;delayed=[];particles=[];novas=[];bolts=[];},updateTraps,updateFx,${before?'':'updateLayerEffects,'}flush:()=>{let guard=0;while(guard++<100){const i=delayed.findIndex(d=>d.t<=state.time);if(i<0)break;const job=delayed.splice(i,1)[0];job.fn();}}},\n    init, newGame, loadGame,`);
@@ -150,5 +150,5 @@ for(const [id,mode]of [['gravebinder_2_1','death'],['rabies','death'],['gravebin
 }
 const cosmetic=active.fresh(sk);cosmetic.s.map.props.push({x:10,y:10,surfaceId:cosmetic.p.surfaceId,type:'barrel',breakable:true});
 active.SkillVFX.scope(cosmetic.p,sk.id,()=>active.SkillVFX.area(10,10,5,cosmetic.p));ok(cosmetic.s.map.props.length===1,'cosmetic area destroyed a prop');
-active.Game.addNova(10,10,5,'#fff');ok(cosmetic.s.map.props.length===0,'gameplay nova stopped destroying props');
+active.Game.addNova(10,10,5,'#fff');ok(cosmetic.s.map.props.every(p=>p.broken&&!p.breakable),'gameplay nova stopped breaking props into persistent remains');
 console.log(`PASS ${checks} checks, ${scenarios} skill/rank/perk scenarios: ${currentGameplay?'current gameplay':'original combat preserved'}, VFX toggle equivalent, coverage, rejection, respec, bounds and cleanup.`);

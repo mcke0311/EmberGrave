@@ -17,6 +17,22 @@ for(const zone of zones)for(const seed of seeds){
   ok(prop&&prop.flipX===t.flipX&&(t.flipX?1-t.artAxis:t.artAxis)===t.axis,tag+' gate art faces across its wall');
   for(const p of [t.approach,t.arrival,{x:(e.x0+e.x1)/2,y:(e.y0+e.y1)/2}])ok(S.supported(m,p.x,p.y,.36),tag+' unsupported passage point '+JSON.stringify(p));
   ok(N.segment(m,t.arrival.x,t.arrival.y,t.approach.x,t.approach.y,.36),tag+' passage approach blocked');
+  if(t.kit!=='town'){
+   ok(t.backing,tag+' freestanding entrance');
+   const rear={x:t.x-(t.axis?3:0),y:t.y-(t.axis?0:3)};
+   ok(!S.supported(m,rear.x,rear.y,.36),tag+' open ground behind cave mouth');
+   const seen=new Set(),queue=[(rear.x|0)+(rear.y|0)*m.w];let boundary=false;
+   for(let q=0;q<queue.length&&!boundary&&seen.size<128;q++){
+    const i=queue[q],x=i%m.w,y=Math.floor(i/m.w);if(seen.has(i)||!m.walls[i])continue;seen.add(i);
+    if(x===0||y===0||x===m.w-1||y===m.h-1){boundary=true;break;}
+    queue.push(i-1,i+1,i-m.w,i+m.w);
+   }
+   ok(boundary||seen.size>=128,tag+' doorway lacks a substantial connected rock mass');
+   ok(env.facades.filter(f=>f.thresholdId===t.id).length===2,tag+' doorway missing wall joins');
+   ok(N.segment(m,t.arrival.x,t.arrival.y,t.x,t.y,.36),tag+' doorway aperture obstructed');
+   const node=m.frontier.landmarks.find(n=>n.exit?.target===e.target)||m.frontier.landmarks.find(n=>n.id==='entry');
+   ok(N.findPath(m,t.arrival,node,{radius:.36,speed:4.5}),tag+' entrance cut off from its court');
+  }
   for(const f of t.footprints)for(let y=f.y0;y<f.y1;y++)for(let x=f.x0;x<f.x1;x++)ok(m.blocked[x+y*m.w],tag+' jamb collision missing');
   if(zone!=='frosthaven_approach')ok(!(t.arrival.x>=e.x0&&t.arrival.x<=e.x1&&t.arrival.y>=e.y0&&t.arrival.y<=e.y1),tag+' arrival in trigger');
   const target=M.generate(e.target,seed);ok(target.spawns[e.spawnKey],tag+' missing destination key');

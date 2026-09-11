@@ -20,6 +20,7 @@ const SpriteAssets = (() => {
   const act2TintKeys=[];
   const tintCacheSources = new Map();
   const isolatedFrameCache = new Map();
+  const act1AuthoredFrames = new Map();
   const bossFlashCache = new Map();
   const playerWalkParts = new Map();
   const playerLoadRequests = new Map();
@@ -189,8 +190,15 @@ const SpriteAssets = (() => {
     }));
     for (const [, def] of unique) bundleOwnedSources.add(def.src);
     // Boss poses are cut out before combat, never on their first strike frame.
-    for(const [id,def] of defs)if(def.bossArt||def.act2Art||def.act3Art||def.act5Art||def.act4Art)for(let i=0;i<def.cols*def.rows;i++){
+    for(const [id,def] of defs)if(def.bossArt||def.act1Art||def.act2Art||def.act3Art||def.act5Art||def.act4Art)for(let i=0;i<def.cols*def.rows;i++){
       const frame=getFrame(id,i);isolatedFrame(frame);if(def.hitShapes)bossFlashFrame(frame);
+    }
+    // Northern event coverage contains many small clips. Immutable bitmaps
+    // release their staging 2D contexts before combat and avoid canvas uploads.
+    if(typeof createImageBitmap==='function')for(const [id,def] of defs)if(def.act1Art)for(let i=0;i<def.cols*def.rows;i++){
+      const key=id+'|'+i,frame=isolatedFrameCache.get(key),flash=bossFlashCache.get(key);
+      if(frame?.image?.getContext){const canvas=frame.image;frame.image=await createImageBitmap(canvas);canvas.width=canvas.height=1;}
+      if(flash?.getContext){const bitmap=await createImageBitmap(flash);bitmap.frameOffsetX=flash.frameOffsetX;bitmap.frameOffsetY=flash.frameOffsetY;bossFlashCache.set(key,bitmap);flash.width=flash.height=1;}
     }
     loadedBundles.add(bundleId);
   }
@@ -245,7 +253,7 @@ const SpriteAssets = (() => {
     const key = `${frame.id}|${frame.index}`;
     if (isolatedFrameCache.has(key)) return isolatedFrameCache.get(key);
     const c = document.createElement("canvas");
-    const bounds=(def.act2Art||def.act3Art||def.act5Art||def.act4Art)?def.hitShapes?.[frame.index]?.bounds:null;
+    const bounds=(def.act1Art||def.act2Art||def.act3Art||def.act5Art||def.act4Art)?def.hitShapes?.[frame.index]?.bounds:null;
     const ox=bounds?Math.max(0,bounds[0]-2):0,oy=bounds?Math.max(0,bounds[1]-2):0;
     c.width=bounds?Math.min(frame.sw,bounds[2]+2)-ox:frame.sw;c.height=bounds?Math.min(frame.sh,bounds[3]+2)-oy:frame.sh;
     c.getContext("2d").drawImage(frame.image, frame.sx+ox, frame.sy+oy, c.width, c.height, 0, 0, c.width, c.height);
@@ -314,18 +322,20 @@ const SpriteAssets = (() => {
   function tinted(frame, color) {
     const key = `${frame.id}|${frame.index || 0}|${color}`;
     if (tintCache.has(key)) return tintCache.get(key);
-    const def=definition(frame.id),act2=def.act2Art||def.act3Art||def.act5Art||def.act4Art,source=act2?isolatedFrame(frame):frame;
-    const c = document.createElement("canvas"); c.width = source.sw; c.height = source.sh;
+    const def=definition(frame.id),act2=def.act1Art||def.act2Art||def.act3Art||def.act5Art||def.act4Art,source=act2?isolatedFrame(frame):frame;
+    const c = def.act1Art&&typeof OffscreenCanvas==='function'?new OffscreenCanvas(source.sw,source.sh):document.createElement("canvas"); c.width = source.sw; c.height = source.sh;
     c.frameOffsetX=frame.anchorX-source.anchorX;c.frameOffsetY=frame.anchorY-source.anchorY;
     const cx = c.getContext("2d");
     cx.drawImage(source.image, source.sx, source.sy, source.sw, source.sh, 0, 0, source.sw, source.sh);
     cx.globalCompositeOperation = act2?"source-atop":"color"; cx.globalAlpha = act2?.3:.46; cx.fillStyle = color; cx.fillRect(0, 0, c.width, c.height);
     cx.globalAlpha = 1; cx.globalCompositeOperation = "destination-in";
     cx.drawImage(source.image, source.sx, source.sy, source.sw, source.sh, 0, 0, source.sw, source.sh);
-    tintCache.set(key, c);
+    const result=c.transferToImageBitmap?c.transferToImageBitmap():c;
+    result.frameOffsetX=c.frameOffsetX;result.frameOffsetY=c.frameOffsetY;
+    tintCache.set(key, result);
     tintCacheSources.set(key, { src: definition(frame.id).src, spec: `${frame.id}|${color}` });
     if(act2){act2TintKeys.push(key);if(act2TintKeys.length>96){const expired=act2TintKeys.shift();tintCache.delete(expired);tintCacheSources.delete(expired);}}
-    return c;
+    return result;
   }
 
   function makeIcon(assetId, frameKey, size) {
@@ -713,6 +723,7 @@ const SpriteAssets = (() => {
       for (const [key, frame] of isolatedFrameCache) {
         if (frame && frame.id && definition(frame.id).src === src) isolatedFrameCache.delete(key);
       }
+      for(const [key,frame] of act1AuthoredFrames)if(definition(frame.id).src===src)act1AuthoredFrames.delete(key);
       for (const [key, parts] of playerWalkParts) {
         if (parts.src === src) playerWalkParts.delete(key);
       }
@@ -1048,8 +1059,15 @@ const SpriteAssets = (() => {
     const animated=authoredFrame(pose);
     if(animated){
       const m=authoredTransform(pose,opts);ctx.save();ctx.transform(m.a,m.b,m.c,m.d,m.e,m.f);
-      ctx.globalAlpha*=(pose.ex.act4Animation||pose.ex.act5Animation||pose.ex.act3Animation||pose.ex.act2Animation).alpha;
+      ctx.globalAlpha*=(pose.ex.act1Animation||pose.ex.act4Animation||pose.ex.act5Animation||pose.ex.act3Animation||pose.ex.act2Animation).alpha;
       if(opts.bossFlash){const flash=bossFlashFrame(animated);ctx.drawImage(flash,-animated.anchorX+(flash.frameOffsetX||0),-animated.anchorY+(flash.frameOffsetY||0));}
+      else if(pose.ex.act1Animation){
+        // The authored transform already supplies position, facing and scale.
+        // Draw the immutable cutout directly without another save/transform.
+        const source=opts.act2Tint?tinted(animated,opts.act2Tint):isolatedFrame(animated);
+        if(source.image)ctx.drawImage(source.image,-source.anchorX,-source.anchorY);
+        else ctx.drawImage(source,-animated.anchorX+(source.frameOffsetX||0),-animated.anchorY+(source.frameOffsetY||0));
+      }
       else drawFrame(ctx,animated,0,0,{tint:opts.act2Tint});
       ctx.restore();return true;
     }
@@ -1079,22 +1097,33 @@ const SpriteAssets = (() => {
 
   const BOSS_POSES={idle:0,movement:1,windup:2,impact:3,recovery:4,death:5};
   function authoredFrame(pose){
-    const a=pose.ex?.act4Animation||pose.ex?.act5Animation||pose.ex?.act3Animation||pose.ex?.act2Animation;if(!a||!manifest.entries[a.asset])return null;
+    const a=pose.ex?.act1Animation||pose.ex?.act4Animation||pose.ex?.act5Animation||pose.ex?.act3Animation||pose.ex?.act2Animation;if(!a||!manifest.entries[a.asset])return null;
     if(!images.has(manifest.entries[a.asset].src))return null;
+    const key=a.asset+'|'+a.index;
+    if(pose.ex.act1Animation&&act1AuthoredFrames.has(key))return act1AuthoredFrames.get(key);
     const f=getFrame(a.asset,a.index),anchor=manifest.entries[a.asset].anchors?.[a.index];
-    return anchor?{...f,anchorX:anchor[0],anchorY:anchor[1]}:f;
+    const frame=anchor?{...f,anchorX:anchor[0],anchorY:anchor[1]}:f;
+    if(pose.ex.act1Animation)act1AuthoredFrames.set(key,frame);
+    return frame;
   }
   function authoredTransform(pose,opts){
     // Authored limbs supply the action. Do not apply the generic whole-body
     // attack lean/death rotation a second time to an already collapsed frame.
-    const scale=(opts.scale??1)*(opts.bossArt?.42:.5)*(pose.ex?.spriteScale||1);
+    const scale=(opts.scale??1)*(pose.ex?.act1Animation?.scale??(opts.bossArt?.42:.5))*(pose.ex?.spriteScale||1);
     const flip=Math.cos(pose.ang||0)<-.15?-1:1;
+    const rest=pose.ex?.act1Animation;
+    if(rest?.rest&&!rest.still&&!motionPreference?.matches){
+      const breath=Math.sin(rest.clock*2.1)*.006,walking=rest.walkPhase!==null;
+      // Gentle breathing stays rooted at the feet. Travel follows actual
+      // stride distance, using the same art, scale and transform for picking.
+      return {a:scale*flip*(1-breath*.4),b:0,c:0,d:scale*(1+breath),e:0,f:walking?-Math.abs(Math.sin(rest.walkPhase))*1.5:0};
+    }
     return {a:scale*flip,b:0,c:0,d:scale,e:0,f:0};
   }
   function bossFlashFrame(frame) {
     const key=frame.id+'|'+frame.index;
     if(bossFlashCache.has(key))return bossFlashCache.get(key);
-    const def=definition(frame.id),source=(def.act2Art||def.act3Art||def.act5Art||def.act4Art)?isolatedFrame(frame):frame;
+    const def=definition(frame.id),source=(def.act1Art||def.act2Art||def.act3Art||def.act5Art||def.act4Art)?isolatedFrame(frame):frame;
     const c=document.createElement('canvas');c.width=source.sw;c.height=source.sh;
     c.frameOffsetX=frame.anchorX-source.anchorX;c.frameOffsetY=frame.anchorY-source.anchorY;
     const cx=c.getContext('2d');cx.drawImage(source.image,source.sx,source.sy,source.sw,source.sh,0,0,source.sw,source.sh);

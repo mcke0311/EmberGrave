@@ -8,7 +8,7 @@ const scope=vm.createContext({console,Math,Date,performance:{now:()=>now},Uint8A
  window:{addEventListener:(n,f)=>events[n]=f,matchMedia:()=>({matches:false})},localStorage:{getItem:()=>null,setItem:noop},
  Sfx:new Proxy({vol:{}},{get:(o,k)=>o[k]||noop}),Player3D:{assets:{},update:noop},UI:new Proxy({cursorItem:null},{get:(o,k)=>k in o?o[k]:noop}),
  SpriteAssets:{maps:{props:{}},actorGeometry:(o,p,x,y)=>({left:x-15,right:x+15,top:y-40,bottom:y}),hitTestGeometry:(g,x,y,pad)=>x>=g.left-pad&&x<=g.right+pad&&y>=g.top-pad&&y<=g.bottom+pad}});
-for(const f of ['utils','data','data_overrides','sprite_manifest','mapgen','navigation','items','lootfilter','entities'])vm.runInContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'),scope);
+for(const f of ['utils','data','data_overrides','sprite_manifest','mapgen','navigation','prop_interactions','items','lootfilter','entities'])vm.runInContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'),scope);
 const source=fs.readFileSync(new URL('../js/game.js',import.meta.url),'utf8').replace('    init, newGame, loadGame,',
  `    __test:{freshState,heldUpdate,updateHover,tryJump,updateFx,updateTraps,cancelGroundHold,setup(s,c){state=s;canvas=c;running=true;camPos={x:0,y:0};groundHold=null;heldTarget=null;mouse={x:0,y:0,l:false,r:false,shift:false,alt:false};bindInput();},get hold(){return groundHold;}},\n    init, newGame, loadGame,`);
 vm.runInContext(source,scope);

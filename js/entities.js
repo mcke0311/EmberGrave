@@ -32,11 +32,15 @@ class Entity {
     this.dir = U.dirFrom(sdx, sdy);
   }
   startAction(state, dur, data) {
+    if(this.action?.dragnetPending||this.action?.veilPending)this.action.interrupted=true;
     this.action = Object.assign({ state, t: 0, dur }, data || {});
     if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.action(this);
+    if(typeof Act1EnemyAnimation!=='undefined')Act1EnemyAnimation.action(this);
   }
   /* generic walk along this.path with collision against walls & entities */
+  movementLocked() { return !!this.snarePull || (this.snareRootUntil || 0) > Game.state.time; }
   moveAlong(dt, speed, map, others) {
+    if (this.movementLocked()) { this.moving=false; this.curSpeed=0; return; }
     if (!this.path || !this.path.length) { this.moving = false; this.curSpeed = 0; return; }
     const wp = this.path[0];
     if(wp.kind==='surface'){
@@ -72,6 +76,7 @@ class Entity {
   }
   // A local step shared by routes and held steering. Only moveAlong may repath.
   moveToward(dt, speed, tx, ty, map, others) {
+    if (this.movementLocked()) { this.moving=false; this.curSpeed=0; return; }
     const d = U.dist(this.x, this.y, tx, ty);
     if (!Number.isFinite(d) || d < .001) { this.moving = false; this.curSpeed = 0; return; }
     if (this.slowT > 0) speed *= (1 - this.slowPct / 100);
@@ -138,7 +143,7 @@ class Entity {
         this.hazT = 0.34;
         const chunk = h.dps * 0.34;
         if (isPlayer) this.takeDamage(chunk, null, h.elem || "phys");
-        else this.takeDamage(chunk, Game.state.player, null, h.elem || "phys");   // credit kills to the player
+        else this.takeDamage(chunk, Game.state.player, { environment: true }, h.elem || "phys");   // credit kills to the player
       }
     }
   }
@@ -191,6 +196,7 @@ class Entity {
     if(typeof Act3EnemyAnimation!=='undefined')Act3EnemyAnimation.sample(this,o);
     if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.sample(this,o);
     if(typeof Act4EnemyAnimation!=='undefined')Act4EnemyAnimation.sample(this,o);
+    if(typeof Act1EnemyAnimation!=='undefined')Act1EnemyAnimation.sample(this,o);
     return o;
   }
 }
@@ -272,14 +278,16 @@ class Player extends Entity {
     const epoch=this._skillEpoch, source=this._castingSkillId||(typeof SkillAudio!=='undefined'?SkillAudio.current?.id:null);
     Game.afterDelay(seconds,()=>{if(epoch===this._skillEpoch)this.withSkillSource(source,callback);});
   }
-  withSkillSource(source,callback) {
+  withSkillSource(source,callback,emitter=this) {
     const previous=this._castingSkillId, before=new Set(this.buffs);
     const world=typeof Game!=="undefined"?Game.state:null, effectsBefore=new Set(world?.fx||[]);
+    const motions=["siphon","charging","leaping","spinning","dashing","drawing"], motionBefore=motions.map(k=>this[k]);
     this._castingSkillId=source;
     const run=()=>typeof SkillVFX!=='undefined'?SkillVFX.scope(this,source,callback):callback();
-    try{return typeof SkillAudio!=='undefined'?SkillAudio.scope(source,{owner:this,emitter:this},run):run();}finally{
+    try{return typeof SkillAudio!=='undefined'?SkillAudio.scope(source,{owner:this,emitter},run):run();}finally{
       if(source)for(const b of this.buffs)if(!before.has(b)&&!b.sourceSkill)b.sourceSkill=source;
       if(source&&world)for(const f of world.fx||[])if(!effectsBefore.has(f)){f.sourceSkill ||= source;f.owner ||= this;}
+      if(source)motions.forEach((key,i)=>{if(this[key]&&this[key]!==motionBefore[i])this[key].sourceSkill ||= source;});
       this._castingSkillId=previous;
     }
   }
@@ -305,7 +313,21 @@ class Player extends Entity {
       !m.dead && m.owner === this && ["summon", "summon_golem"].includes(DATA.SKILLS[m.sourceSkill]?.type));
   }
   companionUpkeep() {
-    return this.maintainedCompanions().reduce((sum,m) => sum + Math.max(1,this.effRank(m.sourceSkill)),0);
+    return this.maintainedCompanions().reduce((sum,m) => sum + this.resolveSkill(m.sourceSkill).upkeep(this.effRank(m.sourceSkill)),0);
+  }
+  summonAuraStatsFor(target) {
+    const stats = {};
+    if (this.dead || target.dead) return stats;
+    for (const m of (typeof Game !== "undefined" && Game.state?.minions || [])) {
+      if (m.dead || m.owner !== this || !m.auraRadius || !TerrainLayers.same(m,target) || U.dist2(m.x,m.y,target.x,target.y) > m.auraRadius ** 2) continue;
+      // Multiple Ents extend coverage; the same aura never multiplies itself.
+      for (const [key,value] of Object.entries(m.auraStats || {})) stats[key] = Math.max(stats[key] || 0,value);
+    }
+    return stats;
+  }
+  syncSummonAuras() {
+    const key = JSON.stringify(this.summonAuraStatsFor(this));
+    if (key !== this._summonAuraKey) { this._summonAuraKey = key; this.computeStats(); }
   }
   checkAetherDepletion() {
     if (this.mana > 0) return;
@@ -324,7 +346,7 @@ class Player extends Entity {
   skillTargetRange(id,target) {
     const sk=this.resolveSkill(id),rk=id==="basic"?1:Math.max(1,this.effRank(id));
     for(const field of ["castRange","grappleRange","blinkRange","leapRange","chargeRange","throwRange"])if(sk?.[field])return sk[field](rk);
-    if(["combo_finish","bash","shockwave","afterimage"].includes(sk?.type)&&sk.range)return sk.range(rk);
+    if(["combo_finish","bash","shockwave","afterimage","dusk_cleave"].includes(sk?.type)&&sk.range)return sk.range(rk);
     if(["spellnova","freezenova","fear","shout","warshout_debuff","overloadnuke"].includes(sk?.type)&&sk.radius)return Math.max(1.2,sk.radius(rk)-.3);
     return null;
   }
@@ -340,6 +362,7 @@ class Player extends Entity {
     this.computeStats(); UI.refreshBuffs?.();
   }
   clearSkillState() {
+    this.clearVeilState();
     if(typeof SkillAudio!=='undefined')SkillAudio.reset();
     if(typeof SkillVFX!=='undefined')SkillVFX.reset();
     this._skillEpoch++; this._perkCache=null; this.skillPerks={};
@@ -438,7 +461,8 @@ class Player extends Entity {
     this._computingGear=g;
     const p = this.passiveStats();
     this._computingGear=null;
-    const b = {};
+    const b = this.summonAuraStatsFor(this);
+    this._summonAuraKey = JSON.stringify(b);
     for (const buff of this.buffs) for (const [k, v] of Object.entries(buff.stats)) b[k] = (b[k] || 0) + v;
     const S = k => (g[k] || 0) + (p[k] || 0) + (b[k] || 0);
     const attr = {
@@ -499,13 +523,14 @@ class Player extends Entity {
     st.resLight = Math.min(75, S("resLight") + S("resAll"));
     st.resPoison = Math.min(75, S("resPoison") + S("resAll"));
     st.elem = { fire: S("fireDmg"), cold: S("coldDmg"), light: S("lightDmg"), poison: S("poisonDmg") };
+    st.elementPct = Object.fromEntries(Object.keys(DATA.DAMAGE_ELEMENTS).map(e => [e, S(e + "DmgPct")]));
     /* bespoke per-class stat hooks, summed from passives / buffs / stances */
     for (const k of ["tempoCapBonus", "tempoWindowBonus", "dmgPerTempo", "shoutDurPct", "uninterruptible",
       "momentumDmgPct", "mobilityCdr", "scorchPct", "scorchSpread", "shatterRank", "coldVsFrozenPct",
       "minionThorns", "curseDurPct", "curseRadiusPct", "curseSpread", "poisonDotPct", "plagueSpreadPct",
       "corpseChance", "overhealCap", "soulCharge", "projRange", "trapCap", "armSpeed", "pShare",
       "pManaPerBeast", "totemRate", "totemTtl", "earthRadius", "shiftStun", "shiftRadius", "extendPerEnemy",
-      "primalProc", "dmgToFire", "totemPower", "totemCapacity",
+      "primalProc", "dmgToFire", "totemPower", "totemCapacity", "bleedDps", "snareConditionPct",
       "dmgTakenPct", "dmgReducePct", "immovable"]) st[k] = S(k);
     /* Bulwark stance hardens the longer you hold ground */
     if (this.stance === "bulwark" && this.rootT > 0) st.armor = Math.floor(st.armor * (1 + Math.min(this.rootT, 3) / 3 * (this.bulwarkArmor || 0.3)));
@@ -537,6 +562,7 @@ class Player extends Entity {
       bonus += st["skillClass_" + sk.cls] || 0;
       bonus += st["skillTree_" + sk.cls + "_" + sk.tree] || 0;
     }
+    if (typeof UniquePowers !== "undefined") bonus += UniquePowers.rankBonus(this, id);
     return rk + bonus;
   }
   weaponDamage() {
@@ -568,6 +594,117 @@ class Player extends Entity {
     return m;
   }
 
+  applyHuntBleed(mon, actual) {
+    if (!(actual > 0) || mon.dead || !(this.stats.bleedDps > 0)) return;
+    mon.bleedDot = { dps: Math.max(mon.bleedDot?.dps || 0, this.stats.bleedDps), t: 3, owner: this };
+  }
+  snareDamageScale(sk) {
+    return this.synergyMult(sk) * (1 + (this.stats.trapPct || 0) / 100) * (1 + this.stats.attr.dex / 140);
+  }
+  snareDamageMult(mon) {
+    const count = Number(mon.slowT > 0 && mon.slowPct > 0) + Number(mon.snareRootUntil > Game.state.time) + Number(mon.bleedDot?.t > 0 && mon.bleedDot.dps > 0);
+    return 1 + count * (this.stats.snareConditionPct || 0) / 100;
+  }
+  snareHit(mon, damage) {
+    const actual = mon.takeDamage(damage * this.snareDamageMult(mon), this, { sourceSkill: this._castingSkillId || "basic" }, "phys");
+    this.applyHuntBleed(mon, actual);
+    return actual;
+  }
+
+  clearVeilState() {
+    this._veilEpoch=(this._veilEpoch||0)+1;
+    this.shadowAmbushUntil=0;
+    this.buffs=this.buffs.filter(b=>b.id!=="shadow_ambush");
+    if(this.action?.veilPending)this.action.interrupted=true;
+    for(const mon of Game.state?.monsters||[])mon.veilExposedUntil=0;
+  }
+  veilHit(mon, cast) {
+    if(mon.dead)return 0;
+    const {sk,rk}=cast,mark=mon.killMark;
+    let directMult=cast.ambush?1.25:1;
+    if(mon.veilExposedUntil>Game.state.time)directMult*=1+(sk.exposedBonus?.(rk)||0)/100;
+    if(sk.missingHpBonus)directMult*=1+sk.missingHpBonus(rk)*U.clamp(1-mon.hp/mon.maxHp,0,1);
+    const actual=this.strike(mon,cast.mult,{auto:true,directMult});
+    if(actual>0){
+      if(sk.exposeDuration&&!mon.dead)mon.veilExposedUntil=Game.state.time+sk.exposeDuration(rk);
+      // A lethal strike already detonates its mark through Monster.die.
+      if(sk.type==="deathblow"&&mark?.until>Game.state.time&&mon.killMark===mark)Game.detonateMark(mon);
+    }
+    return actual;
+  }
+  performVeilAttack(sk,rk,target,point) {
+    const world=Game.state,map=world.map,surface=this.surfaceId??0,id=sk.id;
+    if(this.dead||this.stunT>0||(this.skillCd[id]||0)>world.time)return false;
+    let aim=point||target;if(!aim||!Number.isFinite(aim.x)||!Number.isFinite(aim.y))return false;
+    if((aim.surfaceId??surface)!==surface||target&&(target.dead||!TerrainLayers.same(this,target)))return false;
+    const range=sk.castRange?.(rk)||sk.range(rk);
+    let dist=U.dist(this.x,this.y,aim.x,aim.y);
+    if(dist<.001&&sk.type==="dusk_cleave"){
+      const [dx,dy]=U.screenVecToWorld(this.visAng);aim={x:this.x+dx*range,y:this.y+dy*range};dist=U.dist(this.x,this.y,aim.x,aim.y);
+    }
+    if(dist<.001&&sk.type!=="shadow_flurry")return false;
+    const k=Math.min(1,range/dist);aim={x:this.x+(aim.x-this.x)*k,y:this.y+(aim.y-this.y)*k};
+    const clear=(a,b)=>U.los((x,y)=>MapGen.walkable(map,x,y,surface),a.x,a.y,b.x,b.y);
+    if(!MapGen.walkable(map,aim.x,aim.y,surface)||!clear(this,aim))return false;
+    this.pay(sk,rk);if(sk.cd)this.skillCd[id]=world.time+sk.cd(rk);
+    const cycle=(sk.attackCycle?.(rk)||1)/this.stats.attackRate,flurry=sk.type==="shadow_flurry",count=flurry?sk.count(rk):1;
+    const first=flurry?.35:.45,last=first+(count-1)*.15,total=flurry?last+.2:1;
+    this.face(aim.x,aim.y);this.startAction("attack",cycle*total);
+    const action=this.action,epoch=this._skillEpoch,cast={sk,rk,mult:sk.dmgMult(rk)*this.synergyMult(sk),ambush:false,epoch:this._veilEpoch||0};
+    action.veilPending=true;
+    if(typeof SkillAudio!=="undefined")SkillAudio.markRelease(this);
+    const visited=new Set();let ended=false;
+    for(let i=0;i<count;i++){
+      const release=(first+i*.15)*cycle;this.markActionRelease(release);
+      this.afterSkillDelay(release,()=>{
+        if(ended||this.dead||action.interrupted||this.stunT>0||Game.state!==world||world.map!==map||(this.surfaceId??0)!==surface||this._skillEpoch!==epoch||this.action&&this.action!==action){ended=true;return;}
+        let victim=null;
+        if(flurry){
+          const eligible=world.monsters.filter(m=>!m.dead&&TerrainLayers.same(this,m)&&U.dist(aim.x,aim.y,m.x,m.y)<=sk.radius(rk)+m.radius&&U.dist(this.x,this.y,m.x,m.y)<=range+m.radius&&clear(this,m));
+          if(!eligible.length){ended=true;action.veilPending=false;action.dur=Math.min(action.dur,(action.t||0)+cycle*.2);return;}
+          if(eligible.every(m=>visited.has(m)))visited.clear();
+          const available=eligible.filter(m=>!visited.has(m));
+          victim=i===0&&available.includes(target)?target:available.sort((a,b)=>U.dist2(aim.x,aim.y,a.x,a.y)-U.dist2(aim.x,aim.y,b.x,b.y))[0];
+          visited.add(victim);
+        }
+        if(i===0){cast.ambush=this.shadowAmbushUntil>world.time;if(cast.ambush){this.shadowAmbushUntil=0;this.buffs=this.buffs.filter(b=>b.id!=="shadow_ambush");}}
+        this.skillSound('release');
+        if(typeof SkillVFX!=="undefined")SkillVFX.release(this,id);
+        if(flurry){
+          if(typeof SkillVFX!=="undefined")SkillVFX.beam(this.x,this.y,victim.x,victim.y,SkillVFX.recipes[id],{dur:.18,surfaceId:surface,veilBlade:true});
+          this.veilHit(victim,cast);
+        }else if(sk.type==="dusk_cleave"){
+          const angle=Math.atan2(aim.y-this.y,aim.x-this.x);
+          for(const m of world.monsters){
+            if(m.dead||!TerrainLayers.same(this,m)||U.dist(this.x,this.y,m.x,m.y)>range+m.radius||!clear(this,m))continue;
+            const delta=Math.atan2(Math.sin(Math.atan2(m.y-this.y,m.x-this.x)-angle),Math.cos(Math.atan2(m.y-this.y,m.x-this.x)-angle));
+            if(Math.abs(delta)<=sk.arc(rk)/2)this.veilHit(m,cast);
+          }
+        }else Game.spawnProjectile({x:this.x,y:this.y,tx:aim.x,ty:aim.y,surfaceId:surface,speed:16,kind:"veilblade",fromPlayer:true,sourceSkill:id,visualOwner:this,veilCast:cast,maxRange:range,skillEpoch:epoch});
+        if(i===count-1)action.veilPending=false;
+      });
+    }
+    return true;
+  }
+
+  // These snapshots store outgoing elemental amplification once. Spreads copy the
+  // stored amount; companions deliberately do not use this player-only path.
+  applyPoison(mon, dps, duration, opts = {}) {
+    const elem = opts.fire ? "fire" : "poison";
+    const scaled = opts.scaled ? dps : DATA.scaleElement(this, dps, elem);
+    const old = mon.poisonDot;
+    const keep = opts.strongest && old && old.dps > scaled && !!old.fire === !!opts.fire;
+    mon.poisonDot = keep ? { ...old, t: duration } : {
+      dps: scaled, t: duration, ...(opts.fire ? { fire: true } : {}), owner: this,
+      sourceSkill: this._castingSkillId || "basic", elementScaled: true
+    };
+    return mon.poisonDot;
+  }
+  applyPlague(mon, effect, scaled = false) {
+    mon.plague = { ...effect, tick: scaled ? effect.tick : DATA.scaleElement(this, effect.tick, "poison"),
+      owner: this, sourceSkill: this._castingSkillId || "gravebinder_2_1", elementScaled: true };
+  }
+
   /* ---------------- spells ---------------- */
   /* rolled spell damage: rank range scaled by Willpower, +spell%, synergies, crits */
   spellRoll(sk, rk) {
@@ -584,15 +721,18 @@ class Player extends Entity {
     const col = { fire: "#ff9040", cold: "#9fd8ff", light: "#fff080", poison: "#90ff70", shadow: "#c080e0", earth: "#c0a060" }[elem] || "#ffffff";
     /* Brittle Bones: cold strikes hit frozen foes harder */
     if (elem === "cold" && mon.frozen && Game.state.time < mon.frozen) dmg *= 1 + (this.stats.coldVsFrozenPct || 0) / 100;
+    if (!opts.elementScaled) dmg = DATA.scaleElement(this, dmg, elem);
     if (typeof UniquePowers !== "undefined") dmg = UniquePowers.empower(this,"spell",dmg,mon);
-    const actual = mon.takeDamage(dmg, this, { uniqueEvent: "spell", crit: !!opts.crit, elem }, elem);
+    const elementBaseRatios = opts.elementBaseRatios || { [elem]: 1 / DATA.elementMultiplier(this, elem) };
+    const actual = mon.takeDamage(dmg, this, { uniqueEvent: "spell", crit: !!opts.crit, elem, elementScaled: true, elementBaseRatios, sourceSkill: this._castingSkillId || opts.sourceSkill || "basic" }, elem);
+    this.applyHuntBleed(mon, actual);
     this.skillSound('impact',{elem,target:mon,crit:!!opts.crit});
     if(typeof SkillAudio!=='undefined'&&elem==='cold'&&mon.frozen)SkillAudio.passive(this,'frozen',{target:mon,elem});
     if(typeof SkillVFX!=='undefined')SkillVFX.hit(this,mon,elem,!!opts.crit);
     if (opts.crit) Game.fx.hitPause = Math.max(Game.fx.hitPause, 0.05);
     if (elem === "fire") {
-      if (opts.burn) mon.poisonDot = { dps: opts.burn, t: 2, fire: true };
-      if (opts.scorch) { const sc = mon.scorch || { stacks: 0 }; sc.stacks = Math.min(5, sc.stacks + 1); sc.dps = opts.scorch * sc.stacks * (1 + (this.stats.scorchPct || 0) / 100); sc.until = Game.state.time + 3; mon.scorch = sc; }
+      if (opts.burn) this.applyPoison(mon, opts.burn, 2, { fire: true });
+      if (opts.scorch) { const sc = mon.scorch || { stacks: 0 }; sc.stacks = Math.min(5, sc.stacks + 1); sc.dps = DATA.scaleElement(this, opts.scorch * sc.stacks * (1 + (this.stats.scorchPct || 0) / 100), "fire"); sc.owner = this; sc.sourceSkill = this._castingSkillId; sc.until = Game.state.time + 3; mon.scorch = sc; }
       for (let i = 0; i < 5; i++) Game.addParticle(mon.x, mon.y, "#ff9040");
     } else if (elem === "cold") {
       mon.applySlow(opts.chill || 2, 40);
@@ -600,7 +740,7 @@ class Player extends Entity {
     } else if (elem === "light") {
       for (let i = 0; i < 4; i++) Game.addParticle(mon.x, mon.y, "#fff080");
     } else if (elem === "poison") {
-      if (opts.pdot) mon.poisonDot = { dps: opts.pdot / 3, t: 3 };
+      if (opts.pdot) this.applyPoison(mon, opts.pdot / 3, 3);
       for (let i = 0; i < 4; i++) Game.addParticle(mon.x, mon.y, "#90ff70");
     } else if (elem === "shadow") {
       for (let i = 0; i < 4; i++) Game.addParticle(mon.x, mon.y, "#c080e0");
@@ -656,20 +796,27 @@ class Player extends Entity {
     const groundAttack=['nova','shockwave','leap'].includes(DATA.SKILLS[sourceSkill]?.type);
     if (!opts.guardChecked && !groundAttack && mon.imperialCombat?.block(this)) return 0;
     const d = this.rollDamage(mult, mon);
-    let total = d.phys + d.fire + d.cold + d.light + (this.tempo || 0) * (this.stats.dmgPerTempo || 0);
+    const converted = this.stats.dmgToFire > 0;
+    let total = d.phys + (this.tempo || 0) * (this.stats.dmgPerTempo || 0);
+    for (const elem of ["fire", "cold", "light"]) total += converted ? d[elem] : DATA.scaleElement(this, d[elem], elem);
+    if (converted) total = DATA.scaleElement(this, total, "fire");
+    const elementBaseRatios = converted ? { fire: 1 / DATA.elementMultiplier(this, "fire") } :
+      Object.fromEntries(["fire", "cold", "light"].map(elem => [elem, total > 0 ? (total - DATA.scaleElement(this, d[elem], elem) + d[elem]) / total : 1]));
+    total *= opts.directMult ?? 1; // Conditional hit bonuses never change wound DPS.
     const fireMode = this.stats.dmgToFire > 0;                       // Fire Claw: all damage becomes fire
     let primal = false;                                              // Primal Surge: double phys + fire eruption
     if (this.stats.primalProc > 0 && Math.random() * 100 < this.stats.primalProc) { primal = true; total *= 2; }
     if (d.crit) { Game.fx.hitPause = Math.max(Game.fx.hitPause, 0.055); }
     this.skillSound('impact',{target:mon,elem:fireMode||primal?'fire':'phys',crit:d.crit});
     if (typeof UniquePowers !== "undefined") total = UniquePowers.empower(this,"strike",total,mon);
-    const actual = mon.takeDamage(total, this, { ...d, uniqueEvent: "strike", elem: fireMode ? "fire" : "phys" }, fireMode ? "fire" : undefined);
+    const actual = mon.takeDamage(total, this, { ...d, uniqueEvent: "strike", elem: fireMode ? "fire" : "phys", elementScaled: true, elementBaseRatios, sourceSkill: this._castingSkillId || "basic" }, fireMode ? "fire" : undefined);
+    this.applyHuntBleed(mon, actual);
     if(typeof SkillVFX!=='undefined'){
       SkillVFX.hit(this,mon,fireMode?'fire':'phys',d.crit);
       if(primal)SkillVFX.passive(this,'primal',{x:mon.x,y:mon.y});
     }
     if (!fireMode && d.cold > 0) mon.applySlow(2, 30);
-    if (!fireMode && d.poison > 0) mon.poisonDot = { dps: d.poison / 3, t: 3 };
+    if (!fireMode && d.poison > 0) this.applyPoison(mon, d.poison / 3, 3);
     /* life/mana steal are strike-only (weapon/melee/ranged), not applied to spell damage */
     if (this.stats.lifeSteal > 0) {
       this.healLife(actual * this.stats.lifeSteal / 100);
@@ -692,7 +839,7 @@ class Player extends Entity {
     if (primal) {   /* fiery eruption: half the blow to every other foe in a small area */
       Sfx.playSkill?.('primal_surge','impact',{owner:this,target:mon,elem:'fire',trigger:'primal'}); Game.addNova(mon.x, mon.y, 2.2, "#ff7a30");
       for (let i = 0; i < 9; i++) Game.addParticle(mon.x, mon.y, "#ff9040");
-      for (const m2 of TerrainLayers.targets(Game.state.monsters)) { if (m2 === mon || m2.dead) continue; if (U.dist(mon.x, mon.y, m2.x, m2.y) < 2.2 + m2.radius) m2.takeDamage(total * 0.5, this, null, "fire"); }
+      for (const m2 of TerrainLayers.targets(Game.state.monsters)) { if (m2 === mon || m2.dead) continue; if (U.dist(mon.x, mon.y, m2.x, m2.y) < 2.2 + m2.radius) m2.takeDamage(total * 0.5 * elementBaseRatios.fire, this, null, "fire"); }
     }
     Game.addFloat(mon.x, mon.y, Math.floor(total), d.crit ? "#ffb030" : primal ? "#ff7a30" : fireMode ? "#ff9040" : "#ffffff", d.crit || primal);
     Game.bloodBurst(mon.x, mon.y, d.crit ? 14 : 7);
@@ -779,6 +926,7 @@ class Player extends Entity {
 
   /* execute a skill *now* (caller has verified range etc.) */
   performSkill(skillId,target,point) {
+    if (DATA.SKILLS[skillId]?.type === "passive") return false;
     if (this.rejectSkillWeapon(skillId)) return false;
     const run=()=>this.performSkillPresentation(skillId,target,point);
     return typeof SkillAudio!=='undefined'?SkillAudio.cast(this,skillId,run):run();
@@ -816,6 +964,8 @@ class Player extends Entity {
     const syn = isBasic ? 1 : this.synergyMult(sk);
 
     switch (sk.type) {
+      case "umbral_knife": case "dusk_cleave": case "shadow_flurry": case "deathblow":
+        return this.performVeilAttack(sk,rk,target,point);
       case "melee": {
         if (!target) return false;
         this.face(target.x, target.y);
@@ -963,7 +1113,7 @@ class Player extends Entity {
           dmgLo: lo, dmgHi: hi, elem: sk.elem || null,
           slowPct: sk.slowPct ? sk.slowPct(rk) : 0, slowDur: sk.slowDur ? sk.slowDur(rk) : 0,
           burn: sk.burn ? sk.burn(rk) : 0,
-          mult: this.synergyMult(sk) * (1 + this.stats.trapPct / 100) * (1 + this.stats.attr.dex / 140),
+          mult: this.snareDamageScale(sk),
         };
         /* cap concurrent traps */
         if (Game.state.traps.length >= 4+(this.stats.trapCap||0)) Game.state.traps.shift();
@@ -985,6 +1135,12 @@ class Player extends Entity {
         for (let i = 0; i < 8; i++) Game.addParticle(this.x + U.rf(-0.3, 0.3), this.y + U.rf(-0.3, 0.3), "#4a4458");
         Game.addNova(this.x, this.y, 0.8, "#6a6480");
         this.x = aim.x; this.y = aim.y;
+        if(skillId==="veilranger_2_0"){
+          if(this.action?.veilPending)this.action.interrupted=true;
+          this.shadowAmbushUntil=Game.state.time+3;
+          this.buffs=this.buffs.filter(b=>b.id!=="shadow_ambush");
+          this.buffs.push({id:"shadow_ambush",label:"Shadow Ambush: next Veil attack +25%",emoji:"◆",stats:{},until:this.shadowAmbushUntil,sourceSkill:skillId});
+        }
         this._animationController?.reset();
         this.path = null;
         for (let i = 0; i < 8; i++) Game.addParticle(this.x + U.rf(-0.3, 0.3), this.y + U.rf(-0.3, 0.3), "#4a4458");
@@ -1118,6 +1274,8 @@ class Player extends Entity {
           if (mine.length >= cap) mine.reduce((lo, m) => m.hp < lo.hp ? m : lo, mine[0]).die();   // the most wounded returns to the wild
           const mi = new Minion(sk.minion, stats, this);
           mi.sourceSkill=skillId;
+          mi.auraRadius=sk.auraRadius || 0;
+          mi.auraStats=sk.auraStats?.(rk) || {};
           if (corpse) { mi.x = corpse.x; mi.y = corpse.y; }   // it climbs out of the body
           mi.dmgPctOwner = this.stats.minionDmgPct;
           mi.refreshPalette();
@@ -1127,6 +1285,7 @@ class Player extends Entity {
             mi.name = "Empowered " + (mi.name || "Minion");
           }
           Game.state.minions.push(mi);
+          if (mi.auraRadius) this.syncSummonAuras();
           if (corpse) {
             if(typeof SkillVFX!=='undefined')SkillVFX.transfer(this,skillId,corpse,mi);
             Sfx.play("vox_bone");
@@ -1209,8 +1368,8 @@ class Player extends Entity {
             const dealt = this.strike(target, mult);              // the bite's direct damage
             if (dealt > 0 && !target.dead) {                      // only a landed bite festers
               const tickDps = dealt * 0.5;                        // poison ticks at HALF the direct damage
-              target.poisonDot = { dps: Math.max((target.poisonDot && target.poisonDot.dps) || 0, tickDps), t: pdur };
-              target.rabies = { until: Game.state.time + pdur, dps: tickDps, cloudRad: crad, owner: this };
+              this.applyPoison(target, tickDps, pdur, { strongest: true });
+              target.rabies = { until: Game.state.time + pdur, dps: DATA.scaleElement(this, tickDps, "poison"), cloudRad: crad, owner: this, elementScaled: true };
               for (let i = 0; i < 4; i++) Game.addParticle(target.x, target.y, "#90ff70");
             }
           }
@@ -1614,6 +1773,7 @@ class Player extends Entity {
         const col = { inferno: "#ff9040", glacier: "#9fd8ff", static: "#fff080", miasma: "#90ff70", caltrop: "#c8c8c8", smoke: "#9aa0a8", snare: "#6aa84a", spore: "#b8d870", quake: "#c0a060", regrowth: "#80ff90" }[kind] || "#ffffff";
         const f = { type: "groundfield", fieldKind: kind, x: aim.x, y: aim.y, radius: sk.radius(rk), ttl: sk.dur(rk), maxTtl: sk.dur(rk), tickEvery: (typeof sk.tickEvery === "function" ? sk.tickEvery(rk) : (sk.tickEvery || 0.5)), lo: dm[0], hi: dm[1], owner: this,
           slowPct: sk.slowPct ? sk.slowPct(rk) : 0, selfDodge: sk.selfDodge ? sk.selfDodge(rk) : 0, weakenPct: sk.weakenPct ? sk.weakenPct(rk) : 0, heal: sk.heal ? sk.heal(rk) : 0 };
+        if (kind === "caltrop") f.snareMult = this.snareDamageScale(sk);
         if (kind === "spore") { const a = Math.atan2(aim.y - this.y, aim.x - this.x); f.vx = Math.cos(a) * 0.6; f.vy = Math.sin(a) * 0.6; }
         if (["inferno", "glacier", "static"].includes(kind)) Game.state.fx = Game.state.fx.filter(g => !(g.type === "groundfield" && g.fieldKind === kind));
         this.afterActionDelay(dur0 * 0.5, () => { if (this.dead) return; Sfx.play(kind === "glacier" ? "frost" : kind === "static" ? "zap" : "blast"); Game.addNova(aim.x, aim.y, f.radius, col); Game.state.fx.push(Object.assign(f,{surfaceId:TerrainLayers.current(Game.state.map)})); });
@@ -1680,7 +1840,7 @@ class Player extends Entity {
         if (!target) { const ap = point || { x: this.x, y: this.y }; let bd = 64; for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead) continue; const dd = U.dist2(ap.x, ap.y, m.x, m.y); if (dd < bd) { bd = dd; target = m; } } }
         if (!target) return false;
         this.pay(sk, rk); const dur0 = this.beginCast(sk, target);
-        target.plague = { until: Game.state.time + dur0 + sk.dur(rk), tick: sk.tick(rk), tickT: 0, spreadCd: 1.5, spreadRange: sk.spreadRange(rk), burstRange: sk.burstRange(rk) };
+        this.applyPlague(target, { until: Game.state.time + dur0 + sk.dur(rk), tick: sk.tick(rk), tickT: 0, spreadCd: 1.5, spreadRange: sk.spreadRange(rk), burstRange: sk.burstRange(rk) });
         Sfx.play("curse"); Game.addParticle(target.x, target.y, "#90ff70");
         return true;
       }
@@ -1781,10 +1941,41 @@ class Player extends Entity {
         let aim = target ? { x: target.x, y: target.y } : point; if (!aim) aim = { x: this.x, y: this.y };
         const maxR = sk.castRange ? sk.castRange(rk) : 9, d = U.dist(this.x, this.y, aim.x, aim.y); if (d > maxR) { const k = maxR / d; aim = { x: this.x + (aim.x - this.x) * k, y: this.y + (aim.y - this.y) * k }; }
         this.pay(sk, rk); this.startAction("attack", dur); Sfx.play("bow");
+        // One live Arrowfall per caster, including zones on inactive surfaces.
+        for (let i = Game.state.fx.length - 1; i >= 0; i--) {
+          const field = Game.state.fx[i];
+          if (field.type === "rain" && field.owner === this) Game.state.fx.splice(i, 1);
+        }
         Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "rain", x: aim.x, y: aim.y, radius: sk.radius(rk), ttl: sk.dur(rk), maxTtl: sk.dur(rk), tickEvery: 0.25, mult: sk.dmgMult(rk) * syn, owner: this });
         return true;
       }
-      case "tripwire": {   // Tripwire — a bleeding line snare
+      case "dragnet": {
+        if ((this.skillCd[skillId] || 0) > Game.state.time) return false;
+        let aim = point || target; if (!aim) return false;
+        const map=Game.state.map,world=Game.state,surface=this.surfaceId,range=sk.castRange(rk),d=U.dist(this.x,this.y,aim.x,aim.y),k=d>range?range/d:1;
+        aim={x:this.x+(aim.x-this.x)*k,y:this.y+(aim.y-this.y)*k};
+        if (point?.surfaceId!==undefined && point.surfaceId!==surface || !MapGen.walkable(map,aim.x,aim.y,surface) || !U.los((x,y)=>MapGen.walkable(map,x,y,surface),this.x,this.y,aim.x,aim.y)) return false;
+        this.pay(sk,rk);this.skillCd[skillId]=Game.state.time+sk.cd(rk);this.face(aim.x,aim.y);this.startAction("attack",.4);
+        const action=this.action,epoch=this._skillEpoch,dm=sk.dmg(rk),scale=this.snareDamageScale(sk),radius=sk.radius(rk),root=Math.min(3,sk.root(rk));action.dragnetPending=true;
+        this.markActionRelease(.4);
+        this.afterSkillDelay(.4,()=>{
+          if(this.dead||action.interrupted||world!==Game.state||map!==world.map||surface!==this.surfaceId||epoch!==this._skillEpoch||this.stunT>0||this.action&&this.action!==action)return;
+          action.dragnetPending=false;
+          if(typeof SkillAudio!=="undefined")SkillAudio.release(this,skillId);
+          if(typeof SkillVFX!=="undefined")SkillVFX.release(this,skillId);
+          world.fx.push({type:"dragnet",sourceSkill:skillId,owner:this,surfaceId:surface,x:aim.x,y:aim.y,fromX:this.x,fromY:this.y,radius,ttl:.5,maxTtl:.5});
+          Sfx.play("click");
+          for(const mon of TerrainLayers.targets(world.monsters)) {
+            if(mon.dead||!TerrainLayers.same(this,mon)||U.dist(aim.x,aim.y,mon.x,mon.y)>radius+mon.radius||!U.los((x,y)=>MapGen.walkable(map,x,y,surface),aim.x,aim.y,mon.x,mon.y))continue;
+            const damage=U.rf(...dm)*scale,actual=this.snareHit(mon,damage);
+            Game.addFloat(mon.x,mon.y,Math.floor(actual),"#d8c79a");
+            if(typeof SkillVFX!=="undefined")SkillVFX.hit(this,mon,"phys",false);
+            if(actual>0&&!mon.dead)mon.applyDragnet(aim,root,this);
+          }
+        });
+        return true;
+      }
+      case "tripwire": {   // Legacy wire effects; no longer learnable.
         let aim = target ? { x: target.x, y: target.y } : point; if (!aim) { const [wx, wy] = U.screenVecToWorld(this.visAng); aim = { x: this.x + wx * 5, y: this.y + wy * 5 }; }
         const len = sk.length(rk), d = U.dist(this.x, this.y, aim.x, aim.y) || 1, ex = this.x + (aim.x - this.x) / d * len, ey = this.y + (aim.y - this.y) / d * len;
         this.pay(sk, rk); const dm = sk.dmg(rk);
@@ -1830,9 +2021,11 @@ class Player extends Entity {
           if (mon.dead) continue;
           let burst = 0;
           if (mon.poisonDot) burst += mon.poisonDot.dps * mon.poisonDot.t * sk.dotMult(rk);
+          if (mon.bleedDot) burst += mon.bleedDot.dps * mon.bleedDot.t * sk.dotMult(rk);
           if (mon.quarry && Game.state.time < mon.quarry.until) burst += mon.quarry.stacks * sk.perQuarry(rk) / 100 * wavg;
           if (mon.killMark && Game.state.time < mon.killMark.until) burst += sk.markBonus(rk) / 100 * wavg;
           if (burst <= 0) continue;
+          mon.bleedDot = null;
           Game.addNova(mon.x, mon.y, 1.4, "#d04040");
           this.spellHit(mon, burst, "shadow", {});
           mon.poisonDot = null; mon.quarry = null;
@@ -1899,17 +2092,20 @@ class Player extends Entity {
   }
 
   update(dt) {
-    const active=this.siphon||this.charging||this.leaping||this.spinning||this.dashing;
+    const active=this.siphon||this.charging||this.leaping||this.spinning||this.dashing||this.drawing;
+    const sourceBefore=this._castingSkillId;this._castingSkillId=active?.sourceSkill||sourceBefore;
     const run=()=>typeof SkillVFX!=='undefined'?SkillVFX.scope(this,active?.sourceSkill,()=>this.updatePlayer(dt)):this.updatePlayer(dt);
     try { return typeof SkillAudio!=='undefined'?SkillAudio.scope(active?.sourceSkill,{owner:this,emitter:active||this},run):run(); }
-    finally { if (typeof UniquePowers !== "undefined") UniquePowers.tick(this); }
+    finally { this._castingSkillId=sourceBefore; if (typeof UniquePowers !== "undefined") UniquePowers.tick(this); }
   }
   updatePlayer(dt) {
+    if(this.stunT>0&&this.action?.veilPending)this.action.interrupted=true;
     this.updateAnim(dt);
     /* the dead do not walk, drink, or whirl — they wait to rise */
     if (this.dead) { this.moving = false; return; }
     this.checkAetherDepletion();
     if (this.drawing && !this.canUseSkillWeapon('veilranger_0_2')) { this.drawing=null; this.action=null; }
+    this.syncSummonAuras();
     const st = this.stats;
     /* buffs expiry */
     const n = this.buffs.length;
@@ -2093,7 +2289,7 @@ class Player extends Entity {
       const isSpell = skDef && ["projectile", "pierce", "chain", "fan", "blast", "spellnova", "curse", "corpse", "summon", "minionbuff", "wfan", "wpierce", "trap", "blink", "form", "beam", "meteor", "heal",
         "firewall", "pyreblast", "freezenova", "balllightning", "arcblink", "overloadnuke", "groundfield",
         "ward", "sacrifice", "siphon_beam", "doom", "taunt_curse", "plague_seed", "devour", "corpse_launch", "reap", "outbreak", "summon_golem",
-        "charge_shot", "ricochet", "rain", "tripwire", "decoy", "afterimage", "weapon_coat", "deathmark", "detonate_dots",
+        "charge_shot", "ricochet", "rain", "dragnet", "tripwire", "decoy", "afterimage", "weapon_coat", "deathmark", "detonate_dots", "umbral_knife", "dusk_cleave", "shadow_flurry", "deathblow",
         "totem", "roamaoe", "shout", "fear", "banner", "banner_ultimate", "warshout_debuff", "thrown", "grapple", "fireclaw"].includes(skDef.type);
       let reach;
       if (isSpell) {
@@ -2205,12 +2401,21 @@ class Minion extends Entity {
       this.spriteOpts = { kind: "hound", pal: { fur: "#6a4a34", trim: "#3a2a1c", eye: "#ff8040" }, scale: 1.18 };
     } else if (stats.sprite === "hawk") {
       this.beast = true; this.name = stats.name || "Spirit Hawk"; this.radius = 0.26;
-      this.projKind = "arrow"; this.isArcher = true;
+      this.projKind = null; this.isArcher = false; this.autoHop = false;
+      this.orbitRadius = 2.8;
+      this.orbitAngle = Game.state.minions.filter(m=>!m.dead && m.owner===owner && m.kindId===kindId).length * 2.399963;
+      this.orbitCenter = {x:owner.x,y:owner.y}; this.hawkHitUntil = new WeakMap();
+      this.x = owner.x + Math.cos(this.orbitAngle)*this.orbitRadius;
+      this.y = owner.y + Math.sin(this.orbitAngle)*this.orbitRadius; this.jumpZ = 22;
       this.spriteOpts = { kind: "hound", pal: { fur: "#9aa6b8", trim: "#5a6478", eye: "#cfe0ff" }, scale: 0.7 };
     } else if (stats.sprite === "bear") {
       this.beast = true; this.name = stats.name || "Guardian Bear";
       this.radius = 0.5; this.taunt = stats.taunt || 5; this.slamRadius = 1.8; this.slamCd = 5; this.slamStun = stats.slamStun || 0.6;
       this.spriteOpts = { kind: "grizzly", pal: { fur: "#5a4632", claw: "#e0d8c4", eye: "#ffb040" }, scale: 1.15 };
+    } else if (stats.sprite === "ent") {
+      this.beast = true; this.name = stats.name || "Ent Guardian";
+      this.radius = 0.55; this.taunt = stats.taunt || 5; this.slamRadius = 2; this.slamCd = 4; this.slamStun = 0.6;
+      this.spriteOpts = { kind: "treant", pal: { bark: "#5a4632", wood: "#74604a", leaf: "#3a5a2c", eye: "#d0ff80" }, scale: 1.15 };
     } else if (stats.sprite === "golem") {
       this.name = "Bone Golem"; this.radius = 0.55; this.taunt = stats.taunt || 4; this.slamRadius = 2.0; this.slamCd = 4; this.slamStun = 0.6; this.slamDmg = stats.slamDmg || this.dmg; this.tier = stats.tier || 1;
       this.spriteOpts = { kind: "golem", pal: { bone: "#cdbf95", boneDark: "#5c4b2b", eye: "#ff3b00" }, scale: 1.0 + (this.tier - 1) * 0.12 };
@@ -2222,7 +2427,7 @@ class Minion extends Entity {
       this.spriteOpts = { kind: "skeleton", pal: Minion.PAL_BASE,
         weapon: this.isArcher ? "wand" : "sword", scale: 0.92 };
     }
-    this.spriteOpts.summonArt = kindId;
+    if (stats.sprite !== "ent") this.spriteOpts.summonArt = kindId;
     if (this.noAttack) { this.visAng = owner.visAng; this.angT = owner.visAng; }
     this.deathT = 0;
   }
@@ -2235,11 +2440,13 @@ class Minion extends Entity {
   }
   takeDamage(amount, source) {
     if (this.dead) return;
+    const aura = this.owner.summonAuraStatsFor(this);
+    amount *= 1 - Math.min(80,aura.dmgReducePct || 0) / 100;
     this.hp -= amount;
     this.flashT = 0.1;
     this.lastHitT = Game.state.time;
     /* bristled hides & Marrow Pact bone-thorns bite melee attackers back */
-    const thorns = (this.thornsFlat || 0) + ((!this.beast && this.owner.stats && this.owner.stats.minionThorns) || 0);
+    const thorns = (this.thornsFlat || 0) + (aura.thorns || 0) + ((!this.beast && this.owner.stats && this.owner.stats.minionThorns) || 0);
     if (thorns > 0 && source && source.takeDamage && source !== this.owner && U.dist(this.x, this.y, source.x, source.y) < 1.8) { source.takeDamage(thorns, this); if(!this.beast&&typeof SkillAudio!=='undefined')SkillAudio.passive(this.owner,'minion',{emitter:this,target:source}); }
     if (Math.random() < 0.3) this.startAction("hit", 0.16);
     if (this.hp <= 0) this.die();
@@ -2248,6 +2455,7 @@ class Minion extends Entity {
   die({ silent = false } = {}) {
     if (this.dead) return;
     this.dead = true;
+    if (this.auraRadius) this.owner.syncSummonAuras();
     this.deathT = 0.72;
     this.startAction("death", 0.68);
     if (!silent) this.playSound('end',this.beast ? "die_flesh" : "die_bone");
@@ -2255,6 +2463,7 @@ class Minion extends Entity {
   }
   dmgRoll() {
     let d = U.rf(this.dmg[0], this.dmg[1]) * (1 + (this.owner.stats?.minionDmgPct ?? this.dmgPctOwner) / 100);
+    d *= 1 + (this.owner.summonAuraStatsFor(this).dmgPct || 0) / 100;
     if (Game.state.time < this.buffUntil) d *= 1 + this.buffDmg / 100;
     return d;
   }
@@ -2262,9 +2471,40 @@ class Minion extends Entity {
     if(this.sourceSkill&&typeof SkillAudio!=='undefined')return Sfx.playSkill(this.sourceSkill,phase,{owner:this.owner,emitter:this,...context});
     Sfx.play(fallback);
   }
+  updateHawk(dt, player, aura) {
+    const center = this.orbitCenter, radius = this.orbitRadius;
+    const relocated = !TerrainLayers.same(this,player) || U.dist(center.x,center.y,player.x,player.y) > 8;
+    this.surfaceId = player.surfaceId ?? 0;
+    if (relocated) { center.x=player.x; center.y=player.y; this.x=center.x+Math.cos(this.orbitAngle)*radius; this.y=center.y+Math.sin(this.orbitAngle)*radius; }
+    const speed = this.stunT > 0 ? 0 : this.speed * (1+(aura.frw||0)/100) * (this.slowT>0?1-this.slowPct/100:1);
+    const turn = speed * dt / radius, angle = this.orbitAngle;
+    const steps = Math.max(1,Math.ceil((Math.abs(turn)*radius+U.dist(center.x,center.y,player.x,player.y))/.2));
+    const interval = 1 / (this.atkRate * (1+(aura.ias||0)/100));
+    for (let i=1;i<=steps;i++) {
+      const k=i/steps, a=angle+turn*k, x=U.lerp(center.x,player.x,k)+Math.cos(a)*radius, y=U.lerp(center.y,player.y,k)+Math.sin(a)*radius;
+      const dx=x-this.x,dy=y-this.y,len2=dx*dx+dy*dy, hitTime=Game.state.time-dt+dt*k;
+      if (speed>0) for (const mon of Game.state.monsters) {
+        if (mon.dead || !TerrainLayers.same(this,mon) || (this.hawkHitUntil.get(mon) ?? -Infinity)>hitTime) continue;
+        const t=len2?Math.max(0,Math.min(1,((mon.x-this.x)*dx+(mon.y-this.y)*dy)/len2)):0;
+        if (U.dist2(mon.x,mon.y,this.x+t*dx,this.y+t*dy)>(this.radius+mon.radius)**2) continue;
+        this.hawkHitUntil.set(mon,hitTime+interval);
+        const damage=this.dmgRoll(); mon.takeDamage(damage,this); Game.minionFloat(mon.x,mon.y,damage);
+        this.playSound('impact','hit',{target:mon,elem:'phys'});
+        if(typeof SkillVFX!=='undefined')SkillVFX.scope(this.owner,this.sourceSkill,()=>SkillVFX.hit(this.owner,mon,'phys'));
+      }
+      this.face(x,y); this.x=x; this.y=y;
+    }
+    this.orbitAngle=(angle+turn)%(Math.PI*2); this.orbitCenter={x:player.x,y:player.y};
+    this.jumpZ=22+Math.sin(this.orbitAngle*2)*4; this.path=null; this.jumping=null;
+    this.moving=speed>0; this.curSpeed=speed; this.stride+=speed*dt;
+  }
   update(dt, player, map) {
     this.updateAnim(dt);
     if (this.dead) { this.jumping = null; this.jumpZ = 0; this.deathT -= dt; return; }
+    const aura = this.owner.summonAuraStatsFor(this);
+    if (aura.lifeRegen) this.hp=Math.min(this.maxHp,this.hp+aura.lifeRegen*dt);
+    if (this.orbitRadius) { this.updateHawk(dt,player,aura); return; }
+    const moveSpeed=this.speed*(1+(aura.frw||0)/100), atkRate=this.atkRate*(1+(aura.ias||0)/100);
     if (this.updateTraversal(dt)) return;
     this.tileHazardTick(dt, map, false);   // minions take terrain hazards too
     if (this.dead) return;
@@ -2286,7 +2526,7 @@ class Minion extends Entity {
       this.attackCd-=dt;
       if(this.slamRadius)this.slamCd-=dt;
       Game.repath(this,player.x,player.y,player.surfaceId);
-      this.moveAlong(dt,this.speed*1.2,map,TerrainLayers.targets(Game.state.minions));
+      this.moveAlong(dt,moveSpeed*1.2,map,TerrainLayers.targets(Game.state.minions));
       return;
     }
     const walk = (x, y) => MapGen.walkable(map, x, y);
@@ -2304,7 +2544,7 @@ class Minion extends Entity {
       /* bear / golem ground-slam */
       if (this.slamRadius && this.slamCd <= 0 && d < this.slamRadius + target.radius + 0.6) {
         this.slamCd = 4.5; this.startAction("attack", 0.6);
-        const sx = this.x, sy = this.y, sdmg = this.slamDmg ? U.rf(this.slamDmg[0], this.slamDmg[1]) * (1 + (this.owner.stats?.minionDmgPct ?? this.dmgPctOwner) / 100) : this.dmgRoll() * 1.5;
+        const sx = this.x, sy = this.y, sdmg = this.slamDmg ? U.rf(this.slamDmg[0], this.slamDmg[1]) * (1 + (this.owner.stats?.minionDmgPct ?? this.dmgPctOwner) / 100) * (1+(aura.dmgPct||0)/100) : this.dmgRoll() * 1.5;
         Game.afterDelay(0.4, () => { if (this.dead) return; this.playSound('impact','slam',{elem:'earth'}); Game.addNova(sx, sy, this.slamRadius, "#c0a060"); Game.fx.shake = Math.max(Game.fx.shake, 3); for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(sx, sy, mon.x, mon.y) > this.slamRadius + mon.radius) continue; mon.takeDamage(sdmg, this); Game.minionFloat(mon.x, mon.y, sdmg); mon.stunT = Math.max(mon.stunT, this.slamStun || 0.6); Game.knockMonster(mon, sx, sy, 1.0); } });
         this.moving = false; return;
       }
@@ -2314,8 +2554,8 @@ class Minion extends Entity {
         this.path = null; this.moving = false;
         this.face(target.x, target.y);
         if (this.attackCd <= 0) {
-          this.attackCd = 1 / this.atkRate;
-          const dur = Math.min(0.55, 0.9 / this.atkRate);
+          this.attackCd = 1 / atkRate;
+          const dur = Math.min(0.55, 0.9 / atkRate);
           this.startAction("attack", dur);
           const tref = target;
           Game.afterDelay(dur * 0.55, () => {
@@ -2340,14 +2580,14 @@ class Minion extends Entity {
           this.repathT = 0.4;
           Game.repath(this, target.x, target.y);
         }
-        this.moveAlong(dt, this.speed, map, TerrainLayers.targets(Game.state.minions));
+        this.moveAlong(dt, moveSpeed, map, TerrainLayers.targets(Game.state.minions));
         if (!this.path || !this.path.length) this.moving = false;
       }
     } else if (U.dist(this.x, this.y, player.x, player.y) > 2.6) {
       /* heel */
       this.repathT -= dt;
       if (this.repathT <= 0) { this.repathT = 0.35; Game.repath(this, player.x + U.rf(-1.2, 1.2), player.y + U.rf(-1.2, 1.2)); }
-      this.moveAlong(dt, this.speed * 1.2, map, TerrainLayers.targets(Game.state.minions));
+      this.moveAlong(dt, moveSpeed * 1.2, map, TerrainLayers.targets(Game.state.minions));
       if (!this.path || !this.path.length) this.moving = false;
     } else this.moving = false;
   }
@@ -2397,6 +2637,7 @@ class ImperialCombat {
   }
   trySpecial(force=false){
     const m=this.mon,s=this.profile.special,t=m.pickTarget(this.world.player);
+    if(s&&["blink","charge","leap"].includes(s.kind)&&m.movementLocked())return false;
     if(!s||this.active||(!force&&this.cooldown>0)||!t||!this.valid()||this.disabled()||!this.los(t))return false;
     const distance=U.dist(m.x,m.y,t.x,t.y),angle=Math.atan2(t.y-m.y,t.x-m.x);
     let shape,point;
@@ -2576,6 +2817,9 @@ class Monster extends Entity {
     this.minion = !!opts.minion;
     this.summonOwner=opts.summonOwner||null;
     this.isBoss = !!def.boss;
+    this.monsterFamily=opts.monsterFamily||opts.summonOwner?.monsterFamily||DATA.monsterFamily(defId);
+    this.packId=opts.packId||opts.summonOwner?.packId||null;
+    this.familyHome=opts.familyHome?{...opts.familyHome}:null;
     this.type = DATA.enemyType(def);    // humanoid | undead | beast | demon
     this.scale = def.big || 1;
     this.radius = 0.34 * this.scale;
@@ -2630,6 +2874,29 @@ class Monster extends Entity {
     this.slowT = Math.max(this.slowT, dur);
     this.slowPct = Math.max(this.slowPct, pct);
   }
+  applyDragnet(aim, duration, owner) {
+    if(this.dead||this.def.ccImmune||this.def.rootImmune||Game.bossWard?.(this))return;
+    if(this.isBoss){this.applySlow(duration,40);return;}
+    this.cancelAttacks();this.imperialCombat?.cancel();this.act2Combat?.cancel();this.enemySkills?.cancel();
+    this.jumping=null;this.pulled=null;this.path=null;this.jumpZ=0;
+    const d=U.dist(aim.x,aim.y,this.x,this.y),stop=Math.max(.55,this.radius),ratio=d>stop?stop/d:1;
+    this.snarePull={fromX:this.x,fromY:this.y,x:aim.x+(this.x-aim.x)*ratio,y:aim.y+(this.y-aim.y)*ratio,t:0,dur:.3,root:Math.min(3,duration),owner,surfaceId:this.surfaceId};
+  }
+  updateSnarePull(dt,map) {
+    const p=this.snarePull;if(!p)return false;
+    if(p.surfaceId!==this.surfaceId){this.snarePull=null;return false;}
+    const step=Math.min(dt,p.dur-p.t);p.t+=step;
+    const k=Math.min(1,p.t/p.dur),tx=U.lerp(p.fromX,p.x,k),ty=U.lerp(p.fromY,p.y,k),d=U.dist(this.x,this.y,tx,ty),n=Math.max(1,Math.ceil(d/.08));
+    const ox=this.x,oy=this.y;let blocked=false;
+    for(let i=1;i<=n;i++){
+      const x=U.lerp(ox,tx,i/n),y=U.lerp(oy,ty,i/n);
+      if(!TerrainNavigation.segment(map,this.x,this.y,x,y,this.radius,1,this.surfaceId)){blocked=true;break;}
+      this.x=x;this.y=y;
+    }
+    this.moving=U.dist(ox,oy,this.x,this.y)>.001;
+    if(blocked||k>=1){this.snarePull=null;this.snareRootUntil=Math.max(this.snareRootUntil||0,Game.state.time-Math.max(0,dt-step)+p.root);this.moving=false;}
+    return true;
+  }
   /* nearest hostile: the player or one of their minions —
      and in the Cinderdeep, rival broods tear at each other too */
   pickTarget(player) {
@@ -2642,7 +2909,7 @@ class Monster extends Entity {
     }
     if (Game.state.map.zone.infight && !this.def.projectile && !this.isBoss) {
       for (const o of TerrainLayers.targets(Game.state.monsters)) {
-        if (o === this || o.dead || o.isBoss || (o.def.faction || o.def.family) === (this.def.faction || this.def.family)) continue;
+        if (o === this || o.dead || o.isBoss || this.allied(o)) continue;
         const dd = U.dist2(this.x, this.y, o.x, o.y);
         if (dd < bd && dd < (this.def.sight * this.def.sight)) { bd = dd; best = o; }
       }
@@ -2690,7 +2957,10 @@ class Monster extends Entity {
       if (!this.wardMessageAt || Game.state.time>=this.wardMessageAt) { Game.msg("The ritual shields this foe. "+ward+".","#d8b880"); this.wardMessageAt=Game.state.time+3; }
       return 0;
     }
-    let dmg = amount * (this.enemySkills?.physicalMult(source,elem,detail) ?? 1);
+    // Callers that already scaled mixed weapon hits, spell impacts or DoT
+    // snapshots opt out. Raw player item procs use this final damage boundary.
+    const elemental = source === Game.state.player && !detail?.elementScaled && !detail?.environment ? DATA.elementMultiplier(source, elem) : 1;
+    let dmg = amount * elemental * (this.enemySkills?.physicalMult(source,elem,detail) ?? 1);
     const hpBefore = this.hp;
     if (typeof UniquePowers !== "undefined") dmg *= 1 + UniquePowers.exposed(this) / 100;
     if(this.encounter && this.defId==="mire_mother" && this.encounter.phase>0 && this.encounter.stage==="recovery")dmg*=1.25;
@@ -2713,9 +2983,10 @@ class Monster extends Entity {
     const nextForm=this.defId==="vethriss" && this.def.phases?.[this.phaseIdx||0];
     if (nextForm) dmg=Math.min(dmg,Math.max(0,this.hp-this.maxHp*nextForm.at));
     this.loseHealth(dmg);
-    this.flashT = 0.1;
+    if (!detail?.bleedDot) this.flashT = 0.1;
+    if(!this.aggro)this.wakePack();
     this.aggro = true;
-    if (!this.action || this.action.state !== "attack") {
+    if (!detail?.bleedDot && (!this.action || this.action.state !== "attack")) {
       if (Math.random() < 0.4) this.startAction("hit", 0.18);
     }
     const actual = Math.max(0, Math.min(hpBefore, hpBefore - this.hp));
@@ -2724,12 +2995,14 @@ class Monster extends Entity {
     return actual;
   }
   attackNova(x,y,radius,color){
-    Game.addNova(x,y,radius,color,(typeof Act5EnemyAnimation!=='undefined'?Act5EnemyAnimation.novaPresentation(this):undefined)||(typeof Act2EnemyAnimation!=='undefined'?Act2EnemyAnimation.novaPresentation(this):undefined));
+    Game.addNova(x,y,radius,color,(typeof Act1EnemyAnimation!=='undefined'?Act1EnemyAnimation.novaPresentation(this):undefined)||(typeof Act5EnemyAnimation!=='undefined'?Act5EnemyAnimation.novaPresentation(this):undefined)||(typeof Act2EnemyAnimation!=='undefined'?Act2EnemyAnimation.novaPresentation(this):undefined));
   }
   deferAttack(delay,fn){
     if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.deferred(this,delay);
     if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.deferred(this,delay);
     const act5Visual=this.act5Visual;
+    if(typeof Act1EnemyAnimation!=='undefined')Act1EnemyAnimation.deferred(this,delay);
+    const act1Visual=this.act1Visual;
     const combat=this.imperialCombat,epoch=combat?.epoch;
     const world=Game.state,map=world.map,castEpoch=this.castEpoch;
     Game.afterDelay(delay,()=>{
@@ -2737,6 +3010,7 @@ class Monster extends Entity {
       if(combat&&(!combat.valid()||combat.disabled()||combat.epoch!==epoch))return;
       if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.emit(this,this.def.projectile?'bolt':'melee');
       if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.release(this,act5Visual);
+      if(typeof Act1EnemyAnimation!=='undefined')Act1EnemyAnimation.release(this,act1Visual);
       fn();
     });
   }
@@ -2744,6 +3018,7 @@ class Monster extends Entity {
   cancelAttacks(){
     if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.cancel(this);
     if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.cancel(this);
+    if(typeof Act1EnemyAnimation!=='undefined')Act1EnemyAnimation.cancel(this);
     this.castEpoch++;
     if(this.attackWarning)this.attackWarning.ttl=0;
     if(this.slamWarning)this.slamWarning.ttl=0;
@@ -2753,7 +3028,42 @@ class Monster extends Entity {
     this.charging=this.leaping=this.whirling=null;this.jumpZ=0;
     if(this.action?.state==='attack'||this.action?.state==='cast')this.action=null;
   }
-  allied(other){return !!other&&other!==this&&(other.def.faction||other.def.family)===(this.def.faction||this.def.family);}
+  allied(other){return !!other&&other!==this&&(other.def.faction||other.monsterFamily||other.def.family)===(this.def.faction||this.monsterFamily||this.def.family);}
+  wakePack(){
+    if(this.isBoss||this.beacon)return;
+    for(const other of TerrainLayers.targets(Game.state.monsters)){
+      if(other===this||other.dead||other.aggro||other.isBoss||other.beacon||!this.allied(other))continue;
+      // An alert ends at this pack. Woken allies do not relay it into a chain.
+      if(this.packId?other.packId!==this.packId:other.packId||other.monsterFamily!==this.monsterFamily)continue;
+      if(U.dist2(this.x,this.y,other.x,other.y)>81||!this.combatLos(other))continue;
+      other.aggro=true;other.path=null;
+    }
+  }
+  familyIdle(dt,map){
+    const home=this.familyHome,family=DATA.MONSTER_FAMILIES[this.monsterFamily];
+    if(!home||!family)return false;
+    this.wanderT-=dt;
+    if(this.wanderT<=0){
+      const phase=U.hash(this.packId||this.defId),time=Game.state.time+phase%17;
+      this.wanderT=family.routine==='guard'?5:2.5+phase%7*.2;
+      const away=U.dist(this.x,this.y,home.x,home.y)>6;
+      let tx=home.x,ty=home.y;
+      if(!away){
+        const angle=phase%628/100,patrol=family.routine==='patrol';
+        const range=patrol?2.4:family.routine==='prowl'?2:family.routine==='nest'?1.1:family.routine==='ritual'?.45:.25;
+        const a=patrol?angle:angle+Math.floor(time/4)*1.7,step=patrol?(Math.floor(time/8)%2?1:-1):1;
+        tx+=Math.cos(a)*range*step;ty+=Math.sin(a)*range*step;
+      }
+      if(this.supportedPoint(tx,ty)&&!map.hazard[(tx|0)+(ty|0)*map.w]){
+        if(away)Game.repath(this,tx,ty,this.surfaceId);
+        else if(TerrainNavigation.segment(map,this.x,this.y,tx,ty,this.radius))this.path=[{cx:tx,cy:ty,x:tx|0,y:ty|0}];
+      }
+      if(family.routine==='ritual'||family.routine==='nest')this.face(home.anchorX,home.anchorY);
+    }
+    this.moveAlong(dt,this.def.speed*(family.routine==='prowl'?.5:.32),map,TerrainLayers.targets(Game.state.monsters));
+    if(!this.path?.length)this.moving=false;
+    return true;
+  }
   eligibleTarget(target){
     if(!target||target.dead||target.untargetable||!TerrainLayers.same(this,target))return false;
     const world=Game.state;
@@ -2780,8 +3090,13 @@ class Monster extends Entity {
   }
   combatColor(elem){return {fire:'#ff905c',cold:'#a8e5ff',light:'#ffe58e',shadow:'#c9a3ef',poison:'#a8df79'}[elem]||'#e4d1b0';}
   combatSound(elem,kind,melee=false){
+    if(typeof Act1EnemyAnimation!=='undefined'&&Act1EnemyAnimation.eligible(this)&&elem&&elem!=='phys')return this.attackSound(elem,'hit');
     if(melee)return kind==='sword'||kind==='axe'?'swing':elem==='shadow'?'curse':'hit';
     return kind==='arrow'?'bow':kind==='axe'?'swing':{fire:'firebolt',cold:'frost',light:'zap',shadow:'curse',poison:'curse'}[elem]||'hit';
+  }
+  attackSound(elem,fallback){
+    return typeof Act1EnemyAnimation!=='undefined'&&Act1EnemyAnimation.eligible(this)
+      ?({fire:'firebolt',cold:'frost',light:'zap',shadow:'curse',poison:'curse'}[elem]||fallback):fallback;
   }
   dealAttack(target,damage,elem='phys',onHit=false){
     if(!target||target.dead)return 0;
@@ -2809,14 +3124,15 @@ class Monster extends Entity {
     const duration=Math.max(ability.windup||0,this.def.warnings?.[kind]||({slam:.8,charge:.6,leap:.6,whirl:.6}[kind]||.6));
     const warning={surfaceId:this.surfaceId,type:'enemywarning',owner:this,shape,kind,col:this.combatColor(ability.elem||this.def.meleeElem),x:shape.x,y:shape.y,ttl:duration,maxTtl:duration};
     this.attackWarning=warning;Game.state.fx.push(warning);this.path=null;this.moving=false;
-    this.startAction('attack',duration+(ability.recovery??.25),{act5Kind:kind});
+    this.startAction('attack',duration+(ability.recovery??.25),{enemySkill:kind,act5Kind:kind});
     this.deferAttack(duration,()=>{if(this.attackWarning!==warning)return;warning.ttl=0;this.attackWarning=null;resolve(warning);});
     return warning;
   }
   sustainWarning(warning,duration){warning.ttl=warning.maxTtl=duration;warning.phase='active';this.attackWarning=warning;}
-  finishWarning(){if(this.attackWarning)this.attackWarning.ttl=0;this.attackWarning=null;if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.finish(this);}
+  finishWarning(){if(this.attackWarning)this.attackWarning.ttl=0;this.attackWarning=null;if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.finish(this);if(typeof Act1EnemyAnimation!=='undefined')Act1EnemyAnimation.finish(this);}
   ownSummon(child){
-    child.summonOwner=this;child.fromSummon=true;child.def.faction=this.def.faction||this.def.family;
+    child.summonOwner=this;child.fromSummon=true;child.def.faction=this.def.faction||this.monsterFamily||this.def.family;
+    child.monsterFamily=this.monsterFamily;child.packId=this.packId;
     this.children.push(child);return child;
   }
   livingChildren(){this.children=this.children.filter(c=>!c.dead&&TerrainLayers.targets(Game.state.monsters).includes(c));return this.children.length;}
@@ -2830,6 +3146,13 @@ class Monster extends Entity {
     const nextForm=this.defId==="vethriss" && this.def.phases?.[this.phaseIdx||0];
     if (nextForm) { this.hp=Math.max(this.hp,this.maxHp*nextForm.at); return; }
     this.dead = true;
+    if(this.packId&&Game.state.map.ecology){
+      const map=Game.state.map,territory=map.ecology.territories.find(t=>t.packs.includes(this.packId));
+      if(territory&&!Game.state.monsters.some(m=>!m.dead&&territory.packs.includes(m.packId))){
+        const site=map.props.find(p=>p.territoryId===territory.id);
+        if(site){site.spent=true;site.label=DATA.MONSTER_FAMILIES[territory.family].name+' — deserted';}
+      }
+    }
     this.cancelAttacks();
     this.enemySkills?.cancel();
     if (typeof UniquePowers !== "undefined") UniquePowers.killed(this,source,uniqueContext);
@@ -2840,6 +3163,7 @@ class Monster extends Entity {
     this.corpseT = 12;
     if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.emit(this,'death');
     if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.emit(this,'death');
+    if(typeof Act1EnemyAnimation!=='undefined')Act1EnemyAnimation.emit(this,'death');
     Sfx.play(this.def.sounds === "bone" ? "die_bone" : "die_flesh");
     /* affliction payoffs that fire when the host dies */
     if (this.killMark) Game.detonateMark(this);
@@ -2848,14 +3172,14 @@ class Monster extends Entity {
       const bx = this.x, by = this.y, br = this.plague.burstRange || 2.5;
       Sfx.playSkill?.('gravebinder_2_1','impact',{owner:Game.state.player,emitter:this,elem:'poison'});
       if(typeof SkillVFX!=='undefined')SkillVFX.scope(Game.state.player,'gravebinder_2_1',()=>Game.addNova(bx,by,br,"#90ff70"));else Game.addNova(bx, by, br, "#90ff70");
-      for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this || m.plague) continue; if (U.dist(bx, by, m.x, m.y) <= br + m.radius) m.plague = { until: Game.state.time + 5, tick: this.plague.tick, tickT: 0, spreadCd: 1.5, spreadRange: this.plague.spreadRange, burstRange: br }; }
+      for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this || m.plague) continue; if (U.dist(bx, by, m.x, m.y) <= br + m.radius) m.plague = { ...this.plague, until: Game.state.time + 5, tickT: 0, spreadCd: 1.5, burstRange: br }; }
     }
     /* Rabies: a rabid corpse erupts into a contagious poison cloud */
     if (this.rabies && Game.state.time < this.rabies.until) {
       Sfx.playSkill?.('rabies','impact',{owner:this.rabies.owner||Game.state.player,emitter:this,elem:'poison'});
       if(typeof SkillVFX!=='undefined')SkillVFX.scope(this.rabies.owner||Game.state.player,'rabies',()=>Game.addNova(this.x,this.y,this.rabies.cloudRad,"#90ff70"));else Game.addNova(this.x, this.y, this.rabies.cloudRad, "#90ff70");
       Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "groundfield", fieldKind: "miasma", rabies: true, rdps: this.rabies.dps, rdur: 8, rcloud: this.rabies.cloudRad,
-        owner: this.rabies.owner || Game.state.player, sourceSkill:'rabies', x: this.x, y: this.y, radius: this.rabies.cloudRad, ttl: 4, maxTtl: 4, tickEvery: 0.5 });
+        owner: this.rabies.owner || Game.state.player, elementScaled: this.rabies.elementScaled, sourceSkill:'rabies', x: this.x, y: this.y, radius: this.rabies.cloudRad, ttl: 4, maxTtl: 4, tickEvery: 0.5 });
     }
     /* Brittle Bones: a frozen foe SHATTERS on death, splashing cold */
     if (this.frozen && Game.state.time < this.frozen && Game.state.player && Game.state.player.stats && Game.state.player.stats.shatterRank > 0) {
@@ -2868,7 +3192,7 @@ class Monster extends Entity {
       if(typeof SkillAudio!=='undefined')SkillAudio.passive(Game.state.player,'fire',{emitter:this});
       const give = Math.ceil(this.scorch.stacks / 2), sdps = this.scorch.dps;
       Game.addNova(this.x, this.y, 2.0, "#ff7a20");
-      for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this) continue; if (U.dist(this.x, this.y, m.x, m.y) < 2.0 + m.radius) { const sc = m.scorch || { stacks: 0 }; sc.stacks = Math.min(5, sc.stacks + give); sc.dps = sdps; sc.until = Game.state.time + 3; m.scorch = sc; } }
+      for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this) continue; if (U.dist(this.x, this.y, m.x, m.y) < 2.0 + m.radius) { const sc = m.scorch || { stacks: 0 }; sc.stacks = Math.min(5, sc.stacks + give); sc.dps = sdps; sc.owner = this.scorch.owner || Game.state.player; sc.sourceSkill = this.scorch.sourceSkill; sc.until = Game.state.time + 3; m.scorch = sc; } }
     }
     /* Grave Whispers: a curse leaps off the dead to the nearest un-cursed foe */
     const pl = Game.state.player;
@@ -2895,7 +3219,7 @@ class Monster extends Entity {
       Game.afterDelay(windup, () => {
         warning.ttl=0;
         if(Game.state!==world||world.map!==map||this.castEpoch!==epoch||this.combatMap!==map)return;
-        Sfx.play("blast");
+        Sfx.play(this.attackSound(b.elem,'blast'));
         this.attackNova(bx, by, b.radius, col);
         for (let i = 0; i < 12; i++) Game.addParticle(bx + U.rf(-0.5, 0.5), by + U.rf(-0.5, 0.5), col);
         this.areaAttack(shape,b.dmg,b.elem||'poison');
@@ -2934,7 +3258,7 @@ class Monster extends Entity {
       this.slamWarning=null;warning.ttl=0;
       if(this.dead||hero.dead||Game.state!==world||Game.state.map!==map||!world.monsters.includes(this))return;
       if(this.openingId&&!["bossIntro","boss"].includes(world.flags.opening?.stage))return;
-      this.attackNova(warning.x,warning.y,s.radius,warning.col);Sfx.play("slam");
+      this.attackNova(warning.x,warning.y,s.radius,warning.col);Sfx.play(this.attackSound(s.elem||this.def.meleeElem,'slam'));
       if(!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)Game.fx.shake=Math.max(Game.fx.shake,3);
       // Match the visible boundary exactly: the actor's ground anchor must be inside.
       this.areaAttack({kind:'circle',x:warning.x,y:warning.y,radius:s.radius},U.rf(...this.def.dmg)*s.mult*(this.def.dmgMult||1)*2.2*this.witherMult(),s.elem||this.def.meleeElem);
@@ -2949,6 +3273,7 @@ class Monster extends Entity {
     this.updateAnim(dt);
     if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.tick(this);
     if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.tick(this);
+    if(typeof Act1EnemyAnimation!=='undefined')Act1EnemyAnimation.tick(this);
     if (this.dead) { this.act2Combat?.updateDead(dt); this.corpseT -= dt; return; }
     if (Game.bossWard?.(this)) { this.path=null; this.moving=false; return; }
     if (this.encounter && !this.encounter.prepare(player,map)) return;
@@ -2965,6 +3290,7 @@ class Monster extends Entity {
       if (this.beaconCd <= 0 && this.children.length < bs.max && U.dist(this.x, this.y, player.x, player.y) < 22) {
         this.beaconCd = bs.cd;
         if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.emit(this,'summon');
+        if(typeof Act1EnemyAnimation!=='undefined')Act1EnemyAnimation.summon(this);
         for (let i = 0; i < bs.count; i++) {
           const a = Math.random() * Math.PI * 2, r = 1.2 + Math.random() * 1.4;
           const sx = this.x + Math.cos(a) * r, sy = this.y + Math.sin(a) * r;
@@ -2981,16 +3307,25 @@ class Monster extends Entity {
     }
     if (typeof UniquePowers !== "undefined") UniquePowers.tickDots(this,dt);
     if (this.dead) return;
+    if (this.bleedDot) {
+      const bleed = this.bleedDot, elapsed = Math.min(dt, bleed.t);
+      bleed.t -= elapsed;
+      // Use physical mitigation and boss protection without triggering on-hit effects.
+      this.takeDamage(bleed.dps * elapsed, bleed.owner, { uniqueDot: true, bleedDot: true }, "phys");
+      if (this.dead) return;
+      if (Math.random() < elapsed * 4) Game.addParticle(this.x, this.y, "#b83040");
+      if (bleed.t <= 0) this.bleedDot = null;
+    }
     if (this.poisonDot) {
       this.poisonDot.t -= dt;
       this.loseHealth(this.poisonDot.dps * dt * (1 + ((player.stats && player.stats.poisonDotPct) || 0) / 100) * (1 - this.elemRes(this.poisonDot.fire ? "fire" : "poison") / 100));
       if (Math.random() < dt * 6) Game.addParticle(this.x, this.y, this.poisonDot.fire ? "#ff9040" : "#90ff70");
-      if (this.hp <= 0) { this.die(this.poisonDot.owner || player); return; }
+      if (this.hp <= 0) { this.die(this.poisonDot.owner || player, { sourceSkill: this.poisonDot.sourceSkill, elem: this.poisonDot.fire ? "fire" : "poison" }); return; }
       if (this.poisonDot.t <= 0) this.poisonDot = null;
     }
     /* Scorch: Cinder's stacking burn that Pyre consumes and Heat Haze spreads */
     if (this.scorch) {
-      if (Game.state.time < this.scorch.until) { this.loseHealth(this.scorch.dps * dt); if (Math.random() < dt * 5) Game.addParticle(this.x, this.y, "#ff7a20"); if (this.hp <= 0) { this.die(player); return; } }
+      if (Game.state.time < this.scorch.until) { this.loseHealth(this.scorch.dps * dt); if (Math.random() < dt * 5) Game.addParticle(this.x, this.y, "#ff7a20"); if (this.hp <= 0) { this.die(this.scorch.owner || player, { sourceSkill: this.scorch.sourceSkill, elem: "fire" }); return; } }
       else this.scorch = null;
     }
     /* Contagion: ticking plague that leaps to the healthy and bursts on death */
@@ -3004,10 +3339,10 @@ class Monster extends Entity {
         const rng = (pg.spreadRange || 3.5) * (1 + ((player.stats && player.stats.plagueSpreadPct) || 0) / 100);
         let best = null, bd = rng * rng;
         for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this || m.plague) continue; const dd = U.dist2(this.x, this.y, m.x, m.y); if (dd < bd) { bd = dd; best = m; } }
-        if (best) best.plague = { until: Game.state.time + (pg.until - Game.state.time), tick: pg.tick, tickT: 0, spreadCd: 1.5, spreadRange: pg.spreadRange, burstRange: pg.burstRange };
+        if (best) best.plague = { ...pg, tickT: 0, spreadCd: 1.5 };
         if(best&&typeof SkillVFX!=='undefined')SkillVFX.transfer(player,'gravebinder_2_1',this,best);
       }
-      if (this.hp <= 0) { this.die(player); return; }
+      if (this.hp <= 0) { this.die(pg.owner || player, { sourceSkill: pg.sourceSkill, elem: "poison" }); return; }
       if (Game.state.time >= pg.until) this.plague = null;
     }
     /* Doom: a charging death-timer that detonates when it expires */
@@ -3020,6 +3355,7 @@ class Monster extends Entity {
     if (this.def.regen && !this.noHeal) this.hp = Math.min(this.maxHp, this.hp + this.maxHp * this.def.regen * dt);
     // Keep lifecycle and existing damage ticking while the pursuit takes stairs.
     // Stationary encounters remain in their authored arenas.
+    if(this.updateSnarePull(dt,map))return;
     if(map.layers&&!TerrainLayers.same(this,player)){
       if(!this.awaitingSurface){this.cancelAttacks();this.awaitingSurface=true;}
       if(this.isBoss||this.encounter||this.stunT>0||this.frozen>Game.state.time||player.dead||(!this.aggro&&U.dist(this.x,this.y,player.x,player.y)>22)){
@@ -3065,7 +3401,7 @@ class Monster extends Entity {
       }
     }
     /* yanked in by a Vanguard harpoon: slide to the destination, then stunned + struck */
-    if (this.pulled) {
+    if (this.pulled && !this.movementLocked()) {
       const P = this.pulled; P.t += dt; const k = Math.min(1, P.t / P.dur);
       this.x = U.lerp(P.fx, P.tx, k); this.y = U.lerp(P.fy, P.ty, k); this.moving = true;
       if (k >= 1) { this.pulled = null; this.stunT = Math.max(this.stunT, P.stun); if (P.owner && !P.owner.dead) P.owner.strike(this, P.mult, { auto: true }); }
@@ -3097,7 +3433,7 @@ class Monster extends Entity {
       this.jumpZ = Math.sin(k * Math.PI) * 32; this.moving = true;
       if (k >= 1) {
         this.jumpZ = 0; this.leaping = null;this.finishWarning();
-        Sfx.play("slam"); Game.fx.shake = Math.max(Game.fx.shake, 5);
+        Sfx.play(this.attackSound(this.def.leap.elem||this.def.meleeElem,'slam')); Game.fx.shake = Math.max(Game.fx.shake, 5);
         this.attackNova(this.x, this.y, this.def.leap.radius, this.combatColor(this.def.leap.elem||this.def.meleeElem));
         const dmg = U.rf(...this.def.dmg) * this.def.leap.mult * (this.def.dmgMult || 1) * 2.2 * this.witherMult();
         if(this.supportedPoint(this.x,this.y))this.areaAttack(L.shape,dmg,this.def.leap.elem||this.def.meleeElem);
@@ -3120,7 +3456,7 @@ class Monster extends Entity {
         W.tick = this.def.whirl.tick || 0.3;
         const dmg = U.rf(...this.def.dmg) * this.def.whirl.mult * (this.def.dmgMult || 1) * 2.2 * this.witherMult();
         this.areaAttack({kind:'circle',x:this.x,y:this.y,radius:this.def.whirl.radius},dmg,this.def.whirl.elem||this.def.meleeElem);
-        this.attackNova(this.x, this.y, this.def.whirl.radius, this.combatColor(this.def.whirl.elem||this.def.meleeElem)); Sfx.play("swing");
+        this.attackNova(this.x, this.y, this.def.whirl.radius, this.combatColor(this.def.whirl.elem||this.def.meleeElem)); Sfx.play(this.attackSound(this.def.whirl.elem||this.def.meleeElem,'swing'));
       }
       if (W.t >= W.dur) {this.whirling = null;this.finishWarning();}
       return;
@@ -3180,8 +3516,7 @@ class Monster extends Entity {
         });
         if (this.def.voice) Sfx.voice(this.def.voice, this.def.aggroLines[0]);
       }
-      /* wake the pack */
-      for (const o of TerrainLayers.targets(Game.state.monsters)) if (!o.dead && !o.aggro && U.dist(o.x, o.y, this.x, this.y) < 5) o.aggro = true;
+      this.wakePack();
     }
     /* treasure-beasts bolt away from the hero — catch them for the hoard;
        the "cause flee" affix sets a temporary fleeUntil timer */
@@ -3194,6 +3529,9 @@ class Monster extends Entity {
       return;
     }
     if (!this.aggro) {
+      // Rival Cinderdeep packs can notice each other before the hero arrives.
+      if(map.zone.infight&&this.wanderT<=0&&!player.dead){const rival=this.pickTarget(player);if(rival instanceof Monster&&this.combatLos(rival)){this.aggro=true;this.wakePack();return;}}
+      if(this.familyIdle(dt,map))return;
       /* idle wander */
       this.wanderT -= dt;
       if (this.wanderT <= 0) {
@@ -3211,6 +3549,17 @@ class Monster extends Entity {
 
     if(this.enemySkills){this.enemySkills.fight(player,map);return;}
     const selected=this.pickTarget(player);
+    if(this.def.breath){
+      this.breathCd=Math.max(0,(this.breathCd??3)-dt);
+      const b=this.def.breath,dist=selected?U.dist(this.x,this.y,selected.x,selected.y):Infinity;
+      if(this.breathCd<=0&&selected&&dist>2&&dist<=b.range&&this.combatLos(selected)){
+        this.breathCd=b.cd;this.face(selected.x,selected.y);
+        const shape={kind:'cone',x:this.x,y:this.y,radius:b.radius,arc:b.arc,angle:Math.atan2(selected.y-this.y,selected.x-this.x)};
+        this.warnAttack('breath',shape,b,()=>{
+          this.areaAttack(shape,U.rf(...this.def.dmg)*b.mult*(this.def.dmgMult||1)*2.2*this.witherMult(),b.elem);Sfx.play('frost');
+        });return;
+      }
+    }
     const d=selected?U.dist(this.x,this.y,selected.x,selected.y):Infinity;
     if(this.act2Combat){this.act2Combat.act(dt,player,map);return;}
     /* boss specials */
@@ -3348,7 +3697,7 @@ class Monster extends Entity {
           this.deferAttack(0.4, () => {
             if (this.dead || patient.dead || patient.noHeal || !this.allied(patient) || !TerrainLayers.targets(Game.state.monsters).includes(patient) || U.dist(this.x,this.y,patient.x,patient.y)>this.def.heals.radius || !this.combatLos(patient)) return;
             patient.hp = Math.min(patient.maxHp, patient.hp + this.def.heals.amount);
-            Game.addNova(patient.x, patient.y, 0.8, "#90ff90",typeof Act5EnemyAnimation!=='undefined'?Act5EnemyAnimation.novaPresentation(this):undefined);
+            this.attackNova(patient.x, patient.y, 0.8, "#90ff90");
             Game.addFloat(patient.x, patient.y, "+" + this.def.heals.amount, "#90ff90");
             Sfx.play("shrine");
           });
@@ -3357,7 +3706,7 @@ class Monster extends Entity {
       }
     }
     /* shades step through shadow to reach their prey */
-    if (this.def.teleports) {
+    if (this.def.teleports && !this.movementLocked()) {
       this.teleCd -= dt;
       if (this.teleCd <= 0) {
         const prey = selected;
@@ -3370,6 +3719,7 @@ class Monster extends Entity {
             const act5Origin={x:this.x,y:this.y};
             this.x = nx; this.y = ny; this.path = null;
             if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.blink(this,act5Origin.x,act5Origin.y);
+            if(typeof Act1EnemyAnimation!=='undefined')Act1EnemyAnimation.blink(this,act5Origin.x,act5Origin.y);
             for (let i = 0; i < 6; i++) Game.addParticle(this.x, this.y, "#c080ff");
             Sfx.play("portal");
           }
@@ -3407,7 +3757,7 @@ class Monster extends Entity {
         this.slamCd = this.def.slam.cd;
         const s=this.def.slam,shape={kind:'circle',x:this.x,y:this.y,radius:s.radius};
         this.warnAttack('slam',shape,s,()=>{
-          Game.fx.shake=Math.max(Game.fx.shake,4);Sfx.play(s.elem==='shadow'?'curse':'slam');
+          Game.fx.shake=Math.max(Game.fx.shake,4);Sfx.play(this.attackSound(s.elem||this.def.meleeElem,s.elem==='shadow'?'curse':'slam'));
           this.attackNova(shape.x,shape.y,s.radius,this.combatColor(s.elem||this.def.meleeElem));
           this.areaAttack(shape,U.rf(...this.def.dmg)*s.mult*(this.def.dmgMult||1)*2.2*this.witherMult(),s.elem||this.def.meleeElem);
         });
@@ -3416,7 +3766,7 @@ class Monster extends Entity {
     }
 
     /* a goring charge across open ground */
-    if (this.def.charge) {
+    if (this.def.charge && !this.movementLocked()) {
       this.chargeCd = (this.chargeCd || 0) - dt;
       const ct = selected;
       if (this.chargeCd <= 0 && ct) {
@@ -3441,7 +3791,7 @@ class Monster extends Entity {
       }
     }
     /* Vandil drops from the sky with his polearm */
-    if (this.def.leap) {
+    if (this.def.leap && !this.movementLocked()) {
       this.leapCd -= dt;
       const lt = selected;
       if (this.leapCd <= 0 && lt) {
@@ -3458,7 +3808,7 @@ class Monster extends Entity {
       }
     }
     /* Sigrun opens into a moving whirlwind */
-    if (this.def.whirl) {
+    if (this.def.whirl && !this.movementLocked()) {
       this.whirlCd -= dt;
       const wt = selected;
       if (this.whirlCd <= 0 && wt && U.dist(this.x, this.y, wt.x, wt.y) < 7 && this.combatLos(wt) && this.supportedPoint(this.x,this.y)) {
@@ -3527,7 +3877,7 @@ class Monster extends Entity {
           let dmg = U.rf(...this.def.dmg) * (this.def.dmgMult || 1) * 2.2 * this.witherMult();
           this.dealAttack(tgt,dmg,this.def.meleeElem||'phys',true);
           Sfx.play(this.combatSound(this.def.meleeElem,this.spriteOpts.weapon,true));
-          if(this.def.meleeElem)Game.addParticle(tgt.x,tgt.y,this.combatColor(this.def.meleeElem));
+          if(this.def.meleeElem&&(typeof Act1EnemyAnimation==='undefined'||!Act1EnemyAnimation.eligible(this)||DATA.ENEMIES[this.defId].meleeElem))Game.addParticle(tgt.x,tgt.y,this.combatColor(this.def.meleeElem));
           if (tgt.stats && tgt.stats.thorns > 0 && !this.dead) this.takeDamage(tgt.stats.thorns, tgt);
         });
       }
@@ -3590,6 +3940,7 @@ class Npc extends Entity {
 /* ------------------------------------------------------------------ */
 class Projectile {
   constructor(o) {
+    this.veilCast=o.veilCast||null;this.maxRange=o.maxRange;this.skillEpoch=o.skillEpoch;
     this.enemySlow=o.enemySlow||null;
     this.sourceSkill=o.sourceSkill||null;this.visualOwner=o.visualOwner||null;
     this.x = o.x; this.y = o.y; this.surfaceId=o.surfaceId??TerrainLayers.current(Game.state.map);
@@ -3627,11 +3978,31 @@ class Projectile {
     this.dead = false;
   }
   update(dt, map, player, monsters) {
+    if(this.veilCast){
+      const owner=this.visualOwner||player;
+      if(owner.dead||Game.state!==this.originWorld||map!==this.originMap||owner._skillEpoch!==this.skillEpoch||(owner._veilEpoch||0)!==this.veilCast.epoch||!TerrainLayers.same(this,owner)){this.dead=true;return;}
+      return owner.withSkillSource(this.sourceSkill,()=>this.updateVeil(dt,map,owner,monsters));
+    }
     if(!this.fromPlayer&&this.mon&&(Game.state!==this.originWorld||map!==this.originMap)){this.dead=true;return;}
     if(this.imperialOwner&&!this.imperialOwner.valid()){this.dead=true;return;}
     if(this.bossOwner&&(!this.bossOwner.encounter?.active||this.bossOwner.dead||this.bossOwner.encounter.map!==map)){this.dead=true;return;}
     const run=()=>typeof SkillVFX!=='undefined'&&this.sourceSkill?SkillVFX.scope(this.visualOwner||player,this.sourceSkill,()=>this.updateMotion(dt,map,player,monsters)):this.updateMotion(dt,map,player,monsters);
+    if (this.fromPlayer) return (this.visualOwner || player).withSkillSource(this.sourceSkill || "basic", () => this.updateMotion(dt,map,player,monsters), this);
     return typeof SkillAudio!=='undefined'?SkillAudio.scope(this.sourceSkill,{owner:this.visualOwner||player,emitter:this},run):run();
+  }
+  updateVeil(dt,map,owner,monsters) {
+    if(this.dead)return;
+    const distance=Math.min(this.speed*dt,Math.max(0,this.maxRange-this.travelled)),steps=Math.max(1,Math.ceil(distance/.08)),step=distance/steps;
+    for(let i=0;i<steps;i++){
+      this.x+=this.vx/this.speed*step;this.y+=this.vy/this.speed*step;this.travelled+=step;
+      if(!MapGen.walkable(map,this.x,this.y,this.surfaceId)){
+        if(typeof SkillVFX!=="undefined")SkillVFX.projectileContact(this,"wall");
+        this.dead=true;return;
+      }
+      const victim=monsters.filter(m=>!m.dead&&TerrainLayers.same(this,m)&&U.dist(this.x,this.y,m.x,m.y)<m.radius+.25).sort((a,b)=>U.dist2(this.x,this.y,a.x,a.y)-U.dist2(this.x,this.y,b.x,b.y))[0];
+      if(victim){owner.veilHit(victim,this.veilCast);this.dead=true;return;}
+    }
+    if(this.travelled>=this.maxRange-1e-8)this.dead=true;
   }
   updateMotion(dt, map, player, monsters) {
     if (this.dead) return;
@@ -3720,7 +4091,7 @@ class Projectile {
             if (this.quarryBonus && m.quarry && Game.state.time < m.quarry.until) { mult *= 1 + this.quarryBonus / 100 * m.quarry.stacks; m.quarry = null; }
             player.strike(m, mult, { auto: !!this.boomerang, guardChecked:!!m.imperialCombat });
             if (this.quarryOnHit) m.quarry = { until: Game.state.time + 6, stacks: Math.min(5, ((m.quarry && m.quarry.stacks) || 0) + this.quarryStacks) };
-            if (this.arrowWeapon && player.coat && player.buffs.some(b => b.id === "serrated")) m.poisonDot = { dps: Math.max((m.poisonDot && m.poisonDot.dps) || 0, player.coat.pdot / 3), t: player.coat.woundDuration??4 };
+            if (this.arrowWeapon && player.coat && player.buffs.some(b => b.id === "serrated")) player.applyPoison(m, player.coat.pdot / 3, player.coat.woundDuration??4, { strongest: true });
             if (this.hitSet) this.hitSet.add(m);
             if (this.knockFirst) { Game.knockMonster(m, this.x, this.y, 1.5); this.knockFirst = false; }
             if (this.boomerang) continue;                        // pierces all on both legs

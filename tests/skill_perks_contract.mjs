@@ -21,7 +21,7 @@ function fresh(classId='vanguard'){
   const p=new Player('Perk test',classId);p.lvl=100;p.x=10;p.y=10;
   if(classId==='veilranger')p.equip.main={kind:'gear',cat:'bow',dmg:[1,3],speed:1,ranged:true,twoHand:true,affixes:[]};
   const state=G.__test.freshState(p,123);
-  state.map={id:'test',w:40,h:40,tiles:new Uint8Array(1600),props:[],hazard:new Uint8Array(1600),zone:{lvl:1}};
+  state.map={id:'test',w:40,h:40,tiles:new Uint8Array(1600),blocked:new Uint8Array(1600),props:[],hazard:new Uint8Array(1600),zone:{lvl:1}};
   state.monsters=[];state.minions=[];state.quests={};state.fx=[];state.projectiles=[];state.traps=[];state.time=0;
   G.__test.setState(state);
   for(const sk of Object.values(D.SKILLS))if(sk.cls===classId)p.skills[sk.id]=10;
@@ -78,6 +78,79 @@ for(const sk of skills){
   ok(JSON.stringify(original)===JSON.stringify(after),`${sk.id} base values mutated`);
 }
 ok(ids.size===642,'642 options');
+// Arrowfall replaces its previous field immediately, even on another surface.
+{
+  const {p,state,target}=fresh('veilranger'),id='veilranger_0_6';
+  p.mana=10000;
+  const other={type:'rain',owner:{strike(){}},x:30,y:30,radius:1,ttl:10};
+  state.fx.push(other);
+  for(const x of [11,11,12])ok(p.performSkill(id,null,{x,y:10}),'Arrowfall recast');
+  const fields=state.fx.filter(f=>f.type==='rain'&&f.owner===p);
+  ok(fields.length===1&&fields[0].x===12,'one zone at latest cast position');
+  ok(state.fx.includes(other),'other caster zone retained');
+  fields[0].surfaceId=1;p.performSkill(id,null,{x:11,y:10});
+  ok(!state.fx.includes(fields[0]),'inactive surface zone replaced');
+  let hits=0;const strike=p.strike;p.strike=function(mon,...args){if(mon===target)hits++;return strike.call(this,mon,...args);};
+  G.__test.updateFx(.01);ok(hits===1,'overlapping recasts deal one pulse');
+  ok(target.bleedDot?.dps===30,'Arrowfall applies Master of the Hunt');
+}
+// The old skill ID keeps ranks/perks while becoming a weapon-independent passive.
+{
+  const {p,state,target}=fresh('veilranger'),id='veilranger_0_5',sk=D.SKILLS[id];
+  ok(sk.name==='Master of the Hunt'&&sk.type==='passive'&&!sk.mana&&!sk.requiredWeapons,'passive replaces Skewering Bolt');
+  pick(p,id,5,0);pick(p,id,10,0);p.computeStats();approx(p.stats.bleedDps,48,'bleed ranks and perks');
+  const mana=p.mana;ok(!p.performSkill(id,target),'passive cannot be cast');approx(p.mana,mana,'passive costs no aether');
+  for(const cat of ['bow','crossbow','sword','wand',null]){
+    p.equip.main=cat?{kind:'gear',cat,dmg:[10,10],speed:1,affixes:[],ranged:['bow','crossbow','wand'].includes(cat)}:null;
+    p.computeStats();target.bleedDot=null;p.strike(target,1,{auto:true});
+    approx(target.bleedDot.dps,48,'bleed with '+cat);
+  }
+  target.bleedDot.t=1;p.spellHit(target,10,'fire',{});
+  approx(target.bleedDot.dps,48,'spell hit refreshes without stacking');approx(target.bleedDot.t,3,'duration refreshed');
+  target.poisonDot={dps:7,t:4};const poison=target.poisonDot;p.spellHit(target,10,'phys',{});
+  ok(target.poisonDot===poison,'physical bleed preserves poison');
+  target.bleedDot=null;const tryHit=p.tryHit;p.tryHit=()=>false;p.strike(target,1);p.tryHit=tryHit;
+  ok(!target.bleedDot,'miss does not bleed');
+  target.encounter={canDamage:()=>false};p.spellHit(target,10,'phys',{});
+  ok(!target.bleedDot,'invulnerable hit does not bleed');target.encounter=null;
+  p.skills[id]=0;p.skillPerks={};p.computeStats();p.strike(target,1,{auto:true});
+  ok(!target.bleedDot,'unlearned passive does not bleed');
+  p.skills[id]=1;p.computeStats();p.mana=10000;p.performSkill('veilranger_1_0',null,{x:target.x,y:target.y});
+  for(const tr of state.traps)tr.armT=0;G.__test.updateTraps(.01);
+  approx(target.bleedDot.dps,3,'trap impact applies bleed');
+}
+// Bleed ticks are frame-rate independent, expire precisely, and do not reapply.
+{
+  const {p,state,target}=fresh('veilranger');target.bleedDot=null;p.tryHit=()=>true;
+  G.spawnProjectile({x:p.x,y:p.y,tx:target.x,ty:target.y,speed:14,kind:'arrow',fromPlayer:true,mult:1});
+  const arrow=state.projectiles.at(-1);
+  for(let i=0;i<30&&!arrow.dead;i++)arrow.update(1/60,state.map,p,state.monsters);
+  ok(target.bleedDot?.dps===30,'released arrow impact applies passive bleed');
+  target.poisonDot=null;target.quarry=null;target.killMark=null;target.curseFrailty=null;
+  target.bleedDot={dps:12,t:2,owner:p};p.mana=10000;
+  const id='veilranger_2_6';ok(p.performSkill(id,target),'Deathblow works without wound setup');
+  G.__test.flush(3);
+  for(const pr of state.projectiles)for(let i=0;i<90&&!pr.dead;i++)pr.update(1/60,state.map,p,state.monsters);
+  approx(target.bleedDot.dps,30,'Deathblow applies the strongest Hunt bleed');
+  approx(target.bleedDot.t,3,'Deathblow refreshes instead of consuming bleed');
+}
+for(const fps of [20,60,120]){
+  const {p,state,target}=fresh('veilranger');
+  target.poisonDot=null;target.scorch=null;target.curseFrailty=null;target.def.resAll=0;target.def.armor=0;target.frozen=Infinity;
+  p.stats.bleedDps=3;p.applyHuntBleed(target,10);const hp=target.hp;
+  for(let i=0;i<fps*4;i++){state.time+=1/fps;target.update(1/fps,p,state.map);}
+  ok(Math.abs(hp-target.hp-9)<1e-5,'three-second bleed total at '+fps+'fps');
+  ok(!target.bleedDot,'bleed expires at '+fps+'fps');
+}
+{
+  const {p,state,target}=fresh('veilranger');
+  target.poisonDot=null;target.scorch=null;target.curseFrailty=null;target.def.resAll=0;target.def.armor=100;target.frozen=Infinity;
+  p.stats.bleedDps=10;p.applyHuntBleed(target,10);target.bleedDot.t=.1;const hp=target.hp;
+  target.update(.5,p,state.map);
+  const reduction=Math.min(.6,100/(100+22+4*target.lvl));
+  ok(Math.abs(hp-target.hp-(1-reduction))<1e-7,'last partial tick uses physical armor mitigation');
+  ok(!target.bleedDot,'large frame does not overrun bleed duration');
+}
 // Concrete combat outcomes, rather than catalog-only checks.
 {
   const {p,target,state}=fresh('emberwitch'),id='emberwitch_0_0',base=p.resolveSkill(id).dmg(10)[0];
@@ -131,7 +204,7 @@ ok(ids.size===642,'642 options');
   const {p,state,target}=fresh('wildkeeper');pick(p,'call_wolf',5,2);pick(p,'call_wolf',10,1);
   p.performSkill('call_wolf',null,{x:11,y:10});G.__test.flush(1);
   const wolf=state.minions.at(-1);approx(wolf.atkRate,1.3*1.25,'summon attack speed');
-  approx(wolf.maxHp,Math.floor((26+8*10)*1.25),'summon life perk');
+  approx(wolf.maxHp,Math.floor((78+24*10)*1.25),'summon life perk');
   pick(p,'fangform',10,0);p.performSkill('fangform');ok(p.buffs.some(b=>b.id==='form_fang'&&b.stats.ias===20&&b.until===Infinity),'form perk not retained in toggle');
   pick(p,'totem_mastery',10,0);pick(p,'wildkeeper_1_0',10,0);for(let i=0;i<7;i++){p.mana=p.stats.maxMana;p.performSkill('wildkeeper_1_0',target,{x:10,y:10});}
   ok(state.fx.filter(f=>f.type==='totem').length===6,'totem capacity not combined');
@@ -155,4 +228,70 @@ ok(ids.size===642,'642 options');
   ok(!state.minions.some(m=>m.sourceSkill),'reset left skill summons');
   ok(!Object.keys(JSON.parse(store.get('perk-test')).skillPerks).length,'reset was not saved');
 }
-console.log(`PASS ${checks} perk checks: 107 skills, 642 choices, 963 combinations, ${casts} combat casts, live effects, snapshots and saves.`);
+// Wildkeeper summons keep their full tripled life curve before bond modifiers.
+for(const [id,hp,growth] of [['call_wolf',26,8],['thornback_boar',60,16],['wildkeeper_0_2',18,5],['wildkeeper_0_3',110,24]]) {
+  const {p,state}=fresh('wildkeeper');state.minions=[];p.skills={[id]:1};p.computeStats();
+  for(const rank of [1,5,10,20])approx(D.SKILLS[id].minionStats(rank).hp,3*(hp+growth*rank),id+' triple life at '+rank);
+  p.performSkill(id);G.__test.flush(1);
+  approx(state.minions[0].maxHp,3*(hp+growth),id+' live rank-one life');
+}
+// Measured Breath updates upkeep even for an already living companion, including
+// the Gravebinder's two raised servants and stitched golem.
+for(const sk of skills.filter(s=>['summon','summon_golem'].includes(s.type)&&s.minion!=='ent')) {
+  const {p,state}=fresh(sk.cls);state.minions=[];p.skills={[sk.id]:5};p.computeStats();
+  p.performSkill(sk.id);G.__test.flush(1);
+  const minion=state.minions[0];ok(minion&&!minion.dead,sk.id+' upkeep companion spawned');
+  approx(p.companionUpkeep(),5,sk.id+' base upkeep');
+  pick(p,sk.id,5,1);approx(p.companionUpkeep(),3.75,sk.id+' discounted upkeep');
+  approx(p.resolveSkill(sk.id).mana(5),sk.mana(5)*.75,sk.id+' discounted cast');
+  p.stats.skillAll=2;approx(p.companionUpkeep(),5.25,sk.id+' upkeep honors equipment rank');
+  p.stats.skillAll=0;p.stats.manaRegen=0;p.mana=100;p.manaPool=0;p.update(.2);
+  approx(p.mana,99.25,sk.id+' actual per-second drain');
+  minion.die();approx(p.companionUpkeep(),0,sk.id+' dead summon free');
+}
+{
+  const {p,state}=fresh('wildkeeper');state.minions=[];p.skills={wildkeeper_0_2:1};p.computeStats();
+  p.performSkill('wildkeeper_0_2');G.__test.flush(1);const hawk=state.minions[0];
+  ok(!hawk.isArcher&&!hawk.projKind&&hawk.groundImmune&&hawk.untargetable,'hawk is an airborne contact summon');
+  const victim=(x,y,surfaceId=0)=>({x,y,surfaceId,radius:.3,dead:false,hits:0,hp:10000,takeDamage(n){this.hits++;this.hp-=n;}});
+  const near=victim(hawk.x,hawk.y),far=victim(p.x,p.y),otherFloor=victim(hawk.x,hawk.y,1);
+  state.monsters=[near,far,otherFloor];
+  const step=dt=>{state.time+=dt;hawk.update(dt,p,state.map);};
+  step(.02);ok(near.hits===1&&far.hits===0&&otherFloor.hits===0,'hawk only hits contacted monsters on its surface');
+  step(.02);ok(near.hits===1,'hawk contact has a per-enemy cooldown');
+  const before=hawk.orbitAngle;state.monsters=[];step(1);
+  ok(hawk.orbitAngle!==before&&hawk.moving&&hawk.jumpZ>0,'hawk keeps flying with no monsters');
+  p.x+=1;step(.05);approx(Math.hypot(hawk.x-p.x,hawk.y-p.y),2.8,'orbit follows moving player');
+  const sweep=victim(p.x+Math.cos(hawk.orbitAngle+.4)*2.8,p.y+Math.sin(hawk.orbitAngle+.4)*2.8);
+  state.monsters=[sweep];step(.8);ok(sweep.hits===1,'swept orbit catches monsters between frame endpoints');
+  const crossing=victim((p.x+30)/2,p.y);state.monsters=[crossing];p.x=30;p.surfaceId=1;step(.05);
+  ok(hawk.surfaceId===1&&crossing.hits===0,'teleports and surface changes do not sweep damage across the map');
+  ok(!state.projectiles.length,'hawk never emits arrows');
+  p.mana=0;p.checkAetherDepletion();ok(hawk.dead,'hawk dies at zero aether');
+}
+// All six Ent perks have real effects for both the keeper and companions.
+for(let a=0;a<3;a++)for(let b=0;b<3;b++) {
+  const {p,state,companion}=fresh('wildkeeper'),id='wildkeeper_0_6';
+  p.skills={[id]:10};p.computeStats();pick(p,id,5,a);pick(p,id,10,b);
+  const before={...p.stats},damage=companion.dmgRoll(),count=state.minions.length;
+  p.performSkill(id);G.__test.flush(1);const ent=state.minions.at(-1);
+  ok(ent.kindId==='ent'&&ent.beast&&ent.spriteOpts.kind==='treant'&&state.minions.length===count+1&&!companion.dead,'Ent replaces sacrifice with a tree ally');
+  ent.x=p.x;ent.y=p.y;companion.x=p.x;companion.y=p.y;p.syncSummonAuras();
+  ok(ent.maxHp===1350&&ent.auraRadius===6&&ent.slamRadius>0,'Ent health, aura and slam');
+  if(a===0){approx(p.stats.dmgPct,before.dmgPct+12,'keeper damage aura');approx(p.stats.spellPct,before.spellPct+12,'keeper spell aura');approx(companion.dmgRoll(),damage*1.12,'ally damage aura');}
+  if(a===1){approx(p.stats.dmgReducePct,before.dmgReducePct+10,'keeper protection aura');const hp=companion.hp;companion.takeDamage(10,null);approx(companion.hp,hp-9,'ally protection aura');}
+  if(a===2){approx(p.stats.lifeRegen,before.lifeRegen+2,'keeper healing aura');const hp=companion.hp;companion.noAttack=true;companion.update(.5,p,state.map);approx(companion.hp,hp+1,'ally healing aura');companion.noAttack=false;}
+  if(b===0){approx(p.stats.ias,before.ias+20,'keeper haste aura');companion.attackCd=0;companion.action=null;companion.update(.01,p,state.map);approx(companion.attackCd,1/1.2,'ally haste aura');}
+  if(b===1){approx(p.stats.thorns,before.thorns+20,'keeper thorns aura');let reflected=0;companion.takeDamage(1,{x:companion.x+.5,y:companion.y,takeDamage(n){reflected+=n;}});approx(reflected,20,'ally thorns aura');}
+  if(b===2){let speed=0;const saved=companion.moveAlong;companion.moveAlong=(dt,s)=>{speed=s;};state.monsters=[];companion.x=p.x+4;companion.action=null;companion.update(.01,p,state.map);approx(speed,3*1.2*1.2,'ally movement aura');companion.moveAlong=saved;}
+  ent.x=p.x+7;p.syncSummonAuras();approx(p.stats.dmgPct,before.dmgPct,'aura leaves keeper range');
+  companion.x=p.x;ok(!Object.keys(p.summonAuraStatsFor(companion)).length,'aura leaves ally range');
+  ent.x=p.x;ent.surfaceId=1;p.syncSummonAuras();ok(!Object.keys(p.summonAuraStatsFor(p)).length,'aura respects terrain surfaces');
+  ent.surfaceId=0;p.syncSummonAuras();const active=plain(p.summonAuraStatsFor(p));
+  p.mana=p.stats.maxMana;p.performSkill(id);G.__test.flush(2);const ent2=state.minions.at(-1);ent2.x=p.x;ent2.y=p.y;p.syncSummonAuras();
+  ok(JSON.stringify(plain(p.summonAuraStatsFor(p)))===JSON.stringify(active),'duplicate Ent auras do not stack');
+  ent.die();ok(Object.keys(p.summonAuraStatsFor(p)).length>0,'remaining Ent sustains aura');
+  ent2.die();ok(!Object.keys(p.summonAuraStatsFor(p)).length,'last Ent death removes aura');
+  approx(p.stats.dmgPct,before.dmgPct,'Ent death immediately recomputes keeper stats');
+}
+console.log(`PASS ${checks} perk checks: 107 skills, 642 choices, 963 combinations, ${casts} combat casts, Wildkeeper life, orbit contact, upkeep, auras and saves.`);

@@ -11,6 +11,15 @@ World props feature five act-themed art sets, timed hero gestures and lasting
 used states, including eight searchable frozen bodies in Act I. See
 [animated props and validation](docs/PROP_INTERACTIONS.md).
 
+Monsters now occupy family territories with related pack members, patrols,
+dens, nests and ritual sites. Alerts stay within a pack, and cleared sites
+become deserted. See [monster families](docs/MONSTER_FAMILIES.md).
+
+Browse **[Items & Affixes](loot.html)** to compare item stats, full brown powers,
+drop locations and percentage chances with adjustable level, difficulty and Magic
+Find. The read-only view includes affix tiers and CSV export; see the
+[loot data guide](docs/LOOT_DATA_VIEW.md) for probability definitions and validation.
+
 ## The saga (five acts)
 The playable opening, **The Last Warm Wall**, begins on the snowy road to
 **Frosthaven**. Follow Bryn, witness a fallen guard awaken beside an Embershard,
@@ -185,7 +194,7 @@ Chosen from a D2-style animated **campfire select screen** —
 - **Vanguard** (Arms / Warcries / Assault): melee weapon arts, war-shouts, charges and slams
 - **Ember Witch** (Cinder / Rime / Tempest): bolts, fans, piercing lances, chain lightning, frost novas, ground bursts
 - **Gravebinder** (Bonecraft / Hex / Rot): skeletal warriors and plague mages **raised from enemy corpses** (the corpse is consumed), Poison Mastery that envenoms every skeleton's strike — and visibly blackens their bones green — plus area curses, soul drain, and corpse detonation
-- **Veil Ranger** (Precision / Snares / Veil): aimed shots, arrow fans, skewering bolts that pierce whole packs, placeable barbed/frost/powder traps, Shadowstep blinks, and evasion buffs
+- **Veil Ranger** (Precision / Snares / Veil): aimed shots, arrow fans, Master of the Hunt's passive bleed on all attacks, a single Arrowfall zone, placeable barbed/frost/powder traps, Dragnet grouping and roots, Exploit Weakness bonuses for layered slows/roots/bleeds, Shadowstep-empowered Umbral Knife, Dusk Cleave, Shadow Flurry, and Deathblow attacks that exploit Exposed and detonate Killing Mark
 - **Wildkeeper** (Wildkin / Stormcall / Wildshape): wolf and boar companions, sky-bolts, earth-spike stuns, called thunder — and true **beast transformations** (Fangform, Stoneform, Apexform) that reshape your body on screen
 
 …plus randomized loot up to Unique rarity, **socketed gear and six glyph types**
@@ -586,7 +595,13 @@ materials in its four slots, and **Strike the anvil** when all requirements are 
 Closing the altar returns materials and results to the pack, with overflow at the
 hero's feet. Crafting previews describe random results without predicting rolls.
 
-**C** groups attributes, offense, defense, and exploration stats. **Q** opens a
+**C** opens the full character sheet, including zero-value stats, recovery,
+companion upkeep, class bonuses, and separate elemental resistances. Hover or
+keyboard-focus any stat for its gameplay effects. Basic attack, LMB and RMB skills
+show elemental damage per hit or pulse, immediate totals, and full-duration
+damage-over-time totals. Values update while the sheet stays open. Read the
+[character sheet calculation notes](docs/CHARACTER_SHEET.md) for timing and
+conditional damage details. **Q** opens a
 journal with act and status filters and a side-by-side quest list and details.
 Turn-ins are included in Active; locked quests keep their details concealed.
 

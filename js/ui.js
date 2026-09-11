@@ -12,6 +12,7 @@ const UI = (() => {
   let cursorItem = null;            // item held on the mouse cursor
   let cursorFrom = null;            // grid it was lifted from
   let openPanels = { left: null, right: null, center: null };
+  let characterTip = null, characterRefreshAt = 0;
   let vendorCtx = null;             // active vendor {npcId, items}
   let curTree = 0;
   let selectedSkill = null, skillsClass = null, hudBindingSignature = "", hudPlayer = null;
@@ -190,13 +191,18 @@ const UI = (() => {
       button.classList.toggle("active", active); button.setAttribute("aria-pressed", String(active));
     }
     refreshSkillButtons();
-    /* keep the character-sheet to-hit readout live while it's open */
+    /* Reconcile visible sheet values at most ten times a second. Never rebuild
+       focused controls or run the preview calculations while the panel is shut. */
     if (openPanels.left === "char") {
-      const hs = document.getElementById("statHit"); if (hs) hs.textContent = hitChanceStr(p);
-      for (const [label,value] of [["Life",`${Math.ceil(p.hp)} / ${p.stats.maxHp}`],["Aether",`${Math.ceil(p.mana)} / ${p.stats.maxMana}`],["Experience",`${U.fmt(p.xp)} / ${U.fmt(DATA.xpForLevel(p.lvl))}`]]) {
-        const cell=els.panelLeft.querySelector(`[data-stat="${label}"] .v`); if(cell)cell.textContent=value;
+      if (performance.now() >= characterRefreshAt) renderCharacter();
+      else {
+        const values=CharacterSheet.liveValues(p);
+        values.xp=p.lvl>=DATA.MAX_LEVEL?"Maximum level":U.fmt(p.xp)+" / "+U.fmt(DATA.xpForLevel(p.lvl));
+        for(const [id,value] of Object.entries(values)){
+          const row=els.panelLeft.querySelector(`[data-stat-id="${id}"]`);
+          if(row&&row.dataset.value!==value){row.dataset.value=value;row.querySelector(".v").textContent=value;if(characterTip===row)showCharacterTooltip(row);}
+        }
       }
-      for (const time of els.panelLeft.querySelectorAll('[data-effect-time]')) { const buff=p.buffs[+time.dataset.effectTime]; if(buff)time.textContent=buff.until===Infinity||buff.infinite?"∞":Math.max(0,Math.ceil(buff.until-Game.state.time))+"s"; }
     }
   }
   function skillBtnIcon(el, skillId) {
@@ -339,13 +345,13 @@ const UI = (() => {
   }
   function refreshBuffs() {
     const p = Game.state.player;
-    if (openPanels.left === "char") renderCharacter();
     els.buffs.innerHTML = "";
     for (const b of p.buffs) {
       const d = document.createElement("div"); d.className = "buffico";
       const remain = b.until === Infinity || b.infinite ? "∞" : Math.ceil(b.until - Game.state.time) + "s";
       d.innerHTML = `${b.emoji || "✦"}<span class="bt">${remain}</span>`;
       d.addEventListener("mouseenter", () => {
+        hideTooltip();
         const r = d.getBoundingClientRect();
         const lines = buffEffectLines(b);
         const html = `<div class="tt-head">${b.label}${b.until === Infinity || b.infinite ? "  ·  permanent" : "  ·  " + remain}</div>`
@@ -439,6 +445,7 @@ const UI = (() => {
     if (base && it.identified && it.rarity !== "common" && it.kind === "gear") labels.appendChild(base);
   }
   function showItemTooltip(it, x, y, ctx) {
+    hideTooltip();
     els.tooltip.innerHTML = itemTooltipHTML(it, ctx);
     addItemPreview(els.tooltip, it);
     els.tooltip.classList.remove("hidden");
@@ -470,6 +477,7 @@ const UI = (() => {
     el.style.top = U.clamp(y - h - 14, 6, innerHeight - h - 6) + "px";
   }
   function showSkillTooltip(id, x, y) {
+    hideTooltip();
     const p = Game.state.player;
     const sk = p.resolveSkill(id);
     const rk = id === "basic" ? 1 : (p.skills[id] || 0);
@@ -484,7 +492,7 @@ const UI = (() => {
     if (rk > 0 && rk < (sk.maxRank || 1) && id !== "basic")
       html += `<div class="tt-base">Next: ${sk.desc(eff + 1)}</div>`;
     if (sk.mana && id !== "basic") html += `<div class="tt-req">Aether cost: ${sk.mana(Math.max(1, eff))}</div>`;
-    if (["summon","summon_golem"].includes(sk.type)) html += `<div class="tt-req">Upkeep: ${Math.max(1,eff)} aether/sec per companion. All companions die at zero aether.</div>`;
+    if (["summon","summon_golem"].includes(sk.type)) html += `<div class="tt-req">Upkeep: ${sk.upkeep(eff)} aether/sec per companion. All companions die at zero aether.</div>`;
     if (sk.requiredWeapons) html += `<div class="tt-${p.canUseSkillWeapon(id)?"req":"reqbad"}">Requires a bow or crossbow</div>`;
     if (sk.reqLvl > 1) html += `<div class="tt-${p.lvl >= sk.reqLvl ? "req" : "reqbad"}">Requires character level ${sk.reqLvl}</div>`;
     if (sk.prereq && DATA.SKILLS[sk.prereq]) html += `<div class="tt-${(p.skills[sk.prereq] || 0) > 0 ? "req" : "reqbad"}">Requires ${DATA.SKILLS[sk.prereq].name}</div>`;
@@ -497,7 +505,7 @@ const UI = (() => {
     els.tooltip.classList.remove("hidden");
     positionTip(els.tooltip, x, y);
   }
-  function hideTooltip() { els.tooltip.classList.add("hidden"); els.tooltipCmp.classList.add("hidden"); }
+  function hideTooltip() { characterTip = null; els.tooltip.classList.remove("character-tooltip"); els.tooltip.classList.add("hidden"); els.tooltipCmp.classList.add("hidden"); }
 
   /* ================================================== panels */
   function panelEl(side) { return side === "left" ? els.panelLeft : side === "right" ? els.panelRight : els.panelCenter; }
@@ -897,87 +905,125 @@ const UI = (() => {
     el.appendChild(textNode("div", "pack-help", vendorCtx ? "SELLING MODE · Right-click a pack item to sell it. Equipped items are not sold." : "Click to carry · Right-click / Enter to equip or use · Carry a jewel or glyph to a socket"));
   }
 
-  /* live to-hit readout vs the most recently struck enemy (attack rating governs physical hits) */
-  function hitChanceStr(p) {
-    const mon = p.lastTarget;
-    if (!mon || !mon.def || mon.dead) return "—  (no recent target)";
-    const ch = p.hitChanceVs(mon);
-    if (ch == null) return "—";
-    return Math.round(ch * 100) + "%  vs " + (mon.name || (mon.def && mon.def.name) || "target");
-  }
-
   /* ---------- character panel ---------- */
+  function showCharacterTooltip(row) {
+    characterTip = row;
+    els.tooltip.classList.add("character-tooltip");
+    els.tooltip.replaceChildren(textNode("div", "tt-name tt-rare", row.dataset.label),
+      textNode("div", "tt-mod", row.dataset.value), textNode("div", "tt-base", row.dataset.help));
+    els.tooltip.setAttribute("role", "tooltip");
+    els.tooltipCmp.classList.add("hidden"); els.tooltip.classList.remove("hidden");
+    const r = row.getBoundingClientRect();
+    positionTip(els.tooltip, r.left + r.width / 2, r.top);
+  }
+  function characterEntries(p) {
+    const entries=[], add=(id,type,label,extra={})=>entries.push({id,type,label,...extra});
+    add("identity","identity",p.name);
+    add("class","eyebrow",p.cls.name+" · Level "+p.lvl);
+    add("level","stat","Level",{value:String(p.lvl),help:"Character level increases base Life, Aether and Attack Rating, unlocks talents and changes your chance to hit enemies of different levels."});
+    add("xp","stat","Experience",{value:p.lvl>=DATA.MAX_LEVEL?"Maximum level":U.fmt(p.xp)+" / "+U.fmt(DATA.xpForLevel(p.lvl)),help:"Experience earned toward your next level. Enemy kills and quest rewards grant experience. At maximum level no further levels are gained."});
+    const sections=CharacterSheet.sections(p,Game.state);
+    function stats(section) {
+      add("section-"+section.title,"heading",section.title,{note:section.title==="Attributes"?p.attrPts+" points available":""});
+      for(const row of section.rows)add("stat-"+row.id,"stat",row.label,{...row,id:"stat-"+row.id,statId:row.id});
+    }
+    stats(sections[0]);
+    add("section-damage","heading","Damage");
+    add("damage-help","note","Non-critical damage before enemy defenses. Each total is for one hit or pulse on one enemy. Hover or focus a row for details.");
+    for(const [slot,assigned,label] of [["basic","basic","Basic Attack"],["left",p.skillL,"LMB Skill"],["right",p.skillR,"RMB Skill"]]) {
+      const preview=CharacterSheet.preview(p,assigned||"basic",Game.state), prefix="damage-"+slot;
+      add(prefix,"attack",label+" · "+preview.name,{slot,skill:preview.id});
+      for(const [i,part] of preview.parts.entries()) {
+        const key=prefix+"-"+i;
+        add(key+"-part","part",part.label,{note:part.basis});
+        const elemKeys=[...CharacterSheet.coreElements,...Object.keys(part.hit).filter(k=>!CharacterSheet.coreElements.includes(k))];
+        for(const elem of elemKeys) add(key+"-"+elem,"stat",CharacterSheet.elements[elem]+" Damage",{
+          value:CharacterSheet.formatRange(part.hit[elem]),element:elem,help:"Non-critical "+CharacterSheet.elements[elem].toLowerCase()+" contribution, "+part.basis+", before enemy defenses. Zero means this hit has no immediate damage of this type. Damage over time is listed separately. "+part.notes.join(" ")});
+        add(key+"-total","stat","Total Hit Damage",{value:CharacterSheet.formatRange(part.totalHit),total:true,help:"Sum of the unrounded immediate damage components, "+part.basis+". Excludes damage over time, enemy defenses, target-specific bonuses and random procs. Displayed values are rounded to two decimal places."});
+        for(const [di,d] of part.dots.entries())add(key+"-dot-"+di,"stat",d.label+" · "+CharacterSheet.number(d.duration)+"s",{element:d.element,value:CharacterSheet.formatRange(d.range),help:d.help+" Total over "+CharacterSheet.number(d.duration)+"s, not damage per second."});
+        if(part.dots.length||part.conditionalEffect)add(key+"-effect-total","stat","Total Including Damage over Time",{value:CharacterSheet.formatRange(part.totalEffect),total:true,help:part.conditionalEffect||"One immediate hit plus its listed effects lasting their full durations. Assumes the target survives and effects are not replaced. This is not damage per second or the sum of every pulse in a cast."});
+        if(part.conditionalEffect)add(key+"-conditional","note",part.conditionalEffect);
+      }
+      for(const [i,n] of preview.notes.entries())add(prefix+"-note-"+i,"note",n);
+    }
+    for(const section of sections.slice(1))stats(section);
+    if(p.buffs.length){
+      add("section-effects","heading","Active Effects");
+      const ids=new Map();
+      for(const b of p.buffs){
+        const base=b.id||b.label||"effect", n=ids.get(base)||0;ids.set(base,n+1);
+        const effects=buffEffectLines(b).join(", "), time=b.until===Infinity||b.infinite?"Permanent":Math.max(0,Math.ceil(b.until-Game.state.time))+"s";
+        add("effect-"+base+"-"+n,"stat",(b.emoji||"✦")+" "+(b.label||"Active effect"),{value:time,help:effects||"An ongoing skill or equipment effect. Its active stat bonuses are already included in the sheet."});
+      }
+    }
+    return entries;
+  }
   function renderCharacter() {
-    const p = Game.state.player;
-    const el = els.panelLeft;
-    el.classList.remove("hidden");
-    header(el, "Character", "left");
-    el.appendChild(textNode("div", "hero-identity", p.name));
-    el.appendChild(textNode("div", "manage-eyebrow", p.cls.name + " · Level " + p.lvl));
-    const st = p.stats;
-    const rows = [];
-    const add = (k, v, plus) => rows.push({ k, v, plus });
-    add("Level", p.lvl);
-    add("Experience", `${U.fmt(p.xp)} / ${U.fmt(DATA.xpForLevel(p.lvl))}`);
-    rows.push({section:"Attributes", note:p.attrPts + " points available"});
-    for (const a of ["str", "dex", "vit", "wil"]) {
-      const label = { str: "Strength", dex: "Dexterity", vit: "Vitality", wil: "Willpower" }[a];
-      add(label, st.attr[a], p.attrPts > 0 ? a : null);
+    const p=Game.state.player, el=els.panelLeft;
+    characterRefreshAt=performance.now()+100;
+    let body=el.querySelector(".character-sheet");
+    if(!body){
+      el.classList.remove("hidden"); header(el,"Character","left");
+      body=textNode("div","character-sheet"); body.id="characterSheet"; el.appendChild(body);
+      body.addEventListener("keydown",e=>{
+        if([" ","Enter"].includes(e.key)&&!e.target.closest("button"))e.stopPropagation();
+        if(e.key==="Escape"&&characterTip){hideTooltip();e.stopPropagation();}
+      });
+      // Assign instead of accumulating listeners when reopening the panel.
+      el.onscroll=()=>{if(characterTip)hideTooltip();};
     }
-    const [wlo, whi] = p.weaponDamage();
-    rows.push({section:"Offense"});
-    add("Damage", `${Math.floor(wlo * (1 + st.dmgPct / 100))} – ${Math.floor(whi * (1 + st.dmgPct / 100))}`);
-    add("Attack Rating", st.ar);
-    add("Chance to Hit", `<span id="statHit">${hitChanceStr(p)}</span>`);
-    add("Critical Chance", st.critChance.toFixed(1) + "%");
-    add("Attacks / sec", st.attackRate.toFixed(2));
-    if (st.spellPct > 0) add("Spell Power", "+" + st.spellPct + "%");
-    if (st.fcr > 0) add("Cast Speed", "+" + st.fcr + "%");
-    rows.push({section:"Defense & vitality"});
-    add("Armor", st.armor);
-    add("Block", st.block + "%");
-    if (st.dodge > 0) add("Evasion", st.dodge + "%");
-    add("Life", `${Math.ceil(p.hp)} / ${st.maxHp}`);
-    add("Aether", `${Math.ceil(p.mana)} / ${st.maxMana}`);
-
-    add("Resist Fire / Cold", `${st.resFire}% / ${st.resCold}%`);
-    add("Resist Lightning / Poison", `${st.resLight}% / ${st.resPoison}%`);
-    rows.push({section:"Exploration"});
-    add("Move Speed", "+" + st.frw + "%");
-    add("Rare Loot Chance", "+" + st.mf + "%");
-    add("Gold Find", "+" + st.goldFind + "%");
-    for (const r of rows) {
-      if (r.section) { const section = textNode("h3", "manage-section", r.section); if (r.note) section.appendChild(textNode("small", "attribute-points", r.note)); el.appendChild(section); continue; }
-      const d = document.createElement("div"); d.className = "statrow";
-      d.dataset.stat = r.k;
-      d.innerHTML = `<span>${r.k}</span><span class="v">${r.v}</span>`;
-      if (r.plus) {
-        const b = document.createElement("button"); b.type="button"; b.className = "attrbtn"; b.textContent = "+"; b.setAttribute("aria-label","Increase " + r.k);
-        b.addEventListener("click", () => {
-          if (p.attrPts <= 0) return;
-          p.attr[r.plus]++; p.attrPts--;
-          p.computeStats(); 
-          renderCharacter(); refreshHUD();
-        });
-        d.querySelector(".v").appendChild(b);
+    const rows=characterEntries(p), old=new Map([...body.children].map(n=>[n.dataset.rowKey,n]));
+    const setText=(node,text)=>{if(node.textContent!==text)node.textContent=text;};
+    const retained=new Set();let anchor=body.firstElementChild;
+    for(const row of rows){
+      let node=old.get(row.id);
+      if(!node){
+        const tag=row.type==="heading"?"h3":row.type==="attack"?"h4":"div";
+        const cls={identity:"hero-identity",eyebrow:"manage-eyebrow",heading:"manage-section",attack:"damage-assignment",part:"damage-part",note:"character-note",stat:"statrow character-stat"}[row.type];
+        node=textNode(tag,cls);node.dataset.rowKey=row.id;
+        if(row.type==="stat"){
+          node.tabIndex=0;
+          node.append(textNode("span","stat-label"),textNode("span","v"),textNode("span","stat-help"));
+          node.querySelector(".stat-help").id="help-"+row.id;
+          node.setAttribute("aria-describedby","help-"+row.id);
+          node.addEventListener("mouseenter",()=>showCharacterTooltip(node));
+          node.addEventListener("focusin",()=>requestAnimationFrame(()=>{
+            // Focusing an off-screen stat first scrolls it into view. Place its
+            // help after that scroll, while later user scrolling still hides it.
+            if(node.isConnected&&node.contains(document.activeElement))showCharacterTooltip(node);
+          }));
+          node.addEventListener("mouseleave",()=>{if(characterTip===node)hideTooltip();});
+          node.addEventListener("focusout",e=>{if(!node.contains(e.relatedTarget)&&characterTip===node)hideTooltip();});
+        }else if(["heading","part"].includes(row.type))node.append(textNode("span",""),textNode("small",""));
       }
-      el.appendChild(d);
+      retained.add(node);
+      if(row.type==="stat"){
+        node.dataset.statId=row.statId||row.id;node.dataset.stat=row.label;
+        const changed=node.dataset.label!==row.label||node.dataset.value!==row.value||node.dataset.help!==row.help;
+        node.dataset.label=row.label;node.dataset.value=row.value;node.dataset.help=row.help;
+        setText(node.querySelector(".stat-label"),row.label);setText(node.querySelector(".v"),row.value);
+        setText(node.querySelector(".stat-help"),row.help);
+        node.classList.toggle("damage-total",!!row.total);node.dataset.element=row.element||"";
+        if(row.statId==="hitChance")node.querySelector(".v").id="statHit";
+        if(row.attribute){
+          let button=node.querySelector(".attrbtn");
+          if(!button){
+            button=actionButton("+",()=>{
+              const hero=Game.state.player;if(hero.attrPts<=0)return;
+              hero.attr[row.attribute]++;hero.attrPts--;hero.computeStats();renderCharacter();refreshHUD();
+            },"attrbtn");button.setAttribute("aria-label","Increase "+row.label);node.appendChild(button);
+          }
+          // Keep the control in place when the last point is spent.
+          button.disabled=p.attrPts<=0;
+        }
+        if(changed&&characterTip===node)showCharacterTooltip(node);
+      }else if(["heading","part"].includes(row.type)){setText(node.firstElementChild,row.label);setText(node.lastElementChild,row.note||"");}
+      else setText(node,row.label);
+      if(row.slot){node.dataset.damageSlot=row.slot;node.dataset.skill=row.skill;}
+      if(node===anchor)anchor=anchor.nextElementSibling;
+      else body.insertBefore(node,anchor);
     }
-    /* active effects — transforms, stances, and other buffs (their bonuses are already in the stats above) */
-    if (p.buffs && p.buffs.length) {
-      const head = document.createElement("div"); head.className = "statrow";
-      head.style.cssText = "margin-top:10px;border-top:1px solid #2c2315;padding-top:8px";
-      head.innerHTML = `<span style="color:#cdbb88;letter-spacing:1px">ACTIVE EFFECTS</span><span></span>`;
-      el.appendChild(head);
-      for (const b of p.buffs) {
-        const eff = buffEffectLines(b).join(", ");
-        const remain = b.until === Infinity || b.infinite ? "∞" : Math.ceil(b.until - Game.state.time) + "s";
-        const d = document.createElement("div"); d.className = "statrow";
-        d.innerHTML = `<span>${b.emoji || "✦"} ${b.label} <span data-effect-time="${p.buffs.indexOf(b)}" style="color:#a5afb7;font-size:11px">${remain}</span></span>`
-          + `<span class="v" style="color:#9bb6d0;font-size:11px;max-width:230px;text-align:right">${eff || "—"}</span>`;
-        el.appendChild(d);
-      }
-    }
+    for(const node of old.values())if(!retained.has(node)){if(characterTip===node)hideTooltip();node.remove();}
   }
 
   /* ---------- skill tree panel ---------- */
@@ -1085,7 +1131,7 @@ const UI = (() => {
     heading.appendChild(title); el.appendChild(heading);
     const stats = document.createElement("div"); stats.className = "skill-facts";
     if (sk.mana) stats.innerHTML += `<span><b>${Number(sk.mana(eff)).toFixed(1).replace(/\.0$/, "")}</b> aether</span>`;
-    if (["summon","summon_golem"].includes(sk.type)) stats.innerHTML += `<span><b>${eff}/s</b> per companion · dies at zero aether</span>`;
+    if (["summon","summon_golem"].includes(sk.type)) stats.innerHTML += `<span><b>${sk.upkeep(eff)}/s</b> per companion · dies at zero aether</span>`;
     if (sk.requiredWeapons) stats.innerHTML += `<span class="${p.canUseSkillWeapon(sk.id)?"":"unmet"}">Bow or crossbow required</span>`;
     if (sk.cd) stats.innerHTML += `<span><b>${Number(sk.cd(eff)).toFixed(1).replace(/\.0$/, "")}s</b> cooldown</span>`;
     stats.innerHTML += `<span><b>${sk.reqLvl}</b> level required</span>`; el.appendChild(stats);
@@ -1545,19 +1591,20 @@ const UI = (() => {
     el.classList.add("waypoint-panel");
     header(el, asCaravan ? "THE CARAVAN" : "THE WAYSTONES", "center");
     const here = Game.state.map.id;
-    const groups = DATA.ACTS.concat([DATA.OPTIONAL_ACT]);
-    let currentAct=Math.max(0,groups.findIndex(g=>(g.zones || []).includes(here))), selected=here, pending=false;
+    const groups = DATA.ACTS;
+    const attuned=id=>(Game.state.shrines || []).includes(id);
+    const initialDestination=g=>g.zones.find(id=>id===here)||g.zones.find(attuned)||g.zones[0];
+    let currentAct=Math.max(0,groups.findIndex(g=>g.zones.includes(here))), selected=initialDestination(groups[currentAct]), pending=false;
     const intro=textNode("p","wp-intro",asCaravan?"Choose an attuned waystone. The caravan will take you there.":"Across the sundered world, the stones remember your passage.");el.appendChild(intro);
     const tabs=textNode("div","wp-tabs");tabs.setAttribute("role","tablist");tabs.setAttribute("aria-label","Travel region");el.appendChild(tabs);
     const body=textNode("div","wp-body");el.appendChild(body);
     const status=textNode("p","wp-status");status.setAttribute("role","status");el.appendChild(status);
-    const attuned=id=>(Game.state.shrines || []).includes(id);
     const render=()=>{
       tabs.replaceChildren();body.replaceChildren();
       groups.forEach((g,i)=>{
-        const tab=textNode("button","wp-tab",g===DATA.OPTIONAL_ACT?"Ashen Marches":"Act "+g.rn);tab.type="button";tab.id="wp-tab-"+i;
+        const tab=textNode("button","wp-tab","Act "+g.rn);tab.type="button";tab.id="wp-tab-"+i;
         tab.setAttribute("role","tab");tab.setAttribute("aria-selected",String(i===currentAct));tab.setAttribute("aria-controls","wp-destinations");tab.tabIndex=i===currentAct?0:-1;tab.disabled=pending;
-        tab.title=g.name;tab.addEventListener("click",()=>{currentAct=i;selected=(g.zones || []).find(id=>id===here)||(g.zones || []).find(attuned)||(g.zones || [])[0];render();document.getElementById(tab.id)?.focus();});
+        tab.title=g.name;tab.addEventListener("click",()=>{currentAct=i;selected=initialDestination(g);render();document.getElementById(tab.id)?.focus();});
         tab.addEventListener("keydown",e=>{const next=e.key==="ArrowRight"?(i+1)%groups.length:e.key==="ArrowLeft"?(i+groups.length-1)%groups.length:e.key==="Home"?0:e.key==="End"?groups.length-1:null;if(next!==null){e.preventDefault();tabs.children[next].click();}});
         tabs.appendChild(tab);
       });
@@ -1705,104 +1752,8 @@ const UI = (() => {
   }
 
   /* ===================================== loot filter panel */
-  const LF_PROPS = ["rarity", "reqLvl", "power", "phys", "armor", "value", "mods", "sockets", "craft", "type", "slot", "name", "hasMod", "skill", "quest", "unique", "legendary"];
-  const LF_OPS = [">=", "<=", ">", "<", "==", "!=", "contains"];
-  const LF_SOUNDS = [["", "(filtered default)"], ["dropUnique", "Fanfare"], ["dropRare", "Chime"], ["drop", "Thud"], ["pickup", "Blip"], ["forge", "Forge"], ["crit", "Crit"]];
-  function lfSelect(opts, val, onChange) {
-    const s = document.createElement("select");
-    for (const o of opts) { const op = document.createElement("option"); const [v, label] = Array.isArray(o) ? o : [o, o]; op.value = v; op.textContent = label; if (String(v) === String(val)) op.selected = true; s.appendChild(op); }
-    s.addEventListener("change", () => onChange(s.value)); return s;
-  }
   function renderLootFilter(box) {
-    const LF = LootFilter, cfg = LF.config, re = () => renderLootFilter(box);
-    box.innerHTML = `<h2>LOOT FILTER</h2>`;
-    const row = (label) => { const d = document.createElement("div"); d.className = "setrow"; if (label != null) d.innerHTML = `<span>${label}</span>`; box.appendChild(d); return d; };
-
-    { const r = row("Enabled"); const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = cfg.enabled; cb.addEventListener("change", () => LF.setEnabled(cb.checked)); r.appendChild(cb); }
-    { const r = row("Preset"); r.appendChild(lfSelect(LF.presetList().map(p => [p.key, p.name]).concat([["custom", "Custom"]]), cfg.preset, v => { LF.setPreset(v); re(); })); }
-    { const r = row("Reveal hidden (hold)"); const btn = document.createElement("button"); btn.className = "menubtn"; btn.style.minWidth = "70px"; btn.textContent = cfg.revealKey.toUpperCase();
-      btn.addEventListener("click", () => { btn.textContent = "press a key…"; const h = e => { e.preventDefault(); LF.setRevealKey(e.key.toLowerCase()); window.removeEventListener("keydown", h, true); re(); }; window.addEventListener("keydown", h, true); }); r.appendChild(btn); }
-
-    { const r = row(cfg.preset === "custom" ? "Rules (top wins)" : "Rules (editing forks a Custom copy)"); const add = document.createElement("button"); add.className = "menubtn"; add.textContent = "+ Add"; add.addEventListener("click", () => { LF.addRule(); re(); }); r.appendChild(add); }
-    const list = document.createElement("div"); list.style.maxHeight = "42vh"; list.style.overflowY = "auto"; box.appendChild(list);
-    const rules = LF.rules();
-    if (!rules.length) { const e = document.createElement("div"); e.className = "setrow"; e.style.opacity = ".7"; e.textContent = "No rules — every item is shown."; list.appendChild(e); }
-    rules.forEach((rule, idx) => list.appendChild(lfRuleCard(rule, idx, rules.length, re)));
-
-    { const r = row(null);
-      const mkb = (t, fn) => { const b = document.createElement("button"); b.className = "menubtn"; b.textContent = t; b.addEventListener("click", fn); r.appendChild(b); };
-      mkb("Export", () => prompt("Copy your loot filter JSON:", LF.exportJSON()));
-      mkb("Import", () => { const t = prompt("Paste a loot filter JSON:"); if (t && LF.importJSON(t)) re(); else if (t) msg("Invalid filter JSON.", "#c08080"); });
-      mkb("Reset", () => { LF.reset(); re(); });
-    }
-    const back = document.createElement("button"); back.className = "menubtn"; back.textContent = "Back"; back.addEventListener("click", () => openEsc()); box.appendChild(back);
-  }
-  /* one editable rule card: enable · name · reorder/dup/delete · conditions · appearance · sound · preview */
-  function lfRuleCard(rule, idx, total, re) {
-    const LF = LootFilter, a = rule.action || (rule.action = {});
-    const card = document.createElement("div"); card.style.cssText = "border:1px solid #4a4438;border-radius:5px;margin:4px 0;padding:5px;background:rgba(0,0,0,.25)";
-    const bar = document.createElement("div"); bar.style.cssText = "display:flex;gap:4px;align-items:center";
-    const en = document.createElement("input"); en.type = "checkbox"; en.checked = rule.enabled; en.title = "Enable rule"; en.addEventListener("change", () => LF.editRule(rule.id, { enabled: en.checked }));
-    const nm = document.createElement("input"); nm.type = "text"; nm.value = rule.name || ""; nm.style.flex = "1"; nm.addEventListener("change", () => LF.editRule(rule.id, { name: nm.value }));
-    bar.appendChild(en); bar.appendChild(nm);
-    const ic = (t, fn) => { const b = document.createElement("button"); b.className = "menubtn"; b.style.cssText = "min-width:24px;padding:2px 6px"; b.textContent = t; b.addEventListener("click", fn); bar.appendChild(b); };
-    ic("▲", () => { LF.moveRule(rule.id, -1); re(); });
-    ic("▼", () => { LF.moveRule(rule.id, 1); re(); });
-    ic("⧉", () => { LF.duplicateRule(rule.id); re(); });
-    ic("✕", () => { LF.deleteRule(rule.id); re(); });
-    card.appendChild(bar);
-
-    const condWrap = document.createElement("div"); condWrap.style.margin = "4px 0";
-    const logicRow = document.createElement("div"); logicRow.style.cssText = "display:flex;gap:6px;align-items:center;font-size:12px";
-    logicRow.appendChild(document.createTextNode("Match"));
-    logicRow.appendChild(lfSelect([["AND", "ALL of"], ["OR", "ANY of"]], rule.logic || "AND", v => LF.editRule(rule.id, { logic: v })));
-    const addC = document.createElement("button"); addC.className = "menubtn"; addC.style.cssText = "padding:2px 6px"; addC.textContent = "+ cond"; addC.addEventListener("click", () => { rule.conditions.push({ prop: "rarity", op: ">=", value: 2 }); LF.editRule(rule.id, {}); re(); }); logicRow.appendChild(addC);
-    condWrap.appendChild(logicRow);
-    (rule.conditions || []).forEach((c, ci) => {
-      const cr = document.createElement("div"); cr.style.cssText = "display:flex;gap:3px;margin:2px 0";
-      cr.appendChild(lfSelect(LF_PROPS, c.prop, v => { c.prop = v; LF.editRule(rule.id, {}); }));
-      cr.appendChild(lfSelect(LF_OPS, c.op, v => { c.op = v; LF.editRule(rule.id, {}); }));
-      const val = document.createElement("input"); val.type = "text"; val.value = c.value != null ? c.value : ""; val.style.width = "70px"; val.title = "e.g. 2, player-10, frw, gravebinder, sword";
-      val.addEventListener("change", () => { const n = +val.value; c.value = (val.value !== "" && !isNaN(n) && !/player/i.test(val.value)) ? n : val.value; LF.editRule(rule.id, {}); });
-      cr.appendChild(val);
-      const del = document.createElement("button"); del.className = "menubtn"; del.style.cssText = "padding:2px 6px"; del.textContent = "−"; del.addEventListener("click", () => { rule.conditions.splice(ci, 1); LF.editRule(rule.id, {}); re(); }); cr.appendChild(del);
-      condWrap.appendChild(cr);
-    });
-    card.appendChild(condWrap);
-
-    const app = document.createElement("div"); app.style.cssText = "display:flex;flex-wrap:wrap;gap:8px;font-size:12px;align-items:center";
-    const hideCb = document.createElement("input"); hideCb.type = "checkbox"; hideCb.checked = !!a.hide; hideCb.addEventListener("change", () => { if (hideCb.checked) a.hide = true; else delete a.hide; LF.editRule(rule.id, {}); re(); });
-    const hl = document.createElement("label"); hl.appendChild(hideCb); hl.appendChild(document.createTextNode(" Hide")); app.appendChild(hl);
-    const colorCtl = (key, label, def) => {
-      const wrap = document.createElement("label"); wrap.style.cssText = "display:flex;gap:2px;align-items:center";
-      const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = a[key] !== undefined && a[key] !== null;
-      const ci = document.createElement("input"); ci.type = "color"; ci.value = (typeof a[key] === "string" ? a[key] : def); ci.style.cssText = "width:22px;height:18px;padding:0;border:0;background:none"; ci.disabled = !cb.checked;
-      cb.addEventListener("change", () => { ci.disabled = !cb.checked; if (cb.checked) a[key] = ci.value; else delete a[key]; LF.editRule(rule.id, {}); });
-      ci.addEventListener("input", () => { a[key] = ci.value; LF.editRule(rule.id, {}); });
-      wrap.appendChild(cb); wrap.appendChild(document.createTextNode(label)); wrap.appendChild(ci); return wrap;
-    };
-    app.appendChild(colorCtl("color", "Text", "#ffffff"));
-    app.appendChild(colorCtl("glow", "Glow", "#ffd070"));
-    app.appendChild(colorCtl("beam", "Beam", "#ffd070"));
-    app.appendChild(colorCtl("minimap", "Map", "#ffd070"));
-    const sl = document.createElement("label"); sl.style.cssText = "display:flex;gap:2px;align-items:center"; sl.appendChild(document.createTextNode("Size"));
-    const si = document.createElement("input"); si.type = "number"; si.min = "0.8"; si.max = "1.8"; si.step = "0.1"; si.value = a.size || 1; si.style.width = "48px";
-    si.addEventListener("change", () => { const v = +si.value; if (Math.abs(v - 1) < 0.01) delete a.size; else a.size = v; LF.editRule(rule.id, {}); });
-    sl.appendChild(si); app.appendChild(sl);
-    const snd = lfSelect(LF_SOUNDS, a.sound || "", v => { if (v) a.sound = v; else delete a.sound; LF.editRule(rule.id, {}); if (v) Sfx.play(v); });
-    const snl = document.createElement("label"); snl.style.cssText = "display:flex;gap:2px;align-items:center"; snl.appendChild(document.createTextNode("Sound")); snl.appendChild(snd); app.appendChild(snl);
-    card.appendChild(app);
-
-    const prev = document.createElement("div"); prev.style.cssText = "margin-top:5px;padding:4px;text-align:center;background:rgba(20,16,12,.6);border-radius:4px";
-    if (a.hide) { prev.textContent = "(item hidden)"; prev.style.opacity = ".5"; }
-    else {
-      const lab = document.createElement("span");
-      lab.textContent = "Sample Item" + (a.beam ? "  ▮" : "") + (a.minimap ? "  ◈" : "") + (a.sound ? "  ♪" : "");
-      lab.style.cssText = `color:${a.color || "#cfcfcf"};font-size:${Math.round(13 * (a.size || 1))}px;padding:2px 6px;background:rgba(5,4,3,.82);border-radius:3px;` + (a.glow ? `box-shadow:0 0 8px ${a.glow};border:1px solid ${a.glow}` : "");
-      prev.appendChild(lab);
-    }
-    card.appendChild(prev);
-    return card;
+    LootFilterUI.open(box, { back: openEsc, close: closeEsc });
   }
   function renderControls(box) {
     box.innerHTML = `<h2>CONTROLS</h2>`;

@@ -31,7 +31,7 @@ special = {
  'arrow':'bow', 'volley':'bow', 'draw':'bow', 'ricochet':'bow', 'skewer':'bow', 'rain':'bow',
  'shout':'warcry', 'fear':'warcry', 'roar':'warcry', 'howl':'warcry', 'muster':'warcry',
  'banner':'banner', 'standard':'banner', 'parry':'shield', 'bulwark':'shield', 'bash':'shield',
- 'grapple':'chain', 'barbed':'trap', 'tripwire':'trap', 'caltrop':'trap',
+ 'grapple':'chain', 'barbed':'trap', 'tripwire':'trap', 'dragnet':'trap', 'caltrop':'trap',
  'frosttrap':'frost', 'powder':'fire', 'claw':'fire', 'skeleton':'bone', 'mage':'poison',
  'fangform':'nature', 'bearform':'nature', 'stoneform':'earth', 'apexform':'fire',
  'wolf':'nature', 'boar':'earth', 'bear':'nature', 'hawk':'storm', 'devour':'bone',
@@ -39,6 +39,11 @@ special = {
 }
 heavy = {'finish','execute','roar','fissure','leap','meteor','inferno','glacier','overload','golem','muster','sacrifice','corpse','outbreak','rain','powder','hemorrhage','bear','quake','tempest','stoneform','apexform'}
 accents = {'finish':'shield','parry':'chain','execute':'blood','banner':'cloth','standard':'cloth','charge':'cloth','grapple':'latch','axe':'steel','fissure':'roots','bash':'chain','leap':'roots','meteor':'thunder','inferno':'thunder','glacier':'stone','overload':'thunder','golem':'stone','bonespear':'blade','muster':'bone','sacrifice':'blood','siphon':'breath','reap':'blade','corpse':'bone','outbreak':'breath','volley':'cloth','draw':'draw','ricochet':'steel','skewer':'blade','rain':'wind','barbed':'chain','tripwire':'latch','powder':'stone','decoy':'cloth','blink':'breath','smoke':'wind','afterimage':'blade','wolf':'roots','boar':'growl','hawk':'wind','bear':'roots','totem':'roots','cyclone':'wind','quake':'roots','tempest':'thunder','fangform':'roots','bearform':'roots','stoneform':'roots','apexform':'growl','claw':'blade'}
+accents['ent'] = 'roots'
+accents['dragnet'] = 'cloth'
+special.update(umbral='steel', dusk='steel', flurry='steel', deathblow='steel')
+accents.update(umbral='breath', dusk='blade', flurry='cloth', deathblow='blood')
+heavy.add('deathblow')
 catalog = {}
 audible_passives = {'emberwitch_0_2','emberwitch_1_2','gravebinder_0_3','gravebinder_1_4','gravebinder_1_6','kinship','primal_surge'}
 for i, row in enumerate(rows):

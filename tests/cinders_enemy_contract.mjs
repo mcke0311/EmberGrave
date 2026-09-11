@@ -4,8 +4,10 @@ import {fixture} from './boss_fixture.mjs';
 const before=fixture({sourceDirectory:'tmp/cinders_enemies/before/js',dataSeed:518}),f=fixture({dataSeed:518});
 let checks=0;const ok=(value,message)=>{assert.ok(value,message);checks++;};
 const equal=(a,b,message)=>{assert.deepEqual(JSON.parse(JSON.stringify(a??null)),JSON.parse(JSON.stringify(b??null)),message);checks++;};
-const ids=[...new Set(['ash_wastes','cinder_bastion','throne'].flatMap(z=>f.DATA.ZONES[z].spawns))].sort();
-equal(ids,Object.keys(f.DATA.ACT5_COMBAT_PROFILES).sort(),'Every Act 5 enemy has an explicit profile');equal(ids.length,50);
+const campaignIds=[...new Set(['ash_wastes','cinder_bastion','throne'].flatMap(z=>f.DATA.ZONES[z].spawns))].sort();
+ok(campaignIds.every(id=>f.DATA.ACT5_COMBAT_PROFILES[id]),'Every resident Act 5 enemy has an explicit profile');
+// Audit the entire combat catalog, including creatures reserved for the editor.
+const ids=Object.keys(f.DATA.ACT5_COMBAT_PROFILES).sort();equal(ids.length,50);
 const audit=ids.map(id=>{
  const d=f.DATA.ENEMIES[id],b=before.DATA.ENEMIES[id];
  for(const key of ['hp','dmg','armor','xp','pack','speed','artId','faction','family'])equal(d[key],b[key],id+' preserves '+key);
