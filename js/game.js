@@ -140,6 +140,7 @@ const Game = (() => {
   }
 
   const SAVE_PREFIX = "embergrave_save_";
+  const CAMPAIGN_BACKUP_PREFIX = "embergrave_campaign_backup_";
 
   async function requireSpriteBundle(bundleId, label, { recoverable = false } = {}) {
     const loading = document.createElement("div");
@@ -231,6 +232,23 @@ const Game = (() => {
   /* =====================================================================
      GAME LIFECYCLE
      ===================================================================== */
+  function freshCampaign() {
+    return {
+      /* You begin already tasked; later tiers start in town without the tutorial. */
+      quests: { q7: { state: "active", count: 0 }, q1: { state: "offered" } },
+      shrines: ["frosthaven", "town"], home: "frosthaven", flags: {},
+    };
+  }
+  function campaignSnapshot(s = state) {
+    return JSON.parse(JSON.stringify({quests:s.quests, shrines:s.shrines, home:s.home, flags:s.flags}));
+  }
+  function restoreCampaign(s, campaign) {
+    const progress = { ...freshCampaign(), ...JSON.parse(JSON.stringify(campaign)) };
+    progress.home ||= progress.shrines.includes("frosthaven") ? "frosthaven" :
+      (progress.shrines.find(id => DATA.ZONES[id]?.kind === "camp" || id === "town") || "frosthaven");
+    if (!DATA.ZONES[progress.home]) progress.home = "frosthaven";
+    Object.assign(s, progress);
+  }
   function freshState(player, seed) {
     return {
       player, seed,
@@ -238,11 +256,8 @@ const Game = (() => {
       map: null, mapsCache: {}, monstersByMap: {}, groundByMap: {},
       monsters: [], npcs: [], ground: [], projectiles: [], minions: [], traps: [],
       fx: [],   // transient world effects: fields, walls, banners, totems, weather (never saved)
-      /* you begin already tasked — no aimless first minutes */
-      quests: { q7: { state: "active", count: 0 }, q1: { state: "offered" } },
-      shrines: ["frosthaven", "town"],
-      home: "frosthaven",
-      flags: {},
+      ...freshCampaign(),
+      campaignsByDifficulty: {}, characterFlags: {}, difficultyTransition: null,
       difficulty: 0, unlockedDiff: 0,
       vendorStock: {},
       portal: null,
@@ -594,7 +609,8 @@ const Game = (() => {
   }
 
   /* ---------------- map transitions ---------------- */
-  async function enterMap(zoneId, spawnKey, { revive = false, openingMode = null, arrivalPosition = null, reuseCachedMap = false, recoverable: recoverableTravel = false, quietQuestAudio = false } = {}) {
+  async function enterMap(zoneId, spawnKey, { revive = false, openingMode = null, arrivalPosition = null, reuseCachedMap = false, recoverable: recoverableTravel = false, quietQuestAudio = false, difficultyChange = null } = {}) {
+    if (!state || (state.difficultyTransition && state.difficultyTransition !== difficultyChange)) return false;
     if(typeof PropInteractions!=='undefined')PropInteractions.cancel(state);
     if(openingMode === "gate" && !opening.ready) {
       const s=state.flags.opening?.stage;
@@ -651,12 +667,26 @@ const Game = (() => {
       }
       if(state!==enteringState||transition!==mapTransitionSeq)return false;
     }
-    /* stash current map entities for session persistence */
+    if(state!==enteringState || transition!==mapTransitionSeq)return false;
+    if(difficultyChange && difficultyChange.lifecycleSeq !== playerLoadoutSeq) {
+      running = resumeRunning;
+      return false;
+    }
+    /* All destination assets are ready. Only now commit a difficulty change. */
     for(const mon of state.monsters||[])mon.cancelAttacks?.();
     if(typeof BossEncounters!=="undefined")BossEncounters.cancelAll();
     if(typeof EnemySkills!=="undefined")EnemySkills.cancelAll();
     if(typeof Act2EnemyCombat!=="undefined")Act2EnemyCombat.cancelAll();
-    if (state.map) {
+    if (difficultyChange) {
+      opening.reset();
+      state.campaignsByDifficulty[state.difficulty] = campaignSnapshot();
+      state.difficulty = difficultyChange.difficulty;
+      restoreCampaign(state, difficultyChange.campaign);
+      state.mapsCache = {}; state.monstersByMap = {}; state.groundByMap = {};
+      state.portal = null; state.actGate = null; state.vendorStock = {};
+      state.cathedralVisits = 0;
+    } else if (state.map) {
+      /* Ordinary travel remembers the departing area's entities for this session. */
       state.monstersByMap[state.map.id] = state.monsters;
       state.groundByMap[state.map.id] = state.ground;
       if (state.portal?.instance?.map === state.map) Object.assign(state.portal.instance,{monsters:state.monsters,ground:state.ground});
@@ -827,9 +857,10 @@ const Game = (() => {
     if (!state) return;
     if (state.player.dead && state.player.hardcore) return;
     opening.captureLoot();
+    state.campaignsByDifficulty[state.difficulty] = campaignSnapshot();
     const p = state.player;
     const data = {
-      v: 1, name: p.name, classId: p.classId, hardcore: p.hardcore,
+      v: 2, name: p.name, classId: p.classId, hardcore: p.hardcore,
       playerRenderer: "three",
       lvl: p.lvl, xp: p.xp, attr: p.attr, attrPts: p.attrPts, skillPts: p.skillPts,
       skills: p.skills, skillPerks: p.skillPerks, gold: p.gold, skillL: p.skillL, skillR: p.skillR, quickSlots: p.quickSlots, deaths: p.deaths,
@@ -837,8 +868,8 @@ const Game = (() => {
       inv: p.inv.items.map(serializeItem),
       stash: p.stash.items.map(serializeItem),
       equip: Object.fromEntries(Object.entries(p.equip).map(([k, v]) => [k, serializeItem(v)])),
-      seed: state.seed, quests: state.quests, shrines: state.shrines, flags: state.flags,
-      difficulty: state.difficulty, unlockedDiff: state.unlockedDiff, home: state.home,
+      seed: state.seed, campaignsByDifficulty: state.campaignsByDifficulty, characterFlags: state.characterFlags,
+      difficulty: state.difficulty, unlockedDiff: state.unlockedDiff,
       savedAt: Date.now(),
     };
     try { localStorage.setItem(saveSlotKey, JSON.stringify(data)); } catch (e) { msg("Save failed: " + e.message, "#c05050"); }
@@ -866,6 +897,16 @@ const Game = (() => {
     const raw = localStorage.getItem(slot);
     if (!raw) return;
     const d = JSON.parse(raw);
+    const legacy = !d.campaignsByDifficulty;
+    if (legacy) {
+      try {
+        const backup = CAMPAIGN_BACKUP_PREFIX + slot;
+        if (localStorage.getItem(backup) === null) localStorage.setItem(backup, raw);
+      } catch (err) {
+        msg("Could not back up this hero before updating campaign saves: " + err.message, "#c05050");
+        return false;
+      }
+    }
     const p = new Player(d.name, d.classId);
     p.hardcore = d.hardcore; p.lvl = d.lvl; p.xp = d.xp;
     p.attr = d.attr; p.attrPts = d.attrPts; p.skillPts = d.skillPts;
@@ -909,14 +950,27 @@ const Game = (() => {
       return;
     }
     state = freshState(p, d.seed);
-    state.quests = d.quests || { q7: { state: "offered", count: 0 } };
-    state.shrines = d.shrines || ["frosthaven", "town"];
-    state.flags = d.flags || {};
+    const validTier = value => Number.isInteger(value) && !!DATA.DIFFICULTIES[value];
+    state.unlockedDiff = validTier(d.unlockedDiff) ? d.unlockedDiff : 0;
+    state.difficulty = validTier(d.difficulty) ? Math.min(d.difficulty, state.unlockedDiff) : 0;
+    state.characterFlags = d.characterFlags || {};
+    if (legacy) {
+      const flags = { ...d.flags };
+      for (const key of Object.keys(flags)) {
+        if (key.startsWith("sawCine_")) { state.characterFlags[key] = flags[key]; delete flags[key]; }
+        // Shared legacy records cannot establish progress in a higher-tier campaign.
+        if (/^dead_.*@(?!0$)/.test(key)) delete flags[key];
+      }
+      const normal = freshCampaign();
+      normal.quests = d.quests || normal.quests;
+      normal.shrines = d.shrines || normal.shrines;
+      normal.home = d.home || (normal.shrines.includes("frosthaven") ? "frosthaven" :
+        (normal.shrines.find(id => DATA.ZONES[id]?.kind === "camp" || id === "town") || "frosthaven"));
+      normal.flags = flags;
+      state.campaignsByDifficulty[0] = normal;
+    } else state.campaignsByDifficulty = d.campaignsByDifficulty;
+    restoreCampaign(state, state.campaignsByDifficulty[state.difficulty] || freshCampaign());
     opening.reset();
-    state.unlockedDiff = d.unlockedDiff || 0;
-    state.difficulty = Math.min(d.difficulty || 0, state.unlockedDiff);
-    /* home defaults to the first attuned hub; legacy saves fall back gracefully */
-    state.home = d.home || (state.shrines.includes("frosthaven") ? "frosthaven" : (state.shrines.find(s => DATA.ZONES[s] && (DATA.ZONES[s].kind === "camp" || s === "town")) || "town"));
     saveSlotKey = slot;
     UI.hideTitle();
     running = true;
@@ -927,6 +981,7 @@ const Game = (() => {
       return;
     }
     if(state?.player!==p)return;
+    saveGame(); // Also persist migrations when the opening checkpoint is outside town.
     if (state && DATA.CAMPAIGN.bossDead(state,"vethriss") && !state.flags.ending) UI.openFinalChoice();
   }
   function saveAndQuit() {
@@ -1111,7 +1166,7 @@ const Game = (() => {
     if (q.reward.gold) { p.gold += q.reward.gold; msg(`Received ${q.reward.gold} gold.`, "#d8b860"); }
     if (q.reward.skillPts) { p.skillPts += q.reward.skillPts; msg(`Gained ${q.reward.skillPts} talent point.`, "#7fd87f"); }
     if (q.reward.item) {
-      const it = Items.rollGear(q.reward.item.ilvl, q.reward.item.rarity);
+      const it = Items.rollGear(DATA.effectiveLevel(q.reward.item.ilvl, state.difficulty), q.reward.item.rarity);
       it.identified = true;
       if (!Items.autoPlace(p.inv, it)) dropAtFeet(it);
       msg(`Received: ${it.name}`, Items.RARITY_COLOR[it.rarity]);
@@ -1122,7 +1177,8 @@ const Game = (() => {
       msg(`Received: ${it.name}`, "#9fdf9f");
     }
     if (q.reward.glyph) {
-      const it = Items.rollGlyph((DATA.ZONES[q.zone]?.lvl || p.lvl) + DATA.DIFFICULTIES[state.difficulty].lvlAdd, p.stats.mf);
+      const zone = DATA.ZONES[q.zone];
+      const it = Items.rollGlyph(zone ? DATA.effectiveLevel(zone.lvl, state.difficulty) : p.lvl, p.stats.mf);
       if (!Items.autoPlace(p.inv, it)) dropAtFeet(it);
       msg(`Received: ${it.name}`, "#7fd8c0");
     }
@@ -1159,15 +1215,26 @@ const Game = (() => {
     saveGame();
   }
   /* switch difficulty tier: the whole world re-knits itself */
-  function setDifficulty(d) {
-    if (!state || d === state.difficulty || d > (state.unlockedDiff || 0)) return;
-    state.difficulty = d;
-    state.mapsCache = {}; state.monstersByMap = {}; state.groundByMap = {};
-    state.portal = null;
-    enterMap(state.home || "frosthaven", "default");
-    centerMsg(DATA.DIFFICULTIES[d].name.toUpperCase(), "the world twists to meet you");
-    Sfx.play("vox_boss");
-    saveGame();
+  async function setDifficulty(d) {
+    if (!state || state.player.dead || state.difficultyTransition || !Number.isInteger(d) ||
+        !DATA.DIFFICULTIES[d] || d === state.difficulty || d > (state.unlockedDiff || 0)) return false;
+    const switchingState = state;
+    const change = {difficulty:d, campaign:state.campaignsByDifficulty[d] || freshCampaign(), lifecycleSeq:playerLoadoutSeq};
+    state.difficultyTransition = change;
+    try {
+      const destination = DATA.ZONES[change.campaign.home] ? change.campaign.home : "frosthaven";
+      if (!await enterMap(destination, "default", {recoverable:true, difficultyChange:change}) || state !== switchingState) {
+        if(state === switchingState)msg("Difficulty unchanged. The destination could not be loaded; please try again.", "#c05050");
+        return false;
+      }
+      centerMsg(DATA.DIFFICULTIES[d].name.toUpperCase(), "the world twists to meet you");
+      Sfx.play("vox_boss");
+      saveGame();
+      if (DATA.CAMPAIGN.bossDead(state,"vethriss") && !state.flags.ending) UI.openFinalChoice();
+      return true;
+    } finally {
+      switchingState.difficultyTransition = null;
+    }
   }
 
   function doRespec() {
@@ -1607,7 +1674,7 @@ const Game = (() => {
     map.props = map.props.filter(p => !p.event);
     const z = map.zone;
     if (z.kind === "town" || z.kind === "camp" || z.opening) return;
-    const lvl = (z.lvl || 1) + DATA.DIFFICULTIES[state.difficulty].lvlAdd;
+    const lvl = DATA.effectiveLevel(z.lvl, state.difficulty);
     const pool = DATA.EVENTS.filter(e => (e.minLvl || 1) <= lvl + 2);
     if (!pool.length) return;
     const composition=map.composition||map.act2||map.frontier;
@@ -1643,7 +1710,7 @@ const Game = (() => {
     const ev = prop.ev, p = state.player;
     prop.spent=true;prop.interact=null;prop.event=false;prop.lootable=false;
     if (prop.type === "chest" || prop.type === "strongbox") prop.opened=true;
-    const lvl = (state.map.zone.lvl || 1) + DATA.DIFFICULTIES[state.difficulty].lvlAdd;
+    const lvl = DATA.effectiveLevel(state.map.zone.lvl, state.difficulty);
     Sfx.play("shrine"); centerMsg(ev.name, "");
     // Activation is cosmetic; it must not smash neighboring loot containers.
     PropInteractions.effect(prop,state,'activate');
@@ -1732,7 +1799,7 @@ const Game = (() => {
     prop.breakable=false;
     PropInteractions.freeTile(m,prop);PropInteractions.effect(prop,state,'break');
     Sfx.play(PropInteractions.sound(prop));
-    scatterDrops(Items.rollDrops((m.zone.lvl || 1) + DATA.DIFFICULTIES[state.difficulty].lvlAdd, "barrel", p.stats.mf, p.stats.goldFind), prop.x, prop.y);
+    scatterDrops(Items.rollDrops(DATA.effectiveLevel(m.zone.lvl, state.difficulty), "barrel", p.stats.mf, p.stats.goldFind), prop.x, prop.y);
     return true;
   }
   /* skills/AoE: shatter every breakable prop within a radius (called from addNova) */
@@ -1796,8 +1863,8 @@ const Game = (() => {
   function firstSightCutscene(id, src) {
     if (!state || !state.player || state.player.dead) return;
     const key = "sawCine_" + id;
-    if (state.flags[key]) return;
-    state.flags[key] = true;
+    if (state.characterFlags[key]) return;
+    state.characterFlags[key] = true;
     saveGame();
     UI.playVideo(src, () => {});   // pauses the game; resumes when the clip ends/skips
   }
@@ -1902,7 +1969,7 @@ const Game = (() => {
       if(prop.searched)return false;
       prop.searched=true;prop.interact=null;
       Sfx.play(PropInteractions.sound(prop));
-      scatterDrops(Items.rollDrops((state.map.zone.lvl||1)+DATA.DIFFICULTIES[state.difficulty].lvlAdd,'barrel',p.stats.mf,p.stats.goldFind),prop.x,prop.y+.5);
+      scatterDrops(Items.rollDrops(DATA.effectiveLevel(state.map.zone.lvl,state.difficulty),'barrel',p.stats.mf,p.stats.goldFind),prop.x,prop.y+.5);
       return true;
     }
     if (prop.breakable) return breakProp(prop);
@@ -1913,7 +1980,7 @@ const Game = (() => {
       prop.lootable = false;
       prop.opened = true;
       Sfx.play("chest");
-      scatterDrops(Items.rollDrops((state.map.zone.lvl || 1) + 1 + DATA.DIFFICULTIES[state.difficulty].lvlAdd, "chest", p.stats.mf + (prop.rich ? 40 : 0), p.stats.goldFind), prop.x, prop.y + 0.6);
+      scatterDrops(Items.rollDrops(DATA.effectiveLevel((state.map.zone.lvl || 1) + 1, state.difficulty), "chest", p.stats.mf + (prop.rich ? 40 : 0), p.stats.goldFind), prop.x, prop.y + 0.6);
       return;
     }
   }

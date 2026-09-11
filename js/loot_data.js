@@ -73,22 +73,22 @@ const LootData = (() => {
   }
   function chance(row,level,source,mf) {return distribution(level,source,mf).get(row.id)||0;}
   function difficultyChances(row,normalLevel,source,mf=0) {
-    return DATA.DIFFICULTIES.map(d=>({difficulty:d.id,level:normalLevel+d.lvlAdd,p:chance(row,normalLevel+d.lvlAdd,source,mf)}));
+    return DATA.DIFFICULTIES.map(d=>{const level=DATA.effectiveLevel(normalLevel,d.id);return {difficulty:d.id,level,p:chance(row,level,source,mf)};});
   }
   function locations(row,difficulty=0,mf=0,includeZero=false) {
-    const add=DATA.DIFFICULTIES[difficulty].lvlAdd, out=[];
+    const out=[];
     for(const z of Object.values(DATA.ZONES)) {
       if(['town','camp'].includes(z.kind)||z.opening)continue;
       const pool=[...new Set([...(z.spawns||[]),z.boss].filter(Boolean))];
       for(const id of pool) {
-        const d=DATA.ENEMIES[id];if(!d)continue;
-        const level=d.boss?d.lvl+add:Math.max(Math.max(1,z.lvl+add-2),Math.min(z.lvl+add+1,d.lvl+add));
+        if(!DATA.ENEMIES[id])continue;
+        const d=DATA.resolveEnemy(id,z.id),level=DATA.monsterLevel(d,z,difficulty);
         for(const source of d.boss?['boss']:['normal','elite']) {
           const p=chance(row,level,source,mf);if(p||includeZero)out.push({key:`${z.id}/${id}/${source}`,zone:z.name,name:d.name,source,level,p});
         }
       }
       for(const source of ['chest','barrel']) {
-        const level=(z.lvl||1)+add+(source==='chest'?1:0),p=chance(row,level,source,mf);
+        const level=DATA.effectiveLevel((z.lvl||1)+(source==='chest'?1:0),difficulty),p=chance(row,level,source,mf);
         if(p||includeZero)out.push({key:`${z.id}/${source}`,zone:z.name,name:source==='chest'?'Chest (if present)':'Breakable (if present)',source,level,p});
       }
     }

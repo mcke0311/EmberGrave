@@ -2797,19 +2797,12 @@ class Monster extends Entity {
     this.combatWorld=Game.state;this.combatMap=Game.state.map;this.castEpoch=0;
     /* difficulty tier scaling (applied before elite modifiers) */
     const diff = (Game.state && DATA.DIFFICULTIES[Game.state.difficulty]) || DATA.DIFFICULTIES[0];
+    def.lvl = DATA.monsterLevel(def, Game.state?.map?.zone, diff.id);
     if (diff.id > 0) {
-      def.lvl += diff.lvlAdd;
       def.hp = Math.floor(def.hp * diff.hpMul);
       def.dmgMult = (def.dmgMult || 1) * diff.dmgMul;
       def.xp = Math.floor(def.xp * diff.xpMul);
       def.resAll = Math.min(70, (def.resAll || 0) + diff.resAdd);
-    }
-    /* zone level band: every non-boss creature stays within ~3 levels of the area's level
-       (e.g. the Fallen North spans 1–3, the Mines 2–5) so no wildly off-level monsters appear */
-    if (!def.boss && Game.state && Game.state.map && Game.state.map.zone) {
-      const add = (diff.id > 0 ? diff.lvlAdd : 0);
-      const zl = Game.state.map.zone.lvl || def.lvl;
-      def.lvl = U.clamp(def.lvl, Math.max(1, zl + add - 2), zl + add + 1);
     }
     this.lvl = def.lvl;
     this.name = def.name;

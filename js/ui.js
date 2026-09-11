@@ -1623,7 +1623,7 @@ const UI = (() => {
       const z=DATA.ZONES[selected] || DATA.ZONES[group.zones[0]],detail=textNode("section","wp-detail");body.appendChild(detail);
       detail.appendChild(textNode("div","wp-sigil","◇"));detail.appendChild(textNode("p","wp-eyebrow",group.name));detail.appendChild(textNode("h2","",z.name));
       const types={camp:"Safe haven",town:"Safe haven",wild:"Wilderness",dungeon:"Dungeon"};
-      detail.appendChild(textNode("p","wp-facts",`${types[z.kind]||"Frontier"} · Recommended level ${z.lvl || 1}`));
+      detail.appendChild(textNode("p","wp-facts",`${types[z.kind]||"Frontier"} · Recommended level ${DATA.effectiveLevel(z.lvl,Game.state.difficulty)}`));
       detail.appendChild(textNode("p","wp-description",selected===here?"You stand beside this waystone.":attuned(selected)?"This stone knows your touch. The road is open.":"Find and attune this waystone in the world to unlock travel."));
       const travel=textNode("button","wp-travel",pending?"Opening the road…":"Travel to "+z.name);travel.type="button";travel.disabled=pending||selected===here||!attuned(selected);detail.appendChild(travel);
       travel.addEventListener("click",async()=>{
@@ -1698,10 +1698,10 @@ const UI = (() => {
     mk("Loot Filter", () => renderLootFilter(box));
     const st = Game.state;
     if (st && (st.unlockedDiff || 0) > 0) {
-      mk(`Difficulty: ${DATA.DIFFICULTIES[st.difficulty].name}  ▸`, () => {
+      mk(`Difficulty: ${DATA.DIFFICULTIES[st.difficulty].name}  ▸`, async () => {
         const next = (st.difficulty + 1) % ((st.unlockedDiff || 0) + 1);
         closeEsc();
-        Game.setDifficulty(next);
+        await Game.setDifficulty(next);
       });
     }
     mk("Save and Quit to Title", () => { closeEsc(); Game.saveAndQuit(); });

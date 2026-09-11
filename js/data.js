@@ -2292,9 +2292,21 @@ DATA.BIOMES = {
 /* =====================  DIFFICULTY TIERS  ===================== */
 DATA.DIFFICULTIES = [
   { id: 0, name: "Normal",    hpMul: 1,   dmgMul: 1,   lvlAdd: 0,  xpMul: 1,   resAdd: 0,  eliteBoost: 0 },
-  { id: 1, name: "Nightmare", hpMul: 2.4, dmgMul: 1.6, lvlAdd: 7,  xpMul: 2.6, resAdd: 20, eliteBoost: 0.08 },
-  { id: 2, name: "Torment",   hpMul: 4.8, dmgMul: 2.4, lvlAdd: 13, xpMul: 5.5, resAdd: 40, eliteBoost: 0.16 },
+  { id: 1, name: "Nightmare", hpMul: 2.4, dmgMul: 1.6, lvlAdd: 30, xpMul: 2.6, resAdd: 20, eliteBoost: 0.08 },
+  { id: 2, name: "Torment",   hpMul: 4.8, dmgMul: 2.4, lvlAdd: 60, xpMul: 5.5, resAdd: 40, eliteBoost: 0.16 },
 ];
+
+/* Inputs are Normal source levels; character/item levels already include their tier. */
+DATA.effectiveLevel = (normalLevel, difficulty = 0) =>
+  Math.max(1, normalLevel || 1) + (DATA.DIFFICULTIES[difficulty] || DATA.DIFFICULTIES[0]).lvlAdd;
+DATA.monsterLevel = (def, zone, difficulty = 0) => {
+  let level = def.lvl;
+  if (!def.boss && zone) {
+    const area = zone.lvl || level;
+    level = U.clamp(level, Math.max(1, area - 2), area + 1);
+  }
+  return DATA.effectiveLevel(level, difficulty);
+};
 
 /* =====================  NAMED GLYPH COMBINATIONS  =====================
    Fill an item's sockets with these glyphs IN THIS ORDER and the item

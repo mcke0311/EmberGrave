@@ -40,7 +40,7 @@ for(const r of tiers){const key=(r.a.group||r.a.stat)+'/'+r.t.name;expectedAffix
 for(const [key,p] of expectedAffixes)ok(Math.abs((counts.get(key)||0)/N-p)<6*Math.sqrt(p*(1-p)/N)+.0006,key+' first roll distribution');
 const grave=L.byId.get('u_gravebite');
 for(const row of L.rows)for(const [i,c] of L.difficultyChances(row,5,'boss',100).entries()){
-  ok(c.level===[5,12,18][i],'difficulty applies level increment once');
+  ok(c.level===[5,35,65][i],'difficulty applies level increment once');
   ok(c.p===L.chance(row,c.level,'boss',100),'difficulty probability matches source level');
 }
 const comparison=L.compareLocations(grave,100);

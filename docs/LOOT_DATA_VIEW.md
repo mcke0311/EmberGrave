@@ -7,7 +7,7 @@ The page reads current data and overrides without reading or writing hero saves.
 - Search 494 item definitions, including 163 items with authored brown powers.
 - Filter by item type and slot; compare source level, source type, and Magic Find.
 - Compare Normal, Nightmare, and Torment percentages side by side. Enter the
-  source level on Normal; the other columns apply the runtime's +7 / +13 level
+  source level on Normal; the other columns apply the runtime's +30 / +60 level
   increments. The top difficulty selector controls sorting, eligibility filtering,
   and the selected item's source cards. Difficulty has no separate drop multiplier.
 - Location details compare the same monster/container on all three difficulties,

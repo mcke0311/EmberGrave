@@ -489,11 +489,23 @@ Gloves, boots, belts, rings, and amulets remain inventory-only.
 4. Find the **Sunken Crypt** at the far end of the fields. Silence **Gravecaller Hesh**, then descend to **The Vigil** and destroy **Morthul, the Grave-Warden**.
 5. Maesa hears singing from the **Ruined Chapel** in the south of the fields — end **Vicar Thessaly** and his Hollow Choir.
 6. Take the north road into **The Blackbough**, a forest gone wrong, and cut your way to the **Greymonastery**.
-7. Climb through the Cloister to the Sanctum and unmake **Vellath, the Unshepherd** — completing Act I and unlocking the next **difficulty tier**.
+7. Climb through the Cloister to the Sanctum and unmake **Vellath, the Unshepherd** to complete the Cinderwatch questline. Continue the saga through the remaining acts to the Throne of Cinders.
 
-Beating the act unlocks **Nightmare**, then **Torment** (Esc menu → Difficulty): monsters
-gain levels, life, damage, resistances and elite frequency — and drop better loot.
-Bosses revive per tier; your character and stash carry forward.
+Completing the full saga unlocks **Nightmare**, then completing it on Nightmare
+unlocks **Torment** (Esc menu → Difficulty). Nightmare adds **30 monster/source
+levels** to Normal; Torment adds **60**. Monsters also gain life, damage,
+resistances and elite frequency, and their higher levels unlock higher-level loot.
+Each difficulty has its own quests, story discoveries, boss deaths, travel
+shrines and home. A new tier begins in Frosthaven with the Act I quests, skipping
+the opening road tutorial; returning to a tier resumes its campaign progress.
+Quests award their rewards once per difficulty. Character levels, talents, gear,
+inventory, stash and cinematic history carry forward.
+
+Older saves are backed up locally before upgrading to separate campaign saves.
+Their shared history becomes Normal progress; higher tiers start fresh, including
+characters already playing Nightmare or Torment. Character assets and unlocked
+difficulties are preserved. Backups use `embergrave_campaign_backup_` keys in
+localStorage and do not appear as extra heroes in the save list.
 
 Death (normal): respawn in town, lose 10% gold. Death (hardcore): the character is deleted. Forever.
 

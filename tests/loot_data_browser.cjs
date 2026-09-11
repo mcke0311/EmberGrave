@@ -1,7 +1,7 @@
 const fs=require('node:fs'),assert=require('node:assert/strict'),path=require('node:path');
 const runtime=path.join(process.env.USERPROFILE||'', '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules');
 const {chromium}=require(require.resolve('playwright',{paths:[runtime,__dirname]}));
-const dest='tests/qa/loot_data';fs.mkdirSync(dest,{recursive:true});
+const dest=process.env.LOOT_QA_DIR||'tests/qa/loot_data';fs.mkdirSync(dest,{recursive:true});
 (async()=>{
   const browser=await chromium.launch({channel:'chrome',headless:true});
   const context=await browser.newContext({viewport:{width:1536,height:1000},acceptDownloads:true}),page=await context.newPage();
@@ -13,11 +13,11 @@ const dest='tests/qa/loot_data';fs.mkdirSync(dest,{recursive:true});
     ok((await page.locator('#detail').innerText()).includes('First Beat'),'default full brown power');
     await page.locator('#level').fill('5');
     ok((await page.locator('#itemHeaders').innerText()).toLowerCase().includes('nightmare'),'difficulty columns visible');
-    ok((await page.locator('#itemHeaders').innerText()).includes('Lv 18'),'Torment source level includes +13');
+    ok((await page.locator('#itemHeaders').innerText()).includes('Lv 65'),'Torment source level includes +60');
     ok(await page.locator('#locations .location').first().locator('.difficulty-grid>div').count()===3,'same location shows all three difficulties');
     await page.locator('#difficulty').selectOption('1');
     ok((await page.locator('#scenario').innerText()).includes('Sorting and eligibility use Nightmare'),'difficulty controls scenario');
-    ok((await page.locator('#detail h3').allTextContents()).some(t=>t.includes('Nightmare')&&t.includes('12')),'difficulty applies effective source level');
+    ok((await page.locator('#detail h3').allTextContents()).some(t=>t.includes('Nightmare')&&t.includes('35')),'difficulty applies effective source level');
     await page.locator('#eligible').check();
     ok(await page.locator('#items [data-difficulty="1"].zero').count()===0,'eligibility uses Nightmare chance');
     await page.locator('#eligible').uncheck();await page.locator('#difficulty').selectOption('0');
