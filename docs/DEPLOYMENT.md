@@ -1,0 +1,96 @@
+# Sites deployment
+
+The deployment prepared on 2026-09-11 uses the existing private Sites project
+`appgprj_6aa420e20bfc8191b59e30227bca8a09`, slug `embergrave-sunderstone-saga`.
+Reuse this project for updates; do not register another Site.
+
+The isolated release checkout is `tmp/embergrave-site/`. Its hosting manifest is
+`tmp/embergrave-site/.openai/hosting.json`, with static output in `dist/`.
+The source game remains in the repository root. The release includes the game,
+the loot reference page, referenced artwork, music, and sound effects. It excludes
+the local data editor and its Python write endpoint. Browser-local saves retain
+their existing behavior and are specific to the deployed origin.
+
+The release copy of `assets/cine_oathsworn.mp4` was compressed to H.264/AAC with
+fast-start metadata to fit the host's per-file limit. The original is unchanged.
+The deployed loot page omits its link to the local editor.
+
+Validation covered 54 JavaScript files, 1,135 runtime file references, a successful HTTP
+entrypoint response, and 228 existing navigation checks. Browser interaction
+testing was not performed during deployment.
+
+Large Git uploads were interrupted by connection resets. The release source was
+successfully uploaded in smaller commits using `tmp/upload_site.py`; this helper
+accepts a short-lived credential through the process environment and never writes
+the credential to disk. Obtain a fresh credential for this same Sites project
+when updating. Never enable automatic publication while uploading partial batches.
+
+Build-time sprite source catalogs in `js/data.js` remain intact, but their input
+images are excluded unless also referenced by the runtime manifest. This brings
+the packaged release to 195.14 MiB, below Sites' 256 MiB input archive limit.
+
+Direct archive uploads failed at the file-transfer service. The saved source is
+therefore packaged by Sites during deployment.
+
+Release source commit: `ef2e7ceddb990d80e969735c47ad6385b2e222e3`.
+Packaged release: `tmp/embergrave-site.tar.gz`.
+Publication status: **succeeded**, confirmed by Sites on 2026-09-11 at 16:22 UTC.
+
+Live URL: https://embergrave-sunderstone-saga.mcke0311.chatgpt.site
+Access: private, owner-only.
+
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_2febe34c7a6c8191a4c6d43c6d3ebab6` (version 3).
+Latest deployment: `appgdep_6aa42a033c6481919514a4b777df83f1`.
+
+Earlier attempts failed during the hosting service's Git checkout with
+`fetch-pack: unexpected disconnect`, `fatal: early EOF`, and
+`fatal: fetch-pack: invalid index-pack output`. Retrying the saved release produced
+the same failure. An earlier attempt successfully checked out the larger first
+version but rejected its archive size; the current version resolves that size issue.
+
+The user subsequently explicitly authorized replacing the new deployment
+repository's history with the compact release. That replacement succeeded using
+`tmp/upload_compact_site.py`, an initial force-with-lease push guarded by the old
+remote head, and small follow-up transfers. The active local release branch is
+`codex/sites-compact-upload`. Its final tree was verified identical to the approved
+`codex/sites-compact` release. Discarded artwork is no longer reachable through
+the remote default branch. The original game's Git history has not been changed.
+
+## Support page update — 2026-09-11
+
+Version 4 adds `support.html`, its stylesheet and donation-link configuration,
+and a main-menu link. Publication succeeded at 16:54 UTC. The site remains
+private and owner-only. Ko-fi is the selected provider, but the creator is still
+setting up the account; `js/support-config.js` has an empty donation URL, so the
+page says donations are not open and hides the payment link.
+
+Support page: https://embergrave-sunderstone-saga.mcke0311.chatgpt.site/support.html
+Source commit: `351623a56212d2d715dd7cc3cc8f54244c63e6a9`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_3decbeccc6ec8191b1751c227fc6acf9`.
+Deployment: `appgdep_6aa431b4df9c8191a08e873b5d3dbf4a`.
+
+Validation: local HTTP 200, JavaScript syntax, six donation-destination state
+checks, local page asset references, and release/source equality for all seven
+changed release files. Browser interaction testing was not requested. The local
+packaging helper could not start its Bash runtime, so Sites packaged the pushed
+static source during deployment.
+
+To enable donations, add the creator-provided Ko-fi URL in both the root game
+and release configuration, bump its cache version in support.html, and publish
+the updated release. Public access must also be enabled before sharing the
+support page with players.
+
+## Ko-fi connected — 2026-09-11
+
+Version 5 connects the creator-provided https://ko-fi.com/embergrave URL and
+bumps the support configuration cache version. Publication succeeded at
+17:04 UTC. The Support on Ko-fi button is now enabled; site access remains
+private and owner-only. Supporters can use the Ko-fi URL directly.
+
+Source commit: `ef41074596bdfb785379024d85555274b531b3f7`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_d0bfdf1b538881918424d69707996c1d`.
+Deployment: `appgdep_6aa433f00de481918ea11f8a4d708780`.
+
+Validated the actual configuration with the donation script: button visible,
+exact destination preserved, provider hostname shown, and cache version updated.
+Ko-fi checkout itself was not tested and no payment was made.

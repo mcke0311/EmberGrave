@@ -20,6 +20,15 @@ drop locations and percentage chances with adjustable level, difficulty and Magi
 Find. The read-only view includes affix tiers and CSV export; see the
 [loot data guide](docs/LOOT_DATA_VIEW.md) for probability definitions and validation.
 
+## Support development
+Players can visit **[Support the game](support.html)** from the main menu.
+To enable donations, set `donationUrl` in `js/support-config.js` to the creator's
+public HTTPS payment or crowdfunding page. Until a real URL is configured, the
+page clearly says donations are not open and does not display a payment button.
+Payment takes place on the linked provider's site; this game collects no payment
+details. Include `support.html`, `css/support.css`, `js/support.js`, and
+`js/support-config.js` when updating the hosted release.
+
 ## The saga (five acts)
 The playable opening, **The Last Warm Wall**, begins on the snowy road to
 **Frosthaven**. Follow Bryn, witness a fallen guard awaken beside an Embershard,

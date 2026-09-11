@@ -21,6 +21,8 @@
 #titleFoot { margin:0; color:#a4a097; font:10px/1.6 Georgia,serif; letter-spacing:.17em; text-transform:uppercase; }
 #titleFoot .title-diamond { color:#c29b5c; margin:0 12px 0 0; font-size:9px; }
 #title button,#title input { font-family:inherit; }
+#title a.title-action { text-decoration:none; }
+#title a.title-action:focus-visible { outline:2px solid #ffe1a4; outline-offset:5px; }
 #title button { cursor:pointer; color:inherit; }
 #title button:disabled { cursor:wait; opacity:.6; }
 #title button:focus-visible,#title input:focus-visible,#title [role='tabpanel']:focus-visible { outline:2px solid #ffe1a4; outline-offset:5px; }
