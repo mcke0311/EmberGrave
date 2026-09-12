@@ -101,26 +101,26 @@ const PropInteractions = (() => {
     if(pr.interact||pr.lootable)return {state:'reach',duration:.45,contact:.225};
     return null;
   }
-  function reachable(state,pr){
-    const m=state.map,p=state.player;
+  function reachable(state,pr,p=state.player){
+    const m=state.map;
     return TerrainLayers.same(p,pr)&&Math.hypot(p.x-pr.x,p.y-pr.y)<(pr.interactionRange||1.6)&&
       Math.abs(TerrainNavigation.height(m,p.x,p.y,p.surfaceId)-TerrainNavigation.height(m,pr.x,pr.y,pr.surfaceId))<=1&&
       U.los((x,y)=>(x===(pr.x|0)&&y===(pr.y|0))||MapGen.walkable(m,x,y,p.surfaceId),p.x,p.y,pr.x,pr.y);
   }
-  function begin(state,pr,commit){
-    const p=state.player,spec=profile(pr);
-    if(!spec||!state.map.props.includes(pr)||p.dead||p.action||p.stunT>0||p.jumping||p.leaping||p.charging||p.dashing||p.spinning||!reachable(state,pr))return false;
+  function begin(state,pr,commit,p=state.player){
+    const spec=profile(pr);
+    if(!spec||!state.map.props.includes(pr)||p.dead||p.action||p.stunT>0||p.jumping||p.leaping||p.charging||p.dashing||p.spinning||!reachable(state,pr,p))return false;
     p.path=null;p.command=null;p.moving=false;p.curSpeed=0;p.face(pr.x,pr.y);p.visAng=p.angT;
     p.startAction(spec.state,spec.duration);p.action.visual.releases=[spec.contact/spec.duration];
     p.action.propInteraction={prop:pr,map:state.map,at:state.time,contact:spec.contact,commit,done:false};
     if(spec.state==='kick')Sfx.play('swing');
     return true;
   }
-  function cancel(state){if(state?.player?.action?.propInteraction){state.player.action=null;return true;}return false;}
-  function update(state){
-    const p=state.player,a=p.action,work=a?.propInteraction;
+  function cancel(state,p=state?.player){if(p?.action?.propInteraction){p.action=null;return true;}return false;}
+  function update(state,p=state.player){
+    const a=p.action,work=a?.propInteraction;
     if(!work)return;
-    if(work.map!==state.map||p.dead||p.stunT>0||p.jumping||p.leaping||p.charging||p.dashing||p.spinning||p.command||!state.map.props.includes(work.prop)||(!work.done&&!profile(work.prop))||!reachable(state,work.prop)){cancel(state);return;}
+    if(work.map!==state.map||p.dead||p.stunT>0||p.jumping||p.leaping||p.charging||p.dashing||p.spinning||p.command||!state.map.props.includes(work.prop)||(!work.done&&!profile(work.prop))||!reachable(state,work.prop,p)){cancel(state,p);return;}
     if(!work.done&&state.time-work.at+1e-8>=work.contact){
       work.done=true;
       const accepted=TerrainLayers.scope(state.map,p,()=>work.commit());

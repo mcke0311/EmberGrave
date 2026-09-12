@@ -94,3 +94,23 @@ Deployment: `appgdep_6aa433f00de481918ea11f8a4d708780`.
 Validated the actual configuration with the donation script: button visible,
 exact destination preserved, provider hostname shown, and cache version updated.
 Ko-fi checkout itself was not tested and no payment was made.
+
+## Mobile controls and settings update — 2026-09-11
+
+Version 6 publishes the latest GitHub `main` code, verified at
+`699be51cfbb452e72b06f769991da79d9383ec83`. Publication succeeded at
+19:01 UTC. The existing URL, private owner-only access, Ko-fi destination,
+compressed cinematic, and editor exclusion are preserved.
+
+The release updates the entrypoint, game input, title screen, and settings UI,
+and adds the mobile-controls script and mobile/settings stylesheets.
+
+Release source commit: `a184f0fa475feaed1b2082619507c91d3844ae2a`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_2041fc3a8eb08191970ee2982603efde`.
+Deployment: `appgdep_6aa44f99f7c88191b6bfd029db67d619`.
+
+Validation passed: 57 JavaScript syntax checks, 1,138 runtime references with
+none missing, 43 mobile gameplay checks, 62 successful local HTTP page/asset
+requests, and exact source/release equality for all seven updated files.
+Browser interaction testing was not performed. The local packaging helper
+could not start its Bash runtime; Sites packaged the exact pushed static source.

@@ -361,11 +361,13 @@ class Player extends Entity {
     this.buffs.push({id,label:sk.name,stats,until:Game.state.time+sk.castBuffDuration(rk),sourceSkill:sk.id});
     this.computeStats(); UI.refreshBuffs?.();
   }
-  clearSkillState() {
+  clearSkillState({respec=true}={}) {
     this.clearVeilState();
-    if(typeof SkillAudio!=='undefined')SkillAudio.reset();
-    if(typeof SkillVFX!=='undefined')SkillVFX.reset();
-    this._skillEpoch++; this._perkCache=null; this.skillPerks={};
+    if(!(typeof Coop!=='undefined'&&Coop.active)){
+      if(typeof SkillAudio!=='undefined')SkillAudio.reset();
+      if(typeof SkillVFX!=='undefined')SkillVFX.reset();
+    }
+    this._skillEpoch++; this._perkCache=null;if(respec)this.skillPerks={};
     this.buffs=this.buffs.filter(b=>!b.sourceSkill && !/^(stance_|form_|perk_)/.test(b.id||"") && !["soul_charge","banner_aura","smoke_evasion"].includes(b.id));
     this.form=null; this.stance=null; this.riposteData=null; this.rootT=0;
     this.boneWard=null; this.coat=null; this.retalCold=null;
@@ -847,6 +849,7 @@ class Player extends Entity {
   }
   takeDamage(raw, source, elemKind) {
     if (this.dead || Game.debugFlags.god) return;
+    if(raw>0)this._coopHurt=(this._coopHurt||0)+1;
     /* Riposte stance: parry the next melee blow, negate it, and counter */
     if (this.stance === "riposte" && this.riposteData && (source instanceof Monster) && (!elemKind || elemKind === "phys") && Game.state.time >= (this.parryCdUntil || 0)) {
       this.parryCdUntil = Game.state.time + (this.riposteData.window || 0.6);
@@ -887,7 +890,7 @@ class Player extends Entity {
     /* Rimeguard: melee attackers are chilled and bitten by frost */
     if (this.retalCold && Game.state.time < this.retalCold.until && (source instanceof Monster) && U.dist(this.x, this.y, source.x, source.y) < 1.9) { source.takeDamage(this.retalCold.dmg, this); source.applySlow(2, 40); Sfx.playSkill?.('rimeguard','impact',{owner:this,target:source,elem:'cold'}); }
     /* Kindred Bond: the pack shares the hero's wounds */
-    if (this.stats.pShare > 0) { const beasts = TerrainLayers.targets(Game.state.minions).filter(m => !m.dead); if (beasts.length) { const share = dmg * Math.min(0.5, this.stats.pShare / 100); dmg -= share; const each = share / beasts.length; for (const mi of beasts) mi.takeDamage(each, source); if(typeof SkillAudio!=='undefined')Sfx.playSkill?.('kinship','impact',{owner:this,trigger:'minion',level:.5}); } }
+    if (this.stats.pShare > 0) { const beasts = TerrainLayers.targets(Game.state.minions).filter(m => !m.dead && m.owner===this); if (beasts.length) { const share = dmg * Math.min(0.5, this.stats.pShare / 100); dmg -= share; const each = share / beasts.length; for (const mi of beasts) mi.takeDamage(each, source); if(typeof SkillAudio!=='undefined')Sfx.playSkill?.('kinship','impact',{owner:this,trigger:'minion',level:.5}); } }
     dmg = Math.max(1, dmg);
     if (typeof UniquePowers !== "undefined") dmg = UniquePowers.absorb(this,dmg);
     if (dmg <= 0) return;
@@ -902,7 +905,7 @@ class Player extends Entity {
     Game.bloodBurst(this.x, this.y, 5);
     /* chance-to-cast when struck */
     if (this.stats.procs) for (const p of this.stats.procs) if (p.trigger === "struck" && Math.random() * 100 < p.chance) Game.fireProc(p, this.x, this.y, this);
-    if (this.hp <= 0) { this.hp = 0; Game.onPlayerDeath(source); }
+    if (this.hp <= 0) { this.hp = 0; Game.onPlayerDeath(source,this); }
   }
   tryBlock(source) {
     const blocked=this.stats.block > 0 && Math.random() * 100 < this.stats.block;
@@ -926,6 +929,7 @@ class Player extends Entity {
 
   /* execute a skill *now* (caller has verified range etc.) */
   performSkill(skillId,target,point) {
+    if(typeof Coop!=="undefined"&&Coop.active&&!Coop.authority)return Coop.submit(target?{type:"attack",skill:skillId,targetId:target._coopId}:{type:"cast",skill:skillId,point});
     if (DATA.SKILLS[skillId]?.type === "passive") return false;
     if (this.rejectSkillWeapon(skillId)) return false;
     const run=()=>this.performSkillPresentation(skillId,target,point);
@@ -976,7 +980,7 @@ class Player extends Entity {
           this.afterActionDelay(dur * 0.45, () => {
             if (this.dead) return;
             Sfx.play("bow");
-            Game.spawnProjectile({ x: this.x, y: this.y, tx: target.x, ty: target.y, speed: 11, kind: "arrow", fromPlayer: true, mult, quarryOnHit: sk.quarryOnHit, quarryStacks:sk.quarryStacks?.(rk), pierce:!!sk.perkPierce });
+            Game.spawnProjectile({ visualOwner:this, x: this.x, y: this.y, tx: target.x, ty: target.y, speed: 11, kind: "arrow", fromPlayer: true, mult, quarryOnHit: sk.quarryOnHit, quarryStacks:sk.quarryStacks?.(rk), pierce:!!sk.perkPierce });
           });
         } else {
           Sfx.play("swing");
@@ -1023,7 +1027,7 @@ class Player extends Entity {
             if (mult > 0) this.strike(mon, mult, { auto: true });
             if (sk.stun) mon.stunT = Math.max(mon.stunT, sk.stun(rk));
             if (sk.slowPct) mon.applySlow(sk.dur(rk), sk.slowPct(rk));
-            if (sk.weaken) mon.curseWither = { until: Game.state.time + sk.dur(rk), pct: sk.weaken(rk) };
+            if (sk.weaken) mon.curseWither = {owner:this, until: Game.state.time + sk.dur(rk), pct: sk.weaken(rk) };
           }
         });
         return true;
@@ -1088,10 +1092,10 @@ class Player extends Entity {
             const a0 = Math.atan2(aim.y - this.y, aim.x - this.x);
             for (let i = 0; i < n; i++) {
               const a = a0 + (i - (n - 1) / 2) * spread / Math.max(1, n - 1) * 2;
-              Game.spawnProjectile(Object.assign({}, base, { tx: this.x + Math.cos(a) * 8, ty: this.y + Math.sin(a) * 8 }));
+              Game.spawnProjectile(Object.assign({visualOwner:this}, base, { tx: this.x + Math.cos(a) * 8, ty: this.y + Math.sin(a) * 8 }));
             }
           } else {
-            Game.spawnProjectile(Object.assign({}, base, { tx: aim.x, ty: aim.y, pierce: true, speed: 14 }));
+            Game.spawnProjectile(Object.assign({visualOwner:this}, base, { tx: aim.x, ty: aim.y, pierce: true, speed: 14 }));
           }
         });
         return true;
@@ -1116,7 +1120,8 @@ class Player extends Entity {
           mult: this.snareDamageScale(sk),
         };
         /* cap concurrent traps */
-        if (Game.state.traps.length >= 4+(this.stats.trapCap||0)) Game.state.traps.shift();
+        const ownTraps=Game.state.traps.filter(t=>t.owner===this);
+        if (ownTraps.length >= 4+(this.stats.trapCap||0)) Game.state.traps.splice(Game.state.traps.indexOf(ownTraps[0]),1);
         trap.surfaceId=this.surfaceId??0;
         Game.state.traps.push(trap);
         Sfx.play("click");
@@ -1169,11 +1174,11 @@ class Player extends Entity {
               const a = sk.scatter ? a0 + (Math.random() - 0.5) * spread * 2
                                    : a0 + (i - (n - 1) / 2) * spread / Math.max(1, n - 1) * 2;
               const sp = mkSpell(); if (sk.wander) sp.wander = sk.wander;
-              Game.spawnProjectile(Object.assign({}, base, { tx: this.x + Math.cos(a) * 8, ty: this.y + Math.sin(a) * 8, spell: sp }));
+              Game.spawnProjectile(Object.assign({visualOwner:this}, base, { tx: this.x + Math.cos(a) * 8, ty: this.y + Math.sin(a) * 8, spell: sp }));
             }
           } else {
             const sp = mkSpell(); if (sk.wander) sp.wander = sk.wander;
-            Game.spawnProjectile(Object.assign({}, base, { tx: aim.x, ty: aim.y, spell: sp }));
+            Game.spawnProjectile(Object.assign({visualOwner:this}, base, { tx: aim.x, ty: aim.y, spell: sp }));
           }
         });
         return true;
@@ -1270,7 +1275,7 @@ class Player extends Entity {
           stats.hp = Math.floor(stats.hp * (1 + this.stats.minionHpPct / 100));
           if (empowered) { stats.hp *= 2; stats.dmg = [stats.dmg[0] * 2, stats.dmg[1] * 2]; }   // gravestone-raised: doubled stats
           const cap = sk.cap(rk);
-          const mine = TerrainLayers.targets(Game.state.minions).filter(m => !m.dead && m.kindId === sk.minion);
+          const mine = TerrainLayers.targets(Game.state.minions).filter(m => !m.dead && m.owner===this && m.kindId === sk.minion);
           if (mine.length >= cap) mine.reduce((lo, m) => m.hp < lo.hp ? m : lo, mine[0]).die();   // the most wounded returns to the wild
           const mi = new Minion(sk.minion, stats, this);
           mi.sourceSkill=skillId;
@@ -1377,7 +1382,7 @@ class Player extends Entity {
         return true;
       }
       case "minionbuff": {
-        if (!TerrainLayers.targets(Game.state.minions).some(m => !m.dead)) { Game.msg("You have no servants to muster.", "#9a9a9a"); return false; }
+        if (!TerrainLayers.targets(Game.state.minions).some(m => !m.dead&&m.owner===this)) { Game.msg("You have no servants to muster.", "#9a9a9a"); return false; }
         if (sk.cd && this.skillCd[skillId] && Game.state.time < this.skillCd[skillId]) { Game.msg(sk.name + " not ready.", "#c0a060"); Sfx.play("error"); return false; }
         this.pay(sk, rk);
         if (sk.cd) this.skillCd[skillId] = Game.state.time + sk.cd(rk);
@@ -1387,7 +1392,7 @@ class Player extends Entity {
           Sfx.play("roar");
           const healPct = sk.heal ? sk.heal(rk) : 100;   // dread_muster heals a %, feral_howl full
           for (const mi of TerrainLayers.targets(Game.state.minions)) {
-            if (mi.dead) continue;
+            if (mi.dead||mi.owner!==this) continue;
             mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * healPct / 100);
             mi.buffUntil = Game.state.time + sk.dur(rk);
             mi.buffDmg = sk.dmgBuff(rk);
@@ -1409,8 +1414,8 @@ class Player extends Entity {
           Game.addNova(aim.x, aim.y, radius, "#b070d0");
           for (const mon of TerrainLayers.targets(Game.state.monsters)) {
             if (mon.dead || U.dist(aim.x, aim.y, mon.x, mon.y) > radius + mon.radius) continue;
-            if (sk.curse === "frailty") mon.curseFrailty = { until: Game.state.time + cdur, pct };
-            else { mon.curseWither = { until: Game.state.time + cdur, pct }; mon.applySlow(cdur, slowPct); }
+            if (sk.curse === "frailty") mon.curseFrailty = {owner:this, until: Game.state.time + cdur, pct };
+            else { mon.curseWither = {owner:this, until: Game.state.time + cdur, pct }; mon.applySlow(cdur, slowPct); }
             Game.addParticle(mon.x, mon.y, "#b070d0");
           }
         });
@@ -1601,7 +1606,7 @@ class Player extends Entity {
         this.pay(sk, rk); this.startAction("attack", dur * 0.8); Sfx.play("roar");
         const R = sk.radius(rk);
         Game.addNova(this.x, this.y, R, "#b070d0"); Game.fx.shake = Math.max(Game.fx.shake, 3);
-        for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > R + mon.radius) continue; if (mon.isBoss) mon.applySlow(sk.dur(rk), 50); else { mon.feared = Game.state.time + sk.dur(rk); mon.aggro = true; } if(sk.fearWeaken?.(rk)>0)mon.curseWither={until:Game.state.time+sk.dur(rk),pct:sk.fearWeaken(rk)}; }
+        for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > R + mon.radius) continue; if (mon.isBoss) mon.applySlow(sk.dur(rk), 50); else { mon.feared = Game.state.time + sk.dur(rk); mon.aggro = true; } if(sk.fearWeaken?.(rk)>0)mon.curseWither={owner:this,until:Game.state.time+sk.dur(rk),pct:sk.fearWeaken(rk)}; }
         return true;
       }
       case "combat_stance": case "parry_stance": {   // Berserker / Bulwark / Riposte (toggle)
@@ -1637,7 +1642,7 @@ class Player extends Entity {
         let aim = target ? { x: target.x, y: target.y } : point; if (!aim) { const [wx, wy] = U.screenVecToWorld(this.visAng); aim = { x: this.x + wx * 5, y: this.y + wy * 5 }; }
         this.pay(sk, rk); this.face(aim.x, aim.y); this.startAction("attack", dur); Sfx.play("swing");
         const n = sk.count(rk), a0 = Math.atan2(aim.y - this.y, aim.x - this.x), mult = sk.mult(rk) * syn, rng = sk.throwRange(rk);
-        for (let i = 0; i < n; i++) { const a = a0 + (i - (n - 1) / 2) * 0.13; Game.spawnProjectile({ x: this.x, y: this.y, tx: this.x + Math.cos(a) * rng, ty: this.y + Math.sin(a) * rng, speed: 11, kind: "thrownaxe", fromPlayer: true, mult, pierce: true, boomerang: { maxRange: rng, fromX: this.x, fromY: this.y, returning: false } }); }
+        for (let i = 0; i < n; i++) { const a = a0 + (i - (n - 1) / 2) * 0.13; Game.spawnProjectile({ visualOwner:this, x: this.x, y: this.y, tx: this.x + Math.cos(a) * rng, ty: this.y + Math.sin(a) * rng, speed: 11, kind: "thrownaxe", fromPlayer: true, mult, pierce: true, boomerang: { maxRange: rng, fromX: this.x, fromY: this.y, returning: false } }); }
         return true;
       }
       case "shockwave": {   // Seismic Slam (id ground_slam) / Fissure — a travelling crack
@@ -1675,7 +1680,7 @@ class Player extends Entity {
         let aim = point || (target ? { x: target.x, y: target.y } : { x: this.x, y: this.y });
         if (!MapGen.walkable(Game.state.map, aim.x, aim.y)) aim = { x: this.x, y: this.y };
         this.pay(sk, rk);
-        Game.state.fx = Game.state.fx.filter(f => !(f.type === "banner" && f.tag === sk.id));
+        Game.state.fx = Game.state.fx.filter(f => !(f.type === "banner" && f.tag === sk.id && f.owner===this));
         Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "banner", tag: sk.id, x: aim.x, y: aim.y, radius: sk.radius(rk), ttl: sk.dur(rk), maxTtl: sk.dur(rk), tickEvery: 0.3,
           allyDmg: sk.allyDmg ? sk.allyDmg(rk) : 10, allyIas: sk.allyIas ? sk.allyIas(rk) : 8, enemyDmg: sk.enemyDmg ? sk.enemyDmg(rk) : 12,
           heal: sk.type === "banner_ultimate" ? (sk.heal ? sk.heal(rk) : 4) : (sk.bannerHeal?.(rk)??0), kindCol: sk.type === "banner_ultimate" ? "#ffe6a0" : "#d8b84a", owner: this });
@@ -1686,7 +1691,7 @@ class Player extends Entity {
         this.pay(sk, rk); this.startAction("attack", dur * 0.8); Sfx.play("roar");
         const R = sk.radius(rk);
         Game.addNova(this.x, this.y, R, "#d8b84a"); Game.fx.shake = Math.max(Game.fx.shake, 2);
-        for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > R + mon.radius) continue; const duration=sk.debuffDuration?.(rk)??6; mon.sunder = { until: Game.state.time + duration, stacks: Math.min(3, ((mon.sunder && mon.sunder.stacks) || 0) + 2) }; mon.applySlow(duration, sk.roarSlow?.(rk)??15); if(sk.roarWeaken?.(rk)>0)mon.curseWither={until:Game.state.time+duration,pct:sk.roarWeaken(rk)}; }
+        for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > R + mon.radius) continue; const duration=sk.debuffDuration?.(rk)??6; mon.sunder = { until: Game.state.time + duration, stacks: Math.min(3, ((mon.sunder && mon.sunder.stacks) || 0) + 2) }; mon.applySlow(duration, sk.roarSlow?.(rk)??15); if(sk.roarWeaken?.(rk)>0)mon.curseWither={owner:this,until:Game.state.time+duration,pct:sk.roarWeaken(rk)}; }
         return true;
       }
       /* ===================== EMBER WITCH ===================== */
@@ -1731,7 +1736,7 @@ class Player extends Entity {
         this.afterActionDelay(dur0 * 0.5, () => {
           if (this.dead) return; Sfx.play("frost"); Game.addNova(this.x, this.y, radius, "#9fd8ff");
           for (let i = 0; i < 14; i++) Game.addParticle(this.x + U.rf(-1, 1), this.y + U.rf(-1, 1), "#cfeaff");
-          for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > radius + mon.radius) continue; const r = this.spellRoll(sk, rk); this.spellHit(mon, r.dmg, "cold", { crit: r.crit }); mon.frozen = Game.state.time + fr; mon.stunT = Math.max(mon.stunT, fr); }
+          for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(this.x, this.y, mon.x, mon.y) > radius + mon.radius) continue; const r = this.spellRoll(sk, rk); this.spellHit(mon, r.dmg, "cold", { crit: r.crit }); mon.frozen = Game.state.time + fr; mon.freezeOwner=this; mon.stunT = Math.max(mon.stunT, fr); }
         });
         return true;
       }
@@ -1775,7 +1780,7 @@ class Player extends Entity {
           slowPct: sk.slowPct ? sk.slowPct(rk) : 0, selfDodge: sk.selfDodge ? sk.selfDodge(rk) : 0, weakenPct: sk.weakenPct ? sk.weakenPct(rk) : 0, heal: sk.heal ? sk.heal(rk) : 0 };
         if (kind === "caltrop") f.snareMult = this.snareDamageScale(sk);
         if (kind === "spore") { const a = Math.atan2(aim.y - this.y, aim.x - this.x); f.vx = Math.cos(a) * 0.6; f.vy = Math.sin(a) * 0.6; }
-        if (["inferno", "glacier", "static"].includes(kind)) Game.state.fx = Game.state.fx.filter(g => !(g.type === "groundfield" && g.fieldKind === kind));
+        if (["inferno", "glacier", "static"].includes(kind)) Game.state.fx = Game.state.fx.filter(g => !(g.type === "groundfield" && g.fieldKind === kind && g.owner===this));
         this.afterActionDelay(dur0 * 0.5, () => { if (this.dead) return; Sfx.play(kind === "glacier" ? "frost" : kind === "static" ? "zap" : "blast"); Game.addNova(aim.x, aim.y, f.radius, col); Game.state.fx.push(Object.assign(f,{surfaceId:TerrainLayers.current(Game.state.map)})); });
         return true;
       }
@@ -1788,7 +1793,7 @@ class Player extends Entity {
         return true;
       }
       case "sacrifice": {   // Sacrificial Pyre (all) / Blood of the Pack (one)
-        const mode = sk.mode || "all", beasts = TerrainLayers.targets(Game.state.minions).filter(m => !m.dead);
+        const mode = sk.mode || "all", beasts = TerrainLayers.targets(Game.state.minions).filter(m => !m.dead&&m.owner===this);
         if (!beasts.length) { Game.msg(mode === "one" ? "No beast to give." : "You have no servants to sacrifice.", "#9a9a9a"); return false; }
         this.pay(sk, rk); Sfx.play("blast");
         if (mode === "all") {
@@ -1825,7 +1830,7 @@ class Player extends Entity {
         if (!target) { const ap = point || { x: this.x, y: this.y }; let bd = 64; for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead) continue; const dd = U.dist2(ap.x, ap.y, m.x, m.y); if (dd < bd) { bd = dd; target = m; } } }
         if (!target) return false;
         this.pay(sk, rk); const dur0 = this.beginCast(sk, target), timer = sk.timer(rk) * (1 + (this.stats.curseDurPct || 0) / 100);
-        target.doom = { until: Game.state.time + dur0 + timer, charge: 0, maxCharge: timer, dmgLo: sk.dmgLo(rk), dmgHi: sk.dmgHi(rk), radius: sk.radius(rk) * (1 + (this.stats.curseRadiusPct || 0) / 100) };
+        target.doom = { owner:this, until: Game.state.time + dur0 + timer, charge: 0, maxCharge: timer, dmgLo: sk.dmgLo(rk), dmgHi: sk.dmgHi(rk), radius: sk.radius(rk) * (1 + (this.stats.curseRadiusPct || 0) / 100) };
         Sfx.play("curse"); Game.addParticle(target.x, target.y, "#9a40c0");
         return true;
       }
@@ -1863,7 +1868,7 @@ class Player extends Entity {
         if (!corpse) corpse = Game.corpseFromGrave(this, aim, (sk.castRange ? sk.castRange(rk) : 9));
         if (!corpse) { Game.msg("No corpse or grave to hurl.", "#9a9a9a"); return false; }
         this.pay(sk, rk); corpse.exploded = true; corpse.corpseT = 0; const dm = sk.dmg(rk);
-        Game.spawnProjectile({ x: corpse.x, y: corpse.y, tx: aim.x, ty: aim.y, speed: sk.projSpeed ? sk.projSpeed(rk) : 11, kind: "cadaver", fromPlayer: true, spell: { dmg: U.rf(dm[0], dm[1]) * (1 + this.stats.spellPct / 100), knockback: sk.knockback(rk), sprayRadius: sk.sprayRadius(rk) } });
+        Game.spawnProjectile({ visualOwner:this, x: corpse.x, y: corpse.y, tx: aim.x, ty: aim.y, speed: sk.projSpeed ? sk.projSpeed(rk) : 11, kind: "cadaver", fromPlayer: true, spell: { dmg: U.rf(dm[0], dm[1]) * (1 + this.stats.spellPct / 100), knockback: sk.knockback(rk), sprayRadius: sk.sprayRadius(rk) } });
         Sfx.play("swing");
         return true;
       }
@@ -1888,7 +1893,7 @@ class Player extends Entity {
       }
       case "summon_golem": {   // Bone Golem — stitched from corpses; re-cast on corpses to feed & grow
         const gatherR = sk.gatherRadius(rk), maxStitch = sk.maxCorpses(rk);
-        const existing = TerrainLayers.targets(Game.state.minions).find(m => !m.dead && m.kindId === "bone_golem");
+        const existing = TerrainLayers.targets(Game.state.minions).find(m => !m.dead && m.owner===this && m.kindId === "bone_golem");
         const cur = existing ? (existing.stitches || 1) : 0, remaining = maxStitch - cur;
         if (existing && remaining <= 0) { Game.msg(`The golem is already whole (${maxStitch} bones).`, "#9a9a9a"); Sfx.play("error"); return false; }
         /* every cast — including feeding — must consume at least one nearby corpse */
@@ -1934,7 +1939,7 @@ class Player extends Entity {
       case "ricochet": {   // Ricochet Shard — bank-shot arrow
         let aim = target ? { x: target.x, y: target.y } : point; if (!aim) { const [wx, wy] = U.screenVecToWorld(this.visAng); aim = { x: this.x + wx * 5, y: this.y + wy * 5 }; }
         this.pay(sk, rk); this.face(aim.x, aim.y); this.startAction("attack", dur); Sfx.play("bow");
-        this.afterActionDelay(dur * 0.4, () => { if (this.dead) return; Game.spawnProjectile({ x: this.x, y: this.y, tx: aim.x, ty: aim.y, speed: 14, kind: "arrow", fromPlayer: true, mult: sk.dmgMult(rk) * syn, ricochet: { bounces: sk.bounces(rk) } }); });
+        this.afterActionDelay(dur * 0.4, () => { if (this.dead) return; Game.spawnProjectile({ visualOwner:this, x: this.x, y: this.y, tx: aim.x, ty: aim.y, speed: 14, kind: "arrow", fromPlayer: true, mult: sk.dmgMult(rk) * syn, ricochet: { bounces: sk.bounces(rk) } }); });
         return true;
       }
       case "rain": {   // Arrowfall — a circle that rains arrows
@@ -2010,7 +2015,7 @@ class Player extends Entity {
         if (!target) { const ap = point || { x: this.x, y: this.y }; let bd = 64; for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead) continue; const dd = U.dist2(ap.x, ap.y, m.x, m.y); if (dd < bd) { bd = dd; target = m; } } }
         if (!target) return false;
         this.pay(sk, rk);
-        target.killMark = { until: Game.state.time + sk.dur(rk), amp: sk.amp(rk), det: sk.detDmg(rk) };
+        target.killMark = { owner:this, until: Game.state.time + sk.dur(rk), amp: sk.amp(rk), det: sk.detDmg(rk) };
         Sfx.play("curse"); Game.addParticle(target.x, target.y, "#c080e0");
         return true;
       }
@@ -2041,7 +2046,7 @@ class Player extends Entity {
         this.pay(sk, rk);
         const kind = sk.totemKind || "storm", ttl = sk.ttl(rk) * (1 + (this.stats.totemTtl || 0)), dm = sk.dmg(rk).map(n=>n*(1+(this.stats.totemPower||0)/100));
         const cap = sk.cap(rk) + Math.floor((this.effRank("totem_mastery") || 0) / 10) + (this.stats.totemCapacity||0);
-        const same = Game.state.fx.filter(f => f.type === "totem" && f.totemKind === kind);
+        const same = Game.state.fx.filter(f => f.type === "totem" && f.totemKind === kind && f.owner===this);
         while (same.length >= cap) { const old = same.shift(); const idx = Game.state.fx.indexOf(old); if (idx >= 0) Game.state.fx.splice(idx, 1); }
         Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "totem", totemKind: kind, x: aim.x, y: aim.y, ttl, maxTtl: ttl, radius: sk.radius(rk), zapCd: sk.zapCd ? sk.zapCd(rk) : 1.1, zapT: 0.3, lo: dm[0], hi: dm[1], pulseCd: sk.pulseCd ? sk.pulseCd(rk) : 1.4, pulseT: 0, wispCd: sk.wispCd ? sk.wispCd(rk) : 3, wispT: 1, ringR: 0, owner: this });
         Sfx.play("shrine"); Game.addNova(aim.x, aim.y, 1.2, kind === "tempest" ? "#fff080" : "#cfe0ff");
@@ -2060,6 +2065,7 @@ class Player extends Entity {
 
   /* belt potion */
   quaff(slotIdx) {
+    if(typeof Coop!=="undefined"&&Coop.active&&!Coop.authority)return Coop.submit({type:"quaff",slot:slotIdx});
     if (this.dead) return;
     const slot = this.belt[slotIdx];
     if (!slot || slot.count <= 0) { Sfx.play("error"); return; }
@@ -2316,7 +2322,7 @@ class Player extends Entity {
       const g = cmd.gi;
       if (!Game.state.ground.includes(g)) { this.command = null; return; }
       if (TerrainLayers.same(this,g) && U.dist(this.x, this.y, g.x, g.y) < 1.2) {
-        Game.pickupGround(g);
+        Game.pickupGround(g,this);
         this.command = null; this.path = null; this.moving = false;
       } else {
         this.moveAlong(dt, st.moveSpeed, Game.state.map, TerrainLayers.targets(Game.state.monsters));
@@ -2328,7 +2334,7 @@ class Player extends Entity {
       const d = U.dist(this.x, this.y, o.x, o.y);
       if (TerrainLayers.same(this,o) && d < (cmd.run ? 1.8 : (o.interactionRange || 1.6))) {
         this.path = null; this.moving = false; this.command = null;
-        if (cmd.run) cmd.run(); else Game.interact(o);
+        if (cmd.run) cmd.run(); else Game.interact(o,this);
       } else {
         this.moveAlong(dt, st.moveSpeed, Game.state.map, TerrainLayers.targets(Game.state.monsters));
         this.footsteps(dt);
@@ -2357,7 +2363,7 @@ class Player extends Entity {
     this.startAction("attack", 1 / this.stats.attackRate);
     this.markActionRelease(0);
     Sfx.playSkill?.(dr.sourceSkill||'veilranger_0_2','release',{owner:this,charge:chargeK});
-    Game.spawnProjectile({ x: this.x, y: this.y, tx: aim.x, ty: aim.y, speed: 16, kind: "arrow", fromPlayer: true,
+    Game.spawnProjectile({ visualOwner:this, x: this.x, y: this.y, tx: aim.x, ty: aim.y, speed: 16, kind: "arrow", fromPlayer: true,
       sourceSkill:dr.sourceSkill||'veilranger_0_2',
       mult: dr.dmgMin + (dr.dmgMax - dr.dmgMin) * chargeK, pierce: true,
       maxPierce: chargeK < 0.4 ? 1 : 99, knockFirst: chargeK >= 0.8, quarryBonus: dr.quarryBonus || 0 });
@@ -2604,11 +2610,11 @@ class ImperialCombat {
     const phase=((Math.floor(mon.x*31+mon.y*17)+U.hash(mon.defId))>>>0)%17/17;
     this.cooldown=(this.profile.special?.cd||0)*(.35+phase*.3);this.active=null;this.lastAttack=null;this.epoch=0;
   }
-  valid(){return Game.state===this.world&&Game.state.map===this.map&&!this.mon.dead&&!this.world.player.dead;}
+  valid(){return Game.state===this.world&&Game.state.map===this.map&&!this.mon.dead&&!(this.world.players||[this.world.player]).every(p=>p.dead);}
   disabled(){const m=this.mon;return m.stunT>0||m.frozen>this.world.time||m.feared>this.world.time||m.beckon?.until>this.world.time||m.fleeUntil>this.world.time||!!m.pulled;}
   cancel(){this.epoch++;this.active=null;if(['attack','cast'].includes(this.mon.action?.state))this.mon.action=null;this.mon.jumpZ=0;}
   tick(dt){this.cooldown=Math.max(0,this.cooldown-dt);if(this.profile.role!=='boss')this.mon.attackCd=Math.max(0,this.mon.attackCd-dt);if(!this.valid()||this.disabled())this.cancel();}
-  targets(){return [this.world.player,...this.world.minions].filter(t=>TerrainLayers.same(this.mon,t)&&!t.dead&&!t.untargetable);}
+  targets(){return [...(this.world.players||[this.world.player]),...this.world.minions].filter(t=>TerrainLayers.same(this.mon,t)&&!t.dead&&!t.untargetable);}
   los(t){return (t.surfaceId===undefined||TerrainLayers.same(this.mon,t))&&U.los((x,y)=>MapGen.walkable(this.map,x,y,this.mon.surfaceId),this.mon.x,this.mon.y,t.x,t.y);}
   clear(p){return TerrainSurface.supported(this.map,p.x,p.y,this.mon.radius,this.mon.surfaceId);}
   landing(p){return this.clear(p)&&this.world.monsters.every(t=>!TerrainLayers.same(this.mon,t)||t===this.mon||t.dead||Math.hypot(t.x-p.x,t.y-p.y)>t.radius+this.mon.radius+.15);}
@@ -2893,8 +2899,8 @@ class Monster extends Entity {
   /* nearest hostile: the player or one of their minions —
      and in the Cinderdeep, rival broods tear at each other too */
   pickTarget(player) {
-    let best = player.dead ? null : player;
-    let bd = player.dead ? Infinity : U.dist2(this.x, this.y, player.x, player.y);
+    let best=null,bd=Infinity;
+    for(const p of Game.state.players||[player])if(!p.dead&&TerrainLayers.same(this,p)){const d=U.dist2(this.x,this.y,p.x,p.y);if(d<bd){bd=d;best=p;}}
     for (const mi of TerrainLayers.targets(Game.state.minions)) {
       if (mi.dead || mi.untargetable) continue;   // hawks can't be picked as a direct target
       const dd = U.dist2(this.x, this.y, mi.x, mi.y);
@@ -2952,7 +2958,7 @@ class Monster extends Entity {
     }
     // Callers that already scaled mixed weapon hits, spell impacts or DoT
     // snapshots opt out. Raw player item procs use this final damage boundary.
-    const elemental = source === Game.state.player && !detail?.elementScaled && !detail?.environment ? DATA.elementMultiplier(source, elem) : 1;
+    const elemental = (source instanceof Player) && !detail?.elementScaled && !detail?.environment ? DATA.elementMultiplier(source, elem) : 1;
     let dmg = amount * elemental * (this.enemySkills?.physicalMult(source,elem,detail) ?? 1);
     const hpBefore = this.hp;
     if (typeof UniquePowers !== "undefined") dmg *= 1 + UniquePowers.exposed(this) / 100;
@@ -2984,7 +2990,7 @@ class Monster extends Entity {
     }
     const actual = Math.max(0, Math.min(hpBefore, hpBefore - this.hp));
     if (this.hp <= 0) this.die(source, { ...detail, damage: actual });
-    if (typeof UniquePowers !== "undefined" && source === Game.state.player) UniquePowers.hit(source,this,actual,detail,hpBefore);
+    if (typeof UniquePowers !== "undefined" && (source instanceof Player)) UniquePowers.hit(source,this,actual,detail,hpBefore);
     return actual;
   }
   attackNova(x,y,radius,color){
@@ -3007,7 +3013,7 @@ class Monster extends Entity {
       fn();
     });
   }
-  castInterrupted(){const t=Game.state.time;return Game.state.player.dead||this.stunT>0||this.frozen>t||this.feared>t||this.pulled||this.beckon?.until>t||this.fleeUntil>t;}
+  castInterrupted(){const t=Game.state.time;return (Game.state.players||[Game.state.player]).every(p=>p.dead)||this.stunT>0||this.frozen>t||this.feared>t||this.pulled||this.beckon?.until>t||this.fleeUntil>t;}
   cancelAttacks(){
     if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.cancel(this);
     if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.cancel(this);
@@ -3060,11 +3066,11 @@ class Monster extends Entity {
   eligibleTarget(target){
     if(!target||target.dead||target.untargetable||!TerrainLayers.same(this,target))return false;
     const world=Game.state;
-    if(target===world.player||world.minions.includes(target))return true;
+    if((world.players||[world.player]).includes(target)||world.minions.includes(target))return true;
     return !!world.map.zone.infight&&!this.def.projectile&&!this.isBoss&&target!==this&&!target.isBoss&&world.monsters.includes(target)&&!this.allied(target);
   }
   hostileTargets(){
-    const world=Game.state,targets=[world.player,...world.minions];
+    const world=Game.state,targets=[...(world.players||[world.player]),...world.minions];
     if(world.map.zone.infight&&!this.def.projectile&&!this.isBoss)for(const other of world.monsters)if(this.eligibleTarget(other))targets.push(other);
     return targets.filter(t=>!t.dead&&!t.untargetable&&TerrainLayers.same(this,t));
   }
@@ -3131,6 +3137,7 @@ class Monster extends Entity {
   livingChildren(){this.children=this.children.filter(c=>!c.dead&&TerrainLayers.targets(Game.state.monsters).includes(c));return this.children.length;}
 
   die(source, uniqueContext) {
+    const credit=Game.playerOwner?.(source)||Game.state.player;
     if (this.dead) return;
     if(Game.state!==this.combatWorld||Game.state.map!==this.combatMap){this.dead=true;this.hp=0;this.cancelAttacks();return;}
     if(this.encounter&&!this.encounter.canDamage())return;
@@ -3163,36 +3170,36 @@ class Monster extends Entity {
     if (this.doom) Game.detonateDoom(this);
     if (this.plague) {
       const bx = this.x, by = this.y, br = this.plague.burstRange || 2.5;
-      Sfx.playSkill?.('gravebinder_2_1','impact',{owner:Game.state.player,emitter:this,elem:'poison'});
-      if(typeof SkillVFX!=='undefined')SkillVFX.scope(Game.state.player,'gravebinder_2_1',()=>Game.addNova(bx,by,br,"#90ff70"));else Game.addNova(bx, by, br, "#90ff70");
+      Sfx.playSkill?.('gravebinder_2_1','impact',{owner:credit,emitter:this,elem:'poison'});
+      if(typeof SkillVFX!=='undefined')SkillVFX.scope(credit,'gravebinder_2_1',()=>Game.addNova(bx,by,br,"#90ff70"));else Game.addNova(bx, by, br, "#90ff70");
       for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this || m.plague) continue; if (U.dist(bx, by, m.x, m.y) <= br + m.radius) m.plague = { ...this.plague, until: Game.state.time + 5, tickT: 0, spreadCd: 1.5, burstRange: br }; }
     }
     /* Rabies: a rabid corpse erupts into a contagious poison cloud */
     if (this.rabies && Game.state.time < this.rabies.until) {
-      Sfx.playSkill?.('rabies','impact',{owner:this.rabies.owner||Game.state.player,emitter:this,elem:'poison'});
-      if(typeof SkillVFX!=='undefined')SkillVFX.scope(this.rabies.owner||Game.state.player,'rabies',()=>Game.addNova(this.x,this.y,this.rabies.cloudRad,"#90ff70"));else Game.addNova(this.x, this.y, this.rabies.cloudRad, "#90ff70");
+      Sfx.playSkill?.('rabies','impact',{owner:this.rabies.owner||credit,emitter:this,elem:'poison'});
+      if(typeof SkillVFX!=='undefined')SkillVFX.scope(this.rabies.owner||credit,'rabies',()=>Game.addNova(this.x,this.y,this.rabies.cloudRad,"#90ff70"));else Game.addNova(this.x, this.y, this.rabies.cloudRad, "#90ff70");
       Game.state.fx.push({ surfaceId:TerrainLayers.current(Game.state.map), type: "groundfield", fieldKind: "miasma", rabies: true, rdps: this.rabies.dps, rdur: 8, rcloud: this.rabies.cloudRad,
-        owner: this.rabies.owner || Game.state.player, elementScaled: this.rabies.elementScaled, sourceSkill:'rabies', x: this.x, y: this.y, radius: this.rabies.cloudRad, ttl: 4, maxTtl: 4, tickEvery: 0.5 });
+        owner: this.rabies.owner || credit, elementScaled: this.rabies.elementScaled, sourceSkill:'rabies', x: this.x, y: this.y, radius: this.rabies.cloudRad, ttl: 4, maxTtl: 4, tickEvery: 0.5 });
     }
     /* Brittle Bones: a frozen foe SHATTERS on death, splashing cold */
-    if (this.frozen && Game.state.time < this.frozen && Game.state.player && Game.state.player.stats && Game.state.player.stats.shatterRank > 0) {
-      const sr = Game.state.player.stats.shatterRank, pl0 = Game.state.player;
+    if (this.frozen && Game.state.time < this.frozen && (this.freezeOwner||credit)?.stats.shatterRank > 0) {
+      const pl0=this.freezeOwner||credit, sr=pl0.stats.shatterRank;
       Game.addNova(this.x, this.y, 2.2, "#9fd8ff"); Sfx.playSkill?.('emberwitch_1_2','impact',{owner:pl0,emitter:this,elem:'cold',trigger:'frozen'});
       for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this) continue; if (U.dist(this.x, this.y, m.x, m.y) < 2.2 + m.radius) pl0.spellHit(m, 6 + 3 * sr, "cold", {}); }
     }
     /* Heat Haze: a Scorched corpse erupts, scattering its stacks to the pack */
-    if (this.scorch && Game.state.player && Game.state.player.stats && Game.state.player.stats.scorchSpread > 0) {
-      if(typeof SkillAudio!=='undefined')SkillAudio.passive(Game.state.player,'fire',{emitter:this});
+    if (this.scorch && (this.scorch.owner||credit)?.stats.scorchSpread > 0) {
+      if(typeof SkillAudio!=='undefined')SkillAudio.passive(credit,'fire',{emitter:this});
       const give = Math.ceil(this.scorch.stacks / 2), sdps = this.scorch.dps;
       Game.addNova(this.x, this.y, 2.0, "#ff7a20");
-      for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this) continue; if (U.dist(this.x, this.y, m.x, m.y) < 2.0 + m.radius) { const sc = m.scorch || { stacks: 0 }; sc.stacks = Math.min(5, sc.stacks + give); sc.dps = sdps; sc.owner = this.scorch.owner || Game.state.player; sc.sourceSkill = this.scorch.sourceSkill; sc.until = Game.state.time + 3; m.scorch = sc; } }
+      for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this) continue; if (U.dist(this.x, this.y, m.x, m.y) < 2.0 + m.radius) { const sc = m.scorch || { stacks: 0 }; sc.stacks = Math.min(5, sc.stacks + give); sc.dps = sdps; sc.owner = this.scorch.owner || credit; sc.sourceSkill = this.scorch.sourceSkill; sc.until = Game.state.time + 3; m.scorch = sc; } }
     }
     /* Grave Whispers: a curse leaps off the dead to the nearest un-cursed foe */
-    const pl = Game.state.player;
+    const pl = this.curseFrailty?.owner||this.curseWither?.owner||credit;
     if (pl && pl.stats && pl.stats.curseSpread > 0 && (this.curseFrailty || this.curseWither)) {
       let best = null, bd = 25;
       for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this || m.curseFrailty || m.curseWither) continue; const dd = U.dist2(this.x, this.y, m.x, m.y); if (dd < bd) { bd = dd; best = m; } }
-      if (best) { if (this.curseFrailty) best.curseFrailty = { until: Game.state.time + 6, pct: this.curseFrailty.pct }; if (this.curseWither) best.curseWither = { until: Game.state.time + 6, pct: this.curseWither.pct }; Game.addParticle(best.x, best.y, "#b070d0"); if(typeof SkillAudio!=='undefined')SkillAudio.passive(pl,'curse',{target:best}); }
+      if (best) { if (this.curseFrailty) best.curseFrailty = { owner:this.curseFrailty.owner||pl, until: Game.state.time + 6, pct: this.curseFrailty.pct }; if (this.curseWither) best.curseWither = { owner:this.curseWither.owner||pl, until: Game.state.time + 6, pct: this.curseWither.pct }; Game.addParticle(best.x, best.y, "#b070d0"); if(typeof SkillAudio!=='undefined')SkillAudio.passive(pl,'curse',{target:best}); }
     }
     /* Soul Harvest: each cursed/marked kill grants a stacking spell charge */
     if (pl && pl.stats && pl.stats.soulCharge > 0 && (this.curseFrailty || this.curseWither || this.killMark || this.doom)) {
@@ -3998,6 +4005,7 @@ class Projectile {
     if(this.travelled>=this.maxRange-1e-8)this.dead=true;
   }
   updateMotion(dt, map, player, monsters) {
+    if(this.fromPlayer)player=this.visualOwner||player;
     if (this.dead) return;
     /* a lobbed undead body arcs to its landing point, then crashes + rises (no mid-air collision) */
     if (this.lob) {
@@ -4117,6 +4125,7 @@ class Projectile {
           }
         }
       } else {
+        player=(Game.state.players||[player]).find(p=>!p.dead&&TerrainLayers.same(this,p)&&U.dist(this.x,this.y,p.x,p.y)<p.radius+.25)||player;
         const mon = this.mon;
         const hitDmg = mon ? U.rf(...mon.def.dmg) * (mon.def.dmgMult || 1) * 2.2 * mon.witherMult() * this.bossMult : 0;
         const elem = this.elem || (mon && mon.def.projectile && mon.def.projectile.elem);

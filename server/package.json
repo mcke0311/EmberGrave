@@ -1,0 +1,8 @@
+{
+  "name": "embergrave-coop-relay",
+  "private": true,
+  "version": "0.1.0",
+  "engines": {"node": ">=22"},
+  "scripts": {"start": "node relay.cjs", "test": "node --test ../tests/coop_relay.test.cjs"},
+  "dependencies": {"ws": "^8.18.3"}
+}

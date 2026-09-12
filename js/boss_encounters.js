@@ -57,8 +57,7 @@ const BossEncounters = (() => {
       this.mon.spriteOpts.bossPose=this.pose;
     }
     targets(fn) {
-      const p=this.world.player;
-      if(!p.dead)fn(p);
+      for(const p of this.world.players||[this.world.player])if(!p.dead)fn(p);
       for(const m of this.world.minions)if(this.active&&!m.dead)fn(m);
     }
     clearAttacks() {
@@ -92,7 +91,7 @@ const BossEncounters = (() => {
       this.clearAttacks();this.clearOwned();this.active=false;this.stage="dead";this.pose="death";this.setArt();
     }
     prepare(player,map) {
-      if(map!==this.map||Game.state!==this.world||player.dead||!insideArena(this.arena,player.x,player.y)) {
+      if(map!==this.map||Game.state!==this.world||!(this.world.players||[player]).some(p=>!p.dead&&insideArena(this.arena,p.x,p.y))) {
         if(this.active||this.mon.hp<this.mon.maxHp)this.reset();
         return false;
       }
@@ -167,7 +166,7 @@ const BossEncounters = (() => {
       }
     }
     damage(shape,mult,elem,hit=null) {
-      this.targets(t=>{if(t.groundImmune||hit?.has(t))return;if(contains(shape,t.x,t.y)){hit?.add(t);t.takeDamage(U.rf(...this.mon.def.dmg)*2.2*(this.mon.def.dmgMult||1)*this.mon.witherMult()*mult*(t===this.world.player?1:.45),this.mon,elem);}});
+      this.targets(t=>{if(t.groundImmune||hit?.has(t))return;if(contains(shape,t.x,t.y)){hit?.add(t);t.takeDamage(U.rf(...this.mon.def.dmg)*2.2*(this.mon.def.dmgMult||1)*this.mon.witherMult()*mult*(t instanceof Player?1:.45),this.mon,elem);}});
     }
     start(id,player) {
       const m=this.mon;
@@ -305,7 +304,7 @@ const BossEncounters = (() => {
           const swept={...s,x:m.x,y:m.y,length:Math.hypot(x-m.x,y-m.y)};
           if(insideArena(this.arena,x,y,m.radius)&&footprint(map,x,y,m.radius)){m.x=x;m.y=y;}
           else swept.length=0;
-          this.targets(t=>{if(!t.groundImmune&&!a.hit.has(t)&&contains(s,t.x,t.y)&&contains(swept,t.x,t.y)){a.hit.add(t);t.takeDamage(U.rf(...m.def.dmg)*2.2*(m.def.dmgMult||1)*a.mult*m.witherMult()*(t===player?1:.45),m);}});
+          this.targets(t=>{if(!t.groundImmune&&!a.hit.has(t)&&contains(s,t.x,t.y)&&contains(swept,t.x,t.y)){a.hit.add(t);t.takeDamage(U.rf(...m.def.dmg)*2.2*(m.def.dmgMult||1)*a.mult*m.witherMult()*(t instanceof Player?1:.45),m);}});
           if(!this.active||this.attack!==a)return;
         }
       }

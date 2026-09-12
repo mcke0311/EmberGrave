@@ -91,6 +91,7 @@ const MobileControls = (() => {
     world=canvas;
     root=document.createElement('div'); root.id='mobileControls'; root.hidden=true;
     root.innerHTML=`<div class="mobile-tools" aria-label="Game controls">
+      <button type="button" data-action="party" hidden aria-label="Open party">Party</button>
       <button type="button" data-action="map" aria-label="Toggle map">Map</button>
       <button type="button" data-action="loot" aria-label="Toggle loot labels">Loot</button>
       <button type="button" data-action="menu" aria-label="Open menu or close panels">Menu</button>
@@ -106,7 +107,7 @@ const MobileControls = (() => {
     stick=document.getElementById('mobileStick'); knob=document.getElementById('mobileKnob');
     bindHold(stick,'move'); bindHold(document.getElementById('mobileAttack'),'L'); bindHold(document.getElementById('mobileSkill'),'R');
     for (const button of root.querySelectorAll('[data-action]')) bindTap(button,() => {
-      Game.touchAction(button.dataset.action); sync();
+      if(button.dataset.action==='party')CoopUI.party();else Game.touchAction(button.dataset.action); sync();
     });
     bindTap(document.getElementById('mobileAssign'),e => {
       e.stopPropagation(); reset(); UI.openSkillPick('R'); sync();
@@ -153,6 +154,9 @@ const MobileControls = (() => {
   }
   function sync() {
     if (!root) return;
+    const party=root.querySelector('[data-action=party]');party.hidden=!(typeof Coop!=='undefined'&&Coop.active);
+    if(!party.hidden){const alert=!!(Coop.paused||Coop.saveError);party.textContent=alert?'Party !':'Party';party.setAttribute('aria-label',alert?'Open party: connection or save needs attention':'Open party');}
+    if(typeof MobileWorkspace!=='undefined')MobileWorkspace.sync();
     const p=Game.state?.player, active=enabled && !!p && !p.dead && document.getElementById('title').classList.contains('hidden');
     root.hidden=!active;
     const ready=active && Game.touchReady() && document.getElementById('skillPick').classList.contains('hidden');

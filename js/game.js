@@ -218,6 +218,7 @@ const Game = (() => {
       UI.init();
       bindInput();
       if (typeof MobileControls !== "undefined") MobileControls.init(canvas);
+      if (typeof MobileWorkspace !== "undefined") MobileWorkspace.init();
       UI.showTitle();
       requestAnimationFrame(tick);
     } catch (err) {
@@ -253,7 +254,7 @@ const Game = (() => {
   }
   function freshState(player, seed) {
     return {
-      player, seed,
+      player, players: [player], seed,
       time: 0,
       map: null, mapsCache: {}, monstersByMap: {}, groundByMap: {},
       monsters: [], npcs: [], ground: [], projectiles: [], minions: [], traps: [],
@@ -618,6 +619,7 @@ const Game = (() => {
 
   /* ---------------- map transitions ---------------- */
   async function enterMap(zoneId, spawnKey, { revive = false, openingMode = null, arrivalPosition = null, reuseCachedMap = false, recoverable: recoverableTravel = false, quietQuestAudio = false, difficultyChange = null } = {}) {
+    if(typeof Coop!=="undefined"&&Coop.active&&!Coop.loading)return Coop.requestTravel(zoneId,spawnKey,arguments[2]||{});
     if (!state || (state.difficultyTransition && state.difficultyTransition !== difficultyChange)) return false;
     if(typeof PropInteractions!=='undefined')PropInteractions.cancel(state);
     if(openingMode === "gate" && !opening.ready) {
@@ -744,6 +746,7 @@ const Game = (() => {
         const pos = sp.boss ? { x: sp.x, y: sp.y } : nearestReach(map, reach, sp.x, sp.y);   // keep hand-placed bosses put
         const mon = new Monster(sp.id, pos.x, pos.y, { elite: sp.elite || extraElite, minion: sp.minion, skillProfile:sp.skillProfile,
           packId:sp.packId,monsterFamily:sp.monsterFamily,familyHome:sp.familyHome&&{...sp.familyHome,x:pos.x,y:pos.y} });
+        if(typeof Coop!=="undefined"&&Coop.active)mon._coopId='spawn_'+zoneId+'_'+map.monsterSpawns.indexOf(sp);
         if (sp.cathedralEncounter) mon.cathedralEncounter=sp.cathedralEncounter;
         state.monsters.push(mon);
       }
@@ -806,7 +809,7 @@ const Game = (() => {
       }
       if (!state.shrines.includes(zoneId)) state.shrines.push(zoneId);
       saveGame();
-      if(!wasOpening)msg("Autosaved.", "#6a7a5a");
+      if(!wasOpening&&!(typeof Coop!=="undefined"&&Coop.active))msg("Autosaved.", "#6a7a5a");
     }
     /* act intro flourish, once per act */
     const act = DATA.ACTS.find(a => a.camp === zoneId);
@@ -863,6 +866,7 @@ const Game = (() => {
     return it;
   }
   function saveGame() {
+    if (typeof Coop!=="undefined" && Coop.active) { Coop.save(); return; }
     if (!state) return;
     if (state.player.dead && state.player.hardcore) return;
     opening.captureLoot();
@@ -994,6 +998,7 @@ const Game = (() => {
     if (state && DATA.CAMPAIGN.bossDead(state,"vethriss") && !state.flags.ending) UI.openFinalChoice();
   }
   function saveAndQuit() {
+    if(typeof Coop!=="undefined"&&Coop.active)return Coop.leave();
     resetTouch();
     cancelGroundHold();
     Sfx.stopDeath(); Sfx.stopSkills?.();
@@ -1013,6 +1018,7 @@ const Game = (() => {
      QUESTS
      ===================================================================== */
   function acceptQuest(qid) {
+    if(typeof Coop!=="undefined"&&Coop.active&&!Coop.committing)return Coop.submit({type:'acceptQuest',questId:qid});
     const q = DATA.QUESTS.find(x => x.id === qid);
     if (!q || state.quests[qid]?.state !== "offered") return;
     state.quests[qid] = { ...state.quests[qid], state: "active", count: 0 };
@@ -1024,6 +1030,7 @@ const Game = (() => {
     saveGame();
   }
   function campaignEvent(event, {silent=false}={}) {
+    if(typeof Coop!=="undefined"&&Coop.active)Coop.trackParticipants?.();
     const ready = event ? DATA.CAMPAIGN.record(state,event) : DATA.CAMPAIGN.sync(state);
     for (const q of ready) {
       msg(`${q.name}: objectives complete. Return to ${DATA.NPCS[q.giver].name}.`, "#7fd87f");
@@ -1164,13 +1171,16 @@ const Game = (() => {
     }
   }
   function completeQuest(qid) {
+    if(typeof Coop!=="undefined"&&Coop.active&&!Coop.committing)return Coop.submit({type:'completeQuest',questId:qid});
     const q = DATA.QUESTS.find(x => x.id === qid);
     const st = state.quests[qid];
     if (!st || st.state !== "reward") return;
+    if(typeof Coop!=="undefined"&&Coop.active)Coop.rewardParticipants(q);
     st.state = "done";
     const p = state.player;
     msg(`“${q.done}”`, "#d8c79a");
     /* every quest grants experience — explicit reward.xp, else a level-scaled share (more for boss hunts) */
+    if(!(typeof Coop!=="undefined"&&Coop.active)){
     const xp = (q.reward && q.reward.xp) || Math.floor(DATA.xpForLevel(p.lvl) * (q.type === "killBoss" ? 0.7 : q.type === "ritual" ? 0.6 : q.type === "beacons" ? 0.55 : 0.4));
     if (xp > 0) { msg(`+${xp} experience.`, "#a9c8ff"); p.gainXp(xp); }
     if (q.reward.gold) { p.gold += q.reward.gold; msg(`Received ${q.reward.gold} gold.`, "#d8b860"); }
@@ -1192,11 +1202,12 @@ const Game = (() => {
       if (!Items.autoPlace(p.inv, it)) dropAtFeet(it);
       msg(`Received: ${it.name}`, "#7fd8c0");
     }
+    }
     Sfx.play("questCompleted");
     /* turning in an act-boss quest opens the caravan road to the next act's camp */
     if (q.type === "killBoss") {
       const act = DATA.ACTS.find(a => a.boss === q.target);
-      if (act && act.next && !state.shrines.includes(act.next)) {
+      if (act && act.next && !state.shrines.includes(act.next) && !(typeof Coop!=="undefined"&&Coop.active)) {
         state.shrines.push(act.next);
         const dest = DATA.ZONES[act.next] ? DATA.ZONES[act.next].name : "the road south";
         centerMsg("THE CARAVAN ROAD OPENS", `Speak to the caravan or any travel shrine to journey to ${dest}`);
@@ -1208,6 +1219,7 @@ const Game = (() => {
     let ni = i + 1; while (DATA.QUESTS[ni] && DATA.QUESTS[ni].optional) ni++;
     if (DATA.QUESTS[ni] && !state.quests[DATA.QUESTS[ni].id]) state.quests[DATA.QUESTS[ni].id] = { state: "offered" };
     syncOptionalQuests();
+    if(typeof Coop!=="undefined"&&Coop.active)for(const id of Object.keys(state.quests))if(!CoopProtocol.ZONES.includes(DATA.QUESTS.find(q=>q.id===id)?.zone))delete state.quests[id];
     if (qid === "q3") centerMsg("THE VIGIL IS BROKEN", "but Maesa hears singing from a ruined chapel in the south…");
     /* finishing the whole saga unlocks the next difficulty tier */
     if (q.reward && q.reward.finale) {
@@ -1226,6 +1238,7 @@ const Game = (() => {
   }
   /* switch difficulty tier: the whole world re-knits itself */
   async function setDifficulty(d) {
+    if(typeof Coop!=="undefined"&&Coop.active)return false;
     if (!state || state.player.dead || state.difficultyTransition || !Number.isInteger(d) ||
         !DATA.DIFFICULTIES[d] || d === state.difficulty || d > (state.unlockedDiff || 0)) return false;
     const switchingState = state;
@@ -1247,8 +1260,7 @@ const Game = (() => {
     }
   }
 
-  function doRespec() {
-    const p = state.player;
+  function doRespec(p = state.player) {
     let refund = 0;
     for (const rk of Object.values(p.skills)) refund += rk;
     if (!refund) { msg("You have nothing to unlearn.", "#9b8a60"); return; }
@@ -1257,14 +1269,14 @@ const Game = (() => {
     const companions=state.minions.filter(m=>m.owner===p&&m.sourceSkill);
     for(const m of companions)m.dead=true; // dismiss quietly; no death-triggered explosions
     state.minions=state.minions.filter(m=>!companions.includes(m));
-    state.projectiles=state.projectiles.filter(o=>!o.fromPlayer&&o.minionDmg===undefined);
+    state.projectiles=state.projectiles.filter(o=>o.visualOwner!==p && o.minionSource?.owner!==p && (state.players.length>1 || (!o.fromPlayer&&o.minionDmg===undefined)));
     state.traps=state.traps.filter(o=>o.owner!==p);
     state.fx=state.fx.filter(o=>o.owner!==p);
     // Status payloads on monsters are player skill effects. Clear cached zones too.
     const groups=[state.monsters,...Object.values(state.monstersByMap||{})];
     for(const monsters of groups)for(const m of monsters||[]) {
-      for(const key of ["poisonDot","scorch","plague","doom","killMark","quarry","curseFrailty","curseWither","sunder","rabies","pulled","beckon"])m[key]=null;
-      m.frozen=0;m.feared=0;m.blindUntil=0;m.slowT=0;m.slowPct=0;m.stunT=0;m.glacierT=0;
+      for(const key of ["poisonDot","scorch","plague","doom","killMark","quarry","curseFrailty","curseWither","sunder","rabies","pulled","beckon"])if(state.players.length===1||m[key]?.owner===p)m[key]=null;
+      if(state.players.length===1){m.frozen=0;m.feared=0;m.blindUntil=0;m.slowT=0;m.slowPct=0;m.stunT=0;m.glacierT=0;}
     }
     p.skillPts += refund;
     p.skillL = "basic"; p.skillR = "basic";
@@ -1281,11 +1293,13 @@ const Game = (() => {
      ===================================================================== */
   function afterDelay(sec, fn) { const m=state.map,surfaceId=TerrainLayers.current(m);delayed.push({ t: state.time + sec, fn:()=>TerrainLayers.scope(m,surfaceId,fn) }); }
   function addFloat(x, y, text, color, big) {
+    if(typeof Coop!=="undefined"&&Coop.active)Coop.visual?.('float',{surfaceId:TerrainLayers.current(state.map),x,y,text,color,big});
     if (!options.dmgNumbers && typeof text === "number") return;
     floats.push({ surfaceId:TerrainLayers.current(state.map), x, y, text: "" + text, color, big, t: 0 });
   }
   /* minion-dealt damage — its own toggle, independent of the player dmg-numbers gate */
   function minionFloat(x, y, dmg) {
+    if(typeof Coop!=="undefined"&&Coop.active)Coop.visual?.('float',{surfaceId:TerrainLayers.current(state.map),x,y,text:Math.floor(dmg),color:'#9fd0ff',minion:true});
     if (!options.minionDamage) return;
     floats.push({ surfaceId:TerrainLayers.current(state.map), x, y, text: "" + Math.floor(dmg), color: "#9fd0ff", big: false, t: 0 });
   }
@@ -1293,6 +1307,7 @@ const Game = (() => {
      P grey · F orange · C blue · L yellow · Ps green (matches the monster-resist palette). */
   const HURT_COL = { phys: "#cfcfcf", fire: "#ff8a3c", cold: "#6fa8ff", light: "#ffe24c", poison: "#7ee06a", shadow: "#c080e0" };
   function playerHurtFloat(x, y, dmg, elem) {
+    if(typeof Coop!=="undefined"&&Coop.active)Coop.visual?.('float',{surfaceId:TerrainLayers.current(state.map),x,y,text:Math.max(1,Math.round(dmg)),color:HURT_COL[elem||'phys'],hurt:true});
     floats.push({ surfaceId:TerrainLayers.current(state.map), x, y, text: "" + Math.max(1, Math.round(dmg)), color: HURT_COL[elem || "phys"] || HURT_COL.phys, big: false, t: 0 });
   }
   const MAX_PARTICLES = 700;   // hard cap: cosmetic only — keeps spell-spam / many emitters from flooding the array
@@ -1308,6 +1323,7 @@ const Game = (() => {
     if (Math.random() < 0.5) particles.push({ surfaceId:TerrainLayers.current(state.map), x, y, vx: U.rf(-0.6, 0.6), vy: U.rf(-0.6, 0.6), z: 4, color: "#6a6055", t: 0.4, grav: -4 });
   }
   function addNova(x, y, radius, color, presentation) {
+    if(typeof Coop!=="undefined"&&Coop.active)Coop.visual?.('nova',{surfaceId:TerrainLayers.current(state.map),x,y,radius,color,hideRadius:!!presentation?.hideRadius});
     novas.push({ surfaceId:TerrainLayers.current(state.map), x, y, radius, color, t: 0, dur: 0.35, hideRadius:!!presentation?.hideRadius,
       styled:typeof SkillVFX!=='undefined'&&SkillVFX.area(x,y,radius,state.player,presentation) });
     // Radius visibility is cosmetic; retain prop destruction and its rewards.
@@ -1315,10 +1331,12 @@ const Game = (() => {
   }
   /* a jagged lightning arc between two world points (Arc Lattice, Thunderstorm) */
   function lightningBolt(x0, y0, x1, y1, color) {
+    if(typeof Coop!=="undefined"&&Coop.active)Coop.visual?.('bolt',{surfaceId:TerrainLayers.current(state.map),x0,y0,x1,y1,color});
     bolts.push({ surfaceId:TerrainLayers.current(state.map), x0, y0, x1, y1, color: color || "#fff080", t: 0, dur: 0.22, seed: (Math.random() * 1000) | 0, styled:typeof SkillVFX!=='undefined'&&SkillVFX.beam(x0,y0,x1,y1) });
   }
   /* a straight glowing beam between two world points (beam-type skills) */
   function beamFx(x0, y0, x1, y1, color) {
+    if(typeof Coop!=="undefined"&&Coop.active)Coop.visual?.('bolt',{surfaceId:TerrainLayers.current(state.map),x0,y0,x1,y1,color,straight:true,width:6.5});
     bolts.push({ surfaceId:TerrainLayers.current(state.map), x0, y0, x1, y1, color: color || "#fff080", t: 0, dur: 0.2, seed: 0, straight: true, width: 6.5, styled:typeof SkillVFX!=='undefined'&&SkillVFX.beam(x0,y0,x1,y1) });
   }
   function spawnProjectile(o) {
@@ -1327,10 +1345,10 @@ const Game = (() => {
       o={...o,lift:((bounds?bounds[3]-bounds[1]:art?.cell?.[1])||110)*(o.mon.scale||1)*.5*ACTOR_BODY_SCALE*.55};
     }
     if(o.fromPlayer||o.minionDmg!==undefined){
-      o={...o,sourceSkill:o.sourceSkill||o.minionSource?.sourceSkill||state.player._castingSkillId||'basic',visualOwner:o.visualOwner||state.player};
+      o={...o,sourceSkill:o.sourceSkill||o.minionSource?.sourceSkill||(o.visualOwner||state.player)._castingSkillId||'basic',visualOwner:o.visualOwner||state.player};
     }
     if(o.fromPlayer&&o.kind==='arrow'){
-      const p=state.player,origin=Player3D.projectileOrigin?.(p,ACTOR_BODY_SCALE);
+      const p=o.visualOwner||state.player,origin=Player3D.projectileOrigin?.(p,ACTOR_BODY_SCALE);
       if(origin)o={...o,x:p.x+origin.x,y:p.y+origin.y,lift:origin.lift+(p.jumpZ||0)+elevLift(p.x,p.y,p.surfaceId)};
     }
     o.surfaceId ??= TerrainLayers.current(state.map);
@@ -1372,6 +1390,7 @@ const Game = (() => {
 
   /* traversal jump: arc toward the cursor (clamped), clearing gaps/cliffs, landing on walkable ground */
   function tryJump(point = null) {
+    if(typeof Coop!=="undefined"&&Coop.active&&!Coop.authority)return Coop.submit({type:"jump",point:point||steeringPoint()});
     const p = state.player;
     if (!p || p.dead || p.jumping || p.leaping || p.dashing || p.charging || p.spinning) return;
     if (state.time < (p.jumpCdUntil || 0)) return;
@@ -1404,10 +1423,11 @@ const Game = (() => {
 
   /* ---------------- deaths & drops ---------------- */
   function onMonsterDeath(mon, source) {
-    const p = state.player;
+    const p = playerOwner(source) || closestPlayer(mon) || state.player;
+    if(typeof Coop!=="undefined"&&Coop.active)Coop.monsterDied(mon);
     if(mon.bossOwner)return; // Encounter-owned adds are never a reward or quest farm.
     if(mon.openingId && state.flags.opening?.defeated.includes(mon.openingId))return;
-    p.gainXp(Math.floor(mon.def.xp * (1 + Math.max(0, (p.lvl - mon.lvl)) * -0.08)));
+    for(const hero of (typeof Coop!=="undefined"&&Coop.active ? state.players.filter(p=>p.connected!==false) : [p])) hero.gainXp(Math.max(0,Math.floor(mon.def.xp * (1 + Math.max(0, (hero.lvl - mon.lvl)) * -0.08))));
     /* carrion feast: drink life from nearby deaths */
     if (p.stats.lifeOnDeath > 0 && U.dist(p.x, p.y, mon.x, mon.y) < 9) {
       p.healLife(p.stats.lifeOnDeath);
@@ -1715,9 +1735,9 @@ const Game = (() => {
       }
     }
   }
-  function triggerEvent(prop) {
+  function triggerEvent(prop, actor = state.player) {
     if (prop.interact !== "event" || !state.map.props.includes(prop)) return;
-    const ev = prop.ev, p = state.player;
+    const ev = prop.ev, p = actor;
     prop.spent=true;prop.interact=null;prop.event=false;prop.lootable=false;
     if (prop.type === "chest" || prop.type === "strongbox") prop.opened=true;
     const lvl = DATA.effectiveLevel(state.map.zone.lvl, state.difficulty);
@@ -1801,9 +1821,9 @@ const Game = (() => {
     }
   }
   /* Smash once, retaining nonblocking, visibly broken remains for this expedition. */
-  function breakProp(prop) {
+  function breakProp(prop, actor = state.player) {
     if (!prop || !prop.breakable || prop.broken) return false;
-    const m = state.map, p = state.player;
+    const m = state.map, p = actor;
     if (!m.props.includes(prop)||!TerrainLayers.affects(m,prop,p)) return false;
     prop.broken = true;
     prop.breakable=false;
@@ -1827,13 +1847,12 @@ const Game = (() => {
       if (pr.breakable && !pr.broken && distToSeg(pr.x, pr.y, x0, y0, x1, y1) <= width) breakProp(pr);
     }
   }
-  function dropAtFeet(item) {
-    const p = state.player;
+  function dropAtFeet(item, p = state.player) {
     state.ground.push({ surfaceId:p.surfaceId??0, x: p.x + U.rf(-0.4, 0.4), y: p.y + U.rf(-0.4, 0.4), item, toss: 0.3 });
   }
-  function pickupGround(gi) {
-    if(!TerrainLayers.same(state.player,gi))return;
-    const p = state.player;
+  function pickupGround(gi, p = state.player) {
+    if(typeof Coop!=="undefined"&&Coop.active&&!Coop.committing){Coop.enqueuePickup(gi,p);return;}
+    if(!TerrainLayers.same(p,gi))return;
     const i = state.ground.indexOf(gi);
     if (i < 0) return;
     if (gi.gold) {
@@ -1878,7 +1897,8 @@ const Game = (() => {
     saveGame();
     UI.playVideo(src, () => {});   // pauses the game; resumes when the clip ends/skips
   }
-  function onPlayerDeath(source) {
+  function onPlayerDeath(source, hero = state.player) {
+    if(typeof Coop!=="undefined"&&Coop.active)return Coop.died(hero);
     resetTouch();
     if(typeof EnemySkills!=="undefined")EnemySkills.cancelAll();
     if(typeof Act2EnemyCombat!=="undefined")Act2EnemyCombat.cancelAll();
@@ -1941,13 +1961,14 @@ const Game = (() => {
   /* =====================================================================
      INTERACTION (props, portals, shrines)
      ===================================================================== */
-  function interact(prop) {
-    if(!TerrainLayers.same(state.player,prop))return;
-    return TerrainLayers.scope(state.map,state.player,()=>interactOnSurface(prop));
+  function interact(prop, p = state.player) {
+    if(typeof Coop!=="undefined"&&Coop.active&&!Coop.committing){Coop.enqueueInteraction(prop,p);return;}
+    if(!TerrainLayers.same(p,prop))return;
+    return TerrainLayers.scope(state.map,p,()=>interactOnSurface(prop,false,p));
   }
-  function interactOnSurface(prop, committed=false) {
-    const p = state.player;
-    if(!committed&&PropInteractions.profile(prop))return PropInteractions.begin(state,prop,()=>interactOnSurface(prop,true));
+  function interactOnSurface(prop, committed=false, p=state.player) {
+    if(!committed&&PropInteractions.profile(prop))return PropInteractions.begin(state,prop,()=>{if(typeof Coop!=="undefined"&&Coop.active)Coop.finishInteraction(prop,p);else interactOnSurface(prop,true,p);},p);
+    if(typeof Coop!=="undefined"&&Coop.active&&Coop.openInteraction(prop,p))return;
     if(opening.interact(prop))return;
     if (prop.storyId) return interactStory(prop);
     /* people get a conversation (the board is a special "NPC") */
@@ -1962,7 +1983,7 @@ const Game = (() => {
     if (prop.interact === "forge") { Sfx.play("forge"); UI.openForge(); return; }
     if (prop.interact === "board") { Sfx.play("click"); UI.openBoard(); return; }
     if (prop.interact === "caravan") { Sfx.play("click"); UI.openShrine(true); return; }   // the war-caravan: fast travel between attuned places
-    if (prop.interact === "event") { triggerEvent(prop); return; }   // random world event
+    if (prop.interact === "event") { triggerEvent(prop,p); return; }   // random world event
     if (prop.interact === "memory_lore") { msg(prop.lore,"#d8c79a"); centerMsg(prop.label,"A fragment the cathedral could not erase"); return; }
     if (prop.interact === "shrine") {
       const zid = state.map.id;
@@ -1983,7 +2004,7 @@ const Game = (() => {
       scatterDrops(Items.rollDrops(DATA.effectiveLevel(state.map.zone.lvl,state.difficulty),'barrel',p.stats.mf,p.stats.goldFind),prop.x,prop.y+.5);
       return true;
     }
-    if (prop.breakable) return breakProp(prop);
+    if (prop.breakable) return breakProp(prop,p);
     if (prop.lootable) {
       if (prop.encounterLock && state.monsters.some(mon=>!mon.dead && mon.cathedralEncounter===prop.encounterLock)) {
         msg("Defeat the guardians of this memory to open its cache.","#d8b880"); return false;
@@ -2010,6 +2031,7 @@ const Game = (() => {
   function canTradeWith(npc) { return !npc.survivor && (npc.def || DATA.NPCS[npc.id])?.role === "vendor"; }
   let travelPending=false;
   function castPortal() {
+    if(typeof Coop!=="undefined"&&Coop.active&&!Coop.committing)return Coop.submit({type:"portal"});
     if (isHub(state.map.id)) { msg("You are already home.", "#9b8a60"); return false; }
     state.portal = { surfaceId:state.player.surfaceId, mapId: state.map.id, x: state.player.x, y: state.player.y + 0.4, returnPosition:{x:state.player.x,y:state.player.y,surfaceId:state.player.surfaceId}, home: state.home || "frosthaven",
       instance:{map:state.map,monsters:state.monsters,ground:state.ground} };
@@ -2062,6 +2084,7 @@ const Game = (() => {
       handleClick(e.button === 2);
     });
     window.addEventListener("mouseup", e => {
+      if(typeof Coop!=="undefined"&&Coop.active){CoopInput.release(e.button);if(e.button===0)mouse.l=false;if(e.button===2)mouse.r=false;return;}
       if (e.button === 0) { mouse.l = false; heldTarget = null; cancelGroundHold(); }
       if (e.button === 2) mouse.r = false;
       /* loosing a held bow: release the Drawn Shot on button-up and clear the hold command so it doesn't re-nock */
@@ -2104,9 +2127,12 @@ const Game = (() => {
   }
 
   let camPos = null, shakeOx = 0, shakeOy = 0;
+  function renderPosition(actor) {
+    return typeof CoopMotion!=="undefined"&&typeof Coop!=="undefined"&&Coop.active&&Coop.host ? CoopMotion.sample(actor,Coop.renderAlpha) : actor;
+  }
   function updateCamera(dt) {
     if (!state) return;
-    const p = opening.cameraTarget() || state.player;
+    const p = renderPosition(opening.cameraTarget() || state.player);
     const tx = U.isoX(p.x, p.y) - canvas.width / 2;
     const ty = U.isoY(p.x, p.y) - canvas.height / 2 - 20 - surfaceLift(p.x,p.y,p.surfaceId);
     if (!camPos) camPos = { x: tx, y: ty };
@@ -2149,13 +2175,14 @@ const Game = (() => {
 
   // Dismissing a menu must not replay a held gesture or release a charged shot.
   function cancelMenuInput() {
+    if(typeof Coop!=="undefined"&&Coop.active&&!Coop.loading)Coop.submit({type:"stop"});
     resetTouch(); cancelGroundHold();
     heldTarget = null; mouse.l = mouse.r = mouse.shift = mouse.alt = false;
     LootFilter.setReveal(false);
     const p = state?.player;
     if (!p) return;
     PropInteractions.cancel(state);
-    p.command = null; p.path = null; p.drawing = null;
+    p.command = null; p.path = null; p.drawing = null;p._coopMotion=null;p._predictPath=null;
     p._navGoal = null; p._navCache = null; p._navPendingGoal = null; p._pendingClick = null;
     if (!p.jumping) { p.moving = false; p.curSpeed = 0; }
   }
@@ -2185,6 +2212,7 @@ const Game = (() => {
     if (!p.jumping) { p.moving = false; p.curSpeed = 0; }
   }
   function resetTouch() {
+    if(typeof CoopInput!=="undefined")CoopInput.resetTouch();
     touch.x = touch.y = 0; touch.side = null; touch.castOnce = false;
     stopTouchMovement();
     // Cancellation must not fire a charged shot into a menu or a new map.
@@ -2192,6 +2220,7 @@ const Game = (() => {
     if (typeof MobileControls !== 'undefined') MobileControls.releasePointers();
   }
   function touchMove(x, y) {
+    if(typeof Coop!=="undefined"&&Coop.active)return CoopInput.touchMove(x,y);
     if (!touchReady() || !Number.isFinite(x) || !Number.isFinite(y)) return;
     cancelGroundHold(); mouse.l = mouse.r = false; heldTarget = null;
     const wx = U.unisoX(x, y), wy = U.unisoY(x, y), length = Math.hypot(wx, wy);
@@ -2241,6 +2270,7 @@ const Game = (() => {
     });
   }
   function touchSkill(side, down) {
+    if(typeof Coop!=="undefined"&&Coop.active)return CoopInput.touchSkill(side,down);
     if (!['L','R'].includes(side)) return;
     if (!down) {
       if (touch.side !== side) return;
@@ -2294,6 +2324,7 @@ const Game = (() => {
     return TerrainLayers.scope(state.map,state.player,()=>handleSurfaceClick(rightBtn));
   }
   function handleSurfaceClick(rightBtn) {
+    if(typeof Coop!=="undefined"&&Coop.active){updateHover();return CoopInput.click(rightBtn,coopPointer());}
     const p = state.player;
     if (p.dead) return;
     if (p.jumping && (rightBtn || mouse.shift)) { const world=screenToWorld(mouse.x,mouse.y);if(world)p._pendingClick = {rightBtn, mouse: {...mouse}, world}; return; }
@@ -2399,6 +2430,7 @@ const Game = (() => {
 
   /* continuous hold behaviour */
   function heldUpdate() {
+    if(typeof Coop!=="undefined"&&Coop.active)return CoopInput.hold(coopPointer());
     const p = state.player;
     if (touchUpdate()) return;
     if (p.dead || UI.cursorItem) { cancelGroundHold(); return; }
@@ -2433,10 +2465,11 @@ const Game = (() => {
   }
 
   function monsterGeometry(mon, cam) {
-    const x = U.isoX(mon.x, mon.y) - cam.x;
-    const y = U.isoY(mon.x, mon.y) - cam.y - elevLift(mon.x, mon.y,mon.surfaceId);
+    const point=renderPosition(mon);
+    const x = U.isoX(point.x, point.y) - cam.x;
+    const y = U.isoY(point.x, point.y) - cam.y - elevLift(point.x, point.y,point.surfaceId);
     if ((mon.beacon || mon.defId==="boss_portal")&&!mon.pose().ex?.act1Animation) return SpriteAssets.frameGeometry(SpriteAssets.getFrame(SpriteAssets.maps.props.beacon, 0), x, y);
-    return SpriteAssets.actorGeometry(mon.spriteOpts, mon.pose(), x, y - (mon.jumpZ || 0), ACTOR_BODY_SCALE);
+    return SpriteAssets.actorGeometry(mon.spriteOpts, mon.pose(), x, y - (point.jumpZ || 0), ACTOR_BODY_SCALE);
   }
 
   /* hover detection (screen-space) */
@@ -2583,7 +2616,7 @@ const Game = (() => {
   function update(dt) {
     state.time += dt;
     const p = state.player;
-    PropInteractions.update(state);
+    for(const hero of state.players||[p])PropInteractions.update(state,hero);
     opening.update(dt);
     if (LootFilter.version !== lootFilterVersion) refreshLoot();   // re-apply the filter only when it changed
     /* delayed callbacks */
@@ -2591,21 +2624,21 @@ const Game = (() => {
       if (state.time >= delayed[i].t) { const fn = delayed[i].fn; delayed.splice(i, 1); fn(); }
     }
     updateHover();
-    heldUpdate();
-    p.update(dt);
+    if(!(typeof Coop!=="undefined"&&Coop.active))heldUpdate();
+    for(const hero of state.players||[p])hero.update(dt);
 
     /* exits are CLICK-ONLY (hover to highlight, click to travel) — see handleClick/updateHover.
        Walking across an exit no longer transitions, so you can cross map edges freely. */
     /* monsters */
     for (const mon of state.monsters) {
-      mon.update(dt, p, state.map);
+      mon.update(dt, closestPlayer(mon)||p, state.map);
     }
     for (let i = state.monsters.length - 1; i >= 0; i--) {
       const mon = state.monsters[i];
       if (mon.dead && mon.corpseT <= 0) state.monsters.splice(i, 1);
     }
     /* minions */
-    for (const mi of state.minions) mi.update(dt, p, state.map);
+    for (const mi of state.minions) mi.update(dt, mi.owner||p, state.map);
     state.minions = state.minions.filter(mi => !mi.dead || mi.deathT > 0);
     updateLayerEffects("traps",updateTraps,dt);
     updateLayerEffects("fx",updateFx,dt);
@@ -2614,14 +2647,14 @@ const Game = (() => {
     for (const pr of state.projectiles) pr.update(dt, state.map, p, state.monsters);
     state.projectiles = state.projectiles.filter(pr => !pr.dead);
     // Sample after movement and incoming hits, once per simulation tick.
-    Player3D.update?.(p,dt);
+    if(!(typeof CoopMotion!=="undefined"&&typeof Coop!=="undefined"&&Coop.active&&Coop.host))for(const hero of state.players||[p])Player3D.update?.(hero,dt);
     updateBossEncounter();
     for (const gi of state.ground) if (gi.toss > 0) gi.toss -= dt;
     /* gold is collected automatically when you walk over it */
-    if (!p.dead) {
+    for(const p of state.players||[state.player])if (!p.dead) {
       for (let i = state.ground.length - 1; i >= 0; i--) {
         const gi = state.ground[i];
-        if (TerrainLayers.same(p,gi) && gi.gold && gi.toss <= 0 && U.dist(p.x, p.y, gi.x, gi.y) < 1.4) pickupGround(gi);
+        if (TerrainLayers.same(p,gi) && gi.gold && gi.toss <= 0 && U.dist(p.x, p.y, gi.x, gi.y) < 1.4) pickupGround(gi,p);
       }
     }
     /* particles, floats, novas */
@@ -2662,9 +2695,8 @@ const Game = (() => {
     state[key]=out;
   }
   function updateTraps(dt) {
-    const p = state.player;
     for (let i = state.traps.length - 1; i >= 0; i--) {
-      const tr = state.traps[i];
+      const tr = state.traps[i], p = tr.owner || state.player;
       if (tr.armT > 0) { tr.armT -= dt; continue; }
       tr.ttl -= dt;
       if (tr.ttl <= 0) { state.traps.splice(i, 1); continue; }
@@ -2724,11 +2756,11 @@ const Game = (() => {
     if (MapGen.walkable(state.map, mon.x, ny)) mon.y = ny;
   }
   function detonateMark(mon) {
-    return state.player.withSkillSource("veilranger_2_4", () => detonateMarkEffect(mon), mon);
+    return (mon.killMark?.owner||state.player).withSkillSource("veilranger_2_4", () => detonateMarkEffect(mon), mon);
   }
   function detonateMarkEffect(mon) {
     if (!mon.killMark || mon._detonatingMark) return;
-    const mark=mon.killMark,o=state.player,det=mark.det??10,amp=mark.amp??25;
+    const mark=mon.killMark,o=mon.killMark.owner||state.player,det=mark.det??10,amp=mark.amp??25;
     mon._detonatingMark=true;
     try {
     Sfx.playSkill?.('veilranger_2_4','impact',{owner:o,emitter:mon,elem:'shadow'});
@@ -2736,15 +2768,15 @@ const Game = (() => {
     for (const m of TerrainLayers.targets(state.monsters)) {
       if (m.dead || !TerrainLayers.same(mon,m) || U.dist(mon.x, mon.y, m.x, m.y) > 2.5 + m.radius) continue;
       o.spellHit(m, det, "shadow", {});
-      if (m !== mon && !m.dead && !m._detonatingMark && !m.killMark) m.killMark = { until: state.time + 3, amp: amp / 2, det: det / 2 };
+      if (m !== mon && !m.dead && !m._detonatingMark && !m.killMark) m.killMark = { owner:o, until: state.time + 3, amp: amp / 2, det: det / 2 };
     }
     } finally {if(mon.killMark===mark)mon.killMark=null;mon._detonatingMark=false;}
   }
   function detonateDoom(mon) {
-    return state.player.withSkillSource("gravebinder_1_2", () => detonateDoomEffect(mon), mon);
+    return (mon.doom?.owner||state.player).withSkillSource("gravebinder_1_2", () => detonateDoomEffect(mon), mon);
   }
   function detonateDoomEffect(mon) {
-    if (!mon.doom) return; const o = state.player, d = mon.doom, k = 0.5 + 0.5 * (d.charge / d.maxCharge);
+    if (!mon.doom) return; const o = mon.doom.owner||state.player, d = mon.doom, k = 0.5 + 0.5 * (d.charge / d.maxCharge);
     Sfx.playSkill?.('gravebinder_1_2','impact',{owner:o,emitter:mon,elem:'shadow'});
     addNova(mon.x, mon.y, d.radius, "#9a40c0"); fx.shake = Math.max(fx.shake, 4);
     for (const m of TerrainLayers.targets(state.monsters)) {
@@ -2817,7 +2849,7 @@ const Game = (() => {
     }
     switch (f.fieldKind) {
       case "inferno": for (const m of TerrainLayers.targets(state.monsters)) { if (!m.dead && inR(m)) o.spellHit(m, fieldDmgRoll(f), "fire", { burn: 2 }); } break;
-      case "glacier": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; o.spellHit(m, fieldDmgRoll(f), "cold", {}); m.applySlow(0.9, f.slowPct || 60); m.glacierT = (m.glacierT || 0) + (f.tickEvery || 0.5); if (m.glacierT > 1.2) { m.frozen = Math.max(m.frozen || 0, state.time + 1.0); m.stunT = Math.max(m.stunT, 1.0); } } break;
+      case "glacier": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; o.spellHit(m, fieldDmgRoll(f), "cold", {}); m.applySlow(0.9, f.slowPct || 60); m.glacierT = (m.glacierT || 0) + (f.tickEvery || 0.5); if (m.glacierT > 1.2) { m.freezeOwner=o; m.frozen = Math.max(m.frozen || 0, state.time + 1.0); m.stunT = Math.max(m.stunT, 1.0); } } break;
       case "static": { let t = null, bd = 1e9; for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; const dd = U.dist2(f.x, f.y, m.x, m.y); if (dd < bd) { bd = dd; t = m; } } if (t) { const sc = 1 + ((o.staticChg || 0) / 40); o.spellHit(t, fieldDmgRoll(f) * sc, "light", {}); lightningBolt(f.x, f.y, t.x, t.y); } break; }
       case "caltrop": for (const m of TerrainLayers.targets(state.monsters)) {
         if (m.dead || !inR(m)) continue;
@@ -2825,17 +2857,18 @@ const Game = (() => {
         else o.spellHit(m,fieldDmgRoll(f),"phys",{});
         m.applySlow(0.6, f.slowPct || 40);
       } break;
-      case "smoke": { for (const m of TerrainLayers.targets(state.monsters)) { if (!m.dead && inR(m)) m.blindUntil = state.time + 0.6; } if (TerrainLayers.same(f,state.player) && U.dist(state.player.x, state.player.y, f.x, f.y) < f.radius) refreshBuff(state.player, "smoke_evasion", { dodge: f.selfDodge || 30 }, 0.6); break; }
+      case "smoke": { for (const m of TerrainLayers.targets(state.monsters)) { if (!m.dead && inR(m)) m.blindUntil = state.time + 0.6; } if (TerrainLayers.same(f,o) && U.dist(o.x, o.y, f.x, f.y) < f.radius) refreshBuff(o, "smoke_evasion", { dodge: f.selfDodge || 30 }, 0.6); break; }
       case "miasma": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; o.spellHit(m, fieldDmgRoll(f), "poison", {}); m.applySlow(0.7, f.slowPct || 20); } break;
       case "snare": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; m.applySlow(0.8, 95); o.spellHit(m, fieldDmgRoll(f), "poison", {}); } break;
-      case "spore": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; o.applyPoison(m, f.lo || 3, 3, { strongest: true }); m.curseWither = { until: state.time + 1.5, pct: f.weakenPct || 12 }; } break;
+      case "spore": for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead || !inR(m)) continue; o.applyPoison(m, f.lo || 3, 3, { strongest: true }); m.curseWither = { owner:o, until: state.time + 1.5, pct: f.weakenPct || 12 }; } break;
       case "quake": if (Math.random() < 0.7) { const a = Math.random() * 6.283, r = Math.random() * f.radius, qx = f.x + Math.cos(a) * r, qy = f.y + Math.sin(a) * r; addNova(qx, qy, 1.2, "#c0a060"); fx.shake = Math.max(fx.shake, 2); for (const m of TerrainLayers.targets(state.monsters)) { if (m.dead) continue; if (U.dist(qx, qy, m.x, m.y) < 1.4 + m.radius) { o.spellHit(m, fieldDmgRoll(f), "earth", {}); m.applySlow(0.6, f.slowPct || 25); } } } break;
-      case "regrowth": { const pl = state.player; if (TerrainLayers.same(f,pl) && U.dist(pl.x, pl.y, f.x, f.y) < f.radius) pl.healLife(pl.stats.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); for (const mi of TerrainLayers.targets(state.minions)) { if (!mi.dead && U.dist(mi.x, mi.y, f.x, f.y) < f.radius) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); } break; }
+      case "regrowth": { for(const pl of state.players||[state.player]) if (TerrainLayers.same(f,pl) && U.dist(pl.x, pl.y, f.x, f.y) < f.radius) pl.healLife(pl.stats.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); for (const mi of TerrainLayers.targets(state.minions)) { if (!mi.dead && U.dist(mi.x, mi.y, f.x, f.y) < f.radius) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * (f.heal || 3) / 100 * (f.tickEvery || 0.5)); } break; }
     }
   }
   function applyBanner(f, p) {
-    const inAura = TerrainLayers.same(f,p) && U.dist(p.x, p.y, f.x, f.y) < f.radius;
-    if (inAura) { refreshBuff(p, "banner_aura", { dmgPct: f.allyDmg, ias: f.allyIas }, 0.6); if (f.heal) p.healLife(p.stats.maxHp * f.heal / 100 * (f.tickEvery || 0.3)); }
+    for(const hero of state.players||[p]){
+    const p=hero, inAura = !p.dead && TerrainLayers.same(f,p) && U.dist(p.x, p.y, f.x, f.y) < f.radius;
+    if (inAura) { refreshBuff(p, "banner_aura", { dmgPct: f.allyDmg, ias: f.allyIas }, 0.6); if (f.heal) p.healLife(p.stats.maxHp * f.heal / 100 * (f.tickEvery || 0.3)); }}
     for (const mi of TerrainLayers.targets(state.minions)) { if (!mi.dead && U.dist(mi.x, mi.y, f.x, f.y) < f.radius) { mi.buffUntil = Math.max(mi.buffUntil, state.time + 0.6); mi.buffDmg = Math.max(mi.buffDmg, f.allyDmg); if (f.heal) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * f.heal / 100 * (f.tickEvery || 0.3)); } }
     for (const m of TerrainLayers.targets(state.monsters)) { if (!m.dead && U.dist(m.x, m.y, f.x, f.y) < f.radius) m.bannerWeak = { until: state.time + 0.6, pct: f.enemyDmg }; }
   }
@@ -2886,8 +2919,8 @@ const Game = (() => {
     const p = state.player; if (!p) return;
     for (let i = state.fx.length - 1; i >= 0; i--) {
       const f = state.fx[i]; if(f.type!=='act2warning')f.ttl -= dt;
-      if(f.type==="slamwarning"&&(f.owner.dead||p.dead||f.owner.slamWarning!==f))f.ttl=0;
-      if(f.type==='enemywarning'&&(p.dead||(f.projectile?f.projectile.dead:!f.death&&(f.owner.dead||f.owner.attackWarning!==f))))f.ttl=0;
+      if(f.type==="slamwarning"&&(f.owner.dead||(state.players||[p]).every(h=>h.dead)||f.owner.slamWarning!==f))f.ttl=0;
+      if(f.type==='enemywarning'&&((state.players||[p]).every(h=>h.dead)||(f.projectile?f.projectile.dead:!f.death&&(f.owner.dead||f.owner.attackWarning!==f))))f.ttl=0;
       if (f.ttl <= 0) { state.fx.splice(i, 1); continue; }
       const o = f.owner || p;
       const tick = () => { f.tickT = (f.tickT || 0) - dt; if (f.tickT <= 0) { f.tickT = f.tickEvery || 0.4; return true; } return false; };
@@ -3295,15 +3328,17 @@ const Game = (() => {
     }
     for (const mon of opening.actor ? [...state.monsters,opening.actor] : state.monsters) {
       if (mon.husk) continue;                 // corpse husks (spawnCorpse) are logical-only, never drawn
-      const sx = U.isoX(mon.x, mon.y) - cam.x, sy = U.isoY(mon.x, mon.y) - cam.y;
+      const point=renderPosition(mon);
+      const sx = U.isoX(point.x, point.y) - cam.x, sy = U.isoY(point.x, point.y) - cam.y;
       const geometry = monsterGeometry(mon, cam);
       if (geometry.right < 0 || geometry.left > W || geometry.bottom < 0 || geometry.top > H + 100) continue;
-      draws.push({ d: mon.x + mon.y, kind: "mon", sx, sy, mon, geometry });
+      draws.push({ d: point.x + point.y, kind: "mon", sx, sy, mon, geometry });
     }
     for (const mi of state.minions) {
-      const sx = U.isoX(mi.x, mi.y) - cam.x, sy = U.isoY(mi.x, mi.y) - cam.y;
+      const point=renderPosition(mi);
+      const sx = U.isoX(point.x, point.y) - cam.x, sy = U.isoY(point.x, point.y) - cam.y;
       if (!inView(sx, sy)) continue;
-      draws.push({ d: mi.x + mi.y, kind: "minion", sx, sy, mi });
+      draws.push({ d: point.x + point.y, kind: "minion", sx, sy, mi });
     }
     for (const tr of state.traps) {
       const sx = U.isoX(tr.x, tr.y) - cam.x, sy = U.isoY(tr.x, tr.y) - cam.y - surfaceLift(tr.x,tr.y,tr.surfaceId);
@@ -3314,13 +3349,13 @@ const Game = (() => {
       const sx = U.isoX(n.x, n.y) - cam.x, sy = U.isoY(n.x, n.y) - cam.y;
       draws.push({ d: n.x + n.y, kind: "npc", sx, sy, n });
     }
-    {
-      const sx = U.isoX(p.x, p.y) - cam.x, sy = U.isoY(p.x, p.y) - cam.y;
-      draws.push({ d: p.x + p.y, kind: "player", sx, sy });
+    for(const hero of state.players||[p]){
+      const point=renderPosition(hero),sx=U.isoX(point.x,point.y)-cam.x,sy=U.isoY(point.x,point.y)-cam.y;
+      draws.push({d:point.x+point.y,kind:"player",sx,sy,hero});
     }
     for (const pr of state.projectiles) {
-      const sx = U.isoX(pr.x, pr.y) - cam.x, sy = U.isoY(pr.x, pr.y) - cam.y;
-      draws.push({ d: pr.x + pr.y, kind: "proj", sx, sy, pr });
+      const point=renderPosition(pr),sx = U.isoX(point.x, point.y) - cam.x, sy = U.isoY(point.x, point.y) - cam.y;
+      draws.push({ d: point.x + point.y, kind: "proj", sx, sy, pr });
     }
     for (const ps of portalPositions()) {
       const sx = U.isoX(ps.x, ps.y) - cam.x, sy = U.isoY(ps.x, ps.y) - cam.y - surfaceLift(ps.x,ps.y,ps.surfaceId);
@@ -3526,7 +3561,10 @@ const Game = (() => {
           break;
         }
         case "player": {
-          drawLiveActor(playerModelOpts(p), p.pose(), d.sx, d.sy - (p.jumpZ || 0) - elevLift(p.x,p.y,p.surfaceId), p.flashT > 0, 1, null, p);
+          const p=d.hero||state.player;
+          const point=renderPosition(p);
+          if(typeof Coop!=="undefined"&&Coop.active)nameplate(p.name+(p.dead?" — fallen":""),d.sx,d.sy-88,p===state.player?"#e4ce91":"#97cbd4");
+          drawLiveActor(playerModelOpts(p), p.pose(), d.sx, d.sy - (point.jumpZ || 0) - elevLift(point.x,point.y,point.surfaceId), p.flashT > 0, 1, null, point);
           if(typeof SkillVFX!=='undefined'){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,p.x,p.y,p.surfaceId);SkillVFX.drawActor(ctx,p,cam);ctx.restore();}
           break;
         }
@@ -3905,7 +3943,7 @@ const Game = (() => {
       if(b.encounter){
         ctx.fillStyle=b.encounter.config.color;ctx.font="12px 'Palatino Linotype', serif";
         const e=b.encounter;
-        const status=e.statusText(),phase=e.config.phases[e.phase];
+        const phase=e.config.phases[e.phase],status=typeof e.statusText==='function'?e.statusText():e.statusLabel||phase;
         ctx.fillText(status.startsWith(phase)?status:phase+" · "+status,bossCenter,by+43,Math.min(W-40,bw+180));
         if(e.stage==="windup"||e.stage==="recovery") {
           const progress=e.stage==="windup"?1-e.timer/e.attack.windup:e.timer/e.recoveryDuration;
@@ -3990,7 +4028,8 @@ const Game = (() => {
   }
   function drawEntity(e, sx, sy) {
     if (e.husk) return;         // bodiless corpse husk: a logical corpse source, not a drawable figure
-    sy -= elevLift(e.x, e.y,e.surfaceId);   // stand on top of raised terrain
+    const point=renderPosition(e);
+    sy -= elevLift(point.x, point.y,point.surfaceId);   // stand on top of raised terrain
     let alpha = 1;
     if (e.dead && e.corpseT !== undefined && e.corpseT < 3) alpha = Math.max(0, e.corpseT / 3);
     /* beacons are obelisks, not figures — draw the rune-stone with a barrier glow */
@@ -4013,7 +4052,7 @@ const Game = (() => {
       ctx.beginPath(); ctx.ellipse(sx, sy, 20 * e.scale, 9 * e.scale, 0, 0, Math.PI * 2); ctx.fill();
     }
     const opts = e.playerEcho ? { threePlayer: e.playerEcho, scale: 1 } : e.spriteOpts;
-    drawLiveActor(opts, e.pose(), sx, sy - (e.jumpZ || 0), e.flashT > 0, alpha * (e.playerEcho ? .55 : 1), e.playerEcho ? '#9185c2' : !e.dead && e.tint ? e.tint : null, e);
+    drawLiveActor(opts, e.pose(), sx, sy - (point.jumpZ || 0), e.flashT > 0, alpha * (e.playerEcho ? .55 : 1), e.playerEcho ? '#9185c2' : !e.dead && e.tint ? e.tint : null, point);
     if(typeof SkillVFX!=='undefined'&&SkillVFX.hasStatus(e)){ctx.save();LevelTerrain.clipBehind(ctx,state.map,camera(),e.x,e.y,e.surfaceId);SkillVFX.drawStatus(ctx,e,camera());ctx.restore();}
   }
   /* "!" over quest givers, "?" when a reward waits */
@@ -4173,7 +4212,9 @@ const Game = (() => {
   function propSpriteFrame(pr) {
     const animated=PropInteractions.frame(pr,state);if(animated)return animated;
     const type=propVisualType(pr);
-    return SpriteAssets.getFrame(SpriteAssets.maps.props[(pr.artZone||state.map.id)+'_'+type]||SpriteAssets.maps.props[type],0);
+    const id=SpriteAssets.maps.props[(pr.artZone||state.map.id)+'_'+type]||SpriteAssets.maps.props[type];
+    if(!id)throw Error('Missing prop frame: '+JSON.stringify({zone:state.map.id,type,prop:pr,loading:typeof Coop!=='undefined'&&Coop.loading}));
+    return SpriteAssets.getFrame(id,0);
   }
   function drawProp(d) {
     const pr = d.pr;
@@ -4433,11 +4474,13 @@ const Game = (() => {
     lastT = t;
     if (typeof MobileControls !== "undefined") MobileControls.sync();
     if (!running || !state) return;
+    if(typeof Coop!=="undefined"&&Coop.active&&Coop.loading)return;
     if(typeof SkillAudio!=='undefined')SkillAudio.setPaused(UI.escOpen()||UI.cinematicActive());
     let dt = dtRaw;
     if (fx.hitPause > 0) { fx.hitPause -= dtRaw; dt *= 0.12; }
     try {
-      if (!UI.escOpen() && !UI.cinematicActive()) update(dt);
+      if(typeof Coop!=="undefined"&&Coop.active){updateHover();if(!UI.escOpen()&&!UI.cinematicActive()&&!UI.anyOpen())heldUpdate();Coop.frame(dtRaw);}
+      else if (!UI.escOpen() && !UI.cinematicActive()) update(dt);
       else cancelGroundHold();
       updateCamera(dtRaw);           // camera eases on real time, even during hit-pause
       render();
@@ -4467,7 +4510,108 @@ const Game = (() => {
     }
   }
 
+  function submitCommand(command){
+    if(typeof Coop!=="undefined"&&Coop.active)return Coop.submit(command);
+    if(command.type==='travel')return enterMap(command.zone,command.spawn||'default');
+    if(typeof Coop!=="undefined"&&typeof CoopCommands!=="undefined")return Coop.runLocal(command);
+    const p=state?.player;if(!p)return;
+    if(command.type==='quaff')return p.quaff(command.slot);
+    if(command.type==='move'){p.command={type:'move',point:command.point};return repath(p,command.point.x,command.point.y);}
+    if(command.type==='cast')return p.performSkill(command.skill,null,command.point);
+  }
+  function playerOwner(source){return source instanceof Player?source:source?.owner instanceof Player?source.owner:null;}
+  function closestPlayer(actor){return (state.players||[state.player]).filter(p=>!p.dead&&TerrainLayers.same(p,actor)).sort((a,b)=>U.dist2(a.x,a.y,actor.x,actor.y)-U.dist2(b.x,b.y,actor.x,actor.y))[0]||null;}
+  function makeCoopHero(name,classId){
+    if(!DATA.CLASSES[classId])throw Error('Unknown class');
+    const p=new Player(String(name||'Hero').slice(0,24),classId),kit=DATA.PLAYER_STARTER_LOADOUTS[classId];
+    p.equip.main=Items.fromBase(kit.main);p.equip.chest=Items.fromBase(kit.chest);
+    Items.autoPlace(p.inv,Items.makeConsumable('hp1',2));Items.autoPlace(p.inv,Items.makeConsumable('mp1',2));Items.autoPlace(p.inv,Items.makeConsumable('tp',1));
+    p.belt[0]={id:'hp1',count:2};p.belt[1]={id:'mp1',count:2};p.computeStats();p.hp=p.stats.maxHp;p.mana=p.stats.maxMana;return p;
+  }
+  async function prepareCoopHero(p){
+    const signature=playerLoadoutSignature(p);if(p._playerVisualSignature===signature&&p._playerVisual)return;
+    p._playerVisual=playerAssets.resolvePlayerVisual(p.classId,p.equip,[]);
+    await playerAssets.loadPlayerLoadout(p._playerVisual);p._playerVisualSignature=signature;
+  }
+  async function preloadCoop(zone){
+    if(!CoopProtocol.ZONES.includes(zone))throw Error('Unsupported co-op area');
+    await SpriteAssets.loadBundle('zone:'+(DATA.ZONES[zone].artZone||zone));
+    await SpriteAssets.loadBundle('actors:act1');
+    const boss=DATA.ZONES[zone]?.boss;
+    if(boss&&DATA.BOSS_ENCOUNTERS[boss])await SpriteAssets.loadBundle('boss:'+boss);
+  }
+  async function startCoop(p,seed,record=null,zone='frosthaven'){
+    running=false;opening.reset();state=freshState(p,seed);state.players=[p];saveSlotKey=null;
+    if(record?.quests)state.quests=structuredClone(record.quests);
+    if(record?.flags)state.flags=structuredClone(record.flags);
+    state.flags.opening={v:2,stage:'complete',rescued:true,defeated:[]};
+    state.shrines=(record?.shrines||['frosthaven']).filter(z=>CoopProtocol.ZONES.includes(z));state.home='frosthaven';delete state.quests.q1;
+    await prepareCoopHero(p);UI.hideTitle();running=true;
+    if(!await enterMap(zone,'default',{recoverable:true}))throw Error('Could not enter '+zone);
+    UI.closeAll();return state;
+  }
+  function stopCoop(){running=false;state=null;opening.reset();Sfx.stopMusic();Sfx.stopSkills?.();UI.closeAll();UI.showTitle();}
+  function safeCoopArrival(point){return safeArrival(state.map,point);}
+  function coopPointer(){return {mouse,point:steeringPoint(),mon:hoverMon,prop:hoverProp,npc:hoverNpc,label:hoverLabel,portal:hoverPortal,exit:hoverExit};}
+  function coopRefresh(){refreshLoot();UI.refreshHUD();UI.refreshBelt();UI.refreshBuffs();UI.refreshManagement?.();updateBossEncounter();}
+  function hostPresentation(dt,alpha){
+    const clock=state.time-(1-alpha)/30;
+    for(const p of state.players)Player3D.update?.(p,dt,{sample:CoopMotion.sample(p,alpha),clock});
+  }
+  function coopPresentation(dt){
+    for(const actor of [...state.players,...state.monsters,...state.minions,...state.projectiles])if(actor._netTo){
+      actor._netT+=dt;const k=1-Math.exp(-dt/(actor===state.player ? .1 : .055));
+      actor.x=U.lerp(actor.x,actor._netTo.x,k);actor.y=U.lerp(actor.y,actor._netTo.y,k);
+    }
+    CoopInput.predict(dt);
+    for(const p of state.players){p.updateAnim(dt);Player3D.update?.(p,dt);}
+    for(const m of [...state.monsters,...state.minions])m.updateAnim(dt);
+    if(typeof SkillVFX!=='undefined')SkillVFX.update(dt,state,particles.length);
+    for(let i=floats.length-1;i>=0;i--){floats[i].t+=dt;if(floats[i].t>1)floats.splice(i,1);}
+    for(let i=novas.length-1;i>=0;i--){novas[i].t+=dt;if(novas[i].t>novas[i].dur)novas.splice(i,1);}
+    for(let i=bolts.length-1;i>=0;i--){bolts[i].t+=dt;if(bolts[i].t>bolts[i].dur)bolts.splice(i,1);}
+    exploreT-=dt;if(exploreT<=0){exploreT=.25;explore();}updateBossEncounter();
+  }
+  function coopJump(p,point){
+    if(p.jumping||p.action||p.stunT>0||state.time<(p.jumpCdUntil||0)||!point)return;
+    const d=U.dist(p.x,p.y,point.x,point.y)||.001;
+    let distance=Math.min(4.2,d),dst=null;
+    for(;distance>=.5;distance-=.5){const x=p.x+(point.x-p.x)/d*distance,y=p.y+(point.y-p.y)/d*distance;if(state.map.surfaceVersion?TerrainSurface.supported(state.map,x,y,p.radius):MapGen.walkable(state.map,x,y)){dst={x,y};break;}}
+    if(!dst)return;
+    p.jumping={fx:p.x,fy:p.y,tx:dst.x,ty:dst.y,t:0,dur:.42};p.jumpCdUntil=state.time+.65;p.command=null;p.path=null;
+  }
+  function coopAirAttack(p,skill,w){
+    if(!w||p.dead||p.action||p.stunT>0||p.jumping||!p.canUseSkillWeapon(skill))return;
+    const sk=p.resolveSkill(skill),rank=skill==='basic'?1:p.effRank(skill);
+    if(skill!=='basic'&&(rank<=0||!p.canPay(sk,rank)))return;
+    p.withSkillSource(skill,()=>{
+      p.face(w.x,w.y);if(skill!=='basic'){p.pay(sk,rank);p.applySkillPerkBuff(sk,rank);}
+      p.command=null;p.path=null;p.startAction('attack',1/p.stats.attackRate);
+      if(p.stats.ranged)spawnProjectile({x:p.x,y:p.y,tx:w.x,ty:w.y,speed:11,kind:'arrow',fromPlayer:true,visualOwner:p,sourceSkill:skill,mult:skill==='basic'?1:sk.dmgMult(rank)*p.synergyMult(sk),quarryOnHit:sk.quarryOnHit,quarryStacks:sk.quarryStacks?.(rank),pierce:!!sk.perkPierce});
+      Sfx.playSkill?.(skill,'release',{owner:p});
+    });
+  }
+  function openCoopInteraction(o){
+    if(o.isNpc||o.def&&DATA.NPCS[o.id]){if(o.def?.role==='board')UI.openBoard();else UI.openDialog(o);}
+    else if(o.interact==='storage')UI.openStorage();else if(o.interact==='forge')UI.openForge();else if(o.interact==='board')UI.openBoard();else if(['shrine','caravan'].includes(o.interact))UI.openShrine(o.interact==='caravan');
+  }
+  function rewardCoopQuest(q,p){
+    const reward=q.reward||{};p.gainXp(reward.xp||Math.floor(DATA.xpForLevel(p.lvl)*(q.type==='killBoss'?.7:q.type==='beacons'?.55:.4)));
+    p.gold+=reward.gold||0;p.skillPts+=reward.skillPts||0;p.attrPts+=reward.attrPts||0;
+    const items=[];if(reward.item){const it=Items.rollGear(reward.item.ilvl,reward.item.rarity);it.identified=true;items.push(it);}
+    if(reward.consumable)items.push(Items.makeConsumable(reward.consumable));if(reward.glyph)items.push(Items.rollGlyph(DATA.ZONES[q.zone]?.lvl||p.lvl,p.stats.mf));
+    for(const it of items)if(!Items.autoPlace(p.inv,it))dropAtFeet(it,p);
+  }
+  function coopVisual(e){
+    if(e.effect==='float'&&(e.hurt||(e.minion?options.minionDamage:options.dmgNumbers||typeof e.text!=='number')))floats.push({...e,text:String(e.text),t:0});
+    if(e.effect==='nova')novas.push({...e,t:0,dur:.35});
+    if(e.effect==='bolt')bolts.push({...e,t:0,dur:.22,seed:(Math.random()*1000)|0});
+    if(e.effect==='skill'){const owner=state.players.find(p=>p._coopId===e.ownerId);if(owner)Sfx.playSkill?.(e.skill,e.phase,{owner});}
+  }
+
   return {
+    coop: {makeHero:makeCoopHero,prepareHero:prepareCoopHero,start:startCoop,stop:stopCoop,preload:preloadCoop,update,presentation:coopPresentation,hostPresentation,refresh:coopRefresh,repeatSkill,arrival:safeCoopArrival,pickup:pickupGround,interact:(o,p)=>interactOnSurface(o,false,p),interactCommitted:(o,p)=>interactOnSurface(o,true,p),openInteraction:openCoopInteraction,drop:dropAtFeet,respec:doRespec,castPortal,acceptQuest,completeQuest,rewardQuest:rewardCoopQuest,jump:coopJump,airAttack:coopAirAttack,visual:coopVisual},
+    submitCommand,playerOwner,closestPlayer,renderPosition,
     init, newGame, loadGame, saveGame, listSaves, deleteSave, saveAndQuit,
     skipOpening,
     preparePlayerEquipment, commitPlayerEquipment, discardPlayerEquipment,

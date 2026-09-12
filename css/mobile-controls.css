@@ -48,8 +48,6 @@
 .touch-controls #buffs { top:calc(147px + env(safe-area-inset-top)); left:12px; }
 .touch-controls #msglog { left:50%; transform:translateX(-50%); bottom:calc(62px + env(safe-area-inset-bottom)); width:calc(100% - 320px); max-height:90px; overflow:hidden; font-size:10px; }
 .touch-controls #panelWorkspace { z-index:40; }
-.touch-controls #panelWorkspace:not(.paired) .panel { inset:calc(8px + env(safe-area-inset-top)) 8px calc(60px + env(safe-area-inset-bottom))!important; width:auto!important; max-width:none; transform:none; padding:14px; }
-.touch-controls #panelWorkspace.paired { inset:calc(8px + env(safe-area-inset-top)) 8px calc(60px + env(safe-area-inset-bottom)); }
 .touch-controls .panel .pclose { min-width:44px; min-height:44px; }
 .touch-controls #skillPick { left:8px!important; top:auto!important; bottom:calc(60px + env(safe-area-inset-bottom)); width:calc(100% - 16px); max-width:500px; max-height:60dvh; overflow:auto; z-index:65; }
 .touch-controls #escmenu { padding:env(safe-area-inset-top) 8px env(safe-area-inset-bottom); overflow:auto; }
@@ -90,4 +88,82 @@
   .touch-controls .opening-caption { bottom:64px; max-width:calc(100% - 320px); }
   .touch-controls .opening-skip { top:calc(108px + env(safe-area-inset-top)); bottom:auto; right:175px; padding:4px; }
   .mobile-tools { top:calc(98px + env(safe-area-inset-top)); }
+}
+
+/* The workspace owns mobile navigation and hides all world-facing controls. */
+#workspaceHeader[hidden],#workspaceTabs[hidden],#mobileControls button[hidden] { display:none; }
+#workspaceHeader { display:none; }
+.touch-controls .mobile-tools { display:grid;grid-template-columns:repeat(2,44px); }
+.touch-controls #coopHUD { display:none!important; }
+.touch-controls.mobile-menu-open :is(#mobileControls,#hud,#buffs,#minimap,#zonelabel,#msglog,.opening-objective,.opening-caption,.opening-skip) { visibility:hidden!important;pointer-events:none!important; }
+.touch-controls #panelWorkspace:has(.panel:not(.hidden)) {
+  position:fixed!important;display:block!important;inset:var(--visible-top,0px) 0 auto!important;
+  width:100%!important;height:var(--visible-height,100dvh)!important;max-height:none!important;
+  background:#10171f;z-index:45;pointer-events:auto;padding:0!important;overflow:hidden;
+  --workspace-head:calc(64px + env(safe-area-inset-top));
+}
+.touch-controls #panelWorkspace:has(#workspaceTabs:not([hidden])) { --workspace-head:calc(112px + env(safe-area-inset-top)); }
+.touch-controls #workspaceHeader:not([hidden]) {
+  position:absolute;inset:0 0 auto;z-index:8;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 12px;
+  padding:calc(8px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) 8px calc(12px + env(safe-area-inset-left));
+  background:#19212a;border-bottom:1px solid #756044;
+}
+#workspaceTitle { margin:0;color:#eee0c0;font:20px/1.15 Georgia; }
+#workspaceHeader button { min-width:44px;min-height:44px;padding:8px 12px;background:#242d36;color:#ead7b6;border:1px solid #796747;border-radius:4px;font:13px system-ui; }
+#workspaceTabs { display:flex;gap:8px;grid-column:1/-1; }
+#workspaceTabs button { flex:1; }
+#workspaceTabs button[aria-pressed=true] { background:#654e2e;border-color:#d3b87a; }
+.touch-controls #panelWorkspace .panel {
+  z-index:1;position:absolute!important;inset:var(--workspace-head) 0 0!important;width:100%!important;max-width:none!important;min-width:0!important;
+  height:auto!important;max-height:none!important;transform:none!important;flex:none!important;
+  padding:16px calc(12px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left))!important;
+  border:0;border-radius:0;overflow:auto!important;overscroll-behavior:contain;box-sizing:border-box;
+}
+.touch-controls #panelWorkspace .panel:is(.hidden,.workspace-inactive) { display:none!important; }
+.touch-controls #panelWorkspace .panel :is(.ptitle,.pclose) { display:none!important; }
+.touch-controls .panel :is(button,.dlgopt,.wprow) { min-height:44px; }
+.touch-controls .panel input { min-height:44px;font-size:16px; }
+.touch-controls #panelWorkspace .management-panel #equipwrap { width:min(400px,100%); }
+.touch-controls #panelWorkspace .item-grid-scroll { max-width:100%;overflow-x:auto; }
+.touch-controls #panelWorkspace .panel #forgeCraft,.touch-controls #panelWorkspace .shop-buy { position:static; }
+.touch-controls #touchItemMenu.workspace-detail {
+  position:absolute;inset:0;margin:0;width:100%;max-width:none;height:100%;max-height:none;box-sizing:border-box;z-index:12;
+  padding:calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+  background:#10171f;overflow:auto;overscroll-behavior:contain;
+}
+.touch-controls #panelWorkspace.item-detail-open :is(.panel,#workspaceHeader) { display:none!important; }
+.touch-controls .touch-item-actions { position:sticky;bottom:0;background:#10171f;padding-bottom:8px; }
+.touch-controls #skillPick {
+  position:fixed!important;inset:var(--visible-top,0px) 0 auto!important;width:100%!important;max-width:none!important;
+  height:var(--visible-height,100dvh);max-height:none!important;box-sizing:border-box;
+  padding:calc(12px + env(safe-area-inset-top)) 12px calc(16px + env(safe-area-inset-bottom));z-index:65;
+}
+.touch-controls #skillPick button { min-height:44px; }
+.touch-controls #escmenu { position:fixed;top:var(--visible-top,0px);height:var(--visible-height,100dvh);box-sizing:border-box; }
+.touch-controls #escmenu .box { max-height:calc(var(--visible-height,100dvh) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+.touch-controls .coop-dialog {
+  position:fixed!important;inset:var(--visible-top,0px) 0 auto!important;margin:0!important;width:100%!important;
+  max-width:none!important;height:var(--visible-height,100dvh)!important;max-height:none!important;border-radius:0;
+  padding:calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))!important;
+}
+.touch-controls .coop-header { position:sticky;top:calc(-12px - env(safe-area-inset-top));background:#211c19;padding:8px 0;z-index:2; }
+.touch-controls .coop-header h2 { font-size:22px; }
+.critical-overlay #panelWorkspace,.critical-overlay #skillPick { visibility:hidden;pointer-events:none; }
+.inventory-status { color:#eac892;font:12px/1.4 system-ui;min-height:1.4em; }
+.inventory-status:empty { display:none; }
+.inventory-pending :is(.invgrid,#equipwrap,#forgeRow,.shop-buy,#inventoryTidy) { opacity:.65; }
+.touch-controls #forgeRow { flex-wrap:wrap; }
+.touch-controls .saved-hero strong,.touch-controls .saved-details strong { overflow-wrap:anywhere; }
+@media (orientation:landscape) and (max-height:600px) {
+  .touch-controls .mobile-tools { display:flex; }
+  .touch-controls #panelWorkspace .management-panel[data-kind=inv]:not(.workspace-inactive):not(.hidden) {
+    display:grid;grid-template-columns:minmax(220px,.9fr) minmax(0,1.1fr);gap:8px 20px;align-content:start;
+  }
+  .touch-controls .management-panel[data-kind=inv] .manage-eyebrow { grid-column:1;grid-row:1;margin:0;align-self:center; }
+  .touch-controls #panelWorkspace .management-panel[data-kind=inv] #equipwrap { grid-column:1;grid-row:2;margin:8px auto; }
+  .touch-controls .management-panel[data-kind=inv] #goldrow { grid-column:1;grid-row:3;margin:0;padding:0; }
+  .touch-controls .management-panel[data-kind=inv] .pack-toolbar { grid-column:2;grid-row:1;margin:0; }
+  .touch-controls .management-panel[data-kind=inv] .item-grid-scroll { grid-column:2;grid-row:2;align-self:center; }
+  .touch-controls .management-panel[data-kind=inv] .pack-help { grid-column:2;grid-row:3;margin:0; }
+  .touch-controls .management-panel[data-kind=inv] .inventory-status { grid-column:1/-1; }
 }

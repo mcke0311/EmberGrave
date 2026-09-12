@@ -169,7 +169,10 @@ const Sfx = (() => {
     return Promise.all([ac.state === "suspended" ? ac.resume().catch(() => {}) : null, loadClick(), loadDeath()]);
   }
   function loadSkills() { return typeof SkillAudio!=='undefined'?SkillAudio.init(ac,sfxBus,vol):null; }
-  function playSkill(id,phase,context) { return typeof SkillAudio!=='undefined'?SkillAudio.play(id,phase,context):null; }
+  function playSkill(id,phase,context) {
+    if(typeof Coop!=='undefined'&&Coop.active&&context?.owner?._coopId)Coop.visual?.('skill',{skill:id,phase,ownerId:context.owner._coopId});
+    return typeof SkillAudio!=='undefined'?SkillAudio.play(id,phase,context):null;
+  }
   function stopSkills(owner) { if(typeof SkillAudio!=='undefined')SkillAudio.stopAll(owner); }
   function setVol(k, v) {
     vol[k] = v;

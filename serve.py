@@ -17,6 +17,8 @@ SAVABLE = {"data_overrides": os.path.join(ROOT, "js", "data_overrides.js")}
 
 
 class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
+    # Reuse connections for sprite bundles, especially with multiple local clients.
+    protocol_version = "HTTP/1.1"
     # ES modules require a JavaScript MIME type. Windows file associations and
     # alternate Python installs can otherwise label .mjs as plain text.
     extensions_map = {
@@ -26,6 +28,8 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
     }
 
     def do_POST(self):
+        # Editor responses have no Content-Length; close to delimit their bodies.
+        self.close_connection = True
         # editor.html saves generated override files here, e.g. POST /api/save/data_overrides
         if self.path.startswith("/api/save/"):
             key = self.path[len("/api/save/"):].strip("/")

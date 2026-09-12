@@ -57,11 +57,11 @@ window.Player3D=(()=>{
     }
     return view.projectileOrigin(pose,visual.equipment,{classId:visual.classId,scale});
   }
-  function update(player,dt){
+  function update(player,dt,{sample=player,clock=Game.state.time}={}){
     if(!controllerFactory)return;
     if(!player._animationController)Object.defineProperty(player,'_animationController',{value:controllerFactory(),configurable:true});
     let stepped=false;
-    player._animationController.update(player,dt,{map:Game.state.map,clock:Game.state.time,onFootstep:()=>{if(!stepped){Sfx.play('step');stepped=true;}}});
+    player._animationController.update(sample,dt,{map:Game.state.map,clock,onFootstep:()=>{if(!stepped){Sfx.play('step');stepped=true;}}});
     if(player.classId==='wildkeeper'){
       if(!shifts.has(player))shifts.set(player,shiftFactory());
       const form=player.buffs.find(b=>b?.id?.startsWith('form_'))?.id||null;

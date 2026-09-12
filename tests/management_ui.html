@@ -30,7 +30,7 @@ try {
  const sold=p.inv.items[0],value=items.sellValue(sold);gold=p.gold;rightClick(doc.querySelector('#panelRight .invgrid .invitem'));ok(!p.inv.items.includes(sold)&&p.gold===gold+value,'right-click selling failed');
  ui.togglePanel('char');ok(!doc.querySelector('.selling-mode'),'vendor context leaked into character panel');
  const attrs=p.attr.str,points=p.attrPts;doc.querySelector('[aria-label="Increase Strength"]').click();ok(p.attr.str===attrs+1&&p.attrPts===points-1,'attribute allocation failed');
- ok(doc.querySelectorAll('#panelLeft .manage-section').length===4,'character stat grouping missing');
+ ok(['Attributes','Damage',...win.eval('CharacterSheet').sections(p,game.state).slice(1).map(section=>section.title)].every(title=>[...doc.querySelectorAll('#panelLeft .manage-section')].some(node=>node.textContent.startsWith(title))),'character stat grouping missing');
  const hp=p.hp;p.hp-=7;ui.refreshHUD();ok(doc.querySelector('[data-stat="Life"] .v').textContent.startsWith(Math.ceil(p.hp)+" /"),"character life not live");p.hp=hp;
  ui.closeAll();pack();ui.togglePanel('inv');const search=doc.querySelector('.pack-toolbar input');search.value='no such item';search.dispatchEvent(new win.Event('input'));ok(doc.querySelectorAll('.search-dim').length===p.inv.items.length,'inventory search did not highlight without hiding items');
  search.value='';search.dispatchEvent(new win.Event('input'));const ids=p.inv.items.map(i=>i.uid).sort().join();doc.getElementById('inventoryTidy').click();ok(p.inv.items.map(i=>i.uid).sort().join()===ids,'tidy changed item identities');
@@ -84,7 +84,7 @@ try {
  await game.enterMap('frosthaven','default');ok(!p.jumping&&p.jumpZ===0&&!p._navPendingGoal,'map transition retained traversal');
  p.jumping={fx:p.x,fy:p.y,tx:p.x+.5,ty:p.y,t:0,dur:.42};p.jumpZ=20;p._navPendingGoal={x:10,y:10};p._pendingClick={rightBtn:false,mouse:{}};game.onPlayerDeath(null);
  ok(!p.jumping&&p.jumpZ===0&&!p._pendingClick&&!p._navPendingGoal,'death retained traversal state');
- p.dead=false;p.action=null;p.hp=p.stats.maxHp;p.mana=p.stats.maxMana;await game.enterMap('frosthaven','default');doc.getElementById('centerMsg').classList.add('hidden');
+ p.dead=false;p.action=null;p.hp=p.stats.maxHp;p.mana=p.stats.maxMana;ui.hideDeath();await game.enterMap('frosthaven','default');doc.getElementById('centerMsg').classList.add('hidden');
 
  // Item identity is consistent through pack, held item, tooltip, shop and sockets.
  ui.closeAll();p.inv.items=[];

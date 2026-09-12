@@ -10,15 +10,15 @@ const fs=require('node:fs');
       const browserMessages=[];
       page.on('console',m=>{if(m.type()==='warning'||m.type()==='error')browserMessages.push(m.text());});
       await page.goto('http://localhost:8741/tests/'+target,{waitUntil:'load',timeout:60000});
-      await page.waitForFunction(()=>['passed','failed'].includes(document.body.dataset.testStatus),{},{timeout:240000});
-      const result=await page.evaluate(()=>({status:document.body.dataset.testStatus,text:(document.querySelector('#status')||document.querySelector('#result')||document.querySelector('#results'))?.textContent,performance:window.perfResults}));
+      await page.waitForFunction(()=>['passed','failed'].includes(document.body.dataset.testStatus)||/^(PASS|FAIL)/.test((document.querySelector('#result')||document.querySelector('#results'))?.textContent||''),{},{timeout:240000});
+      const result=await page.evaluate(()=>({status:document.body.dataset.testStatus||(/^PASS/.test((document.querySelector('#result')||document.querySelector('#results'))?.textContent||'')?'passed':'failed'),text:(document.querySelector('#status')||document.querySelector('#result')||document.querySelector('#results'))?.textContent,performance:window.perfResults}));
       result.environment={browser:browser.version(),platform:process.platform};
       if(browserMessages.length)result.browserMessages=browserMessages;
       if(result.performance){
         const name=target.replace(/[^a-z0-9_-]/gi,'_');
         fs.mkdirSync('tests/qa/act2',{recursive:true});fs.writeFileSync('tests/qa/act2/'+name+'.json',JSON.stringify(result,null,2)+'\n');
         console.log(target,JSON.stringify(result.performance.results.map(r=>({where:r.where,simulate:r.simulate,cpu:r.cpuMs,interval:r.frameIntervalMs,end:r.endPosition}))));
-      }else console.log(target,JSON.stringify({...result,text:result.text?.split('\n')[0]}));
+      }else console.log(target,JSON.stringify({...result,text:result.status==='failed'?result.text:result.text?.split('\n')[0]}));
       if(process.env.BROWSER_QA_SCREENSHOTS){fs.mkdirSync('tests/qa/act2',{recursive:true});await page.screenshot({path:'tests/qa/act2/'+target.replace(/[^a-z0-9_-]/gi,'_')+'.png'});}
       if(result.status!=='passed')process.exitCode=1;
       await context.close();

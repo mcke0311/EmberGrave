@@ -156,9 +156,9 @@ window.TitleScreen=(()=>{
   function theme(id){const t=THEMES[id]||THEMES.vanguard;root().style.setProperty('--class-color',t.color);root().style.setProperty('--class-rgb',t.rgb);root().dataset.class=id;}
   function reset(screen){
     cleanup();cleanup=()=>{};
-    const r=root(),m=document.getElementById('titleMenu');r.dataset.screen=screen;r.scrollTop=0;
+    const r=root(),m=document.getElementById('titleMenu');r._back=null;r.dataset.screen=screen;r.scrollTop=0;
     for(const sibling of r.parentElement.children)if(sibling!==r&&!obscured.has(sibling)){obscured.set(sibling,sibling.inert);sibling.inert=true;}
-    r.onkeydown=e=>{if(e.key==='Escape'&&r.dataset.screen!=='main'&&m.getAttribute('aria-busy')!=='true'){e.preventDefault();e.stopPropagation();main({focus:true});}};
+    r.onkeydown=e=>{if(e.key==='Escape'&&r.dataset.screen!=='main'&&m.getAttribute('aria-busy')!=='true'){e.preventDefault();e.stopPropagation();(r._back||(()=>main({focus:true})))();}};
     r.setAttribute('aria-label',screen==='main'?'Embergrave main menu':screen==='new'?'Create a hero':'Choose a saved hero');
     document.getElementById('titleInner').classList.remove('wide');m.replaceChildren();theme('vanguard');
     if(!background)background=animateBackground();else background.refresh();
@@ -180,6 +180,7 @@ window.TitleScreen=(()=>{
       const latest=saves[0],b=button('CONTINUE','title-action primary',()=>enter(m,()=>Game.loadGame(latest.slot)));
       const details=el('span','continue-detail',`${latest.name} · Level ${latest.lvl} ${DATA.CLASSES[latest.classId]?.name||latest.classId}`);details.id='continueDetails';b.setAttribute('aria-describedby',details.id);b.append(details);actions.append(b);
     }
+    if(typeof CoopUI!=='undefined')actions.append(button('MULTIPLAYER','title-action secondary',()=>CoopUI.open().catch(e=>CoopUI.status(e.message))));
     actions.append(button('NEW HERO','title-action '+(!saves.length?'primary':'secondary'),newHero));
     if(saves.length)actions.append(button('CHOOSE HERO','title-action quiet',savedHeroes));
     actions.append(button('SETTINGS & CONTROLS','title-action quiet',()=>UI.openSettings({origin:'title'})));
@@ -233,10 +234,11 @@ window.TitleScreen=(()=>{
     document.addEventListener('visibilitychange',wake);motion.addEventListener('change',wake);size();wake();
     return {refresh(){angle=1.05;start=performance.now();wake();},dispose(){disposed=true;cancelAnimationFrame(raf);observer.disconnect();document.removeEventListener('visibilitychange',wake);motion.removeEventListener('change',wake);showcase.dispose();}};
   }
-  function backButton(){return button('← BACK','title-back',()=>main({focus:true}));}
-  function newHero(){
+  function backButton(back=()=>main({focus:true})){return button('← BACK','title-back',back);}
+  function newHero(options={}){
     const m=reset('new'),preferred=new URLSearchParams(location.search).get('class');let selected=ORDER.includes(preferred)?preferred:'vanguard';
-    const top=el('div','selection-top');top.append(backButton(),el('span','title-kicker','CHOOSE WHO ANSWERS THE CALL'),el('span','selection-count','FIVE CALLINGS. ONE FATE.'));m.append(top);
+    root()._back=options.back||null;
+    const top=el('div','selection-top');top.append(backButton(options.back),el('span','title-kicker',options.coop?'CHOOSE YOUR CO-OP HERO':'CHOOSE WHO ANSWERS THE CALL'),el('span','selection-count','FIVE CALLINGS. ONE FATE.'));m.append(top);
     const scene=el('section','selection-scene'),info=el('div','class-story');info.id='campInfo';info.setAttribute('role','tabpanel');info.tabIndex=0;
     scene.append(info);m.append(scene);
     const preview=stage(scene,()=>selected);
@@ -258,31 +260,32 @@ window.TitleScreen=(()=>{
       preview.refresh();
     }
     const form=el('form','hero-form');form.id='campRow';
-    const nameLabel=el('label','hero-name','NAME YOUR LEGEND'),input=el('input');input.id='nameInput';input.name='heroName';input.maxLength=14;input.placeholder='Wanderer';input.autocomplete='off';input.spellcheck=false;nameLabel.append(input);
+    const nameLabel=el('label','hero-name','NAME YOUR LEGEND'),input=el('input');input.id='nameInput';input.name='heroName';input.maxLength=options.coop?24:14;input.placeholder='Wanderer';input.autocomplete='off';input.spellcheck=false;nameLabel.append(input);
     const hardcore=el('label','hardcore-option'),check=el('input');check.type='checkbox';check.id='hcBox';check.name='hardcore';check.setAttribute('aria-describedby','hardcoreHelp');
     const hcText=el('span');hcText.append(el('strong','','Hardcore'),el('small','','One life. No second chances.'));hcText.lastChild.id='hardcoreHelp';hardcore.append(check,hcText);
-    const go=el('button','title-action primary','ENTER THE MARCHES');go.type='submit';go.setAttribute('aria-label','ENTER THE MARCHES');
-    form.append(nameLabel,hardcore,go);form.addEventListener('submit',e=>{e.preventDefault();Sfx.init();enter(m,()=>Game.newGame(input.value.trim()||'Wanderer',selected,check.checked));});m.append(form);
+    const go=el('button','title-action primary',options.coop?'CREATE CO-OP HERO':'ENTER THE MARCHES');go.type='submit';go.setAttribute('aria-label',go.textContent);
+    form.append(nameLabel);if(!options.coop)form.append(hardcore);form.append(go);form.addEventListener('submit',e=>{e.preventDefault();Sfx.init();enter(m,()=>options.create?options.create(input.value.trim()||'Wanderer',selected):Game.newGame(input.value.trim()||'Wanderer',selected,check.checked));});m.append(form);
     select(selected);cleanup=()=>preview.dispose();focusHeading(tabs.get(selected));
     // Keep the selected tab in the keyboard sequence after focusHeading.
     tabs.get(selected).tabIndex=0;
   }
-  function savedHeroes(){
-    const m=reset('saves'),saves=Game.listSaves();if(!saves.length){main({focus:true});return;}
-    let selected=saves[0];
-    const top=el('div','selection-top');top.append(backButton(),el('span','title-kicker','THE UNFINISHED CHRONICLES'),button('NEW HERO','title-back',newHero));m.append(top);
+  function savedHeroes(options={}){
+    const m=reset('saves'),saves=options.saves||Game.listSaves();if(!saves.length){main({focus:true});return;}
+    root()._back=options.back||null;
+    let selected=saves.find(s=>s.slot===options.selectedId)||saves[0];
+    const top=el('div','selection-top');top.append(backButton(options.back),el('span','title-kicker',options.coop?'YOUR CO-OP HEROES':'THE UNFINISHED CHRONICLES'),button('NEW HERO','title-back',options.newHero||newHero));m.append(top);
     const scene=el('section','selection-scene saved-scene'),story=el('div','saved-story');story.append(el('span','title-kicker','YOUR LEGENDS'),el('h3','saved-heading','Answer the call again.'));
     const list=el('div','saved-roster');list.setAttribute('role','group');list.setAttribute('aria-label','Saved heroes');story.append(list);scene.append(story);m.append(scene);
     const preview=stage(scene,()=>DATA.CLASSES[selected.classId]?selected.classId:'vanguard',()=>selected.equipment);
-    const footer=el('div','saved-footer'),details=el('div','saved-details'),resume=button('CONTINUE','title-action primary',()=>enter(m,()=>Game.loadGame(selected.slot)));footer.append(details,resume);m.append(footer);
+    const footer=el('div','saved-footer'),details=el('div','saved-details'),resume=button(options.coop?'HOST OR JOIN':'CONTINUE','title-action primary',()=>enter(m,()=>options.onSelect?options.onSelect(selected):Game.loadGame(selected.slot)));footer.append(details,resume);m.append(footer);
     const rows=new Map();
     for(const s of saves){
       const row=el('div','saved-row'),pick=button('','saved-hero',()=>select(s));pick.append(crest(s.classId));
       const text=el('span');text.append(el('strong','',s.name),el('small','',`Level ${s.lvl} · ${DATA.CLASSES[s.classId]?.name||s.classId}${s.hardcore?' · Hardcore':''}`));pick.append(text);pick.setAttribute('aria-label',`Select ${s.name}, level ${s.lvl} ${DATA.CLASSES[s.classId]?.name||s.classId}`);
-      const del=button('×','delete-hero',()=>{if(confirm(`Bury ${s.name} forever?`)){Game.deleteSave(s.slot);savedHeroes();}});del.setAttribute('aria-label','Delete '+s.name);del.title='Delete '+s.name;
+      const del=button('×','delete-hero',()=>{if(confirm(options.deleteMessage?options.deleteMessage(s):`Bury ${s.name} forever?`))enter(m,async()=>{if(options.remove){await options.remove(s);await options.refresh();}else{Game.deleteSave(s.slot);savedHeroes();}});});del.setAttribute('aria-label','Delete '+s.name);del.title='Delete '+s.name;
       row.append(pick,del);rows.set(s.slot,pick);list.append(row);
     }
-    function select(s){selected=s;theme(s.classId);rows.forEach((b,slot)=>b.setAttribute('aria-pressed',String(slot===s.slot)));details.replaceChildren(el('span','title-kicker','RESUME YOUR JOURNEY'),el('strong','',s.name),el('span','',`Level ${s.lvl} ${DATA.CLASSES[s.classId]?.name||s.classId}${s.hardcore?' · Hardcore':''}`));preview.refresh();}
+    function select(s){selected=s;options.onChange?.(s);theme(s.classId);rows.forEach((b,slot)=>b.setAttribute('aria-pressed',String(slot===s.slot)));details.replaceChildren(el('span','title-kicker','RESUME YOUR JOURNEY'),el('strong','',s.name),el('span','',`Level ${s.lvl} ${DATA.CLASSES[s.classId]?.name||s.classId}${s.hardcore?' · Hardcore':''}`));preview.refresh();}
     select(selected);cleanup=()=>preview.dispose();rows.get(selected.slot).focus({preventScroll:true});
   }
   function hide(){cleanup();cleanup=()=>{};background?.dispose();background=null;for(const [sibling,inert] of obscured)sibling.inert=inert;obscured.clear();}

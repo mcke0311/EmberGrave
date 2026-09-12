@@ -22,12 +22,45 @@ const UI = (() => {
   const itemName = it => (it.identified ? it.name : it.baseName) || it.name || "Item";
   const bindTap = (el, fn) => typeof MobileControls !== 'undefined' ? MobileControls.bindTap(el,fn) : el.addEventListener('click',fn);
   function actionButton(label, fn, cls = "manage-button") { const b = textNode("button", cls, label); b.type = "button"; b.addEventListener("click", fn); return b; }
+  let managementSignature = '', managementMessage = '';
+  const coopItems = () => typeof InventoryActions !== 'undefined' && InventoryActions.active;
+  function managementStatus(message) {
+    managementMessage=message;
+    for(const panel of [els.panelLeft,els.panelRight,els.panelCenter]){
+      if(!panel || panel.classList.contains('hidden'))continue;
+      let status=panel.querySelector('.inventory-status');
+      if(!status){status=textNode('p','inventory-status');status.setAttribute('role','status');panel.append(status);}
+      status.textContent=message;
+    }
+  }
+  function refreshManagement(force=false) {
+    if(!coopItems() || !Game.state?.player)return;
+    const p=Game.state.player;
+    const signature=JSON.stringify([p.inv,p.stash,p.equip,p.management,p.gold,Game.state.vendorStock]);
+    if(!force && signature===managementSignature)return;
+    managementSignature=signature;
+    const panels=[els.panelLeft,els.panelRight,els.panelCenter].filter(Boolean);
+    const scrolls=panels.flatMap(panel=>[panel,...panel.querySelectorAll('.item-grid-scroll,.shop-list')].map(el=>({panel:panel.id,selector:el===panel?null:'.'+el.className.split(' ')[0],x:el.scrollLeft,y:el.scrollTop})));
+    const focused=document.activeElement,focusId=focused?.id,focusItem=focused?.dataset.itemId;
+    const selection=focused?.tagName==='INPUT'?[focused.selectionStart,focused.selectionEnd]:null;
+    setCursorItem(p.management?.carried||null);
+    forgeSlots=p.management?.offer||[null,null,null,null];
+    if(vendorCtx){const selected=vendorCtx.selected?._coopId;vendorCtx.items=Game.state.vendorStock[vendorCtx.npcId]||[];vendorCtx.selected=vendorCtx.items.find(it=>it._coopId===selected)||null;}
+    renderIfOpen('inv');renderIfOpen('storage');renderIfOpen('vendor');
+    if(openPanels.center==='forge')renderForge();
+    for(const r of scrolls){const panel=$(r.panel),node=r.selector?panel.querySelector(r.selector):panel;if(node){node.scrollLeft=r.x;node.scrollTop=r.y;}}
+    const focus=focusId?$(focusId):focusItem?panels.flatMap(p=>[...p.querySelectorAll('[data-item-id]')]).find(n=>n.dataset.itemId===focusItem):null;
+    if(focus && focused?.closest('#panelWorkspace')){focus.focus({preventScroll:true});if(selection&&focus.type==='search')focus.setSelectionRange(...selection);}
+    managementStatus(managementMessage);syncWorkspace();
+  }
   function syncWorkspace() {
     const host = document.getElementById("panelWorkspace"); if (!host) return;
     host.classList.toggle("paired", openPanels.right === "inv" && (openPanels.left === "vendor" || openPanels.left === "storage" || openPanels.center === "forge"));
     host.classList.toggle("forge-workspace", openPanels.center === "forge");
+    if(typeof MobileWorkspace!=='undefined')MobileWorkspace.sync();
   }
   function resetManagementState() {
+    if (coopItems()) {if(managementHero?.heroId!==Game.state.player.heroId){inventoryQuery='';forgeRecipe='glyph';}managementHero=Game.state.player;return;}
     if (managementHero === Game.state.player) return;
     managementHero = Game.state.player; inventoryQuery = ""; questFilter = "all"; questUiAct = questUiSel = null; forgeRecipe = "glyph";
   }
@@ -247,7 +280,7 @@ const UI = (() => {
         q.setAttribute("aria-label", `F${i + 1}: ${sk.name}. Select for right mouse; right-click to reassign.`);
         q.title = `${sk.name} · F${i + 1}\nClick to select · Right-click to reassign`;
         if (p.skillR === id || p.skillL === id) q.classList.add("qbound");
-        bindTap(q, e => { e.stopPropagation(); p.skillR = id; refreshHUD(); renderIfOpen("skills"); });
+        bindTap(q, e => { e.stopPropagation(); InventoryActions.run({type:"bind",slot:"R",skill:id},()=>{p.skillR=id;refreshHUD();renderIfOpen("skills");}); });
         q.addEventListener("mouseenter", e => { const r = q.getBoundingClientRect(); showSkillTooltip(id, r.left + r.width / 2, r.top); });
         q.addEventListener("mouseleave", hideTooltip);
         q.addEventListener("focus", () => { const r = q.getBoundingClientRect(); showSkillTooltip(id, r.left + r.width / 2, r.top); });
@@ -289,6 +322,7 @@ const UI = (() => {
     const p = Game.state.player;
     if (!p.quickSlots) p.quickSlots = [null, null, null, null];
     const id = p.quickSlots[i];
+    if(typeof Coop!=="undefined"&&Coop.active){if(id)Coop.submit({type:"bind",slot:"R",skill:id});else CoopUI.skillPick("Q"+i);return;}
     if (id && (id === "basic" || p.skills[id] > 0)) { p.skillR = id; refreshHUD(); Sfx.play("click"); }
     else openSkillPick("Q" + i);
   }
@@ -309,6 +343,7 @@ const UI = (() => {
       bindTap(s, () => { Game.state.player.quaff(i); refreshHUD(); });
       s.addEventListener("contextmenu", e => {
         e.preventDefault();
+        if(typeof Coop!=="undefined"&&Coop.active){Coop.submit({type:"unbelt",slot:i});return;}
         const p = Game.state.player, slot = p.belt[i];
         if (!slot) return;
         const it = Items.makeConsumable(slot.id, slot.count);
@@ -515,7 +550,19 @@ const UI = (() => {
   /* ================================================== panels */
   function panelEl(side) { return side === "left" ? els.panelLeft : side === "right" ? els.panelRight : els.panelCenter; }
   function closePanel(side) {
-    document.getElementById('touchItemMenu')?.remove();
+    document.getElementById('touchItemMenu')?.remove();document.getElementById('panelWorkspace')?.classList.remove('item-detail-open');
+    if(!coopItems()&&side==='right'&&openPanels.right==='inv'&&cursorItem&&Game.state?.player){
+      const it=cursorItem,grid=cursorFrom?.items?cursorFrom:null;
+      if(grid&&Items.fits(grid,it,it.gx,it.gy))Items.place(grid,it,it.gx,it.gy);
+      else if(!Items.autoPlace(Game.state.player.inv,it)){Game.dropAtFeet(it);msg('Your pack was full — carried item placed at your feet.');}
+      setCursorItem(null);Game.state.player.computeStats();
+    }
+    if(coopItems()&&Game.state?.player){
+      const m=Game.state.player.management;
+      if((side==='right'&&openPanels.right==='inv')||(side==='center'&&openPanels.center==='forge'&&m?.offer?.some(Boolean))) {
+        Game.submitCommand({type:'returnManagement'}).then(()=>refreshManagement(true));
+      }
+    }
     if (side === "center" && openPanels.center === "forge") { returnForgeItems(); renderIfOpen("inv"); }
     const el = panelEl(side);
     el.classList.add("hidden"); el.innerHTML = "";
@@ -524,13 +571,14 @@ const UI = (() => {
     el.classList.remove("management-panel"); delete el.dataset.kind;
     if (side === "left") vendorCtx = null;
     syncWorkspace();
-    if (side === "left" && openPanels.right === "inv") renderInventory();
+    if (side === "left" && openPanels.right === "inv" && Game.state?.player) renderInventory();
     hideTooltip();
   }
-  function closeAll() { closePanel("left"); closePanel("right"); closePanel("center"); els.skillPick.classList.add("hidden"); }
-  function anyOpen() { return openPanels.left || openPanels.right || openPanels.center; }
+  function closeAll() { if(typeof CoopUI!=="undefined")CoopUI.close(); closePanel("left"); closePanel("right"); closePanel("center"); els.skillPick.classList.add("hidden"); }
+  function anyOpen() { if(typeof CoopUI!=="undefined"&&CoopUI.isOpen)return true; return openPanels.left || openPanels.right || openPanels.center; }
 
   function togglePanel(name) {
+    Game.cancelMenuInput();
     const side = name === "inv" ? "right" : "left";
     if (openPanels[side] === name) { closePanel(side); return; }
     if (typeof MobileControls !== "undefined" && MobileControls.enabled) closeAll();
@@ -538,9 +586,12 @@ const UI = (() => {
     if (name === "inv" && ["skills","quest"].includes(openPanels.left)) closePanel("left");
     closePanel(side);
     openPanels[side] = name;
+    if(coopItems()){setCursorItem(Game.state.player.management?.carried||null);managementSignature='';}
     renderPanel(name);
+    if(typeof MobileWorkspace!=='undefined')MobileWorkspace.select(side);
   }
   function renderIfOpen(name) {
+    if(!Game.state?.player)return;
     if (openPanels.left === name || openPanels.right === name) renderPanel(name);
   }
   function renderPanel(name) {
@@ -578,6 +629,7 @@ const UI = (() => {
     for (const it of grid.items) {
       const d = document.createElement("div");
       d.className = `invitem r-${it.rarity}`;
+      d.dataset.itemId=it._coopId||it.uid||'';
       d.dataset.itemName = itemName(it).toLowerCase(); d.tabIndex = 0; d.setAttribute("aria-label", itemName(it));
       d.addEventListener("focus", () => { const r = d.getBoundingClientRect(); showItemTooltip(it,r.right,r.top,ctxName); });
       d.addEventListener("blur", hideTooltip);
@@ -601,6 +653,10 @@ const UI = (() => {
       const r = g.getBoundingClientRect();
       const gx = U.clamp(Math.round((e.clientX - r.left - cursorItem.w * CELL / 2) / CELL), 0, grid.w - cursorItem.w);
       const gy = U.clamp(Math.round((e.clientY - r.top - cursorItem.h * CELL / 2) / CELL), 0, grid.h - cursorItem.h);
+      if(coopItems()){
+        const old=grid.items.filter(o=>gx<o.gx+o.w&&o.gx<gx+cursorItem.w&&gy<o.gy+o.h&&o.gy<gy+cursorItem.h);
+        return InventoryActions.submit({type:'place',itemId:cursorItem._coopId,to:ctxName==='storage'?'stash':'inv',x:gx,y:gy,targetId:old.length===1?old[0]._coopId:null});
+      }
       if (Items.fits(grid, cursorItem, gx, gy)) {
         Items.place(grid, cursorItem, gx, gy);
         setCursorItem(null);
@@ -625,7 +681,7 @@ const UI = (() => {
   }
   function openTouchItemMenu(grid, it, ctxName, event) {
     document.getElementById('touchItemMenu')?.remove();
-    const dialog=textNode('dialog','gframe'); dialog.id='touchItemMenu';
+    const dialog=textNode('section','gframe workspace-detail'); dialog.id='touchItemMenu';dialog.setAttribute('role','region');
     dialog.setAttribute('aria-label',itemName(it));
     const details=textNode('div','touch-item-details'); details.innerHTML=itemTooltipHTML(it,ctxName);
     addItemPreview(details,it);
@@ -636,22 +692,39 @@ const UI = (() => {
       }
     }
     hideTooltip(); dialog.appendChild(details);
+    if(it.kind==='gear'&&ctxName!=='equip')for(const equipped of [...new Set(Items.slotFor(it).map(slot=>Game.state.player.equip[slot]).filter(Boolean))]){
+      const compare=textNode('details','shop-compare');compare.appendChild(textNode('summary','','Compare equipped: '+itemName(equipped)));
+      const body=textNode('div','touch-item-details');body.innerHTML=itemTooltipHTML(equipped,'equip');addItemPreview(body,equipped);compare.append(body);dialog.append(compare);
+    }
     const actions=textNode('div','touch-item-actions'); dialog.appendChild(actions);
-    const close=()=>{dialog.close();dialog.remove();hideTooltip();};
+    const close=()=>{dialog.remove();hideTooltip();document.getElementById('panelWorkspace').classList.remove('item-detail-open');};
     const p=Game.state.player,c=DATA.CONSUMABLES[it.baseId];
-    const label=vendorCtx&&grid===p.inv?'Sell':it.kind==='gear'?(it.identified?'Equip':'Identify'):
+    const label=ctxName==='equip'?'Unequip':vendorCtx&&grid===p.inv?'Sell':it.kind==='gear'?(it.identified?'Equip':'Identify'):
       c?.belt?'Move to belt':c&&(c.respec||it.baseId==='tp')?'Use':null;
-    if(label)actions.appendChild(actionButton(label,()=>{close();gridItemRClick(grid,it,ctxName);},'manage-primary'));
+    if(label)actions.appendChild(actionButton(label,()=>{close();if(ctxName==='equip')unequipSlot(grid,it);else gridItemRClick(grid,it,ctxName);},'manage-primary'));
     actions.appendChild(actionButton('Carry',()=>{
-      close();gridItemClick(grid,it,ctxName);
+      close();if(ctxName==='equip')carryEquipment(grid,it);else gridItemClick(grid,it,ctxName);
       els.cursorItem.style.left=(event.clientX-it.w*CELL/2)+'px';
       els.cursorItem.style.top=(event.clientY-it.h*CELL/2)+'px';
     }));
-    actions.appendChild(actionButton('Cancel',close));
-    dialog.addEventListener('cancel',e=>{e.preventDefault();close();});
-    document.getElementById('game').appendChild(dialog); dialog.showModal();
+    if(ctxName!=='vendor')actions.appendChild(actionButton('Drop',async()=>{
+      close();
+      if(coopItems())return InventoryActions.submit({type:'drop',itemId:it._coopId});
+      if(ctxName==='equip'){await carryEquipment(grid,it);if(cursorItem!==it)return;setCursorItem(null);}
+      else Items.remove(grid,it);
+      Game.dropAtFeet(it);refreshGrids();refreshHUD();
+    }));
+    actions.appendChild(actionButton('Back',close));
+    dialog.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();}});
+    const workspace=$('panelWorkspace');workspace.appendChild(dialog);workspace.classList.add('item-detail-open');actions.querySelector('button')?.focus();
   }
   function gridItemClick(grid, it, ctxName) {
+    if(coopItems()){
+      const carried=Game.state.player.management?.carried;
+      if(!carried)return InventoryActions.submit({type:'carry',itemId:it._coopId});
+      if(['glyph','jewel'].includes(carried.kind)&&it.kind==='gear')return InventoryActions.submit({type:'socket',itemId:it._coopId,socketId:carried._coopId});
+      return InventoryActions.submit({type:'place',itemId:carried._coopId,to:ctxName==='storage'?'stash':'inv',x:it.gx,y:it.gy,targetId:it._coopId});
+    }
     if (cursorItem) {
       /* glyph or jewel on cursor + socketed gear under it -> seat it */
       if ((cursorItem.kind === "glyph" || cursorItem.kind === "jewel") && it.kind === "gear") {
@@ -700,6 +773,11 @@ const UI = (() => {
   }
   function gridItemRClick(grid, it, ctxName) {
     const p = Game.state.player;
+    if(coopItems()){
+      const type=vendorCtx&&grid===p.inv?'sell':it.kind==='gear'?(it.identified?'equip':'identify'):it.belt?'belt':it.kind==='consumable'&&it.baseId!=='idscroll'?'use':null;
+      if(type)return InventoryActions.submit({type,itemId:it._coopId,...(type==='sell'?{npcId:vendorCtx.npcId}:{})});
+      msg('Carry this item to place it or socket it.');return;
+    }
     if (vendorCtx && grid === p.inv) {  /* sell */
       p.gold += Items.sellValue(it);
       Items.remove(grid, it);
@@ -818,6 +896,20 @@ const UI = (() => {
     renderIfOpen("skills");   // gear may carry "+to talents" — keep the tree in sync on equip/unequip
   }
 
+  async function carryEquipment(slot,it){
+    if(coopItems())return InventoryActions.submit({type:'carry',itemId:it._coopId});
+    const p=Game.state.player,next={...p.equip};delete next[slot];
+    const prepared=await prepareEquipmentChange(next);if(!prepared)return;
+    if(p.equip[slot]!==it||cursorItem){Game.discardPlayerEquipment(prepared);return;}
+    delete p.equip[slot];Game.commitPlayerEquipment(prepared);p.computeStats();setCursorItem(it);refreshGrids();refreshHUD();
+  }
+  async function unequipSlot(slot,it){
+    if(coopItems())return InventoryActions.submit({type:'unequip',slot,itemId:it._coopId});
+    const p=Game.state.player;if(!Items.canAutoPlace(p.inv,it)){msg('No room in your pack.');return;}
+    const next={...p.equip};delete next[slot];const prepared=await prepareEquipmentChange(next);if(!prepared)return;
+    if(p.equip[slot]!==it||!Items.canAutoPlace(p.inv,it)){Game.discardPlayerEquipment(prepared);return;}
+    delete p.equip[slot];Items.autoPlace(p.inv,it);Game.commitPlayerEquipment(prepared);p.computeStats();refreshGrids();refreshHUD();
+  }
   /* ---------- inventory panel ---------- */
   const EQ_LAYOUT = {
     head: [136, 8, 2, 2], amulet: [224, 28, 1, 1], chest: [136, 99, 2, 3],
@@ -842,7 +934,8 @@ const UI = (() => {
       const it = p.equip[slot];
       if (it) {
         const d = document.createElement("div");
-        d.className = `invitem r-${it.rarity}`;
+        d.className = `invitem r-${it.rarity}`;d.dataset.itemId=it._coopId||it.uid||'';d.tabIndex=0;d.setAttribute('aria-label',slotLabel+': '+itemName(it));
+        d.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();unequipSlot(slot,it);}});
         d.style.left = "0"; d.style.top = "0"; d.style.width = "100%"; d.style.height = "100%";
         const icon = SpriteAssets.itemIcon(it);
         icon.style.width = "100%"; icon.style.height = "100%"; icon.style.objectFit = "contain";
@@ -851,6 +944,12 @@ const UI = (() => {
         d.addEventListener("mouseleave", hideTooltip);
         d.addEventListener("click", async e => {
           e.stopPropagation();
+          if(typeof MobileControls!=='undefined'&&MobileControls.enabled&&!cursorItem)return openTouchItemMenu(slot,it,'equip',e);
+          if(coopItems()){
+            if(cursorItem&&['glyph','jewel'].includes(cursorItem.kind))return InventoryActions.submit({type:'socket',itemId:it._coopId,socketId:cursorItem._coopId});
+            if(cursorItem)return InventoryActions.submit({type:'equip',itemId:cursorItem._coopId,slot});
+            return carryEquipment(slot,it);
+          }
           if (cursorItem) {
             if ((cursorItem.kind === "glyph" || cursorItem.kind === "jewel") && it.sockets) {
               const glyphName = cursorItem.name;
@@ -884,6 +983,7 @@ const UI = (() => {
         });
         d.addEventListener("contextmenu", async e => {
           e.preventDefault(); e.stopPropagation();
+          if(coopItems())return unequipSlot(slot,it);
           const nextEquip = Object.assign({}, p.equip); delete nextEquip[slot];
           const prepared = await prepareEquipmentChange(nextEquip);
           if (!prepared) return;
@@ -907,6 +1007,7 @@ const UI = (() => {
         s.appendChild(ph);
         s.addEventListener("click", async () => {
           if (!cursorItem || cursorItem.kind !== "gear") return;
+          if(coopItems())return InventoryActions.submit({type:'equip',itemId:cursorItem._coopId,slot});
           const equipping = cursorItem;
           const slots = Items.slotFor(equipping);
           if (!slots.includes(slot)) return;
@@ -935,10 +1036,10 @@ const UI = (() => {
     goldRow.append(textNode("strong", "", U.fmt(p.gold) + " gold"), textNode("span", "", p.inv.items.reduce((n,i)=>n+i.w*i.h,0) + " / " + (p.inv.w*p.inv.h) + " cells"));
     el.appendChild(goldRow);
     const toolbar = textNode("div", "pack-toolbar");
-    const search = document.createElement("input"); search.type = "search"; search.placeholder = "Find an item…"; search.value = inventoryQuery; search.setAttribute("aria-label","Find items in your pack");
+    const search = document.createElement("input"); search.type = "search"; search.placeholder = "Find an item…"; search.value = inventoryQuery; search.setAttribute("aria-label","Find items in your pack");search.id="inventorySearch";
     const highlight = () => { for (const item of el.querySelectorAll('.invgrid .invitem')) { const match = !inventoryQuery || item.dataset.itemName.includes(inventoryQuery.toLowerCase()); item.classList.toggle("search-dim", !match); item.classList.toggle("search-match", !!inventoryQuery && match); } };
     search.addEventListener("input",()=>{inventoryQuery=search.value;highlight();});
-    const tidy = actionButton("Tidy pack",()=>{ if (cursorItem) return; if (!Items.tidy(p.inv)) msg("This arrangement cannot be tidied. Your items stayed in place.","#c08080"); else Sfx.play("pickup"); renderInventory(); }); tidy.id="inventoryTidy"; tidy.disabled=!!cursorItem;
+    const tidy = actionButton("Tidy pack",()=>{ if (cursorItem) return; if(coopItems())return InventoryActions.submit({type:"tidy"}); if (!Items.tidy(p.inv)) msg("This arrangement cannot be tidied. Your items stayed in place.","#c08080"); else Sfx.play("pickup"); renderInventory(); }); tidy.id="inventoryTidy"; tidy.disabled=!!cursorItem;
     toolbar.append(search,tidy); el.appendChild(toolbar);
     renderGrid(el, p.inv, "inv"); highlight();
     const touchMode=typeof MobileControls !== "undefined" && MobileControls.enabled;
@@ -1052,6 +1153,7 @@ const UI = (() => {
           if(!button){
             button=actionButton("+",()=>{
               const hero=Game.state.player;if(hero.attrPts<=0)return;
+              if(typeof Coop!=="undefined"&&Coop.active){Coop.submit({type:"attribute",attribute:row.attribute}).then(()=>{renderCharacter();refreshHUD();});return;}
               hero.attr[row.attribute]++;hero.attrPts--;hero.computeStats();renderCharacter();refreshHUD();
             },"attrbtn");button.setAttribute("aria-label","Increase "+row.label);node.appendChild(button);
           }
@@ -1194,6 +1296,7 @@ const UI = (() => {
     learn.textContent = status.rank >= sk.maxRank ? "Maximum rank reached" : !status.unlocked ? "Requirements not met" : p.skillPts <= 0 ? "No talent points available" : `${status.rank ? "Upgrade to rank " + (status.rank + 1) : "Learn skill"}  ·  1 point`;
     learn.addEventListener("click", () => {
       const fresh = skillAvailability(p, sk); if (!fresh.learnable) return;
+      if(typeof Coop!=="undefined"&&Coop.active){Coop.submit({type:"learn",skill:sk.id}).then(()=>{renderSkills();refreshHUD();});return;}
       p.skills[sk.id] = fresh.rank + 1; p.skillPts--; p.computeStats();
       if (sk.type !== "passive" && fresh.rank === 0) { if (p.skillR === "basic") p.skillR = sk.id; autoBindQuick(p, sk.id); }
       Sfx.play("skillup"); renderSkills(); refreshHUD();
@@ -1210,7 +1313,7 @@ const UI = (() => {
         const active = i < 2 ? p[i === 0 ? "skillL" : "skillR"] === sk.id : p.quickSlots[i - 2] === sk.id;
         const b = document.createElement("button"); b.type = "button"; b.textContent = key; b.className = active ? "bound" : "";
         b.setAttribute("aria-label", `Assign ${sk.name} to ${key}`); b.setAttribute("aria-pressed", String(active));
-        b.addEventListener("click", () => { if (i < 2) p[i === 0 ? "skillL" : "skillR"] = sk.id; else p.quickSlots[i - 2] = sk.id;
+        b.addEventListener("click", () => { if(typeof Coop!=="undefined"&&Coop.active){Coop.submit({type:"bind",slot:i<2?(i===0?"L":"R"):i-2,skill:sk.id}).then(()=>{refreshHUD();renderSkills();});return;} if (i < 2) p[i === 0 ? "skillL" : "skillR"] = sk.id; else p.quickSlots[i - 2] = sk.id;
            refreshHUD(); renderSkillDetail(el, p, sk); el.querySelectorAll(".skill-binding-row button")[i].focus(); }); row.appendChild(b);
       }); binds.appendChild(row); el.appendChild(binds);
     } else if (sk.type === "passive") { const note = document.createElement("p"); note.className = "skill-passive-note"; note.textContent = "Always active once learned. No hotkey needed."; el.appendChild(note); }
@@ -1251,6 +1354,7 @@ const UI = (() => {
         button.addEventListener("click",()=>{preview=opt;perkPreview.set(key,opt.id);refreshPreview();});list.appendChild(button);
       }
       choose.addEventListener("click",()=>{
+        if(typeof Coop!=="undefined"&&Coop.active){Coop.submit({type:"perk",skill:sk.id,tier,perk:preview.id}).then(()=>{renderSkills();refreshHUD();});return;}
         if(!p.chooseSkillPerk(sk.id,tier,preview.id))return;
         const scroll=el.scrollTop;Game.saveGame();Sfx.play("skillup");renderSkills();refreshHUD();
         $("skillDetail").scrollTop=scroll;
@@ -1393,10 +1497,11 @@ const UI = (() => {
 
   /* ---------- vendor ---------- */
   function openVendor(npcId) {
+    Game.cancelMenuInput();
     closePanel("center"); closePanel("left");
     vendorCtx = {npcId, items: Game.state.vendorStock[npcId] || [], filter:"all", selected:null};
     openPanels.left = "vendor"; openPanels.right = "inv";
-    renderVendor(); renderInventory();
+    renderVendor(); renderInventory();if(typeof MobileWorkspace!=='undefined')MobileWorkspace.select('left');
   }
   function shopCategory(it) { return it.kind !== "gear" ? "supplies" : it.slot === "main" ? "weapons" : ["ring","amulet"].includes(it.slot) ? "jewelry" : "armor"; }
   function renderVendor() {
@@ -1429,6 +1534,7 @@ const UI = (() => {
       const price=Items.value(selected), room=Items.canAutoPlace(p.inv,selected);
       const buy=actionButton(p.gold<price?"Not enough gold":!room?"Pack is full":"Buy for "+price+" gold",()=>{
         if(vendorCtx!==v || !v.items.includes(selected) || p.gold<price || cursorItem)return;
+        if(coopItems())return InventoryActions.submit({type:'buy',itemId:selected._coopId,npcId:v.npcId});
         const incoming=selected.kind === "consumable"?Items.makeConsumable(selected.baseId,selected.count):selected;
         if(!Items.canAutoPlace(p.inv,incoming)){msg("No room in your pack.","#c08080");renderVendor();return;}
         Items.autoPlace(p.inv,incoming);p.gold-=price;if(selected.kind!=="consumable")v.items.splice(v.items.indexOf(selected),1);
@@ -1438,18 +1544,19 @@ const UI = (() => {
     el.appendChild(textNode("p","pack-help","Select an item to inspect it. Right-click an item in your pack to sell."));
     if(v.npcId === "maesa"){
       const un=p.inv.items.filter(i=>!i.identified);
-      const identify=actionButton("Identify all · 60 gold",()=>{const items=p.inv.items.filter(i=>!i.identified);if(!items.length||p.gold<60)return;p.gold-=60;items.forEach(i=>i.identified=true);Sfx.play("shrine");refreshGrids();refreshHUD();});
+      const identify=actionButton("Identify all · 60 gold",()=>{if(coopItems())return InventoryActions.submit({type:"identifyAll",npcId:v.npcId});const items=p.inv.items.filter(i=>!i.identified);if(!items.length||p.gold<60)return;p.gold-=60;items.forEach(i=>i.identified=true);Sfx.play("shrine");refreshGrids();refreshHUD();});
       identify.disabled=!un.length||p.gold<60;el.appendChild(identify);
     }
   }
 
   /* ---------- storage ---------- */
   function openStorage() {
+    Game.cancelMenuInput();
     closePanel("center"); closePanel("left");
     openPanels.left = "storage";
     renderStorage();
     openPanels.right = "inv";
-    renderInventory();
+    renderInventory();if(typeof MobileWorkspace!=='undefined')MobileWorkspace.select('left');
   }
   function renderStorage() {
     const p = Game.state.player;
@@ -1466,6 +1573,8 @@ const UI = (() => {
   /* ---------- Forge Altar (crafting) ---------- */
   let forgeSlots = [null, null, null, null];
   function returnForgeItems() {
+    if(!Game.state?.player){forgeSlots=[null,null,null,null];return;}
+    if(coopItems()){forgeSlots=[null,null,null,null];return;}
     const p = Game.state.player;
     for (let i = 0; i < 4; i++) {
       const it = forgeSlots[i];
@@ -1475,11 +1584,13 @@ const UI = (() => {
     }
   }
   function openForge() {
+    Game.cancelMenuInput();
     closePanel("center"); closePanel("left");
     openPanels.center = "forge"; openPanels.right = "inv";
-    renderForge(); renderInventory();
+    renderForge(); renderInventory();if(typeof MobileWorkspace!=='undefined')MobileWorkspace.select('center');
   }
   function renderForge() {
+    if(coopItems())forgeSlots=Game.state.player.management?.offer||[null,null,null,null];
     const el=els.panelCenter;el.classList.remove("hidden");header(el,"Forge Altar","center");
     el.appendChild(textNode("div","manage-eyebrow","Old rites · New powers"));
     const recipes=textNode("div","recipe-list");
@@ -1489,6 +1600,7 @@ const UI = (() => {
     const row=textNode("div","");row.id="forgeRow";
     for(let i=0;i<4;i++){
       const it=forgeSlots[i],slot=actionButton("",()=>{
+        if(coopItems())return InventoryActions.submit({type:'offer',slot:i,itemId:Game.state.player.management?.carried?._coopId||null,expectedId:forgeSlots[i]?._coopId||null});
         if(cursorItem&&!forgeSlots[i]){forgeSlots[i]=cursorItem;setCursorItem(null);}
         else if(!cursorItem&&forgeSlots[i]){setCursorItem(forgeSlots[i]);forgeSlots[i]=null;}
         const match=ForgeRecipes.recipes.find(r=>ForgeRecipes.evaluate(forgeSlots,r.id).valid);if(match)forgeRecipe=match.id;
@@ -1504,6 +1616,7 @@ const UI = (() => {
     el.appendChild(textNode("p","pack-help","Click a material to carry it. Closing the altar returns your offering to your pack; overflow is placed at your feet."));
   }
   function tryTransmute() {
+    if(coopItems())return InventoryActions.submit({type:'craft',recipe:forgeRecipe,items:forgeSlots.filter(Boolean).map(it=>it._coopId)});
     const check=ForgeRecipes.evaluate(forgeSlots,forgeRecipe);if(!check.valid)return;
     const {glyphs,gear,pots,total,upgrade}=check;let result,leftovers=[];
     if(forgeRecipe === "glyph")result=Items.reforgeGlyph(glyphs[0]);
@@ -1680,6 +1793,7 @@ const UI = (() => {
 
   /* ---------- skill picker ---------- */
   function openSkillPick(which) {
+    Game.cancelMenuInput();
     const p = Game.state.player;
     const pick = els.skillPick;
     if (!pick.classList.contains("hidden") && pick.dataset.which === which) { pick.classList.add("hidden"); return; }
@@ -1687,7 +1801,7 @@ const UI = (() => {
     pick.innerHTML = "";
     hideTooltip();
     const caption = document.createElement("div"); caption.className = "picker-heading";
-    caption.innerHTML = `<span>ASSIGN ${which === "L" ? "LEFT MOUSE" : which === "R" ? "RIGHT MOUSE" : "F" + (+which.slice(1) + 1)}</span><small>Select a learned skill</small>`; pick.appendChild(caption);
+    caption.innerHTML = `<span>ASSIGN ${typeof MobileControls!=="undefined"&&MobileControls.enabled?(which==="L"?"ATTACK":which==="R"?"SECONDARY SKILL":"QUICK SKILL "+(+which.slice(1)+1)):which === "L" ? "LEFT MOUSE" : which === "R" ? "RIGHT MOUSE" : "F" + (+which.slice(1) + 1)}</span><small>Select a learned skill</small>`; pick.appendChild(caption);
     for (const id of learnedActives(p)) {
       const sk = id === "basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[id];
       const d = document.createElement("button"); d.type = "button"; d.className = "pickopt";
@@ -1697,8 +1811,9 @@ const UI = (() => {
       d.setAttribute("aria-label", "Assign " + sk.name);
       d.addEventListener("mouseenter", e => { const r = d.getBoundingClientRect(); showSkillTooltip(id, r.left + r.width / 2, r.top); });
       d.addEventListener("mouseleave", hideTooltip);
-      d.addEventListener("click", () => {
-        if (which === "L") p.skillL = id;
+      d.addEventListener("click", async () => {
+        if(coopItems()){if(!await InventoryActions.submit({type:"bind",slot:which[0]==="Q"?+which.slice(1):which,skill:id}))return;}
+        else if (which === "L") p.skillL = id;
         else if (which === "R") p.skillR = id;
         else if (which[0] === "Q") p.quickSlots[+which.slice(1)] = id;   // assign to F-slot
         pick.classList.add("hidden");
@@ -1712,9 +1827,10 @@ const UI = (() => {
     if (which[0] === "Q") {
       const clr = document.createElement("button"); clr.type = "button"; clr.className = "pickopt pickclear"; clr.textContent = "Clear slot";
       clr.title = "Clear slot";
-      clr.addEventListener("click", () => { p.quickSlots[+which.slice(1)] = null; pick.classList.add("hidden"); hideTooltip();  refreshHUD(); renderIfOpen("skills"); });
+      clr.addEventListener("click", async () => { if(coopItems()){if(!await InventoryActions.submit({type:"bind",slot:+which.slice(1),skill:null}))return;}else p.quickSlots[+which.slice(1)] = null; pick.classList.add("hidden"); hideTooltip();  refreshHUD(); renderIfOpen("skills"); });
       pick.appendChild(clr);
     }
+    const back=actionButton("Back",()=>{pick.classList.add("hidden");hideTooltip();});pick.prepend(back);
     pick.classList.remove("hidden");
     let btn = which === "L" ? els.skillL : which === "R" ? els.skillR
             : els.quickbar.children[+which.slice(1)] || els.quickbar;
@@ -1970,6 +2086,7 @@ const UI = (() => {
     clearTitleMusicGesture();
   }
   function showTitle() {
+    setCursorItem(null);forgeSlots=[null,null,null,null];managementHero=null;managementSignature="";
     hideOpening();
     hideDeath();
     els.title.classList.remove("hidden");
@@ -1985,6 +2102,7 @@ const UI = (() => {
 
   /* ================================================== debug */
   function toggleDebug() {
+    if(typeof Coop!=="undefined"&&Coop.active){msg("Debug commands are unavailable in co-op.");return;}
     const el = els.debug;
     if (!el.classList.contains("hidden")) { el.classList.add("hidden"); return; }
     el.classList.remove("hidden");
@@ -2063,7 +2181,9 @@ const UI = (() => {
   let videoOn = false;
   function cinematicActive() { return videoOn || !els.cinematic.classList.contains("hidden"); }
   /* play a full-screen video, pausing the game; fade in, then fade back and call onDone */
-  function playVideo(src, onDone) {
+  function playVideo(src, onDone, coopLocal=false) {
+    if(typeof Coop!=="undefined"&&Coop.active&&!coopLocal)return Coop.cinematic(src,onDone);
+    closeAll();closeEsc();Game.cancelMenuInput();
     const el = els.cinematic;
     videoOn = true;
     let finished = false;
@@ -2160,11 +2280,12 @@ const UI = (() => {
     showOpening, hideOpening, openingObjective, openingCaption, openingArrival, tickOpening, openOpeningDialog,
     init, refreshHUD, refreshBelt, refreshBuffs, refreshGrids, renderIfOpen,
     msg, centerMsg, togglePanel, closePanel, closeAll, anyOpen, openPanels: () => openPanels,
+    refreshManagement, managementStatus,
     openVendor, openStorage, openDialog, openBoard, openShrine, openSkillPick, openForge, quickCast,
     showItemTooltip, showSkillTooltip, hideTooltip,
     openEsc, openSettings, closeEsc, escOpen,
     showTitle, hideTitle, showDeath, hideDeath, toggleDebug,
-    get cursorItem() { return cursorItem; },
+    get cursorItem() { return coopItems()?Game.state?.player?.management?.carried||null:cursorItem; },
     setCursorItem,
   };
 })();
