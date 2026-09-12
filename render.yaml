@@ -1,0 +1,18 @@
+# One relay instance keeps each party's sockets together. No database is needed.
+services:
+  - type: web
+    name: embergrave-multiplayer
+    runtime: docker
+    plan: free
+    region: ohio
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    autoDeployTrigger: off
+    envVars:
+      - key: BIND_ADDRESS
+        value: 0.0.0.0
+      - key: ALLOWED_ORIGINS
+        value: https://embergravegame.mcke0311.chatgpt.site
+      - key: MAX_ROOMS
+        value: "100"

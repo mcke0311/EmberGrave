@@ -39,7 +39,7 @@ const CoopUI=(()=>{
     const advanced=el('details'),summary=el('summary','Connection settings');advanced.append(summary);d.append(advanced);
     const relay=field(advanced,'Relay address',el('input'));relay.id='coopRelay';relay.value=draft.relay||window.COOP_CONFIG.relayUrl;relay.oninput=()=>draft.relay=relay.value;
     async function start(mode){
-      window.COOP_CONFIG.relayUrl=relay.value.trim();status('Connecting to the party…');d.setAttribute('aria-busy','true');
+      window.COOP_CONFIG.relayUrl=relay.value.trim();status('Connecting to the party… The server may take up to a minute to wake up.');d.setAttribute('aria-busy','true');
       const controls=[...d.querySelectorAll('button,input,select')];controls.forEach(b=>b.disabled=true);
       try{await Coop.connect(mode,hero.id,code.value.trim().toUpperCase(),saved.value||null);if(Coop.host)close();else status('Waiting for the host to load your hero…');}
       catch(e){status(e.message);}finally{d.removeAttribute('aria-busy');controls.forEach(b=>b.disabled=false);}
