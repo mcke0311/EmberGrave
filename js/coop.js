@@ -32,12 +32,18 @@ const Coop=(()=>{
   }
   function openSocket(mode,code){
     return new Promise((resolve,reject)=>{
-      const url=window.COOP_CONFIG.relayUrl;
-      if(location.protocol==='https:'&&!url.startsWith('wss:')){reject(Error('Online play needs a secure wss:// relay. Configure the relay URL.'));return;}
-      ws=new WebSocket(url);let welcomed=false;
-      const timeout=setTimeout(()=>{if(!welcomed){reject(Error('Relay did not respond. Start the local relay or check its URL.'));ws.close();}},10000);
-      ws.onopen=()=>wire(mode==='host'?'create':mode==='resume'?'resume':'join',mode==='resume'?{room,token:resumeToken}:{room:code});
-      ws.onmessage=async({data:raw})=>{
+      const url=String(window.COOP_CONFIG.relayUrl||'').trim();
+      if(!url){reject(Error('Online multiplayer is not connected yet. The website owner needs to activate the multiplayer server.'));return;}
+      let endpoint;try{endpoint=new URL(url);}catch{reject(Error('Enter a valid multiplayer server address in Connection settings.'));return;}
+      if(!['ws:','wss:'].includes(endpoint.protocol)){reject(Error('The multiplayer server address must begin with ws:// or wss://.'));return;}
+      if(location.protocol==='https:'&&endpoint.protocol!=='wss:'){reject(Error('This website needs a secure multiplayer server address beginning with wss://.'));return;}
+      const socket=new WebSocket(url);ws=socket;let welcomed=false;
+      const configured=Number(window.COOP_CONFIG.connectTimeoutMs);
+      const waitMs=mode==='resume'?10000:Number.isFinite(configured)?Math.max(10000,Math.min(120000,configured)):90000;
+      const timeout=setTimeout(()=>{if(!welcomed){reject(Error('The multiplayer server did not respond. It may be waking up; try again shortly.'));socket.close();}},waitMs);
+      socket.onopen=()=>{if(socket===ws)wire(mode==='host'?'create':mode==='resume'?'resume':'join',mode==='resume'?{room,token:resumeToken}:{room:code});};
+      socket.onmessage=async({data:raw})=>{
+        if(socket!==ws)return;
         try{
           const m=P.parse(raw);
           if(m.type==='welcome'){
@@ -51,7 +57,7 @@ const Coop=(()=>{
             }
             resolve(m);ui()?.refresh();
           }else if(m.type==='error'){
-            if(!welcomed){clearTimeout(timeout);reject(Error(m.message));ws.close();}else notify(m.message);
+            if(!welcomed){clearTimeout(timeout);reject(Error(m.message));socket.close();}else notify(m.message);
           }else if(m.type==='roster'){
             const previousRoster=roster;roster=m.members;
             if(s())for(const p of s().players||[]){const peer=roster.find(r=>r.id===p._coopId);p.connected=!!peer?.connected;if(!p.connected){p.command=null;p.path=null;p.drawing=null;}}
@@ -69,9 +75,11 @@ const Coop=(()=>{
           }else if(m.type==='ended'){incoming=incoming.then(async()=>{notify(m.reason);await leave(false);});await incoming;}
         }catch(e){console.error('Co-op message failed',e);notify('Co-op: '+e.message);}
       };
-      ws.onerror=()=>{if(!welcomed){clearTimeout(timeout);reject(Error('Cannot reach the relay at '+url));}};
-      ws.onclose=()=>{
-        clearTimeout(timeout);if(stopped||!active)return;
+      socket.onerror=()=>{if(socket===ws&&!welcomed){clearTimeout(timeout);reject(Error('Cannot reach the multiplayer server. Try again shortly, or check Connection settings.'));}};
+      socket.onclose=()=>{
+        clearTimeout(timeout);if(socket!==ws)return;
+        if(!welcomed){reject(Error('The multiplayer server closed the connection before the party was ready. Try again shortly.'));return;}
+        if(stopped||!active)return;
         paused='Reconnecting…';if(!reconnectAt)reconnectAt=Date.now();ui()?.refresh();
         retry=setTimeout(async()=>{if(Date.now()-reconnectAt>=60000){notify('Reconnection timed out. Your last checkpoint is available.');leave(false);return;}try{await openSocket('resume');}catch(e){notify(e.message);}},1500);
       };
