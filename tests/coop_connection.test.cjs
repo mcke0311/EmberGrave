@@ -61,3 +61,15 @@ test('relay refusal restores retry state and retains its useful error',async()=>
   await f.sockets[0].message('error',{message:'Relay is full. Try again later.'});await rejected;
   assert.equal(f.coop.active,false);assert.equal(f.timers.size,0);
 });
+test('an established party keeps retrying after a failed resume handshake',async()=>{
+  const f=fixture('https:',{relayUrl:'wss://relay.example/ws'});
+  const attempt=f.coop.connect('join','hero','ROOM');await new Promise(setImmediate);
+  await f.sockets[0].message('welcome',{room:'ROOM',playerId:'guest',hostId:'host',token:'token'});await attempt;
+  f.sockets[0].close();
+  const [id,timer]=[...f.timers].find(([,t])=>t.ms===1500);f.timers.delete(id);
+  const reconnect=timer.fn();await new Promise(setImmediate);
+  assert.equal([...f.timers.values()][0].ms,10000,'resume keeps the short timeout');
+  f.sockets[1].onerror();await reconnect;
+  assert.equal(f.coop.active,true);assert.equal(f.sockets[1].readyState,3);
+  assert.equal([...f.timers.values()].filter(t=>t.ms===1500).length,1);
+});

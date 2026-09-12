@@ -75,13 +75,17 @@ const Coop=(()=>{
           }else if(m.type==='ended'){incoming=incoming.then(async()=>{notify(m.reason);await leave(false);});await incoming;}
         }catch(e){console.error('Co-op message failed',e);notify('Co-op: '+e.message);}
       };
-      socket.onerror=()=>{if(socket===ws&&!welcomed){clearTimeout(timeout);reject(Error('Cannot reach the multiplayer server. Try again shortly, or check Connection settings.'));}};
+      socket.onerror=()=>{if(socket===ws&&!welcomed){clearTimeout(timeout);reject(Error('Cannot reach the multiplayer server. Try again shortly, or check Connection settings.'));socket.close();}};
       socket.onclose=()=>{
         clearTimeout(timeout);if(socket!==ws)return;
         if(!welcomed){reject(Error('The multiplayer server closed the connection before the party was ready. Try again shortly.'));return;}
         if(stopped||!active)return;
         paused='Reconnecting…';if(!reconnectAt)reconnectAt=Date.now();ui()?.refresh();
-        retry=setTimeout(async()=>{if(Date.now()-reconnectAt>=60000){notify('Reconnection timed out. Your last checkpoint is available.');leave(false);return;}try{await openSocket('resume');}catch(e){notify(e.message);}},1500);
+        retry=setTimeout(async function reconnect(){
+          if(stopped||!active)return;
+          if(Date.now()-reconnectAt>=60000){notify('Reconnection timed out. Your last checkpoint is available.');leave(false);return;}
+          try{await openSocket('resume');}catch(e){notify(e.message);if(!stopped&&active)retry=setTimeout(reconnect,1500);}
+        },1500);
       };
     });
   }
