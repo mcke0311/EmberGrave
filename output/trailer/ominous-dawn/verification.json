@@ -1,0 +1,45 @@
+{
+  "file": "EMBERGRAVE-Ominous-Dawn-Trailer-40s.mp4",
+  "duration_seconds": 40.0,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "fps": 30,
+  "size_bytes": 22140376,
+  "full_decode_errors": "",
+  "audio_levels": [
+    "[Parsed_volumedetect_0 @ 000002ada7fd32c0] mean_volume: -16.0 dB",
+    "[Parsed_volumedetect_0 @ 000002ada7fd32c0] max_volume: -1.5 dB"
+  ],
+  "black_intervals": [
+    "[blackdetect @ 000002734e53ca80] black_start:0 black_end:0.133333 black_duration:0.133333"
+  ],
+  "footage_note": "All five classes captured in the existing isolated boss review. Heroes invulnerable for capture; source gameplay runs at normal simulation speed.",
+  "soundtrack": "Ominous Dawn (user-supplied MP3), with understated game sound effects.",
+  "music_source": "output\\trailer\\music\\Ominous Dawn.mp3",
+  "music_excerpt_seconds": [
+    0.96,
+    40.96
+  ],
+  "normalization": "Two-pass loudness normalization: -16 LUFS, -1.5 dBTP ceiling.",
+  "normalization_measurement": {
+    "input_i": "-17.69",
+    "input_tp": "-1.14",
+    "input_lra": "3.10",
+    "input_thresh": "-27.81",
+    "output_i": "-15.41",
+    "output_tp": "-1.50",
+    "output_lra": "1.70",
+    "output_thresh": "-25.48",
+    "normalization_type": "dynamic",
+    "target_offset": "-0.59"
+  },
+  "music_sync": {
+    "first_combat_seconds": 6.5,
+    "title_seconds": 33.233
+  },
+  "cinematics": "Existing cine_oathsworn.mp4 and cine_korvath.mp4; aspect ratios and source watermarks retained.",
+  "supplied_song_sha256": "a44a0a9cb83889d1825aa52c23f1da3845c7c42f4f47c4ca3d6311b605b6d805",
+  "exported_music_correlation": 0.998492
+}

@@ -605,6 +605,7 @@ const UI = (() => {
     }
   }
   function header(el, title, side) {
+    if(typeof MobilePages!=='undefined')MobilePages.release(el);
     el.classList.remove("talent-panel");
     const kind = openPanels[side]; el.dataset.kind = kind || "dialog";
     el.classList.toggle("waypoint-panel", kind === "shrine");
@@ -677,6 +678,16 @@ const UI = (() => {
       }
     });
     const scroll = textNode('div','item-grid-scroll'); scroll.appendChild(g); container.appendChild(scroll);
+    if(typeof MobileShell!=='undefined'&&MobileShell.enabled&&cursorItem){
+      container.appendChild(actionButton('Place carried item here',()=>{
+        const it=cursorItem;
+        for(let y=0;y<=grid.h-it.h;y++)for(let x=0;x<=grid.w-it.w;x++)if(Items.fits(grid,it,x,y)){
+          if(coopItems())return InventoryActions.submit({type:'place',itemId:it._coopId,to:ctxName==='storage'?'stash':'inv',x,y});
+          Items.place(grid,it,x,y);setCursorItem(null);refreshGrids();refreshHUD();return;
+        }
+        msg('No room here. Choose another container or item.');
+      }));
+    }
     return g;
   }
   function openTouchItemMenu(grid, it, ctxName, event) {
@@ -1909,6 +1920,7 @@ const UI = (() => {
     mk("Resume", () => closeEsc());
     mk("Controls", () => openSettings({ tab: "controls", origin: "pause" }));
     mk("Settings", () => openSettings({ origin: "pause" }));
+    if(typeof MobileShell!=='undefined')MobileShell.controls(actions);
     mk("Loot Filter", () => {
       menuScreen = "loot"; menuBackAction = "Loot Filter";
       const workshop = textNode("div", "box gframe"); els.escmenu.replaceChildren(workshop);
@@ -2251,7 +2263,8 @@ const UI = (() => {
     const list = el.querySelector("#choiceList");
     for (const key of ["give", "seal", "destroy"]) {
       const e = ENDINGS[key];
-      const b = document.createElement("div"); b.className = "choicebtn";
+      const b = document.createElement(typeof MobileShell!=='undefined'&&MobileShell.enabled?'button':'div'); b.className = "choicebtn";
+      if(b.tagName==='BUTTON')b.type='button';
       b.innerHTML = `<b>${e.name}</b>${e.sub}`;
       b.addEventListener("click", () => {  showEnding(key); });
       list.appendChild(b);
@@ -2266,6 +2279,12 @@ const UI = (() => {
       `<span class="ln em" style="margin-top:18px">The Waking World endures. For now.</span>`;
     const lines = [...txt.querySelectorAll(".ln")];
     clearCin();
+    if(typeof MobileShell!=='undefined'&&MobileShell.enabled){
+      for(const line of lines)line.classList.add('show');titleEl.classList.add('show');skip.remove();
+      Game.recordEnding(key);el.onclick=null;
+      el.appendChild(actionButton('Return to title',()=>{clearCin();el.classList.add('hidden');el.innerHTML='';Game.saveAndQuit();},'phone-ending-return'));
+      return;
+    }
     lines.forEach((ln, i) => cinTimers.push(setTimeout(() => ln.classList.add("show"), 400 + i * 2400)));
     cinTimers.push(setTimeout(() => titleEl.classList.add("show"), 600 + lines.length * 2400));
     cinTimers.push(setTimeout(() => skip.classList.add("show"), 1200 + lines.length * 2400));

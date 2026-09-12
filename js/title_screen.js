@@ -156,6 +156,8 @@ window.TitleScreen=(()=>{
   function theme(id){const t=THEMES[id]||THEMES.vanguard;root().style.setProperty('--class-color',t.color);root().style.setProperty('--class-rgb',t.rgb);root().dataset.class=id;}
   function reset(screen){
     cleanup();cleanup=()=>{};
+    if(typeof MobilePages!=='undefined')MobilePages.release(document.getElementById('titleMenu'));
+    delete root().dataset.heroStep;
     const r=root(),m=document.getElementById('titleMenu');r._back=null;r.dataset.screen=screen;r.scrollTop=0;
     for(const sibling of r.parentElement.children)if(sibling!==r&&!obscured.has(sibling)){obscured.set(sibling,sibling.inert);sibling.inert=true;}
     r.onkeydown=e=>{if(e.key==='Escape'&&r.dataset.screen!=='main'&&m.getAttribute('aria-busy')!=='true'){e.preventDefault();e.stopPropagation();(r._back||(()=>main({focus:true})))();}};
@@ -189,6 +191,22 @@ window.TitleScreen=(()=>{
     support.href='support.html';support.target='_blank';support.rel='noopener noreferrer';
     support.setAttribute('aria-label','Support the game (opens in a new tab)');
     actions.append(support);
+    if(typeof MobileShell!=='undefined'&&MobileShell.enabled){
+      const secondary=[...actions.children].filter(n=>!['CONTINUE','NEW HERO','MULTIPLAYER'].some(label=>n.getAttribute('aria-label')===label));
+      let morePage=0;
+      function showMore(){
+        for(const node of [...actions.children])node.hidden=true;
+        const available=secondary.filter(n=>!(n.hasAttribute('data-phone-fullscreen')&&!document.fullscreenEnabled)&&!(n.hasAttribute('data-phone-install')&&MobileShell.standalone()));
+        available.slice(morePage*4,morePage*4+4).forEach(node=>node.hidden=false);back.hidden=false;
+        moreNext.hidden=available.length<=4;moreNext.textContent=morePage?'Previous options':'Next options';moreNext.setAttribute('aria-label',moreNext.textContent);
+      }
+      const more=button('MORE','title-action quiet',()=>{morePage=0;showMore();});
+      const moreNext=button('Next options','title-action quiet',()=>{morePage=morePage?0:1;showMore();});
+      const back=button('BACK','title-action quiet',()=>{for(const node of [...actions.children])node.hidden=false;secondary.forEach(node=>node.hidden=true);back.hidden=true;moreNext.hidden=true;});
+      MobileShell.controls(actions);
+      for(const node of [...actions.children])if(node.hasAttribute('data-phone-fullscreen')||node.hasAttribute('data-phone-install')){node.classList.add('title-action','quiet');secondary.push(node);}
+      secondary.forEach(node=>node.hidden=true);back.hidden=true;moreNext.hidden=true;actions.append(more,back,moreNext);
+    }
     m.append(actions);
     const chapter=el('aside','splash-chapter');chapter.append(el('span','title-kicker','ACT I'),el('strong','','The Fallen North'),el('span','chapter-line','Beyond the last warm wall.'));m.append(chapter);
     if(focus)actions.querySelector('button').focus({preventScroll:true});
@@ -236,7 +254,7 @@ window.TitleScreen=(()=>{
   }
   function backButton(back=()=>main({focus:true})){return button('← BACK','title-back',back);}
   function newHero(options={}){
-    const m=reset('new'),preferred=new URLSearchParams(location.search).get('class');let selected=ORDER.includes(preferred)?preferred:'vanguard';
+    const m=reset('new'),preferred=new URLSearchParams(location.search).get('class');let selected=ORDER.includes(preferred)?preferred:'vanguard',phoneHeroActions=null;
     root()._back=options.back||null;
     const top=el('div','selection-top');top.append(backButton(options.back),el('span','title-kicker',options.coop?'CHOOSE YOUR CO-OP HERO':'CHOOSE WHO ANSWERS THE CALL'),el('span','selection-count','FIVE CALLINGS. ONE FATE.'));m.append(top);
     const scene=el('section','selection-scene'),info=el('div','class-story');info.id='campInfo';info.setAttribute('role','tabpanel');info.tabIndex=0;
@@ -258,6 +276,7 @@ window.TitleScreen=(()=>{
       const disciplines=el('div','class-disciplines');disciplines.setAttribute('aria-label','Skill disciplines');
       cls.trees.forEach((name,i)=>{const d=el('div','discipline');d.append(el('span','discipline-index',['I','II','III'][i]),el('strong','',name),el('span','',t.trees[i]));disciplines.append(d);});info.append(disciplines);
       preview.refresh();
+      if(phoneHeroActions)info.append(phoneHeroActions);
     }
     const form=el('form','hero-form');form.id='campRow';
     const nameLabel=el('label','hero-name','NAME YOUR LEGEND'),input=el('input');input.id='nameInput';input.name='heroName';input.maxLength=options.coop?24:14;input.placeholder='Wanderer';input.autocomplete='off';input.spellcheck=false;nameLabel.append(input);
@@ -266,6 +285,17 @@ window.TitleScreen=(()=>{
     const go=el('button','title-action primary',options.coop?'CREATE CO-OP HERO':'ENTER THE MARCHES');go.type='submit';go.setAttribute('aria-label',go.textContent);
     form.append(nameLabel);if(!options.coop)form.append(hardcore);form.append(go);form.addEventListener('submit',e=>{e.preventDefault();Sfx.init();enter(m,()=>options.create?options.create(input.value.trim()||'Wanderer',selected):Game.newGame(input.value.trim()||'Wanderer',selected,check.checked));});m.append(form);
     select(selected);cleanup=()=>preview.dispose();focusHeading(tabs.get(selected));
+    if(typeof MobileShell!=='undefined'&&MobileShell.enabled){
+      root().dataset.heroStep='class';
+      const actions=el('div','phone-hero-next');
+      phoneHeroActions=actions;
+      const next=button('Next', '',()=>{root().dataset.heroStep='identity';input.focus({preventScroll:true});});
+      const details=button('Details','',()=>MobileShell.showHelp(`${DATA.CLASSES[selected].desc} Disciplines: ${DATA.CLASSES[selected].trees.join(', ')}.`,DATA.CLASSES[selected].name));
+      actions.append(details,next);info.append(actions);
+      for(const tab of tabs.values())tab.addEventListener('click',()=>info.append(actions));
+      root()._back=()=>{if(root().dataset.heroStep==='identity'){root().dataset.heroStep='class';tabs.get(selected).focus({preventScroll:true});}else (options.back||(()=>main({focus:true})))();};
+      top.firstChild.addEventListener('click',e=>{if(root().dataset.heroStep==='identity'){e.preventDefault();e.stopImmediatePropagation();root().dataset.heroStep='class';tabs.get(selected).focus({preventScroll:true});}},true);
+    }
     // Keep the selected tab in the keyboard sequence after focusHeading.
     tabs.get(selected).tabIndex=0;
   }

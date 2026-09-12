@@ -212,6 +212,7 @@ const Game = (() => {
       mmSmall = document.getElementById("minimap");
       mmCtx = mmSmall.getContext("2d");
       window.addEventListener("resize", resize);
+      window.addEventListener("phoneviewportchange", resize);
       resize();
       await Player3D.init();
       if (!await requireSpriteBundle("core", "LOADING CORE SPRITES")) return;
@@ -226,9 +227,12 @@ const Game = (() => {
     }
   }
   function resize() {
-    canvas.width = innerWidth; canvas.height = innerHeight;
+    if(!canvas)return;
+    const viewport=typeof MobileShell!=='undefined'&&MobileShell.enabled?MobileShell.viewport:{width:innerWidth,height:innerHeight};
+    if(canvas.width===viewport.width&&canvas.height===viewport.height&&lightCv)return;
+    canvas.width = viewport.width; canvas.height = viewport.height;
     lightCv = document.createElement("canvas");
-    lightCv.width = innerWidth; lightCv.height = innerHeight;
+    lightCv.width = viewport.width; lightCv.height = viewport.height;
     lightCtx = lightCv.getContext("2d");
   }
 
@@ -2201,7 +2205,7 @@ const Game = (() => {
   // Touch input is separate from the mouse so a second finger cannot steal
   // the movement gesture or move the aim underneath a held skill.
   function touchReady() {
-    return !!(running && state && !state.player.dead && !UI.escOpen() &&
+    return !!(!(typeof MobileShell!=='undefined'&&MobileShell.blocked) && running && state && !state.player.dead && !UI.escOpen() &&
       !UI.cinematicActive() && !UI.anyOpen() && !UI.cursorItem);
   }
   function stopTouchMovement() {
@@ -4475,12 +4479,13 @@ const Game = (() => {
     if (typeof MobileControls !== "undefined") MobileControls.sync();
     if (!running || !state) return;
     if(typeof Coop!=="undefined"&&Coop.active&&Coop.loading)return;
-    if(typeof SkillAudio!=='undefined')SkillAudio.setPaused(UI.escOpen()||UI.cinematicActive());
+    const phoneBlocked=typeof MobileShell!=='undefined'&&MobileShell.blocked;
+    if(typeof SkillAudio!=='undefined')SkillAudio.setPaused(UI.escOpen()||UI.cinematicActive()||phoneBlocked);
     let dt = dtRaw;
     if (fx.hitPause > 0) { fx.hitPause -= dtRaw; dt *= 0.12; }
     try {
-      if(typeof Coop!=="undefined"&&Coop.active){updateHover();if(!UI.escOpen()&&!UI.cinematicActive()&&!UI.anyOpen())heldUpdate();Coop.frame(dtRaw);}
-      else if (!UI.escOpen() && !UI.cinematicActive()) update(dt);
+      if(typeof Coop!=="undefined"&&Coop.active){updateHover();if(!phoneBlocked&&!UI.escOpen()&&!UI.cinematicActive()&&!UI.anyOpen())heldUpdate();Coop.frame(dtRaw);}
+      else if (!phoneBlocked && !UI.escOpen() && !UI.cinematicActive()) update(dt);
       else cancelGroundHold();
       updateCamera(dtRaw);           // camera eases on real time, even during hit-pause
       render();

@@ -192,28 +192,25 @@ const equal = (a, b, message) => { assert.deepEqual(a, b, message); checks++; };
     console.log('PASS pause navigation, input isolation, held-input cancellation and loot workshop compatibility.');
     await page.context().close();
 
-    const phone = await makePage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
-    await load(phone); await titleSettings(phone).tap();
-    await tab(phone, 'Controls');
-    equal(await phone.locator('[data-device="touch"]').getAttribute('aria-pressed'), 'true', 'touch guide not selected on touch device');
-    await phone.getByRole('button', { name: 'Keyboard & Mouse', exact: true }).tap();
-    ok(await phone.evaluate(() => MobileControls.enabled), 'keyboard guide disabled touch');
-    await phone.getByRole('button', { name: 'Touch', exact: true }).tap();
-    for (const [label, width, height] of [['phone', 390, 844], ['small-phone', 320, 568], ['landscape', 844, 390]]) {
-      await phone.setViewportSize({ width, height });
-      for (const name of ['Audio', 'Gameplay', 'Display', 'Controls']) {
-        await tab(phone, name); await capture(phone, label + '-' + name.toLowerCase());
-        // Scrolling must keep Back visible and reveal the entire last row.
-        await phone.locator('#settingsPanel').evaluate(el => { el.scrollTop = el.scrollHeight; });
-        const fits = await phone.evaluate(() => {
-          const body = document.querySelector('#settingsPanel'), last = body.lastElementChild;
-          return last.getBoundingClientRect().bottom <= body.getBoundingClientRect().bottom + 1;
-        });
-        ok(fits, label + ': last setting/guide row cannot be reached');
-      }
+    const { reveal } = require('./phone_page_helpers.cjs');
+    const phone = await makePage({ viewport: { width: 390, height: 844 }, screen: {width:390,height:844}, isMobile: true, hasTouch: true });
+    await phone.goto(base + '/index.html', {waitUntil:'load',timeout:120000});
+    await phone.waitForFunction(()=>document.querySelector('#titleMenu button'),null,{timeout:120000});
+    ok(await phone.locator('#phoneRotate').isVisible(), 'portrait must ask for rotation');
+    await phone.setViewportSize({width:844,height:390});
+    await phone.waitForFunction(()=>!MobileShell.blocked);
+    await phone.getByRole('button',{name:'MORE',exact:true,includeHidden:true}).tap();
+    await titleSettings(phone).tap();
+    for(const name of ['Audio','Gameplay','Display','Controls']){
+      const target=phone.getByRole('tab',{name,exact:true,includeHidden:true});await reveal(target);await target.tap();
+      await phone.waitForTimeout(100);
+      ok(await phone.locator('.menu-shell').evaluate(el=>el.scrollHeight<=el.clientHeight+1&&el.scrollWidth<=el.clientWidth+1),name+' phone settings scroll');
     }
-    await phone.getByRole('button', { name: 'Back', exact: true }).tap();
-    ok(await phone.locator('#escmenu').isHidden(), 'touch Back did not close title settings');
+    const keyboard=phone.getByRole('button',{name:'Keyboard & Mouse',exact:true,includeHidden:true});await reveal(keyboard);await keyboard.tap();
+    ok(await phone.evaluate(()=>MobileControls.enabled),'guide must not disable touch');
+    const touch=phone.getByRole('button',{name:'Touch',exact:true,includeHidden:true});await reveal(touch);await touch.tap();
+    const back=phone.getByRole('button',{name:'Back',exact:true,includeHidden:true});await reveal(back);await back.tap();
+    ok(await phone.locator('#escmenu').isHidden(),'phone Back returns to title');
     await phone.context().close();
     equal(errors, [], 'browser page errors');
     fs.writeFileSync(path.join(output, 'report.json'), JSON.stringify({ status: 'PASS', checks, errors }, null, 2));

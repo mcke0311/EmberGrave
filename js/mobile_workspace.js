@@ -14,8 +14,7 @@ const MobileWorkspace=(()=>{
     for(const id of ['panelLeft','panelRight','panelCenter','skillPick','escmenu','title','cinematic','deathScreen'])observer.observe(document.getElementById(id),{attributes:true,attributeFilter:['class','open']});
     observer.observe(document.body,{childList:true});
     window.addEventListener('resize',sync);
-    const viewport=()=>{const v=window.visualViewport;document.documentElement.style.setProperty('--visible-height',(v?.height||innerHeight)+'px');document.documentElement.style.setProperty('--visible-top',(v?.offsetTop||0)+'px');};
-    window.visualViewport?.addEventListener('resize',viewport);window.visualViewport?.addEventListener('scroll',viewport);viewport();sync();
+    window.addEventListener('phoneviewportchange',sync);sync();
   }
   function select(side){active=side;UI.hideTooltip();sync();}
   function sync(){

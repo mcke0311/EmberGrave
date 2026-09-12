@@ -2,6 +2,7 @@
   "name": "embergrave-game",
   "private": true,
   "scripts": {
+    "test:phone": "node tests/phone_screens_browser.cjs && node tests/mobile_controls_browser.cjs && node tests/settings_menu_browser.cjs",
     "test:coop": "node --test tests/coop_relay.test.cjs tests/coop_motion.test.cjs && node tests/coop_contract.mjs && node tests/coop_inventory_contract.mjs",
     "test:coop:performance": "node tests/coop_performance.cjs",
     "test:coop:browser": "node tests/coop_browser.cjs",

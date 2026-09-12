@@ -1,0 +1,156 @@
+// Isolated browser coverage for bounded phone screens. Never reads user saves.
+const { chromium }=require('playwright');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const {reveal}=require('./phone_page_helpers.cjs');
+const base=process.env.GAME_REVIEW_URL||'http://127.0.0.1:8741';
+const output='tmp/phone-screens';fs.mkdirSync(output,{recursive:true});
+const pause=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{
+ const browser=await chromium.launch({channel:'chrome',headless:true});
+ const context=await browser.newContext({viewport:{width:568,height:320},screen:{width:568,height:320},isMobile:true,hasTouch:true});
+ const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.stack));
+ await page.addInitScript(()=>{
+   const store=new Map([['embergrave_options',JSON.stringify({vol:{master:0,sfx:0,music:0}})]]);
+   Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});
+ });
+ try{
+  await page.goto(base+'/index.html?touch=1',{waitUntil:'load',timeout:120000});
+  await page.waitForFunction(()=>typeof Game!=='undefined'&&document.querySelector('#titleMenu button'),null,{timeout:120000});
+  await pause(300);
+  console.log('title',await page.evaluate(()=>({phone:MobileShell.enabled,blocked:MobileShell.blocked,errors:document.querySelector('#appFatal')?.textContent,orientation:screen.orientation.type})));
+  await page.screenshot({path:output+'/title.png'});
+  await page.getByRole('button',{name:'NEW HERO',exact:true}).click();await pause(300);
+  await page.screenshot({path:output+'/hero.png'});
+  await page.getByRole('button',{name:'Next',exact:true}).click();await pause(100);
+  assert.equal(await page.locator('#title').getAttribute('data-hero-step'),'identity');
+  await page.locator('#nameInput').fill('Phone QA');
+  await page.evaluate(()=>{Object.defineProperty(visualViewport,'height',{value:120,configurable:true});MobileShell.refresh();});
+  assert.equal(await page.evaluate(()=>MobileShell.blocked),false,'keyboard must not trigger portrait gate');
+  assert.ok(await page.locator('#nameInput').evaluate(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.bottom<=120;}),'keyboard hides name input');
+  await page.locator('#phoneKeyboardDone').click();
+  await page.evaluate(()=>{delete visualViewport.height;MobileShell.refresh();});
+  await page.setViewportSize({width:320,height:568});await page.waitForFunction(()=>MobileShell.blocked);
+  assert.equal(await page.locator('#nameInput').inputValue(),'Phone QA');
+  await page.setViewportSize({width:568,height:320});await page.waitForFunction(()=>!MobileShell.blocked);
+  assert.equal(await page.locator('#title').getAttribute('data-hero-step'),'identity');
+  await page.getByRole('button',{name:'← BACK',exact:true}).click();
+  await page.locator('#choose-emberwitch').click();await page.getByRole('button',{name:'Next',exact:true}).click();
+  assert.equal(await page.locator('#nameInput').inputValue(),'Phone QA','hero step lost the name');
+  await page.screenshot({path:output+'/identity.png'});
+  await page.evaluate(async()=>{await Game.newGame('Phone QA','vanguard',false);await Game.skipOpening();Game.debugFlags.god=true;UI.hideTitle();UI.closeAll();});
+  await page.waitForFunction(()=>Game.touchReady(),null,{timeout:120000});
+  await page.screenshot({path:output+'/game.png'});
+  async function audit(label){
+    await pause(120);
+    const result=await page.evaluate(()=>{
+      const bad=[],seen=[];
+      const root=[...document.querySelectorAll('.phone-paged')].filter(n=>n.getClientRects().length&&!n.closest('.hidden,.workspace-inactive')&&(!n.matches('dialog')||n.open)).at(-1);
+      if(!root)return {bad:['Missing pager'],seen};
+      function check(){
+        const head=root.querySelector('.phone-pager-head').getBoundingClientRect(),foot=root.querySelector('.phone-pager-foot').getBoundingClientRect();
+        if(root.scrollHeight>root.clientHeight+1||root.scrollWidth>root.clientWidth+1){bad.push('root scroll '+root.scrollWidth+'x'+root.scrollHeight);for(const n of root.querySelectorAll('*'))if(n.getClientRects().length&&n.getBoundingClientRect().right>innerWidth+1)bad.push('wide '+n.tagName+'.'+n.className+' '+Math.round(n.getBoundingClientRect().right));}
+        for(const n of root.querySelectorAll('.phone-unit:not(.phone-off):not(.phone-text-source),.phone-ui button')){
+          if(!n.getClientRects().length||n.closest('.phone-off,.phone-skip'))continue;
+          const r=n.getBoundingClientRect(),text=n.getAttribute('aria-label')||n.textContent.trim().slice(0,90)||n.tagName;
+          if(n.classList.contains('phone-unit')){seen.push(text);if(r.top<head.bottom-1||r.bottom>foot.top+1)bad.push(text+' outside body '+Math.round(r.top)+'..'+Math.round(r.bottom));}
+          if(r.left<-.5||r.right>innerWidth+1)bad.push(text+' outside width');
+          if(n.matches('button,a,input,select,.invitem,.eqslot')&&(r.width<43||r.height<43))bad.push(text+' small '+Math.round(r.width)+'x'+Math.round(r.height));
+        }
+      }
+      const next=()=>root.querySelector('.phone-pager-foot button:last-of-type');
+      const nav=()=>[...root.querySelectorAll('.phone-pager-foot button')].find(n=>n.textContent==='Next');
+      const sections=()=>[...root.querySelectorAll('.phone-pager-foot button')].find(n=>n.textContent==='Sections');
+      const groups=[];
+      if(!sections().hidden){sections().click();for(let i=0;i<100;i++){check();groups.push(...[...root.querySelectorAll('.phone-section-choice:not(.phone-off)')].map(n=>n.textContent));if(nav().disabled)break;nav().click();}}
+      if(!groups.length)groups.push(null);
+      for(const group of groups){
+        if(group){if(root.querySelector('.phone-pager-head strong').textContent!=='Sections')sections().click();
+          const previous=[...root.querySelectorAll('.phone-pager-foot button')].find(n=>n.textContent==='Previous');while(!previous.disabled)previous.click();
+          for(let i=0;i<100;i++){const b=[...root.querySelectorAll('.phone-section-choice:not(.phone-off)')].find(n=>n.textContent===group);if(b){b.click();break;}if(nav().disabled){bad.push('Missing section '+group);break;}nav().click();}
+        }
+        for(let i=0;i<100;i++){check();if(nav().disabled)break;nav().click();}
+      }
+      return {bad:[...new Set(bad)],pages:seen.length,groups};
+    });
+    console.log('AUDIT',label,JSON.stringify(result));
+    if(result.bad.length){await page.screenshot({path:output+'/'+label.replace(/[^a-z0-9]/gi,'_')+'-failure.png'});}
+    return result.bad.map(e=>label+': '+e);
+  }
+  const failures=[];
+  for(const panel of ['inv','char','skills','quest']){
+   await page.evaluate(p=>{UI.closeAll();UI.togglePanel(p);},panel);await pause(300);
+   const report=await page.evaluate(()=>[...document.querySelectorAll('.phone-paged')].filter(n=>n.getClientRects().length&&!n.closest('.hidden,.workspace-inactive')).map(root=>({id:root.id,kind:root.dataset.kind,sections:root.querySelector('.phone-pager-head')?.textContent,page:root.querySelector('.phone-pager-foot')?.textContent,client:[root.clientWidth,root.clientHeight],scroll:[root.scrollWidth,root.scrollHeight],units:[...root.querySelectorAll('.phone-unit:not(.phone-off):not(.phone-text-source)')].filter(n=>n.getClientRects().length).map(n=>({tag:n.tagName,cls:n.className,text:n.textContent.slice(0,80),r:JSON.parse(JSON.stringify(n.getBoundingClientRect()))}))})));
+   console.log(panel,JSON.stringify(report));await page.screenshot({path:output+'/'+panel+'.png'});
+   failures.push(...await audit(panel));
+  }
+  await page.evaluate(()=>{UI.closeAll();UI.openSettings({origin:'pause'});});await pause(300);await page.screenshot({path:output+'/settings.png'});
+  for(const size of [{width:568,height:240},{width:667,height:375},{width:844,height:390}]){
+   await page.setViewportSize(size);await pause(100);
+   for(const panel of ['inv','char','skills','quest','storage','forge']){
+    await page.evaluate(p=>{UI.closeEsc();UI.closeAll();if(p==='storage')UI.openStorage();else if(p==='forge')UI.openForge();else UI.togglePanel(p);},panel);
+    failures.push(...await audit(size.width+'x'+size.height+'-'+panel));
+   }
+   for(const tab of ['audio','gameplay','display','controls']){
+    await page.evaluate(tab=>{UI.closeAll();UI.openSettings({origin:'pause',tab});},tab);failures.push(...await audit(size.width+'x'+size.height+'-'+tab));
+   }
+  }
+  await page.setViewportSize({width:568,height:240});
+  await page.evaluate(()=>{
+    UI.closeEsc();UI.closeAll();const p=Game.state.player;p.inv.items=[];p.stash.items=[];
+    for(let i=0;i<40;i++)Items.place(p.inv,Items.makeConsumable('idscroll',1),i%10,Math.floor(i/10));
+    for(let i=0;i<60;i++)Items.place(p.stash,Items.makeConsumable('idscroll',1),i%10,Math.floor(i/10));
+    p.attrPts=5;UI.togglePanel('inv');
+  });failures.push(...await audit('full-pack'));
+  await page.evaluate(()=>{UI.closeAll();UI.openStorage();});failures.push(...await audit('full-storage'));
+  for(const cls of ['vanguard','emberwitch','gravebinder','wildkeeper','veilranger']){
+    await page.evaluate(cls=>{UI.closeAll();const p=Game.state.player;p.classId=cls;p.cls=DATA.CLASSES[cls];p.lvl=50;p.skillPts=100;p.computeStats();UI.togglePanel('skills');},cls);
+    for(let tree=0;tree<3;tree++){
+      const tab=page.locator('#discipline-'+tree);await reveal(tab);await tab.click();failures.push(...await audit(cls+'-tree-'+tree));
+    }
+  }
+  await page.evaluate(()=>{UI.closeAll();UI.openShrine();});failures.push(...await audit('travel'));
+  await page.evaluate(()=>{UI.closeAll();UI.openDialog(Game.state.npcs[0]);});failures.push(...await audit('dialogue'));
+  await page.evaluate(()=>{UI.closeAll();UI.openVendor(Object.keys(Game.state.vendorStock)[0]);});failures.push(...await audit('vendor'));
+  await page.evaluate(()=>{UI.closeAll();UI.openEsc();});
+  const filter=page.locator('#escmenu').getByRole('button',{name:'Loot Filter',exact:true,includeHidden:true});await reveal(filter);await filter.click();failures.push(...await audit('loot-filter'));
+  await page.evaluate(()=>{UI.closeEsc();UI.showDeath(0,'Frosthaven');});failures.push(...await audit('death'));await page.evaluate(()=>UI.hideDeath());
+  await page.evaluate(()=>UI.openFinalChoice());failures.push(...await audit('final-choice'));
+  await page.evaluate(()=>{document.querySelector('#cinematic').classList.add('hidden');MobileShell.showHelp('A long description. '.repeat(150),'Long item detail');});failures.push(...await audit('long-text'));
+  await page.locator('#phoneInstallHelp .phone-pager-head button').click();
+  assert.ok(await page.locator('#phoneInstallHelp').isHidden(),'closed help still covers the game');
+  // Fullscreen promises and browser exit events must not leave the interface blocked.
+  await page.evaluate(async()=>{
+    window.__fullCalls=0;window.__requestFull=document.documentElement.requestFullscreen;
+    document.documentElement.requestFullscreen=()=>{window.__fullCalls++;return Promise.reject(new Error('denied'));};
+    await MobileShell.fullscreen();
+  });assert.equal(await page.evaluate(()=>window.__fullCalls),1);assert.ok(await page.locator('#phoneInstallHelp').isVisible());
+  await page.evaluate(()=>{document.documentElement.requestFullscreen=window.__requestFull;document.querySelector('#phoneInstallHelp').close();});
+  await page.evaluate(async()=>{
+    const request=document.documentElement.requestFullscreen,exit=document.exitFullscreen,lock=screen.orientation.lock;
+    let entered=false,locked=false;
+    Object.defineProperty(document,'fullscreenElement',{configurable:true,get:()=>entered?document.documentElement:null});
+    document.documentElement.requestFullscreen=async()=>{entered=true;document.dispatchEvent(new Event('fullscreenchange'));};
+    document.exitFullscreen=async()=>{entered=false;document.dispatchEvent(new Event('fullscreenchange'));};
+    screen.orientation.lock=async direction=>{locked=direction==='landscape';};
+    try{await MobileShell.fullscreen();if(!entered||!locked)throw Error('fullscreen did not request landscape');await MobileShell.fullscreen();if(entered)throw Error('fullscreen exit failed');}
+    finally{document.documentElement.requestFullscreen=request;document.exitFullscreen=exit;screen.orientation.lock=lock;delete document.fullscreenElement;MobileShell.refresh();}
+    const install=new Event('beforeinstallprompt');window.__installCalls=0;install.prompt=async()=>{window.__installCalls++;};install.userChoice=Promise.resolve({outcome:'accepted'});dispatchEvent(install);MobileShell.showHelp();
+  });
+  const install=page.locator('#phoneInstallHelp').getByRole('button',{name:'Install app',exact:true,includeHidden:true});await reveal(install);await install.click();
+  assert.equal(await page.evaluate(()=>window.__installCalls),1);
+  await page.evaluate(()=>{
+    const native=window.matchMedia;window.matchMedia=q=>q==='(display-mode: standalone)'?{matches:true}:native.call(window,q);
+    try{if(!MobileShell.standalone())throw Error('standalone not detected');const host=document.createElement('div');MobileShell.controls(host);if(!host.querySelector('[data-phone-install]').hidden)throw Error('installed launch offers installation');}finally{window.matchMedia=native;}
+  });
+  await page.evaluate(()=>{UI.closeAll();UI.showTitle();const hero=Game.listSaves()[0];TitleScreen.savedHeroes({saves:Array.from({length:24},(_,i)=>({...hero,slot:'phone-fixture-'+i,name:'Saved hero '+i}))});});
+  failures.push(...await audit('many-saved-heroes'));
+  const manifest=await page.evaluate(async()=>await fetch('manifest.webmanifest').then(r=>r.json()));
+  assert.equal(manifest.display,'standalone');assert.equal(manifest.orientation,'landscape');
+  for(const icon of manifest.icons)assert.ok((await context.request.get(base+'/'+icon.src)).ok());
+  console.log('FAILURES',JSON.stringify(failures));
+  fs.writeFileSync(output+'/geometry.json',JSON.stringify({failures,errors},null,2));
+  assert.deepEqual(failures,[]);
+  console.log('errors',errors);assert.deepEqual(errors,[]);
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});
