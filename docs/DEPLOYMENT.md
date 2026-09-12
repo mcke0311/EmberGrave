@@ -114,3 +114,27 @@ none missing, 43 mobile gameplay checks, 62 successful local HTTP page/asset
 requests, and exact source/release equality for all seven updated files.
 Browser interaction testing was not performed. The local packaging helper
 could not start its Bash runtime; Sites packaged the exact pushed static source.
+
+## Public multiplayer connected — 2026-09-12
+
+Version 9 connects the hosted game to the activated Render relay at
+`wss://embergrave-multiplayer.onrender.com/ws`. Publication succeeded at
+17:56 UTC at https://embergravegame.mcke0311.chatgpt.site, with existing public
+access preserved. The relay's health endpoint reports build `embergrave-coop-2`.
+
+Release source: `f18e180aa114a63163b17a22aae73bd75c454c93`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_5573d6c2a6f4819184b108c0da8d19d3`.
+Deployment: `appgdep_6aa591c8f75c8191a08325850ec4b94c`.
+
+Twelve configuration and public relay checks passed, including four-player room
+admission using the real game's Origin, guest commands, large snapshot transfers
+to every guest, reconnection with the same player identity, and clean room exit.
+After publication, the live index and versioned configuration both returned HTTP
+200 and selected the verified public relay. This release changes only the relay
+configuration and its cache version; the previous connection recovery fixes are
+included. HTTP development/LAN pages retain their local relay defaults.
+
+The local archive helper could not start Bash. Sites built the exact pushed
+static source, and successful deployment was confirmed before the live-file check.
+Render's Free instance can take about a minute to wake after inactivity; the
+hosted client allows 90 seconds for the initial connection.
