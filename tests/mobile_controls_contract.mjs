@@ -67,6 +67,7 @@ near.surfaceId=0;near.x=p.x+1;near.y=p.y;s.map.blocked[Math.floor(near.x)+Math.f
 G.touchSkill('L',true);G.touchSkill('L',false);ok(hits.length===0,'targeted through a wall');
 s.map.blocked.fill(0);s.monsters=[near];blocked=true;G.touchSkill('L',true);ok(hits.length===0,'panel allowed an attack');blocked=false;
 p.skillCd.basic=s.time+5;G.touchSkill('L',true);ok(hits.length===0,'cooldown allowed an attack');p.skillCd.basic=0;
+G.touchSkill('L',false);
 // A held buff/summon only activates once, even if it has no action animation.
 const buff=Object.values(DATA.SKILLS).find(sk=>sk.type==='buff');p.skills[buff.id]=1;p.skillR=buff.id;p.mana=1e6;
 G.touchSkill('R',true);const count=hits.length;for(let i=0;i<20;i++){s.time+=.3;api.heldUpdate();}
@@ -78,4 +79,23 @@ ok(released===1&&!p.drawing,'charged shot failed to release');G.touchSkill('R',t
 ok(released===1&&!p.drawing,'cancel fired a charged shot');
 s=fresh();p=s.player;G.touchTap(U.isoX(25.5,20.5)+500,U.isoY(25.5,20.5));
 ok(p.command?.type==='move'&&p.path?.length,'world tap did not create a path');frame(s,30);ok(p.x>20.5,'world tap path did not execute');
-console.log(`PASS ${checks} touch gameplay checks: screen direction, speed, collision, jumping, targeting, independent input and cancellation.`);
+// Direct slots resolve their ID on press, never rebinding the mouse skills.
+s=fresh();p=s.player;const casts=[];p.performSkill=(id)=>{casts.push(id);return true;};p.releaseDraw=()=>{casts.push('release');p.drawing=null;};
+p.quickSlots=[buff.id,buff.id,buff.id,buff.id];p.skills[buff.id]=1;p.mana=1e6;
+const originalL=p.skillL,originalR=p.skillR;
+for(let i=0;i<4;i++){
+ const before=casts.length;G.touchQuickSlot(i,true);for(let n=0;n<5;n++){s.time+=.3;api.heldUpdate();}G.touchQuickSlot(i,false);
+ ok(casts.length===before+1&&casts.at(-1)===buff.id,'direct skill slot '+i+' did not activate exactly once');
+}
+ok(p.skillL===originalL&&p.skillR===originalR,'direct slots changed mouse bindings');
+G.touchMove(40,20);G.touchQuickSlot(0,true);G.touchQuickSlot(1,true);G.touchQuickSlot(1,false);
+ok(casts.at(-1)===buff.id,'a second skill stole combat ownership');G.touchQuickSlot(0,false);frame(s,5);ok(p.x>20.5,'direct skill release stopped independent movement');G.resetTouch();
+let before=casts.length;p.quickSlots[0]=null;G.touchQuickSlot(0,true);G.touchQuickSlot(0,false);G.touchQuickSlot(-1,true);G.touchQuickSlot(4,true);ok(casts.length===before,'invalid or empty slot cast');
+p.quickSlots[0]=buff.id;p.skills[buff.id]=0;G.touchQuickSlot(0,true);G.touchQuickSlot(0,false);ok(casts.length===before,'unlearned direct skill cast');p.skills[buff.id]=1;
+p.skillCd[buff.id]=s.time+5;G.touchQuickSlot(0,true);G.touchQuickSlot(0,false);ok(casts.length===before,'direct skill bypassed cooldown');p.skillCd[buff.id]=0;
+const weaponCheck=p.canUseSkillWeapon,payCheck=p.canPay;
+p.canUseSkillWeapon=()=>false;G.touchQuickSlot(0,true);G.touchQuickSlot(0,false);ok(casts.length===before,'direct skill bypassed required weapon');p.canUseSkillWeapon=weaponCheck;
+p.canPay=()=>false;G.touchQuickSlot(0,true);G.touchQuickSlot(0,false);ok(casts.length===before,'direct skill bypassed resource cost');p.canPay=payCheck;
+G.touchQuickSlot(0,true);p.drawing={touch:true};G.touchQuickSlot(0,false);ok(casts.at(-1)==='release','direct charged skill did not release');
+G.touchQuickSlot(0,true);p.drawing={touch:true};before=casts.length;G.resetTouch();ok(casts.length===before&&!p.drawing,'direct skill cancellation fired a charge');
+console.log(`PASS ${checks} touch gameplay checks: movement, direct skills, targeting, independent input and cancellation.`);

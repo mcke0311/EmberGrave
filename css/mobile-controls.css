@@ -93,6 +93,7 @@
 /* The workspace owns mobile navigation and hides all world-facing controls. */
 #workspaceHeader[hidden],#workspaceTabs[hidden],#mobileControls button[hidden] { display:none; }
 #workspaceHeader { display:none; }
+#workspaceHeader .workspace-heading { display:contents; }
 .touch-controls .mobile-tools { display:grid;grid-template-columns:repeat(2,44px); }
 .touch-controls #coopHUD { display:none!important; }
 .touch-controls.mobile-menu-open :is(#mobileControls,#hud,#buffs,#minimap,#zonelabel,#msglog,.opening-objective,.opening-caption,.opening-skip) { visibility:hidden!important;pointer-events:none!important; }

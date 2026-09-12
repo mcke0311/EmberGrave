@@ -51,7 +51,7 @@ const base=process.env.COOP_TEST_URL||'http://127.0.0.1:8741';
     ok(await a.evaluate(()=>JSON.stringify(CoopCodec.hero(Game.state.player).inv))===ownBefore[0]&&await b.evaluate(()=>JSON.stringify(CoopCodec.hero(Game.state.player).inv))===ownBefore[1],'rejected cross-player action leaves both personal inventories unchanged');
     await b.evaluate(()=>CoopInput.touchMove(1,0));
     await a.waitForFunction(netId=>Game.state.players.find(p=>p._coopId===netId).command?.type==='steer',netId);
-    await b.locator('[data-panel=inv]').tap();
+    await b.locator('[data-action=pack]').tap();
     await a.waitForFunction(netId=>!Game.state.players.find(p=>p._coopId===netId).command,netId);
     ok(true,'opening a mobile menu cancels the host-owned movement command');
     ok(await b.locator('#panelRight .invgrid .invitem').count()>0,'guest inventory uses the single-player grid');
@@ -65,43 +65,44 @@ const base=process.env.COOP_TEST_URL||'http://127.0.0.1:8741';
     await b.evaluate(()=>InventoryActions.submit({type:'place',itemId:Game.state.player.management.carried._coopId,to:'inv',x:8,y:3,targetId:null}));
     await b.waitForFunction(id=>Game.state.player.inv.items.find(i=>i._coopId===id)?.gx===8,item);
     ok(await b.locator('#inventorySearch').inputValue()==='draught','authoritative refresh preserves search');
-    await b.locator('#panelWorkspace .phone-paged:not(.hidden):not(.workspace-inactive) .phone-pager-head .pclose').tap();
+    await b.locator('#workspaceClose').tap();
     const close=async()=>{await b.evaluate(()=>UI.closeAll());await b.waitForFunction(()=>!UI.anyOpen());};
     for(const [width,height] of [[568,240],[568,320],[844,390]]){
       await b.setViewportSize({width,height});await b.waitForTimeout(200);
       ok(await b.locator('#coopHUD').isHidden(),'party roster does not obscure gameplay at '+width+'×'+height);
-      await b.locator('[data-action=party]').tap();
-      await b.locator('.coop-dialog[open].phone-paged').waitFor();await b.locator('#mobileControls').waitFor({state:'hidden'});
-      ok(await b.locator('.coop-dialog[open].phone-paged').isVisible()&&await b.locator('#mobileControls').isHidden(),'Party opens an exclusive menu at '+width+'×'+height);
+      await b.locator('[data-action=phone-menu]').tap();const party=b.locator('#escmenu').getByRole('button',{name:'Party',exact:true});await reveal(party);await party.tap();
+      await b.locator('.coop-dialog[open]').waitFor();await b.locator('#mobileControls').waitFor({state:'hidden'});
+      ok(await b.locator('.coop-dialog[open]').isVisible()&&await b.locator('#mobileControls').isHidden(),'Party opens an exclusive menu at '+width+'×'+height);
       await press('Close');
       // Position the host-owned guest at the real strongbox for access validation.
       await a.evaluate(netId=>{const p=Game.state.players.find(p=>p._coopId===netId),o=Game.state.map.props.find(o=>o.interact==='storage');p.x=o.x;p.y=o.y;p.surfaceId=o.surfaceId||0;p.command=null;},netId);
       await b.evaluate(()=>UI.openStorage());
       ok(await b.locator('#workspaceTabs button').count()===2,'storage and pack use tabs at '+width+'×'+height);
-      await b.locator('#panelWorkspace .phone-paged:not(.hidden):not(.workspace-inactive) .phone-pager-head').getByRole('button',{name:'Switch panel'}).click();
-      await b.waitForFunction(()=>!!document.querySelector('#panelWorkspace .phone-paged:not(.hidden):not(.workspace-inactive) .phone-pager-head .pclose'));
+      await b.locator('#workspaceTabs [data-side=right]').click();
+      await b.waitForFunction(()=>!!document.querySelector('#workspaceClose'));
       const layout=await b.evaluate(()=>{
         const visible=el=>!!el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden';
         const panels=[...document.querySelectorAll('#panelWorkspace .panel')].filter(visible);
         const r=panels[0].getBoundingClientRect();
-        const button=panels[0].querySelector('.phone-pager-head .pclose'),br=button.getBoundingClientRect();
+        const button=document.getElementById('workspaceClose'),br=button.getBoundingClientRect();
         const hit=document.elementFromPoint(br.x+br.width/2,br.y+br.height/2);
-        return {count:panels.length,fits:r.x>=0&&r.right<=innerWidth+1&&r.bottom<=innerHeight+1&&r.top>=0,hit:button.contains(hit),targets:[...panels[0].querySelectorAll('.phone-pager-head button')].every(b=>b.offsetHeight>=44)};
+        return {count:panels.length,fits:r.x>=0&&r.right<=innerWidth+1&&r.bottom<=innerHeight+1&&r.top>=0,hit:button.contains(hit),targets:[...document.querySelectorAll('#workspaceHeader button:not([hidden])')].every(b=>b.offsetHeight>=44)};
       });
       ok(layout.count===1&&layout.fits&&layout.hit&&layout.targets,'one reachable workspace with unobscured navigation at '+width+'×'+height+' '+JSON.stringify(layout));
       await b.screenshot({path:`tmp/coop-ui-qa/inventory-${width}x${height}.png`});await close();
       for(const panel of ['char','skills','quest']){
         await b.evaluate(panel=>UI.togglePanel(panel),panel);
-        await b.locator('#panelWorkspace .phone-paged:not(.hidden):not(.workspace-inactive) .phone-pager-head').waitFor();
-        ok(await b.locator('#panelWorkspace .phone-paged:not(.hidden):not(.workspace-inactive) .phone-pager-head').isVisible()&&await b.locator('#mobileControls').isHidden(),panel+' occupies the menu workspace at '+width+'×'+height);
-        await b.locator('#panelWorkspace .phone-paged:not(.hidden):not(.workspace-inactive) .phone-pager-head .pclose').click();
+        await b.locator('#workspaceHeader').waitFor();
+        ok(await b.locator('#workspaceHeader').isVisible()&&await b.locator('#mobileControls').isHidden(),panel+' occupies the menu workspace at '+width+'×'+height);
+        await b.locator('#workspaceClose').click();
       }
-      await b.evaluate(()=>UI.openForge());await b.locator('#panelWorkspace .phone-paged:not(.hidden):not(.workspace-inactive) .phone-pager-head').getByRole('button',{name:'Switch panel'}).click();
+      await b.evaluate(()=>UI.openForge());await b.locator('#workspaceTabs [data-side=right]').click();
       ok(await b.locator('#panelRight .invgrid .invitem').count()>0&&await b.locator('#panelCenter').isHidden(),'forge and pack switch without overlap at '+width+'×'+height);await close();
       await b.evaluate(()=>UI.openSettings());ok(await b.locator('#escmenu').isVisible()&&await b.locator('#mobileControls').isHidden(),'settings hides gameplay controls at '+width+'×'+height);await b.evaluate(()=>UI.closeEsc());
     }
     // Closing while carrying recovers items, including after a failed host commit.
-    await b.evaluate(()=>UI.togglePanel('inv'));await b.evaluate(item=>InventoryActions.submit({type:'carry',itemId:item}),item);
+    await b.evaluate(()=>UI.togglePanel('inv'));const carried=await b.evaluate(item=>InventoryActions.submit({type:'carry',itemId:item}),item);
+    ok(carried,'guest can carry before rollback test');await b.waitForFunction(id=>Game.state.player.management?.carried?._coopId===id,item);
     await a.evaluate(()=>{window.realCommit=CoopStore.commit;CoopStore.commit=async()=>{throw Error('Injected inventory save failure');};});
     const failed=await b.evaluate(()=>InventoryActions.submit({type:'place',itemId:Game.state.player.management.carried._coopId,to:'inv',x:7,y:3,targetId:null}));
     ok(!failed,'failed host save rejects placement');
@@ -116,7 +117,7 @@ const base=process.env.COOP_TEST_URL||'http://127.0.0.1:8741';
     await b.evaluate(({id,room})=>Coop.connect('join',id,room),{id,room});
     await b.waitForFunction(item=>Game.state?.player?.management?.carried?._coopId===item&&!Coop.loading,item);
     ok(await a.evaluate(id=>Game.state.players.filter(p=>p.heroId===id).length===1,id),'reloading with a carried item restores the same personal hero');
-    await b.evaluate(()=>UI.togglePanel('inv'));await b.locator('#panelWorkspace .phone-paged:not(.hidden):not(.workspace-inactive) .phone-pager-head .pclose').click();await b.waitForFunction(()=>!Game.state.player.management.carried);
+    await b.evaluate(()=>UI.togglePanel('inv'));await b.locator('#workspaceClose').click();await b.waitForFunction(()=>!Game.state.player.management.carried);
     ok(await b.evaluate(id=>Game.state.player.inv.items.filter(it=>it._coopId===id).length===1,item),'recovered carried item returns exactly once');
     // Both clients contend for one real vendor item; only one payment may commit.
     const sale=await a.evaluate(netId=>{

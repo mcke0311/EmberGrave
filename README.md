@@ -7,7 +7,8 @@ recorded soundtrack and UI/death sounds. See [skill audio](docs/SKILL_AUDIO.md).
 JavaScript with **no build step**. Characters use the locally vendored,
 MIT-licensed Three.js renderer by default when the game is served over HTTP.
 
-On phones, play in landscape with paged menus and item cards. Use **More → Full
+On phones, play in landscape with a floating thumbstick, four direct-cast skills,
+and scrollable menus with item cards. Use **More → Full
 screen** where supported, or **Add to Home Screen** for an app-style launch.
 See [phone presentation and verification](docs/PHONE_EXPERIENCE.md).
 

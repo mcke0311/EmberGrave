@@ -156,7 +156,6 @@ window.TitleScreen=(()=>{
   function theme(id){const t=THEMES[id]||THEMES.vanguard;root().style.setProperty('--class-color',t.color);root().style.setProperty('--class-rgb',t.rgb);root().dataset.class=id;}
   function reset(screen){
     cleanup();cleanup=()=>{};
-    if(typeof MobilePages!=='undefined')MobilePages.release(document.getElementById('titleMenu'));
     delete root().dataset.heroStep;
     const r=root(),m=document.getElementById('titleMenu');r._back=null;r.dataset.screen=screen;r.scrollTop=0;
     for(const sibling of r.parentElement.children)if(sibling!==r&&!obscured.has(sibling)){obscured.set(sibling,sibling.inert);sibling.inert=true;}

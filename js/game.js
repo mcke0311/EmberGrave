@@ -943,7 +943,7 @@ const Game = (() => {
     p.skillL = d.skillL || "basic"; p.skillR = d.skillR || "basic";
     p.quickSlots = (d.quickSlots && d.quickSlots.slice(0, 4)) || [null, null, null, null];
     while (p.quickSlots.length < 4) p.quickSlots.push(null);
-    p.quickSlots = p.quickSlots.map(s => (s && DATA.SKILLS[s] && DATA.SKILLS[s].type !== "passive") ? s : null);
+    p.quickSlots = p.quickSlots.map(s => s === 'basic' || (s && DATA.SKILLS[s] && DATA.SKILLS[s].type !== "passive") ? s : null);
     if ((!DATA.SKILLS[p.skillL] && p.skillL !== "basic") || DATA.SKILLS[p.skillL]?.type === "passive") p.skillL = "basic";
     if ((!DATA.SKILLS[p.skillR] && p.skillR !== "basic") || DATA.SKILLS[p.skillR]?.type === "passive") p.skillR = "basic";
     p.belt = d.belt || [null, null, null, null];
@@ -2100,6 +2100,7 @@ const Game = (() => {
       if (k === "escape" && e.repeat) { e.preventDefault(); return; }
       if (UI.escOpen()) return;
       if (!running || !state || state.player.dead) return;
+      if(typeof MobileShell!=='undefined'&&MobileShell.enabled&&(MobileShell.blocked||MobileWorkspace.paused))return;
       if (e.key === "Shift") { cancelGroundHold(); mouse.shift = true; }
       if (e.key === "Alt") { mouse.alt = true; e.preventDefault(); }
       if (document.activeElement && ["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)) { if (k === "escape" && UI.anyOpen()) { UI.closeAll(); e.preventDefault(); } return; }
@@ -2205,7 +2206,7 @@ const Game = (() => {
   // Touch input is separate from the mouse so a second finger cannot steal
   // the movement gesture or move the aim underneath a held skill.
   function touchReady() {
-    return !!(!(typeof MobileShell!=='undefined'&&MobileShell.blocked) && running && state && !state.player.dead && !UI.escOpen() &&
+    return !!(!(typeof MobileShell!=='undefined'&&MobileShell.blocked) && !(typeof MobileWorkspace!=='undefined'&&MobileWorkspace.paused) && running && state && !state.player.dead && !UI.escOpen() &&
       !UI.cinematicActive() && !UI.anyOpen() && !UI.cursorItem);
   }
   function stopTouchMovement() {
@@ -2217,7 +2218,7 @@ const Game = (() => {
   }
   function resetTouch() {
     if(typeof CoopInput!=="undefined")CoopInput.resetTouch();
-    touch.x = touch.y = 0; touch.side = null; touch.castOnce = false;
+    touch.x = touch.y = 0; touch.side = null; touch.skill = null; touch.castOnce = false;
     stopTouchMovement();
     // Cancellation must not fire a charged shot into a menu or a new map.
     if (state?.player?.drawing?.touch) state.player.drawing = null;
@@ -2242,7 +2243,7 @@ const Game = (() => {
     return {x:p.x + x * 4.2, y:p.y + y * 4.2, surfaceId:p.surfaceId};
   }
   function castTouchSkill() {
-    const p = state.player, id = p['skill' + touch.side], sk = p.resolveSkill(id);
+    const p = state.player, id = touch.skill, sk = p.resolveSkill(id);
     if (!sk || p.action || p.jumping || p.drawing || p.stunT > 0 || p.leaping || p.dashing || p.charging || p.spinning) return;
     if (touch.castOnce && !repeatSkill(id)) return;
     if (state.time < touch.nextCast || state.time < (p.skillCd[id] || 0)) return;
@@ -2276,17 +2277,26 @@ const Game = (() => {
   function touchSkill(side, down) {
     if(typeof Coop!=="undefined"&&Coop.active)return CoopInput.touchSkill(side,down);
     if (!['L','R'].includes(side)) return;
+    holdTouchSkill(side, state?.player?.['skill'+side], down);
+  }
+  function touchQuickSlot(index, down) {
+    if (!Number.isInteger(index) || index < 0 || index > 3) return;
+    if(typeof Coop!=="undefined"&&Coop.active)return CoopInput.touchQuickSlot(index,down);
+    holdTouchSkill('Q'+index, state?.player?.quickSlots?.[index], down);
+  }
+  function holdTouchSkill(side, skill, down) {
     if (!down) {
       if (touch.side !== side) return;
-      touch.side = null;
+      touch.side = null; touch.skill = null;
       if (state?.player?.drawing?.touch) state.player.releaseDraw();
       return;
     }
-    if (!touchReady()) return;
+    if (!touchReady() || touch.side || !skill || (skill !== 'basic' &&
+      (!state.player.skills[skill] || DATA.SKILLS[skill]?.type === 'passive'))) return;
     cancelGroundHold(); mouse.l = mouse.r = false; heldTarget = null;
     state.player.command = null; state.player.path = null;
     state.player._pendingClick = null; state.player._navPendingGoal = null;
-    touch.side = side; touch.castOnce = false; touch.nextCast = 0;
+    touch.side = side; touch.skill = skill; touch.castOnce = false; touch.nextCast = 0;
     castTouchSkill();
   }
   function touchUpdate() {
@@ -4485,7 +4495,8 @@ const Game = (() => {
     if (fx.hitPause > 0) { fx.hitPause -= dtRaw; dt *= 0.12; }
     try {
       if(typeof Coop!=="undefined"&&Coop.active){updateHover();if(!phoneBlocked&&!UI.escOpen()&&!UI.cinematicActive()&&!UI.anyOpen())heldUpdate();Coop.frame(dtRaw);}
-      else if (!phoneBlocked && !UI.escOpen() && !UI.cinematicActive()) update(dt);
+      else if (!phoneBlocked && !UI.escOpen() && !UI.cinematicActive() &&
+        !(typeof MobileWorkspace!=='undefined' && MobileWorkspace.paused)) update(dt);
       else cancelGroundHold();
       updateCamera(dtRaw);           // camera eases on real time, even during hit-pause
       render();
@@ -4631,7 +4642,7 @@ const Game = (() => {
     debugDrop, debugSpawnElites, debugGotoBoss,
     recordEnding,
     msg, centerMsg, saveOptions,
-    touchReady, touchMove, touchSkill, touchTap, touchAction, resetTouch, cancelMenuInput,
+    touchReady, touchMove, touchSkill, touchQuickSlot, touchTap, touchAction, resetTouch, cancelMenuInput,
     fx, options, debugFlags,
     get state() { return state; },
   };

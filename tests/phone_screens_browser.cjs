@@ -1,4 +1,4 @@
-// Isolated browser coverage for bounded phone screens. Never reads user saves.
+// Isolated browser coverage for scrollable phone screens. Never reads user saves.
 const { chromium }=require('playwright');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
@@ -44,44 +44,30 @@ const pause=ms=>new Promise(r=>setTimeout(r,ms));
   async function audit(label){
     await pause(120);
     const result=await page.evaluate(()=>{
-      const bad=[],seen=[];
-      const root=[...document.querySelectorAll('.phone-paged')].filter(n=>n.getClientRects().length&&!n.closest('.hidden,.workspace-inactive')&&(!n.matches('dialog')||n.open)).at(-1);
-      if(!root)return {bad:['Missing pager'],seen};
-      function check(){
-        const head=root.querySelector('.phone-pager-head').getBoundingClientRect(),foot=root.querySelector('.phone-pager-foot').getBoundingClientRect();
-        if(root.scrollHeight>root.clientHeight+1||root.scrollWidth>root.clientWidth+1){bad.push('root scroll '+root.scrollWidth+'x'+root.scrollHeight);for(const n of root.querySelectorAll('*'))if(n.getClientRects().length&&n.getBoundingClientRect().right>innerWidth+1)bad.push('wide '+n.tagName+'.'+n.className+' '+Math.round(n.getBoundingClientRect().right));}
-        for(const n of root.querySelectorAll('.phone-unit:not(.phone-off):not(.phone-text-source),.phone-ui button')){
-          if(!n.getClientRects().length||n.closest('.phone-off,.phone-skip'))continue;
-          const r=n.getBoundingClientRect(),text=n.getAttribute('aria-label')||n.textContent.trim().slice(0,90)||n.tagName;
-          if(n.classList.contains('phone-unit')){seen.push(text);if(r.top<head.bottom-1||r.bottom>foot.top+1)bad.push(text+' outside body '+Math.round(r.top)+'..'+Math.round(r.bottom));}
-          if(r.left<-.5||r.right>innerWidth+1)bad.push(text+' outside width');
-          if(n.matches('button,a,input,select,.invitem,.eqslot')&&(r.width<43||r.height<43))bad.push(text+' small '+Math.round(r.width)+'x'+Math.round(r.height));
-        }
+      const visible=n=>n.getClientRects().length&&getComputedStyle(n).visibility!=='hidden'&&!n.closest('[inert]');
+      const roots=[...document.querySelectorAll('dialog[open],#cinematic:not(.hidden),#escmenu:not(.hidden) > .box,#touchItemMenu,#skillPick:not(.hidden),#panelWorkspace > .panel:not(.hidden):not(.workspace-inactive),#title:not(.hidden) #titleMenu')].filter(visible);
+      const root=roots[0],bad=[];if(!root)return {bad:['No active screen']};
+      const r=root.getBoundingClientRect();
+      if(r.left<-.5||r.top<-.5||r.right>innerWidth+1||r.bottom>innerHeight+1)bad.push('screen outside viewport '+JSON.stringify(r));
+      if(root.scrollWidth>root.clientWidth+1)bad.push('horizontal root overflow '+root.scrollWidth+'/'+root.clientWidth);
+      for(const el of root.querySelectorAll('*'))if(visible(el)&&el.getBoundingClientRect().right>r.right+1)bad.push('wide '+el.tagName+'.'+el.className);
+      const controls=[...root.querySelectorAll('button,input:not([type=checkbox]),select,textarea,summary,[role=button]')].filter(visible);
+      for(const el of controls){const b=el.getBoundingClientRect();if(b.width<43||b.height<43)bad.push('small '+(el.getAttribute('aria-label')||el.textContent).slice(0,70)+' '+Math.round(b.width)+'x'+Math.round(b.height));}
+      const head=document.getElementById('workspaceHeader');
+      if(visible(head))for(const el of head.querySelectorAll('button'))if(visible(el)){
+        const b=el.getBoundingClientRect(),hit=document.elementFromPoint(b.x+b.width/2,b.y+b.height/2);
+        if(b.width<43||b.height<43||!el.contains(hit))bad.push('unreachable navigation '+el.textContent);
       }
-      const next=()=>root.querySelector('.phone-pager-foot button:last-of-type');
-      const nav=()=>[...root.querySelectorAll('.phone-pager-foot button')].find(n=>n.textContent==='Next');
-      const sections=()=>[...root.querySelectorAll('.phone-pager-foot button')].find(n=>n.textContent==='Sections');
-      const groups=[];
-      if(!sections().hidden){sections().click();for(let i=0;i<100;i++){check();groups.push(...[...root.querySelectorAll('.phone-section-choice:not(.phone-off)')].map(n=>n.textContent));if(nav().disabled)break;nav().click();}}
-      if(!groups.length)groups.push(null);
-      for(const group of groups){
-        if(group){if(root.querySelector('.phone-pager-head strong').textContent!=='Sections')sections().click();
-          const previous=[...root.querySelectorAll('.phone-pager-foot button')].find(n=>n.textContent==='Previous');while(!previous.disabled)previous.click();
-          for(let i=0;i<100;i++){const b=[...root.querySelectorAll('.phone-section-choice:not(.phone-off)')].find(n=>n.textContent===group);if(b){b.click();break;}if(nav().disabled){bad.push('Missing section '+group);break;}nav().click();}
-        }
-        for(let i=0;i<100;i++){check();if(nav().disabled)break;nav().click();}
-      }
-      return {bad:[...new Set(bad)],pages:seen.length,groups};
+      return {bad:[...new Set(bad)],controls:controls.length,scrollable:root.scrollHeight>root.clientHeight};
     });
     console.log('AUDIT',label,JSON.stringify(result));
-    if(result.bad.length){await page.screenshot({path:output+'/'+label.replace(/[^a-z0-9]/gi,'_')+'-failure.png'});}
+    if(result.bad.length)await page.screenshot({path:output+'/'+label.replace(/[^a-z0-9]/gi,'_')+'-failure.png'});
     return result.bad.map(e=>label+': '+e);
   }
   const failures=[];
   for(const panel of ['inv','char','skills','quest']){
    await page.evaluate(p=>{UI.closeAll();UI.togglePanel(p);},panel);await pause(300);
-   const report=await page.evaluate(()=>[...document.querySelectorAll('.phone-paged')].filter(n=>n.getClientRects().length&&!n.closest('.hidden,.workspace-inactive')).map(root=>({id:root.id,kind:root.dataset.kind,sections:root.querySelector('.phone-pager-head')?.textContent,page:root.querySelector('.phone-pager-foot')?.textContent,client:[root.clientWidth,root.clientHeight],scroll:[root.scrollWidth,root.scrollHeight],units:[...root.querySelectorAll('.phone-unit:not(.phone-off):not(.phone-text-source)')].filter(n=>n.getClientRects().length).map(n=>({tag:n.tagName,cls:n.className,text:n.textContent.slice(0,80),r:JSON.parse(JSON.stringify(n.getBoundingClientRect()))}))})));
-   console.log(panel,JSON.stringify(report));await page.screenshot({path:output+'/'+panel+'.png'});
+   await page.screenshot({path:output+'/'+panel+'.png'});
    failures.push(...await audit(panel));
   }
   await page.evaluate(()=>{UI.closeAll();UI.openSettings({origin:'pause'});});await pause(300);await page.screenshot({path:output+'/settings.png'});
@@ -117,7 +103,7 @@ const pause=ms=>new Promise(r=>setTimeout(r,ms));
   await page.evaluate(()=>{UI.closeEsc();UI.showDeath(0,'Frosthaven');});failures.push(...await audit('death'));await page.evaluate(()=>UI.hideDeath());
   await page.evaluate(()=>UI.openFinalChoice());failures.push(...await audit('final-choice'));
   await page.evaluate(()=>{document.querySelector('#cinematic').classList.add('hidden');MobileShell.showHelp('A long description. '.repeat(150),'Long item detail');});failures.push(...await audit('long-text'));
-  await page.locator('#phoneInstallHelp .phone-pager-head button').click();
+  await page.locator('#phoneInstallHelp > button').click();
   assert.ok(await page.locator('#phoneInstallHelp').isHidden(),'closed help still covers the game');
   // Fullscreen promises and browser exit events must not leave the interface blocked.
   await page.evaluate(async()=>{

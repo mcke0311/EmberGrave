@@ -1,6 +1,6 @@
 /* Translate mouse and touch intentions into ID-only host commands. */
 const CoopInput=(()=>{
-  let press=null,last=0,stick=null,skillSide=null,once=false;
+  let press=null,last=0,stick=null,skillSide=null,heldSkill=null,once=false;
   // Saving is a short command queue, not a reason to discard a player's click.
   const blocked=()=>{const reason=Coop.paused;return !!reason&&reason!=='Saving party changes…';};
   function send(c){
@@ -40,15 +40,29 @@ const CoopInput=(()=>{
   }
   function touchMove(x,y){
     if(!Game.touchReady())return;const a=U.unisoX(x,y),b=U.unisoY(x,y),d=Math.hypot(a,b);stick=d?{x:a/d,y:b/d}:null;
-    if(!d)send({type:'stop'});else touchTick();
+    if(!d&&!skillSide)send({type:'stop'});else touchTick();
   }
-  function touchSkill(side,down){if(!down){skillSide=null;send({type:'release'});return;}if(!Game.touchReady())return;skillSide=side;once=false;touchTick();}
+  function touchSkill(side,down){
+    if(!['L','R'].includes(side))return;
+    holdTouchSkill(side,Game.state?.player?.['skill'+side],down);
+  }
+  function touchQuickSlot(index,down){
+    if(!Number.isInteger(index)||index<0||index>3)return;
+    holdTouchSkill('Q'+index,Game.state?.player?.quickSlots?.[index],down);
+  }
+  function holdTouchSkill(side,skill,down){
+    if(!down){if(skillSide!==side)return;skillSide=null;heldSkill=null;send({type:'release'});if(stick)touchTick();return;}
+    const p=Game.state?.player;
+    if(!Game.touchReady()||blocked()||skillSide||!skill||
+      (skill!=='basic'&&(!p.skills[skill]||DATA.SKILLS[skill]?.type==='passive')))return;
+    skillSide=side;heldSkill=skill;once=false;touchTick();
+  }
   function touchTick(){
     if(!Game.touchReady()||blocked())return;
     const p=Game.state.player,[dx,dy]=stick?[stick.x,stick.y]:U.screenVecToWorld(p.visAng);
     const point={x:U.clamp(p.x+dx*4.2,0,Game.state.map.w),y:U.clamp(p.y+dy*4.2,0,Game.state.map.h),surfaceId:p.surfaceId};
     if(stick)send({type:'steer',point});
-    if(skillSide){const skill=p['skill'+skillSide];if(once&&!Game.coop.repeatSkill(skill))return;
+    if(skillSide){const skill=heldSkill;if(once&&!Game.coop.repeatSkill(skill))return;
       const monsters=Game.state.monsters.filter(m=>!m.dead&&TerrainLayers.same(p,m)&&U.dist(p.x,p.y,m.x,m.y)<9).sort((a,b)=>U.dist2(p.x,p.y,a.x,a.y)-U.dist2(p.x,p.y,b.x,b.y));
       targetSkill(skill,{mon:monsters[0],point},false);once=true;
     }
@@ -61,5 +75,5 @@ const CoopInput=(()=>{
     }else p.moveToward(dt,p.stats.moveSpeed,c.point.x,c.point.y,Game.state.map,[]);
     if(U.dist(p.x,p.y,c.point.x,c.point.y)<.1)p._coopMotion=null;
   }
-  return {click,hold,release,touchMove,touchSkill,predict,resetTouch(){const held=stick||skillSide||press;stick=null;skillSide=null;press=null;once=false;if(Game.state?.player){Game.state.player._coopMotion=null;Game.state.player._predictPath=null;}if(held&&Coop.active&&!Coop.loading)send({type:'stop'});}};
+  return {click,hold,release,touchMove,touchSkill,touchQuickSlot,predict,resetTouch(){const held=stick||skillSide||press;stick=null;skillSide=null;heldSkill=null;press=null;once=false;if(Game.state?.player){Game.state.player._coopMotion=null;Game.state.player._predictPath=null;}if(held&&Coop.active&&!Coop.loading)send({type:'stop'});}};
 })();

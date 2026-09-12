@@ -550,6 +550,7 @@ const UI = (() => {
   /* ================================================== panels */
   function panelEl(side) { return side === "left" ? els.panelLeft : side === "right" ? els.panelRight : els.panelCenter; }
   function closePanel(side) {
+    if(typeof MobileViews!=='undefined')MobileViews.release(panelEl(side));
     document.getElementById('touchItemMenu')?.remove();document.getElementById('panelWorkspace')?.classList.remove('item-detail-open');
     if(!coopItems()&&side==='right'&&openPanels.right==='inv'&&cursorItem&&Game.state?.player){
       const it=cursorItem,grid=cursorFrom?.items?cursorFrom:null;
@@ -605,7 +606,7 @@ const UI = (() => {
     }
   }
   function header(el, title, side) {
-    if(typeof MobilePages!=='undefined')MobilePages.release(el);
+    if(typeof MobileViews!=='undefined')MobileViews.release(el);
     el.classList.remove("talent-panel");
     const kind = openPanels[side]; el.dataset.kind = kind || "dialog";
     el.classList.toggle("waypoint-panel", kind === "shrine");
@@ -613,6 +614,7 @@ const UI = (() => {
     el.innerHTML = "";
     const head = textNode("div", "ptitle", title); el.appendChild(head);
     const close = actionButton("×", () => closePanel(side), "pclose"); close.setAttribute("aria-label", "Close " + title.toLowerCase()); el.appendChild(close);
+    if(typeof MobileViews!=='undefined'&&MobileViews.enabled())queueMicrotask(()=>MobileViews.mount(el));
     syncWorkspace();
   }
 
@@ -634,10 +636,14 @@ const UI = (() => {
       d.dataset.itemName = itemName(it).toLowerCase(); d.tabIndex = 0; d.setAttribute("aria-label", itemName(it));
       d.addEventListener("focus", () => { const r = d.getBoundingClientRect(); showItemTooltip(it,r.right,r.top,ctxName); });
       d.addEventListener("blur", hideTooltip);
-      d.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); Sfx.play("click"); gridItemRClick(grid,it,ctxName); } });
+      d.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); Sfx.play("click"); if(typeof MobileShell!=='undefined'&&MobileShell.enabled)d.click();else gridItemRClick(grid,it,ctxName); } });
       d.style.left = it.gx * CELL + "px"; d.style.top = it.gy * CELL + "px";
       d.style.width = it.w * CELL + "px"; d.style.height = it.h * CELL + "px";
       d.appendChild(SpriteAssets.itemIcon(it));
+      if(typeof MobileShell!=='undefined'&&MobileShell.enabled){
+        d.setAttribute('role','button');
+        const copy=textNode('span','phone-item-copy');copy.append(textNode('strong','',itemName(it)),textNode('small','',itemTypeLabel(it)+' · '+(it.rarity||'common')+(it.kind==='gear'?' · Level '+Items.effReqLvl(it):'')));d.append(copy);
+      }
       if (it.count > 1) { const s = document.createElement("div"); s.className = "stk"; s.textContent = it.count; d.appendChild(s); }
       d.addEventListener("mouseenter", e => { const r = d.getBoundingClientRect(); showItemTooltip(it, r.left + r.width / 2, r.top, ctxName); });
       d.addEventListener("mouseleave", hideTooltip);
@@ -691,24 +697,26 @@ const UI = (() => {
     return g;
   }
   function openTouchItemMenu(grid, it, ctxName, event) {
+    const opener=document.activeElement;
     document.getElementById('touchItemMenu')?.remove();
     const dialog=textNode('section','gframe workspace-detail'); dialog.id='touchItemMenu';dialog.setAttribute('role','region');
     dialog.setAttribute('aria-label',itemName(it));
     const details=textNode('div','touch-item-details'); details.innerHTML=itemTooltipHTML(it,ctxName);
     addItemPreview(details,it);
-    for (const line of details.querySelectorAll('.tt-base,.tt-gold')) {
+    const touchCopy=body=>{for (const line of body.querySelectorAll('.tt-base,.tt-gold')) {
       if (/right-click/i.test(line.textContent)) {
         if (line.classList.contains('tt-gold')) line.textContent=line.textContent.replace(/ \(right-click\)/i,'');
         else line.remove();
       }
-    }
+    }};
+    touchCopy(details);
     hideTooltip(); dialog.appendChild(details);
     if(it.kind==='gear'&&ctxName!=='equip')for(const equipped of [...new Set(Items.slotFor(it).map(slot=>Game.state.player.equip[slot]).filter(Boolean))]){
-      const compare=textNode('details','shop-compare');compare.appendChild(textNode('summary','','Compare equipped: '+itemName(equipped)));
-      const body=textNode('div','touch-item-details');body.innerHTML=itemTooltipHTML(equipped,'equip');addItemPreview(body,equipped);compare.append(body);dialog.append(compare);
+      const compare=textNode('details','shop-compare');compare.open=typeof MobileShell!=='undefined'&&MobileShell.enabled;compare.appendChild(textNode('summary','','Equipped: '+itemName(equipped)));
+      const body=textNode('div','touch-item-details');body.innerHTML=itemTooltipHTML(equipped,'equip');addItemPreview(body,equipped);touchCopy(body);compare.append(body);dialog.append(compare);
     }
     const actions=textNode('div','touch-item-actions'); dialog.appendChild(actions);
-    const close=()=>{dialog.remove();hideTooltip();document.getElementById('panelWorkspace').classList.remove('item-detail-open');};
+    const close=()=>{dialog.remove();hideTooltip();document.getElementById('panelWorkspace').classList.remove('item-detail-open');if(typeof MobileWorkspace!=='undefined')MobileWorkspace.sync();if(opener?.isConnected)opener.focus({preventScroll:true});};
     const p=Game.state.player,c=DATA.CONSUMABLES[it.baseId];
     const label=ctxName==='equip'?'Unequip':vendorCtx&&grid===p.inv?'Sell':it.kind==='gear'?(it.identified?'Equip':'Identify'):
       c?.belt?'Move to belt':c&&(c.respec||it.baseId==='tp')?'Use':null;
@@ -725,9 +733,9 @@ const UI = (() => {
       else Items.remove(grid,it);
       Game.dropAtFeet(it);refreshGrids();refreshHUD();
     }));
-    actions.appendChild(actionButton('Back',close));
+    const back=actionButton('Back',close);back.dataset.itemBack='';actions.appendChild(back);
     dialog.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();}});
-    const workspace=$('panelWorkspace');workspace.appendChild(dialog);workspace.classList.add('item-detail-open');actions.querySelector('button')?.focus();
+    const workspace=$('panelWorkspace');workspace.appendChild(dialog);workspace.classList.add('item-detail-open');if(typeof MobileWorkspace!=='undefined')MobileWorkspace.sync();actions.querySelector('button')?.focus();
   }
   function gridItemClick(grid, it, ctxName) {
     if(coopItems()){
@@ -946,7 +954,7 @@ const UI = (() => {
       if (it) {
         const d = document.createElement("div");
         d.className = `invitem r-${it.rarity}`;d.dataset.itemId=it._coopId||it.uid||'';d.tabIndex=0;d.setAttribute('aria-label',slotLabel+': '+itemName(it));
-        d.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();unequipSlot(slot,it);}});
+        d.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(typeof MobileShell!=='undefined'&&MobileShell.enabled)d.click();else unequipSlot(slot,it);}});
         d.style.left = "0"; d.style.top = "0"; d.style.width = "100%"; d.style.height = "100%";
         const icon = SpriteAssets.itemIcon(it);
         icon.style.width = "100%"; icon.style.height = "100%"; icon.style.objectFit = "contain";
@@ -1255,6 +1263,7 @@ const UI = (() => {
       n.setAttribute("aria-label", `${sk.name}, ${SkillIcons.describe(sk).role}, rank ${status.rank} of ${sk.maxRank}${status.unlocked ? "" : ", locked"}`);
       n.appendChild(SkillIcons.create(sk, 46));
       const name = document.createElement("span"); name.className = "talent-node-name"; name.textContent = sk.name; n.appendChild(name);
+      if(typeof MobileShell!=='undefined'&&MobileShell.enabled){const tier=textNode('small','phone-tier-label','Tier '+(sk.pos[1]+1)+' · Level '+sk.reqLvl+(sk.prereq?' · Requires '+DATA.SKILLS[sk.prereq].name:''));name.append(tier);}
       const rank = document.createElement("span"); rank.className = "talent-node-rank";
       rank.innerHTML = `<b>${status.rank}</b><span> / ${sk.maxRank}</span>${bonus ? `<em>+${bonus}</em>` : ""}`;
       if (bonus) rank.title = `${status.rank} invested + ${bonus} from equipment`; n.appendChild(rank);
@@ -1264,7 +1273,7 @@ const UI = (() => {
       n.addEventListener("click", () => {
         selectedSkill = sk.id;
         for (const node of area.querySelectorAll(".talent-node")) node.setAttribute("aria-pressed", String(node.dataset.skill === selectedSkill));
-        renderSkillDetail(details, p, sk); hideTooltip();
+        renderSkillDetail(details, p, sk); hideTooltip();if(typeof MobileViews!=='undefined')MobileViews.detail(el);
       }); area.appendChild(n);
     }
     board.appendChild(area);
@@ -1323,6 +1332,7 @@ const UI = (() => {
       ["LMB", "RMB", "F1", "F2", "F3", "F4"].forEach((key, i) => {
         const active = i < 2 ? p[i === 0 ? "skillL" : "skillR"] === sk.id : p.quickSlots[i - 2] === sk.id;
         const b = document.createElement("button"); b.type = "button"; b.textContent = key; b.className = active ? "bound" : "";
+        if(typeof MobileShell!=='undefined'&&MobileShell.enabled){b.textContent=i===0?'Attack':i===1?'Secondary':'Skill '+(i-1);b.hidden=i===1;}
         b.setAttribute("aria-label", `Assign ${sk.name} to ${key}`); b.setAttribute("aria-pressed", String(active));
         b.addEventListener("click", () => { if(typeof Coop!=="undefined"&&Coop.active){Coop.submit({type:"bind",slot:i<2?(i===0?"L":"R"):i-2,skill:sk.id}).then(()=>{refreshHUD();renderSkills();});return;} if (i < 2) p[i === 0 ? "skillL" : "skillR"] = sk.id; else p.quickSlots[i - 2] = sk.id;
            refreshHUD(); renderSkillDetail(el, p, sk); el.querySelectorAll(".skill-binding-row button")[i].focus(); }); row.appendChild(b);
@@ -1470,7 +1480,7 @@ const UI = (() => {
       const row = document.createElement("button"); row.type="button"; row.setAttribute("aria-pressed",String(q.id === questUiSel));
       row.className = "qrow " + info.cls + (q.id === questUiSel ? " sel" : "");
       row.innerHTML = `<span class="qg">${info.glyph}</span><span class="qn">${locked ? "Sealed Trial" : q.name}</span>`;
-      row.addEventListener("click", () => { questUiSel = q.id; renderQuests(); });
+      row.addEventListener("click", () => { if(typeof MobileViews!=='undefined')MobileViews.detail(el);questUiSel = q.id; renderQuests(); });
       ul.appendChild(row);
     }
     if (!list.length) ul.appendChild(textNode("p","manage-empty","No quests in this category."));
@@ -1526,7 +1536,7 @@ const UI = (() => {
     if (!items.includes(v.selected)) v.selected = items[0] || null;
     const list = textNode("div","shop-list");
     for (const it of items) {
-      const row = actionButton("",()=>{v.selected=it;renderVendor();},"shop-entry"); row.classList.toggle("selected",v.selected===it); row.setAttribute("aria-pressed",String(v.selected===it));
+      const row = actionButton("",()=>{if(typeof MobileViews!=='undefined')MobileViews.detail(el);v.selected=it;renderVendor();},"shop-entry"); row.classList.toggle("selected",v.selected===it); row.setAttribute("aria-pressed",String(v.selected===it));
       row.style.setProperty("--rarity",Items.RARITY_COLOR[it.rarity] || "#aaa");
       row.appendChild(SpriteAssets.itemIcon(it));
       const labels=textNode("span","shop-entry-label");labels.appendChild(textNode("strong","",itemName(it)));
@@ -1830,7 +1840,7 @@ const UI = (() => {
         pick.classList.add("hidden");
         
         hideTooltip(); refreshHUD(); renderIfOpen("skills");
-        (which === "L" ? els.skillL : which === "R" ? els.skillR : els.quickbar.children[+which.slice(1)]).focus();
+        if(typeof MobileShell!=='undefined'&&MobileShell.enabled)MobileWorkspace.pickerClosed();else (which === "L" ? els.skillL : which === "R" ? els.skillR : els.quickbar.children[+which.slice(1)]).focus();
       });
       pick.appendChild(d);
     }
@@ -1838,10 +1848,10 @@ const UI = (() => {
     if (which[0] === "Q") {
       const clr = document.createElement("button"); clr.type = "button"; clr.className = "pickopt pickclear"; clr.textContent = "Clear slot";
       clr.title = "Clear slot";
-      clr.addEventListener("click", async () => { if(coopItems()){if(!await InventoryActions.submit({type:"bind",slot:+which.slice(1),skill:null}))return;}else p.quickSlots[+which.slice(1)] = null; pick.classList.add("hidden"); hideTooltip();  refreshHUD(); renderIfOpen("skills"); });
+      clr.addEventListener("click", async () => { if(coopItems()){if(!await InventoryActions.submit({type:"bind",slot:+which.slice(1),skill:null}))return;}else p.quickSlots[+which.slice(1)] = null; pick.classList.add("hidden"); hideTooltip(); refreshHUD(); renderIfOpen("skills");if(typeof MobileShell!=='undefined'&&MobileShell.enabled)MobileWorkspace.pickerClosed(); });
       pick.appendChild(clr);
     }
-    const back=actionButton("Back",()=>{pick.classList.add("hidden");hideTooltip();});pick.prepend(back);
+    const back=actionButton("Back",()=>{pick.classList.add("hidden");hideTooltip();if(typeof MobileWorkspace!=='undefined')MobileWorkspace.pickerClosed();});back.classList.add('phone-picker-back');pick.prepend(back);
     pick.classList.remove("hidden");
     let btn = which === "L" ? els.skillL : which === "R" ? els.skillR
             : els.quickbar.children[+which.slice(1)] || els.quickbar;
@@ -1920,6 +1930,10 @@ const UI = (() => {
     mk("Resume", () => closeEsc());
     mk("Controls", () => openSettings({ tab: "controls", origin: "pause" }));
     mk("Settings", () => openSettings({ origin: "pause" }));
+    if(typeof MobileShell!=='undefined'&&MobileShell.enabled){
+      const loot=mk('Loot labels: '+(Game.options.alwaysLabels?'On':'Off'),()=>{Game.options.alwaysLabels=!Game.options.alwaysLabels;Game.saveOptions();loot.textContent='Loot labels: '+(Game.options.alwaysLabels?'On':'Off');loot.setAttribute('aria-pressed',String(Game.options.alwaysLabels));});loot.setAttribute('aria-pressed',String(Game.options.alwaysLabels));
+      if(typeof Coop!=='undefined'&&Coop.active)mk('Party',()=>{closeEsc();CoopUI.party();});
+    }
     if(typeof MobileShell!=='undefined')MobileShell.controls(actions);
     mk("Loot Filter", () => {
       menuScreen = "loot"; menuBackAction = "Loot Filter";
@@ -2035,11 +2049,11 @@ const UI = (() => {
         [["Attack", "Skill"], "Hold an assigned skill to fight a nearby visible enemy. Move close for melee. Buffs and summons fire once per press."],
         [["Jump"], "Jump in the thumbstick direction, or forward while standing still."]]],
       ["Skills & potions", [
-        [["Assign"], "Change the skill assigned to the Skill button."],
-        [["Talents"], "Select a ready skill and assign it to Attack (L) or Skill (R)."],
+        [["Talents → Loadout"], "Assign Attack and four skills. Each skill button casts directly; an empty slot opens assignment."],
+        [["Skill 1–4"], "Hold to repeat supported attacks. Buffs and summons activate once per press. Release charged skills to fire."],
         [["Draughts"], "Tap a numbered bottle to drink a belt potion."]]],
       ["Panels & interactions", [
-        [["Bottom toolbar"], "Open Inventory, Character, Talents, or Quests."],
+        [["Pack / Menu"], "Open the full-screen menu. Switch between Pack, Character, Talents, Quests and More."],
         [["Map"], "Show or hide the map overlay."],
         [["Menu"], "Close an open panel, or pause and open the game menu."],
         [["Inventory"], "Tap an item to open its actions, including equip, use, sell, or move to belt."]]]
@@ -2302,7 +2316,7 @@ const UI = (() => {
     refreshManagement, managementStatus,
     openVendor, openStorage, openDialog, openBoard, openShrine, openSkillPick, openForge, quickCast,
     showItemTooltip, showSkillTooltip, hideTooltip,
-    openEsc, openSettings, closeEsc, escOpen,
+    openEsc, openSettings, closeEsc, escOpen, menuBack,
     showTitle, hideTitle, showDeath, hideDeath, toggleDebug,
     get cursorItem() { return coopItems()?Game.state?.player?.management?.carried||null:cursorItem; },
     setCursorItem,

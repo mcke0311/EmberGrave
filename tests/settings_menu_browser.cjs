@@ -209,7 +209,7 @@ const equal = (a, b, message) => { assert.deepEqual(a, b, message); checks++; };
     const keyboard=phone.getByRole('button',{name:'Keyboard & Mouse',exact:true,includeHidden:true});await reveal(keyboard);await keyboard.tap();
     ok(await phone.evaluate(()=>MobileControls.enabled),'guide must not disable touch');
     const touch=phone.getByRole('button',{name:'Touch',exact:true,includeHidden:true});await reveal(touch);await touch.tap();
-    const back=phone.getByRole('button',{name:'Back',exact:true,includeHidden:true});await reveal(back);await back.tap();
+    const back=phone.locator('#escmenu').getByRole('button',{name:'Back',exact:true,includeHidden:true});await reveal(back);await back.tap();
     ok(await phone.locator('#escmenu').isHidden(),'phone Back returns to title');
     await phone.context().close();
     equal(errors, [], 'browser page errors');
