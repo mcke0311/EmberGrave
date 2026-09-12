@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "test:phone": "node tests/phone_screens_browser.cjs && node tests/mobile_controls_browser.cjs && node tests/settings_menu_browser.cjs",
-    "test:coop": "node --test tests/coop_relay.test.cjs tests/coop_motion.test.cjs tests/coop_latency.test.cjs tests/mobile_coop_input.test.cjs && node tests/coop_contract.mjs && node tests/coop_inventory_contract.mjs",
+    "test:coop": "node --test tests/coop_connection.test.cjs tests/coop_relay.test.cjs tests/coop_motion.test.cjs tests/coop_latency.test.cjs tests/mobile_coop_input.test.cjs && node tests/coop_contract.mjs && node tests/coop_inventory_contract.mjs",
     "test:coop:performance": "node tests/coop_performance.cjs",
     "test:coop:browser": "node tests/coop_browser.cjs",
     "test:coop:ui": "node tests/coop_ui_browser.cjs",

@@ -21,7 +21,7 @@ async function session(){
     snapshot(s,epoch,seq,full){snapshots++;return {kind:'snapshot',epoch,seq,full,zone:s.map.id,time:s.time,groups:Object.fromEntries(groups.map(k=>[k,s[k].map(p=>({_coopId:p._coopId,x:p.x,y:p.y}))])),props:[],campaign:{},vendorStock:{}};}};
   const Game={state:world,options:{},msg(){},submitCommand:c=>ctx.CoopRef.submit(c),
     coop:{async start(p){world.player=p;world.players=[p];},async prepareHero(p){if(p.heroId==='guestHero'&&assetGate)await assetGate.promise;},arrival:p=>p,update(dt){world.time+=dt;updates++;},hostPresentation(){},refresh(){},stop(){}}};
-  const ctx=vm.createContext({console,structuredClone,performance,Date,Math,Map,Set,JSON,Promise,Uint32Array,crypto:require('node:crypto').webcrypto,WebSocket:Socket,CoopProtocol:P,CoopCodec:C,
+  const ctx=vm.createContext({URL,console,structuredClone,performance,Date,Math,Map,Set,JSON,Promise,Uint32Array,crypto:require('node:crypto').webcrypto,WebSocket:Socket,CoopProtocol:P,CoopCodec:C,
     Game,CoopMotion:{capture(){}},CoopCommands:{economic:new Set(['quaff']),settle:async()=>{},execute:async(p,c)=>{p.command=c;}},
     CoopStore:{read:async()=>hero,commit:async()=>{if(saveGate)await saveGate.promise;}},
     CoopUI:{refresh(){},tick(){},status(){},closeTravel(){},close(){}},UI:{anyOpen:()=>false},document:{hidden:false},window:{COOP_CONFIG:{relayUrl:'ws://test'}},location:{protocol:'http:'},sessionStorage:{getItem:()=>null,setItem(){},removeItem(){}},setTimeout,clearTimeout,setInterval:fn=>{heartbeat=fn;return 1;},clearInterval(){},U:{dist:(x,y,a,b)=>Math.hypot(x-a,y-b)}});
