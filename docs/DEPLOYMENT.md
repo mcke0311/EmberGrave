@@ -1,5 +1,9 @@
 # Sites deployment
 
+Current website (verified 2026-09-12): https://embergravegame.mcke0311.chatgpt.site
+The existing Site is now public. Preserve its current audience and project ID
+when updating; the private access and earlier URL recorded below are historical.
+
 The deployment prepared on 2026-09-11 uses the existing private Sites project
 `appgprj_6aa420e20bfc8191b59e30227bca8a09`, slug `embergrave-sunderstone-saga`.
 Reuse this project for updates; do not register another Site.
@@ -114,3 +118,31 @@ none missing, 43 mobile gameplay checks, 62 successful local HTTP page/asset
 requests, and exact source/release equality for all seven updated files.
 Browser interaction testing was not performed. The local packaging helper
 could not start its Bash runtime; Sites packaged the exact pushed static source.
+
+## Contained phone experience published — 2026-09-12
+
+Version 7 publishes the tested landscape phone experience from source commit
+`f6ff1f4992c7517e02bb7fd494163467774ee715`. Publication succeeded at 16:53 UTC.
+The current public website is https://embergravegame.mcke0311.chatgpt.site.
+Existing sharing settings were preserved. The historical private deployment path
+reported that the audience had changed; current public access was then verified
+before using the standard publication path.
+
+The release includes the shared viewport/rotation controller, bounded paged phone
+screens, compact menus and HUD, fullscreen controls, Home Screen help and manifest,
+app icons, and the current multiplayer client dependencies. It does not deploy a
+multiplayer relay server. The Items & Affixes and Support pages, donation
+configuration, and compressed cinematic are unchanged.
+
+Release source commit: `9b657e26f173976b5a2ab8f7e890d49e2d49f6f5`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_a472a551fa888191b9c923ade4b2ba48`.
+Deployment: `appgdep_6aa5830d99c881919ba5f9ce1635aeff`.
+
+Validation: all 30 updated runtime files match the committed game source exactly;
+70 JavaScript syntax checks and 1,155 runtime references passed with no missing
+assets. Manifest entrypoint and icons are present. The 202.36 MiB release remains
+within hosting limits. The implementation's phone, touch, settings, title,
+inventory transaction, and multiplayer browser suites passed before publication;
+physical Safari/iPhone and Chrome/Android installation checks remain manual.
+The local packaging helper could not start Bash, so Sites packaged the exact
+pushed static source. Successful publication was confirmed by deployment status.
