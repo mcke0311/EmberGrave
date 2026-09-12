@@ -158,12 +158,15 @@ const MobileControls = (() => {
     if(!party.hidden){const alert=!!(Coop.paused||Coop.saveError);party.textContent=alert?'Party !':'Party';party.setAttribute('aria-label',alert?'Open party: connection or save needs attention':'Open party');}
     if(typeof MobileWorkspace!=='undefined')MobileWorkspace.sync();
     const p=Game.state?.player, active=enabled && !!p && !p.dead && document.getElementById('title').classList.contains('hidden');
+    const wasActive=!root.hidden;
     root.hidden=!active;
     const ready=active && Game.touchReady() && document.getElementById('skillPick').classList.contains('hidden');
     root.classList.toggle('blocked',!ready);
     document.body.classList.toggle('touch-playing',active);
     if (!ready && [...pointers.values()].some(p=>p.kind !== 'tap')) reset();
-    if (!active) reset();
+    // Cancel once when touch controls disappear. Desktop frames must not reset
+    // the shared co-op mouse gesture or its local movement prediction.
+    if (!active && wasActive) reset();
     if (!active) return;
     for (const [id,side] of [['mobileAttack','L'],['mobileSkill','R']]) {
       const el=document.getElementById(id), skill=p['skill'+side], def=skill === 'basic' ? DATA.BASIC_ATTACK : DATA.SKILLS[skill];

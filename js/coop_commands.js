@@ -47,9 +47,10 @@ const CoopCommands=(()=>{
     if(['move','steer','attack','cast','stop','jump','interact','pickup'].includes(c.type))p.reviveTarget=null;
     switch(c.type){
       case 'move':case 'steer':
-        if(!pt)fail('Missing destination');p.command={type:c.type,point:pt};p.path=null;
-        if(c.type==='move')Game.repath(p,pt.x,pt.y,pt.surfaceId);return;
-      case 'stop':p.command=null;p.path=null;p.drawing=null;p.moving=false;return;
+        if(!pt)fail('Missing destination');p.command={type:c.type,point:pt};
+        if(c.type==='move')Game.repath(p,pt.x,pt.y,pt.surfaceId);
+        else{p.path=null;p._navGoal=null;p._navCache=null;}return;
+      case 'stop':p.command=null;p.path=null;p._navGoal=null;p._navCache=null;p.drawing=null;p.moving=false;return;
       case 'release':p.releaseDraw();p.command=null;return;
       case 'attack':{
         checkSkill(p,c.skill);const t=s.monsters.find(m=>m._coopId===c.targetId&&!m.dead);

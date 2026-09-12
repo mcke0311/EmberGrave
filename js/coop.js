@@ -7,7 +7,8 @@ const Coop=(()=>{
   let retry=null,pingTimer=null,serial=Promise.resolve(),incoming=Promise.resolve(),heartbeatAt=0,reconnectAt=0,travel=null,critical=false,admission=null;
   const queued=new Set();let commandCount=0;
   let localSaveError=null;
-  const assemblers=new Map(),events=[],visuals=[],areas={},accepted=new Map();
+  const assemblers=new Map(),events=[],visuals=[],areas={},accepted=new Map(),joining=new Map();
+  let fullSync=false;
   const s=()=>Game.state;
   function resumeInfo(){try{return JSON.parse(sessionStorage.getItem('embergrave-coop-connection')||'null');}catch{return null;}}
   function rememberConnection(){try{sessionStorage.setItem('embergrave-coop-connection',JSON.stringify({room,token:resumeToken,heroId:heroRecord.id,relay:window.COOP_CONFIG.relayUrl,host}));}catch{}}
@@ -84,7 +85,7 @@ const Coop=(()=>{
   async function connect(mode,heroId,code,campaignId){
     if(active)throw Error('Leave the current session first.');
     heroRecord=await CoopStore.read('heroes',heroId);if(!heroRecord)throw Error('Choose a co-op hero.');
-    stopped=false;active=true;loading=true;host=mode==='host';paused='Preparing the party…';epoch=1;inputSeq=0;admission=null;lastSnapshot=received=null;accepted.clear();lastCommands.clear();Object.keys(areas).forEach(k=>delete areas[k]);
+    stopped=false;active=true;loading=true;host=mode==='host';paused='Preparing the party…';epoch=1;inputSeq=0;admission=null;lastSnapshot=received=null;fullSync=false;accepted.clear();joining.clear();lastCommands.clear();Object.keys(areas).forEach(k=>delete areas[k]);
     try{
       const remembered=resumeInfo(),canResume=mode==='join'&&remembered&&!remembered.host&&remembered.room===code&&remembered.heroId===heroId&&remembered.relay===window.COOP_CONFIG.relayUrl;
       if(canResume){room=remembered.room;resumeToken=remembered.token;await openSocket('resume');}else await openSocket(mode,code);
@@ -101,7 +102,7 @@ const Coop=(()=>{
       }else{
         data({kind:'hero',hero:heroRecord});
       }
-      pingTimer=setInterval(()=>{wire('ping',{at:Date.now()});flush();if(host)wire('data',{payload:{kind:'heartbeat',paused:pauseReason(),epoch}});},1000);
+      pingTimer=setInterval(()=>{wire('ping',{at:Date.now()});flush();if(host)wire('data',{payload:{kind:'heartbeat',paused:pauseReason(true),epoch}});},1000);
       ui()?.refresh();return room;
     }catch(e){stopped=true;active=false;loading=false;ws?.close();if(s())Game.coop.stop();throw e;}
   }
@@ -114,13 +115,27 @@ const Coop=(()=>{
         if(accepted.has(from)){sendSnapshot(true,from);return;}
         if(s()?.map.id!=='frosthaven'||loading||s().players.length>=4){event('message',{message:'Join while the host is in Frosthaven.'},from);return;}
         if(s().players.some(p=>p.heroId===m.hero?.id)){event('message',{message:'That hero is already in this party.'},from);return;}
-        serial=serial.then(async()=>{busy=true;
-        try{
-          if(s()?.map.id!=='frosthaven'||travel)throw Error('Join while the party is in Frosthaven.');
-          const p=C.restoreHero(campaign.heroes[m.hero?.id]||m.hero);p._coopId=from;p.connected=true;await Game.coop.prepareHero(p);
-          const sp=Game.coop.arrival({x:s().player.x+1,y:s().player.y+1});p.x=sp.x;p.y=sp.y;s().players.push(p);await CoopCommands.settle(p);accepted.set(from,p.heroId);
-          await checkpoint();lastSnapshot=null;sendSnapshot(true);
-        }catch(e){s().players=s().players.filter(p=>p._coopId!==from);accepted.delete(from);event('message',{message:e.message},from);}finally{busy=false;wireAdmission();}});await serial;
+        if(joining.has(from))return;
+        const world=s(),ticket={};joining.set(from,ticket);
+        // Asset downloads must not hold the simulation or incoming command queue.
+        Promise.resolve().then(async()=>{
+          const p=C.restoreHero(campaign.heroes[m.hero?.id]||m.hero);p._coopId=from;p.connected=true;
+          await Game.coop.prepareHero(p);
+          if(!active||!host||s()!==world||joining.get(from)!==ticket)return;
+          serial=serial.then(async()=>{
+            if(!active||!host||s()!==world||!roster.some(r=>r.id===from&&r.connected))return;
+            busy=true;
+            try{
+              if(s().map.id!=='frosthaven'||travel||loading||s().players.length>=4)throw Error('Join while the party is in Frosthaven with an open slot.');
+              if(s().players.some(h=>h.heroId===p.heroId))throw Error('That hero is already in this party.');
+              const sp=Game.coop.arrival({x:s().player.x+1,y:s().player.y+1});p.x=sp.x;p.y=sp.y;s().players.push(p);
+              await CoopCommands.settle(p);accepted.set(from,p.heroId);await checkpoint();sendSnapshot(true);
+            }catch(e){s().players=s().players.filter(p=>p._coopId!==from);accepted.delete(from);event('message',{message:e.message},from);}
+            finally{busy=false;wireAdmission();}
+          });
+          await serial;
+        }).catch(e=>{if(active&&s()===world)event('message',{message:e.message},from);})
+          .finally(()=>{if(joining.get(from)===ticket)joining.delete(from);});
       }else if(m.kind==='command'){
         if(!Number.isSafeInteger(m.seq)||m.seq<1||m.seq<=(lastCommands.get(from)||0)||m.epoch!==epoch)return;
         if(!m.command||typeof m.command.type!=='string')return;delete m.command.committed;
@@ -196,7 +211,7 @@ const Coop=(()=>{
     }).catch(e=>notify(e.message));return serial;
   }
   function submit(command){
-    if(!active||loading||paused&&!host&&!['stop','returnManagement','cancelCarry'].includes(command.type))return Promise.resolve(false);
+    if(!active||loading||paused&&paused!=='Saving party changes…'&&!host&&!['stop','returnManagement','cancelCarry'].includes(command.type))return Promise.resolve(false);
     if(pending.size>200)return Promise.resolve(false);
     const n=++inputSeq,m={kind:'command',seq:n,epoch,command};
     const promise=new Promise(resolve=>pending.set(n,resolve));
@@ -266,7 +281,11 @@ const Coop=(()=>{
   }
   function sendSnapshot(full=false,to){
     if(!host||!s()?.map||loading)return;
-    if(to&&busy){serial.then(()=>sendSnapshot(true));return;}
+    if(full||to)fullSync=true;
+    // Finish the current transfer before sampling again. A slow uplink should
+    // receive the newest world, not a growing queue of obsolete snapshots.
+    if(busy||outbox.length||ws?.bufferedAmount>32*1024)return;
+    full=full||fullSync;fullSync=false;
     if(lastSnapshot&&(lastSnapshot.epoch!==epoch||lastSnapshot.zone!==s().map.id))full=true;
     // A full resync establishes one common baseline for every recipient.
     if(to){full=true;to=undefined;}
@@ -306,7 +325,7 @@ const Coop=(()=>{
     if(ws?.readyState!==WebSocket.OPEN)return 'Reconnecting…';
     if(!host&&performance.now()-lastHost>3500)return 'Waiting for the host…';
     if(!ignoreBusy&&busy)return 'Saving party changes…';
-    return paused==='Save failed'?paused:host?'':paused;
+    return paused==='Save failed'?paused:host||paused==='Saving party changes…'?'':paused;
   }
   function frame(dt){
     if(!active||!s()?.map)return;
@@ -326,7 +345,8 @@ const Coop=(()=>{
     }finally{authority=false;}
     Game.coop.hostPresentation(dt,accumulator*30);
     if(critical||saveClock>=5){
-      busy=true;serial=serial.then(()=>checkpoint()).then(()=>{lastSnapshot=null;sendSnapshot(true);}).catch(e=>{paused='Save failed';notify('Save failed: '+e.message);}).finally(()=>busy=false);
+      const changed=critical;
+      busy=true;serial=serial.then(()=>checkpoint()).then(()=>sendSnapshot(changed)).catch(e=>{paused='Save failed';notify('Save failed: '+e.message);}).finally(()=>busy=false);
     }else if(publish>=1/15){publish=0;sendSnapshot();}
   }
   function scaleEnemies(){const mul=1+.6*((s().map._coopSize||1)-1);for(const m of s().monsters)if(!m._coopScaled){m.hp*=mul;m.maxHp*=mul;m._coopScaled=true;}}

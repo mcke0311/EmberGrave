@@ -91,4 +91,17 @@ for(const effect of ['poisonDot','scorch','plague']){
  mon[effect]=null;s.time=6;mon.update(.1,p,s.map);ok(mon.healthBarUntil<s.time&&mon.hp<mon.maxHp,'injured enemy extended health timer without damage');
  mon.loseHealth(0);ok(mon.healthBarUntil===5,'zero damage extended visibility');
 }
-console.log(`PASS ${checks} gameplay checks: tap/hold input, gesture ownership, collision, interruption, jumping, hazards and damage visibility timers.`);
+// Use the bound canvas mouse events and real cooperative command executor.
+scope.Coop={active:true,host:true,authority:true,paused:'',loading:false};
+for(const name of ['coop_commands','coop_input'])vm.runInContext(fs.readFileSync(new URL('../js/'+name+'.js',import.meta.url),'utf8'),scope);
+const commandApi=vm.runInContext('CoopCommands',scope);
+scope.Coop.submit=c=>commandApi.execute(G.state.player,c);
+s=fresh();p=s.player;press(26.5,20.5);release();
+ok(p.command?.type==='move'&&p.path?.length,'co-op canvas click did not create a route');
+now=40;press(26.5,20.5);release();
+ok(p.path?.length,'repeated co-op click discarded the cached route');
+const beforeMove=p.x;for(let i=0;i<15;i++)frame(s);
+ok(p.x>beforeMove,'co-op mouse route did not move the host');
+scope.Coop.submit({type:'stop'});press(26.5,20.5);release();
+ok(p.path?.length,'co-op stop then click could not resume the route');
+console.log(`PASS ${checks} gameplay checks: solo/co-op mouse input, gesture ownership, collision, interruption, jumping, hazards and damage visibility timers.`);

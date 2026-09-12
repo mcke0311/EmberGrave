@@ -1,6 +1,8 @@
 /* Network data contains no executable callbacks, GPU objects, or navigation caches. */
 const CoopCodec=(()=>{
   const groups=['players','monsters','minions','projectiles','ground','traps','fx','npcs'];
+  // Sub-pixel precision is enough for presentation; saves retain exact values.
+  const motionFields=['x','y','jumpZ','visAng','angT','stride','curSpeed','animT'];
   const heldItems=p=>[p.management?.carried,...(p.management?.offer||[])].filter(Boolean);
   function mapManagement(m,convert){return {carried:m?.carried?convert(m.carried):null,origin:m?.origin||null,offer:(m?.offer||[null,null,null,null]).map(it=>it?convert(it):null),origins:m?.origins||[null,null,null,null]};}
   const skip=new Set(['cls','originWorld','originMap','combatWorld','combatMap','world','map','instance','baseOpts','enemySkills','imperialCombat','act2Combat','path','command','hitSet','hit','targetCache','statsCache','drawingContext','canvas','image','minimap','nav','navigation','mesh']);
@@ -88,6 +90,9 @@ const CoopCodec=(()=>{
     // Items are inlined in their owner; refs are reserved for world actors.
     for(const key of groups)out.groups[key]=(s[key]||[]).map(o=>{
       const row=encode(o,true);
+      for(const field of motionFields)if(Number.isFinite(row[field]))row[field]=Math.round(row[field]*1000)/1000;
+      // Guests animate actors but never run their wandering AI.
+      delete row.wanderT;
       if(key==='players'){row.inv={w:o.inv.w,h:o.inv.h,items:o.inv.items.map(it=>encode(it,true))};row.stash={w:o.stash.w,h:o.stash.h,items:o.stash.items.map(it=>encode(it,true))};row.equip=Object.fromEntries(Object.entries(o.equip).map(([k,it])=>[k,it?encode(it,true):null]));row.management=mapManagement(o.management,it=>encode(it,true));}
       if(key==='ground'&&o.item)row.item=encode(o.item,true);
       if(key==='monsters'&&row.encounter&&typeof o.encounter?.statusText==='function')row.encounter.statusLabel=o.encounter.statusText();

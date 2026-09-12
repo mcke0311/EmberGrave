@@ -1,6 +1,8 @@
 /* Translate mouse and touch intentions into ID-only host commands. */
 const CoopInput=(()=>{
   let press=null,last=0,stick=null,skillSide=null,once=false;
+  // Saving is a short command queue, not a reason to discard a player's click.
+  const blocked=()=>{const reason=Coop.paused;return !!reason&&reason!=='Saving party changes…';};
   function send(c){
     if(!Coop.host&&Game.state){const p=Game.state.player;if(['move','steer'].includes(c.type))p._coopMotion=c;else if(['stop','attack','cast','jump'].includes(c.type))p._coopMotion=null;}
     Game.submitCommand(c);
@@ -10,7 +12,7 @@ const CoopInput=(()=>{
     else if(info.point)send({type:'cast',skill,point:info.point});
   }
   function click(right,info){
-    if(Coop.paused||Game.state.player.dead)return;
+    if(blocked()||Game.state.player.dead)return;
     const p=Game.state.player,skill=right?p.skillR:p.skillL;
     if(p.management?.carried){if(!right)InventoryActions.submit({type:'drop',itemId:p.management.carried._coopId});return;}
     if(!right&&!info.mouse.shift){
@@ -27,7 +29,7 @@ const CoopInput=(()=>{
   function hold(info){
     if(performance.now()-last<80)return;last=performance.now();
     if(stick||skillSide){touchTick();return;}
-    if(!press||Coop.paused)return;
+    if(!press||blocked())return;
     if(press.ground){if(info.mouse.l&&performance.now()-press.at>=150){press.active=true;send({type:'steer',point:info.point});}}
     else if((press.right?info.mouse.r:info.mouse.l)&&Game.coop.repeatSkill(Game.state.player[press.right?'skillR':'skillL']))targetSkill(Game.state.player[press.right?'skillR':'skillL'],info,true);
   }
@@ -42,7 +44,7 @@ const CoopInput=(()=>{
   }
   function touchSkill(side,down){if(!down){skillSide=null;send({type:'release'});return;}if(!Game.touchReady())return;skillSide=side;once=false;touchTick();}
   function touchTick(){
-    if(!Game.touchReady()||Coop.paused)return;
+    if(!Game.touchReady()||blocked())return;
     const p=Game.state.player,[dx,dy]=stick?[stick.x,stick.y]:U.screenVecToWorld(p.visAng);
     const point={x:U.clamp(p.x+dx*4.2,0,Game.state.map.w),y:U.clamp(p.y+dy*4.2,0,Game.state.map.h),surfaceId:p.surfaceId};
     if(stick)send({type:'steer',point});

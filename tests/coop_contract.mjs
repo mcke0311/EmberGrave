@@ -29,6 +29,10 @@ await assert.rejects(()=>Cmd.execute(p,{type:'socket',itemId:gear._coopId,socket
 s.map.props=savedProps;p.stash.items.splice(p.stash.items.indexOf(storedGlyph),1);
 const round=C.restoreHero(C.hero(guest));ok(round.equip.main.baseId===guest.equip.main.baseId&&round.heroId===guest.heroId,'co-op hero preserves starter equipment and identity');
 const snap=C.snapshot(s,2,1,true);const text=JSON.stringify(snap);ok(!text.includes('originWorld')&&!text.includes('function('),'snapshot excludes executable and world references');
+const exactX=p.x;p.x=10.123456789;p.wanderT=1.23456789;
+const compact=C.snapshot(s,2,2,false).groups.players.find(row=>row._coopId===p._coopId);
+ok(compact.x===10.123&&!('wanderT' in compact),'network values omit AI timers and retain sub-pixel movement precision');
+ok(p.x===10.123456789&&C.encode(p,true).x===p.x,'network compaction never changes host simulation or persistence values');p.x=exactX;delete p.wanderT;
 const restored={...s,players:[],monsters:[],minions:[],projectiles:[],traps:[],fx:[],npcs:[],ground:[],map:{...s.map,props:[]}};
 C.apply(restored,JSON.parse(text),'guest');ok(restored.player.name==='Guest'&&restored.players.length===2,'snapshot identifies the local guest');
 const enemy=new Monster('frost_risen',p.x+1,p.y);s.monsters=[enemy];guest.x=enemy.x;guest.y=enemy.y;p.x+=9;
