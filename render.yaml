@@ -13,6 +13,6 @@ services:
       - key: BIND_ADDRESS
         value: 0.0.0.0
       - key: ALLOWED_ORIGINS
-        value: https://embergravegame.mcke0311.chatgpt.site
+        value: https://embergravegame.mcke0311.chatgpt.site,https://embergravegame.com
       - key: MAX_ROOMS
         value: "100"
