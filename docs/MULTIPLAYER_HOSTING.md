@@ -32,3 +32,9 @@ on unrelated website changes.
 Sources: [Render WebSockets](https://render.com/docs/websocket),
 [free-service limits](https://render.com/docs/free), and
 [deployment buttons](https://render.com/docs/deploy-to-render).
+
+## Protocol 2 upgrade
+
+Deploy the frontend and relay for `embergrave-coop-3` together. The relay now serves `GET /rooms`; allow that path through the HTTPS proxy as well as `/ws` and `/healthz`. Discovery responses enforce the configured game origins, disable caching, and omit password-protected rooms. Passwords use a random salt and asynchronous scrypt hashing at the relay. They are never included in directory data or invitation URLs.
+
+Use [the coordinated release and rollback procedure](MULTIPLAYER_RELEASE.md). This workspace prepares the release; these edits do not deploy the public service.

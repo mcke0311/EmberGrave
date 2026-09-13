@@ -26,7 +26,7 @@ try{
  const win=iframe.contentWindow,doc=win.document;
  for(let i=0;i<300&&!doc.querySelector('#titleMenu button');i++)await new Promise(r=>setTimeout(r,30));
  const game=win.eval('Game'),fixed=win.eval('LevelTerrain'),ui=win.eval('UI'),u=win.eval('U');win.eval('Sfx').setVol('master',0);
- await game.newGame('Cache benchmark','vanguard',false);await game.skipOpening();ui.closeAll();
+ await game.newGame('Cache benchmark','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();
  game.state.seed=12345;await game.enterMap('north_wild','from_camp');
  const state=game.state,api=game.__terrainTest,view=doc.getElementById('view');
  state.monsters=[];state.map.explored.fill(1);game.options.screenShake=false;const map=state.map;

@@ -8,7 +8,7 @@ const dest='tests/qa/snare_tree';fs.mkdirSync(dest,{recursive:true});
  await page.route(/\/js\/game\.js(?:\?|$)/,async route=>{const response=await route.fetch();let body=await response.text();body=body.replace('    init, newGame, loadGame,','    __snareQA:{freeze:()=>{running=false;},advance:dt=>{update(dt);render();},render},\n    init, newGame, loadGame,');await route.fulfill({response,body});});
  try {
   await page.goto(process.env.GAME_REVIEW_URL||'http://127.0.0.1:8758/',{waitUntil:'load',timeout:90000});await page.waitForSelector('#titleMenu button',{timeout:90000});
-  await page.evaluate(async()=>{Sfx.setVol('master',0);await Game.newGame('Snare Review','veilranger',false);await Game.skipOpening();await Game.enterMap('north_wild','default');Game.__snareQA.freeze();});
+  await page.evaluate(async()=>{Sfx.setVol('master',0);await Game.newGame('Snare Review','veilranger',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);await Game.enterMap('north_wild','default');Game.__snareQA.freeze();});
   const setup=await page.evaluate(()=>{
    const s=Game.state,p=s.player,m=s.map;Game.debugFlags.god=true;UI.closeAll();UI.hideTitle();
    s.monsters=[];s.minions=[];s.fx=[];s.traps=[];s.projectiles=[];s.npcs=[];p.command=null;p.path=null;

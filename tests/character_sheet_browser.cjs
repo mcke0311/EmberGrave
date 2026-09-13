@@ -13,7 +13,7 @@ fs.mkdirSync(dest,{recursive:true});
   try{
     await page.goto(root+'/index.html');await page.waitForSelector('#titleMenu button',{timeout:90000});
     await page.evaluate(async()=>{
-      Sfx.setVol('master',0);await Game.newGame('Character Sheet Review','veilranger',false);await Game.skipOpening();
+      Sfx.setVol('master',0);await Game.newGame('Character Sheet Review','veilranger',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);
       Game.debugFlags.god=true;Game.state.monsters=[];UI.closeAll();
       const p=Game.state.player;p.lvl=20;p.attrPts=2;
       p.equip.main.affixes.push({stat:'fireDmg',val:10},{stat:'coldDmg',val:15},{stat:'lightDmg',val:22},{stat:'poisonDmg',val:18},{stat:'fireDmgPct',val:50},{stat:'poisonDmgPct',val:40});

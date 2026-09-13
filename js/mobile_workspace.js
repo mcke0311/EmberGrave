@@ -122,7 +122,8 @@ const MobileWorkspace=(()=>{
     }}
     related.hidden=ps.length<2||esc||picker||detail;
     for(const b of related.children)b.setAttribute('aria-pressed',String(b.dataset.side===active));
-    document.documentElement.style.setProperty('--phone-menu-head',((isPhone?96:56)+(related.hidden?0:48))+'px');
+    const height=isPhone?Math.ceil(header.getBoundingClientRect().height)-parseFloat(getComputedStyle(header).paddingTop||0):56+(related.hidden?0:48);
+    document.documentElement.style.setProperty('--phone-menu-head',height+'px');
   }
   return {init,sync,select,open,back,close,pickSkill,pickerClosed,get paused(){return phone()&&blocked;}};
 })();

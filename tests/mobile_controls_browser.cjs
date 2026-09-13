@@ -21,7 +21,7 @@ const {reveal}=require('./phone_page_helpers.cjs');
     ok(await page.locator('#phoneRotate').isVisible(),'portrait rotation gate missing');
     await page.setViewportSize({width:568,height:320});await page.waitForFunction(()=>!MobileShell.blocked);
     console.log('Landscape ready; preparing an isolated hero.');
-    await page.evaluate(async()=>{await Game.newGame('Mobile QA','vanguard',false);await Game.skipOpening();Game.debugFlags.god=true;UI.hideTitle();UI.closeAll();});
+    await page.evaluate(async()=>{await Game.newGame('Mobile QA','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);Game.debugFlags.god=true;UI.hideTitle();UI.closeAll();});
     await page.waitForFunction(()=>Game.touchReady(),null,{timeout:120000});
     await page.evaluate(()=>{window.__touchEvents=[];for(const type of ['pointerdown','pointerup','pointercancel','lostpointercapture'])document.addEventListener(type,e=>window.__touchEvents.push({type,id:e.pointerId,target:e.target.id}),true);});
     const client=await context.newCDPSession(page);

@@ -8,7 +8,42 @@ const Coop=(()=>{
   const queued=new Set();let commandCount=0;
   let localSaveError=null;
   const assemblers=new Map(),events=[],visuals=[],areas={},accepted=new Map(),joining=new Map();
-  let fullSync=false;
+  let fullSync=false,worker=null,workerSequence=0,connectOptions={},partyRecords=[],nextWorld=null,workerStatus='',mobileQuality='high',qualityClock=0,qualityFrames=[];
+  const workerPending=new Map();
+  function sampleFrame(dt){
+    diagnostics.frameCount++;diagnostics.totalFrameMs+=dt*1000;diagnostics.maxFrameMs=Math.max(diagnostics.maxFrameMs,dt*1000);if(dt>1/30)diagnostics.framesOver33++;diagnostics.frames.push(dt*1000);if(diagnostics.frames.length>3600)diagnostics.frames.shift();
+    if(!window.matchMedia?.('(pointer: coarse)').matches)return;qualityClock+=dt;qualityFrames.push(dt*1000);
+    if(qualityClock<3)return;qualityClock=0;sendHost({kind:'view',width:innerWidth,height:innerHeight});const a=qualityFrames.sort((a,b)=>a-b),p95=a[Math.floor(a.length*.95)]||0;qualityFrames=[];
+    if(p95>28)mobileQuality='low';else if(p95<19)mobileQuality='high';
+  }
+  const diagnostics={frames:[],frameCount:0,totalFrameMs:0,maxFrameMs:0,framesOver33:0,rtt:0,receivedBytes:0,receivedMessages:0,applyMs:0};
+  function workerRequest(type,args={}){return new Promise((resolve,reject)=>{const requestId=++workerSequence;workerPending.set(requestId,{resolve,reject});worker.postMessage({type,...args,requestId});});}
+  function workerFailed(message){
+    paused='Host simulation stopped. Resume the saved campaign in a new room.';notify(paused+' '+message);
+    for(const p of workerPending.values())p.reject(Error(message));workerPending.clear();for(const resolve of pending.values())resolve(false);pending.clear();
+    stopped=true;clearInterval(pingTimer);clearTimeout(retry);wire('roomState',{open:false});wire('leave');ws?.close();ws=null;worker?.terminate();worker=null;active=false;loading=false;Game.coop.stop();ui()?.status('Host simulation stopped. Resume your saved campaign. '+message);
+  }
+  async function startWorker(record){
+    worker=new Worker(new URL('js/coop_worker.js?v='+P.BUILD,document.baseURI));
+    worker.onerror=e=>workerFailed(e.message||'Worker failed.');worker.onmessageerror=()=>workerFailed('Worker communication failed.');
+    worker.onmessage=({data:m})=>{
+      if(m.type==='reply'){const p=workerPending.get(m.requestId);workerPending.delete(m.requestId);if(m.error)p?.reject(Error(m.error));else p?.resolve(m.value);return;}
+      if(m.type==='runtimeStatus'){paused=m.paused;return;}
+      if(m.type==='send'){if(m.payload.kind==='joined')wire('admittedMember',{playerId:m.to});data(m.payload,m.to);return;}
+      if(m.type==='reject'){wire('rejectMember',{playerId:m.playerId,reason:m.reason});return;}
+      if(m.type==='fatal'){workerFailed(m.message);return;}
+      if(m.type==='local')incoming=incoming.then(()=>onData(hostId,m.payload,true)).catch(e=>workerFailed(e.message));
+    };
+    await workerRequest('start',{args:{hero:heroRecord,hostId:localId,campaign:record,seed:connectOptions.seed,view:{width:innerWidth,height:innerHeight}}});
+    await incoming;loading=false;paused='';workerStatus='';worker.postMessage({type:'status',hidden:document.hidden,offline:ws?.readyState!==WebSocket.OPEN});wire('roomState',{open:true});
+  }
+  async function listRooms(){
+    const url=new URL(window.COOP_CONFIG.relayUrl);url.protocol=url.protocol==='wss:'?'https:':'http:';url.pathname='/rooms';url.search='';url.hash='';
+    const response=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(90000)});if(!response.ok)throw Error('Party list is unavailable. Try again.');
+    const result=await response.json();if(result.build!==P.BUILD)throw Error('Incompatible game version. Reload the game.');return result.rooms;
+  }
+
+  if(typeof document!=='undefined')document.addEventListener?.('visibilitychange',()=>{if(worker)worker.postMessage({type:'status',hidden:document.hidden,offline:ws?.readyState!==WebSocket.OPEN});});
   const s=()=>Game.state;
   function resumeInfo(){try{return JSON.parse(sessionStorage.getItem('embergrave-coop-connection')||'null');}catch{return null;}}
   function rememberConnection(){try{sessionStorage.setItem('embergrave-coop-connection',JSON.stringify({room,token:resumeToken,heroId:heroRecord.id,relay:window.COOP_CONFIG.relayUrl,host}));}catch{}}
@@ -17,7 +52,8 @@ const Coop=(()=>{
   function wire(type,data){if(ws?.readyState!==WebSocket.OPEN)return false;if(ws.bufferedAmount>1024*1024)return false;ws.send(JSON.stringify(P.envelope(type,data)));return true;}
   function data(payload,to){
     const frames=P.frames(payload,'t_'+(++seq));
-    if(outbox.length+frames.length>400){outbox=[];lastSnapshot=null;notify('Connection is slow; resynchronizing.');return false;}
+    if(outbox.length+frames.length>1024){notify('Connection is too slow. Please wait before trying again.');return false;}
+    if(payload.kind==='command'&&payload.command?.type==='steer'&&outbox.at(-1)?.payload.kind==='command'&&outbox.at(-1).payload.command?.type==='steer'){const previous=outbox.pop().payload.seq;pending.get(previous)?.(false);pending.delete(previous);}
     for(const payload of frames)outbox.push({payload,to});flush();return true;
   }
   function flush(){while(outbox.length&&ws?.readyState===WebSocket.OPEN&&ws.bufferedAmount<256*1024){const m=outbox.shift();wire('data',m);}}
@@ -42,7 +78,7 @@ const Coop=(()=>{
       const configured=Number(window.COOP_CONFIG.connectTimeoutMs);
       const waitMs=mode==='resume'?10000:Number.isFinite(configured)?Math.max(10000,Math.min(120000,configured)):90000;
       const timeout=setTimeout(()=>{if(!welcomed){reject(Error('The multiplayer server did not respond. It may be waking up; try again shortly.'));socket.close();}},waitMs);
-      socket.onopen=()=>{if(socket===ws)wire(mode==='host'?'create':mode==='resume'?'resume':'join',mode==='resume'?{room,token:resumeToken}:{room:code});};
+      socket.onopen=()=>{if(socket===ws)wire(mode==='host'?'create':mode==='resume'?'resume':'join',mode==='resume'?{room,token:resumeToken}:{room:code,password:connectOptions.password,name:connectOptions.name||heroRecord?.name+"'s party",hostName:heroRecord?.name});};
       socket.onmessage=async({data:raw})=>{
         if(socket!==ws)return;
         try{
@@ -53,24 +89,28 @@ const Coop=(()=>{
             if(mode==='resume'){
               paused='';lastSnapshot=null;outbox=[];
               for(const resolve of pending.values())resolve(false);pending.clear();
-              if(host){wire('roomState',{open:s()?.map.id==='frosthaven'});sendSnapshot(true);}
+              if(worker){wire('roomState',{open:true});worker.postMessage({type:'status',hidden:document.hidden,offline:false});worker.postMessage({type:'receive',from:localId,payload:{kind:'resync'}});}else if(host){wire('roomState',{open:s()?.map.id==='frosthaven'});sendSnapshot(true);}
               else data({kind:'resync'});
             }
             resolve(m);ui()?.refresh();
           }else if(m.type==='error'){
             if(!welcomed){clearTimeout(timeout);reject(Error(m.message));socket.close();}else notify(m.message);
+          }else if(m.type==='pong'){diagnostics.rtt=Math.max(0,Date.now()-m.at);
           }else if(m.type==='roster'){
             const previousRoster=roster;roster=m.members;
+            if(worker)worker.postMessage({type:'roster',members:roster});
             if(s())for(const p of s().players||[]){const peer=roster.find(r=>r.id===p._coopId);p.connected=!!peer?.connected;if(!p.connected){p.command=null;p.path=null;p.drawing=null;}}
             if(host&&travel&&!travel.cinematic&&s().players.some(p=>!p.connected))cancelTravel('A player disconnected. Travel cancelled.');
             if(host&&travel?.cinematic)finishCinematic();
-            if(host&&!loading){wireAdmission();for(const peer of roster)if(peer.connected&&!previousRoster.find(r=>r.id===peer.id)?.connected&&peer.id!==localId&&accepted.has(peer.id))sendSnapshot(true,peer.id);}
+            if(host&&!worker&&!loading){wireAdmission();for(const peer of roster)if(peer.connected&&!previousRoster.find(r=>r.id===peer.id)?.connected&&peer.id!==localId&&accepted.has(peer.id))sendSnapshot(true,peer.id);}
             if(!roster.find(r=>r.id===hostId)?.connected)paused='Waiting for the host to reconnect…';
             ui()?.refresh();
           }else if(m.type==='departed'){
-            if(host&&s()){const p=s().players.find(p=>p._coopId===m.playerId);if(p)campaign.heroes[p.heroId]=C.hero(p);s().players=s().players.filter(p=>p._coopId!==m.playerId);s().minions=s().minions.filter(p=>p.owner?._coopId!==m.playerId);lastCommands.delete(m.playerId);critical=true;}
+            if(worker)worker.postMessage({type:'depart',playerId:m.playerId});
+            if(host&&!worker&&s()){const p=s().players.find(p=>p._coopId===m.playerId);if(p)campaign.heroes[p.heroId]=C.hero(p);s().players=s().players.filter(p=>p._coopId!==m.playerId);s().minions=s().minions.filter(p=>p.owner?._coopId!==m.playerId);lastCommands.delete(m.playerId);critical=true;}
             ui()?.refresh();
           }else if(m.type==='data'){
+            diagnostics.receivedBytes+=raw.length;diagnostics.receivedMessages++;
             if(!assemblers.has(m.from))assemblers.set(m.from,new P.Assembler());
             const payload=assemblers.get(m.from).accept(m.payload);if(payload){incoming=incoming.then(()=>onData(m.from,payload)).catch(e=>{console.error('Co-op message failed',e);notify('Co-op: '+e.message);});await incoming;}
           }else if(m.type==='ended'){incoming=incoming.then(async()=>{notify(m.reason);await leave(false);});await incoming;}
@@ -81,7 +121,7 @@ const Coop=(()=>{
         clearTimeout(timeout);if(socket!==ws)return;
         if(!welcomed){reject(Error('The multiplayer server closed the connection before the party was ready. Try again shortly.'));return;}
         if(stopped||!active)return;
-        paused='Reconnecting…';if(!reconnectAt)reconnectAt=Date.now();ui()?.refresh();
+        paused='Reconnecting…';if(worker)worker.postMessage({type:'status',hidden:document.hidden,offline:true});if(!reconnectAt)reconnectAt=Date.now();ui()?.refresh();
         retry=setTimeout(async function reconnect(){
           if(stopped||!active)return;
           if(Date.now()-reconnectAt>=60000){notify('Reconnection timed out. Your last checkpoint is available.');leave(false);return;}
@@ -94,14 +134,22 @@ const Coop=(()=>{
     const p=Game.coop.makeHero(name,classId);p.heroId=P.randomId();
     const h=C.hero(p);await CoopStore.commit(null,[h]);return h;
   }
-  async function connect(mode,heroId,code,campaignId){
+  async function connect(mode,heroId,code,campaignId,options={}){
+    if(campaignId&&typeof campaignId==='object'){options=campaignId;campaignId=options.campaignId||null;}
+    if(code&&typeof code==='object'){options=code;code=options.code||'';campaignId=options.campaignId||null;}
+    connectOptions={...options};partyRecords=[];nextWorld=null;
     if(active)throw Error('Leave the current session first.');
     heroRecord=await CoopStore.read('heroes',heroId);if(!heroRecord)throw Error('Choose a co-op hero.');
     stopped=false;active=true;loading=true;host=mode==='host';paused='Preparing the party…';epoch=1;inputSeq=0;admission=null;lastSnapshot=received=null;fullSync=false;accepted.clear();joining.clear();lastCommands.clear();Object.keys(areas).forEach(k=>delete areas[k]);
     try{
       const remembered=resumeInfo(),canResume=mode==='join'&&remembered&&!remembered.host&&remembered.room===code&&remembered.heroId===heroId&&remembered.relay===window.COOP_CONFIG.relayUrl;
       if(canResume){room=remembered.room;resumeToken=remembered.token;await openSocket('resume');}else await openSocket(mode,code);
-      if(host){
+      if(host&&typeof Worker!=='undefined'){
+        campaign=campaignId?await CoopStore.read('campaigns',campaignId):null;
+        await startWorker(campaign);
+      }else if(host){
+        // Non-browser compatibility harness; playable hosts require the worker.
+        if(typeof document!=='undefined'&&document.createElement)throw Error('Hosting requires Web Workers. Use Chrome on Android or a current desktop browser.');
         campaign=campaignId?await CoopStore.read('campaigns',campaignId):null;
         if(campaign&&campaign.ownerHeroId!==heroId)throw Error('Select the hero that owns this campaign.');
         campaign ||= {id:P.randomId(),ownerHeroId:heroId,name:heroRecord.name+"'s Act I",seed:crypto.getRandomValues(new Uint32Array(1))[0],heroes:{},areas:{},quests:null,flags:null,shrines:['frosthaven']};
@@ -112,20 +160,21 @@ const Coop=(()=>{
         accepted.set(localId,p.heroId);roster=roster.map(r=>({...r,ready:false}));
         loading=false;paused='';await checkpoint();wireAdmission();sendSnapshot(true);
       }else{
-        data({kind:'hero',hero:heroRecord});
+        data({kind:'hero',hero:heroRecord,view:{width:typeof innerWidth==='number'?innerWidth:844,height:typeof innerHeight==='number'?innerHeight:390}});
       }
       pingTimer=setInterval(()=>{wire('ping',{at:Date.now()});flush();if(host)wire('data',{payload:{kind:'heartbeat',paused:pauseReason(true),epoch}});},1000);
       ui()?.refresh();return room;
-    }catch(e){stopped=true;active=false;loading=false;ws?.close();if(s())Game.coop.stop();throw e;}
+    }catch(e){stopped=true;active=false;loading=false;wire('leave');ws?.close();worker?.terminate();worker=null;for(const request of workerPending.values())request.reject(e);workerPending.clear();if(s())Game.coop.stop();throw e;}
   }
-  function wireAdmission(){if(host){const open=!loading&&!busy&&!travel&&s()?.map?.id==='frosthaven';if(open!==admission){admission=open;wire('roomState',{open});}}}
-  async function onData(from,m){
+  function wireAdmission(){if(worker)return;if(host){const open=!loading&&!busy&&!travel;if(open!==admission){admission=open;wire('roomState',{open});}}}
+  async function onData(from,m,fromWorker=false){
     if(!active||stopped)return;
-    if(host){
+    if(host&&worker&&!fromWorker){worker.postMessage({type:'receive',from,payload:m});return;}
+    if(host&&!fromWorker){
       if(m.kind==='hero'){
         if(!roster.some(r=>r.id===from&&r.connected))return;
         if(accepted.has(from)){sendSnapshot(true,from);return;}
-        if(s()?.map.id!=='frosthaven'||loading||s().players.length>=4){event('message',{message:'Join while the host is in Frosthaven.'},from);return;}
+        if(loading||s().players.length>=4){event('message',{message:'The party is full or still preparing.'},from);return;}
         if(s().players.some(p=>p.heroId===m.hero?.id)){event('message',{message:'That hero is already in this party.'},from);return;}
         if(joining.has(from))return;
         const world=s(),ticket={};joining.set(from,ticket);
@@ -138,7 +187,7 @@ const Coop=(()=>{
             if(!active||!host||s()!==world||!roster.some(r=>r.id===from&&r.connected))return;
             busy=true;
             try{
-              if(s().map.id!=='frosthaven'||travel||loading||s().players.length>=4)throw Error('Join while the party is in Frosthaven with an open slot.');
+              if(travel||loading||s().players.length>=4)throw Error('The party is full or still preparing.');
               if(s().players.some(h=>h.heroId===p.heroId))throw Error('That hero is already in this party.');
               const sp=Game.coop.arrival({x:s().player.x+1,y:s().player.y+1});p.x=sp.x;p.y=sp.y;s().players.push(p);
               await CoopCommands.settle(p);accepted.set(from,p.heroId);await checkpoint();sendSnapshot(true);
@@ -157,14 +206,19 @@ const Coop=(()=>{
       else if(m.kind==='cinematicDone'){if(travel?.cinematic&&travel.id===m.id){travel.answers.set(from,true);finishCinematic();}}
     }else if(from===hostId){
       lastHost=performance.now();
-      if(m.kind==='heartbeat'){paused=m.paused||'';ui()?.refresh();}
+      if(m.kind==='prepareWorld'){
+        nextWorld=m;ui()?.status('Loading '+(DATA.ZONES[m.zone]?.name||m.zone)+'…');
+        Game.coop.preload(m.zone).then(()=>sendHost({kind:'worldReady',id:m.id,ok:true})).catch(e=>{sendHost({kind:'worldReady',id:m.id,ok:false});notify(e.message);});
+      }else if(m.kind==='joined'){ui()?.party();}
+      else if(m.kind==='teleportChannel'){notify('Teleporting in three seconds. Stay still.');}
+      else if(m.kind==='heartbeat'){paused=m.paused||'';ui()?.refresh();}
       else if(m.kind==='snapshot'||m.kind==='delta')await acceptSnapshot(m);
       else if(m.kind==='ack'){pending.get(m.seq)?.(m.ok);pending.delete(m.seq);if(!m.ok)notify(m.message);}
-      else if(m.kind==='heroSaved'){if(m.hero.id===heroRecord.id){try{await CoopStore.commit(null,[m.hero]);heroRecord=m.hero;localSaveError=null;}catch(e){localSaveError=m.hero;notify('Local hero save failed: '+e.message);}}}
+      else if(m.kind==='heroSaved'){if(m.hero.id===heroRecord.id){try{if(!worker)await CoopStore.commit(null,[m.hero]);heroRecord=m.hero;localSaveError=null;}catch(e){localSaveError=m.hero;notify('Local hero save failed: '+e.message);}}}
       else if(m.kind==='event'&&(m.epoch===undefined||m.epoch===epoch))receiveEvent(m);
-      else if(m.kind==='visuals'&&m.epoch===epoch)for(const e of m.effects||[])Game.coop.visual(e);
+      else if(m.kind==='visuals'&&(m.worldId?s()?.map.id===m.worldId:m.epoch===epoch))for(const e of m.effects||[])Game.coop.visual(e);
       else if(m.kind==='travelOffer'){paused='Party travel';ui()?.travel(m);}
-      else if(m.kind==='travelCancel'){paused='';ui()?.closeTravel();notify(m.message);}
+      else if(m.kind==='travelCancel'){nextWorld=null;paused='';ui()?.closeTravel();notify(m.message);}
       else if(m.kind==='prepareMap'){
         try{await Game.coop.preload(m.zone);data({kind:'travelAnswer',id:m.id,stage:'loaded',ok:true});}
         catch(e){data({kind:'travelAnswer',id:m.id,stage:'loaded',ok:false});notify(e.message);}
@@ -222,12 +276,13 @@ const Coop=(()=>{
       }finally{authority=false;committing=false;busy=false;ui()?.refresh();}
     }).catch(e=>notify(e.message));return serial;
   }
+  function sendHost(payload){if(worker)worker.postMessage({type:'receive',from:localId,payload});else data(payload);}
   function submit(command){
     if(!active||loading||paused&&paused!=='Saving party changes…'&&!host&&!['stop','returnManagement','cancelCarry'].includes(command.type))return Promise.resolve(false);
     if(pending.size>200)return Promise.resolve(false);
-    const n=++inputSeq,m={kind:'command',seq:n,epoch,command};
+    const n=++inputSeq;CoopInput.rememberCommand?.(n,command);const m={kind:'command',seq:n,epoch,worldId:s()?.map.id,generation:s()?.player.travelGeneration||received?.generation||1,command};
     const promise=new Promise(resolve=>pending.set(n,resolve));
-    if(host){lastCommands.set(localId,n);enqueueCommand(localId,m);}else data(m);
+    if(worker)sendHost(m);else if(host){lastCommands.set(localId,n);enqueueCommand(localId,m);}else if(!data(m)){pending.get(n)?.(false);pending.delete(n);}
     return promise;
   }
   async function runLocal(command){
@@ -261,6 +316,7 @@ const Coop=(()=>{
     C.register(s());
   }
   async function checkpoint(){
+    if(worker)return workerRequest('checkpoint');
     if(!active||!host||!s()?.map||loading)return;
     captureArea();
     const heroes=s().players.map(C.hero);
@@ -275,6 +331,7 @@ const Coop=(()=>{
   }
   function save(){if(!active||!host||loading)return;critical=true;}
   async function retrySave(){
+    if(worker)return workerRequest('retrySave');
     if(!host){if(localSaveError)try{await CoopStore.commit(null,[localSaveError]);heroRecord=localSaveError;localSaveError=null;}catch(e){notify('Local hero save failed: '+e.message);}ui()?.refresh();return;}
     busy=true;try{await serial;await checkpoint();paused='';lastSnapshot=null;sendSnapshot(true);}catch(e){paused='Save failed';notify('Save failed: '+e.message);}finally{busy=false;ui()?.refresh();}
   }
@@ -311,24 +368,29 @@ const Coop=(()=>{
     if(visuals.length)data({kind:'visuals',epoch,effects:visuals.splice(0)});
   }
   async function acceptSnapshot(m){
+    const patch=m.kind==='delta'?m:null,start=performance.now();
+    if(m.generation&&received&&m.generation<received.generation)return;
     let changedMap=false;
     if(m.epoch<epoch||received&&m.epoch===epoch&&m.seq<=received.seq)return;
     if(m.kind==='delta'){
-      if(!received||received.seq!==m.base||received.epoch!==m.epoch||received.zone!==m.zone){data({kind:'resync'});return;}
-      const next=structuredClone(received);next.seq=m.seq;next.time=m.time;next.full=false;delete next.terrain;
-      for(const key of C.groups){const rows=new Map(next.groups[key].map(r=>[r._coopId,r]));for(const id of m.groups[key].removed)rows.delete(id);for(const r of m.groups[key].rows)rows.set(r._coopId,{...rows.get(r._coopId),...r});next.groups[key]=[...rows.values()];}
-      for(const key of ['props','campaign','vendorStock'])if(m[key])next[key]=m[key];m=next;
+      if(!received||received.seq!==m.base||received.epoch!==m.epoch||received.zone!==m.zone){sendHost({kind:'resync'});return;}
+      const next=CoopReplication.merge(received,m);if(!next){sendHost({kind:'resync'});return;}m=next;
     }
     if(!s()?.map||s().map.id!==m.zone||epoch!==m.epoch){
       loading=true;changedMap=true;
-      for(const resolve of pending.values())resolve(false);pending.clear();
       const p=C.restoreHero(heroRecord);p._coopId=localId;
       await Game.coop.start(p,m.seed,null,m.zone);epoch=m.epoch;
     }
-    received=m;C.apply(s(),m,localId);inputSeq=Math.max(inputSeq,s().player.coopInputSeq||0);loading=false;
+    const discontinuity=changedMap||!patch||m.generation!==received?.generation||m.groups.players.find(p=>p._coopId===localId)?.dead!==s().player.dead;
+    // A resync resets prediction, not ordered command promises. Their host
+    // acknowledgments may be behind this full snapshot on a congested link.
+    if(discontinuity){CoopInput.resetTouch();s().player._coopMotion=null;s().player._predictPath=null;s().player._presentationCorrection=null;}
+    received=m;partyRecords=m.party||partyRecords;C.apply(s(),m,localId,changedMap?null:patch);if(!discontinuity&&patch?.groups.players.rows.some(p=>p._coopId===localId))CoopInput.reconcile?.(m.groups.players.find(p=>p._coopId===localId));nextWorld=null;inputSeq=Math.max(inputSeq,s().player.coopInputSeq||0);loading=false;
     if(!paused||paused==='Preparing the party…'||paused==='Party travel'||paused==='Reconnecting…')paused='';
-    for(const p of s().players)Game.coop.prepareHero(p).catch(e=>notify(e.message));
-    Game.coop.refresh();if(changedMap)ui()?.closeTravel();ui()?.refresh();
+    await Promise.all(s().players.filter(p=>!patch||patch.groups.players.rows.some(r=>r._coopId===p._coopId&&['classId','equip','form'].some(k=>Object.hasOwn(r,k)))).map(p=>Game.coop.prepareHero(p)));
+    if(changedMap||!patch||patch.campaign||patch.vendorStock||patch.groups.ground.rows.length||patch.groups.ground.removed.length||patch.groups.players.rows.some(p=>['inv','equip','stats','belt','buffs','management'].some(k=>Object.hasOwn(p,k))))Game.coop.refresh();
+    sendHost({kind:'snapshotAck',seq:m.seq});
+    diagnostics.applyMs+=performance.now()-start;if(changedMap)ui()?.closeTravel();ui()?.refresh();
   }
   function pauseReason(ignoreBusy=false){
     if(loading)return 'Loading the party…';
@@ -342,7 +404,8 @@ const Coop=(()=>{
   function frame(dt){
     if(!active||!s()?.map)return;
     flush();ui()?.tick();
-    if(!host){
+    if(!host||worker){
+      if(worker){const status=JSON.stringify([document.hidden,ws?.readyState!==WebSocket.OPEN]);if(status!==workerStatus){workerStatus=status;worker.postMessage({type:'status',hidden:document.hidden,offline:ws?.readyState!==WebSocket.OPEN});}}
       if(!pauseReason())Game.coop.presentation(dt);return;
     }
     if(pauseReason()){accumulator=0;CoopMotion.capture(s());return;}
@@ -381,6 +444,7 @@ const Coop=(()=>{
     enqueueCommand(p._coopId,{seq:0,epoch,command:{type:'returnManagement'}});
   }
   async function requestTravel(zone,spawn='default',options={},wipe=false){
+    if(worker||!host)return submit({type:'travel',zone,spawn,...options});
     if(!host){notify('The host controls party travel.');return false;}
     if(busy&&!authority)await serial;
     if(!P.ZONES.includes(zone)){notify('This destination is outside the Act I co-op beta.');return false;}
@@ -426,6 +490,7 @@ const Coop=(()=>{
     if(explicit&&s()?.player&&!loading){const ok=await submit({type:'returnManagement'});if(!ok){notify('Cannot leave safely until held items are saved.');return;}}
     if(explicit&&!host){await incoming;if(localSaveError){await retrySave();if(localSaveError){notify('Cannot leave safely until the local hero save succeeds.');return;}}}
     if(host&&explicit){try{await serial;await checkpoint();}catch(e){notify('Cannot leave safely: '+e.message);return;}}
+    worker?.terminate();worker=null;for(const p of workerPending.values())p.reject(Error('Party ended.'));workerPending.clear();
     stopped=true;active=false;clearInterval(pingTimer);clearTimeout(retry);if(explicit)wire('leave');ws?.close();ws=null;outbox=[];
     try{sessionStorage.removeItem('embergrave-coop-connection');}catch{}
     for(const fn of pending.values())fn(false);pending.clear();travel=null;loading=false;paused='';ui()?.closeTravel();ui()?.close();Game.coop.stop();ui()?.refresh();
@@ -435,7 +500,7 @@ const Coop=(()=>{
     travel={id:P.randomId(),cinematic:true,answers:new Map(),done};event('cinematic',{src,id:travel.id});
   }
   function finishCinematic(){if(travel?.cinematic&&s().players.filter(p=>p.connected!==false).every(p=>travel.answers.get(p._coopId))){const done=travel.done;travel=null;done?.();}}
-  function cinematicDone(id){if(host&&travel?.cinematic&&travel.id===id){travel.answers.set(localId,true);finishCinematic();}else if(!host)data({kind:'cinematicDone',id});}
+  function cinematicDone(id){if(worker)return sendHost({kind:'cinematicDone',id});if(host&&travel?.cinematic&&travel.id===id){travel.answers.set(localId,true);finishCinematic();}else if(!host)data({kind:'cinematicDone',id});}
   function enqueueAction(o,p,type,committed=false){
     if(!host)return;
     C.register(s());const key=p._coopId+':'+o._coopId+':'+type;
@@ -462,11 +527,11 @@ const Coop=(()=>{
       Game.coop.rewardQuest(q,p);record.coopRewarded.push(id);campaign.heroes[id]=C.hero(p);
     }
   }
-  return {connect,newHero,submit,runLocal,frame,event,visual,save,retrySave,died,checkpoint,requestTravel,answerTravel,leave,cinematic,cinematicDone,trackParticipants,rewardParticipants,resumeInfo,
+  return {listRooms,teleportToPlayer:targetId=>submit({type:'teleportToPlayer',targetId}),sampleFrame,diagnostics:async()=>({...diagnostics,inputResponseMs:CoopInput.responseTimes?.slice()||[],worker:worker?await workerRequest('metrics'):null}),connect,newHero,submit,runLocal,frame,event,visual,save,retrySave,died,checkpoint,requestTravel,answerTravel,leave,cinematic,cinematicDone,trackParticipants,rewardParticipants,resumeInfo,
     enqueuePickup:(g,p)=>enqueueAction(g,p,'pickup'),enqueueInteraction:(o,p)=>enqueueAction(o,p,'interact'),finishInteraction:(o,p)=>enqueueAction(o,p,'interact',true),openInteraction,
     ready:ready=>wire('ready',{ready}),notify,markCritical:()=>critical=true,register:()=>C.register(s()),
     monsterDied(mon){C.id(mon,'monster');const a=areas[s().map.id]||={};a.dead=[...new Set([...(a.dead||[]),mon._coopId])];critical=true;},
-    get active(){return active;},get host(){return host;},get authority(){return authority;},get committing(){return committing;},get loading(){return loading;},
+    get mobileQuality(){return mobileQuality;},get workerHost(){return !!worker;},get hostId(){return hostId;},get party(){return partyRecords;},get active(){return active;},get host(){return host;},get authority(){return authority;},get committing(){return committing;},get loading(){return loading;},
     get saveError(){return !!localSaveError;},get renderAlpha(){return Math.min(1,accumulator*30);},
     get paused(){return pauseReason();},get room(){return room;},get localId(){return localId;},get roster(){return roster;},get busy(){return busy;},get epoch(){return epoch;}
   };

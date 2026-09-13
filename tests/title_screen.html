@@ -73,10 +73,10 @@ try{
  ok(!doc.getElementById('hud').inert,'HUD remained inert in gameplay');
  const signature=oldCanvas.toDataURL(),disposedPaints=backgroundPaints(initialBackdrop);await delay(120);ok(oldCanvas.toDataURL()===signature,'hidden preview continues rendering');
  ok(!initialBackdrop.isConnected&&!backdrop()&&backgroundPaints(initialBackdrop)===disposedPaints,'gameplay did not dispose the background');
- await until(()=>!!doc.getElementById('openingUI'),'playable opening ready',60000);await game.skipOpening();game.state.flags.seenIntro=true;game.saveAndQuit();
+ await until(()=>!!doc.getElementById('openingUI'),'playable opening ready',60000);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);game.state.flags.seenIntro=true;game.saveAndQuit();
  await until(()=>find('CHOOSE HERO'),'saved hero main menu');
  ok(backdrop()!==initialBackdrop&&doc.querySelectorAll('canvas.title-atmosphere').length===1,'return to menu failed to recreate exactly one background');
- await game.newGame('Rowan','wildkeeper',false);await game.skipOpening();game.state.flags.seenIntro=true;game.saveAndQuit();
+ await game.newGame('Rowan','wildkeeper',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);game.state.flags.seenIntro=true;game.saveAndQuit();
  find('CHOOSE HERO').click();await until(()=>doc.querySelector('.saved-hero'),'saved hero list');
  const savedBackdrop=backdrop();ok(savedBackdrop&&doc.querySelectorAll('canvas.title-atmosphere').length===1,'saved-hero screen has no unique background');
  win.toggleTitleMotion();await delay(100);const savedMotion=backgroundSignature();await delay(150);ok(backgroundSignature()!==savedMotion,'saved-hero background is static');win.toggleTitleMotion();

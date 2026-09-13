@@ -38,7 +38,7 @@ const pause=ms=>new Promise(r=>setTimeout(r,ms));
   await page.locator('#choose-emberwitch').click();await page.getByRole('button',{name:'Next',exact:true}).click();
   assert.equal(await page.locator('#nameInput').inputValue(),'Phone QA','hero step lost the name');
   await page.screenshot({path:output+'/identity.png'});
-  await page.evaluate(async()=>{await Game.newGame('Phone QA','vanguard',false);await Game.skipOpening();Game.debugFlags.god=true;UI.hideTitle();UI.closeAll();});
+  await page.evaluate(async()=>{await Game.newGame('Phone QA','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);Game.debugFlags.god=true;UI.hideTitle();UI.closeAll();});
   await page.waitForFunction(()=>Game.touchReady(),null,{timeout:120000});
   await page.screenshot({path:output+'/game.png'});
   async function audit(label){

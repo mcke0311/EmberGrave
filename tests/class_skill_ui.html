@@ -31,7 +31,7 @@ try{
   }
   const select=document.getElementById('classSelect');for(const id of classes){const option=document.createElement('option');option.value=id;option.textContent=data.CLASSES[id].name;select.appendChild(option);}
   async function hero(id){
-    ui.closeAll();await game.newGame('UI review',id,false);await game.skipOpening();ui.closeAll();
+    ui.closeAll();await game.newGame('UI review',id,false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();
     ok(!ui.cinematicActive(),'test prologue did not close');
     const p=game.state.player;p.lvl=24;p.skillPts=30;p.computeStats();p.hp=p.stats.maxHp;p.mana=p.stats.maxMana;
     game.state.monsters=[];ui.refreshHUD();ui.togglePanel('skills');await wait();return p;

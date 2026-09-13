@@ -1,3 +1,4 @@
+import {loadCompletedHero} from './completed_hero_fixture.mjs';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
@@ -49,7 +50,7 @@ for(const difficulty of [0,1,2])for(const source of loot.locations(loot.rows[0],
 }
 
 await G.newGame('Difficulty QA','vanguard',false);
-await G.skipOpening();
+await loadCompletedHero(G);
 s=G.state;s.unlockedDiff=1;
 const slot=G.listSaves().find(row=>row.name==='Difficulty QA').slot;
 const initialHero=()=>plain({lvl:s.player.lvl,xp:s.player.xp,attr:s.player.attr,skills:s.player.skills,gold:s.player.gold,

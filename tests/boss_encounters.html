@@ -32,7 +32,7 @@ try {
   const render=()=>{test.updateBossEncounter();test.updateCamera(.1);test.render();};
   async function setup(id=document.getElementById('boss').value,classId=document.getElementById('hero').value,phase=0) {
     busy=true;paused=true;ui.closeAll();
-    await game.newGame('Boss Review',classId,false);await game.skipOpening();ui.closeAll();
+    await game.newGame('Boss Review',classId,false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();
     game.state.seed=123;const zone=api.DATA.BOSS_ENCOUNTERS[id].zone;
     game.state.quests.q16={state:'done'};game.state.quests.q17={state:'done'};
     if(!await game.enterMap(zone,'default'))throw Error('Could not load '+zone);

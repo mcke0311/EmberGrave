@@ -1,13 +1,29 @@
 # The Last Warm Wall — version 2 verification
 
-Verified on September 6, 2026 using isolated in-memory heroes and saves.
+Updated September 12, 2026 using isolated in-memory heroes and saves.
+
+The mandatory solo opening contract passes **1,110 checks**. New checks cover
+blocked portals and travel, every death checkpoint, retryable load failures,
+alternate courtyard approaches, checkpoint reloads and duplicate prevention.
+Completed saves, established heroes, grandfathered checkpoints, later difficulties
+and hardcore death rules are retained. Co-op continues to start in town.
+
+Chrome touch verification completes all 14 observed stages from the title UI to
+Seraneth, without stage or position assignments. Invulnerability isolates bot
+survival; movement, attack timing, boss health, phases and both finite reinforcement
+waves use production behavior. The east-edge courtyard regression route avoids
+the old trigger and still spawns exactly one captain without taking supplies.
+See `docs/PHONE_EXPERIENCE.md` for the command and physical-device limits.
+
+The following combat-balance walkthrough numbers are historical September 6 results,
+not reruns of the new touch tests:
 
 - Opening contract: **886 checks passed** covering route and prop collision,
   installed artwork, both travelers, cache collection, every checkpoint,
   captain health/phase restoration, finite waves, partial defeats, duplicate
-  rewards, version 1 migration, skip, failed loads, death and early travel.
+  rewards, version 1 migration and the former skip/death/travel behavior (superseded above).
 - Frost slam checks verify the 1.1-second warning, exact world-space damage
-  boundary, 1.25-second recovery, cancellation after death/skip/travel, and
+  boundary, 1.25-second recovery, cancellation after death/travel, and
   reduced-motion shake suppression. Existing bosses keep their old slam behavior.
 - Browser walkthrough: **41,165 checks passed** across five classes using actual
   movement, AI, starter equipment, basic attacks, healing draughts and movement

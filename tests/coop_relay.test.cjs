@@ -27,7 +27,7 @@ test('private room admission, four-player capacity and sender identity',async t=
   const {peer,port}=await setup(t),h=await peer();h.send('create');const host=await h.wait('welcome');
   assert.equal((await fetch('http://127.0.0.1:'+port+'/healthz')).status,200);
   const guests=[];
-  const locked=await peer();locked.send('join',{room:host.room});assert.match((await locked.wait('error')).message,/Frosthaven/);
+  const locked=await peer();locked.send('join',{room:host.room});assert.match((await locked.wait('error')).message,/not available/);
   h.send('roomState',{open:true});await h.wait('roster');
   for(let i=0;i<3;i++){const g=await peer();g.send('join',{room:host.room});g.info=await g.wait('welcome');guests.push(g);}
   locked.send('join',{room:host.room});assert.match((await locked.wait('error')).message,/full/);
@@ -56,4 +56,30 @@ test('origin restrictions, incompatible builds, and expired chunk buffers',async
   for(let i=0;i<4;i++)a.accept({kind:'chunk',id:'x'+i,count:2,index:0,data:'{}'});
   assert.throws(()=>a.accept({kind:'chunk',id:'overflow',count:2,index:0,data:'{}'}),/Too many/);
   const text={message:'🧙'.repeat(50000)};for(const frame of P.frames(text,'unicode'))assert.ok(Buffer.byteLength(JSON.stringify(P.envelope('data',{payload:frame})))<P.MAX_FRAME);
+});
+
+test('public directory hides password rooms and passwords reserve seats atomically',async t=>{
+  const {peer,relay,port}=await setup(t),publicHost=await peer(),privateHost=await peer();
+  publicHost.send('create',{name:'Open adventure',hostName:'Open host'});const open=await publicHost.wait('welcome');publicHost.send('roomState',{open:true});
+  privateHost.send('create',{name:'Secret adventure',hostName:'Private host',password:'Northern lights'});const hidden=await privateHost.wait('welcome');privateHost.send('roomState',{open:true});
+  const directory=await (await fetch('http://127.0.0.1:'+port+'/rooms',{headers:{Origin:'http://test.local'}})).json();
+  assert.equal(directory.rooms.length,1);assert.equal(directory.rooms[0].code,open.room);assert.equal(directory.rooms[0].name,'Open adventure');
+  assert.ok(!JSON.stringify(directory).includes('Northern lights'));assert.ok(!JSON.stringify(directory).includes(hidden.room));
+  assert.equal((await fetch('http://127.0.0.1:'+port+'/rooms',{headers:{Origin:'https://wrong.example'}})).status,403);
+  const wrong=await peer();wrong.send('join',{room:hidden.room,password:'wrong'});assert.match((await wrong.wait('error')).message,/password/);
+  assert.equal(relay.rooms.get(hidden.room).members.size,1);
+  const guests=await Promise.all(Array.from({length:4},()=>peer()));
+  for(const g of guests)g.send('join',{room:hidden.room,password:'Northern lights'});
+  await new Promise(r=>setTimeout(r,250));
+  assert.equal(guests.filter(g=>g.messages.some(m=>m.type==='welcome')).length,3);
+  assert.equal(guests.filter(g=>g.messages.some(m=>m.type==='error'&&/full/.test(m.message))).length,1);
+  assert.equal(relay.rooms.get(hidden.room).members.size,4);
+  const member=[...relay.rooms.get(hidden.room).members.values()].find(m=>m.id!==hidden.playerId);
+  privateHost.send('rejectMember',{playerId:member.id,reason:'Invalid hero'});await new Promise(r=>setTimeout(r,20));
+  assert.equal(relay.rooms.get(hidden.room).members.size,3);
+  assert.equal(relay.rooms.get(hidden.room).passwordSalt.length,16);assert.equal(relay.rooms.get(hidden.room).passwordHash.length,32);
+  for(let i=0;i<3;i++){const g=await peer();g.send('join',{room:open.room});await g.wait('welcome');}
+  const full=(await (await fetch('http://127.0.0.1:'+port+'/rooms')).json()).rooms.find(r=>r.code===open.room);
+  assert.equal(full.players,4);assert.equal(full.maxPlayers,4);assert.equal(full.available,false);assert.equal(full.hostName,'Open host');
+
 });

@@ -40,11 +40,13 @@ The playable opening, **The Last Warm Wall**, begins on the snowy road to
 rescue Mara and Iven from a wrecked caravan, and lead them toward the wall.
 Beyond the gate skirmish, **the Rimebound Captain** keeps his last watch: a
 two-phase boss with marked frost slams and two finite reinforcement waves.
-Gather the watch's healing supplies, defeat the captain, and bring the travelers
+Take the watch's optional healing supplies, defeat the captain, and bring the travelers
 to Seraneth's hearth. The intended first-play pace is 6–7 minutes; practiced
 players can finish sooner, and nothing forces the player to wait.
-Brief contextual prompts teach movement, attack and healing while you play;
-**Skip opening** goes directly to town. Rescue progress, supplies, boss health,
+Brief contextual prompts teach movement, attack and healing while you play.
+New solo heroes must finish the opening; death returns them to their checkpoint,
+and travel stays locked until they speak with Seraneth. Co-op keeps its town start.
+Rescue progress, supplies, boss health,
 phase, reinforcement defeats and uncollected loot survive checkpoints, and
 established heroes never replay the opening. The **Render**, **Mount Karrhal**,
 and the shattered **Sunderstone** remain history to discover in conversation.

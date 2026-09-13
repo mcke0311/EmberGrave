@@ -115,7 +115,7 @@ window.__latency.drawPlayer=window.__latency.wrap('player3d',Player3D.draw);`);
       const scene = await page.evaluate(async ({zone, mode, boss}) => {
         const diag = window.__latency; diag.collecting = false; diag.mode = 'setup';
         Sfx.setVol('master', 0);
-        await Game.newGame('Latency test', boss?'gravebinder':'vanguard', false); await Game.skipOpening();
+        await Game.newGame('Latency test', boss?'gravebinder':'vanguard', false); await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);
         Game.debugFlags.god = true; Game.options.screenShake = false; Game.state.seed = 12345;
         Math.random = U.rng(7331);
         if(boss)zone=DATA.BOSS_ENCOUNTERS[boss].zone;

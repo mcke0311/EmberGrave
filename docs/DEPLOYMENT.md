@@ -1,6 +1,7 @@
 # Sites deployment
 
-Current website (verified 2026-09-12): https://embergravegame.mcke0311.chatgpt.site
+Current website (verified 2026-09-12): https://embergravegame.com
+The original address https://embergravegame.mcke0311.chatgpt.site also remains live.
 The existing Site is now public. Preserve its current audience and project ID
 when updating; the private access and earlier URL recorded below are historical.
 
@@ -170,3 +171,47 @@ The local archive helper could not start Bash. Sites built the exact pushed
 static source, and successful deployment was confirmed before the live-file check.
 Render's Free instance can take about a minute to wake after inactivity; the
 hosted client allows 90 seconds for the initial connection.
+
+## Phone combat and scrolling menus published — 2026-09-12
+
+Version 12 publishes the mobile redesign at
+https://embergravegame.mcke0311.chatgpt.site. Sites confirmed publication succeeded
+at 22:52 UTC; public access is preserved. This release adds the floating stick,
+four direct-cast skill slots, compact HUD, scrolling inventory cards and menu
+navigation, and removes the old mobile pager. Existing runtime assets, compressed
+cinematic, multiplayer endpoint and donation configuration are preserved.
+
+Release source: `3e1eab82b7726755e8fe4acf1ccbc9d138b7315c`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_dc2da72e4bb08191b1447c9ee74ea77d`.
+Deployment: `appgdep_6aa5d7203de88191aa1b6d13f12f3b86`.
+
+All 10 updated runtime files match the tested source exactly. Release validation
+passed 70 JavaScript syntax checks and 1,155 runtime references with no missing
+files. The source was pushed and its complete remote SHA verified before saving.
+The updated official packaging helper could not start Bash on Windows, so Sites
+packaged the exact pushed static source. Phone, touch, settings and co-op test
+results are recorded in the phone implementation notes.
+
+## Custom domain connected — 2026-09-12
+
+The user added the missing ownership TXT record in Namecheap. Both authoritative
+nameservers now return the expected value, and refreshing the existing Sites
+domain record `appgdom_6aa43856e7dc819195bd98e47312c9eb` completed activation at
+23:15 UTC. Domain, provider and SSL statuses are all active. The two A records
+remain `162.159.143.30` and `172.66.3.26`; the TXT host is
+`_openai-site-verification.embergravegame.com` with this value:
+
+```text
+openai-site-verification=5vg9gjI2wtNthJTUrwQpXWcMuPHHseK6vg-lEbpiIkU
+```
+
+The new HTTPS address returns HTTP 200 and the published mobile redesign.
+The existing Render relay initially rejected its Origin with HTTP 403 while
+accepting the old address. Its `ALLOWED_ORIGINS` environment variable now includes
+both exact origins, matching `render.yaml`. Save and deploy reused the existing
+server image; Render reports deployment `dep-daitrfh5efls73etjga0` Live. There were
+zero active rooms or connections before applying the setting. Both origins now
+complete a WebSocket upgrade with HTTP 101.
+
+Browser-local saves remain scoped to their website origin. Existing saves at the
+original Sites address are not automatically copied to the custom domain.

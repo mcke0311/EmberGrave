@@ -8,7 +8,7 @@ fs.mkdirSync(dest,{recursive:true});
  page.on('pageerror',e=>report.errors.push(String(e)));page.on('response',r=>{if(r.status()>=400&&!r.url().endsWith('favicon.ico'))report.missing.push(r.url());});
  try{
   await page.goto(root+'/index.html');await page.waitForSelector('#titleMenu button',{timeout:90000});
-  await page.evaluate(async()=>{Sfx.setVol('master',0);await Game.newGame('Waystone Review','wildkeeper',false);await Game.skipOpening();UI.closeAll();Game.debugFlags.god=true;Game.state.monsters=[];Game.state.shrines.push('north_wild');UI.openShrine();});
+  await page.evaluate(async()=>{Sfx.setVol('master',0);await Game.newGame('Waystone Review','wildkeeper',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);UI.closeAll();Game.debugFlags.god=true;Game.state.monsters=[];Game.state.shrines.push('north_wild');UI.openShrine();});
   ok(await page.locator('.wp-tab').count()===5,'five campaign act tabs');
   ok(await page.locator('.wp-tab[aria-selected=true]').innerText()==='Act I','current act selected');
   ok(await page.locator('.wp-travel').isDisabled(),'current location cannot travel');

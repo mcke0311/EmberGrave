@@ -128,7 +128,7 @@ const equal = (a, b, message) => { assert.deepEqual(a, b, message); checks++; };
     console.log('PASS title access, settings persistence, device guides and keyboard navigation.');
 
     await page.evaluate(async () => {
-      Sfx.setVol('master', 0); await Game.newGame('Menu QA', 'vanguard', false); await Game.skipOpening();
+      Sfx.setVol('master', 0); await Game.newGame('Menu QA', 'vanguard', false); await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);
       Game.debugFlags.god = true; Game.state.monsters = []; UI.closeAll();
       const p = Game.state.player;
       window.menuCalls = { potion: 0, skill: 0 };

@@ -133,6 +133,7 @@ const PropInteractions = (() => {
     pr.blocks=false;
     surface.blocked[x+y*map.w]=surface.walls[x+y*map.w]||map.props.some(p=>p!==pr&&p.blocks&&TerrainLayers.same(p,pr)&&
       ((p.x|0)===x&&(p.y|0)===y||p.footprint&&x>=p.footprint.x0&&x<p.footprint.x1&&y>=p.footprint.y0&&y<p.footprint.y1))?1:0;
+    if(typeof Coop!=='undefined'&&Coop.active){const i=x+y*map.w;map._coopTerrain={...map._coopTerrain,[(pr.surfaceId??0)+':'+i]:[surface.blocked[i],surface.walls[i],surface.hazard?.[i]||0]};}
   }
   function sound(pr){return family(pr).startsWith('frozen_')?'propIce':pr.type==='grave'||pr.type==='pillar'?'propStone':pr.type==='urn'?'propCeramic':pr.type==='barrel'||pr.type==='crate'?'barrel':'chest';}
   function draw(ctx,pr,state,x,y,options){

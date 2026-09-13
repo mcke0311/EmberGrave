@@ -85,6 +85,7 @@ const MapGen = (() => {
 
   function bakeMinimap(m) {
     clearSpawns(m);   // ensure no spawn tile is blocked before we finalize the map
+    if(globalThis.COOP_WORKER)return;
     const c = document.createElement("canvas");
     c.width = m.w; c.height = m.h;
     const ctx = c.getContext("2d");
@@ -925,7 +926,8 @@ const MapGen = (() => {
       rescue:{x:28,y:42},rescueEnemies:[{x:31,y:39},{x:26,y:38},{x:23,y:42}],
       travelers:[{x:27,y:45},{x:29,y:45}],rescueCover:{x:34,y:45},
       shelter:[{x:74,y:20},{x:73,y:21},{x:72,y:20}],cache:{x:78,y:21},
-      captain:{x:91,y:10},bossTrigger:{x:86,y:15},reinforcements:[{x:92,y:18},{x:84,y:7}],
+      // Cover the courtyard and gate approaches; keep the supply stop outside.
+      captain:{x:91,y:10},bossTrigger:{x:86,y:15,x0:83,y0:2,x1:99,y1:23},reinforcements:[{x:92,y:18},{x:84,y:7}],
       pair:[{x:80.5,y:12.5},{x:83.5,y:10.5}],gate:{x:94.5,y:6.5},brynGate:{x:90,y:11}};
     m.npcs=[{id:"bryn",x:14.5,y:72,npcArt:"resident_frosthaven_1"},
       {id:"opening_mara",x:27,y:45,npcArt:"resident_frosthaven_4"},
@@ -3534,7 +3536,13 @@ const MapGen = (() => {
         let seat;
         // Recess the doorway into an existing solid bank. Both shoulders and
         // the rear must already be rock; an isolated pair of piers is not a cave.
-        for(const a of [1,0])for(const back of [0,1,2,3,4,6,8,10,12,16,20])for(const offset of [0,-2,2,-4,4,-6,6,-8,8,-12,12]){
+        // Keep established doorways stable; if sparse candidates miss a narrow
+        // solid bank, search its intervening tiles with the same safety checks.
+        for(const dense of [false,true]){
+        if(dense&&seat)break;
+        const backs=dense?Array.from({length:25},(_,i)=>i):[0,1,2,3,4,6,8,10,12,16,20];
+        const offsets=dense?Array.from({length:41},(_,i)=>i-20):[0,-2,2,-4,4,-6,6,-8,8,-12,12];
+        for(const a of [1,0])for(const back of backs)for(const offset of offsets){
           const px=Math.floor(a?node.x-node.rx-back:node.x+offset)+.5,py=Math.floor(a?node.y+offset:node.y-node.ry-back)+.5;
           if(px<(a?4.5:6.5)||py<(a?6.5:4.5)||px>=m.w-6||py>=m.h-6)continue;
           const point=(t,d)=>({x:px+(a?d:t),y:py+(a?t:d)});
@@ -3565,6 +3573,7 @@ const MapGen = (() => {
             if(!inside(xx,yy)||(m.blocked[idx(m,xx,yy)]&&!m.walls[idx(m,xx,yy)])){safe=false;break;}
           }
           if(safe)seat={x:px,y:py,axis:a,point,corridor,score};
+        }
         }
         if(!seat)throw Error('Act I threshold has no solid backing: '+m.id+'/'+node.id+'/'+seed);
         ({x,y,axis}=seat);approach=seat.point(0,3);arrival=seat.point(0,4);

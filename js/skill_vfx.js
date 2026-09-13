@@ -169,9 +169,10 @@ wildkeeper_2_6 fire apexform`;
     const event={surfaceId:point.surfaceId??(typeof TerrainLayers!=='undefined'?TerrainLayers.current(world?.map):0),kind,recipe,x:point.x,y:point.y,z:point.z??terrain(point.x,point.y),t:0,dur:.5,seed:++sequence,radius:1,...extra};
     events.push(event);peakEvents=Math.max(peakEvents,events.length);return event;
   }
+  const decorationBudget=()=>typeof Coop!=='undefined'&&Coop.active&&Coop.mobileQuality==='low'?200:700;
   function burst(recipe,point,count=12,force=1){
     if(!enabled||!recipe)return;
-    const cap=Math.max(0,Math.min(LIMITS.particles,700-externalParticles));
+    const cap=Math.max(0,Math.min(LIMITS.particles,decorationBudget()-externalParticles));
     const density=particles.length>cap*.65?.5:1;
     for(let i=0;i<Math.ceil(count*density);i++){
       if(particles.length>=cap){dropped++;break;}
@@ -289,7 +290,7 @@ wildkeeper_2_6 fire apexform`;
     events=events.filter(e=>e.t<e.dur&&(!e.action||e.owner.action===e.action)&&!e.owner?.dead);
     for(const pa of particles){pa.t+=dt;pa.x+=pa.vx*dt;pa.y+=pa.vy*dt;pa.z=Math.max(pa.ground,pa.z+pa.vz*dt);pa.vz-=80*dt;pa.angle+=pa.spin*dt;}
     particles=particles.filter(p=>p.t<p.dur);
-    const room=Math.max(0,Math.min(LIMITS.particles,700-legacyParticleCount));if(particles.length>room){dropped+=particles.length-room;particles.splice(0,particles.length-room);}
+    const room=Math.max(0,Math.min(LIMITS.particles,decorationBudget()-legacyParticleCount));if(particles.length>room){dropped+=particles.length-room;particles.splice(0,particles.length-room);}
     for(const g of ghosts)g.t+=dt;ghosts=ghosts.filter(g=>g.t<g.dur);
     for(const pr of state.projectiles){
       if(!get(pr.sourceSkill))continue;

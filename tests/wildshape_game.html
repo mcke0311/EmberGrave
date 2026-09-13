@@ -19,7 +19,7 @@ try{
   const win=iframe.contentWindow,game=win.eval('Game'),data=win.eval('DATA'),ui=win.eval('UI');
   for(let n=0;n<500&&!win.document.querySelector('#titleMenu button');n++)await new Promise(r=>setTimeout(r,20));
   ok(!!win.document.querySelector('#titleMenu button'),'game startup did not finish');
-  await game.newGame('Druid review','wildkeeper',false);await game.skipOpening();game.state.flags.seenIntro=true;ui.closeAll();
+  await game.newGame('Druid review','wildkeeper',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);game.state.flags.seenIntro=true;ui.closeAll();
   const p=game.state.player,api=game.__shiftTest,view=win.Player3D;
   const step=(seconds)=>{for(let i=0;i<Math.ceil(seconds*60);i++)api.update(1/60);api.render();};
   p.command=null;step(.1);ok(!view.__shiftFor(p),'new hero replayed shift');

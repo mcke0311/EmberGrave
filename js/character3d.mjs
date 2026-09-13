@@ -500,6 +500,24 @@ export function createCharacterRenderer({size=384,classId='emberwitch',presentat
     prepare(pose,equipment,id,form);renderer.render(scene,camera);
     return renderer.domElement;
   }
+  function presentationBounds() {
+    // This is only requested by menu previews after rendering. Ignore hidden gear
+    // and effects, and include the pedestal when fitting the portrait rectangle.
+    const box=new THREE.Box3(),part=new THREE.Box3();
+    for(const root of [model.root,pedestal].filter(Boolean))root.traverseVisible(object=>{
+      if(!object.isMesh)return;
+      if(!object.geometry.boundingBox)object.geometry.computeBoundingBox();
+      part.copy(object.geometry.boundingBox).applyMatrix4(object.matrixWorld);box.union(part);
+    });
+    let x0=size,y0=size,x1=0,y1=0;
+    for(const x of [box.min.x,box.max.x])for(const y of [box.min.y,box.max.y])for(const z of [box.min.z,box.max.z]){
+      const v=new THREE.Vector3(x,y,z).project(camera),px=(v.x+1)*size/2,py=(1-v.y)*size/2;
+      x0=Math.min(x0,px);x1=Math.max(x1,px);y0=Math.min(y0,py);y1=Math.max(y1,py);
+    }
+    const pad=Math.max(x1-x0,y1-y0)*.06;
+    x0=Math.max(0,x0-pad);y0=Math.max(0,y0-pad);x1=Math.min(size,x1+pad);y1=Math.min(size,y1+pad);
+    return {x:x0,y:y0,width:x1-x0,height:y1-y0};
+  }
   function draw(ctx,pose,equipment,{scale=1,classId:id=classId,form=null}={}) {
     // Forty screen pixels per model unit matches the world and its foot anchor.
     const factor=40*span/size*scale;
@@ -517,6 +535,10 @@ export function createCharacterRenderer({size=384,classId='emberwitch',presentat
       ctx.drawImage(canvas,-anchor.x*factor,-anchor.y*factor,size*factor,size*factor);
     }
   }
+  function setResolution(value){
+    const next=Math.max(192,Math.min(384,Math.round(value)));if(presentation||next===size)return;
+    size=next;renderer.setSize(size,size,false);anchor.x=(origin.x+1)*size/2;anchor.y=(1-origin.y)*size/2;
+  }
   function dispose(){renderer.domElement.removeEventListener('webglcontextlost',onLost);renderer.domElement.removeEventListener('webglcontextrestored',onRestored);models.forEach(m=>m.dispose());environment.dispose();pmrem.dispose();disposeObject(studio);if(pedestal)disposeObject(pedestal);renderer.dispose();renderer.forceContextLoss();}
-  return {renderer,scene,camera,get model(){return model;},setClass,anchor,render,draw,projectileOrigin,effectAnchors,dispose,get lost(){return lost;}};
+  return {setResolution,renderer,scene,camera,get model(){return model;},setClass,anchor,render,presentationBounds,draw,projectileOrigin,effectAnchors,dispose,get lost(){return lost;}};
 }

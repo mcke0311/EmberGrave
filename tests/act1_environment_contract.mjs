@@ -5,7 +5,7 @@ const context=vm.createContext({console,Math,performance,Uint8Array,Int32Array,U
 for(const n of ['utils','data','data_overrides','boss_encounters','sprite_manifest','mapgen','navigation'])vm.runInContext(fs.readFileSync('js/'+n+'.js','utf8'),context);
 const {MapGen:M,TerrainSurface:S,TerrainNavigation:N}=vm.runInContext('({MapGen,TerrainSurface,TerrainNavigation})',context);
 const zones=['frosthaven_approach','frosthaven','north_wild','mines','shattered_temple','shardpeak_shrine','deepfreeze_cavern'];
-const seeds=[0,1,123,12345,4294967295,...Array.from({length:25},(_,i)=>Math.imul(i+37,2654435761)>>>0)];
+const seeds=[0,1,123,12345,4294967295,320040388,...Array.from({length:25},(_,i)=>Math.imul(i+37,2654435761)>>>0)];
 let checks=0;const ok=(v,msg)=>{checks++;assert.ok(v,msg);};
 for(const zone of zones)for(const seed of seeds){
  const m=M.generate(zone,seed),tag=zone+'/'+seed,env=m.act1Environment;

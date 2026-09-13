@@ -19,7 +19,7 @@ try{
  await new Promise(r=>frame.onload=r);const win=frame.contentWindow,doc=win.document;
  for(let i=0;i<600&&!doc.querySelector('#titleMenu button');i++){if(doc.querySelector('#appFatal'))throw Error(doc.querySelector('#appFatalDetail').textContent);await new Promise(r=>setTimeout(r,30));}
  const {Game:game,UI:ui,TerrainSurface:S,TerrainNavigation:N,Entity,Minion}=win.eval('({Game,UI,TerrainSurface,TerrainNavigation,Entity,Minion})');
- win.eval('Sfx').setVol('master',0);await game.newGame('Terrain review','vanguard',false);await game.skipOpening();ui.closeAll();game.state.seed=12345;
+ win.eval('Sfx').setVol('master',0);await game.newGame('Terrain review','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();game.state.seed=12345;
  await game.enterMap('north_wild','default');game.state.monsters=[];game.state.map.explored.fill(1);game.state.player.hp=game.state.player.stats.maxHp;
  const m=game.state.map,p=game.state.player;
  const ramp=[...m.ramps].filter(r=>r.x>12&&r.y>12&&r.x<m.w-12&&r.y<m.h-12).sort((a,b)=>b.length-a.length||Math.hypot(a.x-80,a.y-80)-Math.hypot(b.x-80,b.y-80))[0];

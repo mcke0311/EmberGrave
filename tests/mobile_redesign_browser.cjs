@@ -17,7 +17,7 @@ const base=process.env.GAME_REVIEW_URL||'http://127.0.0.1:8741';
   await page.goto(base+'/index.html?touch=1',{waitUntil:'load',timeout:120000});
   await page.waitForFunction(()=>typeof Game!=='undefined'&&document.querySelector('#titleMenu button'),null,{timeout:120000});
   await page.evaluate(async()=>{
-    await Game.newGame('Phone redesign','vanguard',false);await Game.skipOpening();Game.debugFlags.god=true;UI.hideTitle();UI.closeAll();
+    await Game.newGame('Phone redesign','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);Game.debugFlags.god=true;UI.hideTitle();UI.closeAll();
     const p=Game.state.player;p.lvl=35;p.skillPts=20;
     const skills=Object.values(DATA.SKILLS).filter(s=>s.cls===p.classId&&s.type!=='passive').slice(0,4);
     for(const s of skills)p.skills[s.id]=1;p.quickSlots=skills.map(s=>s.id);p.computeStats();p.hp=p.stats.maxHp;p.mana=p.stats.maxMana;
@@ -83,7 +83,7 @@ const base=process.env.GAME_REVIEW_URL||'http://127.0.0.1:8741';
   await tablet.addInitScript(()=>{const store=new Map();Object.defineProperty(window,'localStorage',{value:{get length(){return store.size;},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});});
   await tablet.goto(base+'/index.html',{waitUntil:'load',timeout:120000});
   await tablet.waitForFunction(()=>typeof Game!=='undefined'&&document.querySelector('#titleMenu button'));
-  await tablet.evaluate(async()=>{await Game.newGame('Tablet review','vanguard',false);await Game.skipOpening();UI.hideTitle();UI.openStorage();});
+  await tablet.evaluate(async()=>{await Game.newGame('Tablet review','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);UI.hideTitle();UI.openStorage();});
   await tablet.locator('#workspaceHeader').waitFor();
   ok(await tablet.evaluate(()=>!MobileShell.enabled&&MobileControls.enabled&&document.getElementById('workspaceHeader').parentElement.id==='panelWorkspace'),'tablet retains the existing workspace');
   await tablet.locator('#workspaceTabs [data-side=right]').tap();

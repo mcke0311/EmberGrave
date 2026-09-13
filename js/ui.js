@@ -102,13 +102,14 @@ const UI = (() => {
     els.backToTown.addEventListener("click", async () => {
       if (els.backToTown.disabled) return;
       els.backToTown.disabled = true;
-      els.deathStatus.textContent = "Returning to town…";
+      const retryOpening=els.backToTown.dataset.opening==='true';
+      els.deathStatus.textContent = retryOpening?"Loading your checkpoint…":"Returning to town…";
       try {
         if (await Game.returnToTown()) return;
-        els.deathStatus.textContent = "Town could not be loaded. Please try again.";
+        els.deathStatus.textContent = retryOpening?"Checkpoint could not be loaded. Please try again.":"Town could not be loaded. Please try again.";
       } catch (error) {
         console.error("Could not return to town:", error);
-        els.deathStatus.textContent = "Town could not be loaded. Please try again.";
+        els.deathStatus.textContent = retryOpening?"Checkpoint could not be loaded. Please try again.":"Town could not be loaded. Please try again.";
       }
       els.backToTown.disabled = false;
       els.backToTown.focus();
@@ -420,10 +421,12 @@ const UI = (() => {
     clearTimeout(centerT);
     centerT = setTimeout(() => els.centerMsg.classList.add("hidden"), 3200);
   }
-  function showDeath(lost, homeName) {
+  function showDeath(lost, homeName, retryOpening=false) {
     closeAll(); closeEsc();
     clearTimeout(centerT); els.centerMsg.classList.add("hidden");
-    els.deathMessage.textContent = (lost > 0 ? `${lost} gold lost. ` : "") + `Return to ${homeName} when you are ready.`;
+    els.deathMessage.textContent = (lost > 0 ? `${lost} gold lost. ` : "") + (retryOpening?"Resume the last watch from your checkpoint when you are ready.":`Return to ${homeName} when you are ready.`);
+    els.backToTown.textContent=retryOpening?"Retry checkpoint":"Back to Town";
+    els.backToTown.dataset.opening=String(retryOpening);
     els.deathStatus.textContent = "";
     els.backToTown.disabled = false;
     if (!els.deathScreen.open) els.deathScreen.showModal();
@@ -942,7 +945,7 @@ const UI = (() => {
     const el = els.panelRight;
     el.classList.remove("hidden");
     header(el, "Equipment & pack", "right");
-    el.appendChild(textNode("div", vendorCtx ? "manage-eyebrow selling-mode" : "manage-eyebrow", vendorCtx ? "Trading · Right-click pack items to sell" : p.cls.name + " · " + p.name));
+    el.appendChild(textNode("div", vendorCtx ? "manage-eyebrow selling-mode" : "manage-eyebrow", vendorCtx ? (typeof MobileShell!=='undefined'&&MobileShell.enabled?"Trading · Tap pack items to inspect or sell":"Trading · Right-click pack items to sell") : p.cls.name + " · " + p.name));
     const eq = document.createElement("div"); eq.id = "equipwrap";
     for (const [slot, L] of Object.entries(EQ_LAYOUT)) {
       const s = document.createElement("div"); s.className = "eqslot";
@@ -1520,7 +1523,7 @@ const UI = (() => {
   function openVendor(npcId) {
     Game.cancelMenuInput();
     closePanel("center"); closePanel("left");
-    vendorCtx = {npcId, items: Game.state.vendorStock[npcId] || [], filter:"all", selected:null};
+    vendorCtx = {npcId, items: Game.state.vendorStock[npcId] || [], filter:"all", selected:null, resetView:true};
     openPanels.left = "vendor"; openPanels.right = "inv";
     renderVendor(); renderInventory();if(typeof MobileWorkspace!=='undefined')MobileWorkspace.select('left');
   }
@@ -1529,9 +1532,12 @@ const UI = (() => {
     const v = vendorCtx; if (!v) return;
     const p = Game.state.player, el = els.panelLeft;
     el.classList.remove("hidden"); header(el, DATA.NPCS[v.npcId].name, "left");
+    if(typeof MobileViews!=='undefined')MobileViews.vendorContext(el,v.npcId,v.filter,v.resetView);
+    v.resetView=false;
     el.appendChild(textNode("div","manage-eyebrow","Weapons, wares & provisions"));
     const wallet = textNode("div","shop-wallet",U.fmt(p.gold) + " gold available"); el.appendChild(wallet);
-    el.appendChild(filterButtons([["all","All"],["weapons","Weapons"],["armor","Armor"],["jewelry","Jewelry"],["supplies","Supplies"]],v.filter,id=>{v.filter=id;v.selected=null;renderVendor();}));
+    const categories=filterButtons([["all","All"],["weapons","Weapons"],["armor","Armor"],["jewelry","Jewelry"],["supplies","Supplies"]],v.filter,id=>{v.filter=id;v.selected=null;renderVendor();});
+    el.appendChild(categories);
     const items = v.items.filter(it=>v.filter === "all" || shopCategory(it) === v.filter);
     if (!items.includes(v.selected)) v.selected = items[0] || null;
     const list = textNode("div","shop-list");
@@ -1559,10 +1565,10 @@ const UI = (() => {
         const incoming=selected.kind === "consumable"?Items.makeConsumable(selected.baseId,selected.count):selected;
         if(!Items.canAutoPlace(p.inv,incoming)){msg("No room in your pack.","#c08080");renderVendor();return;}
         Items.autoPlace(p.inv,incoming);p.gold-=price;if(selected.kind!=="consumable")v.items.splice(v.items.indexOf(selected),1);
-        Sfx.play("buy");refreshGrids();refreshHUD();
+        Sfx.play("buy");if(typeof MobileViews!=='undefined')MobileViews.back(el);refreshGrids();refreshHUD();
       },"manage-primary shop-buy"); buy.disabled=p.gold<price||!room||!!cursorItem; el.appendChild(buy);
     }
-    el.appendChild(textNode("p","pack-help","Select an item to inspect it. Right-click an item in your pack to sell."));
+    el.appendChild(textNode("p","pack-help","Select an item to inspect it. Open your pack to sell items."));
     if(v.npcId === "maesa"){
       const un=p.inv.items.filter(i=>!i.identified);
       const identify=actionButton("Identify all · 60 gold",()=>{if(coopItems())return InventoryActions.submit({type:"identifyAll",npcId:v.npcId});const items=p.inv.items.filter(i=>!i.identified);if(!items.length||p.gold<60)return;p.gold-=60;items.forEach(i=>i.identified=true);Sfx.play("shrine");refreshGrids();refreshHUD();});
@@ -2162,24 +2168,12 @@ const UI = (() => {
     objective.append(textNode("span","opening-kicker","THE LAST WARM WALL"));
     const goal=textNode("p","opening-goal","Reach Frosthaven"),hint=textNode("p","opening-hint","");
     goal.setAttribute("role","status");hint.setAttribute("aria-live","polite");objective.append(goal,hint);
-    const skip=actionButton("Skip opening",async()=>{
-      if(skip.disabled)return;
-      const hero=Game.state?.player;
-      skip.disabled=true;skip.textContent="Entering Frosthaven…";
-      try {
-        const done=await Game.skipOpening();
-        if(!done && Game.state?.player===hero)openingCaption("","Frosthaven could not be loaded. Try again.",8);
-      } catch(error) {
-        console.error(error);
-        if(Game.state?.player===hero)openingCaption("","Frosthaven could not be loaded. Try again.",8);
-      } finally { skip.disabled=false;skip.textContent="Skip opening"; }
-    },"opening-skip");
     const caption=textNode("div","opening-caption");caption.setAttribute("role","status");caption.setAttribute("aria-atomic","true");
     const speaker=textNode("span","opening-speaker",""),line=textNode("span","opening-line","");caption.append(speaker,line);
     const arrival=textNode("div","opening-arrival");arrival.hidden=true;
     arrival.append(textNode("span","opening-kicker","ACT I · THE FALLEN NORTH"),textNode("div","opening-town","FROSTHAVEN"),textNode("p","","The Last Warm Wall"));
-    root.append(objective,skip,caption,arrival);$("game").appendChild(root);
-    openingEls={root,goal,hint,skip,caption,speaker,line,arrival};
+    root.append(objective,caption,arrival);$("game").appendChild(root);
+    openingEls={root,goal,hint,caption,speaker,line,arrival};
   }
   function hideOpening() {
     openingEls?.root.remove(); openingEls=null;captionTime=arrivalTime=0;

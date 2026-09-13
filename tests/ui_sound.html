@@ -46,7 +46,7 @@ run.onclick=async()=>{
   once(doc.querySelector('.class-tab')||doc.querySelector('[role=tab]'),'class selection');
   once(doc.querySelector('#hcBox'),'hardcore checkbox');
   once(doc.querySelector('#nameInput'),'name focus');let before=count();doc.querySelector('#nameInput').dispatchEvent(new win.Event('input',{bubbles:true}));ok(count()===before,'typing produced a click');
-  await game.newGame('Sound Test','vanguard',false);await game.skipOpening();ui.closeAll();game.state.monsters=[];game.debugFlags.god=true;sfx.stopMusic();
+  await game.newGame('Sound Test','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();game.state.monsters=[];game.debugFlags.god=true;sfx.stopMusic();
   const p=game.state.player;p.gold=2400;p.attrPts=2;p.computeStats();
   once(doc.querySelector('[data-panel=inv]'),'HUD inventory');
   once(doc.getElementById('inventoryTidy'),'tidy');

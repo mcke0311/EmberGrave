@@ -53,7 +53,7 @@ const mean=a=>a.reduce((s,n)=>s+n,0)/a.length;
     const page=pages[version];await page.bringToFront();await page.setViewportSize({width,height:width*9/16});
     const scene=await page.evaluate(async boss=>{
      const bench=window.__bossBench;bench.active=false;bench.collecting=false;Sfx.setVol('master',0);
-     await Game.newGame('Boss animation benchmark','gravebinder',false);await Game.skipOpening();Game.firstSightCutscene=()=>{};
+     await Game.newGame('Boss animation benchmark','gravebinder',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);Game.firstSightCutscene=()=>{};
      Game.debugFlags.god=true;Game.options.screenShake=false;Game.state.seed=12345;Math.random=U.rng(7331);
      if(!await Game.enterMap(DATA.BOSS_ENCOUNTERS[boss].zone,'from_camp'))throw Error('Benchmark map failed');
      UI.hideTitle();UI.closeAll();const s=Game.state,p=s.player,a=s.map.bossArena;s.quests.q16={state:'done'};s.quests.q17={state:'done'};s.monsters=[];s.map.explored.fill(1);

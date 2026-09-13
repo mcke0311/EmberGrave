@@ -11,7 +11,7 @@ try{
  document.getElementById('host').append(frame);await new Promise(r=>frame.onload=r);
  const win=frame.contentWindow;for(let i=0;i<900&&!win.document.querySelector('#titleMenu button');i++){const fatal=win.document.getElementById('appFatal');if(fatal)throw Error(fatal.textContent);await new Promise(r=>setTimeout(r,30));}
  const api=win.eval('({DATA,Game,UI,Items,UniquePowers,Monster,Minion,Sfx})'),{Game:G,UI,DATA:D,Items:I,UniquePowers:Q}=api;
- api.Sfx.setVol('master',0);await G.newGame('Unique review','vanguard',false);await G.skipOpening();UI.closeAll();G.state.player.lvl=100;
+ api.Sfx.setVol('master',0);await G.newGame('Unique review','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(G);UI.closeAll();G.state.player.lvl=100;
  let p=G.state.player;G.debugFlags.god=false;G.__uniqueReview.updateCamera(10);G.__uniqueReview.render();
  function make(id){const u=D.UNIQUES.find(d=>d.id===id),c=D.UNIQUE_CHARMS.find(d=>d.id===id),j=D.UNIQUE_JEWELS.find(d=>d.id===id);const it=u?I.makeUnique(u):c?I.makeUniqueCharm(c):j?I.makeUniqueJewel(j):I.makeGlyph(id);it.identified=true;return it;}
  function show(id){UI.hideTooltip();const it=make(id);UI.showItemTooltip(it,500,win.innerHeight-10);document.getElementById('item').value=id;return it;}
@@ -19,7 +19,7 @@ try{
  document.getElementById('item').onchange=e=>show(e.target.value);
  async function effect(){
   const id=document.getElementById('item').value,it=make(id),selectedPower=Q.catalog[id].powers[0];
-  if(selectedPower.target&&p.classId!==selectedPower.target.classId){await G.newGame('Unique review',selectedPower.target.classId,false);await G.skipOpening();UI.closeAll();p=G.state.player;}
+  if(selectedPower.target&&p.classId!==selectedPower.target.classId){await G.newGame('Unique review',selectedPower.target.classId,false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(G);UI.closeAll();p=G.state.player;}
   p.lvl=100;for(const s of Object.values(D.SKILLS))if(s.cls===p.classId)p.skills[s.id]=1;
   p.inv.items=[];p.equip={};p.buffs=[];p._unique=null;
   if(it.kind==='charm')I.autoPlace(p.inv,it);else if(it.kind==='gear')p.equip[it.slot==='ring'?'ring1':it.slot]=it;else{const host=I.fromBase('handaxe');host.sockets=[null];I.socketGlyph(host,it);p.equip.main=host;}

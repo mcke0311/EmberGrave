@@ -16,7 +16,7 @@ try {
  frame.srcdoc=source.replace('<head>','<head>'+injection);document.getElementById('host').appendChild(frame);await new Promise(r=>frame.onload=r);
  const win=frame.contentWindow,doc=win.document;await until(()=>doc.querySelector('#titleMenu button'),'startup');
  const game=win.eval('Game'),ui=win.eval('UI'),items=win.eval('Items'),data=win.eval('DATA');win.eval('Sfx').setVol('master',0);
- await game.newGame('Kaelen','vanguard',false);await game.skipOpening();ui.closeAll();game.state.monsters=[];game.debugFlags.god=true;
+ await game.newGame('Kaelen','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();game.state.monsters=[];game.debugFlags.god=true;
  let p=game.state.player;p.gold=2400;p.lvl=12;p.attrPts=5;p.computeStats();p.hp=p.stats.maxHp;
  const base=Object.keys(data.BASES).find(k=>data.BASES[k].slot==='main'&&!data.BASES[k].twoHand&&data.BASES[k].ilvl<=1);
  const glyph=Object.keys(data.GLYPHS)[0];
@@ -114,7 +114,7 @@ try {
  bounds();ok(!doc.getElementById('appFatal')&&!win.reviewErrors.length,'runtime errors: '+win.reviewErrors.join('; '));
  const controls=document.getElementById('controls');
  for(const [label,fn] of [['Shop',()=>{ui.closeAll();pack();shop();}],['Inventory',()=>{ui.closeAll();pack();ui.togglePanel('inv');}],['Character',()=>{ui.closeAll();ui.togglePanel('char');}],['Quests',()=>{ui.closeAll();ui.togglePanel('quest');}],['Forge',()=>{ui.closeAll();pack();ui.openForge();}]]){const b=document.createElement('button');b.textContent=label;b.onclick=fn;controls.appendChild(b);}
- const select=document.createElement('select');select.setAttribute('aria-label','Review class');for(const [id,cls] of Object.entries(data.CLASSES)){const option=document.createElement('option');option.value=id;option.textContent=cls.name;select.appendChild(option);}select.onchange=async()=>{ui.closeAll();await game.newGame('Kaelen',select.value,false);await game.skipOpening();ui.closeAll();p=game.state.player;p.gold=2400;p.attrPts=5;game.state.monsters=[];pack();shop();};controls.appendChild(select);
+ const select=document.createElement('select');select.setAttribute('aria-label','Review class');for(const [id,cls] of Object.entries(data.CLASSES)){const option=document.createElement('option');option.value=id;option.textContent=cls.name;select.appendChild(option);}select.onchange=async()=>{ui.closeAll();await game.newGame('Kaelen',select.value,false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();p=game.state.player;p.gold=2400;p.attrPts=5;game.state.monsters=[];pack();shop();};controls.appendChild(select);
  for(const [label,fn] of [['Jewels & supplies',reviewJewels],['Dialogue',reviewDialog]]){const b=document.createElement('button');b.textContent=label;b.onclick=fn;controls.appendChild(b);}
  out.textContent=`PASS — ${checks} interaction checks at ${width} × ${height}. Item identity, socketing, dialogue, buying, selling, full pack, equipment swaps, search/tidy, forge, quests, stats and panel transitions. Saves isolated.`;
 } catch(error){out.textContent='FAIL: '+error.stack;}

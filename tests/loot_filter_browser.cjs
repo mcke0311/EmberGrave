@@ -10,7 +10,7 @@ const dest='tests/qa/loot_filter';fs.mkdirSync(dest,{recursive:true});
   try {
     await page.goto((process.env.GAME_REVIEW_URL||'http://127.0.0.1:8766')+'/index.html');
     await page.waitForSelector('#titleMenu button',{timeout:90000});
-    await page.evaluate(async()=>{Sfx.setVol('master',0);await Game.newGame('Loot Filter Review','vanguard',false);await Game.skipOpening();Game.debugFlags.god=true;Game.state.monsters=[];UI.closeAll();UI.openEsc();});
+    await page.evaluate(async()=>{Sfx.setVol('master',0);await Game.newGame('Loot Filter Review','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);Game.debugFlags.god=true;Game.state.monsters=[];UI.closeAll();UI.openEsc();});
     await page.getByRole('button',{name:'Loot Filter',exact:true}).click();
     const app=page.getByRole('dialog',{name:'Loot filter',exact:true});
     ok(await app.isVisible(),'pause menu integration');

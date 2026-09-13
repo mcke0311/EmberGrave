@@ -15,7 +15,7 @@ try{
  const frame=document.createElement('iframe');frame.title='Playable town review';frame.srcdoc=source.replace('<head>','<head>'+injection);host.append(frame);await new Promise(r=>frame.onload=r);
  const win=frame.contentWindow,doc=win.document;for(let i=0;i<300&&!doc.querySelector('#titleMenu button');i++)await new Promise(r=>setTimeout(r,30));
  const game=win.eval('Game'),ui=win.eval('UI'),data=win.eval('DATA'),assets=win.eval('SpriteAssets'),u=win.eval('U');win.eval('Sfx').setVol('master',0);
- await game.newGame('Town review','vanguard',false);await game.skipOpening();ui.closeAll();
+ await game.newGame('Town review','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();
  const renderer=await fetch('../js/game.js',{cache:'no-store'}).then(r=>r.text());const a=renderer.indexOf('    /* ---- floors ---- */'),b=renderer.indexOf('    /* ---- ground items:',a);
  const drawFloor=new win.Function('ctx','m','cam','tx0','tx1','ty0','ty1','inView','EH','MASSIF_THEMES',"LevelTerrain.beginFrame(m);try {"+renderer.slice(a,b)+"} finally {LevelTerrain.endFrame();}");
  game.state.quests.q8={...game.state.quests.q8,state:'done'};game.state.quests.q8b={...game.state.quests.q8b,state:'offered'};

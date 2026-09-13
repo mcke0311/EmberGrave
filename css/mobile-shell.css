@@ -1,4 +1,5 @@
 /* Phone viewport, presentation and touch-friendly production views. */
+:root { --phone-menu-head:96px; }
 .phone-layout { overscroll-behavior:none; }
 .phone-layout #game { inset:auto!important;top:var(--visible-top);left:var(--visible-left);width:var(--visible-width);height:var(--visible-height);overflow:hidden; }
 .phone-layout #view { width:100%;height:100%; }
@@ -18,7 +19,7 @@
 .phone-layout #title .title-brand { flex:none;margin:0 0 8px!important; }
 .phone-layout #title h1 { font-size:26px!important;line-height:1;letter-spacing:.06em; }
 .phone-layout #title :is(.title-brand h2,#titleEyebrow,#titleFoot,.splash-intro,.splash-chapter,.selection-count) { display:none!important; }
-.phone-layout #titleMenu { flex:1;min-height:0;position:relative; }
+.phone-layout #titleMenu { flex:1;min-height:0;position:relative;align-items:stretch; }
 .phone-layout .splash-actions { margin:0;width:100%;height:100%;display:grid;grid-template-columns:1fr 1fr;align-content:center;gap:8px; }
 .phone-layout #title .title-action { min-height:44px;padding:10px 36px 10px 14px;font:13px/1.3 system-ui;letter-spacing:.04em; }
 .phone-layout #title .continue-detail { font-size:14px;margin:2px 0 0; }
@@ -26,14 +27,18 @@
 .phone-layout #title .title-back { min-height:44px;min-width:44px;margin:0;padding:8px 12px;font:13px system-ui; }
 .phone-layout .selection-top { padding:0!important;height:44px;gap:10px; }
 .phone-layout .selection-top .title-kicker { font:11px system-ui; }
-.phone-layout #title[data-screen=new] #titleMenu { display:grid;grid-template-rows:44px minmax(0,1fr) 48px;gap:4px; }
-.phone-layout #title .selection-scene { height:auto!important;min-height:0;position:relative;display:block; }
+.phone-layout #title:is([data-screen=new],[data-screen=saves]) #titleMenu { display:grid;grid-template-rows:44px minmax(0,1fr) 48px;gap:4px;align-items:stretch; }
+.phone-layout #title .selection-scene { height:auto!important;min-height:0;position:relative;display:block;margin:0;padding:0; }
 .phone-layout #campInfo.class-story { width:48%;max-width:none;padding:6px 0!important;height:100%; }
 .phone-layout #campInfo .class-name { margin:4px 0;font-size:26px; }
 .phone-layout #campInfo :is(.class-quote,.class-description,.class-disciplines) { display:none; }
 .phone-layout #campInfo .title-kicker { font:12px/1.3 system-ui;letter-spacing:0; }
 .phone-layout .hero-viewport { position:absolute!important;right:0!important;top:0;width:48%!important;height:100%!important; }
-.phone-layout .hero-controls { bottom:0;gap:4px; }
+.phone-layout #campCanvas { height:calc(100% - 48px);min-height:0; }
+.phone-layout .hero-controls { position:static;gap:4px;height:44px;margin-top:4px; }
+.phone-layout .hero-controls .gear-switch { display:flex;flex:1;min-width:0; }
+.phone-layout .hero-controls .gear-switch button { flex:1;min-width:0!important;padding:4px!important; }
+.phone-layout .hero-rotation { display:flex;flex:none; }
 .phone-layout .hero-controls button { min-height:44px!important;min-width:44px!important;font:11px system-ui!important; }
 .phone-layout .hero-preview-note { display:none; }
 .phone-layout .class-roster { padding:0;gap:5px;align-items:stretch; }
@@ -54,7 +59,7 @@
 /* HUD: reachable controls frame an open view of the world. */
 .phone-only,.phone-tools { display:none; }
 #mobileMoveZone { display:contents; }
-.phone-layout { --phone-bg:#11171d;--phone-raised:#1b252e;--phone-line:#645742;--phone-ink:#eee3cf;--phone-muted:#a9b3ba;--phone-bronze:#c7a573;--phone-menu-head:96px; }
+.phone-layout { --phone-bg:#11171d;--phone-raised:#1b252e;--phone-line:#645742;--phone-ink:#eee3cf;--phone-muted:#a9b3ba;--phone-bronze:#c7a573; }
 .phone-layout .phone-only { display:block; }
 .phone-layout :is(.orbwrap,#hudIdentity,#xpbar,#quickbar,#hudbuttons,.mobile-tools,#mobileAssign,#mobileSkill) { display:none!important; }
 .phone-layout #mobileControls { z-index:18; }
@@ -107,7 +112,6 @@
 .phone-layout .opening-goal { font:12px/1.5 system-ui;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
 .phone-layout .opening-caption { bottom:66px;max-width:calc(100% - 365px);padding:6px 8px;pointer-events:none; }
 .phone-layout .opening-line { font-size:12px; }
-.phone-layout .opening-skip { top:auto;bottom:calc(62px + env(safe-area-inset-bottom));right:220px;min-height:44px; }
 .phone-layout #mobileControls.blocked #mobileMoveZone { display:none; }
 /* Shared menu chrome, with one naturally scrolling production panel. */
 .phone-layout :is(button,input,select,textarea,summary) { box-sizing:border-box; }
@@ -137,8 +141,8 @@
 .phone-layout .phone-subtabs { display:flex;gap:6px;margin:0 0 12px;border-bottom:1px solid #7d6a4838;padding-bottom:8px; }
 .phone-layout .phone-subtabs button { flex:1;background:transparent;border:1px solid transparent;color:var(--phone-muted); }
 .phone-layout .phone-subtabs [aria-pressed=true] { color:var(--phone-ink);border-color:#9b80525c;background:#b38e491a; }
-.phone-layout .panel :is(.manage-tabs,.qacts,#treeTabs) { display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap; }
-.phone-layout .panel :is(.manage-tabs,.qacts,#treeTabs) button { flex:1;min-width:44px;white-space:normal; }
+.phone-layout .panel :is(.manage-tabs,.qacts),.phone-layout .panel #treeTabs { display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap; }
+.phone-layout .panel :is(.manage-tabs,.qacts) button,.phone-layout .panel #treeTabs button { flex:1;min-width:44px;white-space:normal; }
 .phone-layout .panel :is(.manage-eyebrow,.pack-help,.qacthead,.qlegend) { font:14px/1.5 system-ui;color:var(--phone-muted);letter-spacing:0; }
 .phone-layout .panel :is(.manage-section,h3) { font:19px/1.3 Georgia;color:#e5d5b9; }
 .phone-layout .panel :is(.statrow,.qrow .qn,.qdetail p,.dlgtopic,.dlgtext,.skill-desc,.skill-meta,.skill-requirements,.recipe-requirements,.recipe-outcome,.shop-detail,.shop-compare) { font-size:14px;line-height:1.5; }
@@ -260,13 +264,14 @@
 .phone-layout #title :is(button,.class-choice strong) { font-size:14px!important; }
 .phone-layout #title[data-screen=saves] #titleMenu { display:flex;flex-direction:column;min-height:0; }
 .phone-layout #title[data-screen=saves] .selection-scene { flex:1;min-height:0!important; }
-.phone-layout .saved-story { width:54%;height:100%;padding:8px 0;box-sizing:border-box; }
-.phone-layout .saved-heading { display:none; }
+.phone-layout .saved-story { width:50%;height:100%;padding:8px 0;box-sizing:border-box; }
+.phone-layout .saved-heading,.phone-layout .saved-story > .title-kicker { display:none; }
 .phone-layout .saved-roster { max-height:100%;margin:0;padding:0 8px 0 0; }
 .phone-layout .saved-row { min-height:60px; }
 .phone-layout #title .saved-hero { min-height:60px;padding:8px; }
 .phone-layout #title .delete-hero { min-width:44px;min-height:44px;position:static; }
-.phone-layout .saved-footer { flex-direction:row;gap:12px;padding:8px 0; }
+.phone-layout .saved-footer { flex-direction:row;gap:12px;padding:0;min-height:0; }
+.phone-layout .saved-details :is(.title-kicker,strong) { display:none; }
 .phone-layout .saved-details { min-width:0;flex:1; }
 .phone-layout .saved-details strong { font-size:16px;overflow-wrap:anywhere; }
 .phone-layout .saved-footer .title-action { width:40%; }
@@ -298,7 +303,6 @@
   .phone-layout .phone-move-hint { bottom:14px; }
   .phone-layout #buffs { display:none; }
   .phone-layout .opening-caption { display:none; }
-  .phone-layout .opening-skip { bottom:64px;right:200px; }
   .phone-layout #title .title-brand { display:none; }
   .phone-layout .phone-loadout > p,.phone-layout .panel > .manage-eyebrow { display:none; }
 }

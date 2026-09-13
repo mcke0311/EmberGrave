@@ -16,7 +16,7 @@ try{
   frame.srcdoc=page;$('host').append(frame);await new Promise(r=>frame.onload=r);win=frame.contentWindow;doc=win.document;
   for(let i=0;i<600&&!doc.querySelector('#titleMenu button');i++){if(doc.querySelector('#appFatal'))throw Error(doc.querySelector('#appFatalDetail').textContent);await new Promise(r=>setTimeout(r,30));}
   ({Game:game,UI:ui,SkillVFX:vfx,DATA:data,Player,Monster,Minion}=win.eval('({Game,UI,SkillVFX,DATA,Player,Monster,Minion})'));
-  win.eval('Sfx').setVol('master',0);await game.newGame('Skill atelier','vanguard',false);await game.skipOpening();ui.closeAll();game.debugFlags.god=true;game.options.screenShake=false;game.options.dmgNumbers=false;
+  win.eval('Sfx').setVol('master',0);await game.newGame('Skill atelier','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();game.debugFlags.god=true;game.options.screenShake=false;game.options.dmgNumbers=false;
   game.state.seed=12345;await game.enterMap('north_wild','from_camp');baseMap=game.state.map;const snowDark=baseMap.zone.dark;
   let best=Infinity;for(let y=10;y<baseMap.h-10;y++)for(let x=10;x<baseMap.w-10;x++){
     let clear=true;for(let dy=-5;dy<=5&&clear;dy++)for(let dx=-5;dx<=5;dx++)if(baseMap.walls[x+dx+(y+dy)*baseMap.w]||baseMap.blocked[x+dx+(y+dy)*baseMap.w]){clear=false;break;}

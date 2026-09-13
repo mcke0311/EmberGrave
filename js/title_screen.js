@@ -238,10 +238,11 @@ window.TitleScreen=(()=>{
       if(document.hidden)return;
       if((dirty||!motion.matches)&&now-last>=32&&width&&height){
         last=now;const id=getSelected();cv.setAttribute('aria-label',DATA.CLASSES[id].name+' live 3D model, '+(regalia?'class regalia':savedEquipment?'equipped gear':'starting gear'));
-        ctx.clearRect(0,0,width,height);ctx.save();ctx.translate(width*.5,Math.min(height*.86,height-70));
+        const phone=typeof MobileShell!=='undefined'&&MobileShell.enabled;
+        ctx.clearRect(0,0,width,height);ctx.save();if(!phone)ctx.translate(width*.5,Math.min(height*.86,height-70));
         const scale=Math.min(width/132,height/114);
-        ctx.save();ctx.scale(1,.18);const shadow=ctx.createRadialGradient(0,0,0,0,0,33*scale);shadow.addColorStop(0,'rgba(0,0,0,.48)');shadow.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=shadow;ctx.fillRect(-33*scale,-33*scale,66*scale,66*scale);ctx.restore();
-        try{showcase.draw(ctx,id,{t:motion.matches?0:(now-start)/1000,ang:angle,scale,regalia,equipment:!regalia&&savedEquipment?savedEquipment():null});cv.dataset.renderedClass=id;}
+        if(!phone){ctx.save();ctx.scale(1,.18);const shadow=ctx.createRadialGradient(0,0,0,0,0,33*scale);shadow.addColorStop(0,'rgba(0,0,0,.48)');shadow.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=shadow;ctx.fillRect(-33*scale,-33*scale,66*scale,66*scale);ctx.restore();}
+        try{showcase.draw(ctx,id,{t:motion.matches?0:(now-start)/1000,ang:angle,scale,regalia,bounds:phone?{x:4,y:4,width:Math.max(0,width-8),height:Math.max(0,height-8)}:null,equipment:!regalia&&savedEquipment?savedEquipment():null});cv.dataset.renderedClass=id;}
         catch(error){failed=true;const msg=el('p','preview-error',error.message);msg.setAttribute('role','alert');area.append(msg);}
         ctx.restore();dirty=false;
       }

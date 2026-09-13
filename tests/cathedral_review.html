@@ -37,7 +37,7 @@ async function load(version=el('version').value,zone=el('zone').value){
   if(!win.__ready)throw Error('Game startup timed out');
  }
  api=win.eval('({Game,UI,Sfx,U,MapGen,TerrainNavigation,TerrainSurface,LevelTerrain,Monster,EnemySkills:typeof EnemySkills===\'undefined\'?null:EnemySkills})');game=api.Game;
- api.Sfx.setVol('master',el('sound').checked?.25:0);await game.newGame('Cathedral review','vanguard',false);await game.skipOpening();api.UI.closeAll();api.UI.hideTitle();
+ api.Sfx.setVol('master',el('sound').checked?.25:0);await game.newGame('Cathedral review','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);api.UI.closeAll();api.UI.hideTitle();
  game.state.seed=+el('seed').value>>>0;game.state.cathedralVisits=0;win.Math.random=api.U.rng(game.state.seed^7331);game.debugFlags.god=true;game.options.screenShake=false;
  if(!await game.enterMap(zone,'default'))throw Error('Map entry failed');map=game.state.map;map.explored.fill(1);api.UI.closeAll();
  el('view').replaceChildren(new Option('Arrival','arrival'),new Option('Map center','center'));

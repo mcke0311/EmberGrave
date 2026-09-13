@@ -31,7 +31,7 @@ try{
  const slowPaths=[],findPath=N.findPath;
  N.findPath=(m,from,to,profile)=>{const a={x:from.x,y:from.y},t=performance.now();const result=findPath(m,from,to,profile),ms=performance.now()-t;if(ms>20)slowPaths.push({from:a,to,profile,ms:+ms.toFixed(2),found:!!result});return result;};
  ui.refreshHUD=win.__wrap('HUD',ui.refreshHUD);
- sfx.setVol('master',0);await game.newGame('Performance review','vanguard',false);await game.skipOpening();ui.closeAll();game.debugFlags.god=true;game.options.screenShake=false;game.state.seed=12345;
+ sfx.setVol('master',0);await game.newGame('Performance review','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();game.debugFlags.god=true;game.options.screenShake=false;game.state.seed=12345;
  win.Math.random=win.eval('U.rng(7331)');
  if(!await game.enterMap(zone,'from_camp'))throw Error('Could not enter profiling zone');
  ui.closeAll();ui.hideTitle();win.Math.random=win.eval('U.rng(7331)');

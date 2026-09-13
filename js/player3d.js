@@ -6,7 +6,7 @@ window.Player3D=(()=>{
   async function init(){
     if(!pending)pending=(async()=>{
       if(new URL(document.baseURI).protocol==='file:')throw new Error('3D characters need the local server. Run python serve.py, then open http://localhost:8741/index.html');
-      const [module,definitions,shapes]=await Promise.all([import('./character3d.mjs?v=19'),import('./character_catalog3d.mjs'),import('./character_forms3d.mjs?v=10')]);
+      const [module,definitions,shapes]=await Promise.all([import('./character3d.mjs?v=embergrave-coop-3'),import('./character_catalog3d.mjs'),import('./character_forms3d.mjs?v=10')]);
       catalog=definitions;forms=shapes.FORM_STYLES;rendererFactory=module.createCharacterRenderer;controllerFactory=module.createAnimationController;shiftFactory=module.createWildshapeController;view=rendererFactory();
     })();
     return pending;
@@ -36,6 +36,7 @@ window.Player3D=(()=>{
     return {playerVisual:visual,threePlayer:player,scale:visual.footprint||1};
   }
   function draw(ctx,player,pose){
+    if(typeof Coop!=='undefined'&&Coop.active)view.setResolution?.(Coop.mobileQuality==='low'?256:384);
     const visual=player._formVisual||player._playerVisual;require3D(visual);
     const shift=!player.dead&&shiftFrames.get(player);
     view.draw(ctx,shift?{...pose,ex:{...pose.ex,wildshape:shift}}:pose,visual.equipment,{classId:visual.classId,form:visual.form||null});
@@ -97,18 +98,25 @@ window.Player3D=(()=>{
   // A separate, disposable portrait camera keeps menu gear and framing out of gameplay.
   function createShowcase(){
     if(!rendererFactory)throw new Error('3D player assets have not initialized.');
-    const stage=rendererFactory({size:768,presentation:true}),looks=new Map();
+    const stage=rendererFactory({size:768,presentation:true}),looks=new Map(),fitBoxes=new Map();
     const weapons={vanguard:'sword_t7',emberwitch:'wand_t7',gravebinder:'wand_t7',wildkeeper:'staff2h_t7',veilranger:'bow2h_t7'};
     return {
-      draw(ctx,classId,{t=0,ang=1.05,scale=1,regalia=true,equipment=null}={}){
+      draw(ctx,classId,{t=0,ang=1.05,scale=1,regalia=true,equipment=null,bounds=null}={}){
         const key=classId+':'+regalia+':'+(equipment?JSON.stringify(equipment):'');
         if(!looks.has(key)){
           const ids=regalia?{main:weapons[classId],...(classId==='vanguard'?{off:'shield_t7'}:{}),head:'helm_t7',chest:'chest_t7',gloves:'gloves_t7',boots:'boots_t7',belt:'belt_t7',amulet:'amulet_t7'}:DATA.PLAYER_STARTER_LOADOUTS[classId];
           looks.set(key,assets.resolvePlayerVisual(classId,equipment||Object.fromEntries(Object.entries(ids).map(([slot,baseId])=>[slot,{baseId}]))));
         }
-        stage.draw(ctx,{state:'idle',t,ang,ex:{}},looks.get(key).equipment,{classId,scale});
+        if(bounds){
+          const frame=stage.render({state:'idle',t,ang,ex:{}},looks.get(key).equipment,classId);
+          const fitKey=key+':'+ang;
+          if(!fitBoxes.has(fitKey))fitBoxes.set(fitKey,stage.presentationBounds());
+          const crop=fitBoxes.get(fitKey),factor=Math.max(0,Math.min(bounds.width/crop.width,bounds.height/crop.height));
+          const w=crop.width*factor,h=crop.height*factor;
+          if(factor)ctx.drawImage(frame,crop.x,crop.y,crop.width,crop.height,bounds.x+(bounds.width-w)/2,bounds.y+(bounds.height-h)/2,w,h);
+        }else stage.draw(ctx,{state:'idle',t,ang,ex:{}},looks.get(key).equipment,{classId,scale});
       },
-      dispose(){stage.dispose();looks.clear();}
+      dispose(){stage.dispose();looks.clear();fitBoxes.clear();}
     };
   }
   return Object.freeze({init,assets,drawOptions,draw,projectileOrigin,effectAnchors,effectImage,drawPreview,createShowcase,update,only3D:true});

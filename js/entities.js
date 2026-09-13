@@ -2551,7 +2551,7 @@ class Minion extends Entity {
       if (this.slamRadius && this.slamCd <= 0 && d < this.slamRadius + target.radius + 0.6) {
         this.slamCd = 4.5; this.startAction("attack", 0.6);
         const sx = this.x, sy = this.y, sdmg = this.slamDmg ? U.rf(this.slamDmg[0], this.slamDmg[1]) * (1 + (this.owner.stats?.minionDmgPct ?? this.dmgPctOwner) / 100) * (1+(aura.dmgPct||0)/100) : this.dmgRoll() * 1.5;
-        Game.afterDelay(0.4, () => { if (this.dead) return; this.playSound('impact','slam',{elem:'earth'}); Game.addNova(sx, sy, this.slamRadius, "#c0a060"); Game.fx.shake = Math.max(Game.fx.shake, 3); for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(sx, sy, mon.x, mon.y) > this.slamRadius + mon.radius) continue; mon.takeDamage(sdmg, this); Game.minionFloat(mon.x, mon.y, sdmg); mon.stunT = Math.max(mon.stunT, this.slamStun || 0.6); Game.knockMonster(mon, sx, sy, 1.0); } });
+        Game.afterDelay(0.4, () => { if (this.dead) return; this.playSound('impact','slam',{elem:'earth'}); Game.addNova(sx, sy, this.slamRadius, "#c0a060"); Game.fx.shake = Math.max(Game.fx.shake, 3); for (const mon of TerrainLayers.targets(Game.state.monsters)) { if (mon.dead || U.dist(sx, sy, mon.x, mon.y) > this.slamRadius + mon.radius) continue; mon.takeDamage(sdmg, this); Game.minionFloat(mon.x, mon.y, sdmg); mon.stunT = Math.max(mon.stunT, this.slamStun || 0.6); Game.knockMonster(mon, sx, sy, 1.0); } }, this);
         this.moving = false; return;
       }
       const reach = this.isArcher ? this.range : this.range + target.radius + this.radius;
@@ -2578,7 +2578,7 @@ class Minion extends Entity {
               if (pdot > 0) { tref.poisonDot = { dps: pdot / 3, t: 3, owner:this }; Game.addParticle(tref.x, tref.y, "#90ff70"); }
               Game.bloodBurst(tref.x, tref.y, 4);
             }
-          });
+          }, this);
         }
       } else {
         this.repathT -= dt;

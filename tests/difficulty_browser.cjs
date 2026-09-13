@@ -15,7 +15,7 @@ const out=process.env.DIFFICULTY_QA_DIR||'tmp/difficulty_qa';fs.mkdirSync(out,{r
     await page.goto(process.env.GAME_REVIEW_URL||'http://127.0.0.1:8741/',{waitUntil:'load',timeout:90000});
     await page.waitForSelector('#titleMenu button',{timeout:90000});
     await page.evaluate(async()=>{
-      Sfx.setVol('master',0);await Game.newGame('Difficulty Browser QA','vanguard',false);await Game.skipOpening();
+      Sfx.setVol('master',0);await Game.newGame('Difficulty Browser QA','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);
       const s=Game.state;s.seed=123;s.unlockedDiff=2;s.quests.q7={state:'done'};s.flags.fn_temple_open=true;
       Game.debugFlags.god=true;await Game.enterMap('north_wild','default');
       window.normalMonsters=s.monsters;Game.__difficultyQA.freeze();UI.closeAll();

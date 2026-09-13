@@ -16,7 +16,7 @@ try{
   const win=frame.contentWindow,doc=win.document;
   for(let i=0;i<500&&!doc.querySelector('#titleMenu button');i++)await delay(40);
   const game=win.eval('Game'),ui=win.eval('UI'),data=win.eval('DATA'),Monster=win.eval('Monster'),sprites=win.eval('SpriteAssets');
-  win.eval('Sfx').setVol('master',0);await game.newGame('Story Review','vanguard',false);await game.skipOpening();ui.closeAll();
+  win.eval('Sfx').setVol('master',0);await game.newGame('Story Review','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();
   game.debugFlags.god=true;
   async function visit(zone){ui.closeAll();await game.enterMap(zone,'default');ok(!doc.getElementById('appFatal'),'fatal in '+zone);game.state.monsters=[];game.state.map.explored.fill(1);game.__storyTest.render();}
   await visit('marshcamp');game.state.quests={q10:{state:'offered'}};game.acceptQuest('q10');

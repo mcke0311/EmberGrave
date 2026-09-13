@@ -103,47 +103,64 @@ for(const cls of Object.keys(D.CLASSES)) {
   ok(G.state.npcs.filter(n=>n.id.startsWith('opening_')).length===2,'rescued travelers persist after completion');
 }
 
-for(const s of ['arrival','awakening','guard','road','rescue','rescueTalk','escort','combat','provision','bossIntro','boss','gate','hearth']) {
-  await G.newGame('Skip '+s,'vanguard',false);
-  G.state.flags.opening.stage=s;
-  if(s==='hearth')await G.enterMap('frosthaven','default');
-  const a=G.skipOpening(),b=G.skipOpening();
-  await Promise.all([a,b]);
-  ok(stage()==='done'&&G.state.map.id==='frosthaven','skip '+s);
+ok(typeof G.skipOpening==='undefined','production has no skip API');
+for(const checkpoint of ['arrival','awakening','guard','road','rescue','rescueTalk','escort','combat','provision','bossIntro','boss','gate','hearth']) {
+  await G.newGame('Required '+checkpoint,'vanguard',false);
+  const o=G.state.flags.opening;o.stage=checkpoint;
+  if(['gate','hearth'].includes(checkpoint))o.defeated=['guard','rescue0','rescue1','rescue2','gate0','gate1','captain'];
+  await reload();
+  for(const target of ['town','north_wild','shattered_temple'])ok(!await G.enterMap(target,'default'),'blocked early travel '+checkpoint+'/'+target);
+  if(checkpoint!=='hearth')ok(!await G.enterMap('frosthaven','portal',{openingMode:'skip'}),'old skip mode cannot bypass '+checkpoint);
+  ok(!G.castPortal()&&!G.state.portal,'no opening portal '+checkpoint);
+  const expected=stage(),ledger=JSON.stringify(G.state.flags.opening.defeated);
+  G.onPlayerDeath();ok(G.state.player.dead,'death '+checkpoint);
+  ok(await G.returnToTown(),'checkpoint retry '+checkpoint);
+  ok(!G.state.player.dead&&stage()===expected,'death preserves stage '+checkpoint);
+  ok(JSON.stringify(G.state.flags.opening.defeated)===ledger,'death preserves defeats '+checkpoint);
+  await reload();ok(stage()===expected,'checkpoint survives subsequent reload '+checkpoint);
 }
-await G.newGame('Failed transition','vanguard',false);
-fail.bundle='zone:frosthaven';
-ok(!await G.skipOpening(),'failed skip is retryable');
-ok(stage()==='arrival'&&G.state.map.id==='frosthaven_approach','failure preserves checkpoint');
-fail.bundle=null;ok(await G.skipOpening(),'retry succeeds');
-fail.bundle='actors:act1';
-ok(!await G.enterMap('north_wild','default',{recoverable:true}),'failed northern animation bundle blocks travel');
-ok(G.state.map.id==='frosthaven','animation load failure preserves the current map');
-fail.bundle=null;ok(await G.enterMap('north_wild','default',{recoverable:true}),'northern animation load retries successfully');
 
-await G.newGame('Ordinary death','vanguard',false);
-G.onPlayerDeath();ok(G.state.player.dead,'normal death');
-ok(await G.returnToTown(),'normal return');ok(stage()==='done'&&!G.state.player.dead,'death ends opening');
-await G.newGame('Early travel','vanguard',false);
-G.castPortal();await G.enterMap('frosthaven','portal');
-ok(stage()==='done'&&!G.state.portal,'early travel clears opening portal');
+// The old three-tile circle could be avoided all the way to the closed gate.
+for(const seed of [0,1,123,4294967295])for(const point of [{x:83.5,y:18.5},{x:93.5,y:15.5},{x:93.5,y:8.5},{x:88.5,y:4.5}]) {
+  await G.newGame('Courtyard '+seed,'vanguard',false);G.state.seed=seed;
+  G.state.flags.opening.stage='provision';await reload();
+  step(.1);ok(stage()==='provision','supply checkpoint stays outside trigger');
+  Object.assign(G.state.player,point);step(.1);
+  ok(stage()==='bossIntro','courtyard approach triggers '+JSON.stringify(point));
+  step(3.1);ok(stage()==='boss','courtyard intro advances');
+  ok(G.state.monsters.filter(m=>m.openingId==='captain').length===1,'captain only spawns once');
+  const boss=G.state.monsters.find(m=>m.openingId==='captain');boss.hp=boss.maxHp*.4;step(.1);
+  const hp=boss.hp,waves=JSON.stringify(G.state.flags.opening.waves);
+  G.onPlayerDeath();await G.returnToTown();
+  ok(G.state.monsters.find(m=>m.openingId==='captain').hp===hp,'death preserves captain health');
+  ok(JSON.stringify(G.state.flags.opening.waves)===waves,'death preserves reinforcement ledger');
+}
+await G.newGame('Failed checkpoint','vanguard',false);G.onPlayerDeath();fail.bundle='zone:frosthaven';
+ok(!await G.returnToTown(),'failed checkpoint load is retryable');
+ok(stage()==='arrival'&&G.state.player.dead,'failed retry preserves dead hero and checkpoint');
+fail.bundle=null;ok(await G.returnToTown(),'checkpoint retry succeeds');
+G.state.flags.opening.stage='gate';G.state.flags.opening.defeated.push('captain');
+fail.bundle='zone:frosthaven';ok(!await G.enterMap('frosthaven','from_wild',{openingMode:'gate'}),'failed gate load is retryable');
+ok(stage()==='gate'&&G.state.map.id==='frosthaven_approach','failed gate preserves checkpoint');
+fail.bundle=null;ok(await G.enterMap('frosthaven','from_wild',{openingMode:'gate'}),'gate retry succeeds');
+ok(stage()==='hearth','town arrival still requires Seraneth');G.interact(G.state.npcs.find(n=>n.id==='sera'));
+fail.bundle='actors:act1';ok(!await G.enterMap('north_wild','default',{recoverable:true}),'failed northern animation blocks travel');
+ok(G.state.map.id==='frosthaven','failed travel preserves map');
+fail.bundle=null;ok(await G.enterMap('north_wild','default',{recoverable:true}),'northern animation retries');
 delete G.state.flags.opening;delete G.state.flags.seenIntro;
-await reload();ok(!G.state.flags.opening&&G.state.map.id==='frosthaven','legacy hero without intro flags stays in town');
+await reload();ok(!G.state.flags.opening&&G.state.map.id==='frosthaven','legacy established hero stays in town');
 
 await G.newGame('Hardcore opening','vanguard',true);
-G.onPlayerDeath();ok(G.state.player.dead&&!G.listSaves().some(s=>s.name==='Hardcore opening'),'hardcore still deletes fallen hero');
-ok(!await G.returnToTown(),'hardcore cannot revive');
-G.saveAndQuit();
-ok(!G.listSaves().some(s=>s.name==='Hardcore opening'),'quitting cannot recreate a fallen hardcore save');
+G.onPlayerDeath();ok(G.state.player.dead&&!G.listSaves().some(s=>s.name==='Hardcore opening'),'hardcore deletes fallen hero');
+ok(!await G.returnToTown(),'hardcore cannot revive');G.saveAndQuit();
+ok(!G.listSaves().some(s=>s.name==='Hardcore opening'),'quitting cannot recreate hardcore save');
 
-await G.newGame('Interrupted skip','vanguard',false);
-let release;
-fail.wait={bundle:'zone:frosthaven',promise:new Promise(resolve=>{release=resolve;})};
-const pending=G.skipOpening();
-G.saveAndQuit();fail.wait=null;
-await G.newGame('Replacement hero','emberwitch',false);
+await G.newGame('Interrupted gate','vanguard',false);G.state.flags.opening.stage='gate';
+let release;fail.wait={bundle:'zone:frosthaven',promise:new Promise(resolve=>{release=resolve;})};
+const pending=G.enterMap('frosthaven','from_wild',{openingMode:'gate'});
+G.saveAndQuit();fail.wait=null;await G.newGame('Replacement hero','emberwitch',false);
 release();ok(!await pending,'stale transition discarded');
-ok(G.state.player.name==='Replacement hero'&&stage()==='arrival'&&G.state.map.id==='frosthaven_approach','late skip cannot change replacement hero');
+ok(G.state.player.name==='Replacement hero'&&stage()==='arrival','late gate cannot change replacement hero');
 // Migrate actual version-one checkpoints without sending established heroes backward.
 for(const legacy of ['arrival','awakening','guard','road','combat','gate','hearth','done']) {
   await G.newGame('Migration '+legacy,'vanguard',false);
@@ -154,6 +171,16 @@ for(const legacy of ['arrival','awakening','guard','road','combat','gate','heart
   if(legacy==='combat'){kill('gate0');kill('gate1');ok(stage()==='provision','old gate combat leads to new boss');}
   if(legacy==='gate')ok(controller.ready&&await G.enterMap('frosthaven','from_wild',{openingMode:'gate'}),'already-open old gate remains open');
 }
+
+// Co-op keeps its existing completed opening marker and town start.
+ctx.CoopProtocol={ZONES:['frosthaven','north_wild']};
+ctx.Coop={active:true,loading:true,save(){}};
+const coopHero=G.coop.makeHero('Co-op start','vanguard');
+await G.coop.start(coopHero,123);
+ok(G.state.map.id==='frosthaven'&&!controller.active(),'co-op starts in town with no mandatory solo opening');
+ok(await G.enterMap('north_wild','default'),'co-op completed marker permits normal travel');
+ok(!G.state.npcs.some(n=>n.id==='opening_bryn'),'co-op does not attach opening travelers');
+delete ctx.Coop;
 
 async function bossScene() {
   await G.newGame('Slam tests','vanguard',false);
@@ -174,9 +201,9 @@ captain=await bossScene();p=G.state.player;Object.assign(p,{x:captain.x+captain.
 captain.startTelegraphedSlam(p,G.state.map);const outsideHp=p.hp;flush(1.2);ok(p.hp===outsideHp,'outside visible circle is safe');
 captain=await bossScene();p=G.state.player;Object.assign(p,{x:captain.x,y:captain.y});
 captain.startTelegraphedSlam(p,G.state.map);kill('captain');const deadHp=p.hp;flush(2);ok(p.hp===deadHp&&!G.state.fx.some(f=>f.type==='slamwarning'),'death cancels warning and pending hit');
-captain=await bossScene();captain.startTelegraphedSlam(G.state.player,G.state.map);await G.skipOpening();const townHp=G.state.player.hp;flush(2);ok(G.state.player.hp===townHp&&!G.state.fx.some(f=>f.type==='slamwarning'),'skip cancels attack');
-captain=await bossScene();captain.startTelegraphedSlam(G.state.player,G.state.map);await G.enterMap('frosthaven','default');flush(2);ok(G.state.map.id==='frosthaven'&&!G.state.fx.some(f=>f.type==='slamwarning'),'travel cancels pending attack');
+captain=await bossScene();captain.startTelegraphedSlam(G.state.player,G.state.map);G.onPlayerDeath();await G.returnToTown();const retryHp=G.state.player.hp;flush(2);ok(G.state.player.hp===retryHp&&!G.state.fx.some(f=>f.type==='slamwarning'),'checkpoint retry cancels old attacks');
+captain=await bossScene();captain.startTelegraphedSlam(G.state.player,G.state.map);kill('captain');await G.enterMap('frosthaven','from_wild',{openingMode:'gate'});flush(2);ok(G.state.map.id==='frosthaven'&&!G.state.fx.some(f=>f.type==='slamwarning'),'legitimate gate travel cancels pending attacks');
 captain=await bossScene();captain.startTelegraphedSlam(G.state.player,G.state.map);G.onPlayerDeath();flush(2);ok(G.state.player.dead,'pending slam cannot affect dead hero');
 captain=await bossScene();p=G.state.player;Object.assign(p,{x:captain.x,y:captain.y});
 ctx.window.matchMedia=()=>({matches:true});G.fx.shake=0;captain.startTelegraphedSlam(p,G.state.map);flush(1.2);ok(G.fx.shake===0,'reduced motion disables captain shake');
-console.log(`PASS ${checks} opening checks: five classes, rescue, captain phases, finite reinforcements, attack warnings, every checkpoint, migration, rewards, skip, death and failed-load retry.`);
+console.log(`PASS ${checks} opening checks: five classes, rescue, captain phases, finite reinforcements, attack warnings, every checkpoint, migration, rewards, mandatory progression, death and failed-load retry.`);

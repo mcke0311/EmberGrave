@@ -1,9 +1,14 @@
 const CoopUI=(()=>{
   let dialog=null,statusEl=null,hud=null,screen='',travelId=null,lastTick=0,hudKey='',selectedHero=null,draft={};
-  const healthBars=new Map();
+  const healthBars=new Map();let browseTimer=null;
+  function partyPlayers(){
+    if(!Coop.party?.length)return Game.state?.players||[];
+    return Coop.party.map(r=>{const local=Game.state?.players.find(p=>p._coopId===r.id);return local?Object.assign(Object.create(local),{zone:r.zone}):{...r,_coopId:r.id,stats:{maxHp:r.maxHp}};});
+  }
+
   const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;};
   const button=(label,fn,cls)=>{const b=el('button',label,cls);b.type='button';b.onclick=fn;return b;};
-  function close(){const focus=dialog?._opener;if(screen==='travel'&&travelId){Coop.answerTravel(false);travelId=null;}dialog?.close();dialog?.remove();dialog=null;screen='';statusEl=null;if(typeof UI!=='undefined')UI.hideTooltip();if(typeof MobileWorkspace!=='undefined')MobileWorkspace.sync();if(focus?.isConnected)focus.focus({preventScroll:true});}
+  function close(){clearInterval(browseTimer);browseTimer=null;const focus=dialog?._opener;if(screen==='travel'&&travelId){Coop.answerTravel(false);travelId=null;}dialog?.close();dialog?.remove();dialog=null;screen='';statusEl=null;if(typeof UI!=='undefined')UI.hideTooltip();if(typeof MobileWorkspace!=='undefined')MobileWorkspace.sync();if(focus?.isConnected)focus.focus({preventScroll:true});}
   function shell(title,kind){
     close();if(Game.state)UI.closeAll();Game.cancelMenuInput();const opener=document.activeElement;screen=kind;dialog=el('dialog',null,'coop-dialog');dialog.setAttribute('aria-label',title);dialog._opener=opener;
     const head=el('div',null,'coop-header');head.append(el('h2',title),button('Close',close));dialog.append(head);
@@ -27,39 +32,55 @@ const CoopUI=(()=>{
   }
   async function lobby(hero){
     selectedHero=hero.id;
-    const d=shell('Host or join a party','lobby');
+    const d=shell('Multiplayer parties','lobby');
     const back=button('← Back to heroes',()=>{close();open().catch(e=>UI.msg(e.message));});d.querySelector('.coop-header button').replaceWith(back);
     d.append(el('p',hero.name+' · Level '+hero.lvl+' '+DATA.CLASSES[hero.classId].name,'coop-note'));
-    d.append(el('p','Up to four friends · Player-hosted · Act I','coop-note'));
+    d.append(el('p','Up to four players · Explore Act I together or separately','coop-note'));
     const campaigns=await CoopStore.campaigns();if(dialog!==d)return;
     const saved=el('select');saved.id='coopCampaign';const opt=el('option','New Act I campaign');opt.value='';saved.append(opt);
     for(const c of campaigns.filter(c=>c.ownerHeroId===hero.id)){const o=el('option',c.name);o.value=c.id;saved.append(o);}
     saved.value=draft[hero.id]||'';saved.onchange=()=>draft[hero.id]=saved.value;field(d,'Host campaign',saved);
+    const name=field(d,'Party name (hosting)',el('input'));name.id='coopName';name.maxLength=40;name.value=hero.name+"'s party";
+    const password=field(d,'Password (optional)',el('input'));password.id='coopPassword';password.type='password';password.maxLength=128;password.autocomplete='off';
+    d.append(el('p','A password hides your party from the browser. Share its invitation and password with friends.','coop-note'));
     const code=field(d,'Room code',el('input'));code.id='coopRoom';code.maxLength=10;code.autocomplete='off';code.value=draft.room??new URLSearchParams(location.hash.slice(1)).get('coop')??Coop.resumeInfo()?.room??'';code.oninput=()=>draft.room=code.value;
     const advanced=el('details'),summary=el('summary','Connection settings');advanced.append(summary);d.append(advanced);
     const relay=field(advanced,'Relay address',el('input'));relay.id='coopRelay';relay.value=draft.relay||window.COOP_CONFIG.relayUrl;relay.oninput=()=>draft.relay=relay.value;
     async function start(mode){
       window.COOP_CONFIG.relayUrl=relay.value.trim();status('Connecting to the party… The server may take up to a minute to wake up.');d.setAttribute('aria-busy','true');
       const controls=[...d.querySelectorAll('button,input,select')];controls.forEach(b=>b.disabled=true);
-      try{await Coop.connect(mode,hero.id,code.value.trim().toUpperCase(),saved.value||null);if(Coop.host)close();else status('Waiting for the host to load your hero…');}
+      try{await Coop.connect(mode,hero.id,code.value.trim().toUpperCase(),saved.value||null,{name:name.value.trim(),password:password.value});if(dialog===d)status('Loading your hero…');}
       catch(e){status(e.message);}finally{d.removeAttribute('aria-busy');controls.forEach(b=>b.disabled=false);}
     }
-    const actions=el('div',null,'coop-actions');actions.append(button('Host a party',()=>start('host'),'coop-primary'),button('Join party',()=>start('join')));d.append(actions);
+    const actions=el('div',null,'coop-actions');actions.append(button('Host party',()=>start('host'),'coop-primary'),button('Join by code',()=>start('join')));d.append(actions);
+    const browser=el('section');browser.id='coopRoomList';browser.setAttribute('aria-label','Public parties');d.append(browser);
+    let refreshing=false;
+    async function browse(){
+      if(refreshing||dialog!==d||d.hasAttribute('aria-busy'))return;refreshing=true;
+      window.COOP_CONFIG.relayUrl=relay.value.trim();browser.textContent='Finding parties…';
+      try{const rooms=await Coop.listRooms();if(dialog!==d)return;browser.replaceChildren();
+        if(!rooms.length)browser.append(el('p','No public parties yet. Host one to get started.','coop-note'));
+        for(const room of rooms){const row=el('div',null,'coop-row');row.append(el('strong',room.name),el('span',room.hostName+' · '+room.players+'/'+room.maxPlayers));
+          const join=button(room.players>=room.maxPlayers?'Full':room.available?'Join':'Unavailable',()=>{code.value=room.code;password.value='';start('join');});join.disabled=!room.available;row.append(join);browser.append(row);}
+      }catch(e){if(dialog===d)browser.textContent=e.message;}finally{refreshing=false;}
+    }
+    actions.prepend(button('Browse parties',()=>{browse();if(!browseTimer)browseTimer=setInterval(browse,5000);}));
+    actions.append(button('Refresh parties',browse));browse();browseTimer=setInterval(browse,5000);
     d.append(el('p','Co-op heroes are saved on this device. Solo heroes and progress stay separate.','coop-note'));
   }
   function refresh(){
-    if(Game.state){UI.refreshManagement();if(screen==='party')refreshParty();}
+    if(Game.state&&screen==='party')refreshParty();
     if(typeof MobileWorkspace!=='undefined')MobileWorkspace.sync();
     if(!Coop.active){if(hud)hud.hidden=true;hudKey='';return;}
     if(screen==='lobby'&&Game.state?.players?.some(p=>p._coopId===Coop.localId)&&!Coop.loading)close();
     if(!hud){hud=el('aside');hud.id='coopHUD';hud.setAttribute('aria-label','Co-op party');document.body.append(hud);}
     hud.hidden=false;
-    const players=Game.state?.players||[],key=JSON.stringify([Coop.room,Coop.paused,Coop.host,Coop.saveError,players.map(p=>[p._coopId,p.name,p.classId,p===Game.state.player,p.dead,p.connected,Coop.roster.find(r=>r.id===p._coopId)?.ready])]);
+    const players=partyPlayers(),key=JSON.stringify([Coop.room,Coop.paused,Coop.host,Coop.saveError,players.map(p=>[p._coopId,p.name,p.classId,p._coopId===Coop.localId,p.dead,p.connected,Coop.roster.find(r=>r.id===p._coopId)?.ready])]);
     if(key===hudKey){for(const p of players){const bar=healthBars.get(p._coopId);if(bar){if(bar.max!==p.stats.maxHp)bar.max=p.stats.maxHp;if(bar.value!==p.hp)bar.value=p.hp;}}return;}
     hudKey=key;healthBars.clear();hud.replaceChildren();
     const top=el('div','ROOM '+Coop.room);top.style.letterSpacing='.12em';hud.append(top);
-    for(const p of Game.state?.players||[]){
-      const line=el('div',null,'coop-party-line');line.append(el('span',p.name+(p===Game.state.player?' (you)':'')+' · '+DATA.CLASSES[p.classId].name),el('span',p.connected===false?'Offline':p.dead?'Fallen':Coop.roster.find(r=>r.id===p._coopId)?.ready?'Ready':'Playing'));hud.append(line);
+    for(const p of partyPlayers()){
+      const line=el('div',null,'coop-party-line');line.append(el('span',p.name+(p._coopId===Coop.localId?' (you)':'')+' · '+DATA.CLASSES[p.classId].name),el('span',p.connected===false?'Offline':p.dead?'Fallen':Coop.roster.find(r=>r.id===p._coopId)?.ready?'Ready':'Playing'));hud.append(line);
       const bar=el('progress');bar.max=p.stats.maxHp;bar.value=p.hp;bar.setAttribute('aria-label',p.name+' health');hud.append(bar);
       healthBars.set(p._coopId,bar);
     }
@@ -76,17 +97,19 @@ const CoopUI=(()=>{
     const ready=button('Ready',()=>Coop.ready(!Coop.roster.find(p=>p.id===Coop.localId)?.ready));ready.id='partyReady';d.append(ready);
     const connection=el('p',null,'coop-pause');connection.id='partyConnection';connection.setAttribute('role','status');d.append(connection);
     d.append(button('Retry saving',()=>Coop.retrySave()));
-    d.append(el('p','Your host controls travel and campaign quests. Shared drops go to the first valid pickup.','coop-note'));
+    d.append(el('p','Explore independently. Your host accepts and turns in campaign quests. Teleport outside combat with a three-second channel and ten-second cooldown.','coop-note'));
     d.append(button('Save and leave party',()=>Coop.leave()));refreshParty();
   }
   function refreshParty(){
     const list=document.getElementById('partyRoster');if(!list)return;
-    const players=Game.state?.players||[],key=JSON.stringify(players.map(p=>[p._coopId,p.name,p.dead,p.connected]));
-    if(list.dataset.key!==key){list.dataset.key=key;list.replaceChildren();for(const p of players){const row=el('div',null,'coop-row');row.append(el('strong',p.name+' · '+DATA.CLASSES[p.classId].name));
+    const players=partyPlayers(),key=JSON.stringify(players.map(p=>[p._coopId,p.name,p.dead,p.connected,p.zone,Math.ceil(Math.max(p.combatUntil||0,p.teleportUntil||0)-(Game.state?.partyTime||0))]));
+    if(list.dataset.key!==key){list.dataset.key=key;list.replaceChildren();for(const p of players){const row=el('div',null,'coop-row');row.append(el('strong',p.name+' · '+DATA.CLASSES[p.classId].name),el('span',DATA.ZONES[p.zone||Game.state.map.id]?.name||p.zone));
       const health=el('span');health.dataset.player=p._coopId;row.append(health);
-      if(p.dead&&p!==Game.state.player)row.append(button('Revive',()=>Game.submitCommand({type:'revive',targetId:p._coopId})));list.append(row);
+      if(!p.dead&&p.connected!==false&&p._coopId!==Coop.localId){const teleport=button('Teleport to player',()=>Coop.teleportToPlayer(p._coopId));teleport.disabled=Game.state.player.dead||Math.max(p.combatUntil||0,Game.state.player.combatUntil||0,Game.state.player.teleportUntil||0)>Game.state.partyTime;row.append(teleport);}
+      if(p.dead&&p._coopId===Coop.localId)row.append(button('Return to Frosthaven',()=>Game.submitCommand({type:'respawn'})));
+      if(p.dead&&p._coopId!==Coop.localId&&(!p.zone||p.zone===Game.state.map.id))row.append(button('Revive',()=>Game.submitCommand({type:'revive',targetId:p._coopId})));list.append(row);
     }}
-    for(const label of list.querySelectorAll('[data-player]')){const p=players.find(p=>p._coopId===label.dataset.player);label.textContent=p.connected===false?'Offline':p.dead?'Fallen':Math.ceil(p.hp)+' / '+Math.ceil(p.stats.maxHp)+' Life';}
+    for(const label of list.querySelectorAll('[data-player]')){const p=players.find(p=>p._coopId===label.dataset.player);const text=(p.connected===false?'Offline':p.dead?'Fallen':'Connected')+' · '+Math.ceil(p.hp)+' / '+Math.ceil(p.stats.maxHp)+' Life';if(label.textContent!==text)label.textContent=text;}
     const ready=document.getElementById('partyReady'),isReady=!!Coop.roster.find(p=>p.id===Coop.localId)?.ready;ready.textContent=isReady?'Ready ✓':'Ready';ready.setAttribute('aria-pressed',String(isReady));
     document.getElementById('partyConnection').textContent=Coop.saveError?'Local hero save failed':Coop.paused||'Connected';
   }

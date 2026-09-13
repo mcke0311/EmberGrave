@@ -30,7 +30,7 @@ const CoopCommands=(()=>{
   async function settle(p,carryOnly=false){
     const m=management(p);returnItem(p,m.carried,m.origin);m.carried=null;m.origin=null;
     if(!carryOnly)for(let i=0;i<4;i++){returnItem(p,m.offer[i],m.origins[i]);m.offer[i]=null;m.origins[i]=null;}
-    await Game.coop.prepareHero(p);p.computeStats();
+    if(!globalThis.COOP_WORKER)await Game.coop.prepareHero(p);p.computeStats();
   }
   function facility(p,type,npcId){
     const s=Game.state,o=npcId?s.npcs.find(n=>n.id===npcId):s.map.props.find(o=>o.interact===type&&nearby(p,o));
@@ -74,13 +74,13 @@ const CoopCommands=(()=>{
         return c.committed?Game.coop.interactCommitted(o,p):Game.coop.interact(o,p);
       }
       case 'acceptQuest':case 'completeQuest':{
-        if(p!==s.player)fail('The host manages the party campaign.');
+        if(Coop.hostId?p._coopId!==Coop.hostId:p!==s.player)fail('The host manages the party campaign.');
         const q=DATA.QUESTS.find(q=>q.id===c.questId);if(!q||Coop.active&&!CoopProtocol.ZONES.includes(q.zone))fail('Quest is outside the co-op beta');
         if(!s.npcs.some(n=>n.id===q.giver&&nearby(p,n))&&!s.map.props.some(o=>o.interact==='board'&&q.giver==='board'&&nearby(p,o)))fail('Speak to the quest giver first.');
         if(c.type==='completeQuest'){
           if(s.quests[c.questId]?.state!=='reward')fail('Quest is not ready');
           Game.coop.completeQuest(c.questId);
-          if(Coop.active)s.shrines=s.shrines.filter(z=>CoopProtocol.ZONES.includes(z));
+          if(Coop.active)s.shrines.splice(0,s.shrines.length,...s.shrines.filter(z=>CoopProtocol.ZONES.includes(z)));
           if(Coop.active&&q.target==='korvath'){s.flags.coopComplete=true;Coop.event('complete',{message:'Act I complete — thank you for playing the co-op beta!'});}
         }else Game.coop.acceptQuest(c.questId);
         return;
@@ -136,7 +136,7 @@ const CoopCommands=(()=>{
       case 'unequip':{
         if(!Items.EQUIP_SLOTS.includes(c.slot))fail('Invalid equipment slot');
         const it=p.equip[c.slot];if(!it)fail('Empty equipment slot');if(c.itemId&&it._coopId!==c.itemId)fail('Equipment changed');if(!Items.canAutoPlace(p.inv,it))fail('Pack is full');
-        Items.autoPlace(p.inv,it);delete p.equip[c.slot];await Game.coop.prepareHero(p);p.computeStats();return;
+        Items.autoPlace(p.inv,it);delete p.equip[c.slot];if(!globalThis.COOP_WORKER)await Game.coop.prepareHero(p);p.computeStats();return;
       }
       case 'buy':{
         facility(p,'vendor',c.npcId);const stock=s.vendorStock[c.npcId],it=stock?.find(i=>i._coopId===c.itemId);if(!it)fail('Item is no longer for sale');
@@ -156,8 +156,8 @@ const CoopCommands=(()=>{
         else{result=Items.makeConsumable(upgrade,1);let n=total-3;while(n>0){const take=Math.min(10,n);left.push(Items.makeConsumable(pots[0].baseId,take));n-=take;}}
         for(const it of [result,...left])if(!Items.autoPlace(p.inv,it))Game.coop.drop(it,p);p.computeStats();return;
       }
-      case 'portal':if(p!==s.player)fail('Only the host can open a party portal');return Game.coop.castPortal();
-      case 'travel':if(p!==s.player)fail('Only the host can request party travel');return Coop.requestTravel(c.zone,c.spawn||'default');
+      case 'portal':return Coop.openPortal?Coop.openPortal(p):Game.coop.castPortal();
+      case 'travel':return Coop.requestTravel(c.zone,c.spawn||'default',c,p);
     }
     const entry=item(p,c.itemId);if(!entry)fail('Item is no longer in your inventory');
     const {it,grid,name}=entry;
@@ -166,7 +166,7 @@ const CoopCommands=(()=>{
       case 'carry':{
         const m=management(p);if(m.carried)fail('Place the carried item first');
         const from=entry.name==='offer'?m.origins[entry.slot]:origin(entry);
-        remove(p,entry);m.carried=it;m.origin=from;await Game.coop.prepareHero(p);p.computeStats();return;
+        remove(p,entry);m.carried=it;m.origin=from;if(!globalThis.COOP_WORKER)await Game.coop.prepareHero(p);p.computeStats();return;
       }
       case 'moveItem':{
         if(!['inv','stash'].includes(c.to)||!entry.grid)fail('Invalid item destination');
@@ -175,7 +175,7 @@ const CoopCommands=(()=>{
         if(Number.isInteger(c.x)&&Number.isInteger(c.y)){if(!Items.fits(dest,it,c.x,c.y)){Items.place(grid,it,x,y);fail('Item does not fit');}Items.place(dest,it,c.x,c.y);}
         else {if(!Items.canAutoPlace(dest,it)){Items.place(grid,it,x,y);fail('No room');}Items.autoPlace(dest,it);}p.computeStats();return;
       }
-      case 'drop':remove(p,entry);Game.coop.drop(it,p);await Game.coop.prepareHero(p);p.computeStats();return;
+      case 'drop':remove(p,entry);Game.coop.drop(it,p);if(!globalThis.COOP_WORKER)await Game.coop.prepareHero(p);p.computeStats();return;
       case 'sell':if(name!=='inv')fail('Only pack items can be sold');facility(p,'vendor',c.npcId);p.gold+=Items.sellValue(it);remove(p,entry);p.computeStats();return;
       case 'identify':{
         const scroll=p.inv.items.find(i=>i.baseId==='idscroll');if(!scroll||it.identified||it.kind!=='gear')fail('A Scroll of Insight is required');consume(p,item(p,scroll._coopId));it.identified=true;return;
@@ -183,7 +183,7 @@ const CoopCommands=(()=>{
       case 'socket':{
         const socketable=item(p,c.socketId);if(!socketable||!['glyph','jewel'].includes(socketable.it.kind)||!it.identified)fail('Select a glyph or jewel and identified gear');
         access(p,socketable);
-        if(it.kind!=='gear'||!Items.socketGlyph(it,socketable.it))fail('No compatible empty socket');remove(p,socketable);await Game.coop.prepareHero(p);p.computeStats();return;
+        if(it.kind!=='gear'||!Items.socketGlyph(it,socketable.it))fail('No compatible empty socket');remove(p,socketable);if(!globalThis.COOP_WORKER)await Game.coop.prepareHero(p);p.computeStats();return;
       }
       case 'belt':{
         if(!it.belt)fail('This item cannot be put in the belt');
@@ -193,7 +193,7 @@ const CoopCommands=(()=>{
       }
       case 'use':{
         if(DATA.CONSUMABLES[it.baseId]?.respec){Game.coop.respec(p);consume(p,entry);return;}
-        if(it.baseId==='tp'){if(p!==s.player)fail('Only the host opens party portals');if(Game.coop.castPortal())consume(p,entry);return;}
+        if(it.baseId==='tp'){if(Coop.openPortal?Coop.openPortal(p):Game.coop.castPortal())consume(p,entry);return;}
         fail('Put draughts in your belt to drink them.');break;
       }
       case 'equip':{
@@ -207,7 +207,7 @@ const CoopCommands=(()=>{
           if(name==='carried'&&i===0){management(p).carried=old;management(p).origin={name:'equip',slot};}
           else if(!Items.autoPlace(p.inv,old)){if(i===0)fail('Make room in your pack before swapping equipment');Game.coop.drop(old,p);}
         }
-        await Game.coop.prepareHero(p);p.computeStats();return;
+        if(!globalThis.COOP_WORKER)await Game.coop.prepareHero(p);p.computeStats();return;
       }
       default:fail('Unknown gameplay command');
     }

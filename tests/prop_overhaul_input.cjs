@@ -12,7 +12,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
   await page.goto('http://127.0.0.1:8768/tests/prop_overhaul.html');await page.waitForFunction(()=>document.body.dataset.ready==='true',null,{timeout:180000});await page.evaluate(()=>propReview.setAuto(false));
   for(const [id,form] of [['vanguard',null],['emberwitch',null],['gravebinder',null],['wildkeeper',null],['veilranger',null],...['form_fang','form_brute','form_stone','form_apex'].map(f=>['wildkeeper',f])]){
    await page.evaluate(async({id,form})=>{
-    const q=propReview;await q.game.newGame('Mouse review',id,false);await q.game.skipOpening();await q.travel('north_wild');q.flat();
+    const q=propReview;await q.game.newGame('Mouse review',id,false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(q.game);await q.travel('north_wild');q.flat();
     if(form)q.game.state.player.buffs.push({id:form,stats:{},until:q.game.state.time+100});
     q.target=q.add('frozen_remains',{propFamily:'frozen_traveler',searchable:true,interact:'search_remains'});q.api.render();
    },{id,form});

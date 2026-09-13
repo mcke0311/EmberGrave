@@ -1,0 +1,679 @@
+{
+  "date": "2026-09-12",
+  "build": "embergrave-coop-3",
+  "protocol": 2,
+  "campaignSchema": 2,
+  "environment": {
+    "cpu": "AMD Ryzen 7 5800X",
+    "os": "Windows 11, 10.0.26200",
+    "node": "22.11.0",
+    "browser": "Google Chrome 152.0.7977.83, headless touch emulation",
+    "physicalPixel7a": false
+  },
+  "methodology": {
+    "worldSeed": 123,
+    "simulationRandomSeed": 7331,
+    "baselineEncoder": "tests/fixtures/coop_codec_baseline.js",
+    "baselineRevision": "f050f3da12bb78d2a19efc1f879e458c8255fc9a",
+    "baselineEncoderSha256": "b869ea99bc226e2c2c986f145898b73728ef8926c304f21eb45255d64ea87f8e",
+    "warmupSeconds": 2,
+    "movementComparison": "Both encoders process identical current authority states. Bytes are one recipient JSON payloads, excluding first full snapshot and transport framing.",
+    "scenarios": "All recipient payloads including the host bridge and confirmed hero save records. Six measured seconds; fixed 30 Hz authority and 15 Hz snapshots. VM persistence is mocked.",
+    "browser": "Last 240 guest render frames and twenty instrumented standstill movement starts; desktop touch emulation, not physical touch-to-photon or thermal acceptance."
+  },
+  "movement": [
+    {
+      "players": 2,
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 8,
+      "samples": 119,
+      "baselineBytes": 857876,
+      "currentBytes": 58716,
+      "reductionPercent": 93.15565419711007,
+      "baselineEncodeDiffMs": 688.2341999999974,
+      "currentEncodeDiffMs": 73.31339999999841
+    },
+    {
+      "players": 4,
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 8,
+      "samples": 119,
+      "baselineBytes": 875651,
+      "currentBytes": 73033,
+      "reductionPercent": 91.65957670350402,
+      "baselineEncodeDiffMs": 729.158699999999,
+      "currentEncodeDiffMs": 102.08890000000429
+    }
+  ],
+  "scenarios": [
+    {
+      "players": 2,
+      "scenario": "town",
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 6,
+      "allRecipientsBytes": 118022,
+      "joinMs": null,
+      "largestFields": {
+        "npcs._coopId": 15912,
+        "npcs.y": 1714,
+        "npcs.x": 1710,
+        "npcs.stride": 1586,
+        "npcs.visAng": 766,
+        "npcs.angT": 92,
+        "npcs.moving": 64,
+        "npcs.curSpeed": 44
+      },
+      "simulationMs": {
+        "samples": 180,
+        "mean": 0.04846555555556683,
+        "p95": 0.05830000000014479,
+        "max": 0.26880000000005566
+      },
+      "snapshotMs": {
+        "samples": 180,
+        "mean": 0.5257327777777707,
+        "p95": 0.8408999999999196,
+        "max": 1.024900000000116
+      },
+      "saveMs": {
+        "samples": 1,
+        "mean": 1.1709000000000742,
+        "p95": 1.1709000000000742,
+        "max": 1.1709000000000742
+      },
+      "saveCaptureMs": {
+        "samples": 1,
+        "mean": 0.44499999999993634,
+        "p95": 0.44499999999993634,
+        "max": 0.44499999999993634
+      },
+      "maxPendingCommands": 0
+    },
+    {
+      "players": 2,
+      "scenario": "movement",
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 6,
+      "allRecipientsBytes": 104006,
+      "joinMs": null,
+      "largestFields": {
+        "players._coopId": 2520,
+        "players.y": 2108,
+        "players.stride": 1884,
+        "players.x": 1748,
+        "players.visAng": 298,
+        "players.angT": 156,
+        "players.curSpeed": 16,
+        "players.moving": 16
+      },
+      "simulationMs": {
+        "samples": 180,
+        "mean": 1.8004250000000108,
+        "p95": 2.8566000000000713,
+        "max": 3.652099999999791
+      },
+      "snapshotMs": {
+        "samples": 180,
+        "mean": 0.4116594444444293,
+        "p95": 0.7836999999999534,
+        "max": 0.969499999999698
+      },
+      "saveMs": {
+        "samples": 1,
+        "mean": 2.8836999999998625,
+        "p95": 2.8836999999998625,
+        "max": 2.8836999999998625
+      },
+      "saveCaptureMs": {
+        "samples": 1,
+        "mean": 4.422800000000279,
+        "p95": 4.422800000000279,
+        "max": 4.422800000000279
+      },
+      "maxPendingCommands": 1
+    },
+    {
+      "players": 2,
+      "scenario": "dense-combat",
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 6,
+      "allRecipientsBytes": 553148,
+      "joinMs": null,
+      "largestFields": {
+        "monsters.act1Visual": 86294,
+        "monsters._coopId": 77314,
+        "monsters.action": 35580,
+        "projectiles._coopId": 23460,
+        "projectiles.ttl": 8988,
+        "projectiles.mon": 4992,
+        "players.hp": 3104,
+        "projectiles.y": 3008
+      },
+      "simulationMs": {
+        "samples": 180,
+        "mean": 0.34012055555553566,
+        "p95": 0.6221000000005006,
+        "max": 1.0887999999995372
+      },
+      "snapshotMs": {
+        "samples": 180,
+        "mean": 1.7718938888888767,
+        "p95": 3.8506999999999607,
+        "max": 4.558399999999892
+      },
+      "saveMs": {
+        "samples": 1,
+        "mean": 3.426499999999578,
+        "p95": 3.426499999999578,
+        "max": 3.426499999999578
+      },
+      "saveCaptureMs": {
+        "samples": 1,
+        "mean": 5.09900000000016,
+        "p95": 5.09900000000016,
+        "max": 5.09900000000016
+      },
+      "maxPendingCommands": 1
+    },
+    {
+      "players": 2,
+      "scenario": "summons",
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 6,
+      "allRecipientsBytes": 709748,
+      "joinMs": null,
+      "largestFields": {
+        "monsters.act1Visual": 107692,
+        "monsters._coopId": 99416,
+        "minions._coopId": 51072,
+        "monsters.action": 45716,
+        "projectiles._coopId": 22908,
+        "minions.hp": 17794,
+        "minions.action": 14878,
+        "projectiles.ttl": 8776
+      },
+      "simulationMs": {
+        "samples": 180,
+        "mean": 0.31839999999998425,
+        "p95": 0.6450000000004366,
+        "max": 0.8413000000000466
+      },
+      "snapshotMs": {
+        "samples": 180,
+        "mean": 1.9477422222221927,
+        "p95": 4.386800000000221,
+        "max": 5.765300000000025
+      },
+      "saveMs": {
+        "samples": 1,
+        "mean": 3.7145000000000437,
+        "p95": 3.7145000000000437,
+        "max": 3.7145000000000437
+      },
+      "saveCaptureMs": {
+        "samples": 1,
+        "mean": 4.821100000000115,
+        "p95": 4.821100000000115,
+        "max": 4.821100000000115
+      },
+      "maxPendingCommands": 1
+    },
+    {
+      "players": 2,
+      "scenario": "joining",
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 6,
+      "allRecipientsBytes": 148739,
+      "joinMs": 2.1212999999988824,
+      "largestFields": {
+        "npcs._coopId": 13533,
+        "npcs.y": 1560,
+        "npcs.x": 1550,
+        "players.stats": 1520,
+        "npcs.stride": 1219,
+        "players.inv": 952,
+        "players.equip": 732,
+        "npcs.visAng": 648
+      },
+      "simulationMs": {
+        "samples": 180,
+        "mean": 0.05636777777776337,
+        "p95": 0.10989999999947031,
+        "max": 0.3554999999996653
+      },
+      "snapshotMs": {
+        "samples": 151,
+        "mean": 0.6857609271522817,
+        "p95": 1.3240999999998166,
+        "max": 1.645700000000943
+      },
+      "saveMs": {
+        "samples": 2,
+        "mean": 0.6198999999996886,
+        "p95": 1.2271999999993568,
+        "max": 1.2271999999993568
+      },
+      "saveCaptureMs": {
+        "samples": 2,
+        "mean": 0.41855000000032305,
+        "p95": 0.4228000000002794,
+        "max": 0.4228000000002794
+      },
+      "maxPendingCommands": 0
+    },
+    {
+      "players": 2,
+      "scenario": "separate-areas",
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 6,
+      "allRecipientsBytes": 81670,
+      "joinMs": null,
+      "largestFields": {},
+      "simulationMs": {
+        "samples": 180,
+        "mean": 2.489933888888946,
+        "p95": 3.7291000000004715,
+        "max": 4.805099999999584
+      },
+      "snapshotMs": {
+        "samples": 180,
+        "mean": 0.4461216666667193,
+        "p95": 0.694100000000617,
+        "max": 0.8456999999998516
+      },
+      "saveMs": {
+        "samples": 1,
+        "mean": 3.4448000000011234,
+        "p95": 3.4448000000011234,
+        "max": 3.4448000000011234
+      },
+      "saveCaptureMs": {
+        "samples": 1,
+        "mean": 7.025200000000041,
+        "p95": 7.025200000000041,
+        "max": 7.025200000000041
+      },
+      "maxPendingCommands": 1
+    },
+    {
+      "players": 4,
+      "scenario": "town",
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 6,
+      "allRecipientsBytes": 258091,
+      "joinMs": null,
+      "largestFields": {
+        "npcs._coopId": 41184,
+        "npcs.y": 5272,
+        "npcs.x": 5140,
+        "npcs.stride": 4108,
+        "npcs.visAng": 1472,
+        "npcs.angT": 148,
+        "npcs.moving": 148,
+        "npcs.curSpeed": 116
+      },
+      "simulationMs": {
+        "samples": 180,
+        "mean": 0.06622444444444935,
+        "p95": 0.09180000000014843,
+        "max": 0.2445000000006985
+      },
+      "snapshotMs": {
+        "samples": 360,
+        "mean": 0.497192777777789,
+        "p95": 1.0825999999997293,
+        "max": 1.8075000000008004
+      },
+      "saveMs": {
+        "samples": 1,
+        "mean": 2.020200000000841,
+        "p95": 2.020200000000841,
+        "max": 2.020200000000841
+      },
+      "saveCaptureMs": {
+        "samples": 1,
+        "mean": 0.5149999999994179,
+        "p95": 0.5149999999994179,
+        "max": 0.5149999999994179
+      },
+      "maxPendingCommands": 0
+    },
+    {
+      "players": 4,
+      "scenario": "movement",
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 6,
+      "allRecipientsBytes": 252159,
+      "joinMs": null,
+      "largestFields": {
+        "players._coopId": 10800,
+        "players.y": 8432,
+        "players.stride": 7536,
+        "players.x": 6992,
+        "players.visAng": 1192,
+        "players.angT": 624,
+        "players.curSpeed": 64,
+        "players.moving": 64
+      },
+      "simulationMs": {
+        "samples": 180,
+        "mean": 1.8844027777777632,
+        "p95": 2.809400000000096,
+        "max": 3.7195000000010623
+      },
+      "snapshotMs": {
+        "samples": 360,
+        "mean": 0.43314500000000306,
+        "p95": 0.9099999999998545,
+        "max": 1.4979000000002998
+      },
+      "saveMs": {
+        "samples": 1,
+        "mean": 3.5187000000005355,
+        "p95": 3.5187000000005355,
+        "max": 3.5187000000005355
+      },
+      "saveCaptureMs": {
+        "samples": 1,
+        "mean": 4.653200000000652,
+        "p95": 4.653200000000652,
+        "max": 4.653200000000652
+      },
+      "maxPendingCommands": 1
+    },
+    {
+      "players": 4,
+      "scenario": "dense-combat",
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 6,
+      "allRecipientsBytes": 1250327,
+      "joinMs": null,
+      "largestFields": {
+        "monsters.act1Visual": 172584,
+        "monsters._coopId": 154972,
+        "monsters.action": 71160,
+        "projectiles._coopId": 46920,
+        "projectiles.ttl": 17976,
+        "projectiles.mon": 9984,
+        "players.hp": 6188,
+        "projectiles.y": 6016
+      },
+      "simulationMs": {
+        "samples": 180,
+        "mean": 0.36065611111116597,
+        "p95": 0.7059000000008382,
+        "max": 1.3104000000021188
+      },
+      "snapshotMs": {
+        "samples": 360,
+        "mean": 1.332674722222186,
+        "p95": 3.004499999999098,
+        "max": 4.726300000002084
+      },
+      "saveMs": {
+        "samples": 1,
+        "mean": 5.46389999999883,
+        "p95": 5.46389999999883,
+        "max": 5.46389999999883
+      },
+      "saveCaptureMs": {
+        "samples": 1,
+        "mean": 4.449200000002747,
+        "p95": 4.449200000002747,
+        "max": 4.449200000002747
+      },
+      "maxPendingCommands": 1
+    },
+    {
+      "players": 4,
+      "scenario": "summons",
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 6,
+      "allRecipientsBytes": 1575599,
+      "joinMs": null,
+      "largestFields": {
+        "monsters.act1Visual": 219888,
+        "monsters._coopId": 214140,
+        "minions._coopId": 183792,
+        "monsters.action": 96692,
+        "minions.hp": 65580,
+        "minions.action": 48988,
+        "projectiles._coopId": 46368,
+        "projectiles.ttl": 17760
+      },
+      "simulationMs": {
+        "samples": 180,
+        "mean": 0.37280833333326074,
+        "p95": 0.6970000000001164,
+        "max": 0.9108999999989464
+      },
+      "snapshotMs": {
+        "samples": 360,
+        "mean": 1.5402244444444173,
+        "p95": 3.470499999999447,
+        "max": 5.628800000002229
+      },
+      "saveMs": {
+        "samples": 1,
+        "mean": 5.552700000000186,
+        "p95": 5.552700000000186,
+        "max": 5.552700000000186
+      },
+      "saveCaptureMs": {
+        "samples": 1,
+        "mean": 4.515400000000227,
+        "p95": 4.515400000000227,
+        "max": 4.515400000000227
+      },
+      "maxPendingCommands": 1
+    },
+    {
+      "players": 4,
+      "scenario": "joining",
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 6,
+      "allRecipientsBytes": 312152,
+      "joinMs": 2.5865000000012515,
+      "largestFields": {
+        "npcs._coopId": 39039,
+        "npcs.y": 4869,
+        "npcs.x": 4646,
+        "players.stats": 4575,
+        "npcs.stride": 3853,
+        "players.inv": 2856,
+        "players.equip": 2214,
+        "npcs.visAng": 1581
+      },
+      "simulationMs": {
+        "samples": 180,
+        "mean": 0.06874055555561225,
+        "p95": 0.12549999999828287,
+        "max": 0.25539999999818974
+      },
+      "snapshotMs": {
+        "samples": 331,
+        "mean": 0.5244637462236085,
+        "p95": 1.062900000000809,
+        "max": 2.2366999999976542
+      },
+      "saveMs": {
+        "samples": 2,
+        "mean": 1.4252500000002328,
+        "p95": 2.8356999999996333,
+        "max": 2.8356999999996333
+      },
+      "saveCaptureMs": {
+        "samples": 2,
+        "mean": 0.5343000000011671,
+        "p95": 0.5805000000000291,
+        "max": 0.5805000000000291
+      },
+      "maxPendingCommands": 0
+    },
+    {
+      "players": 4,
+      "scenario": "separate-areas",
+      "seed": 123,
+      "warmupSeconds": 2,
+      "seconds": 6,
+      "allRecipientsBytes": 166727,
+      "joinMs": null,
+      "largestFields": {},
+      "simulationMs": {
+        "samples": 180,
+        "mean": 3.9899594444442807,
+        "p95": 6.760300000001735,
+        "max": 7.485199999999168
+      },
+      "snapshotMs": {
+        "samples": 360,
+        "mean": 0.41170944444457847,
+        "p95": 0.677800000001298,
+        "max": 0.8924999999981083
+      },
+      "saveMs": {
+        "samples": 1,
+        "mean": 5.461600000002363,
+        "p95": 5.461600000002363,
+        "max": 5.461600000002363
+      },
+      "saveCaptureMs": {
+        "samples": 1,
+        "mean": 12.597799999999552,
+        "p95": 12.597799999999552,
+        "max": 12.597799999999552
+      },
+      "maxPendingCommands": 1
+    }
+  ],
+  "browser": [
+    {
+      "players": 2,
+      "rttMs": 150,
+      "environment": "Desktop Chrome touch emulation; not physical Pixel 7a",
+      "browserVersion": "152.0.7977.83",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "frameP95": 18.100000000002183,
+      "responseSamples": [
+        13.5,
+        2.699999988079071,
+        4.900000035762787,
+        12.899999976158142,
+        1.399999976158142,
+        11.699999988079071,
+        13.5,
+        6.399999976158142,
+        0.19999998807907104,
+        7.199999988079071,
+        4.899999976158142,
+        2.199999988079071,
+        11.899999976158142,
+        1,
+        0.7000000476837158,
+        6.299999952316284,
+        2.100000023841858,
+        5.399999976158142,
+        6.600000023841858,
+        5
+      ],
+      "responseP95": 13.5,
+      "networkMax": 28
+    },
+    {
+      "players": 4,
+      "rttMs": 300,
+      "environment": "Desktop Chrome touch emulation; not physical Pixel 7a",
+      "browserVersion": "152.0.7977.83",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "frameP95": 18.099999999998545,
+      "responseSamples": [
+        11.100000023841858,
+        12,
+        2.099999964237213,
+        1.2999999523162842,
+        3.599999964237213,
+        3.100000023841858,
+        11.400000035762787,
+        12.800000011920929,
+        4.300000011920929,
+        12.100000023841858,
+        10.600000023841858,
+        2.199999988079071,
+        3,
+        12.800000011920929,
+        10.699999988079071,
+        12.699999988079071,
+        3.299999952316284,
+        14.899999976158142,
+        6.199999988079071,
+        4.5
+      ],
+      "responseP95": 14.899999976158142,
+      "networkMax": 29
+    }
+  ],
+  "network": {
+    "kbps": 256,
+    "maxPending": 5,
+    "receivedBytes": 122949,
+    "socketBuffered": 0
+  },
+  "validation": {
+    "unit": 45,
+    "coopContract": 85,
+    "inventoryContract": 25,
+    "browserUI": 58,
+    "browserNetwork": 18,
+    "mobileControlsBrowser": 29,
+    "mobileRedesignBrowser": 57,
+    "settingsBrowser": 88,
+    "gameplayInput": 157,
+    "mobileInput": 57,
+    "navigation": 228,
+    "bossEncounters": 85616,
+    "storyCampaign": 214,
+    "currentGameplayVfx": 5373,
+    "propInteractions": 1906,
+    "releaseHashedFiles": 72
+  },
+  "remaining": [
+    "Four ten-minute physical Pixel 7a sessions: 2/4 players as host/guest, including thermal and frame-spike measurements.",
+    "Physical LAN and Internet/TLS testing.",
+    "Matching frontend and relay deployment."
+  ],
+  "publicationReuseComparison": [
+    {
+      "players": 4,
+      "scenario": "dense-combat",
+      "beforeSnapshotMeanMs": 2.637121111111224,
+      "afterSnapshotMeanMs": 1.332674722222186,
+      "identicalBytes": true
+    },
+    {
+      "players": 4,
+      "scenario": "summons",
+      "beforeSnapshotMeanMs": 3.1700150000000678,
+      "afterSnapshotMeanMs": 1.5402244444444173,
+      "identicalBytes": true
+    }
+  ]
+}

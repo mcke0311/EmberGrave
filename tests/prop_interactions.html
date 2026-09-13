@@ -29,7 +29,7 @@ for(const id of Object.keys(CLASS_STYLES))select.add(new Option(data.CLASSES[id]
 function step(seconds){for(let left=seconds;left>1e-8;){const dt=Math.min(.01,left);api.update(dt);left-=dt;}}
 function prop(type,x,y,extra={}){const pr={type,x,y,blocks:type!=='chest',...extra};game.state.map.props.push(pr);if(pr.blocks)game.state.map.blocked[(x|0)+(y|0)*game.state.map.w]=1;return pr;}
 async function setup(id='vanguard'){
- await game.newGame('Interaction review',id,false);await game.skipOpening();ui.closeAll();await game.enterMap('fields','default');sfx.stopMusic();
+ await game.newGame('Interaction review',id,false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();await game.enterMap('fields','default');sfx.stopMusic();
  const s=game.state,m=s.map;s.monsters=[];s.minions=[];s.npcs=[];s.ground=[];m.props=[];m.traps=[];m.exits=[];m.walls.fill(0);m.blocked.fill(0);m.elev.fill(0);m.hazard.fill(0);m.floor.fill(0);m.explored.fill(1);
  game.options.screenShake=false;api.place(20.5,20.5);s.player.visAng=s.player.angT=0;s.player.action=null;return s.player;
 }

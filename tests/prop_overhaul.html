@@ -16,7 +16,7 @@ win.addEventListener('error',e=>errors.push(e.message));win.addEventListener('un
 for(let i=0;i<500&&!doc.querySelector('#titleMenu button');i++)await new Promise(r=>setTimeout(r,30));
 const game=win.eval('Game'),ui=win.eval('UI'),props=win.eval('PropInteractions'),sprites=win.eval('SpriteAssets'),data=win.eval('DATA'),P3=win.eval('Player3D'),api=game.__props;
 let auto=false,last=0;function loop(now){if(auto&&game.state){api.update(Math.min(.033,(now-last)/1000||.016));api.render();}last=now;requestAnimationFrame(loop);}requestAnimationFrame(loop);
-await game.newGame('Prop review','vanguard',false);await game.skipOpening();ui.closeAll();
+await game.newGame('Prop review','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();
 function step(t){for(let left=t;left>1e-8;){const dt=Math.min(.01,left);api.update(dt);left-=dt;}}
 async function travel(zone){auto=false;await game.enterMap(zone,'default');ui.closeAll();const s=game.state;s.map.explored.fill(1);const target=s.map.props.find(p=>p.remainsSite)||s.map.props.find(p=>p.interact==='shrine');if(target)placeNear(target);api.render();return s;}
 function placeNear(pr){const s=game.state,p=s.player,N=win.eval('TerrainNavigation');let found=false;for(const radius of [1.25,1.5,(pr.interactionRange||1.6)-.06])for(let i=0;i<24&&!found;i++){const a=i*Math.PI/12,x=pr.x+Math.cos(a)*radius,y=pr.y+Math.sin(a)*radius;if(!N.clear(s.map,x,y,p.radius))continue;p.x=x;p.y=y;p.surfaceId=pr.surfaceId??0;found=props.reachable(s,pr);}if(!found)throw Error('No review approach for '+s.map.id+'/'+pr.type);p.action=null;p.command=null;p.path=null;p._animationController?.reset();api.setCamera(pr.x,pr.y);P3.update(p,.01);}

@@ -42,7 +42,7 @@ async function load(version=el('version').value,zone=el('zone').value){
  if(!win.__ready)throw Error('Game startup timed out');
  }
  const objects=win.eval('({Game,UI,Sfx,TerrainNavigation,TerrainSurface,U,LevelTerrain,Monster,Minion})');api=objects;game=objects.Game;
- objects.Sfx.setVol('master',0);await game.newGame('Frontier review','vanguard',false);await game.skipOpening();objects.UI.closeAll();objects.UI.hideTitle();
+ objects.Sfx.setVol('master',0);await game.newGame('Frontier review','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);objects.UI.closeAll();objects.UI.hideTitle();
  game.state.seed=+el('seed').value>>>0;win.Math.random=objects.U.rng(game.state.seed^7331);game.debugFlags.god=true;game.options.screenShake=false;
  if(!await game.enterMap(zone,'default'))throw Error('Map entry failed');if(ticket!==request)return;
  map=game.state.map;map.explored.fill(1);reference=MapGen.generate(zone,game.state.seed);objects.UI.closeAll();

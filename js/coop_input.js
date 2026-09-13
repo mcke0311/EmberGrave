@@ -1,10 +1,22 @@
 /* Translate mouse and touch intentions into ID-only host commands. */
 const CoopInput=(()=>{
-  let press=null,last=0,stick=null,skillSide=null,heldSkill=null,once=false;
+  let press=null,last=0,stick=null,skillSide=null,heldSkill=null,once=false,sequence=0;
+  let predictionFrames=[],intentions=[],responseTimes=[],responsePending=null;
+  function rememberCommand(seq,command){const p=Game.state?.player;if(p&&(!Coop.host||Coop.workerHost)){if(['move','steer'].includes(command.type)){if(!p.moving&&!responsePending)responsePending={at:performance.now(),x:p.x,y:p.y};p._coopMotion=command;}else if(['stop','attack','cast','jump'].includes(command.type)){p._coopMotion=null;responsePending=null;}}sequence=seq;intentions.push({seq,command});if(intentions.length>128)intentions.shift();}
+  function reconcile(row){
+    const p=Game.state.player,previous=p._coopPrevious||p,ack=row.coopInputSeq||0;
+    intentions=intentions.filter(i=>i.seq>ack);predictionFrames=predictionFrames.filter(f=>f.seq>ack);
+    const intent=p._coopMotion;p.x=row.x;p.y=row.y;p._netTo=null;p._predictPath=null;
+    let remaining=.25;
+    for(const frame of predictionFrames){if(remaining<=0)break;p._coopMotion=frame.command;const dt=Math.min(frame.dt,remaining);advance(dt);remaining-=dt;}
+    p._coopMotion=intent;
+    const x=previous.x-p.x,y=previous.y-p.y;p._presentationCorrection=Math.hypot(x,y)<2?{x,y}:null;
+  }
+
   // Saving is a short command queue, not a reason to discard a player's click.
   const blocked=()=>{const reason=Coop.paused;return !!reason&&reason!=='Saving party changes…';};
   function send(c){
-    if(!Coop.host&&Game.state){const p=Game.state.player;if(['move','steer'].includes(c.type))p._coopMotion=c;else if(['stop','attack','cast','jump'].includes(c.type))p._coopMotion=null;}
+    if((!Coop.host||Coop.workerHost)&&Game.state){const p=Game.state.player;if(['move','steer'].includes(c.type))p._coopMotion=c;else if(['stop','attack','cast','jump'].includes(c.type))p._coopMotion=null;}
     Game.submitCommand(c);
   }
   function targetSkill(skill,info,hold){
@@ -67,7 +79,7 @@ const CoopInput=(()=>{
       targetSkill(skill,{mon:monsters[0],point},false);once=true;
     }
   }
-  function predict(dt){
+  function advance(dt){
     const p=Game.state.player,c=p._coopMotion;if(!c||p.dead||p.action||Coop.paused)return;
     if(c.type==='move'){
       if(!p._predictPath||p._predictPoint!==c.point){p._predictPoint=c.point;Game.repath(p,c.point.x,c.point.y,c.point.surfaceId);p._predictPath=p.path;}
@@ -75,5 +87,10 @@ const CoopInput=(()=>{
     }else p.moveToward(dt,p.stats.moveSpeed,c.point.x,c.point.y,Game.state.map,[]);
     if(U.dist(p.x,p.y,c.point.x,c.point.y)<.1)p._coopMotion=null;
   }
-  return {click,hold,release,touchMove,touchSkill,touchQuickSlot,predict,resetTouch(){const held=stick||skillSide||press;stick=null;skillSide=null;heldSkill=null;press=null;once=false;if(Game.state?.player){Game.state.player._coopMotion=null;Game.state.player._predictPath=null;}if(held&&Coop.active&&!Coop.loading)send({type:'stop'});}};
+  function predict(dt){
+    const p=Game.state.player;if(p._coopMotion){predictionFrames.push({seq:sequence,command:p._coopMotion,dt});if(predictionFrames.length>60)predictionFrames.shift();}
+    advance(dt);
+    if(responsePending&&Math.hypot(p.x-responsePending.x,p.y-responsePending.y)>.001){responseTimes.push(performance.now()-responsePending.at);if(responseTimes.length>600)responseTimes.shift();responsePending=null;}
+  }
+  return {get responseTimes(){return responseTimes;},rememberCommand,reconcile,click,hold,release,touchMove,touchSkill,touchQuickSlot,predict,resetTouch(){responsePending=null;predictionFrames=[];intentions=[];const held=stick||skillSide||press;stick=null;skillSide=null;heldSkill=null;press=null;once=false;if(Game.state?.player){Game.state.player._coopMotion=null;Game.state.player._predictPath=null;}if(held&&Coop.active&&!Coop.loading)send({type:'stop'});}};
 })();

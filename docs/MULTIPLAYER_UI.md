@@ -43,7 +43,7 @@ hero's feet with feedback. Save failure rolls back the transaction. Reloading a
 guest restores the reserved actor and resumes command numbers after requests
 already seen by the host, so recovered items remain usable.
 
-The protocol build identifier is `embergrave-coop-2`. The frontend and relay must
+The protocol build identifier is `embergrave-coop-3`. The frontend and relay must
 run the matching build; the existing IndexedDB database requires no upgrade.
 This change has not been deployed.
 
@@ -51,17 +51,17 @@ This change has not been deployed.
 
 - `npm run test:coop`: relay, motion, original ownership contracts, and the new
   personal-inventory carry/swap/craft/save contracts.
-- `npm run test:coop:ui`: 66 browser checks for all five class previews, failed
+- `npm run test:coop:ui`: 58 browser checks for all five class previews, failed
   connection retry, ownership isolation, menu input cancellation, personal item
   persistence, host save rollback, reload while carrying, vendor contention,
   hero/campaign deletion, and mobile layouts.
 - `npm run test:coop:network`: 18 latency, replay, reconnect, save-failure, and
   mobile checks, including nominal 150 ms RTT with jitter.
-- `npm run test:coop:browser`: 29 campaign checks with four players; the same
-  suite also passes with `COOP_TEST_PLAYERS=2`.
-- Existing title (410), management browser (60), mobile browser (28), management
+- `npm run test:coop:browser`: the worker campaign contract followed by two-player Chrome integration;
+  set `COOP_TEST_PLAYERS=4` for four players.
+- Earlier UI work recorded title (410), management browser (60), mobile browser (28), management
   contract (897), character-sheet (25,005), mobile input (43), and gameplay input
-  (153) checks passed.
+  (153) checks. See the current release validation for the latest regression counts.
 
 Screenshots are under `tmp/coop-ui-qa/` and `tmp/mobile-controls/`. Layout checks
 cover 320×568, 390×844, 844×390, 1024×768, and desktop. Portrait and landscape
@@ -75,3 +75,11 @@ for accelerated quest steps after testing real revival interruption, avoiding
 random monster deaths during scripted rescue interactions. The campaign run
 also exposed and verified a fix for guest boss status: snapshots carry the
 display text rather than relying on a host-only method.
+
+## Independent parties — protocol 2
+
+Hosting now accepts a party name and optional password. Password-free rooms appear in **Browse parties**; private rooms require their code/invitation and password. **Refresh parties** is available alongside the five-second automatic refresh. Full rooms remain visible but cannot be joined.
+
+New arrivals spawn in Frosthaven and see **Your party** immediately. On phones, reopen it through **Menu → Party**. The roster includes heroes in other areas, their connection state and health, **Teleport to player**, same-area revival, and an individual **Return to Frosthaven** action for fallen heroes. Travel no longer requires a party vote. The host remains responsible for quest acceptance and turn-in.
+
+The 58 shared UI/inventory browser checks have been adapted to inspect the authoritative worker rather than mutating rendered host replicas. They retain mobile sizes 568×240, 568×320 and 844×390, carried-item recovery, failed-save rollback, contested purchases, and solo-save isolation.

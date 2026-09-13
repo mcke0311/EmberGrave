@@ -8,7 +8,7 @@ try{
  const injection=`<base href="${new URL('../index.html',location.href)}"><script>const store=parent.levelReviewStore;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});window.addEventListener('error',e=>parent.document.getElementById('error').textContent=e.message);<\/script>`;
  const frame=document.createElement('iframe');frame.title='Playable level review';frame.srcdoc=source.replace('<head>','<head>'+injection);document.getElementById('host').append(frame);await new Promise(r=>frame.onload=r);
  const win=frame.contentWindow,doc=win.document;for(let i=0;i<300&&!doc.querySelector('#titleMenu button');i++)await new Promise(r=>setTimeout(r,30));
- const game=win.eval('Game'),ui=win.eval('UI'),data=win.eval('DATA');win.eval('Sfx').setVol('master',0);await game.newGame('Terrain review','vanguard',false);await game.skipOpening();ui.closeAll();
+ const game=win.eval('Game'),ui=win.eval('UI'),data=win.eval('DATA');win.eval('Sfx').setVol('master',0);await game.newGame('Terrain review','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);ui.closeAll();
  const ids=Object.keys(data.ZONES).filter(id=>!['town','camp'].includes(data.ZONES[id].kind));let checked=0;
  async function visit(id){
   ui.closeAll();if(!await game.enterMap(id,'default'))throw Error(id+' failed map entry');game.state.monsters=[];game.state.map.explored.fill(1);game.state.player.hp=game.state.player.stats.maxHp;
