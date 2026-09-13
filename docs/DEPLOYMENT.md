@@ -1,6 +1,6 @@
 # Sites deployment
 
-Current website (verified 2026-09-12): https://embergravegame.com
+Current website (updated 2026-09-13): https://embergravegame.com
 The original address https://embergravegame.mcke0311.chatgpt.site also remains live.
 The existing Site is now public. Preserve its current audience and project ID
 when updating; the private access and earlier URL recorded below are historical.
@@ -215,3 +215,44 @@ complete a WebSocket upgrade with HTTP 101.
 
 Browser-local saves remain scoped to their website origin. Existing saves at the
 original Sites address are not automatically copied to the custom domain.
+
+## Latest game and coordinated multiplayer release — 2026-09-13
+
+Version 13 publishes GitHub `main` at
+`1bd90490069ba5dd14919f247a6fba95ab3bc9a0`, including the phone fixes,
+updated app icons, gameplay changes, and worker-hosted multiplayer protocol 2
+(`embergrave-coop-3`). Sites confirmed publication succeeded at 13:41:43 UTC,
+returning https://embergravegame.mcke0311.chatgpt.site. The existing custom domain
+https://embergravegame.com and public audience are preserved.
+
+Release source: `2a20584040627224b6fb3639ac24889370fe2563`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_e25f9c207dc48191a13fd5e84a6b4a19`.
+Deployment: `appgdep_6aa6a7984aac81918a5e7bf327c41ad8`.
+
+The Render relay was deployed from the same GitHub commit. Deployment
+`dep-dajaf395efls738605c0` reports **Deploy succeeded | Live**; `/healthz`
+reports `ok: true` and build `embergrave-coop-3`. There were no active rooms or
+connections before rollout. Existing service configuration and allowed origins
+were retained.
+
+Validation passed: 73 JavaScript syntax checks, 1,159 runtime references with no
+missing files, 45 multiplayer unit tests, 85 co-op and 25 inventory contract
+checks, 58 multiplayer UI checks, 18 network checks, the phone screen audit,
+29 touch-control checks, 57 mobile redesign checks, and 88 settings checks.
+Independent browser sessions passed with two players at 150 ms simulated RTT
+and four players at 300 ms, including separate travel, combat, reconnect, and
+saved-campaign recovery. Both multiplayer performance suites passed, and the
+frontend/worker/relay release manifest verified 72 files.
+
+Live relay smoke checks passed for both website origins, public discovery,
+hidden password rooms, wrong-password rejection, four-player admission,
+full-room rejection, command forwarding, large snapshot delivery, and reconnect.
+The temporary test rooms were closed afterward. The smoke harness was corrected
+to acknowledge hero admission and wait for the server's disconnected roster
+before requesting resume; no application change was needed. Physical Pixel 7a
+acceptance remains unperformed, as documented in `MULTIPLAYER_VALIDATION.md`.
+
+The compact static release contains 1,287 files (202.48 MiB). The compressed
+cinematic, donation destination, and editor exclusion are preserved. The local
+packaging helper could not start Bash on Windows, so Sites built the exact
+pushed static source using the existing remote-build fallback.
