@@ -1152,7 +1152,7 @@ const SpriteAssets = (() => {
     }
     let box = document.getElementById("spriteFatal");
     if (!box) { box = document.createElement("div"); box.id = "spriteFatal"; document.body.appendChild(box); }
-    box.style.cssText = "position:fixed;inset:0;z-index:100000;background:#120d0b;color:#e8d9bd;padding:8vh 10vw;font:16px/1.55 monospace;white-space:pre-wrap";
+    box.style.cssText = "position:fixed;inset:0;z-index:100000;background:#120d0b;color:#e8d9bd;padding:8vh 10vw;font:16px/1.55 var(--font-game);white-space:pre-wrap";
     box.textContent = `EMBERGRAVE COULD NOT LOAD REQUIRED SPRITES\n\n${err && err.message || err}\n\nNo procedural fallback was used.`;
   }
 

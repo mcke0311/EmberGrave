@@ -30,19 +30,19 @@
         box.style.cssText = [
           "position:fixed", "inset:0", "z-index:2147483647", "overflow:auto",
           "display:grid", "place-items:center", "padding:8vh 8vw",
-          "background:#120d0b", "color:#e8d9bd", "font:16px/1.55 monospace"
+          "background:#120d0b", "color:#e8d9bd", "font:16px/1.55 var(--font-game)"
         ].join(";");
         const panel = document.createElement("div");
         panel.style.cssText = "width:min(860px,100%);padding:30px;border:1px solid #8a6035;background:#090706;box-shadow:0 18px 70px #000";
         const title = document.createElement("h1");
-        title.style.cssText = "margin:0 0 18px;color:#e4b46a;font:22px/1.25 monospace;letter-spacing:.08em";
+        title.style.cssText = "margin:0 0 18px;color:#e4b46a;font:22px/1.25 var(--font-game);letter-spacing:.08em";
         title.textContent = "EMBERGRAVE COULD NOT CONTINUE";
         const stageEl = document.createElement("div");
         stageEl.id = "appFatalStage";
         stageEl.style.cssText = "margin-bottom:14px;color:#bca77f";
         const detail = document.createElement("pre");
         detail.id = "appFatalDetail";
-        detail.style.cssText = "margin:0;white-space:pre-wrap;overflow-wrap:anywhere;color:#f0e5ce;font:15px/1.55 monospace";
+        detail.style.cssText = "margin:0;white-space:pre-wrap;overflow-wrap:anywhere;color:#f0e5ce;font:15px/1.55 var(--font-game)";
         const note = document.createElement("p");
         note.style.cssText = "margin:20px 0 0;color:#9c8467";
         note.textContent = "No procedural artwork fallback was used.";

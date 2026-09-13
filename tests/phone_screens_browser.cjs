@@ -12,19 +12,60 @@ const pause=ms=>new Promise(r=>setTimeout(r,ms));
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.stack));
  await page.addInitScript(()=>{
    const store=new Map([['embergrave_options',JSON.stringify({vol:{master:0,sfx:0,music:0}})]]);
-   Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});
+  Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});
  });
+ async function checkMainMenu(saved){
+  const labels=[...(saved?['CONTINUE']:[]),'SINGLE PLAYER','MULTIPLAYER','MORE'];
+  const visibleLabels=()=>page.locator('.splash-actions > :visible').allTextContents();
+  for(const size of [{width:568,height:240},{width:568,height:320},{width:844,height:390}]){
+   await page.setViewportSize(size);await pause(100);
+   assert.deepEqual(await visibleLabels(),labels,'phone main menu order');
+   assert.equal((await page.locator('#titleInner').innerText()).replace(/\s+/g,' ').trim(),['EMBERGRAVE',...labels].join(' '),'phone title has extra or missing text');
+   assert.ok(await page.evaluate(()=>{
+    const nodes=[document.querySelector('#title h1'),...document.querySelector('.splash-actions').children].filter(n=>n.getClientRects().length);
+    const single=nodes.find(n=>n.textContent==='SINGLE PLAYER').getBoundingClientRect(),multi=nodes.find(n=>n.textContent==='MULTIPLAYER').getBoundingClientRect();
+    return single.bottom<=multi.top&&nodes.every(n=>{const r=n.getBoundingClientRect();return r.left>=0&&r.top>=0&&r.right<=innerWidth&&r.bottom<=innerHeight&&(n.tagName==='H1'||r.height>=44);});
+   }),'phone title and vertically ordered actions must fit '+size.width+'x'+size.height);
+   if(size.height===240)await page.screenshot({path:output+'/title-240'+(saved?'-saved':'')+'.png'});
+  }
+  await page.setViewportSize({width:568,height:320});await pause(100);
+  await page.getByRole('button',{name:'MORE',exact:true}).click();
+  const secondary=[...(saved?['CHOOSE HERO']:[]),'SETTINGS & CONTROLS','ITEMS & AFFIXES','SUPPORT THE GAME'];
+  for(const label of secondary)assert.ok((await visibleLabels()).includes(label),'More is missing '+label);
+  const support=page.getByRole('link',{name:'Support the game (opens in a new tab)',exact:true});
+  assert.equal(await support.getAttribute('href'),'https://ko-fi.com/embergrave');
+  assert.equal(await support.getAttribute('target'),'_blank');
+  const next=page.getByRole('button',{name:'Next options',exact:true});
+  if(await next.isVisible()){
+   await next.click();assert.ok((await visibleLabels()).some(x=>['Full screen','Add to Home Screen'].includes(x)),'More next page lost phone controls');
+   await page.getByRole('button',{name:'Previous options',exact:true}).click();
+   for(const label of secondary)assert.ok((await visibleLabels()).includes(label),'previous options did not restore '+label);
+  }
+  await page.getByRole('button',{name:'BACK',exact:true}).click();assert.deepEqual(await visibleLabels(),labels,'Back did not restore the main menu');
+ }
  try{
   await page.goto(base+'/index.html?touch=1',{waitUntil:'load',timeout:120000});
   await page.waitForFunction(()=>typeof Game!=='undefined'&&document.querySelector('#titleMenu button'),null,{timeout:120000});
   await pause(300);
   console.log('title',await page.evaluate(()=>({phone:MobileShell.enabled,blocked:MobileShell.blocked,errors:document.querySelector('#appFatal')?.textContent,orientation:screen.orientation.type})));
+  await checkMainMenu(false);
   await page.screenshot({path:output+'/title.png'});
-  await page.getByRole('button',{name:'NEW HERO',exact:true}).click();await pause(300);
+  await page.getByRole('button',{name:'SINGLE PLAYER',exact:true}).click();await pause(300);
   await page.screenshot({path:output+'/hero.png'});
   await page.getByRole('button',{name:'Next',exact:true}).click();await pause(100);
   assert.equal(await page.locator('#title').getAttribute('data-hero-step'),'identity');
+  const savesBefore=await page.evaluate(()=>localStorage.length);
+  for(const name of ['', '   ']){
+   await page.locator('#nameInput').fill(name);await page.getByRole('button',{name:'ENTER THE MARCHES',exact:true}).click();
+   assert.ok(await page.locator('#heroNameError').isVisible(),'phone name error is hidden');
+   assert.equal(await page.evaluate(()=>document.activeElement.id),'nameInput');
+   assert.equal(await page.evaluate(()=>localStorage.length),savesBefore,'blank name wrote a save');
+   assert.ok(await page.evaluate(()=>!Game.state?.player),'blank name started gameplay');
+  }
   await page.locator('#nameInput').fill('Phone QA');
+  assert.ok(await page.locator('#heroNameError').isHidden(),'correcting phone name keeps an error');
+  await page.locator('#hcBox').check();
+  await page.locator('#nameInput').focus();
   await page.evaluate(()=>{Object.defineProperty(visualViewport,'height',{value:120,configurable:true});MobileShell.refresh();});
   assert.equal(await page.evaluate(()=>MobileShell.blocked),false,'keyboard must not trigger portrait gate');
   assert.ok(await page.locator('#nameInput').evaluate(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.bottom<=120;}),'keyboard hides name input');
@@ -37,8 +78,13 @@ const pause=ms=>new Promise(r=>setTimeout(r,ms));
   await page.getByRole('button',{name:'← BACK',exact:true}).click();
   await page.locator('#choose-emberwitch').click();await page.getByRole('button',{name:'Next',exact:true}).click();
   assert.equal(await page.locator('#nameInput').inputValue(),'Phone QA','hero step lost the name');
+  assert.ok(await page.locator('#hcBox').isChecked(),'hero steps lost Hardcore');
   await page.screenshot({path:output+'/identity.png'});
-  await page.evaluate(async()=>{await Game.newGame('Phone QA','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);Game.debugFlags.god=true;UI.hideTitle();UI.closeAll();});
+  await page.getByRole('button',{name:'← BACK',exact:true}).click();await page.locator('#choose-vanguard').click();await page.getByRole('button',{name:'Next',exact:true}).click();
+  await page.locator('#nameInput').fill('  Phone QA  ');await page.locator('#nameInput').press('Enter');
+  await page.waitForFunction(()=>Game.state?.player&&document.getElementById('title').classList.contains('hidden'),null,{timeout:120000});
+  assert.deepEqual(await page.evaluate(()=>({name:Game.state.player.name,classId:Game.state.player.classId,hardcore:Game.state.player.hardcore})),{name:'Phone QA',classId:'vanguard',hardcore:true},'Enter did not create the selected hero with a trimmed name');
+  await page.evaluate(async()=>{await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);Game.debugFlags.god=true;UI.hideTitle();UI.closeAll();});
   await page.waitForFunction(()=>Game.touchReady(),null,{timeout:120000});
   await page.screenshot({path:output+'/game.png'});
   async function audit(label){
@@ -129,7 +175,10 @@ const pause=ms=>new Promise(r=>setTimeout(r,ms));
     const native=window.matchMedia;window.matchMedia=q=>q==='(display-mode: standalone)'?{matches:true}:native.call(window,q);
     try{if(!MobileShell.standalone())throw Error('standalone not detected');const host=document.createElement('div');MobileShell.controls(host);if(!host.querySelector('[data-phone-install]').hidden)throw Error('installed launch offers installation');}finally{window.matchMedia=native;}
   });
-  await page.evaluate(()=>{UI.closeAll();UI.showTitle();const hero=Game.listSaves()[0];TitleScreen.savedHeroes({saves:Array.from({length:24},(_,i)=>({...hero,slot:'phone-fixture-'+i,name:'Saved hero '+i}))});});
+  await page.evaluate(()=>{UI.closeAll();UI.showTitle();});
+  await checkMainMenu(true);
+  await page.setViewportSize({width:568,height:240});
+  await page.evaluate(()=>{const hero=Game.listSaves()[0];TitleScreen.savedHeroes({saves:Array.from({length:24},(_,i)=>({...hero,slot:'phone-fixture-'+i,name:'Saved hero '+i}))});});
   failures.push(...await audit('many-saved-heroes'));
   const manifest=await page.evaluate(async()=>await fetch('manifest.webmanifest').then(r=>r.json()));
   assert.equal(manifest.display,'standalone');assert.equal(manifest.orientation,'landscape');

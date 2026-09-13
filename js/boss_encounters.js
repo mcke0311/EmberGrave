@@ -380,7 +380,7 @@ const BossEncounters = (() => {
         const full=e.owned.filter(m=>!m.dead&&m.encounterKind!=="portal").length>=e.config.cap;
         const label=portal.portalSpawns>0?(portal.portalTimer===0&&full?"Waiting":portal.portalTimer.toFixed(1)+"s")+" · "+portal.portalSpawns+" left":"Spent portal";
         ctx.globalAlpha=1;ctx.fillStyle="rgba(8,7,5,.9)";ctx.fillRect(x-63,y-12,126,19);
-        ctx.fillStyle=e.config.color;ctx.font="12px sans-serif";ctx.textAlign="center";ctx.fillText(label,x,y+2);ctx.textAlign="left";
+        ctx.fillStyle=e.config.color;ctx.font="12px Exocet, Georgia, serif";ctx.textAlign="center";ctx.fillText(label,x,y+2);ctx.textAlign="left";
       }
       const attack=e.attack;
       if(attack&&(typeof Act1EnemyAnimation==='undefined'||Act1EnemyAnimation.showsAttackRadius(m))&&(e.stage==="windup"||e.stage==="execute"))for(const s of attack.shapes) {

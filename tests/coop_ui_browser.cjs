@@ -32,8 +32,18 @@ const base=process.env.COOP_TEST_URL||'http://127.0.0.1:8741';
       ok(await b.locator('#choose-'+id).getAttribute('aria-selected')==='true',id+' selection and live preview agree');
     }
     await b.getByRole('button',{name:'Next',exact:true}).click();
-    await b.locator('#nameInput').fill('Shared screen ranger');await press('CREATE CO-OP HERO');
+    ok(await b.locator('#nameInput').getAttribute('maxlength')==='24','co-op retains the 24-character name limit');
+    for(const name of ['', '   ']){
+      await b.locator('#nameInput').fill(name);
+      if(name)await b.locator('#nameInput').press('Enter');else await press('CREATE CO-OP HERO');
+      ok(await b.evaluate(async()=>!(await CoopStore.heroes()).length&&!document.querySelector('.coop-dialog')&&document.activeElement.id==='nameInput'),'blank co-op name keeps focus in creation without saving a hero');
+      ok(await b.locator('#heroNameError').isVisible()&&await b.locator('#heroNameError').textContent()==='Enter a character name.','blank co-op name displays required-name feedback');
+    }
+    await b.locator('#nameInput').fill('  Shared screen ranger  ');
+    ok(await b.locator('#heroNameError').isHidden(),'correcting co-op name clears feedback');
+    await press('CREATE CO-OP HERO');
     await b.waitForSelector('#coopRoom',{state:'attached'});await reveal(b.locator('#coopRoom'));await b.locator('#coopRoom').fill('ABC123');await press('← Back to heroes');
+    ok(await b.evaluate(async()=>(await CoopStore.heroes())[0].name==='Shared screen ranger'),'co-op saves the trimmed typed name');
     ok(await b.locator('.saved-hero').count()===1,'new multiplayer hero appears in the shared saved roster');
     ok(await b.locator('#campCanvas').getAttribute('aria-label').then(x=>x?.includes('equipped gear')),'saved hero previews equipped gear');
     await press('HOST OR JOIN');

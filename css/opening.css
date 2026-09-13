@@ -1,9 +1,9 @@
 /* A quiet chapter cue over the playable world; only Skip accepts pointer input. */
-.opening-ui { position:absolute; inset:0; z-index:35; pointer-events:none; color:#eee0c7; font-family:Georgia,'Palatino Linotype',serif; }
+.opening-ui { position:absolute; inset:0; z-index:35; pointer-events:none; color:#eee0c7; font-family:var(--font-game); }
 .opening-objective { position:absolute; top:32px; left:32px; width:min(360px,calc(100vw - 285px)); padding:18px 24px 19px; border-left:2px solid #a99163; background:linear-gradient(90deg,rgba(12,18,24,.87),rgba(12,18,24,.54) 80%,transparent); }
-.opening-kicker { display:block; font:10px/1.5 Georgia,serif; letter-spacing:3px; color:#baa581; }
+.opening-kicker { display:block; font:10px/1.5 var(--font-game); letter-spacing:3px; color:#baa581; }
 .opening-goal { font-size:19px; line-height:1.45; margin:10px 0 6px; text-shadow:0 2px 6px #000; }
-.opening-hint { margin:0; font:12px/1.6 system-ui,sans-serif; color:#b8c5cb; }
+.opening-hint { margin:0; font:12px/1.6 var(--font-game); color:#b8c5cb; }
 .opening-boss .opening-objective { top:105px; width:min(280px,calc(100vw - 330px)); padding:12px 18px; }
 .opening-boss .opening-goal { font-size:17px; }
 .opening-boss .opening-kicker { color:#a8d7e4; }

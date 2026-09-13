@@ -31,7 +31,7 @@ try{
   ({win,game,items,sprites}=await frame());
   ok(win.Player3D.only3D,'ordinary game URL did not require 3D');
   ok(!win.document.getElementById('playerRendererNote')&&!win.document.getElementById('player3dControls'),'retired renderer controls remain');
-  [...win.document.querySelectorAll('#titleMenu button')].find(b=>b.textContent==='NEW HERO').click();
+  [...win.document.querySelectorAll('#titleMenu button')].find(b=>b.textContent==='SINGLE PLAYER').click();
   await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
   ok(!!win.document.querySelector('#titleMenu canvas')&&!win.document.getElementById('appFatal'),'live 3D class selection failed');
   for(const preference of ['sprites',undefined]){
@@ -99,7 +99,7 @@ try{
   ok(!!win.document.getElementById('appFatal')&&/WebGL/.test(win.document.getElementById('appFatalDetail').textContent),'WebGL failure did not stop with a visible error');
   ok(!game.state&&!win.performance.getEntriesByType('resource').some(r=>/\/players\/|\/forms\//.test(r.name)),'WebGL failure fell back to player sprites');
   ({win,game,items,sprites}=await frame());await game.loadGame(slot);
-  document.getElementById('classes').disabled=false;document.getElementById('classes').onclick=()=>{game.saveAndQuit();[...win.document.querySelectorAll('#titleMenu button')].find(b=>b.textContent==='NEW HERO').click();};
+  document.getElementById('classes').disabled=false;document.getElementById('classes').onclick=()=>{game.saveAndQuit();[...win.document.querySelectorAll('#titleMenu button')].find(b=>b.textContent==='SINGLE PLAYER').click();};
   out.textContent=`PASS: ${checks} checks: mandatory 3D, class selection, older saves and URLs, five classes, equipment transactions, all four transformations, save/reload, and zero legacy player sprite calls or downloads, and WebGL failure handling.\nAll saves were isolated in memory.`;
   document.body.dataset.testStatus='passed';
 }catch(error){out.textContent='FAIL: '+error.stack;document.body.dataset.testStatus='failed';}

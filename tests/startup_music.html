@@ -24,7 +24,7 @@ run.onclick=async()=>{
   ok(track.duration>30&&!track.error,'MP3 did not decode');ok(track.loop,'title song does not loop');
   ok(Math.abs(track.volume-.2)<.0001,'master and music volumes were not combined');
   const before=track.currentTime;await delay(180);ok(track.currentTime>before,'playback clock did not advance');
-  [...doc.querySelectorAll('#titleMenu button')].find(b=>b.textContent==='NEW HERO').click();await delay(120);
+  [...doc.querySelectorAll('#titleMenu button')].find(b=>b.textContent==='SINGLE PLAYER').click();await delay(120);
   ok(!track.paused&&track.currentTime>=before,'class selection interrupted the song');
   sfx.music('title');ok(doc.querySelectorAll('#titleMusic').length===1&&track.currentTime>=before,'repeated title music restarted or duplicated audio');
   sfx.setVol('music',0);ok(track.volume===0,'music mute failed');sfx.setVol('music',.4);

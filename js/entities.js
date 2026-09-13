@@ -2782,9 +2782,9 @@ class ImperialCombat {
       if(a.kind==='blink')shapes.push({kind:'circle',x:a.origin.x,y:a.origin.y,radius:m.radius+.4});
       for(const s of shapes){trace(s);ctx.globalAlpha=.14;ctx.fill();ctx.globalAlpha=.9;ctx.stroke();}
       const names={bash:'Shield Bash',sweep:'Gilded Sweep',pulse:m.defId==='chained_sovereign'?'Sovereign’s Slam':'Sunderstone Pulse',charge:'Charge',leap:'Stonefall',blink:'Shadow Step',fan:'Crystal Fan'};
-      const p=project(m.x,m.y);ctx.globalAlpha=1;ctx.font='12px sans-serif';ctx.textAlign='center';ctx.fillStyle=col;ctx.fillText(names[a.kind]+(a.stage==='windup'?' · '+a.remaining.toFixed(1):''),p.x,p.y-65*m.scale);
+      const p=project(m.x,m.y);ctx.globalAlpha=1;ctx.font='12px Exocet, Georgia, serif';ctx.textAlign='center';ctx.fillStyle=col;ctx.fillText(names[a.kind]+(a.stage==='windup'?' · '+a.remaining.toFixed(1):''),p.x,p.y-65*m.scale);
     }
-    if(debug){const p=project(m.x,m.y);ctx.globalAlpha=1;ctx.fillStyle='#f0deaf';ctx.font='12px sans-serif';ctx.textAlign='center';ctx.fillText(this.profile.role+' · '+(a?.stage||'ready')+' · '+this.cooldown.toFixed(1)+'s',p.x,p.y+22);}
+    if(debug){const p=project(m.x,m.y);ctx.globalAlpha=1;ctx.fillStyle='#f0deaf';ctx.font='12px Exocet, Georgia, serif';ctx.textAlign='center';ctx.fillText(this.profile.role+' · '+(a?.stage||'ready')+' · '+this.cooldown.toFixed(1)+'s',p.x,p.y+22);}
     if(this.blockUntil>this.world.time){ctx.strokeStyle='#f0ce78';ctx.lineWidth=3;ctx.globalAlpha=1;trace({kind:'cone',x:m.x,y:m.y,angle:m.visAng,arc:Math.PI*2/3,radius:1});ctx.stroke();}
     ctx.restore();
   }

@@ -5,7 +5,7 @@ const {assert,fs,out,settle,setup}=require('./mobile_fix_helpers.cjs');
   // The Windows Playwright WebKit port has no Web Audio implementation.
   // Keep this presentation regression independent of that platform limitation.
   const audioStub=await page.evaluate(()=>{if(window.AudioContext||window.webkitAudioContext)return false;for(const key of Object.keys(Sfx))if(typeof Sfx[key]==='function')Sfx[key]=()=>{};return true;});
-  await page.getByRole('button',{name:'NEW HERO',exact:true}).tap();
+  await page.getByRole('button',{name:'SINGLE PLAYER',exact:true}).tap();
   for(const [width,height] of [[568,240],[568,320],[667,375],[740,360],[844,390]]){
    await page.setViewportSize({width,height});await settle(page);
    for(const id of ['vanguard','emberwitch','gravebinder','wildkeeper','veilranger']){

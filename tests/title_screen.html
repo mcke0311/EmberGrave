@@ -34,10 +34,19 @@ function paintSignature(){const cv=doc.getElementById('campCanvas'),pixels=cv.ge
 const backdrop=()=>doc.querySelector('.title-backdrop canvas.title-atmosphere');
 const backgroundPaints=cv=>(win.titleBackgroundPaints.get(cv)||[]).length;
 function backgroundSignature(){const cv=backdrop(),pixels=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;let sum=0;for(let i=0;i<pixels.length;i+=52)sum=(sum+pixels[i]*3+pixels[i+1]*5+pixels[i+2]*7+pixels[i+3]*11)%1000000007;return sum;}
+function checkMainMenu(saved){
+ const labels=[...(saved?['CONTINUE']:[]),'SINGLE PLAYER','MULTIPLAYER',...(saved?['CHOOSE HERO']:[]),'SETTINGS & CONTROLS','ITEMS & AFFIXES','SUPPORT THE GAME'];
+ ok([...doc.querySelector('.splash-actions').children].map(n=>n.textContent).join('|')===labels.join('|'),'main menu labels and order');
+ ok(doc.getElementById('titleInner').innerText.replace(/\s+/g,' ').trim()===['EMBERGRAVE',...labels].join(' '),'main screen contains extra text');
+ ok(rect(find('SINGLE PLAYER')).bottom<=rect(find('MULTIPLAYER')).top,'Single Player is not above Multiplayer');
+ const support=doc.querySelector('.splash-actions a');
+ ok(support.href==='https://ko-fi.com/embergrave'&&support.target==='_blank'&&support.relList.contains('noopener'),'support must open Ko-fi directly in a new tab');
+}
 try{
- await until(()=>find('NEW HERO'),'menu loaded');
+ await until(()=>find('SINGLE PLAYER'),'menu loaded');
  const game=win.eval('Game');
  ok(store.size===0,'fresh splash wrote a save');
+ checkMainMenu(false);
  await until(()=>backdrop()&&backgroundPaints(backdrop())>0,'background first paint');
  const initialBackdrop=backdrop();ok(initialBackdrop.getAttribute('aria-hidden')==='true'&&win.getComputedStyle(initialBackdrop).pointerEvents==='none','background must be decorative and noninteractive');
  const movingBackground=backgroundSignature();await delay(220);ok(backgroundSignature()!==movingBackground,'background does not animate');
@@ -51,8 +60,17 @@ try{
  ok(backgroundSignature()===reducedBackground&&backgroundPaints(initialBackdrop)===reducedPaints,'reduced motion keeps painting background');
  win.toggleTitleMotion();await until(()=>backgroundSignature()!==reducedBackground,'background resumes when reduced motion is disabled');
  const font=win.getComputedStyle(doc.querySelector('#title h1'));ok(font.backgroundClip==='text'||font.webkitBackgroundClip==='text','logo gradient not clipped to text');
- for(const size of [...sizes,'3840,2160']){resize(size);await delay(100);fits(doc.querySelector('.title-brand'),'splash '+size);fits(find('NEW HERO'),'splash action '+size);ok(screen().scrollWidth<=screen().clientWidth+1,'splash overflow '+size);const cv=backdrop(),host=rect(doc.querySelector('.title-backdrop')),surface=rect(cv);ok(cv.width<=1920&&cv.height<=1080,'background exceeds resolution cap '+size);ok(Math.abs(surface.width-host.width)<1&&Math.abs(surface.height-host.height)<1,'background no longer covers painting '+size);}
- resize('1280,720');find('NEW HERO').click();await until(()=>doc.getElementById('campCanvas')?.dataset.renderedClass==='vanguard','first 3D render');
+ for(const size of [...sizes,'3840,2160']){resize(size);await delay(100);fits(doc.querySelector('.title-brand'),'splash '+size);fits(find('SINGLE PLAYER'),'splash action '+size);ok(screen().scrollWidth<=screen().clientWidth+1,'splash overflow '+size);const cv=backdrop(),host=rect(doc.querySelector('.title-backdrop')),surface=rect(cv);ok(cv.width<=1920&&cv.height<=1080,'background exceeds resolution cap '+size);ok(Math.abs(surface.width-host.width)<1&&Math.abs(surface.height-host.height)<1,'background no longer covers painting '+size);}
+ resize('1280,720');find('SINGLE PLAYER').click();await until(()=>doc.getElementById('campCanvas')?.dataset.renderedClass==='vanguard','first 3D render');
+ const nameInput=doc.getElementById('nameInput'),heroForm=doc.querySelector('.hero-form');
+ ok(nameInput.required&&nameInput.maxLength===14&&nameInput.placeholder==='Enter character name','solo name field constraints');
+ for(const name of ['', '   ', '\u00a0\u2003']){
+  nameInput.value=name;heroForm.requestSubmit();await delay(40);
+  ok(!game.state?.player&&store.size===0&&screen().dataset.screen==='new','blank name created a solo hero');
+  ok(doc.activeElement===nameInput&&nameInput.getAttribute('aria-invalid')==='true'&&!doc.getElementById('heroNameError').hidden&&doc.getElementById('heroNameError').textContent==='Enter a character name.','invalid name must show an error and focus the field');
+ }
+ nameInput.value='  Eira  ';nameInput.dispatchEvent(new win.Event('input',{bubbles:true}));
+ ok(doc.getElementById('heroNameError').hidden&&!nameInput.hasAttribute('aria-invalid'),'correcting the name did not clear validation');
  ok(backdrop()===initialBackdrop&&doc.querySelectorAll('canvas.title-atmosphere').length===1,'new-hero screen restarted or duplicated background');
  const signatures=new Set();
  for(const id of classes){doc.getElementById('choose-'+id).click();await until(()=>doc.getElementById('campCanvas').dataset.renderedClass===id,id+' rendered');ok(doc.querySelector('[role="tab"][aria-selected="true"]').dataset.class===id,'class tab state '+id);ok(doc.querySelectorAll('.discipline').length===3,'three skill disciplines '+id);signatures.add(paintSignature());}
@@ -60,7 +78,7 @@ try{
  const tab=doc.getElementById('choose-veilranger');tab.dispatchEvent(new win.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));ok(doc.activeElement.id==='choose-vanguard','keyboard selection did not wrap');
  doc.activeElement.dispatchEvent(new win.KeyboardEvent('keydown',{key:'End',bubbles:true}));ok(doc.activeElement.id==='choose-veilranger','End did not select last class');
  doc.activeElement.dispatchEvent(new win.KeyboardEvent('keydown',{key:'Home',bubbles:true}));ok(doc.activeElement.id==='choose-vanguard','Home did not select first class');
- doc.getElementById('nameInput').value='Eira';doc.getElementById('hcBox').checked=true;doc.getElementById('choose-emberwitch').click();ok(doc.getElementById('nameInput').value==='Eira'&&doc.getElementById('hcBox').checked,'class change reset hero choices');
+ doc.getElementById('hcBox').checked=true;doc.getElementById('choose-emberwitch').click();ok(nameInput.value==='  Eira  '&&doc.getElementById('hcBox').checked,'class change reset hero choices');
  win.toggleTitleMotion();await delay(150);const still=paintSignature();await delay(150);ok(paintSignature()===still,'reduced motion did not freeze idle animation');
  find('Starting gear').click();await delay(120);ok(paintSignature()!==still,'starting gear did not change 3D loadout');const front=paintSignature();doc.querySelector('[aria-label="Rotate hero right"]').click();await delay(100);ok(paintSignature()!==front,'rotation did not update 3D model in reduced motion');
  find('Class regalia').click();
@@ -75,6 +93,7 @@ try{
  ok(!initialBackdrop.isConnected&&!backdrop()&&backgroundPaints(initialBackdrop)===disposedPaints,'gameplay did not dispose the background');
  await until(()=>!!doc.getElementById('openingUI'),'playable opening ready',60000);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);game.state.flags.seenIntro=true;game.saveAndQuit();
  await until(()=>find('CHOOSE HERO'),'saved hero main menu');
+ checkMainMenu(true);
  ok(backdrop()!==initialBackdrop&&doc.querySelectorAll('canvas.title-atmosphere').length===1,'return to menu failed to recreate exactly one background');
  await game.newGame('Rowan','wildkeeper',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(game);game.state.flags.seenIntro=true;game.saveAndQuit();
  find('CHOOSE HERO').click();await until(()=>doc.querySelector('.saved-hero'),'saved hero list');

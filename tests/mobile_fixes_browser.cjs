@@ -3,7 +3,7 @@ const {assert,fs,base,out,settle,setup,revealBySwipe}=require('./mobile_fix_help
  const {browser,context,page,errors}=await setup();let checks=0;
  const ok=(v,m)=>{checks++;assert.ok(v,m)};
  try{
-  await page.getByRole('button',{name:'NEW HERO',exact:true}).tap();
+  await page.getByRole('button',{name:'SINGLE PLAYER',exact:true}).tap();
   const sizes=[[568,240],[568,320],[667,375],[740,360],[844,390]],classes=['vanguard','emberwitch','gravebinder','wildkeeper','veilranger'];
   for(const [width,height] of sizes){
    await page.setViewportSize({width,height});await settle(page);

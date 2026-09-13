@@ -148,7 +148,7 @@ const Game = (() => {
   async function requireSpriteBundle(bundleId, label, { recoverable = false } = {}) {
     const loading = document.createElement("div");
     loading.id = "spriteLoading";
-    loading.style.cssText = "position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:#120d0b;color:#d8c79a;font:15px monospace;letter-spacing:.08em";
+    loading.style.cssText = "position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:#120d0b;color:#d8c79a;font:15px var(--font-game);letter-spacing:.08em";
     loading.textContent = `${label} 0%`;
     document.body.appendChild(loading);
     try {
@@ -216,7 +216,9 @@ const Game = (() => {
       window.addEventListener("resize", resize);
       window.addEventListener("phoneviewportchange", resize);
       resize();
-      await Player3D.init();
+      // Wait for the UI font before measuring canvas labels. Font failures
+      // still leave the browser's serif fallback available for gameplay.
+      await Promise.all([Player3D.init(), document.fonts.ready]);
       if (!await requireSpriteBundle("core", "LOADING CORE SPRITES")) return;
       UI.init();
       bindInput();
@@ -3224,7 +3226,7 @@ const Game = (() => {
       if(!TerrainLayers.same(gi,state.player))return;
       const text = gi.gold ? `${gi.gold} gold` : ((gi.item.identified ? gi.item.name : gi.item.baseName) + (gi.item.count > 1 ? ` (${gi.item.count})` : ""));
       const sz = Math.max(10, Math.round(12 * (f.size || 1)));
-      ctx.font = `${sz}px 'Palatino Linotype', serif`;
+      ctx.font = `${sz}px Exocet, Georgia, serif`;
       const tw = ctx.measureText(text).width + 10, bh = sz + 4;
       const lx = sx - tw / 2, ly = sy - 30 - (tossZ || 0) - (sz - 12);
       ctx.globalAlpha = faded ? 0.38 : 1;
@@ -3257,7 +3259,7 @@ const Game = (() => {
       plate(gi, f, sx, sy, 0, false, true);
       ctx.fillStyle = f.color + "28"; ctx.beginPath(); ctx.ellipse(sx, sy, 15, 7.5, 0, 0, Math.PI * 2); ctx.fill();
     }
-    ctx.font = "12px 'Palatino Linotype', serif";
+    ctx.font = "12px Exocet, Georgia, serif";
   }
 
   function render() {
@@ -3489,7 +3491,7 @@ const Game = (() => {
             const bob2 = Math.sin(state.time * 3 + m2.x) * 2;
             ctx.fillStyle = "#b070d0";
             ctx.shadowColor = "#b070d0"; ctx.shadowBlur = 6;
-            ctx.font = "12px serif"; ctx.textAlign = "center";
+            ctx.font = "12px Exocet, Georgia, serif"; ctx.textAlign = "center";
             ctx.fillText("✦", d.sx, d.sy - 56 * m2.scale + bob2);
             ctx.textAlign = "left"; ctx.shadowBlur = 0;
           }
@@ -3555,7 +3557,7 @@ const Game = (() => {
           /* Bone Golem: float its stitched-corpse count over its skull */
           if (mi.kindId === "bone_golem" && !mi.dead) {
             const ny = d.sy - 52 * (mi.spriteOpts.scale || 1) - 18, label = "✚ " + (mi.stitches || 1) + "/" + (mi.maxStitch || mi.stitches || 1);
-            ctx.font = "bold 13px 'Palatino Linotype', serif"; ctx.textAlign = "center";
+            ctx.font = "bold 13px Exocet, Georgia, serif"; ctx.textAlign = "center";
             ctx.fillStyle = "#0a0805"; ctx.fillText(label, d.sx + 1, ny + 1);
             ctx.fillStyle = "#e6d6a6"; ctx.shadowColor = "#7a0000"; ctx.shadowBlur = 6; ctx.fillText(label, d.sx, ny); ctx.shadowBlur = 0;
             ctx.textAlign = "left";
@@ -3786,7 +3788,7 @@ const Game = (() => {
     ctx.textAlign = "center";
     for (const f of floats) {
       const sx = U.isoX(f.x, f.y) - cam.x, sy = U.isoY(f.x, f.y) - cam.y - surfaceLift(f.x,f.y,f.surfaceId) - 46 - f.t * 30;
-      ctx.font = (f.big ? "bold 17px" : "13px") + " 'Palatino Linotype', serif";
+      ctx.font = (f.big ? "bold 17px" : "13px") + " Exocet, Georgia, serif";
       ctx.globalAlpha = U.clamp(1.4 - f.t, 0, 1);
       ctx.fillStyle = "#000";
       ctx.fillText(f.text, sx + 1, sy + 1);
@@ -3970,15 +3972,15 @@ const Game = (() => {
         const marker=bx+bw*phase.at;
         ctx.fillStyle=b.hp/b.maxHp>phase.at?"#efcf92":"#6a5530";ctx.fillRect(marker-1,by,2,14);
       }
-      ctx.font = "13px 'Palatino Linotype', serif"; ctx.textAlign = "center";
+      ctx.font = "13px Exocet, Georgia, serif"; ctx.textAlign = "center";
       ctx.fillStyle = "#e8d8a8";
       const disguised=b.defId==="vethriss"&&b.encounter?.phase===0;
       ctx.fillText(b.name + (!disguised&&b.def.title ? " — " + b.def.title : ""), bossCenter, by - 8);
       const bt = DATA.ENEMY_TYPES[b.type] || DATA.ENEMY_TYPES.humanoid;
-      ctx.font = "10px 'Palatino Linotype', serif"; ctx.fillStyle = bt.color;
+      ctx.font = "10px Exocet, Georgia, serif"; ctx.fillStyle = bt.color;
       ctx.fillText(bt.name.toUpperCase(), bossCenter, by + 25);
       if(b.encounter){
-        ctx.fillStyle=b.encounter.config.color;ctx.font="12px 'Palatino Linotype', serif";
+        ctx.fillStyle=b.encounter.config.color;ctx.font="12px Exocet, Georgia, serif";
         const e=b.encounter;
         const phase=e.config.phases[e.phase],status=typeof e.statusText==='function'?e.statusText():e.statusLabel||phase;
         ctx.fillText(status.startsWith(phase)?status:phase+" · "+status,bossCenter,by+43,Math.min(W-40,bw+180));
@@ -4108,7 +4110,7 @@ const Game = (() => {
     const bob = Math.sin(state.time * 2.6) * 2.5;
     const glyph = kind === "save" ? "✚" : kind;
     const col = kind === "?" ? "#7fd87f" : kind === "save" ? "#ffe6a0" : "#ffd860";
-    ctx.font = "bold 18px 'Palatino Linotype', serif";
+    ctx.font = "bold 18px Exocet, Georgia, serif";
     ctx.textAlign = "center";
     ctx.shadowColor = col; ctx.shadowBlur = 8;
     ctx.fillStyle = "#000";
@@ -4131,9 +4133,9 @@ const Game = (() => {
 
   function nameplate(text, sx, sy, color, hpFrac, typeInfo, subLine, above = false) {
     ctx.textAlign = "center";
-    ctx.font = "13px 'Palatino Linotype', serif";
+    ctx.font = "13px Exocet, Georgia, serif";
     let tw = ctx.measureText(text).width;
-    ctx.font = "10px 'Palatino Linotype', serif";
+    ctx.font = "10px Exocet, Georgia, serif";
     let subW = 0;
     if (subLine) {
       subW = subLine.segments
@@ -4147,12 +4149,12 @@ const Game = (() => {
     if (above) sy -= boxH - 14;
     ctx.fillStyle = "rgba(5,4,3,.8)";
     ctx.fillRect(sx - tw / 2, sy - 14, tw, boxH);
-    ctx.font = "13px 'Palatino Linotype', serif";
+    ctx.font = "13px Exocet, Georgia, serif";
     ctx.fillStyle = color;
     ctx.fillText(text, sx, sy);
     let yy = sy + 4;
     if (subLine) {   /* small line above the bar (e.g. monster resistances) */
-      ctx.font = "10px 'Palatino Linotype', serif";
+      ctx.font = "10px Exocet, Georgia, serif";
       if (subLine.segments) {   /* per-stat colored segments, drawn left-to-right, centered as a group */
         ctx.textAlign = "left";
         let x = sx - subW / 2;
@@ -4169,7 +4171,7 @@ const Game = (() => {
       yy += 6;
     }
     if (typeInfo) {
-      ctx.font = "10px 'Palatino Linotype', serif"; ctx.fillStyle = typeInfo.color;
+      ctx.font = "10px Exocet, Georgia, serif"; ctx.fillStyle = typeInfo.color;
       ctx.fillText(typeInfo.label, sx, yy + 9);
     }
     ctx.textAlign = "left";
@@ -4430,7 +4432,7 @@ const Game = (() => {
     /* notable loot the filter flagged for the minimap */
     for (const gi of state.ground) { const f = gi.filt; if (f && f.minimap && !f.hide) dot(gi.x, gi.y, f.minimap, 3); }
     if(m.layers){
-      mmCtx.fillStyle='#0b0b0b';mmCtx.fillRect(4,3,111,18);mmCtx.font='12px sans-serif';mmCtx.fillStyle='#ead5a0';mmCtx.fillText(p.surfaceId?'Upper gallery':'Lower passage',8,16);
+      mmCtx.fillStyle='#0b0b0b';mmCtx.fillRect(4,3,111,18);mmCtx.font='12px Exocet, Georgia, serif';mmCtx.fillStyle='#ead5a0';mmCtx.fillText(p.surfaceId?'Upper gallery':'Lower passage',8,16);
     }
     dot(p.x, p.y, "#ffffff", 3);
   }
@@ -4455,14 +4457,14 @@ const Game = (() => {
     }
     for (const ex of m.exits) {
       dot((ex.x0 + ex.x1) / 2, (ex.y0 + ex.y1) / 2, "#d8b860", 8);
-      ctx.font = "12px 'Palatino Linotype', serif"; ctx.fillStyle = "#d8b860";
+      ctx.font = "12px Exocet, Georgia, serif"; ctx.fillStyle = "#d8b860";
       ctx.fillText(ex.label, ox + (ex.x0 + ex.x1) / 2 * sc + 8, oy + (ex.y0 + ex.y1) / 2 * sc + 4);
     }
     if (m.shrine) dot(m.shrine.x, m.shrine.y, "#8fd8ff", 6);
     for (const mon of state.monsters) if (!mon.dead && m.explored[(mon.x | 0) + (mon.y | 0) * m.w]) dot(mon.x, mon.y, !TerrainLayers.same(p,mon)?'#564747':mon.isBoss ? "#ff5030" : "#c03030", 3);
     for (const n of state.npcs) dot(n.x, n.y, "#50c050", 5);
     dot(p.x, p.y, "#ffffff", 6);
-    ctx.font = "16px 'Palatino Linotype', serif";
+    ctx.font = "16px Exocet, Georgia, serif";
     ctx.fillStyle = "#d8c79a"; ctx.textAlign = "center";
     ctx.fillText(m.zone.name + (m.layers?(p.surfaceId?' · Upper gallery':' · Lower passage'):'') + "  —  press M to close", W / 2, 30);
     ctx.textAlign = "left";

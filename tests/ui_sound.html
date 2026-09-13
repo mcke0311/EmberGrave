@@ -33,7 +33,7 @@ run.onclick=async()=>{
  }
  try{
   sfx.setVol('master',.15);sfx.setVol('sfx',.25);sfx.setVol('music',0);
-  [...doc.querySelectorAll('#titleMenu button')].find(b=>b.textContent==='NEW HERO').click();
+  [...doc.querySelectorAll('#titleMenu button')].find(b=>b.textContent==='SINGLE PLAYER').click();
   await until(()=>count()===1&&sfx.ctx.state==='running','first activation playback');
   await Promise.all([win.eval('SkillAudio.ready'),sfx.loadInteractionSounds()]);
   const expectedDecodes=2+win.eval('SkillAudio.snapshot().expected')+Object.keys(sfx.INTERACTIONS).length;

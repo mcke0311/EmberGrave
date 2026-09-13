@@ -2,7 +2,7 @@ const {assert,fs,out,setup,touchDriver}=require('./mobile_fix_helpers.cjs');
 (async()=>{
  const {browser,context,page,errors}=await setup({manual:true});let checks=0;const stages=[];
  try{
-  await page.getByRole('button',{name:'NEW HERO',exact:true}).tap();await page.getByRole('button',{name:'Next',exact:true}).tap();
+  await page.getByRole('button',{name:'SINGLE PLAYER',exact:true}).tap();await page.getByRole('button',{name:'Next',exact:true}).tap();
   await page.locator('#nameInput').fill('Touch opening');await page.getByRole('button',{name:'ENTER THE MARCHES',exact:true}).tap();
   await page.waitForFunction(()=>Game.state?.map?.id==='frosthaven_approach');
   // God mode isolates input/progression from bot survival. Damage, boss health,
