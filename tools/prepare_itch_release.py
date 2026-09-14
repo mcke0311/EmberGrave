@@ -28,6 +28,8 @@ def main() -> None:
     parser.add_argument('--archive', type=Path, required=True)
     parser.add_argument('--report', type=Path, required=True)
     parser.add_argument('--target-files', type=int, default=980)
+    parser.add_argument('--coop-via-website', action='store_true',
+                        help='Label co-op as website play and open the existing public game.')
     args = parser.parse_args()
     source, stage = args.source.resolve(), args.stage.resolve()
     if not 1 <= args.target_files <= 1000:
@@ -90,6 +92,24 @@ def main() -> None:
 })();
 '''
     (stage / 'js/sprite_manifest.js').write_text(manifest_text + footer, encoding='utf-8')
+    changed_runtime = {'js/sprite_manifest.js'}
+    if args.coop_via_website:
+        title_path = stage / 'js/title_screen.js'
+        title_text = title_path.read_text(encoding='utf-8')
+        if "button('MULTIPLAYER'," not in title_text:
+            raise SystemExit('Multiplayer menu changed; review the distribution adapter.')
+        title_path.write_text(title_text.replace("'MULTIPLAYER'", "'MULTIPLAYER (WEBSITE)'"), encoding='utf-8')
+        coop_path = stage / 'js/coop_ui.js'
+        coop_path.write_text(coop_path.read_text(encoding='utf-8') + '''
+// itch.io edition: co-op is hosted at the main game's established origin.
+CoopUI.open = async function () {
+  window.location.assign('https://embergravegame.com/');
+};
+''', encoding='utf-8')
+        changed_runtime.update({'js/title_screen.js', 'js/coop_ui.js'})
+        for relative in changed_runtime - {'js/sprite_manifest.js'}:
+            subprocess.run(['node', '--preserve-symlinks', '--preserve-symlinks-main', '--check',
+                            str(stage / relative)], check=True, capture_output=True)
     subprocess.run(['node', '--preserve-symlinks', '--preserve-symlinks-main', '--check',
                     str(stage / 'js/sprite_manifest.js')], check=True, capture_output=True)
 
@@ -122,7 +142,7 @@ process.stdout.write(JSON.stringify(context.DATA.SPRITE_MANIFEST));'''
     for item in packaged_files:
         name = item.relative_to(stage).as_posix()
         assert len(name) <= 240 and item.stat().st_size <= 200_000_000, name
-        if name != 'js/sprite_manifest.js':
+        if name not in changed_runtime:
             assert digest(item.read_bytes()) == digest((source / name).read_bytes()), name
 
     args.archive.parent.mkdir(parents=True, exist_ok=True)
@@ -140,9 +160,11 @@ process.stdout.write(JSON.stringify(context.DATA.SPRITE_MANIFEST));'''
         'archive_sha256': digest(args.archive.read_bytes()),
         'embedded_images': len(selected), 'verified_manifest_definitions': verified_defs,
         'embedded_source_bytes': sum(record['bytes'] for record in records),
-        'preserved_other_files': True, 'archive_crc_verified': True,
+        'preserved_other_files': True, 'changed_runtime_files': sorted(changed_runtime),
+        'archive_crc_verified': True, 'coop_via_website': args.coop_via_website,
         'browser_validation': 'pending', 'itch_embed_validation': 'pending',
-        'multiplayer_origin_configuration': 'Required for itch.io before public listing.',
+        'multiplayer_origin_configuration': ('Co-op opens the existing main website.' if args.coop_via_website
+                                             else 'Required for itch.io before public listing.'),
         'embedded': records,
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
