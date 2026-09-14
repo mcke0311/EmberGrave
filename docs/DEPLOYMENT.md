@@ -256,3 +256,30 @@ The compact static release contains 1,287 files (202.48 MiB). The compressed
 cinematic, donation destination, and editor exclusion are preserved. The local
 packaging helper could not start Bash on Windows, so Sites built the exact
 pushed static source using the existing remote-build fallback.
+
+## Latest menus, typography, and support link — 2026-09-13
+
+Version 14 publishes GitHub `main` at
+`06989f7095eab09ab671e9fd979dce7c014e444c`. Sites confirmed publication
+**succeeded** at 14:40:38 UTC, returning
+https://embergravegame.mcke0311.chatgpt.site. The existing custom domain
+https://embergravegame.com and public audience are preserved.
+
+The update includes the simplified Single Player/Multiplayer menu, required
+character names, shared Exocet typography, and the direct Ko-fi support link.
+The compact release now includes the new OpenType font and shared stylesheet.
+
+Release source: `ef72601553af710de15b539c4e0a7a6a6443f31f`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_736f33d19ddc8191ba21253556529a7e`.
+Deployment: `appgdep_6aa6b55f492081918fc0ff5355824c95`.
+
+Validation passed: 73 JavaScript syntax checks, 1,161 runtime references with
+no missing files, all three page entrypoints, and manifest icons. All 24 changed
+files match the source and committed release exactly, with the established editor
+link removal on the loot page. The release contains 1,289 files (202.81 MiB),
+preserving the compressed cinematic and editor exclusion. Browser interaction
+testing was not repeated for this publication. The multiplayer relay is unchanged.
+
+The pushed remote SHA was verified. The local packaging helper could not start
+Bash on Windows, so Sites packaged the exact pushed source using the existing
+remote-build fallback.

@@ -1,0 +1,37 @@
+{
+  "file": "EMBERGRAVE-Ominous-Dawn-Trailer-2min.mp4",
+  "duration_seconds": 120.0,
+  "frame_count": 3600,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "fps": 30,
+  "video_codec": "H.264",
+  "audio_codec": "AAC stereo, 48 kHz, 256 kbps",
+  "size_bytes": 63062625,
+  "full_decode_errors": "",
+  "audio_loudness": {
+    "input_i": "-16.08",
+    "input_tp": "-4.18",
+    "input_lra": "2.70",
+    "input_thresh": "-26.18",
+    "output_i": "-15.36",
+    "output_tp": "-1.50",
+    "output_lra": "0.90",
+    "output_thresh": "-25.43",
+    "normalization_type": "dynamic",
+    "target_offset": "-0.64"
+  },
+  "black_intervals": [
+    "[blackdetect @ 000001aef6cecfc0] black_start:0 black_end:0.2 black_duration:0.2",
+    "[blackdetect @ 000001aef6cecfc0] black_start:60.066667 black_end:60.233333 black_duration:0.166667",
+    "[blackdetect @ 000001aef6cecfc0] black_start:119.666667 black_end:119.966667 black_duration:0.3"
+  ],
+  "soundtrack": "Ominous Dawn, user-supplied MP3; continuous source 0:00\u20132:00, with a 4.2-second ending fade.",
+  "soundtrack_sha256": "a44a0a9cb83889d1825aa52c23f1da3845c7c42f4f47c4ca3d6311b605b6d805",
+  "footage": "New 30-fps production-renderer captures. Temporary isolated hero saves, invulnerability and restored casting mana for capture; normal movement, attack timing, boss damage and simulation speed.",
+  "cinematics": "Existing project cinematics; their complete composition and any source credits are retained.",
+  "shots": 20,
+  "music_normalization": "Two-pass normalization to -16 LUFS and -1.5 dBTP; sparse game effects."
+}

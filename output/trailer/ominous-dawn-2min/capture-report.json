@@ -1,0 +1,369 @@
+[
+  {
+    "id": "vanguard",
+    "boss": "korvath",
+    "hero": "vanguard",
+    "phase": 1,
+    "seconds": 14,
+    "map": "shattered_temple",
+    "player": [
+      106.55,
+      98.45
+    ],
+    "skills": {
+      "vanguard_0_0": 7
+    },
+    "frames": 420,
+    "peakFx": 0,
+    "firstBossHp": 2600,
+    "lastBossHp": 2184.5869277069273,
+    "startPosition": {
+      "x": 106.55,
+      "y": 98.45
+    },
+    "endPosition": {
+      "x": 106.55,
+      "y": 98.45
+    },
+    "errors": [],
+    "canvas": [
+      1280,
+      720
+    ]
+  },
+  {
+    "id": "gravebinder",
+    "boss": "mire_mother",
+    "hero": "gravebinder",
+    "phase": 1,
+    "seconds": 14,
+    "map": "ritual_site",
+    "player": [
+      112.5,
+      105.5
+    ],
+    "skills": {
+      "venom_spit": 1,
+      "mark_of_frailty": 1,
+      "raise_dead": 10,
+      "raise_plaguemage": 1
+    },
+    "frames": 420,
+    "peakFx": 3,
+    "firstBossHp": 3850.0000000000005,
+    "lastBossHp": 2913.503941319144,
+    "startPosition": {
+      "x": 112.5,
+      "y": 105.5
+    },
+    "endPosition": {
+      "x": 112.5,
+      "y": 105.5
+    },
+    "errors": [],
+    "canvas": [
+      1280,
+      720
+    ]
+  },
+  {
+    "id": "veilranger",
+    "boss": "empty_archangel",
+    "hero": "veilranger",
+    "phase": 1,
+    "seconds": 14,
+    "map": "cathedral1",
+    "player": [
+      88.5,
+      89.5
+    ],
+    "skills": {
+      "veilranger_0_0": 10
+    },
+    "frames": 420,
+    "peakFx": 1,
+    "firstBossHp": 4250,
+    "lastBossHp": 3071.344381205618,
+    "startPosition": {
+      "x": 88.5,
+      "y": 89.5
+    },
+    "endPosition": {
+      "x": 88.5,
+      "y": 89.5
+    },
+    "errors": [],
+    "canvas": [
+      1280,
+      720
+    ]
+  },
+  {
+    "id": "wildkeeper",
+    "boss": "azram",
+    "hero": "wildkeeper",
+    "phase": 1,
+    "seconds": 14,
+    "map": "khal_palace",
+    "player": [
+      105.5,
+      24.5
+    ],
+    "skills": {
+      "wildkeeper_1_0": 8,
+      "call_wolf": 8
+    },
+    "frames": 420,
+    "peakFx": 3,
+    "firstBossHp": 4409.278759271568,
+    "lastBossHp": 4409.278759271568,
+    "startPosition": {
+      "x": 105.5,
+      "y": 24.5
+    },
+    "endPosition": {
+      "x": 105.5,
+      "y": 24.5
+    },
+    "errors": [],
+    "canvas": [
+      1280,
+      720
+    ]
+  },
+  {
+    "id": "emberwitch",
+    "boss": "vethriss",
+    "hero": "emberwitch",
+    "phase": 2,
+    "seconds": 16,
+    "map": "throne",
+    "player": [
+      97.5,
+      104.5
+    ],
+    "skills": {
+      "emberwitch_0_0": 10,
+      "emberwitch_0_4": 5,
+      "emberwitch_1_6": 5
+    },
+    "frames": 480,
+    "peakFx": 3,
+    "firstBossHp": 5600,
+    "lastBossHp": 3928.264302178531,
+    "startPosition": {
+      "x": 97.5,
+      "y": 104.5
+    },
+    "endPosition": {
+      "x": 97.5,
+      "y": 104.5
+    },
+    "errors": [],
+    "canvas": [
+      1280,
+      720
+    ]
+  },
+  {
+    "id": "hollowking",
+    "boss": "malthoron",
+    "hero": "vanguard",
+    "phase": 1,
+    "seconds": 12,
+    "map": "cathedral2",
+    "player": [
+      61.55,
+      58.45
+    ],
+    "skills": {
+      "vanguard_0_0": 10
+    },
+    "frames": 360,
+    "peakFx": 5,
+    "firstBossHp": 7538.783653887516,
+    "lastBossHp": 6379.109608159062,
+    "startPosition": {
+      "x": 61.55,
+      "y": 58.45
+    },
+    "endPosition": {
+      "x": 61.55,
+      "y": 58.45
+    },
+    "errors": [],
+    "canvas": [
+      1280,
+      720
+    ]
+  },
+  {
+    "id": "frosthaven",
+    "boss": "korvath",
+    "hero": "vanguard",
+    "phase": 0,
+    "zone": "frosthaven",
+    "seconds": 10,
+    "map": "frosthaven",
+    "player": [
+      18.5,
+      18.5
+    ],
+    "skills": {
+      "vanguard_0_0": 7
+    },
+    "frames": 300,
+    "peakFx": 0,
+    "firstBossHp": null,
+    "lastBossHp": null,
+    "startPosition": {
+      "x": 18.5,
+      "y": 18.5
+    },
+    "endPosition": {
+      "x": 21.841740292753656,
+      "y": 18.36561878579088
+    },
+    "errors": [],
+    "canvas": [
+      1280,
+      720
+    ]
+  },
+  {
+    "id": "marsh",
+    "boss": "mire_mother",
+    "hero": "gravebinder",
+    "phase": 0,
+    "zone": "weeping_marsh",
+    "seconds": 9,
+    "map": "weeping_marsh",
+    "player": [
+      3.5,
+      86.5
+    ],
+    "skills": {
+      "venom_spit": 1,
+      "mark_of_frailty": 1,
+      "raise_dead": 10,
+      "raise_plaguemage": 1
+    },
+    "frames": 270,
+    "peakFx": 0,
+    "firstBossHp": null,
+    "lastBossHp": null,
+    "startPosition": {
+      "x": 3.5,
+      "y": 86.5
+    },
+    "endPosition": {
+      "x": 7.5,
+      "y": 91.5
+    },
+    "errors": [],
+    "canvas": [
+      1280,
+      720
+    ]
+  },
+  {
+    "id": "sand",
+    "boss": "azram",
+    "hero": "wildkeeper",
+    "phase": 0,
+    "zone": "khalcamp",
+    "seconds": 9,
+    "map": "khalcamp",
+    "player": [
+      17.5,
+      21.5
+    ],
+    "skills": {
+      "wildkeeper_1_0": 8,
+      "call_wolf": 8
+    },
+    "frames": 270,
+    "peakFx": 0,
+    "firstBossHp": null,
+    "lastBossHp": null,
+    "startPosition": {
+      "x": 17.5,
+      "y": 21.5
+    },
+    "endPosition": {
+      "x": 21.5,
+      "y": 26.5
+    },
+    "errors": [],
+    "canvas": [
+      1280,
+      720
+    ]
+  },
+  {
+    "id": "cathedral",
+    "boss": "empty_archangel",
+    "hero": "veilranger",
+    "phase": 0,
+    "zone": "cathedral1",
+    "seconds": 9,
+    "map": "cathedral1",
+    "player": [
+      15.5,
+      88.5
+    ],
+    "skills": {
+      "veilranger_0_0": 10
+    },
+    "frames": 270,
+    "peakFx": 0,
+    "firstBossHp": null,
+    "lastBossHp": null,
+    "startPosition": {
+      "x": 15.5,
+      "y": 88.5
+    },
+    "endPosition": {
+      "x": 19.5,
+      "y": 93.5
+    },
+    "errors": [],
+    "canvas": [
+      1280,
+      720
+    ]
+  },
+  {
+    "id": "cinders",
+    "boss": "vethriss",
+    "hero": "emberwitch",
+    "phase": 0,
+    "zone": "hellgate",
+    "seconds": 9,
+    "map": "hellgate",
+    "player": [
+      20.5,
+      16.5
+    ],
+    "skills": {
+      "emberwitch_0_0": 10
+    },
+    "frames": 270,
+    "peakFx": 0,
+    "firstBossHp": null,
+    "lastBossHp": null,
+    "startPosition": {
+      "x": 20.5,
+      "y": 16.5
+    },
+    "endPosition": {
+      "x": 24.5,
+      "y": 21.5
+    },
+    "errors": [],
+    "canvas": [
+      1280,
+      720
+    ]
+  }
+]

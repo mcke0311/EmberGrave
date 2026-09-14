@@ -1,0 +1,1576 @@
+{
+  "source": "C:\\Users\\this_\\Downloads\\Claudediablo\\tmp\\embergrave-site\\dist",
+  "stage": "C:\\Users\\this_\\Downloads\\Claudediablo\\tmp\\embergrave-itch-launch",
+  "archive": "C:\\Users\\this_\\Downloads\\Claudediablo\\output\\launch-kit\\EMBERGRAVE-itch-launch.zip",
+  "source_files": 1290,
+  "packaged_files": 980,
+  "extracted_bytes": 214319427,
+  "archive_bytes": 205269913,
+  "archive_sha256": "54a9350f873beb89e3fe966cac87b0b6f5ea94a4e254660ae183515cc41a1e4e",
+  "embedded_images": 310,
+  "verified_manifest_definitions": 310,
+  "embedded_source_bytes": 4631154,
+  "preserved_other_files": true,
+  "changed_runtime_files": [
+    "js/coop_ui.js",
+    "js/sprite_manifest.js",
+    "js/title_screen.js"
+  ],
+  "archive_crc_verified": true,
+  "coop_via_website": true,
+  "browser_validation": "pending",
+  "itch_embed_validation": "pending",
+  "multiplayer_origin_configuration": "Co-op opens the existing main website.",
+  "embedded": [
+    {
+      "path": "assets/sprites/packed/world/props/hellgate_paving.webp",
+      "bytes": 974,
+      "sha256": "4d5328c7b46fd2aec9848512f7aacc53416e09e566e757ca41035f4e3b64b9a9"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/marshcamp_paving.webp",
+      "bytes": 1050,
+      "sha256": "1392e2d4fd2b1f1d5cadb4cf02e4968ea9e2e80424f7340a229ec2630a35fff6"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/frosthaven_paving.webp",
+      "bytes": 1116,
+      "sha256": "c1566934956b508a3dd27e83470c86ba98941925bbe9c5ac7ee138d1e74654ef"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/town_paving.webp",
+      "bytes": 1192,
+      "sha256": "cc360ebbf9174abcd30acacd1ffddc5bd2bf2f663e55961596937069810b2cde"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/urn.webp",
+      "bytes": 1274,
+      "sha256": "ff1de471a75aafbe543e4a98e80eba42a0db1b1332820c6211fc6f952c96bea1"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/khalcamp_paving.webp",
+      "bytes": 1360,
+      "sha256": "47f451bb465528dffabef235070fdb9427fb8acb082b789186979a2e641b777f"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/crate.webp",
+      "bytes": 1554,
+      "sha256": "7d378f63d8257ba924c5de82f32e3df4162972307c1a3a30909a17b06a9bffdc"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/chest.webp",
+      "bytes": 1602,
+      "sha256": "3f1acebfe2d006dd85b0754f67d30bfc48365091d0d4b0136ca601be1afb525d"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/signpost.webp",
+      "bytes": 1610,
+      "sha256": "a69013a5770adf312117d8e01c1ec46fa62d9aa94b00e30abf96d3f6b806e337"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/lantern.webp",
+      "bytes": 1656,
+      "sha256": "2fe869f73f81638fe5c8c82038d16409eec1b3204deafac10a87778bdeab9b8b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/barrel.webp",
+      "bytes": 1668,
+      "sha256": "5eb77e73bb68ccb8aa8755047bc196b02eaf5ac873d08abbd936f6091d39608e"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/hay.webp",
+      "bytes": 1702,
+      "sha256": "9895cf954175a25e7e39866968ca2b51b284dc8da92debd4188fc965f150895c"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/pillar.webp",
+      "bytes": 1728,
+      "sha256": "3dc2db4ba46db4300b58a76f45dcc022be2a10584e2c4cc157b0014f5cdd81e8"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/grave.webp",
+      "bytes": 1744,
+      "sha256": "cafe3add4851ca8c759586344d8a4cd90f8abf0d12ec38c89624abd4ec9a8220"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/stash.webp",
+      "bytes": 1978,
+      "sha256": "007f26fae4dd4de3ec3fbad1c194dd83a00d93a5e74f610ec02af68e56098884"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/embershard.webp",
+      "bytes": 2006,
+      "sha256": "d65dfa6d4a31d9ae22e177f9390238f02303ef6cc39cc8d444956c37840afff6"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/fence.webp",
+      "bytes": 2008,
+      "sha256": "3aa061d9c5d620a8441ea00714dc36594baa9a667a276d95522581855320c700"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/brazier.webp",
+      "bytes": 2020,
+      "sha256": "ebfbafd428dca99983d0a70f8de43c2884f7ae6b76af2f04405f061b55128162"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/banner.webp",
+      "bytes": 2090,
+      "sha256": "6b45311709a4cb1ef2c8d0c3679dcbdff9e0c0e954f21ba3a8b6b262c14f2f80"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/lamppost.webp",
+      "bytes": 2104,
+      "sha256": "4247f99b12ba3819933e3a9037cbd89c6f9f62b1a39c095ae5b2f5e9056bcd1f"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/chest_open.webp",
+      "bytes": 2120,
+      "sha256": "54b357f276ad2061471690584de1240fbfcd0da001c79f7148d123a1ee17b3ec"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/rock.webp",
+      "bytes": 2180,
+      "sha256": "00f3d49d2075763fe4945ee44561f29f6dbde8fa0fe767040ed01185e5f6265e"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/strongbox.webp",
+      "bytes": 2242,
+      "sha256": "487d71fc350a76ce50095137985cb42c64e11d851edcb7504ded6aa15dbf6059"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/forge.webp",
+      "bytes": 2498,
+      "sha256": "7cd3cc2de8e63f548d8a839f87de0b1a4d63993babe9c12dcfd5c756e511ddef"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/tent.webp",
+      "bytes": 2590,
+      "sha256": "1b2d068623c61ed0e5aa5eaaf15877ef4a55284bc673620379e4b9e8511cd622"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/fishnet.webp",
+      "bytes": 2638,
+      "sha256": "3e48aa011ce5ca4139ad105cb96c8942c81d0d72bbb37ee070b0cc7f9ee6611f"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/shrine.webp",
+      "bytes": 2666,
+      "sha256": "dbff63ab0e60defab10131b9b238e87cce52b5b7a0733ae34003f7270db24485"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/woodpile.webp",
+      "bytes": 2842,
+      "sha256": "024ed0e8d9ff6e7f3f14228fb262b40014dbd99aa94546a3906b8fcb99fd0ad2"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/marketgoods.webp",
+      "bytes": 2858,
+      "sha256": "6806dabf4248f5ceafdc5dd19d9d9cdf451080cedab3af0a7ac9661b367fed7f"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/stairs.webp",
+      "bytes": 2914,
+      "sha256": "9a4eeda55e915ce92ca867b5ee098689b074f04269a368976c0da40ba0bc6c7e"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/board.webp",
+      "bytes": 3312,
+      "sha256": "675a8458cdb597295c4003a968f8291979514fbf8d3a9cd9807b73bd0f425853"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/cart.webp",
+      "bytes": 3478,
+      "sha256": "b083161035951c98576054a84c619731bb7a633d08d4820e97a2e3f1d6177c67"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/marshcamp_firebowl.webp",
+      "bytes": 3698,
+      "sha256": "f3df08c54c9873b394909a111cc89b15bee0cc4471bef97c7768133bee6e96e2"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/town_firebowl.webp",
+      "bytes": 3770,
+      "sha256": "ad5f8a13827f016863f3052abc3ad235fe4e109307f0f0cc12d40de5fafa3da0"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/hellgate_firebowl.webp",
+      "bytes": 3782,
+      "sha256": "a4d75a2f0ce11209bc2bc10a9f4ad63dca99b4593120842fcf793342404d0109"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_end_south.webp",
+      "bytes": 3802,
+      "sha256": "f510a850ea518eb9bddeb074e90b0d01b99fe435a2a1f3057350af5f399b22a6"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_bastion_pillar.webp",
+      "bytes": 3828,
+      "sha256": "0327bcbf8f347a95f9cc97fe1377e3b9272d664f3eb00e697311569d88c1dfd8"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/khalcamp_firebowl.webp",
+      "bytes": 3842,
+      "sha256": "d1b552f5a856bdb4990d0e2c7ead651a119be117ef099d0f1fcd62ee74be043b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/stall.webp",
+      "bytes": 3864,
+      "sha256": "464ba6aabcfab0b9d6f5a884af7d4f4243528f399cc6c94433efd595877068d9"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_throne_pillar.webp",
+      "bytes": 3884,
+      "sha256": "57e7d88a71f8110c9b2a0b2e551d9d262e64a3d93afdb75597037386423fc6f6"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_south_1.webp",
+      "bytes": 3996,
+      "sha256": "6ce562f7189e7d4ffffe5ee9102f912e0b1b8414a61a220bc3549a2843e0f231"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_south_1.webp",
+      "bytes": 4020,
+      "sha256": "2630e56e7705424953715ff2f0feaf2befd4464a1a6cd3ed157f6d1c54007864"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/cryptdoor.webp",
+      "bytes": 4020,
+      "sha256": "74d4d8af18464a321253d96bd9a03899b91b6f4201ed65754a795d99030143f0"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/cathedral_foundation.webp",
+      "bytes": 4022,
+      "sha256": "67edff99466a8b27a5cef994f2e52aa1633d18fc5ccf6fc7c0368bf6c045abd7"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_end_south.webp",
+      "bytes": 4036,
+      "sha256": "94eb9541b485cfe2168647099f173125f108b78de2a58f7b1e635ed35af89780"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_end_east.webp",
+      "bytes": 4038,
+      "sha256": "6c9cab0d04847fca17ac91fc51616aff7b29c4fb7b337ac3958402b88d1f3d60"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/frosthaven_firebowl.webp",
+      "bytes": 4042,
+      "sha256": "22eff7dc2f6f75297b1b18b638058b78a1f0a6bab47c2ca390d2040a18178ffe"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_end_east.webp",
+      "bytes": 4062,
+      "sha256": "5876833a0f9da016da3a703993c099fe8eb92ad82ded363840d52ed853369e7b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_south_1.webp",
+      "bytes": 4068,
+      "sha256": "73a9e56ca110306c87618532b01114d1d20e0e62357bdd20348382a74aa41210"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/well.webp",
+      "bytes": 4086,
+      "sha256": "a9574d0b7759e973ac5d74fc8c7fc0307b36cd35c01fd71bfaa2707274305422"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_end_east.webp",
+      "bytes": 4122,
+      "sha256": "46779fa99148f5a48d433db1c7674cfb548d504d55cd7817dd79fd707ca419f0"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_end_south.webp",
+      "bytes": 4142,
+      "sha256": "52cd47285835f184cad98e4f8fcc4f7f868196dc5f979f1a90c4ab7154b40914"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_south_1.webp",
+      "bytes": 4170,
+      "sha256": "f2d424cded7758071b734c099fd5ac470567608b35e46dd8a1c0d1bf0122eb36"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_end_south.webp",
+      "bytes": 4242,
+      "sha256": "f7bd67b70ce3cc4b98aba02e9f837534a555bf1b4173b9c83a1ff826aae31d72"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_east_1.webp",
+      "bytes": 4244,
+      "sha256": "a063b37bbfb72374a064773ebc44e1a59dd9f54d4edece07823aaaa38105d3fe"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/beacon.webp",
+      "bytes": 4274,
+      "sha256": "8b64a61cacdbefdb3e6612151b8ddbb87fec33e04cdee551a9fa0fac895972da"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_east_1.webp",
+      "bytes": 4276,
+      "sha256": "8dde33b271fecfa5bd8e41b8f46aaead09281bdfaaf7983dfef733328019d168"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_end_east.webp",
+      "bytes": 4294,
+      "sha256": "f40e1e9a56192ba06cd600792905d63159016b8a1cb674179afce17985c7c103"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_east_1.webp",
+      "bytes": 4310,
+      "sha256": "e81bc9355588e83c2bb52d678cad6f64508d074d8e92c87b29b1184931095a3c"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_east_1.webp",
+      "bytes": 4390,
+      "sha256": "1ca38016a0e1d145e6f9f413ba07c5d1a4016dfd7e7f6168843d8ad8ea621e47"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/scaffold.webp",
+      "bytes": 4862,
+      "sha256": "299360b9e1a46746090928026efaee6c93b48a39e0e043bc3e58ec6e9482e8db"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/chapelruin.webp",
+      "bytes": 5202,
+      "sha256": "f8a33ca41b6e06c078b81d66c725b17df8bbba2e99b0021d2a31909de19ebc1e"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/deadtree.webp",
+      "bytes": 6112,
+      "sha256": "47b48051715c50ae290dc92d505d0faf0fc25ff93464938532e60a1f4d905e3c"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/tree.webp",
+      "bytes": 6134,
+      "sha256": "ea59fab453bd75c834031a1e03a610b4b1481498fee893ddc8d467ddb03fd4b6"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/watchtower.webp",
+      "bytes": 6728,
+      "sha256": "3e7f0c3d1f8dec10eebcc463b7063ce64794122e1ecf9d29149236c1b524367c"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/town_watchtower.webp",
+      "bytes": 6838,
+      "sha256": "d6e7e6a192c62ff4a6fb71b5471528c1e75c581ebdad4d4b8e002bdadca06f12"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/frosthaven_watchtower.webp",
+      "bytes": 6848,
+      "sha256": "7c416731e46a7cc504e9eb66c1c29563583be42f950ceaae9470d3333f568d75"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_defense_pillar.webp",
+      "bytes": 7232,
+      "sha256": "7e9dfebbd70a12d7325b1c1a943cc1be0d72f4e6252cc6f27ef72da5977228e5"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_palace_buttress.webp",
+      "bytes": 7398,
+      "sha256": "3a9c016d81160813d9f58a0b4374f0da60f8e6cb786c90295bfd7ec6743f0101"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_shore_inner.webp",
+      "bytes": 7420,
+      "sha256": "8baac3e26c7a13c14ccaa5a50b311d2fc1cadee534a139f9b111bb7cf7fa6e49"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_tomb_buttress.webp",
+      "bytes": 7474,
+      "sha256": "c9f489b490ee8d700b356a3e25bd5ae9bfb74e2159baf0f4022d6ee30b27b82c"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_shore_outer.webp",
+      "bytes": 7732,
+      "sha256": "b6fc6d76c70142a9b33c2d324fa7d2809b318a125dc521a10d2004c4157310d0"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_masonry_broken_south.webp",
+      "bytes": 8126,
+      "sha256": "a57e0c2bb0cacf95e361d1b5531807c7d0d91c648d696d2b00396d7b96549983"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_sandstone_buttress.webp",
+      "bytes": 8146,
+      "sha256": "5fecb4a5697a7c5cb51a107b67a031dfcdae9cdc8f3bcd03eed410e35c0084eb"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/monasterygate.webp",
+      "bytes": 8412,
+      "sha256": "3303505b37d11321222eba26575b50aa229776a651aa148be5a3cccc196e2a5b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/khalcamp_roundhut.webp",
+      "bytes": 8472,
+      "sha256": "5c9d2d1f72065b25995d74d7afcd7552e6b4b14d4158d116f05de494941b0d4c"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/roundhut.webp",
+      "bytes": 8472,
+      "sha256": "5c9d2d1f72065b25995d74d7afcd7552e6b4b14d4158d116f05de494941b0d4c"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_outer.webp",
+      "bytes": 8646,
+      "sha256": "98f87b5831e50f23e00858d520494af793dd591d78fa7333862e191177c400b2"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_root_inner.webp",
+      "bytes": 8796,
+      "sha256": "ec24bc92b298162f9e6cf581101a8ef285fa9b5044e8e5915281a5965d750c94"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_root_outer.webp",
+      "bytes": 8800,
+      "sha256": "f6381d54c4bd7c1b91bcb3aebada8f63a8384e1f68d40bad751a4c20b891b967"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_north_end_east.webp",
+      "bytes": 9180,
+      "sha256": "115a26219593ef02d23036870876b8b2fa206d9b15dc2b2b9d8155e641aab831"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_outer.webp",
+      "bytes": 9208,
+      "sha256": "e13311d6eb4b3e73bc136a5c9304730b6e9c55e600a7fee372da0083a1644791"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/hellgate_wartent.webp",
+      "bytes": 9536,
+      "sha256": "825e066d029129ce3ba2d8fc86e8d0277507bd193192d8c8fb1f71005b9a9b92"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/wartent.webp",
+      "bytes": 9536,
+      "sha256": "825e066d029129ce3ba2d8fc86e8d0277507bd193192d8c8fb1f71005b9a9b92"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_outer.webp",
+      "bytes": 9744,
+      "sha256": "a029c8599831cd22e6d68d95d719df5a3551ed5ccaf07aeb162d70ecac65b908"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_east_2.webp",
+      "bytes": 9766,
+      "sha256": "64d2b127119455dcbedf838a87f8630082965f22506e2230de23bb9bb5f392a3"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_shore_south.webp",
+      "bytes": 9842,
+      "sha256": "9df85ad56b086144d94062603a7df3c2700254521366f5f791946b2e587d5bc6"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/adobehouse.webp",
+      "bytes": 9954,
+      "sha256": "0f09419f34d229617212d309395089740548be9100c8ba215016a93040a98f30"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/khalcamp_adobehouse.webp",
+      "bytes": 9954,
+      "sha256": "0f09419f34d229617212d309395089740548be9100c8ba215016a93040a98f30"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_inner.webp",
+      "bytes": 9992,
+      "sha256": "1b9958671a1772ec4d59186476fe4ace2efa978b30c8d1db9aa0bc75a473049c"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_bridge_parapet.webp",
+      "bytes": 10058,
+      "sha256": "50d93ca73a1c7ffbfc6a6ef5438013b445b913df946b8762f924dd6f1322feba"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/marshcamp_stilthut.webp",
+      "bytes": 10092,
+      "sha256": "5abcb0bdef2b1d4e4cfa62047b4d851487fc06a259a9ffcb8544e0240158b2b1"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/stilthut.webp",
+      "bytes": 10092,
+      "sha256": "5abcb0bdef2b1d4e4cfa62047b4d851487fc06a259a9ffcb8544e0240158b2b1"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/town_cottage.webp",
+      "bytes": 10164,
+      "sha256": "be8e4dd7bd1dc00da99ee498fb9290545a8815cbdd22cdf6a2920fae397984e4"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_east_2.webp",
+      "bytes": 10176,
+      "sha256": "905c9c28795d821de762affb779cfff6672f35fdad1456ab7d49bc99f2f49f3f"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/cathedral_reliquary_open.webp",
+      "bytes": 10236,
+      "sha256": "e5ed7bb7d379c7800a1bcdd8249d5152c2b5381e185827c808f1a388d6a6835b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_inner.webp",
+      "bytes": 10274,
+      "sha256": "128c5a86faa6f59a6765bd3b2079937cc9cb1f7950ad4a1416bad8a6e393525f"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_south_2.webp",
+      "bytes": 10346,
+      "sha256": "96dfdfad2e882c21d2ad7f17ae2d864456dd619cc7434761ade7b33c21decbc6"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/town_shrine.webp",
+      "bytes": 10420,
+      "sha256": "5c1b12caac78612143289241bf21d3c3ef740687f8c5f598695e7019ba1f6d34"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_outer.webp",
+      "bytes": 10520,
+      "sha256": "50e3fbf2d72bc0cec7e8d484df1bf9cd722c05ab465bb7aeb366164c14bf26d0"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_inner.webp",
+      "bytes": 10584,
+      "sha256": "14603e17f55dce0c013e789ddc47d9357e8c5cabeec1866ab864b34c3a40c7c7"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/khalcamp_verge.webp",
+      "bytes": 10600,
+      "sha256": "171160db7abc242f59717e4e177aad86f8c61d1250e39c8f1094576f0d4e2791"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/frosthaven_cottage.webp",
+      "bytes": 10692,
+      "sha256": "6e11bddcbe1c0f1b58d6dceb385c2c8e1e169d038350b9ba093395ac4c99980d"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act2_votives.webp",
+      "bytes": 10758,
+      "sha256": "de49c5c4ce74d70fb63e2f8c5c5f4d0622d0c1047210516180a279854d9003d3"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_mine_end_south.webp",
+      "bytes": 10810,
+      "sha256": "ae58df2a6d2ec92d2afb4fa9a01305ca73a0a4d5a6cc08bad27711c5ac99a3ea"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_ice_end_south.webp",
+      "bytes": 10830,
+      "sha256": "425909c7af6afc173d6dd5aa24ee4b3a812c62eecc76a1fab7617f8430b0c56b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/hellgate_verge.webp",
+      "bytes": 10970,
+      "sha256": "3752a80561e1f9963285a77d1847b095586277f0c6586714ce912148e5460697"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_south_2.webp",
+      "bytes": 11058,
+      "sha256": "e6f3ff50ec9976fe45398d7afa3c460bd105b4d5a0bde08b44905887cfd0bedf"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/hellgate_shrine.webp",
+      "bytes": 11060,
+      "sha256": "402e8dc3bd5f1ba0aad6007f9ae014e88989071cc816be5378ca67982a0b5ce2"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_shore_end_south.webp",
+      "bytes": 11112,
+      "sha256": "46c439ea1f79ad182a7615694d0b7510fff5b532636de80aec89357552497cd9"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/town_verge.webp",
+      "bytes": 11232,
+      "sha256": "c1d53d4dab70bfec356772414ef1116700b1a1dbc2b99aeea8db6f8b2268a724"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_town_end_south.webp",
+      "bytes": 11480,
+      "sha256": "b64375e3ac2602f42d6f5e63680e6bef9c258de998785d074e6acdf0e87f8dc1"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_inner.webp",
+      "bytes": 11486,
+      "sha256": "7519b74e8ba8598dc2e64b50b40f5332249cb430ff683d55dbef124df524a822"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/cottage.webp",
+      "bytes": 11534,
+      "sha256": "cc6b72adab0cc1bbd280b312b34e8b8d962a44431e2f2d94bf227de90cd2806b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/marshcamp_cottage.webp",
+      "bytes": 11534,
+      "sha256": "cc6b72adab0cc1bbd280b312b34e8b8d962a44431e2f2d94bf227de90cd2806b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_shore_end_east.webp",
+      "bytes": 11596,
+      "sha256": "2e044441574d7f8b37fce92d25debb4e1a2066c744bf6d29e60da4c95c55aca9"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/cathedral_rubble.webp",
+      "bytes": 11606,
+      "sha256": "70184366cd52e79f30a17def03f2bfa703de11d3dca48cf35c52812cbb355ed4"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_north_end_south.webp",
+      "bytes": 11660,
+      "sha256": "9beb9f99615c38bee84ba1369c69f29e28423489422b9500ce1dd7e41f7a2306"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_masonry_inner.webp",
+      "bytes": 11722,
+      "sha256": "fc76210618856b1e276757cda6bf349575442210e17763c7bc1dbd43260f2efb"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_masonry_outer.webp",
+      "bytes": 11746,
+      "sha256": "5ddafaf2243c7662e07c52514e7bb8144871a7c365845060d3d92f37a04b1588"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_east_2.webp",
+      "bytes": 11756,
+      "sha256": "d0a5c757dac739d8af027bc73321e53ab115f66e0c8dab60b10990b0615a172f"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_town_end_east.webp",
+      "bytes": 11796,
+      "sha256": "875d3f17020789fc2eff5a038e99678055cf03f4fb6ee2c1004239cf1693c196"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_east_2.webp",
+      "bytes": 11826,
+      "sha256": "55e4816c2cf29f983d1ca27fbb01deb0515b4e6a36a22ac2ca82d683ccab25fc"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/marshcamp_shrine.webp",
+      "bytes": 11990,
+      "sha256": "0d24a03530e402bfae96899471e441ef32a8c42ab59e0e36fdfb472e412c3b0d"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/frosthaven_shrine.webp",
+      "bytes": 12018,
+      "sha256": "d45e921b691b565ee10f7bb4ab2e317597b45ba9af02ddd63e279f4b8dd6ab12"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/khalcamp_shrine.webp",
+      "bytes": 12044,
+      "sha256": "f6f2807022c9640c1ee242c7eb4cd60d995de01e7b93ba53aa72065452e0fb11"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_mine_end_east.webp",
+      "bytes": 12116,
+      "sha256": "03f14240940a8474792c3e5679217ee7938bed8ca387817935ba2c35effadd52"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/frosthaven_verge.webp",
+      "bytes": 12134,
+      "sha256": "4397937df0a107e90639072e2a632f3624e180f71c297e108ee4065f6c3ade6e"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_south_2.webp",
+      "bytes": 12278,
+      "sha256": "9de33209d9dde479a9558b89505a1d8dcd8befbf27d28c3d6130b38273136737"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/cathedral_reliquary.webp",
+      "bytes": 12292,
+      "sha256": "9b5fe20033ff6ecfcbefe2376615ac14f748e6e654c95f96fd282ab03d547f95"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/marshcamp_verge.webp",
+      "bytes": 12374,
+      "sha256": "7abc55d38937c9310643a56c6526ee7caa0c1645696bf02926609dca368a3d6e"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_south_2.webp",
+      "bytes": 12430,
+      "sha256": "d772e2e60c2f251e19b21e66d1eee791e92be1b59c021a3c47f72b7f86310716"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_temple_end_east.webp",
+      "bytes": 12776,
+      "sha256": "366930652960c9aa91c3b0d3565f3befbf68733875bf0c7664554a2237b3a8d1"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_tomb_pillar.webp",
+      "bytes": 12798,
+      "sha256": "52ccab3f9f721a6b215e6509725073f4ce476e47d6028b2ef4eed672958e9cc4"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_temple_end_south.webp",
+      "bytes": 12922,
+      "sha256": "d784cc0481685988b2daac966f489df0648cbca54dfbe463c682ba1ddff9484b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_rock_east.webp",
+      "bytes": 13126,
+      "sha256": "f6a98054ec13e455893b9b4d56ef3e2671502a3d2003315305068c5d5202f050"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_palace_pillar.webp",
+      "bytes": 13202,
+      "sha256": "ff936f6222356842a11cb17e6097cf037a793a14a7277483bed4ab2b59cd163c"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/longhouse.webp",
+      "bytes": 13202,
+      "sha256": "6ac6f7ccd7185ffbe82ef2dbfb89d21a9a641f042190137e0a9794e2d2d694aa"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_shore_east.webp",
+      "bytes": 13228,
+      "sha256": "02589f0b57d38e5bda3f516b022e2a3a1eb8b920dadd31ae1c6341262f48ab0b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_ash_outer.webp",
+      "bytes": 13314,
+      "sha256": "94681e33dc665b66bc2e922a4aa73f90b8e9b74e40844276eedf8ed70921aad8"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_sandstone_pillar.webp",
+      "bytes": 13610,
+      "sha256": "023aa54d10cb06afea4c98c09bda059a673e69e724eb465ec3838842f240291d"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_shore_south_alt.webp",
+      "bytes": 13614,
+      "sha256": "e00abb82268aeaf14d6623f928fd7b0d9a8a702162d6779c852e7afef76b03e2"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_ice_end_east.webp",
+      "bytes": 13628,
+      "sha256": "d1081e91bef7c91eb41a6cd34bc97feab837aa24bb996c2c2c3f41c4d8ab26cf"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_shore_east_alt.webp",
+      "bytes": 13670,
+      "sha256": "3ea3d148c1b213b62747fa3a3ccd71104d792dd4af362c0d7d3fefb9c9f13741"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/cathedral_seal_broken.webp",
+      "bytes": 13848,
+      "sha256": "9d69947637cc61728414085faab5b3b44f3810639cedaa74440af353a2a4f127"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_rock_south.webp",
+      "bytes": 13864,
+      "sha256": "658962d3995105b94098010b642b6317477e2286e64ede934348935b31834bf2"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act2_boardwalk_y.webp",
+      "bytes": 13908,
+      "sha256": "016aee3dcf5fc38f5c5fb803d58fc3ec019fb8b7804034719a64c7f2264b52e9"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_ash_inner.webp",
+      "bytes": 14174,
+      "sha256": "2a65b3e32052f4d0866a319220ced7ec6165067ae9290ca6c3a420690c15d421"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1polish_boulders.webp",
+      "bytes": 14550,
+      "sha256": "349cdca3fab685a699fbef955a3c9c21c2ce19ca3be71e33b3861cbed8c4f5d9"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act2_boardwalk_x.webp",
+      "bytes": 14690,
+      "sha256": "d5c35b784b0fabeaa2bfc0ea7c8a7fe95de27aa8f03ae9609e302081812cdaf5"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2visual_pier.webp",
+      "bytes": 14836,
+      "sha256": "a012591716c44eab63be6d0a8fa36f3bfd3dc82e7bf0a4b1a1eff6368cde3a15"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_masonry_broken_east.webp",
+      "bytes": 14896,
+      "sha256": "c8c152c083e432b35d723b30fb601a0356223aa051920bed23befe3e3b6a9233"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_throne_end_south.webp",
+      "bytes": 14986,
+      "sha256": "e71fb497a2ce3f2b8986aee4868e5a28cf5333f3d2fd962d109ffe5ba3704aa7"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_biome_pillar.webp",
+      "bytes": 15084,
+      "sha256": "dc509573fb2b66e1e9acb7d5a66130e584058bfb6163dc1b16a62c858c0097da"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_broken_east.webp",
+      "bytes": 15384,
+      "sha256": "3a4d97698739cdb0c5f9e951c9f99a5343e7c2bd24ff5a1bb8027494ffddcce9"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1polish_standing_stone.webp",
+      "bytes": 15434,
+      "sha256": "46af6847b657d04078a6fc1ec87222ae3b074a3ac7b358059fcafcee371f374d"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_east_alt.webp",
+      "bytes": 15612,
+      "sha256": "ac268057dc2ca001328a6f18b0c48c7a6178b7ef12c1c3189a0dc6887bb7932f"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/cathedral_seal.webp",
+      "bytes": 15716,
+      "sha256": "396029e272791648f58830c91272cf71001718d36de1547c1e831d8a483b6252"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_east_alt.webp",
+      "bytes": 15860,
+      "sha256": "5bf6e1f0eb12bc7c15c609f5effc01dd2e770a70bff8a3993f9a6d70912a62d6"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_ash_end_south.webp",
+      "bytes": 15922,
+      "sha256": "79f5fcf67ce4a3d46cf96e6a0cebdeed737309b727eb72ae12f8cee1e27a00d8"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_bastion_inner.webp",
+      "bytes": 16098,
+      "sha256": "532edab8cb6d4c27e6234cfdd641d083a4ee2ddaab1df0268daafccf75179f7c"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_bastion_outer.webp",
+      "bytes": 16144,
+      "sha256": "5d1e8b2f05373d43a2eb14278168e9152d3d17f40328a3a69b0cfd912cbc652a"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/frontier_tracks.webp",
+      "bytes": 16206,
+      "sha256": "ca6b121e3ad125111f8af7ba972f6014ccab839dbf66693ec2360cb682571e7d"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_broken_south.webp",
+      "bytes": 16218,
+      "sha256": "05af6bc12ba0d6515f49ab306550a90622dcd2df628a066ebf5ebcd59f040f8c"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_east.webp",
+      "bytes": 16296,
+      "sha256": "1d0b0867180c55524931f415469a46d161adf1afecb82eecd84f41d880d44b37"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_broken_south.webp",
+      "bytes": 16302,
+      "sha256": "1727f34ea5cd4708e3b5231df6c7ae47e4cfb0ce704b901063afc98e76d3329e"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_root_end_east.webp",
+      "bytes": 16308,
+      "sha256": "0f80debbbb2c37428d278a0c7a9d04b027e1756e415e26db9eada04ff04a130a"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_east_alt.webp",
+      "bytes": 16310,
+      "sha256": "1ad22136a2e87ed3e87dc4c1c4447861872f37e04fc6e9b6f0abd509020b78d2"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_east.webp",
+      "bytes": 16406,
+      "sha256": "4e6b5cf60fae6b07f45a6492d7e3c2b5cf26d7dc4d85773b1eb25252e22ada82"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_root_east_alt.webp",
+      "bytes": 16504,
+      "sha256": "6b7ae6eaa94998339db48cc0f5e99a7434488482433d83d14286510f7e8003ce"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_south.webp",
+      "bytes": 16634,
+      "sha256": "015b18df7effa14ea6042176924689873515e41d9e0cfc9f92024e11d996d876"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_pale_inner.webp",
+      "bytes": 16690,
+      "sha256": "e83934cb358e61bbd4ca61e19d5618bf88247bf10411501ba500bba7510add68"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/cathedral_column.webp",
+      "bytes": 16740,
+      "sha256": "3df65f576047c5a769e9f0a506339a9140f1101314a22449bb8a28bb9d875144"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_south.webp",
+      "bytes": 16838,
+      "sha256": "b82b94e5b38d2813737eeebf381418ecdb0fcb879791ed6dd2cb73b82c408f7b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_root_south.webp",
+      "bytes": 16892,
+      "sha256": "6dfc74d518f3fe51e70f8c62ac54f6238248ed9411f4fc4c538be0f1aad47e94"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_root_south_alt.webp",
+      "bytes": 16962,
+      "sha256": "8a02e9561e751ca304fdb1fabd56fc34a11a0ecdc78efc740856a526b01e09c9"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_south_alt.webp",
+      "bytes": 17006,
+      "sha256": "c6c6711cfa95904e85516bddab07cc9e35faabd566c1c09db8bea4f594ca19a6"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_broken_east.webp",
+      "bytes": 17098,
+      "sha256": "421bd6855d0ffc7321254e2d15c8cc863f223459df32663b73f59223d01b5053"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_south_alt.webp",
+      "bytes": 17136,
+      "sha256": "331d3f90c47ac4835185613fb3ced6727362da7eebeef4b852ec14326954bcc5"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_broken_east.webp",
+      "bytes": 17234,
+      "sha256": "55db5979de59a1f59263ea50d802aee9b98cf7dabc2e3ec37c4e9e767036da8d"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_ash_end_east.webp",
+      "bytes": 17420,
+      "sha256": "3cb1ebc21601d8c3e03eebfda238bb7c840ba9f742c358a73a1991754f9b45dd"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_broken_east.webp",
+      "bytes": 17464,
+      "sha256": "2e85dce29826c8c69523578dade92a16636d3e7817862ce21488133fdfa37d2e"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_root_east.webp",
+      "bytes": 17772,
+      "sha256": "c4be78f876b6b513b3a9e399799f9800c47fd349e7bb45e9cf0c1fb328c74c67"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_south_alt.webp",
+      "bytes": 17848,
+      "sha256": "c89cde3632e8b96ceb443fd8758fbdd712cfcdb508b57c2ac9f59da2bce37897"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_east.webp",
+      "bytes": 17886,
+      "sha256": "1210fec4f8ab3b9e69f02590249ca26e794bfc1c34d9a52f98c3075168fefc2c"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_dark_inner.webp",
+      "bytes": 17912,
+      "sha256": "3274d56dec6fc0cb4478a9956309d8b0991e353689436068ed3f06634a4f7dfb"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_south.webp",
+      "bytes": 18074,
+      "sha256": "9dac36338fb0d89454d7ad41440650eb9c1db31af9c9e3442cfaadbac70ef304"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_root_end_south.webp",
+      "bytes": 18136,
+      "sha256": "b70fcf62294ecd4eb1f967b782e76d7bf79b5c5fe107eaf93e7ca0038b553813"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act2_water_edge.webp",
+      "bytes": 18266,
+      "sha256": "0b28239c1f47b73ec20970e60f1d9dabf00a0684b62a5ce6d60b94e72e1efb17"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_broken_south.webp",
+      "bytes": 18360,
+      "sha256": "99c7b92e0f4903513cfa3f5a9ed8ceef1bda745f69990166d56f93b58adcfeca"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_broken_south.webp",
+      "bytes": 18504,
+      "sha256": "c9d5da073bf1073d2f2d77df84b45dff215a9a749f576bd0ed49134601005218"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_east_alt.webp",
+      "bytes": 18518,
+      "sha256": "35288d27629b125a86ced4607e1c7f9fe1200b672cc42ba8ee946053e5485862"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_masonry_door_south.webp",
+      "bytes": 18688,
+      "sha256": "8499ed42a398f4d3049aff5fabb3beb3b794cafb1daeb76510e1ecc44f3bd8b1"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_east.webp",
+      "bytes": 18778,
+      "sha256": "005cc86fd27242c68747151dc06f739c86443ba1eaf5af80d910c39bbab4a58a"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_paving.webp",
+      "bytes": 18814,
+      "sha256": "c7e084e45d514ec45e6cb8d766016af266282224e1c24b11f5731927adc56759"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_palace_south.webp",
+      "bytes": 18886,
+      "sha256": "f12252ffdd4b83890807bf9ec8fac14ab1613cc81f70d2c7059bda63a81f4a38"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_paving.webp",
+      "bytes": 18894,
+      "sha256": "fcbe3f2cdf7eb15c827456aca9b7a53920b1750884f9965b72d220749fb2dd31"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_tomb_south.webp",
+      "bytes": 18914,
+      "sha256": "591e3393688537c985c31a2494f261f77e9563edd35891e3a963123be4ffbac0"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_paving.webp",
+      "bytes": 19042,
+      "sha256": "85a9e10b5132dcb139318559ff86a277680d0f388b09dce310dd04f6d6b6a65b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_defense_end_east.webp",
+      "bytes": 19042,
+      "sha256": "4226bd471fe8fedca116dc99f3effc78fcbcbe26c2f6ea44f4708dadde3f1c43"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_ice_broken.webp",
+      "bytes": 19138,
+      "sha256": "18a051ac37b880951cbd56e883b04ad2372ee28f3da817d20e21621b3c9cf011"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sandstone_foundation.webp",
+      "bytes": 19172,
+      "sha256": "e6e7a1a398abca10e6c581d5c40e683f2e7fc9d2826b7a0ce724a9bbda19e5eb"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_masonry_south_alt.webp",
+      "bytes": 19372,
+      "sha256": "2aa0838924c2b402a969b32af56a38d6c9f480807e1e9aeaba9f005bb5026ab0"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_tomb_foundation.webp",
+      "bytes": 19496,
+      "sha256": "684c861dd5fc300852792b4b8eec1a43758f4b88da68ab64e82c613d137c2369"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_south.webp",
+      "bytes": 19562,
+      "sha256": "65ce0805057a0dc9fd20be880e2cc0b49a8ea70ba47545e26fea60b83b96271a"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_south_alt.webp",
+      "bytes": 19750,
+      "sha256": "d0d2afb3d3110152e02d29cd650434a8a158dfe1bdcb546535d1240adcdb6477"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_bastion_end_south.webp",
+      "bytes": 19896,
+      "sha256": "1062c1628730ee521960dcc33b5f30a38d03faec8e36cfe96b80565889b2226f"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_masonry_end_south.webp",
+      "bytes": 19930,
+      "sha256": "058937aea0e8374dc25882ecf659794414b1ee610518c5eb8c27b0f50d610eeb"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_paving.webp",
+      "bytes": 19932,
+      "sha256": "06728ba46616a3d3950cba1649b754f6cebd9bc52f14b754ad5621d340c257d4"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_dark_outer.webp",
+      "bytes": 19942,
+      "sha256": "8be4b6591eff53a59c7ed88a7d4fa09cdb8637f447dbad9d8b06f008af9b215d"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_palace_foundation.webp",
+      "bytes": 19962,
+      "sha256": "7b01aec77919eedb12b9d9f78ef8e9713dca7e26e1d0d4fa24d72e50879b3a32"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/hellgate_tower.webp",
+      "bytes": 19990,
+      "sha256": "704ae3d85932cc3378228b3577eea0ea76744f0e936e5e8691719308020c0089"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a3env_sovereign_foundation.webp",
+      "bytes": 20000,
+      "sha256": "3026046f6d4d8160bce7e5107b6c7fd5b432e25dbe735c9c32e59ad74fbf9dfc"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_masonry_south.webp",
+      "bytes": 20020,
+      "sha256": "ffc37b7387c04fff5453dcb47ae404841e2870b15ab6fc672fc2467ba39b94d4"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/khalcamp_tower.webp",
+      "bytes": 20038,
+      "sha256": "777ca8a403d5f3ca6ed70de06ed992e49dcfd8f61ddb6489ff9fd1420b6e609d"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_defense_end_south.webp",
+      "bytes": 20170,
+      "sha256": "cb5dd76fc35d7f8755f574a08b9ec44cca9176e32bcd1ff4606dcde14ac77590"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_palace_east.webp",
+      "bytes": 20332,
+      "sha256": "9d01d27535432f58f0929edf01b0cc8a89428fbaf684a26a2538fd6080fbfa5a"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_bastion_end_east.webp",
+      "bytes": 20448,
+      "sha256": "cb125a2b28c7087eef96d8a6c8fc066018037ec26e2c6019eae113ceca8aa928"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_sandstone_south.webp",
+      "bytes": 20480,
+      "sha256": "b30b55acb92a59e3b4ad9ab0bd1be8a3243364bdfa01bbe48d15b928ab6b2021"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/cathedral_parapet.webp",
+      "bytes": 20516,
+      "sha256": "be4465a78c31fd7abb0b146dd9e34bba592c24b30ad8692fe1acc350b8963642"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_pale_outer.webp",
+      "bytes": 20616,
+      "sha256": "edc53150adfa720432aaf336aeca9c137e97b494ff76e873d5965c1aadf5f6c1"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_ash_abutment.webp",
+      "bytes": 20622,
+      "sha256": "3b0a74bb98082bd31fe6902a0d90286b741ca88dcdc79a1352f22c85677ecbd8"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_tomb_east.webp",
+      "bytes": 20668,
+      "sha256": "7802d9b99ef6b78f07061a2738900dc2928d44763c1d1a7718accafaf39e1b18"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_throne_end_east.webp",
+      "bytes": 20762,
+      "sha256": "296691b07c9558ebb4094368fe5a8f4a321d01cf552801ec80f092556a6be9c2"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_masonry_door_east.webp",
+      "bytes": 20786,
+      "sha256": "df21c0b1c734606c0f772f0693b39d90282776fa05554da8fe1ba5b254d2ed38"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/hellgate_dwelling.webp",
+      "bytes": 21038,
+      "sha256": "50ee3dddcd14d8436ff1478ea1bf0583ad7fb17fa4820aa2d6b095b6f5a42eb1"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_bastion_foundation_corner.webp",
+      "bytes": 21064,
+      "sha256": "fb4fdf1bc57417e19d24ed8d1915dca614db464a4b8d7f6a61cb4dcc06a4d827"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/frosthaven_tower.webp",
+      "bytes": 21240,
+      "sha256": "7d6b5d4b0b8f7cf48ce32b469355e364120898157a03b0cf92aaf66cae649ea5"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_ice_ground.webp",
+      "bytes": 21418,
+      "sha256": "035a8aa567a4f7eb9b4f759daa329b761c621ab71c00eb212b9aa7e2be6c88f3"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_shards.webp",
+      "bytes": 21734,
+      "sha256": "0197d7492d99394c7c4c7c99735a94ed9af7d90d39998142866ea235d64e180a"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_masonry_east_alt.webp",
+      "bytes": 21736,
+      "sha256": "503742517306871801385584d01f6f7118bb7976c0ca03d8bd5875e731a012a1"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_masonry_east.webp",
+      "bytes": 21766,
+      "sha256": "e8eef5b0d3232f4a787f747db75953fc5fd6444b5e5e7293def4adb3b9c4d9d0"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_tomb_broken.webp",
+      "bytes": 21782,
+      "sha256": "aac2ec490547b279d38b578fd11415a0288cf0880bc693d145fd3f2e99b2564d"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_ash_foundation_corner.webp",
+      "bytes": 22032,
+      "sha256": "64f1a844f2f6312ea1fdaf877502a0e8ad205874ec69ab08575ad4eceb294e80"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_palace_broken.webp",
+      "bytes": 22052,
+      "sha256": "f62abcfe8c0d509077320f56b031ad9adaf7b5fe092436abbdd0242479284594"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_north_ground.webp",
+      "bytes": 22074,
+      "sha256": "7a7efec43d5fc5c48b23362d7b16b921786a271aa2ed36be9d6a41e36bdeda92"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/town_tower.webp",
+      "bytes": 22250,
+      "sha256": "1c0a0bba04c79c7704a78fe20ab305766ddf43ea2681ffa70279c9adf7fa1359"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2boundary_masonry_end_east.webp",
+      "bytes": 22364,
+      "sha256": "75c93d012bb3ef741512af0a5f3ba8ca62afca89fe56e545f8776ac448d08037"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2threshold_reeds_out_right.webp",
+      "bytes": 22684,
+      "sha256": "3da7d07da474b4d8930882b8baa5333ef2b2986d4f000c17b0e5cd3a25bdc863"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/khalcamp_dwelling.webp",
+      "bytes": 22776,
+      "sha256": "fce754408bad9b828e09fcc845f90dcf3f18a4277d8e08c763882a26376880cc"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2threshold_reeds_out_left.webp",
+      "bytes": 22836,
+      "sha256": "6f378b17a2d2b7241764882962efb818160bb10551812dc6d8a7d5cadada1f8f"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_biome_south.webp",
+      "bytes": 22948,
+      "sha256": "35097acef52452282d13417d75317cff4954da783e78da8d3ea1245ffc553ff6"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_biome_east_alt.webp",
+      "bytes": 23008,
+      "sha256": "ae99b105d76d69f807d9c21be856a7900bd6261a0d323d74f60d998acf683a37"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_north_south.webp",
+      "bytes": 23024,
+      "sha256": "ad1cb44e46b3118474c5aad071345a5ee0709318abda84169c9f6ff02d6dfcab"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_sandstone_east.webp",
+      "bytes": 23092,
+      "sha256": "3f4e8f5761aee3a93fa2c71dcc97151b9637a879f4f4ccf45d43ed10292d954b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_sandstone_broken.webp",
+      "bytes": 23242,
+      "sha256": "a35f84e624b8f908e026a961f175dc8480fed6c8b632ae64553d3659b3edb8b0"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_rock_retaining.webp",
+      "bytes": 23254,
+      "sha256": "183c76c9b1f72d46cf6633b09f867fcfd8131062880b158ab6a1bb5be50bf95b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_north_south_alt.webp",
+      "bytes": 23302,
+      "sha256": "d07e6fe7722d64b415565113a06ec71aa5e951d9dd392a1acde86021ae7f80b0"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4v2_pier_ash.webp",
+      "bytes": 23446,
+      "sha256": "1aa61b3c52a8710fdb7ec996347c07814f056e080a39dd89eccdd59ea5813614"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_north_east_alt.webp",
+      "bytes": 23464,
+      "sha256": "b4978a31fbf359ee53bd49a376f89a0e1f75fb790d5039abcaa56cf99d69c5da"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/cathedral_glass.webp",
+      "bytes": 23766,
+      "sha256": "ba60bdeb6ebd18ae50e1a9754b719de48805433674258cd1ffe66cf8e3717e16"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_mine_ground.webp",
+      "bytes": 23786,
+      "sha256": "d704eb79dc7a70b6cea1d996c5364ed9818001963c535045f23b38f0af87bfcd"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/khalcamp_market.webp",
+      "bytes": 23830,
+      "sha256": "66074e944987500d6fa0da7084100c3a3ef3912decc6013307644af5fa9b3e0e"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/town_market.webp",
+      "bytes": 24054,
+      "sha256": "b614b13a855936a564a3d784eb9fd098b1ea908d099a3e0ea0d9e994ce63d21e"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_temple_ground.webp",
+      "bytes": 24236,
+      "sha256": "86bd9e9210ff3036ed0e9ded8f1da3c4cf425208945bf0905a1462108a93a109"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_arch_rock_outer.webp",
+      "bytes": 24280,
+      "sha256": "f733bc38f00db73364fc0a06be795fc5bc68eff74b560f984543e7e2b9630521"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_biome_east.webp",
+      "bytes": 24284,
+      "sha256": "da163c9ab71ed5c42516f148adbbf035258848bdb2f5dca63d973f48ffefdfcb"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_north_outer.webp",
+      "bytes": 24308,
+      "sha256": "161173b71362809a47f33d3d07d7c358aabed4409b214611585477720b85a296"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_biome_broken_east.webp",
+      "bytes": 24404,
+      "sha256": "48c55a3fcc3b00dc5df1e19b086280f7220bbd4e92497d8f6a308f3a25864944"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_mine_broken.webp",
+      "bytes": 24486,
+      "sha256": "461402f6384f762736ae5ae2b2f67e0741e3c6451f499a0e09e333b30000af8b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_pale_end_east.webp",
+      "bytes": 24650,
+      "sha256": "bcbe08c44f69d5981aee215a3f6644b6f39d642363b3018b67a2fde748708820"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_bastion_end_east.webp",
+      "bytes": 24716,
+      "sha256": "3ac4efd1babdbaf61edb2923729d557be5ed75e5e68a6cfddd84a502985b8dd9"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_pale_end_south.webp",
+      "bytes": 24816,
+      "sha256": "49701339f19284cb26dd41e45a522959d521c7830cdaae5bcd64c61b1621374a"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/khalcamp_workshop.webp",
+      "bytes": 24986,
+      "sha256": "2fad0181d06098a4473c8fea0c551f66433b37abfa206cee3cd15139fe9e4f43"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_north_east.webp",
+      "bytes": 25184,
+      "sha256": "c76600f5465cfa971e208a4ddd1bef7fe195abd1daebfd66936291deb59e5ece"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_pale_abutment.webp",
+      "bytes": 25270,
+      "sha256": "23edf7038b8e0dc3f5abde21578f97678e1991e4a50d55183908a75df9473cc9"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_bastion_end_south.webp",
+      "bytes": 25344,
+      "sha256": "f50d7344c0bd9d25b336d27e7b138673e17660214f0a0650d6827cc7d949d91e"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_biome_broken_south.webp",
+      "bytes": 25356,
+      "sha256": "e3e8ad1dd1ea6c29567a1273639577294629bcda30b203d1540b4f0dd89b59fc"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_biome_south_alt.webp",
+      "bytes": 25356,
+      "sha256": "e3e8ad1dd1ea6c29567a1273639577294629bcda30b203d1540b4f0dd89b59fc"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/frosthaven_dwelling.webp",
+      "bytes": 25418,
+      "sha256": "4cee263fc2689971c7c04c3b4146688fc1db0394fb66fcebe680a5728b98843a"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_town_ground.webp",
+      "bytes": 25618,
+      "sha256": "53fec9c7245d7f46aad79d0861518f94328a1440b9a99b645b301a4f7bd87b4d"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_biome_end_south.webp",
+      "bytes": 25724,
+      "sha256": "bb4d9a73eecc2a9088971e32a11beda2c5f2e377c99cea98c878c4647048bc73"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_north_broken.webp",
+      "bytes": 25768,
+      "sha256": "878174035fadf9add4271bed7818485061a9d486b8a984552273c5f107bfd497"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_relay_disabled.webp",
+      "bytes": 25938,
+      "sha256": "89249c653f8bce0277d1ff8746df78d7046ae9d58a89254897a7c611a0309628"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act2_root_mat.webp",
+      "bytes": 25960,
+      "sha256": "7f7f0836b4ee38041ba547df737f34301ee702cf85664473dbfd3184d3ea8086"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/hellgate_market.webp",
+      "bytes": 25982,
+      "sha256": "642eac148d98e8a6c3e6833aa8f68ca4910429cb484dc1c56219c6517241922e"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_biome_inner.webp",
+      "bytes": 26076,
+      "sha256": "514b6eaabc34952f9f3ae31238df915f7c53cbc459b5436e53fa20e1eb9f26ec"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_dark_end_south.webp",
+      "bytes": 26122,
+      "sha256": "5801d9245f930b638a132c3fb4d3856ed4546106f09079f61eaa787ef9f53a79"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/town_workshop.webp",
+      "bytes": 26130,
+      "sha256": "7eace581d6af1afff1e079840f7fcfdf1b88d7bbee0df41125bf009c1c9fe1a8"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_biome_ground.webp",
+      "bytes": 26174,
+      "sha256": "073ba9b46d4053af8653625059ded8f13879da6d38c5e067f497033a15666bc5"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/marshcamp_market.webp",
+      "bytes": 26248,
+      "sha256": "00d78fff067d5650eb8c0e25ea579fb932b8c80ddd58f3eb013907a4184419ae"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4v2_pier_bastion.webp",
+      "bytes": 26368,
+      "sha256": "1c1422c53497f6ec3b033dd59e4ffbea0113767ccd3f05ed6d7e59818173faae"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_transition_pale.webp",
+      "bytes": 26510,
+      "sha256": "fab66d77c9b8767fa7fd6a5e3c8b52f7f55da866cdc353834f5fcd7f6820a4ff"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_town_outer.webp",
+      "bytes": 26558,
+      "sha256": "12c04e75f786f3e0653eea8bed297a514dcc1f8be1575f8b52b98239e5470fbe"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_transition_ash.webp",
+      "bytes": 26568,
+      "sha256": "edac5492b89128c0b972931e865349933a2df16c4d7053c9261b4640e8d220ce"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_ice_outer.webp",
+      "bytes": 26588,
+      "sha256": "b722dd8c65ce4eef3b09069e7b8750f54ce56d9f5a94b66a375eb74b81694d0d"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_tracks.webp",
+      "bytes": 26652,
+      "sha256": "deaf24dc0d63639fac13411b882b9189d7fe8e240eb4e0a01abe8267f8a692c1"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_town_inner.webp",
+      "bytes": 26736,
+      "sha256": "deb91a55ea40b3633ae938de815b82ee050390f5abd4acbfe8922946aead6424"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_bastion_abutment.webp",
+      "bytes": 26748,
+      "sha256": "b31c02b0635ca074245d16ac8c84bf8f9c5cbf87f0adae34054fe26aef121833"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_biome_outer.webp",
+      "bytes": 26872,
+      "sha256": "8d6125a0cafa25106dcf8da34188cd3b658731d4dd1f2a6e08639659841747b0"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_transition_bastion.webp",
+      "bytes": 27018,
+      "sha256": "9afbbd4cf07e9a1dd0bed52dfc05ac2fd9e7d2d02afa226caecf27b591ac959b"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/marshcamp_dwelling.webp",
+      "bytes": 27028,
+      "sha256": "85b4f2427858d41c097dbd6c1de1ec6f96a822f88b9d145200a86c56297cf258"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_ice_inner.webp",
+      "bytes": 27306,
+      "sha256": "482d35195f92ec212800838543744ab5675f9d9d4cf34c9d72d90965ea7ed84a"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_pale_foundation_corner.webp",
+      "bytes": 27380,
+      "sha256": "46bf1806370a5f955841990b641645235cd2f3de338c77c03c6aeb92a6a718a0"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_temple_broken.webp",
+      "bytes": 27400,
+      "sha256": "c488acdb821b0d7a8501065790b830dd0cfa7d951a657c5a6f8c1d4c253186d9"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_transition_dark.webp",
+      "bytes": 27544,
+      "sha256": "3112ee76a58b12bcd1bfaf18aabc361a9d69c41f27a76902b8d0f4cc84835a79"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_mine_inner.webp",
+      "bytes": 27590,
+      "sha256": "1d144fd4bc8b0ac05a2b48710e38f8dfaefc4118d90c1aafd70e15ec766e19ec"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_dark_end_east.webp",
+      "bytes": 27598,
+      "sha256": "1460a25236244fa34ca9c2eca3c9e8900021586db3ac5c3d8d1ea242c6ebaf4a"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/frosthaven_workshop.webp",
+      "bytes": 27606,
+      "sha256": "67d469d200a400d321a5ed170340303b31b583c06157897d45b982eb01f77480"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/act3_relay_active.webp",
+      "bytes": 27646,
+      "sha256": "9dacaee22adbc16fd064e354408b97542589251c2a65ceebd74512d79f4a4a16"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/frosthaven_market.webp",
+      "bytes": 27686,
+      "sha256": "aebc3ed98f91195c5168b601cf2bf8c6e57efe0e27bf3a80ae2696a7927f4960"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a5env_biome_end_east.webp",
+      "bytes": 27828,
+      "sha256": "cfc2654cfc627e29697303f1c26d90027063b3401c4a35a439c50f5fcde19c90"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2threshold_reeds_in_left.webp",
+      "bytes": 28220,
+      "sha256": "b97d985d943828f7f12bc222fb75e1526d709c47448d63928bc6184a755b8009"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/cathedral_soul_bound.webp",
+      "bytes": 28570,
+      "sha256": "bd038e559b978eb4853a2e7ef2599174f2c57957257f5ec54eccd8bb1ff141af"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a2threshold_reeds_in_right.webp",
+      "bytes": 28710,
+      "sha256": "cd741f00ab104922eee18003332358d818cfd440d9939d4e3550308b0675efe4"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a4env_dark_foundation_corner.webp",
+      "bytes": 28882,
+      "sha256": "a63d21e7e081d4acba54cbea2bf5e65d692a97c8f7fe8ebb31c8f192424d5534"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/marshcamp_workshop.webp",
+      "bytes": 29004,
+      "sha256": "f36049bac925ea433ed4f9582a7618943f8eb50089c9cfeebd6089c519a0134a"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/hellgate_workshop.webp",
+      "bytes": 29016,
+      "sha256": "85ee81c417c7f26a4fc728a2748a818b4d0fc10e661acdfba057930e488aa01c"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/town_dwelling.webp",
+      "bytes": 29372,
+      "sha256": "466355d5c3addfd027f2baeee8aa9790a9ca9f9ff771ab788b6cdbe7f4536618"
+    },
+    {
+      "path": "assets/sprites/packed/world/props/a1env_town_broken.webp",
+      "bytes": 29398,
+      "sha256": "4be57fa679a4e78e461a24da614e678d72b11244aa96479c34a3b691650dbe84"
+    }
+  ]
+}
