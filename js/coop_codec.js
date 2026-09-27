@@ -133,7 +133,9 @@ const CoopCodec=(()=>{
       cache.actors.set(o,row);return row;
     });
     out.terrainEdits=s.map._coopTerrain||{};
-    out.props=cache.props||(cache.props=s.map.props.map(p=>encode(p,true)));
+    // Cooldowns belong in durable area saves, not the presentation stream. A
+    // ticking den must not retransmit the entire prop catalogue every frame.
+    out.props=cache.props||(cache.props=s.map.props.map(p=>{const row=encode(p,true);delete row.spawnCooldown;return row;}));
     cache.campaign||=encode({quests:s.quests,flags:s.flags,shrines:s.shrines,home:s.home,bossBar:s.bossBar,portal:s.portal});
     out.campaign={...cache.campaign}; // The recipient owns its portal projection.
     out.vendorStock=cache.vendorStock||(cache.vendorStock=Object.fromEntries(Object.entries(s.vendorStock).map(([k,a])=>[k,a.map(it=>encode(it,true))])));
@@ -143,6 +145,32 @@ const CoopCodec=(()=>{
   function applyTerrain(map,edits){
     for(const [key,cell]of Object.entries(edits||{})){const [surfaceId,index]=key.split(':').map(Number),surface=TerrainLayers.view(map,surfaceId);if(!cell||!surface||!Number.isInteger(index)||index<0||index>=map.w*map.h)continue;
       surface.blocked[index]=cell[0];surface.walls[index]=cell[1];if(surface.hazard)surface.hazard[index]=cell[2];
+    }
+  }
+  function restoreProps(map,rows=[]){
+    const saved=new Map(rows.map(p=>[p.propId||MapGen.propIdentity(map,p),p]));
+    const fields=['_coopId','broken','breakable','opened','lootable','searched','searchable','corpseConsumed','spent','completed','interact','event','spawnCooldown'];
+    for(const p of map.props){
+      const row=saved.get(p.propId||MapGen.propIdentity(map,p));
+      // A legacy decorative habitat/ambush is a different behavior. In particular,
+      // its old deserted flag must not disable a newly destructible wolf den.
+      if(!row||row.behavior!==p.behavior)continue;
+      for(const field of fields)if(Object.hasOwn(row,field))p[field]=decode(row[field],new Map());
+      if(!p.building&&!p.behavior&&(row.spent||row.completed)&&row.label)p.label=row.label;
+      if(p.broken)PropInteractions.freeTile(map,p);
+    }
+  }
+  function propMonsters(s){
+    return s.monsters.filter(m=>m.sourcePropId&&!m.dead).map(m=>({id:m._coopId,defId:m.defId,sourcePropId:m.sourcePropId,denId:m.denId,x:m.x,y:m.y,surfaceId:m.surfaceId||0,hp:m.hp,maxHp:m.maxHp,name:m.name,packId:m.packId,familyHome:m.familyHome,scaled:!!m._coopScaled}));
+  }
+  function restorePropMonsters(s,rows=[]){
+    for(const row of rows){
+      if(!s.map.props.some(p=>p.propId===row.sourcePropId)||s.monsters.some(m=>m._coopId===row.id)||!DATA.ENEMIES[row.defId])continue;
+      if(!TerrainNavigation.clear(s.map,row.x,row.y,.34,row.surfaceId))continue;
+      TerrainLayers.scope(s.map,row,()=>{
+        const m=new Monster(row.defId,row.x,row.y,{packId:row.packId,familyHome:row.familyHome});
+        Object.assign(m,{_coopId:row.id,sourcePropId:row.sourcePropId,denId:row.denId,hp:row.hp,maxHp:row.maxHp,name:row.name,_coopScaled:row.scaled,aggro:true});s.monsters.push(m);
+      });
     }
   }
   function apply(s,snap,localId,changes=null){
@@ -184,5 +212,5 @@ const CoopCodec=(()=>{
     if(!changes||changes.vendorStock)s.vendorStock=decode(snap.vendorStock,refs);s.time=snap.time;s.partyTime=snap.partyTime??snap.time;s._snapshotAt=performance.now();
     return refs;
   }
-  return {id,encode,decode,register,hero,restoreHero,snapshot,apply,applyTerrain,groups};
+  return {id,encode,decode,register,hero,restoreHero,snapshot,apply,applyTerrain,restoreProps,propMonsters,restorePropMonsters,groups};
 })();

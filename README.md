@@ -25,6 +25,11 @@ drop locations and percentage chances with adjustable level, difficulty and Magi
 Find. The read-only view includes affix tiers and CSV export; see the
 [loot data guide](docs/LOOT_DATA_VIEW.md) for probability definitions and validation.
 
+Browse **[Level Objects](world.html)** for all 36 levels: prop artwork, shrines,
+dens and nests, containers, story objects, architecture and scenery. Choose a
+seed, click the placement map or gallery, and copy the object's code and art
+references before requesting a change. See the [dashboard guide](docs/WORLD_REFERENCE.md).
+
 ## Support development
 The main menu's **[Support the game](https://ko-fi.com/embergrave)** link opens
 Embergrave's Ko-fi page directly in a new tab. On phones, it is under **More**.

@@ -45,6 +45,15 @@ const PropInteractions = (() => {
     const id=EXTRA[f]?'world.props.remains_events':'world.props.act'+act(state.map);
     return {id,index:frames[index],family:f,age,ended};
   }
+  function visualType(pr) {
+    return ((pr.completed||pr.opened||pr.broken)&&pr.visualDone) || pr.visual || pr.visualType || (pr.type==='chest'&&pr.opened?'chest_open':pr.type);
+  }
+  // Resolve identity without loading pixels, shared by gameplay and references.
+  function resolveVisual(pr,state) {
+    const animated=sample(pr,state);if(animated)return {...animated,type:visualType(pr)};
+    const type=visualType(pr),props=DATA.SPRITE_MANIFEST.maps.props;
+    return {id:props[(pr.artZone||state.map.id)+'_'+type]||props[type]||null,index:0,type,family:family(pr)};
+  }
   function sprite(id,index){
     const key=id+':'+index;if(spriteFrames.has(key))return spriteFrames.get(key);
     const raw=SpriteAssets.getFrame(id,index),b=DATA.SPRITE_MANIFEST.entries[id].hitShapes[index].bounds;
@@ -52,11 +61,12 @@ const PropInteractions = (() => {
     spriteFrames.set(key,cropped);return cropped;
   }
   function frame(pr,state){const s=sample(pr,state);return s?sprite(s.id,s.index):null;}
-  function bounds(frame,x,y,flip=false){
-    if(frame.propCrop)return {x:x-(flip?frame.sw-frame.anchorX:frame.anchorX),y:y-frame.anchorY,w:frame.sw,h:frame.sh};
+  function scale(pr){return pr.displayScale||1;}
+  function bounds(frame,x,y,flip=false,scale=1){
+    if(frame.propCrop)return {x:x-(flip?frame.sw-frame.anchorX:frame.anchorX)*scale,y:y-frame.anchorY*scale,w:frame.sw*scale,h:frame.sh*scale};
     const def=DATA.SPRITE_MANIFEST.entries[frame.id],shape=def.hitShapes?.[frame.index];
     const b=shape?.bounds||[0,0,frame.sw,frame.sh];
-    return {x:x+(flip?frame.anchorX-b[2]:b[0]-frame.anchorX),y:y+b[1]-frame.anchorY,w:b[2]-b[0],h:b[3]-b[1]};
+    return {x:x+(flip?frame.anchorX-b[2]:b[0]-frame.anchorX)*scale,y:y+(b[1]-frame.anchorY)*scale,w:(b[2]-b[0])*scale,h:(b[3]-b[1])*scale};
   }
   function prepare(map,seed){
     if(map.propsPrepared)return map;
@@ -135,7 +145,7 @@ const PropInteractions = (() => {
       ((p.x|0)===x&&(p.y|0)===y||p.footprint&&x>=p.footprint.x0&&x<p.footprint.x1&&y>=p.footprint.y0&&y<p.footprint.y1))?1:0;
     if(typeof Coop!=='undefined'&&Coop.active){const i=x+y*map.w;map._coopTerrain={...map._coopTerrain,[(pr.surfaceId??0)+':'+i]:[surface.blocked[i],surface.walls[i],surface.hazard?.[i]||0]};}
   }
-  function sound(pr){return family(pr).startsWith('frozen_')?'propIce':pr.type==='grave'||pr.type==='pillar'?'propStone':pr.type==='urn'?'propCeramic':pr.type==='barrel'||pr.type==='crate'?'barrel':'chest';}
+  function sound(pr){return pr.behavior==='crystal'||family(pr).startsWith('frozen_')?'propIce':pr.behavior==='wolf_den'||pr.type==='grave'||pr.type==='pillar'?'propStone':pr.type==='urn'?'propCeramic':pr.type==='barrel'||pr.type==='crate'?'barrel':'chest';}
   function draw(ctx,pr,state,x,y,options){
     const s=sample(pr,state);if(!s)return false;
     const frames=s.family==='shrine'&&pr.ev?[1,0]:FRAMES[s.family]||EXTRA[s.family],t=clamp(s.age/.32),current=sprite(s.id,s.index);
@@ -156,14 +166,14 @@ const PropInteractions = (() => {
     if(!pulse&&!magic&&!(hover&&ready))return;
     const color=pr.interact==='forge'?'#ffb05c':COLORS[act(state.map)-1];
     ctx.save();
-    if(hover&&ready){ctx.strokeStyle='#e5d4ad';ctx.lineWidth=1;ctx.globalAlpha=.8;ctx.beginPath();ctx.ellipse(x,y+1,23,10,0,0,Math.PI*2);ctx.stroke();}
+    if(hover&&ready){ctx.strokeStyle='#e5d4ad';ctx.lineWidth=1;ctx.globalAlpha=.8;ctx.beginPath();ctx.ellipse(x,y+1,23*scale(pr),10*scale(pr),0,0,Math.PI*2);ctx.stroke();}
     if(magic&&(!pr.spent||pulse>0)){
       ctx.globalCompositeOperation='lighter';ctx.globalAlpha=pulse*.28+(pr.spent?0:.045+.02*Math.sin(state.time*2+(pr.seed||0)));
       const radius=22+pulse*17;ctx.drawImage(glow(color),x-radius,y-34-radius,radius*2,radius*2);
     }
     if(pulse>0){
       ctx.globalCompositeOperation='source-over';
-      const icy=f.startsWith('frozen_'),debris=pr.broken||pr.searched||pr.corpseConsumed;
+      const icy=pr.behavior==='crystal'||f.startsWith('frozen_'),debris=pr.broken||pr.searched||pr.corpseConsumed;
       for(let i=0;i<9;i++){
         const angle=i*2.399+(pr.seed||0),distance=(1-pulse)*(debris?30:19),rise=Math.sin((1-pulse)*Math.PI)*(debris?15:27);
         ctx.globalAlpha=pulse*.7;ctx.fillStyle=icy?'#d8edf0':magic?color:pr.type==='urn'?'#b2a388':'#9c8c75';
@@ -172,5 +182,5 @@ const PropInteractions = (() => {
     }
     ctx.restore();
   }
-  return {act,family,themed,terminal,sample,frame,bounds,prepare,nearRamp,profile,reachable,begin,cancel,update,effect,freeTile,sound,draw,drawEffects,FRAMES,EXTRA,BODY_SITES};
+  return {act,family,themed,terminal,sample,visualType,resolveVisual,frame,scale,bounds,prepare,nearRamp,profile,reachable,begin,cancel,update,effect,freeTile,sound,draw,drawEffects,FRAMES,EXTRA,BODY_SITES};
 })();

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level objects — Embergrave</title>
+<link rel="icon" href="favicon.ico"><link rel="stylesheet" href="css/world-reference.css">
+</head>
+<body>
+<header class="page-header"><div><a class="brand" href="index.html">EMBERGRAVE <span>/ DESIGN REFERENCE</span></a><h1>Level objects</h1><p>Find what fills the world. Know exactly what to change.</p></div><nav aria-label="Related pages"><a href="editor.html">Data editor ↗</a><a href="loot.html">Items & affixes ↗</a><a href="index.html">Game ↗</a></nav></header>
+<div class="workspace">
+<aside class="level-browser" aria-label="Levels"><div class="sidebar-heading"><span class="eyebrow">WORLD DIRECTORY</span><span id="levelCount"></span></div><label class="sr-only" for="levelSearch">Search levels</label><input type="search" id="levelSearch" placeholder="Find a level…"><nav id="levels" aria-label="Choose a level"></nav></aside>
+<main>
+<form id="scenario" class="scenario"><label>World seed<input id="seed" type="number" min="0" max="4294967295" step="1" value="12345" required></label><label>Difficulty<select id="difficulty"><option value="0">Normal</option><option value="1">Nightmare</option><option value="2">Torment</option></select></label><button class="primary" type="submit">Regenerate</button><span class="read-only">READ ONLY · FRESH LEVEL</span></form>
+<p id="status" role="status" aria-live="polite">Loading world references…</p>
+<section aria-labelledby="zoneName"><div class="zone-heading"><div><span id="zoneAct" class="eyebrow"></span><h2 id="zoneName">The world awaits</h2><code id="zoneId"></code></div><div id="summary" class="summary"></div></div><p id="scenarioNote" class="muted"></p></section>
+<section class="map-panel" aria-label="Placement map"><div class="panel-heading"><div><h3>Placement map</h3><span class="muted">Select a marker · drag to pan · scroll to zoom</span></div><div class="map-buttons"><button id="zoomOut" aria-label="Zoom out">−</button><button id="zoomIn" aria-label="Zoom in">+</button><button id="fit">Fit map</button></div></div><div id="mapWrap"><canvas id="map" tabindex="0" aria-label="Object placement map. Use the gallery and instance selector for keyboard access."></canvas><span id="mapReadout">Choose a level</span></div><div class="map-footer"><label><input id="landmarkToggle" type="checkbox"> Landmark labels</label><label><input id="exitToggle" type="checkbox" checked> Entrances & exits</label><span id="mapLegend">● Placed object　◇ Exit　○ Selected</span></div></section>
+<section class="catalog" aria-labelledby="catalogTitle"><div class="catalog-heading"><div><span class="eyebrow">PLACED IN THIS LEVEL</span><h3 id="catalogTitle">Object gallery <span id="resultCount"></span></h3></div><label class="sr-only" for="objectSearch">Search objects</label><input id="objectSearch" type="search" placeholder="Name, ID, family, sprite…"></div><div id="categories" aria-label="Filter categories" class="categories"></div><div id="gallery" class="gallery"></div></section>
+<details class="secondary" id="eventSection"><summary>Can also appear <span id="eventCount"></span></summary><p class="muted">Eligible random world objects, including those absent from this seed. Weights are per event draw, including treasure creatures; they are not per-level spawn chances.</p><div id="events" class="gallery compact"></div></details>
+<details class="secondary" id="materialSection"><summary>Terrain materials <span id="materialCount"></span></summary><p class="muted">Continuous surfaces and overlays. Tile coverage can overlap and is separate from placed-object counts.</p><div id="materials" class="gallery compact"></div></details>
+<details class="secondary" id="diagnostics" hidden><summary>Reference issues</summary><pre id="issues"></pre></details>
+<p class="footnote">Generated directly from the game’s current definitions and data overrides. No hero saves are opened or changed. Decorative environment artwork follows the same assemblies as the game; this map is a placement reference.</p>
+</main>
+<aside id="detail" class="detail" aria-label="Selected object"><div class="detail-empty"><span class="eyebrow">OBJECT REFERENCE</span><h2>Choose an object</h2><p>Select artwork or a map marker to see its identity, placements, and editing references.</p></div></aside>
+</div>
+<script src="js/utils.js"></script><script src="js/data.js"></script><script src="js/data_overrides.js"></script><script src="js/boss_encounters.js"></script><script src="js/sprite_manifest.js"></script><script src="js/sprite_assets.js"></script><script src="js/prop_interactions.js"></script><script src="js/mapgen.js"></script><script src="js/navigation.js"></script><script src="js/level_terrain.js"></script><script src="js/world_reference.js"></script><script src="js/world_reference_view.js"></script>
+</body>
+</html>

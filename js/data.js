@@ -2960,6 +2960,14 @@ DATA.WORLD_SPRITE_SOURCES = {
   prop_a2visual_seal: { src: "assets/sprites_src/gameplay_art/world/props/a2visual_seal.png", raw: true },
   prop_a2visual_pier: { src: "assets/sprites_src/gameplay_art/world/props/a2visual_pier.png", raw: true },
   /* End Act II visual materials v1. */
+  /* Act I habitats artwork. */
+  prop_shardpeak_memorial: { src: "assets/sprites_src/gameplay_art/world/props/shardpeak_memorial.png", raw: true },
+  prop_shardpeak_prayer_flags: { src: "assets/sprites_src/gameplay_art/world/props/shardpeak_prayer_flags.png", raw: true },
+  prop_shardpeak_gatehouse: { src: "assets/sprites_src/gameplay_art/world/props/shardpeak_gatehouse.png", raw: true },
+  prop_shardpeak_windbreak: { src: "assets/sprites_src/gameplay_art/world/props/shardpeak_windbreak.png", raw: true },
+  prop_mine_crystal: { src: "assets/sprites_src/gameplay_art/world/props/mine_crystal.png", raw: true },
+  prop_mine_crystal_broken: { src: "assets/sprites_src/gameplay_art/world/props/mine_crystal_broken.png", raw: true },
+  /* End Act I habitats artwork. */
   /* Act I landscape polish v2. */
   prop_a1polish_fir: { src: "assets/sprites_src/gameplay_art/world/props/a1polish_fir.png", raw: true },
   prop_a1polish_firs: { src: "assets/sprites_src/gameplay_art/world/props/a1polish_firs.png", raw: true },
@@ -3937,6 +3945,9 @@ for(const [zone,ids] of Object.entries({
   throne:['r55_knight','r64_robed','r84_warlord','bone_dragon','r47_skeleton','r66_wraith','r75_wraith'],
 }))DATA.ZONES[zone].spawns=[...new Set([...DATA.ZONES[zone].spawns,...ids])];
 DATA.monsterFamily = id => DATA.MONSTER_FAMILY_BY_ID[id] || null;
+// Mine Shardbound encounter slots are crystal deposits, never ambient/event foes.
+DATA.ZONES.mines.spawns=DATA.ZONES.mines.spawns.filter(id=>DATA.monsterFamily(id)!=='shardbound');
+DATA.ACT1_PROP_RULES={jewelChance:.10,wolfInterval:6,wolfRadius:12,wolfCap:4,denScale:1.75,spiderChance:.40,itemChance:.40};
 DATA.FAMILY_TERRITORIES = {
   north_wild:{watch:'rimebound',mine:'shardbound',watch_beacon:'rimebound',burial_beacon:'rimebound',quarry_beacon:'shardbound',forecourt:'rimebound',caravan:'icefang',overlook:'icefang',shardpeak:'rimebound',deepfreeze:'icefang'},
   mines:{haul:'shardbound',ore:'shardbound',refuge_0:'rimebound',refuge_1:'rimebound',refuge_2:'rimebound',deep:'icefang',cache:'shardbound'},

@@ -43327,6 +43327,26 @@ DATA.SPRITE_MANIFEST = {
       "revision": "f36049bac925",
       "src": "assets/sprites/packed/world/props/marshcamp_workshop.webp"
     },
+    "world.prop.mine_crystal": {
+      "anchor": [
+        42,
+        93
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e6c1d257813c",
+      "src": "assets/sprites/packed/world/props/mine_crystal.webp"
+    },
+    "world.prop.mine_crystal_broken": {
+      "anchor": [
+        42,
+        54
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ca2820083633",
+      "src": "assets/sprites/packed/world/props/mine_crystal_broken.webp"
+    },
     "world.prop.monasterygate": {
       "anchor": [
         50,
@@ -43376,6 +43396,46 @@ DATA.SPRITE_MANIFEST = {
       "kind": "static",
       "revision": "299360b9e1a4",
       "src": "assets/sprites/packed/world/props/scaffold.webp"
+    },
+    "world.prop.shardpeak_gatehouse": {
+      "anchor": [
+        142,
+        203
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "169527a20032",
+      "src": "assets/sprites/packed/world/props/shardpeak_gatehouse.webp"
+    },
+    "world.prop.shardpeak_memorial": {
+      "anchor": [
+        127,
+        157
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "13681f00b299",
+      "src": "assets/sprites/packed/world/props/shardpeak_memorial.webp"
+    },
+    "world.prop.shardpeak_prayer_flags": {
+      "anchor": [
+        114,
+        215
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3118058dfdc0",
+      "src": "assets/sprites/packed/world/props/shardpeak_prayer_flags.webp"
+    },
+    "world.prop.shardpeak_windbreak": {
+      "anchor": [
+        120,
+        186
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "e9124063ab93",
+      "src": "assets/sprites/packed/world/props/shardpeak_windbreak.webp"
     },
     "world.prop.shrine": {
       "anchor": [
@@ -59184,11 +59244,17 @@ DATA.SPRITE_MANIFEST = {
       "marshcamp_tower": "world.prop.marshcamp_tower",
       "marshcamp_verge": "world.prop.marshcamp_verge",
       "marshcamp_workshop": "world.prop.marshcamp_workshop",
+      "mine_crystal": "world.prop.mine_crystal",
+      "mine_crystal_broken": "world.prop.mine_crystal_broken",
       "monasterygate": "world.prop.monasterygate",
       "pillar": "world.prop.pillar",
       "rock": "world.prop.rock",
       "roundhut": "world.prop.roundhut",
       "scaffold": "world.prop.scaffold",
+      "shardpeak_gatehouse": "world.prop.shardpeak_gatehouse",
+      "shardpeak_memorial": "world.prop.shardpeak_memorial",
+      "shardpeak_prayer_flags": "world.prop.shardpeak_prayer_flags",
+      "shardpeak_windbreak": "world.prop.shardpeak_windbreak",
       "shrine": "world.prop.shrine",
       "signpost": "world.prop.signpost",
       "stairs": "world.prop.stairs",

@@ -29,7 +29,8 @@ for(const zone of zones)for(const seed of [1,123,7331]){
     }
   }
   for(const site of m.props.filter(p=>p.familySite)){
-    ok(!site.blocks&&!site.interact,tag+' decorative site');
+    ok(!site.blocks&&!site.interact,tag+' nonblocking habitat');
+    ok(site.behavior==='wolf_den'?site.breakable:!site.breakable,tag+' only wolf habitats are destructible');
     ok(Props.themed(site)&&Props.EXTRA[site.propFamily],tag+' authored habitat art');
     ok(!Props.nearRamp(m,site.x,site.y),tag+' clear ramps');
   }

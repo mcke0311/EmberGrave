@@ -75,7 +75,7 @@ for(const zone of ['north_wild','mines','shattered_temple','shardpeak_shrine','d
  const a=fresh(zone);T.placeEvents(a.map);const first=a.map.props.filter(p=>p.event).map(p=>({type:p.type,x:p.x,y:p.y}));
  T.placeEvents(a.map);ok(JSON.stringify(first)===JSON.stringify(a.map.props.filter(p=>p.event).map(p=>({type:p.type,x:p.x,y:p.y}))),'events duplicated on revisit');
  for(const p of a.map.props.filter(p=>p.event)){
-  ok(a.map.frontier.anchors.events.some(t=>t.x===p.x&&t.y===p.y),'event ignored authored anchor');
+  ok(p.behavior==='wolf_den'?M.denBoundary(a.map).some(t=>t.x===p.x&&t.y===p.y):a.map.frontier.anchors.events.some(t=>t.x===p.x&&t.y===p.y),'event ignored authored anchor or den boundary');
   ok(N.findPath(a.map,a.player,p,{radius:.36}),'event unreachable');
  }
  const b=fresh(zone);T.placeEvents(b.map);ok(JSON.stringify(first)===JSON.stringify(b.map.props.filter(p=>p.event).map(p=>({type:p.type,x:p.x,y:p.y}))),'event placement not seeded');

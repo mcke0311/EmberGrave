@@ -7,6 +7,11 @@ use distinct barrow, den, nest, ritual, infernal sigil and camp silhouettes.
 Town facilities and authored story landmarks retain their recognizable art and
 receive gesture and activation feedback.
 
+Act I also has jewel-bearing mine crystals, larger wolf dens that spawn wolves
+until destroyed, and single-use spider nests. Shardpeak has four exclusive
+mountain landmarks. See [Act I habitats](ACT1_HABITATS.md) for outcomes, art
+sources, persistence, and validation.
+
 `js/prop_interactions.js` owns presentation, placement, gesture timing, anchored
 geometry and contact commits. Map generation, picking, rendering and the existing
 interaction entry point all use it. Animation uses the simulation clock and

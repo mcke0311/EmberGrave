@@ -1,0 +1,144 @@
+{
+  "revision": 1,
+  "method": "built-in-imagegen-alpha-crop-uniform-scale",
+  "sources": {
+    "shardpeak_memorial": {
+      "source": "assets/sprites_src/gameplay_art_authored/act1_habitats/shardpeak_memorial.png",
+      "sourceHash": "a8f365bf5539a40b37dff69bbdcedb35bbbf14c01020bd65c1c3a985f9dfc0cc",
+      "prompt": "assets/sprites_src/gameplay_art_authored/act1_habitats/shardpeak_memorial.prompt.txt",
+      "output": "assets/sprites/packed/world/props/shardpeak_memorial.webp",
+      "outputHash": "13681f00b299ad7c06165087d15204a9e5e5eacf535d3c230275481c364cef35",
+      "size": [
+        255,
+        164
+      ],
+      "anchor": [
+        127,
+        157
+      ],
+      "crop": [
+        101,
+        107,
+        1439,
+        970
+      ],
+      "scale": 0.1905829596412556,
+      "importReport": "assets/sprites_src/gameplay_art_authored/act1_habitats/import.json"
+    },
+    "shardpeak_prayer_flags": {
+      "source": "assets/sprites_src/gameplay_art_authored/act1_habitats/shardpeak_prayer_flags.png",
+      "sourceHash": "727edc56237cfb9fa6e6d551d58655602ce6b2d7b8bfc5a99318ed2c89fcb8be",
+      "prompt": "assets/sprites_src/gameplay_art_authored/act1_habitats/shardpeak_prayer_flags.prompt.txt",
+      "output": "assets/sprites/packed/world/props/shardpeak_prayer_flags.webp",
+      "outputHash": "3118058dfdc0d84a1cf14caa09ed63cdb1c1b2910ab86a0e70d839016a5b81cb",
+      "size": [
+        229,
+        225
+      ],
+      "anchor": [
+        114,
+        215
+      ],
+      "crop": [
+        10,
+        62,
+        1221,
+        1250
+      ],
+      "scale": 0.1893939393939394,
+      "importReport": "assets/sprites_src/gameplay_art_authored/act1_habitats/import.json"
+    },
+    "shardpeak_gatehouse": {
+      "source": "assets/sprites_src/gameplay_art_authored/act1_habitats/shardpeak_gatehouse.png",
+      "sourceHash": "6ae393bcc2fb8ac49e1ab669febd91e13a95355de5f1bfdbb733b16b205285ef",
+      "prompt": "assets/sprites_src/gameplay_art_authored/act1_habitats/shardpeak_gatehouse.prompt.txt",
+      "output": "assets/sprites/packed/world/props/shardpeak_gatehouse.webp",
+      "outputHash": "169527a20032360a9e0be9949e3de022e6f2c32f38b036cbe7e053a1f59d2c61",
+      "size": [
+        285,
+        213
+      ],
+      "anchor": [
+        142,
+        203
+      ],
+      "crop": [
+        2,
+        8,
+        1441,
+        1085
+      ],
+      "scale": 0.19805420430854762,
+      "importReport": "assets/sprites_src/gameplay_art_authored/act1_habitats/import.json"
+    },
+    "shardpeak_windbreak": {
+      "source": "assets/sprites_src/gameplay_art_authored/act1_habitats/shardpeak_windbreak.png",
+      "sourceHash": "9015103dde4f0efdb04776735e7a4a16d6e2f6c80220551a65847219a381fa83",
+      "prompt": "assets/sprites_src/gameplay_art_authored/act1_habitats/shardpeak_windbreak.prompt.txt",
+      "output": "assets/sprites/packed/world/props/shardpeak_windbreak.webp",
+      "outputHash": "e9124063ab938638587effcdc95c8b5ab145cd1c151fa8d7f09f99c84c49cf5d",
+      "size": [
+        240,
+        195
+      ],
+      "anchor": [
+        120,
+        186
+      ],
+      "crop": [
+        60,
+        0,
+        1383,
+        1077
+      ],
+      "scale": 0.181058495821727,
+      "importReport": "assets/sprites_src/gameplay_art_authored/act1_habitats/import.json"
+    },
+    "mine_crystal": {
+      "source": "assets/sprites_src/gameplay_art_authored/act1_habitats/mine_crystal.png",
+      "sourceHash": "d0c7a830c4b2e8eba1ec62b2c7641eaef3e989c730f5100f6e2796f1a0859666",
+      "prompt": "assets/sprites_src/gameplay_art_authored/act1_habitats/mine_crystal.prompt.txt",
+      "output": "assets/sprites/packed/world/props/mine_crystal.webp",
+      "outputHash": "e6c1d257813cb8e6230ddaafc767d3a2c0c6267d3bac3e44e62d49d3159986cc",
+      "size": [
+        85,
+        96
+      ],
+      "anchor": [
+        42,
+        93
+      ],
+      "crop": [
+        142,
+        110,
+        1101,
+        1193
+      ],
+      "scale": 0.0886426592797784,
+      "importReport": "assets/sprites_src/gameplay_art_authored/act1_habitats/import.json"
+    },
+    "mine_crystal_broken": {
+      "source": "assets/sprites_src/gameplay_art_authored/act1_habitats/mine_crystal_broken.png",
+      "sourceHash": "2119e4c491b0e6f545cbcf1e12c5245c636e7904a3b212ddf69dcfb87830d8e7",
+      "prompt": "assets/sprites_src/gameplay_art_authored/act1_habitats/mine_crystal_broken.prompt.txt",
+      "output": "assets/sprites/packed/world/props/mine_crystal_broken.webp",
+      "outputHash": "ca282008363385872e91f4521fb29a274c18a929025515678312ffefa6e0df98",
+      "size": [
+        85,
+        57
+      ],
+      "anchor": [
+        42,
+        54
+      ],
+      "crop": [
+        140,
+        550,
+        1101,
+        1194
+      ],
+      "scale": 0.0886426592797784,
+      "importReport": "assets/sprites_src/gameplay_art_authored/act1_habitats/import.json"
+    }
+  }
+}

@@ -10,7 +10,7 @@ Examples:
 | Family | Territory | Routine |
 | --- | --- | --- |
 | Rimebound Watch | Northern watch-posts, burial grounds, temple halls | Patrol with archers and guardians |
-| Shardbound | Mines, quarries, crystal shrines | Gather around ritual sites |
+| Shardbound | Quarries and crystal shrines outside the Abandoned Mines | Gather around ritual sites |
 | Icefang Pack | Caravan remains, icy narrows, spring approaches | Prowl around a den |
 | Glacial Brood | Ice galleries and shelves | Move around a nest |
 | Silent Choir | Marsh bells, monastery courts | Hold ritual ground |
@@ -38,7 +38,9 @@ demons can notice a rival before noticing the player.
 Family names appear on enemy hover plates. Camps, dens, nests, burial sites
 and ritual props reuse the installed act-specific art. They are nonblocking,
 avoid arrivals and passages, and become deserted when their territory's last
-resident dies. They add no extra loot or respawning monsters.
+resident dies. Act I wolf dens are an exception: larger boundary dens keep
+producing nearby wolves until destroyed. The mine's former Shardbound sites
+are breakable jewel-bearing crystals. See [Act I habitats](ACT1_HABITATS.md).
 
 Reload an existing save to regenerate its regions with the new populations.
 No save conversion is required.

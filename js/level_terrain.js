@@ -133,9 +133,10 @@ const LevelTerrain = (() => {
     // where their translucent edges meet inside a path or hazard pool.
     const soft=canvas(SIDE),p=soft.getContext('2d');p.filter='blur('+blur+'px)';p.drawImage(c,0,0);return soft;
   }
+  const groundMaterialKey=m=>m.act3?.environment?ImperialEnvironment.materialKey(m):m.act2Visual&&(m.outdoor||m.id==='spawn_pools')?'a2visual_moss':m.act1Environment&&m.outdoor?'a1polish_snow':m.cathedral?m.cathedral.materials[m.cathedral.baseMaterial]:m.act3?.ground?'act3_ground_'+m.act3.ground:'level_ground_'+(m.zone.artZone||m.id);
   function build(m,cx,cy){
     const surface=canvas(SIDE),g=surface.getContext('2d');
-    const ox=(cx*CHUNK-PAD)*TILE,oy=(cy*CHUNK-PAD)*TILE,ground=SpriteAssets.maps.props[m.act3?.environment?ImperialEnvironment.materialKey(m):m.act2Visual&&(m.outdoor||m.id==='spawn_pools')?'a2visual_moss':m.act1Environment&&m.outdoor?'a1polish_snow':m.cathedral?m.cathedral.materials[m.cathedral.baseMaterial]:m.act3?.ground?'act3_ground_'+m.act3.ground:'level_ground_'+(m.zone.artZone||m.id)];
+    const ox=(cx*CHUNK-PAD)*TILE,oy=(cy*CHUNK-PAD)*TILE,ground=SpriteAssets.maps.props[groundMaterialKey(m)];
     fill(g,material(ground,0,false,true),ox,oy);
     // Overlapping soft patches break repetition without drawing a tile grid.
     for(let variant=1;variant<(m.act3?.environment||m.act2Visual||m.act1Environment&&m.outdoor?1:4);variant++){
@@ -578,7 +579,7 @@ const LevelTerrain = (() => {
     }
   }
   const imperialMaterial=key=>material(SpriteAssets.maps.props[key],0,false,true);
-  return Object.freeze({beginFrame,drawTile,drawSurfaceTile,drawEnvironmentBackdrop,drawSurface,drawFloor,clipBehind,endFrame,getDiagnostics,imperialMaterial});
+  return Object.freeze({beginFrame,drawTile,drawSurfaceTile,drawEnvironmentBackdrop,drawSurface,drawFloor,clipBehind,endFrame,getDiagnostics,imperialMaterial,groundMaterialKey});
 })();
 
 /* Complete painted Act I sections follow collision contours. */
@@ -595,8 +596,10 @@ const Act1Environment=(()=>{
     g.fillStyle=gradient;g.fillRect(0,0,192,192);
     return shadow={image,sx:0,sy:0,sw:192,sh:80,anchorX:96,anchorY:40};
   }
-  function assembly(m){
-    const env=m.act1Environment;let saved=cache.get(env);if(saved)return saved;
+  function assembly(m,reference){
+    const frame=(kit,part)=>(reference||SpriteAssets.getFrame)(SpriteAssets.maps.props['a1env_'+kit+'_'+part],0);
+    const nature=part=>(reference||SpriteAssets.getFrame)(SpriteAssets.maps.props['a1polish_'+part],0);
+    const env=m.act1Environment;let saved=cache.get(env);if(saved&&!reference)return saved;
     const walls=[],ground=[];
     for(const s of [...env.segments,...(env.facades||[])]){
       if(s.kit==='north')continue;
@@ -607,7 +610,7 @@ const Act1Environment=(()=>{
       const cx=U.isoX(x,y),cy=U.isoY(x,y)-s.height*14;
       const th=s.thresholdId&&m.thresholds.find(t=>t.id===s.thresholdId);
       walls.push({kind:'act1Boundary',d:th?Math.min(x+y+.01,th.x+th.y-.1):x+y+.01,x,y,s,f,wx:U.isoX(fx,fy),wy:U.isoY(fx,fy)-s.height*14,cx,cy});
-      if(s.length>=3)ground.push({f:frame(s.kit,'ground'),x:cx,y:cy,scale:.48});
+      if(s.length>=3)ground.push({f:frame(s.kit,'ground'),x:cx,y:cy,refX:x,refY:y,scale:.48});
     }
     for(const c of env.corners)if(c.kit!=='north'){
       const adjacent=env.segments.filter(s=>s.kit===c.kit&&((s.x===c.x&&s.y===c.y)||(s.x+(s.axis?0:s.length)===c.x&&s.y+(s.axis?s.length:0)===c.y)));
@@ -620,16 +623,16 @@ const Act1Environment=(()=>{
       const th=c.thresholdId&&m.thresholds.find(t=>t.id===c.thresholdId);
       walls.push({kind:'act1Boundary',d:th?Math.min(c.x+c.y,th.x+th.y-.2):c.x+c.y,x:c.x,y:c.y,s:{kit:'north',length:5},f,
         wx:U.isoX(c.x,c.y),wy:U.isoY(c.x,c.y)-c.height*14,cx:U.isoX(c.x,c.y),cy:U.isoY(c.x,c.y)-c.height*14,scale});
-      ground.push({f:contactShadow(),x:U.isoX(c.x,c.y)+15,y:U.isoY(c.x,c.y)-c.height*14,scale});
+      if(!reference)ground.push({f:contactShadow(),x:U.isoX(c.x,c.y)+15,y:U.isoY(c.x,c.y)-c.height*14,scale});
     }
     for(const c of env.dressing){
       if(c.part==='inner')continue;
-      const f=c.part==='lamp'?SpriteAssets.getFrame(SpriteAssets.maps.props.frosthaven_firebowl,0):nature(c.part),scale=c.scale;
+      const f=c.part==='lamp'?(reference||SpriteAssets.getFrame)(SpriteAssets.maps.props.frosthaven_firebowl,0):nature(c.part),scale=c.scale;
       const x=U.isoX(c.x,c.y),y=U.isoY(c.x,c.y)-c.height*14;
       walls.push({kind:'act1Boundary',d:c.x+c.y+.05,x:c.x,y:c.y,s:{kit:env.kit,length:2},f,wx:x,wy:y,cx:x,cy:y,scale});
-      ground.push({f:contactShadow(),x,y,scale:.7});
+      if(!reference)ground.push({f:contactShadow(),x,y,scale:.7});
     }
-    walls.sort((a,b)=>a.d-b.d);saved={walls,ground};cache.set(env,saved);return saved;
+    walls.sort((a,b)=>a.d-b.d);saved={walls,ground};if(!reference)cache.set(env,saved);return saved;
   }
   function drawGround(ctx,m,cam,inView,damage=null){
     if(damage&&damage.length===0)return;
@@ -660,7 +663,7 @@ const Act1Environment=(()=>{
     }
     ctx.globalAlpha=alpha;
   }
-  return Object.freeze({drawGround,append,draw});
+  return Object.freeze({drawGround,append,draw,describe:(m,ref)=>{const a=assembly(m,ref);return EnvironmentReferenceRecords([...a.walls,...a.ground]);}});
 })();
 
 /* Act II uses complete painted modules along classified collision contours.
@@ -675,8 +678,9 @@ const Act2Boundaries=(()=>{
     const ramp=g.createRadialGradient(1,1,0,1,1,1);ramp.addColorStop(0,color);ramp.addColorStop(1,'transparent');
     g.fillStyle=ramp;g.fillRect(0,0,2,2);return image;
   }
-  function assembly(m){
-    let saved=cache.get(m.boundaries);if(saved&&saved.visual===m.act2Visual)return saved;
+  function assembly(m,reference){
+    const getFrame=reference||SpriteAssets.getFrame;
+    let saved=cache.get(m.boundaries);if(saved&&!reference&&saved.visual===m.act2Visual)return saved;
     saved=m.boundaries.segments.map(s=>{
       const kit=s.kit;
       const direction=s.axis?'south':'east';
@@ -685,7 +689,7 @@ const Act2Boundaries=(()=>{
       const part=kit==='masonry'&&s.variant===4&&s.length===3&&!s.axis&&m.id!=='drowned_crypt'?'broken_east':
         kit==='root'&&s.variant===4?'end_'+direction:direction+(s.variant===1||kit==='shore'&&s.axis?'_alt':'');
       const key=kit+'_'+part;
-      const f=SpriteAssets.getFrame(SpriteAssets.maps.props['a2boundary_'+key],0);
+      const f=getFrame(SpriteAssets.maps.props['a2boundary_'+key],0);
       const x=s.x+(s.axis?0:s.length/2),y=s.y+(s.axis?s.length/2:0);
       const fx=s.x+(s.axis?0:1.5),fy=s.y+(s.axis?1.5:0);
       // A long return wall can have its midpoint in front of the doorway even
@@ -696,7 +700,7 @@ const Act2Boundaries=(()=>{
     });
     saved.sort((a,b)=>a.d-b.d);
     saved.banks=[];
-    const f=SpriteAssets.getFrame(SpriteAssets.maps.props.a2boundary_shore_east,0);
+    const f=getFrame(SpriteAssets.maps.props.a2boundary_shore_east,0);
     for(const points of m.boundaries.shorelines)for(let i=1;i<points.length;i++){
       const a=points[i-1],b=points[i],ax=U.isoX(a.x,a.y),ay=U.isoY(a.x,a.y),bx=U.isoX(b.x,b.y),by=U.isoY(b.x,b.y);
       saved.banks.push({x:(ax+bx)/2,y:(ay+by)/2,length:Math.hypot(bx-ax,by-ay),angle:Math.atan2(by-ay,bx-ax),f});
@@ -704,15 +708,15 @@ const Act2Boundaries=(()=>{
     // Sparse, upright growth sits on the blocked side, not on the walking lane.
     for(const s of m.boundaries.segments)if(!m.act2Visual&&s.kit==='shore'&&s.length>=2&&((s.x*7+s.y*13)%11===0)){
       const x=s.x+(s.axis?s.side*.7:s.length/2),y=s.y+(s.axis?s.length/2:s.side*.7);
-      const f=SpriteAssets.getFrame(SpriteAssets.maps.props.act2_reed_clump,0),scale=.32+((s.x+s.y)%3)*.06;
+      const f=getFrame(SpriteAssets.maps.props.act2_reed_clump,0),scale=.32+((s.x+s.y)%3)*.06;
       saved.push({kind:'act2Boundary',d:x+y,x,y,s:{...s,kit:'growth'},f,scale,wx:U.isoX(x,y),wy:U.isoY(x,y),cx:U.isoX(x,y),cy:U.isoY(x,y)});
     }
     for(const d of m.act2Visual?.dressing||[]){
-      const f=SpriteAssets.getFrame(SpriteAssets.maps.props[d.type],0);
+      const f=getFrame(SpriteAssets.maps.props[d.type],0);
       saved.push({kind:'act2Boundary',d:d.x+d.y,x:d.x,y:d.y,s:{kit:'dressing',length:d.type==='a2visual_cypress'?5:1},f,scale:d.scale,flip:d.flip,tree:d.type==='a2visual_cypress',
         wx:U.isoX(d.x,d.y),wy:U.isoY(d.x,d.y),cx:U.isoX(d.x,d.y),cy:U.isoY(d.x,d.y)});
     }
-    saved.visual=m.act2Visual;cache.set(m.boundaries,saved);return saved;
+    saved.visual=m.act2Visual;if(!reference)cache.set(m.boundaries,saved);return saved;
   }
   function paint(ctx,d){
     const {s,f,sx,sy}=d;
@@ -787,7 +791,7 @@ const Act2Boundaries=(()=>{
     }
     ctx.restore();
   }
-  return Object.freeze({drawGround,append,draw,atmosphere});
+  return Object.freeze({drawGround,append,draw,atmosphere,describe:(m,ref)=>{const a=assembly(m,ref);return EnvironmentReferenceRecords([...a.filter(d=>d.s.kit!=='shore'),...(!m.act2Visual?a.banks:[])]);}});
 })();
 
 /* Painted masonry is depth-sorted with actors. Decks are separate surfaces,
@@ -802,7 +806,7 @@ const ImperialArchitecture=(()=>{
     const walls=(m.act3.environment?[]:art.walls).map(wall=>{
       const x=wall.x+(wall.axis?0:wall.length/2),y=wall.y+(wall.axis?wall.length/2:0);
       const a=TerrainSurface.heightAt(m,wall.x-.01,wall.y-.01,0),b=TerrainSurface.heightAt(m,wall.x+.01,wall.y+.01,0);
-      return {kind:'imperialWall',d:x+y,wx:U.isoX(x,y),wy:U.isoY(x,y)-Math.min(a,b)*14,wall,kit:wall.kit||(m.outdoor?'rock':art.kit)};
+      return {kind:'imperialWall',x,y,d:x+y,wx:U.isoX(x,y),wy:U.isoY(x,y)-Math.min(a,b)*14,wall,kit:wall.kit||(m.outdoor?'rock':art.kit)};
     });
     const sockets=new Map();
     for(const d of walls)if(d.kit!=='rock'){
@@ -814,7 +818,7 @@ const ImperialArchitecture=(()=>{
     }
     for(const n of sockets.values())if(n.axes.size===2){
       const z=Math.min(...[-.01,.01].flatMap(dx=>[-.01,.01].map(dy=>TerrainSurface.heightAt(m,n.x+dx,n.y+dy,0))));
-      walls.push({kind:'imperialCap',d:n.x+n.y+.01,wx:U.isoX(n.x,n.y),wy:U.isoY(n.x,n.y)-z*14,kit:n.kit,wall:{length:1}});
+      walls.push({kind:'imperialCap',x:n.x,y:n.y,d:n.x+n.y+.01,wx:U.isoX(n.x,n.y),wy:U.isoY(n.x,n.y)-z*14,kit:n.kit,wall:{length:1}});
     }
     const bridges=[...art.bridges,...(art.terraces||[])].map(bridge=>{
       const v=bridge.terrace?m:m.layers[1],rails=[],supports=[];
@@ -898,7 +902,18 @@ const ImperialArchitecture=(()=>{
     }
     ctx.restore();
   }
-  return {append,draw};
+  function describe(m,ref){
+    const a=assembly(m),rows=[];
+    const add=(type,x,y,surfaceId=0)=>rows.push(Object.freeze({assetId:SpriteAssets.maps.props['act3_arch_'+type],index:0,x,y,surfaceId}));
+    for(const d of a.walls){const w=d.wall;add(d.kit+'_'+(d.kind==='imperialCap'?'pillar':w.broken?'broken':w.axis?'south':'east'),d.x,d.y);}
+    for(const {bridge,rails,supports} of a.bridges){
+      for(const d of rails)add('bridge_parapet',d.x,d.y,bridge.surfaceId??(bridge.terrace?0:1));
+      for(const d of supports)add(m.act3.architecture.kit+'_pillar',d.x,d.y);
+      add('deckmaterial_material',(bridge.lo+bridge.hi)/2,(bridge.y0+bridge.y1)/2,bridge.surfaceId??(bridge.terrace?0:1));
+    }
+    return rows;
+  }
+  return {append,draw,describe};
 })();
 
 /* Act III's connected paintings use registered foundations, never stretched
@@ -918,6 +933,11 @@ const ImperialEnvironment=(()=>{
       mask.addColorStop(0,'white');mask.addColorStop(1,'transparent');g.fillStyle=mask;g.fillRect(0,0,f.sw,f.sh);
     }
     textures.set(id,image);return image;
+  }
+  function inlayKey(m,n){
+    const outdoor=m.outdoor||!!m.settlement,palace=m.id==='khal_palace',tomb=!outdoor&&m.id!=='underground_market'&&!palace;
+    const used=palace&&['audience','throne'].includes(n.id)||m.id==='tomb_sanctum'&&['ossuary','sovereign'].includes(n.id)||m.id==='sand_tombs'&&n.id==='engine'||m.id==='desert_wastes'&&['caravan','palace'].includes(n.id)||m.id==='underground_market'&&n.id==='bazaar';
+    return used?'a3visual_'+(tomb?'eclipse':'sun'):null;
   }
   function decorateFloor(g,m,ox,oy,size,tile,material){
     const outdoor=m.outdoor||!!m.settlement,palace=m.id==='khal_palace',tomb=!outdoor&&m.id!=='underground_market'&&!palace;
@@ -947,8 +967,8 @@ const ImperialEnvironment=(()=>{
     for(const n of m.act3.landmarks){
       const x=n.x*tile,y=n.y*tile,span=Math.min(n.rx||6,n.ry||6)*tile*(outdoor?1.18:1.40);
       if(x+span<ox||x-span>ox+size||y+span<oy||y-span>oy+size)continue;
-      const heroInlay=palace&&['audience','throne'].includes(n.id)||m.id==='tomb_sanctum'&&['ossuary','sovereign'].includes(n.id)||m.id==='sand_tombs'&&n.id==='engine'||m.id==='desert_wastes'&&['caravan','palace'].includes(n.id)||m.id==='underground_market'&&n.id==='bazaar';
-      if(heroInlay){const tex=texture(tomb?'eclipse':'sun',true);g.drawImage(tex,x-span/2,y-span/2,span,span);}
+      const heroInlay=inlayKey(m,n);
+      if(heroInlay){const tex=texture(heroInlay.slice('a3visual_'.length),true);g.drawImage(tex,x-span/2,y-span/2,span,span);}
       // Wind-blown sand collects along the edges, never as a tile per urn.
       if(!palace){
         const r=(outdoor?5:3)*tile,px=x-(n.rx||5)*tile*.65,py=y+(n.ry||5)*tile*.64;
@@ -997,11 +1017,12 @@ const ImperialEnvironment=(()=>{
     else{const mask=g.createLinearGradient(0,f.sh*.65,0,f.sh);mask.addColorStop(0,'white');mask.addColorStop(1,'transparent');g.fillStyle=mask;g.fillRect(0,0,f.sw,f.sh);}
     const result={...f,image,sx:0,sy:0};softFrames.set(key,result);return result;
   }
-  function assembly(m){
-    const e=m.act3.environment;let result=cache.get(e);if(result)return result;
+  function assembly(m,reference){
+    const getFrame=reference||SpriteAssets.getFrame;
+    const e=m.act3.environment;let result=cache.get(e);if(result&&!reference)return result;
     const parts=[],ground=[];
     const add=(list,asset,x,y,extra={})=>{
-      const f=SpriteAssets.getFrame(SpriteAssets.maps.props[asset],0);
+      const f=getFrame(SpriteAssets.maps.props[asset],0);
       const z=TerrainSurface.heightAt(m,Math.max(0,Math.min(m.w-.01,x)),Math.max(0,Math.min(m.h-.01,y)),0);
       list.push({kind:'imperialEnvironment',asset,f,x,y,d:x+y,wx:U.isoX(x,y),wy:U.isoY(x,y)-z*14,...extra});
     };
@@ -1013,12 +1034,12 @@ const ImperialEnvironment=(()=>{
         continue;
       }else{
         const ends=s.connections.map(p=>(joints.get(p.x+':'+p.y)||[]).every(v=>v===s||v.side!==s.side));
-        add(parts,'a3visual_wall_'+s.material,x,y,{span:s.length,f:wallFrame({...s,end0:ends[s.axis?1:0],end1:ends[s.axis?0:1]}),wall:true});
+        add(parts,'a3visual_wall_'+s.material,x,y,{span:s.length,f:reference?getFrame(SpriteAssets.maps.props['a3visual_wall_'+s.material],0):wallFrame({...s,end0:ends[s.axis?1:0],end1:ends[s.axis?0:1]}),wall:true});
       }
     }
     for(const [i,p] of (e.natural||[]).entries()){
       const dune=p.material==='dune';if(dune&&i%3===1)continue;
-      const asset='a3env_'+p.material+'_'+p.part,f=softNatural(SpriteAssets.getFrame(SpriteAssets.maps.props[asset],0),dune);
+      const asset='a3env_'+p.material+'_'+p.part,f=reference?getFrame(SpriteAssets.maps.props[asset],0):softNatural(getFrame(SpriteAssets.maps.props[asset],0),dune);
       add(dune?ground:parts,asset,p.x,p.y,{natural:true,span:5,scale:p.scale*(dune?1.7:1.04),f});
     }
     for(const t of e.passages){
@@ -1027,7 +1048,7 @@ const ImperialEnvironment=(()=>{
       add(parts,asset,o.x,o.y,{span:o.halfWidth*2,passage:t});
     }
     for(const f of e.foundations)add(ground,f.asset,f.x,f.y,{scale:f.scale*.75});
-    result={parts,ground};cache.set(e,result);return result;
+    result={parts,ground};if(!reference)cache.set(e,result);return result;
   }
   function drawGround(ctx,m,cam,inView,damage=null){
     if(damage&&damage.length===0)return;
@@ -1062,7 +1083,7 @@ const ImperialEnvironment=(()=>{
     else SpriteAssets.drawFrame(ctx,f,d.sx,d.sy,{scale:s});
     ctx.globalAlpha=alpha;
   }
-  return Object.freeze({materialKey,decorateFloor,drawGround,append,draw});
+  return Object.freeze({materialKey,decorateFloor,drawGround,append,draw,describe:(m,ref)=>{const a=assembly(m,ref);return [...EnvironmentReferenceRecords([...a.parts,...a.ground]),...m.act3.landmarks.filter(n=>inlayKey(m,n)).map(n=>Object.freeze({assetId:SpriteAssets.maps.props[inlayKey(m,n)],index:0,x:n.x,y:n.y}))];}});
 })();
 /* Complete painted Act V modules. Assembly is cached by map metadata; only
    visible upright pieces enter the actor depth list. No stretched wall faces. */
@@ -1071,8 +1092,9 @@ const CindersBoundaries=(()=>{
   const batchImages=new Map();let batchPixels=0,batchFrame=0,batchBuilds=0,lastBatches=0,lastIndividuals=0;
   const MAX_BATCH_PIXELS=12_000_000;
   const frame=(kit,part)=>SpriteAssets.getFrame(SpriteAssets.maps.props['a5env_'+kit+'_'+part],0);
-  function assembly(m){
-    const env=m.act5Environment;let saved=cache.get(env);if(saved)return saved;
+  function assembly(m,reference){
+    const frame=(kit,part)=>(reference||SpriteAssets.getFrame)(SpriteAssets.maps.props['a5env_'+kit+'_'+part],0);
+    const env=m.act5Environment;let saved=cache.get(env);if(saved&&!reference)return saved;
     const walls=[],ground=[];
     function piece(s,part,x,y,span,scale=1,crop=0){
       const f=frame(s.kit,part),wx=U.isoX(x,y),wy=U.isoY(x,y)-(s.height||0)*14;
@@ -1088,7 +1110,7 @@ const CindersBoundaries=(()=>{
         const part=s.variant===2?'broken_'+dir:s.variant%2?dir+'_alt':dir;
         // Broad, low slopes belong to the cached terrain. Only the taller
         // boulder clusters below need per-frame depth sorting and fading.
-        ground.push({f:frame(s.kit,part),x:U.isoX(x,y),y:U.isoY(x,y)-s.height*14,scale:.95+(s.variant%3)*.08});
+        ground.push({f:frame(s.kit,part),x:U.isoX(x,y),y:U.isoY(x,y)-s.height*14,refX:x,refY:y,scale:.95+(s.variant%3)*.08});
         continue;
       }
       const span=short?3:natural?4:6;
@@ -1105,8 +1127,9 @@ const CindersBoundaries=(()=>{
       piece(c,'pillar',c.x,c.y,1.4,.9);
     }
     for(const s of env.dressing)piece(s,s.part,s.x,s.y,3,s.scale);
-    for(const d of env.ground)ground.push({f:frame(d.kit,'ground'),x:U.isoX(d.x,d.y),y:U.isoY(d.x,d.y)-(d.height||0)*14,scale:d.scale});
+    for(const d of env.ground)ground.push({f:frame(d.kit,'ground'),x:U.isoX(d.x,d.y),y:U.isoY(d.x,d.y)-(d.height||0)*14,refX:d.x,refY:d.y,scale:d.scale});
     walls.sort((a,b)=>a.d-b.d);
+    if(reference)return {walls,ground};
     const depthBands=new Map(),bands=[];
     for(const d of walls){const key=Math.floor(d.d/6);if(!depthBands.has(key))depthBands.set(key,[]);depthBands.get(key).push(d);}
     for(const members of depthBands.values()){
@@ -1208,7 +1231,7 @@ const CindersBoundaries=(()=>{
     }else ctx.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,sx-f.anchorX*s,sy-f.anchorY*s,f.sw*s,f.sh*s);
     ctx.globalAlpha=alpha;
   }
-  return Object.freeze({drawGround,append,merge,draw,getDiagnostics:()=>({batchPixels,batchBuilds,mergedPixels,mergedBuilds,lastBatches,lastIndividuals})});
+  return Object.freeze({drawGround,append,merge,draw,describe:(m,ref)=>{const a=assembly(m,ref);return EnvironmentReferenceRecords([...a.walls,...a.ground]);},getDiagnostics:()=>({batchPixels,batchBuilds,mergedPixels,mergedBuilds,lastBatches,lastIndividuals})});
 })();
 
 /* Act IV painted assemblies. Collision remains in the map's floor/void grids.
@@ -1239,6 +1262,11 @@ const CathedralEnvironment=(()=>{
       }
     }
     textures.set(key,c);return c;
+  }
+  function inlayKey(m,n){
+    const kit=kits[n.material],ash=kit==='ash';
+    const used=!ash&&(n.id==='sanctuary'||n.id==='nave'||n.id.startsWith('ritual')||n.id==='karrhal')||ash&&(n.id==='flank'||n.id==='sanctuary');
+    return used?'inlay_'+kit:null;
   }
   function decorateFloor(g,m,ox,oy,size,tile){
     const c=m.cathedral;
@@ -1300,9 +1328,9 @@ const CathedralEnvironment=(()=>{
       }
       // Reserve the large mosaic for the actual boss arena. Smaller chapel
       // roundels leave clear stone between combatants and room boundaries.
-      const medallion=!ash&&(n.id==='sanctuary'||n.id==='nave'||n.id.startsWith('ritual')||n.id==='karrhal')||ash&&(n.id==='flank'||n.id==='sanctuary');
+      const medallion=inlayKey(m,n);
       if(medallion){
-        const diameter=(n.id==='sanctuary'&&!m.zone.memoryParent?15:n.id==='nave'?10:7)*tile,r=diameter/2,tex=texture('inlay_'+kit);
+        const diameter=(n.id==='sanctuary'&&!m.zone.memoryParent?15:n.id==='nave'?10:7)*tile,r=diameter/2,tex=texture(medallion);
         g.save();g.beginPath();g.arc(x,y,r,0,Math.PI*2);g.clip();
         g.drawImage(tex,tex.width*.09,tex.height*.09,tex.width*.82,tex.height*.82,x-r,y-r,diameter,diameter);g.restore();
         g.strokeStyle='rgba(20,27,32,.8)';g.lineWidth=6;g.beginPath();g.arc(x,y,r+3,0,Math.PI*2);g.stroke();
@@ -1336,10 +1364,11 @@ const CathedralEnvironment=(()=>{
     }
     g.restore();
   }
-  function assembly(m){
+  function assembly(m,reference){
+    const frame=key=>(reference||SpriteAssets.getFrame)(SpriteAssets.maps.props['a4v2_'+key],0);
     const b=m.cathedral.environment;let saved=cache.get(b);
-    if(saved&&saved.revision===b.revision)return saved;
-    const floor=new Path2D(),faces=[],walls=[],crags=[],piers=new Set();
+    if(saved&&!reference&&saved.revision===b.revision)return saved;
+    const floor=reference?{moveTo(){},lineTo(){},closePath(){}}:new Path2D(),faces=[],walls=[],crags=[],piers=new Set();
     const kits=['pale','dark','ash','bastion'];
     for(const contour of b.contours||[]){
       // A simplified edge can cross a chamber and its bridge. Split at room
@@ -1415,7 +1444,7 @@ const CathedralEnvironment=(()=>{
       }
     }
     faces.sort((a,b)=>a.left.sy+a.right.sy-b.left.sy-b.right.sy);
-    saved={revision:b.revision,floor,faces,walls,crags};cache.set(b,saved);return saved;
+    saved={revision:b.revision,floor,faces,walls,crags};if(!reference)cache.set(b,saved);return saved;
   }
   function clipFloor(ctx,m,cam){ctx.translate(-cam.x,-cam.y);ctx.clip(assembly(m).floor);ctx.translate(cam.x,cam.y);}
   function depth(x,y){return 204+31*Math.sin(x*.013+y*.008)+19*Math.sin(x*.029-y*.012);}
@@ -1564,5 +1593,24 @@ const CathedralEnvironment=(()=>{
     }
     ctx.restore();
   }
-  return Object.freeze({decorateFloor,drawGround,clipFloor,drawRim,append,draw,drawBackdrop,atmosphere});
+  function describe(m,ref){
+    const a=assembly(m,ref),rows=[];
+    const add=(key,sx,sy)=>rows.push(Object.freeze({assetId:SpriteAssets.maps.props['a4v2_'+key],index:0,x:U.unisoX(sx,sy),y:U.unisoY(sx,sy)}));
+    for(const d of a.walls){
+      const key=(d.door?'door_':d.pier?'pier_':'wall_')+d.kit;
+      add(key,d.wx+d.span/2,d.wy+(d.door||d.pier?d.door?d.span/4:0:d.span*d.slope/2));
+    }
+    for(const d of a.faces)add('cliff_'+d.kit,(d.left.sx+d.right.sx)/2,(d.left.sy+d.right.sy)/2);
+    for(const d of a.crags)add('crag_'+d.kit,d.x,d.y);
+    for(const n of m.cathedral.rooms)if(inlayKey(m,n))add(inlayKey(m,n),U.isoX(n.x,n.y),U.isoY(n.x,n.y));
+    return rows;
+  }
+  return Object.freeze({decorateFloor,drawGround,clipFloor,drawRim,append,draw,drawBackdrop,atmosphere,describe});
 })();
+
+// Detached, read-only records for developer references. Rendering keeps its caches.
+function EnvironmentReferenceRecords(draws){
+  return draws.filter(d=>d.f?.id).map(d=>Object.freeze({assetId:d.f.id,index:d.f.index||0,
+    x:d.refX??d.x,y:d.refY??d.y,surfaceId:d.surfaceId||0,scale:d.scale||1,
+    part:d.s?.kit||d.kit||null}));
+}

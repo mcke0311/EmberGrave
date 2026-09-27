@@ -27,7 +27,7 @@ const CoopRuntime=(()=>{
     C.register(w);
     return {props:w.map.props.map(p=>C.encode(p,true)),terrainEdits:structuredClone(w.map._coopTerrain||{}),terrain:C.encode(Object.fromEntries(['blocked','walls','hazard'].map(k=>[k,w.map[k]]))),
       dead:[...new Set([...(campaign.areas[w.worldId]?.dead||[]),...w.monsters.filter(m=>m.dead).map(m=>m._coopId)])],
-      monsters:w.monsters.filter(m=>!m.bossOwner).map(m=>({id:m._coopId,hp:m.hp,maxHp:m.maxHp,dead:m.dead})),
+      monsters:w.monsters.filter(m=>!m.bossOwner&&!m.sourcePropId).map(m=>({id:m._coopId,hp:m.hp,maxHp:m.maxHp,dead:m.dead})),propMonsters:C.propMonsters(w),
       ground:w.ground.map(g=>({...C.encode(g,true),item:g.item?{...Game.serializeItem(g.item),netId:g.item._coopId}:null})),partySize:w.map._coopSize||1};
   });}
   function getWorld(zone,p){
@@ -40,9 +40,10 @@ const CoopRuntime=(()=>{
       if(old){
         if(old.terrain)Object.assign(w.map,C.decode(old.terrain,new Map()));
         if(old.terrainEdits){w.map._coopTerrain=structuredClone(old.terrainEdits);C.applyTerrain(w.map,old.terrainEdits);}
-        w.map.props.forEach((p,i)=>{if(old.props?.[i])Object.assign(p,C.decode(old.props[i],new Map()));});
+        C.restoreProps(w.map,old.props);
         for(const m of w.monsters){if(old.dead?.includes(m._coopId)){m.dead=true;m.hp=0;m.corpseT=0;}else{const row=old.monsters?.find(r=>r.id===m._coopId);if(row&&!m.isBoss){m.hp=row.hp;m.maxHp=row.maxHp;m._coopScaled=true;}}}
         w.ground=(old.ground||[]).map(g=>({...C.decode(g,new Map()),item:g.item?Object.assign(Game.reviveItem(g.item),{_coopId:g.item.netId}):null}));
+        C.restorePropMonsters(w,old.propMonsters);
       }
       w._activated=!!old;if(w._activated)scale(w);C.register(w);
     });return w;

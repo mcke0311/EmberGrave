@@ -1743,7 +1743,8 @@ const MapGen = (() => {
       if(!placement)throw Error('No safe landmark footprint: '+zoneId+'/'+n.id);
       const {x,y,footprint,cells}=placement;
       for(const [xx,yy] of cells){setWall(m,xx,yy,0);block(m,xx,yy);m.elev[idx(m,xx,yy)]=baseAt(xx,yy);}
-      const pr=addProp(m,n.art,x,y,{artZone:'frontier',blocks:true,footprint,building:true,landmarkId:n.id});
+      const peakArt=zoneId==='shardpeak_shrine'&&({memorial:['memorial','Ice-carved Memorial'],pilgrim_stones:['prayer_flags','Prayer-flag Posts'],tollhouse:['gatehouse','Ruined Mountain Gatehouse'],shelter:['windbreak','Stone Windbreak Shelter']})[n.art];
+      const pr=addProp(m,peakArt?peakArt[0]:n.art,x,y,{artZone:peakArt?'shardpeak':'frontier',blocks:true,footprint,building:true,landmarkId:n.id,...(peakArt?{label:peakArt[1]}:{})});
       m.buildings.push(pr);f.reserved.push({...footprint,kind:'architecture',landmarkId:n.id});
       n.footprint=footprint;addLight(m,x+1,y+2,c.outdoor?5:6,'#ffb775');
     }
@@ -1791,6 +1792,16 @@ const MapGen = (() => {
     const combat=f.landmarks.filter(n=>n.id!=='entry'&&n.id!==c.bossNode);
     for(let k=0;k<c.packs;k++){
       const n=combat[k%combat.length],elite=c.rewards.includes(n.id)&&k<combat.length;
+      if(zoneId==='mines'&&DATA.FAMILY_TERRITORIES.mines[n.id]==='shardbound'){
+        const random=U.rng(seed^U.hash('mine-crystal:'+k));let point=null;
+        for(let attempt=0;attempt<200&&!point;attempt++){
+          const x=Math.floor(n.x+(random()-.5)*(n.rx*2-4))+.5,y=Math.floor(n.y+(random()-.5)*(n.ry*2-4))+.5;
+          if(safe(x,y)&&!m.props.some(p=>Math.hypot(x-p.x,y-p.y)<2)&&!f.anchors.survivors.some(p=>Math.hypot(x-p.x,y-p.y)<3))point={x,y};
+        }
+        if(!point)throw Error('No safe mine crystal position: '+k);
+        addProp(m,'mine_crystal',point.x,point.y,{blocks:false,breakable:true,behavior:'crystal',visualDone:'mine_crystal_broken',label:'Jewel-bearing Crystal',landmarkId:n.id,propId:'mines:crystal:'+k});
+        f.encounters.push({landmarkId:n.id,role:'crystal',spawns:[]});continue;
+      }
       const members=DATA.familyMembers(zoneId,n,r),type=members[0];
       const def=DATA.ENEMIES[type],count=def.pack?U.riR(r,def.pack[0],def.pack[1]):U.riR(r,2,4),anchor={x:n.x+(k%2?4:-1),y:n.y+(k%3?2:5)};
       const group={landmarkId:n.id,role:'family',elite,spawns:[]};
@@ -3809,6 +3820,52 @@ const MapGen = (() => {
     if(m.surfaceVersion)TerrainSurface.rebuild(m);
     m.hasElev=m.elev.some(v=>v>0);bakeMinimap(m);return m;
   }
+  const denEdges=new WeakMap();
+  function denBoundary(map){
+    if(denEdges.has(map))return denEdges.get(map);
+    // Only walls connected to the outside qualify; pillars and enclosed islands do not.
+    const outside=new Uint8Array(map.w*map.h),queue=[];
+    const visit=(x,y)=>{const i=x+y*map.w;if(x>=0&&y>=0&&x<map.w&&y<map.h&&map.walls[i]&&!outside[i]){outside[i]=1;queue.push(i);}};
+    for(let x=0;x<map.w;x++){visit(x,0);visit(x,map.h-1);}for(let y=0;y<map.h;y++){visit(0,y);visit(map.w-1,y);}
+    for(let at=0;at<queue.length;at++){const i=queue[at],x=i%map.w,y=Math.floor(i/map.w);visit(x-1,y);visit(x+1,y);visit(x,y-1);visit(x,y+1);}
+    const candidates=[];
+    for(let y=2;y<map.h-2;y++)for(let x=2;x<map.w-2;x++){
+      if(map.blocked[x+y*map.w]||map.hazard[x+y*map.w])continue;
+      let edge=false;for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++)if(dx*dx+dy*dy<=4&&outside[x+dx+(y+dy)*map.w])edge=true;
+      if(edge&&TerrainNavigation.clear(map,x+.5,y+.5,.5))candidates.push({x:x+.5,y:y+.5});
+    }
+    denEdges.set(map,candidates);return candidates;
+  }
+  function denPosition(map,anchor){
+    const composition=map.frontier;
+    const segmentDistance=(p,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,t=Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy||1)));return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy);};
+    for(const p of denBoundary(map).slice().sort((a,b)=>U.dist2(a.x,a.y,anchor.x,anchor.y)-U.dist2(b.x,b.y,anchor.x,anchor.y))){
+      if(U.dist(p.x,p.y,anchor.x,anchor.y)>24)break;
+      if(map.props.some(o=>U.dist(p.x,p.y,o.x,o.y)<3.5)||map.monsterSpawns.some(o=>U.dist(p.x,p.y,o.x,o.y)<2)||
+        Object.values(map.spawns).some(o=>U.dist(p.x,p.y,o.x,o.y)<8)||map.npcs.some(o=>U.dist(p.x,p.y,o.x,o.y)<5)||
+        map.exits.some(e=>p.x>=e.x0-4&&p.x<=e.x1+4&&p.y>=e.y0-4&&p.y<=e.y1+4)||
+        composition?.reserved.some(b=>p.x>b.x0-2&&p.x<b.x1+2&&p.y>b.y0-2&&p.y<b.y1+2)||
+        composition?.routes.some(r=>r.points.some((a,i)=>i&&segmentDistance(p,r.points[i-1],a)<3.2))||
+        typeof PropInteractions!=='undefined'&&PropInteractions.nearRamp(map,p.x,p.y)||
+        map.bossArena&&BossEncounters.insideArena(map.bossArena,p.x,p.y,-3))continue;
+      if(!TerrainNavigation.findPath(map,map.spawns.default,p,{radius:.36,hop:false}))continue;
+      return p;
+    }
+    return null;
+  }
+  function propIdentity(map,p){
+    return map.id+':'+(p.storyId?'story:'+p.storyId:p.remainsSite?'remains:'+p.remainsSite:p.territoryId?'habitat:'+p.territoryId:
+      p.landmarkId&&p.building?'building:'+p.landmarkId:[p.ev?.id||p.type,p.surfaceId||0,p.x,p.y].join(':'));
+  }
+  function identifyProps(map){for(const p of map.props)p.propId ||= propIdentity(map,p);return map;}
+  function eventProp(map,ev,x,y){
+    const p={type:ev.visual||'shrine',x,y,seed:(x*31+y*17)|0,blocks:false,interact:'event',event:true,ev,label:ev.name};
+    if(DATA.ACT1_ZONES.includes(map.id)&&['ev_amb1','ev_amb4'].includes(ev.id)){
+      Object.assign(p,{interact:null,breakable:true,behavior:ev.id==='ev_amb1'?'wolf_den':'spider_nest',propFamily:ev.id==='ev_amb1'?'den':'nest'});
+      if(p.behavior==='wolf_den')Object.assign(p,{displayScale:DATA.ACT1_PROP_RULES.denScale,spawnCooldown:DATA.ACT1_PROP_RULES.wolfInterval});
+    }
+    return p;
+  }
   function settleFamilies(map,seed){
     if(!map.zone.spawns?.length||map.zone.opening||['town','camp'].includes(map.zone.kind))return map;
     const composition=map.frontier||map.act2||map.composition||map.cathedral;
@@ -3836,6 +3893,11 @@ const MapGen = (() => {
     for(const territory of territories.values()){
       const family=DATA.MONSTER_FAMILIES[territory.family],random=U.rng(seed^U.hash(territory.id));
       const propFamily=family.site;
+      if(DATA.ACT1_ZONES.includes(map.id)&&territory.family==='icefang'){
+        const point=denPosition(map,territory);
+        if(point)addProp(map,'family_site',point.x,point.y,{blocks:false,breakable:true,behavior:'wolf_den',propFamily:'den',displayScale:DATA.ACT1_PROP_RULES.denScale,spawnCooldown:DATA.ACT1_PROP_RULES.wolfInterval,seed:U.hash(territory.id),territoryId:territory.id,familySite:territory.family,label:'Wolf Den'});
+        continue;
+      }
       for(let attempt=0;attempt<20;attempt++){
         const a=random()*Math.PI*2,x=territory.x+Math.cos(a)*4.5,y=territory.y+Math.sin(a)*4.5;
         if(!TerrainNavigation.clear(map,x,y,.5)||map.hazard[(x|0)+(y|0)*map.w]||
@@ -3849,9 +3911,47 @@ const MapGen = (() => {
     }
     return map;
   }
+  // Shared with the read-only world reference. Callbacks keep actor creation
+  // and its random calls at the same point in the gameplay event sequence.
+  function placeEvents(map, {seed=0, difficulty=0, random: suppliedRandom, onTreasure}={}) {
+    if (map.cathedral) return; // encounters and rewards have reserved places in these compositions
+    if (map.eventsPlaced) return;                   // events are one-time per map instance — don't re-roll (or re-spawn used shrines) on re-entry
+    map.eventsPlaced = true;
+    map.props = map.props.filter(p => !p.event);
+    const z = map.zone;
+    if (z.kind === "town" || z.kind === "camp" || z.opening) return;
+    const lvl = DATA.effectiveLevel(z.lvl, difficulty);
+    const pool = DATA.EVENTS.filter(e => (e.minLvl || 1) <= lvl + 2);
+    if (!pool.length) return;
+    const composition=map.composition||map.act2||map.frontier;
+    const random=suppliedRandom || (composition?U.rng(seed^U.hash(map.id)^0x77e17):Math.random);
+    const anchors=(composition?.anchors.events||[]).slice();
+    for(let i=anchors.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[anchors[i],anchors[j]]=[anchors[j],anchors[i]];}
+    const count = 1 + (random() < 0.6 ? 1 : 0) + (random() < 0.3 ? 1 : 0);
+    const sp = map.spawns.default || { x: 0, y: 0 };
+    for (let n = 0; n < count; n++) {
+      const ev = U.wpick(pool.map(e => [e, e.weight || 1]),random);
+      let x = 0, y = 0, ok = false;
+      if(composition){const a=anchors[n];if(!a)continue;x=a.x;y=a.y;ok=TerrainNavigation.clear(map,x,y,.4);}
+      for (let tries = 0; !composition && tries < 70 && !ok; tries++) {
+        x = 3 + random() * (map.w - 6); y = 3 + random() * (map.h - 6);
+        if (MapGen.walkable(map, x, y) && U.dist(x, y, sp.x, sp.y) > 9 &&
+            (!map.bossArena || !BossEncounters.insideArena(map.bossArena,x,y,-3))) ok = true;
+      }
+      if (!ok) continue;
+      if(DATA.ACT1_ZONES.includes(map.id)&&ev.id==='ev_amb1'){
+        const point=denPosition(map,{x,y});if(!point)continue;({x,y}=point);
+      }
+      if (ev.kind === "goblin") {
+        onTreasure?.({event:ev, x, y, level:lvl, random});
+      } else {
+        const p=eventProp(map,ev,x,y);p.propId=propIdentity(map,p);map.props.push(p);
+      }
+    }
+  }
   return { generate:(zoneId,seed)=>{
     const map=act5Environment(act1Environment(generateImperial(zoneId,seed),seed),seed);
     settleFamilies(map,seed);
-    return typeof PropInteractions==='undefined'?map:PropInteractions.prepare(map,seed);
-  }, walkable, canStep, elevAt };
+    return identifyProps(typeof PropInteractions==='undefined'?map:PropInteractions.prepare(map,seed));
+  }, placeEvents, eventProp, propIdentity, denBoundary, denPosition, walkable, canStep, elevAt };
 })();

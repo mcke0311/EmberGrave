@@ -1713,42 +1713,15 @@ const Game = (() => {
     return (pools[family]||map.zone.spawns||[]).filter(id=>!DATA.ENEMIES[id].boss);
   }
   function placeEvents(map) {
-    if (map.cathedral) return; // encounters and rewards have reserved places in these compositions
-    if (map.eventsPlaced) return;                   // events are one-time per map instance — don't re-roll (or re-spawn used shrines) on re-entry
-    map.eventsPlaced = true;
-    map.props = map.props.filter(p => !p.event);
-    const z = map.zone;
-    if (z.kind === "town" || z.kind === "camp" || z.opening) return;
-    const lvl = DATA.effectiveLevel(z.lvl, state.difficulty);
-    const pool = DATA.EVENTS.filter(e => (e.minLvl || 1) <= lvl + 2);
-    if (!pool.length) return;
-    const composition=map.composition||map.act2||map.frontier;
-    const random=composition?U.rng(state.seed^U.hash(map.id)^0x77e17):Math.random;
-    const anchors=(composition?.anchors.events||[]).slice();
-    for(let i=anchors.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[anchors[i],anchors[j]]=[anchors[j],anchors[i]];}
-    const count = 1 + (random() < 0.6 ? 1 : 0) + (random() < 0.3 ? 1 : 0);
-    const sp = map.spawns.default || { x: 0, y: 0 };
-    for (let n = 0; n < count; n++) {
-      const ev = U.wpick(pool.map(e => [e, e.weight || 1]),random);
-      let x = 0, y = 0, ok = false;
-      if(composition){const a=anchors[n];if(!a)continue;x=a.x;y=a.y;ok=TerrainNavigation.clear(map,x,y,.4);}
-      for (let tries = 0; !composition && tries < 70 && !ok; tries++) {
-        x = 3 + Math.random() * (map.w - 6); y = 3 + Math.random() * (map.h - 6);
-        if (MapGen.walkable(map, x, y) && U.dist(x, y, sp.x, sp.y) > 9 &&
-            (!map.bossArena || !BossEncounters.insideArena(map.bossArena,x,y,-3))) ok = true;
-      }
-      if (!ok) continue;
-      if (ev.kind === "goblin") {
+    MapGen.placeEvents(map, {seed:state.seed, difficulty:state.difficulty,
+      onTreasure:({event:ev,x,y,level:lvl,random})=>{
         const ids = enemiesByFamily("beast", lvl,{x,y});
         const m = map.act2?Act2EnemyCombat.eventSpawn(ids,x,y,{},[],random):new Monster(U.pickR(random,ids), x, y, {});
-        if(!m)continue;
+        if(!m)return;
         m.flee = true; m.eventDrops = ev.drops || 4; m.name = ev.name; m.tint = ev.color;
         m.def.speed = Math.max(m.def.speed, 3.6) + 1; m.scale *= 0.9; m.spriteOpts.scale = m.scale;
         state.monsters.push(m);
-      } else {
-        map.props.push({ type: ev.visual || "shrine", x, y, seed: (x * 31 + y * 17) | 0, blocks: false, interact: "event", event: true, ev, label: ev.name });
-      }
-    }
+      }});
   }
   function triggerEvent(prop, actor = state.player) {
     if (prop.interact !== "event" || !state.map.props.includes(prop)) return;
@@ -1837,6 +1810,7 @@ const Game = (() => {
   }
   /* Smash once, retaining nonblocking, visibly broken remains for this expedition. */
   function breakProp(prop, actor = state.player) {
+    if(typeof Coop!=='undefined'&&Coop.active&&!Coop.host&&!Coop.committing)return false;
     if (!prop || !prop.breakable || prop.broken) return false;
     const m = state.map, p = actor;
     if (!m.props.includes(prop)||!TerrainLayers.affects(m,prop,p)) return false;
@@ -1844,8 +1818,66 @@ const Game = (() => {
     prop.breakable=false;
     PropInteractions.freeTile(m,prop);PropInteractions.effect(prop,state,'break');
     Sfx.play(PropInteractions.sound(prop));
+    if(prop.behavior){
+      const lvl=DATA.effectiveLevel(m.zone.lvl,state.difficulty),rules=DATA.ACT1_PROP_RULES;
+      prop.interact=null;prop.event=false;prop.spawnCooldown=0;
+      if(prop.behavior==='crystal'){
+        if(Math.random()<rules.jewelChance)scatterDrops([{item:Items.makeJewel(lvl)}],prop.x,prop.y);
+      }else if(prop.behavior==='spider_nest'){
+        const roll=Math.random();
+        if(roll<rules.spiderChance)spawnPropMonster(prop,'crypt_widow');
+        else if(roll<rules.spiderChance+rules.itemChance){
+          const items=Items.rollDrops(lvl,'normal',0,0).filter(d=>d.item?.rarity==='common');
+          // The item branch always pays once, even when the table rolled only
+          // gold, magic items or nothing. Its normal potion pool supplies the fallback.
+          scatterDrops([items.length?U.pick(items):{item:Items.makeConsumable(U.pick(lvl>=5?['hp2','mp2','hp2','rejuv']:['hp1','mp1','hp1']))}],prop.x,prop.y);
+        }
+      }
+      return true;
+    }
     scatterDrops(Items.rollDrops(DATA.effectiveLevel(m.zone.lvl, state.difficulty), "barrel", p.stats.mf, p.stats.goldFind), prop.x, prop.y);
     return true;
+  }
+  function spawnPropMonster(prop,id){
+    const map=state.map,surface=prop.surfaceId??0,radius=.34*(DATA.resolveEnemy(id,map.id).big||1);
+    let point=null;
+    for(const distance of [1.25,1.75,2.25,2.75])for(let k=0;k<16&&!point;k++){
+      const angle=(k+(prop.seed||0)%16)*Math.PI/8,x=prop.x+Math.cos(angle)*distance,y=prop.y+Math.sin(angle)*distance;
+      if(!TerrainNavigation.clear(map,x,y,radius,surface)||map.hazard[(x|0)+(y|0)*map.w]||
+        !TerrainNavigation.segment(map,prop.x,prop.y,x,y,radius,1,surface)||
+        state.monsters.some(m=>!m.dead&&TerrainLayers.same(m,prop)&&U.dist(m.x,m.y,x,y)<m.radius+radius+.15)||
+        (state.players||[state.player]).some(p=>!p.dead&&TerrainLayers.same(p,prop)&&U.dist(p.x,p.y,x,y)<p.radius+radius+.2))continue;
+      point={x,y};
+    }
+    if(!point)return null;
+    return TerrainLayers.scope(map,prop,()=>{
+      const mon=new Monster(id,point.x,point.y,{monsterFamily:DATA.monsterFamily(id),packId:prop.propId,familyHome:{...point,anchorX:prop.x,anchorY:prop.y}});
+      mon.sourcePropId=prop.propId;mon.aggro=true;
+      if(prop.behavior==='wolf_den'){mon.denId=prop.propId;mon.name='Icefang Wolf';}
+      state.monsters.push(mon);return mon;
+    });
+  }
+  function updatePropSpawners(dt){
+    if(typeof Coop!=='undefined'&&Coop.active&&!Coop.host&&!Coop.committing)return;
+    const rules=DATA.ACT1_PROP_RULES,map=state.map;
+    for(const den of map.props){
+      if(den.behavior!=='wolf_den'||den.broken)continue;
+      if(state.monsters.filter(m=>!m.dead&&m.denId===den.propId).length>=rules.wolfCap)continue;
+      const nearby=(state.players||[state.player]).some(p=>{
+        if(p.dead||p.connected===false||!TerrainLayers.same(p,den)||U.dist(p.x,p.y,den.x,den.y)>rules.wolfRadius)return false;
+        // Connectivity is geometric; reuse it while the hero remains in the same tile.
+        const key=[p.x|0,p.y|0,p.surfaceId||0].join(':');
+        const cached=den._reachCache;
+        if(cached?.key===key&&cached.until>state.time)return cached.value;
+        const value=!!TerrainNavigation.findPath(map,p,den,{radius:p.radius||.36,hop:false});
+        den._reachCache={key,value,until:state.time+.5};return value;
+      });
+      if(!nearby)continue;
+      den.spawnCooldown=Math.max(0,(den.spawnCooldown??rules.wolfInterval)-dt);
+      if(den.spawnCooldown>1e-8)continue;
+      // An obstructed entrance retries on the next interval, never queues a wave.
+      den.spawnCooldown=rules.wolfInterval;spawnPropMonster(den,'ice_lurker');
+    }
   }
   /* skills/AoE: shatter every breakable prop within a radius (called from addNova) */
   function breakPropsNear(x, y, radius) {
@@ -2569,9 +2601,9 @@ const Game = (() => {
         if (mouse.x>=sx-anchorX && mouse.x<=sx-anchorX+frame.sw && mouse.y>=sy-frame.anchorY && mouse.y<=sy-frame.anchorY+frame.sh) { hoverProp=pr;return; }
         continue;
       }
-      if(PropInteractions.themed(pr)){
+      if(PropInteractions.themed(pr)||pr.behavior){
         const frame=propSpriteFrame(pr),sx=U.isoX(pr.x,pr.y)-cam.x,sy=U.isoY(pr.x,pr.y)-cam.y-elevLift(pr.x,pr.y,pr.surfaceId);
-        const b=PropInteractions.bounds(frame,sx,sy,!!pr.flipX);
+        const b=PropInteractions.bounds(frame,sx,sy,!!pr.flipX,PropInteractions.scale(pr));
         if(!hidden(pr.x,pr.y)&&mouse.x>=b.x-5&&mouse.x<=b.x+b.w+5&&mouse.y>=b.y-5&&mouse.y<=b.y+b.h+5){hoverProp=pr;return;}
         continue;
       }
@@ -2654,6 +2686,7 @@ const Game = (() => {
     state.time += dt;
     const p = state.player;
     for(const hero of state.players||[p])PropInteractions.update(state,hero);
+    updatePropSpawners(dt);
     opening.update(dt);
     if (!headless && LootFilter.version !== lootFilterVersion) refreshLoot();   // re-apply the filter only when it changed
     /* delayed callbacks */
@@ -4245,15 +4278,12 @@ const Game = (() => {
       return px>=0&&py>=0&&px<frame.sw&&py<frame.sh&&alpha[(px+py*frame.sw)*4+3]>64;
     });
   }
-  function propVisualType(pr) {
-    return ((pr.completed||pr.opened)&&pr.visualDone) || pr.visual || pr.visualType || (pr.type==='chest'&&pr.opened?'chest_open':pr.type);
-  }
+  function propVisualType(pr) { return PropInteractions.visualType(pr); }
   function propSpriteFrame(pr) {
     const animated=PropInteractions.frame(pr,state);if(animated)return animated;
-    const type=propVisualType(pr);
-    const id=SpriteAssets.maps.props[(pr.artZone||state.map.id)+'_'+type]||SpriteAssets.maps.props[type];
-    if(!id)throw Error('Missing prop frame: '+JSON.stringify({zone:state.map.id,type,prop:pr,loading:typeof Coop!=='undefined'&&Coop.loading}));
-    return SpriteAssets.getFrame(id,0);
+    const visual=PropInteractions.resolveVisual(pr,state);
+    if(!visual.id)throw Error('Missing prop frame: '+JSON.stringify({zone:state.map.id,type:visual.type}));
+    return SpriteAssets.getFrame(visual.id,visual.index);
   }
   function drawProp(d) {
     const pr = d.pr;
@@ -4268,11 +4298,11 @@ const Game = (() => {
     const coversHero=pr.building && !pr.interact && p.x+p.y<pr.x+pr.y && Math.abs(dx)<propFrame.sw*.42 && dy>-propFrame.anchorY && dy<0 && (pr.artZone!=='act3'||architectureCovers(propFrame,dx,dy-24-elevLift(p.x,p.y,p.surfaceId)+elevLift(pr.x,pr.y,pr.surfaceId)));
     ctx.save();LevelTerrain.clipBehind(ctx,state.map,camera(),pr.x,pr.y,pr.surfaceId);
     const marshScale=state.map.act2Visual&&pr.artZone==='act2'?(pr.type==='reed_clump'?.32:pr.type==='votives'?.64:1):1;
-    const propOptions={scale:marshScale,flip:mirror,alpha:coversHero?.4:pr.spent&&!PropInteractions.themed(pr)?.6:1};
+    const propOptions={scale:marshScale*PropInteractions.scale(pr),flip:mirror,alpha:coversHero?.4:pr.spent&&!PropInteractions.themed(pr)?.6:1};
     if(!PropInteractions.draw(ctx,pr,state,d.sx,d.sy,propOptions))SpriteAssets.drawFrame(ctx, propFrame, d.sx, d.sy, propOptions);
     PropInteractions.drawEffects(ctx,pr,state,d.sx,d.sy,propFrame,pr===hoverProp);
     ctx.restore();
-    const drawH = PropInteractions.themed(pr)?d.sy-PropInteractions.bounds(propFrame,d.sx,d.sy,mirror).y:propFrame.anchorY;
+    const drawH = d.sy-PropInteractions.bounds(propFrame,d.sx,d.sy,mirror,propOptions.scale).y;
     /* Ambient fire and shrine glows are transient effects layered over sprite art. */
     if (pr.type === "brazier" && !pr.extinguished) {
       const t = state.time * 7 + pr.x;
@@ -4610,7 +4640,7 @@ const Game = (() => {
         if(sp.boss&&(world.flags['dead_'+sp.id+'@0']||world.flags['dead_'+sp.id]))continue;
         const pos=sp.boss?sp:nearestReach(world.map,reach,sp.x,sp.y);
         const mon=new Monster(sp.id,pos.x,pos.y,{elite:sp.elite,minion:sp.minion,skillProfile:sp.skillProfile,packId:sp.packId,monsterFamily:sp.monsterFamily,familyHome:sp.familyHome});
-        mon._coopId='spawn_'+zone+'_'+index;world.monsters.push(mon);
+        mon._coopId='spawn_'+zone+'_'+(zone==='mines'?U.hash(sp.id+':'+sp.x+':'+sp.y):index);world.monsters.push(mon);
       }
       world.npcs=world.map.npcs.filter(n=>!(n.survivor&&rescuedSurvivors().includes(n.sid))).map(n=>new Npc(n.id,n.x,n.y,{survivor:n.survivor,sid:n.sid,npcArt:n.npcArt,displayName:n.displayName,storyId:n.storyId}));
       syncStoryObjects();syncConditionalNpcs();setupBeaconQuest(world.map);syncOptionalQuests();placeEvents(world.map);

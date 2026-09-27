@@ -294,20 +294,21 @@ const Coop=(()=>{
     if(!s()?.map)return;
     C.register(s());
     areas[s().map.id]={props:s().map.props.map(p=>C.encode(p,true)),terrain:C.encode(Object.fromEntries(['blocked','walls','hazard'].filter(k=>s().map[k]).map(k=>[k,s().map[k]]))),dead:[...new Set([...(areas[s().map.id]?.dead||[]),...s().monsters.filter(m=>m.dead).map(m=>m._coopId)])],
-      monsters:s().monsters.filter(m=>!m.bossOwner).map(m=>({id:m._coopId,defId:m.defId,x:m.x,y:m.y,dead:m.dead,hp:m.hp,maxHp:m.maxHp,elite:m.elite,beacon:m.beacon,questTag:m.questTag})),
+      monsters:s().monsters.filter(m=>!m.bossOwner&&!m.sourcePropId).map(m=>({id:m._coopId,defId:m.defId,x:m.x,y:m.y,dead:m.dead,hp:m.hp,maxHp:m.maxHp,elite:m.elite,beacon:m.beacon,questTag:m.questTag})),propMonsters:C.propMonsters(s()),
       ground:s().ground.map(g=>({...C.encode(g,true),item:g.item?{...Game.serializeItem(g.item),netId:g.item._coopId}:null})),partySize:s().map._coopSize||s().players.length};
   }
   function restoreArea(){
     const old=areas[s().map.id];
     if(old){
       if(old.terrain)Object.assign(s().map,C.decode(old.terrain,new Map()));
-      for(let i=0;i<s().map.props.length;i++){const row=old.props[i];if(row)Object.assign(s().map.props[i],C.decode(row,new Map()));}
+      C.restoreProps(s().map,old.props);
       for(const mon of s().monsters){
         const saved=old.monsters?.find(m=>m.id===mon._coopId);
         if(old.dead?.includes(mon._coopId)){mon.dead=true;mon.hp=0;mon.corpseT=0;}
         else if(saved&&!mon.isBoss){mon.maxHp=saved.maxHp;if(!mon._coopScaled)mon.hp=mon.maxHp;mon._coopScaled=true;}
       }
       s().ground=old.ground.map(g=>({...C.decode(g,new Map()),item:g.item?Object.assign(Game.reviveItem(g.item),{_coopId:g.item.netId}):null}));
+      C.restorePropMonsters(s(),old.propMonsters);
     }
     if(!s().map._coopSize){
       s().map._coopSize=old?.partySize||s().players.length;const mul=1+.6*(s().map._coopSize-1);

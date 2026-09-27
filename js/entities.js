@@ -3150,7 +3150,7 @@ class Monster extends Entity {
       const map=Game.state.map,territory=map.ecology.territories.find(t=>t.packs.includes(this.packId));
       if(territory&&!Game.state.monsters.some(m=>!m.dead&&territory.packs.includes(m.packId))){
         const site=map.props.find(p=>p.territoryId===territory.id);
-        if(site){site.spent=true;site.label=DATA.MONSTER_FAMILIES[territory.family].name+' — deserted';}
+        if(site&&site.behavior!=='wolf_den'){site.spent=true;site.label=DATA.MONSTER_FAMILIES[territory.family].name+' — deserted';}
       }
     }
     this.cancelAttacks();
