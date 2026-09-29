@@ -5,6 +5,8 @@
 __pycache__/
 *.py[cod]
 node_modules/
+# Generated distribution archives exceed GitHub's per-file limit.
+/output/launch-kit/*.zip
 .venv/
 venv/
 
