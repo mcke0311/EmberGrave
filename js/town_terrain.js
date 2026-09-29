@@ -56,6 +56,7 @@ const TownTerrain = (() => {
       ctx.save();ctx.setTransform(.5,-.5,1,1,d.x*SCALE,d.y*SCALE);ctx.scale(s,s);ctx.globalAlpha=d.alpha??1;
       ctx.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,-f.anchorX,-f.anchorY,f.sw,f.sh);ctx.restore();
     }
+    if(m.campaignVisual)CampaignEnvironment.decorateFloor(ctx,m,0,0,Math.max(w,h),SCALE);
     // Project one continuous surface into the same 32x16 world coordinate system.
     const margin=m.act5Environment?192:0;
     const projected=canvas((m.w+m.h)*32+4+margin*2,(m.w+m.h)*16+4+margin*2),g=projected.getContext('2d');
@@ -65,11 +66,11 @@ const TownTerrain = (() => {
     if(m.act1Environment)Act1Environment.drawGround(g,m,{x:-m.h*32-2-margin,y:-2-margin},()=>true);
     if(m.act3?.environment)ImperialEnvironment.drawGround(g,m,{x:-m.h*32-2-margin,y:-2-margin},()=>true);
     if(m.act5Environment)CindersBoundaries.drawGround(g,m,{x:-m.h*32-2-margin,y:-2-margin},()=>true);
-    return {canvas:projected,x:-m.h*32-2-margin,y:-2-margin,boundaries:m.boundaries,imperialEnvironment:m.act3?.environment,act5Environment:m.act5Environment,act1Environment:m.act1Environment};
+    return {canvas:projected,x:-m.h*32-2-margin,y:-2-margin,campaignVisual:m.campaignVisual,boundaries:m.boundaries,imperialEnvironment:m.act3?.environment,act5Environment:m.act5Environment,act1Environment:m.act1Environment};
   }
   function draw(ctx,m,cam) {
     let entry=cache.get(m);
-    if(!entry||entry.act1Environment!==m.act1Environment||entry.imperialEnvironment!==m.act3?.environment||entry.boundaries!==m.boundaries||entry.act5Environment!==m.act5Environment){if(entry){entry.canvas.width=0;entry.canvas.height=0;}entry=build(m);cache.set(m,entry);while(cache.size>2)cache.delete(cache.keys().next().value);}
+    if(!entry||entry.campaignVisual!==m.campaignVisual||entry.act1Environment!==m.act1Environment||entry.imperialEnvironment!==m.act3?.environment||entry.boundaries!==m.boundaries||entry.act5Environment!==m.act5Environment){if(entry){entry.canvas.width=0;entry.canvas.height=0;}entry=build(m);cache.set(m,entry);while(cache.size>2)cache.delete(cache.keys().next().value);}
     else {cache.delete(m);cache.set(m,entry);}
     if(m.act1Environment){
       // The town sits in a snowfield; its rectangular navigation grid is not

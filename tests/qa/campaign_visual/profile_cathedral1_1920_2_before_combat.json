@@ -1,0 +1,27 @@
+{
+  "zone": "cathedral1",
+  "width": 1920,
+  "pair": 2,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 41.5,
+    "y": 68.5
+  },
+  "monsters": 25,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 802,
+  "cpuMs": {
+    "median": 4.5,
+    "p95": 7.2,
+    "max": 16.5
+  },
+  "frameIntervalMs": {
+    "median": 16.7,
+    "p95": 17.3,
+    "max": 61.9
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

@@ -12,7 +12,7 @@ const BossLoadouts = {
       candidates.sort((a,b)=>b.ilvl-a.ilvl||a.id.localeCompare(b.id));
       if(candidates[0])p.equip[slot]=Items.fromBase(candidates[0].id);
     }
-    const main={vanguard:'vanguard_0_0',emberwitch:'emberwitch_0_0',gravebinder:'venom_spit',veilranger:'veilranger_0_0',wildkeeper:'wildkeeper_1_0'}[p.classId];
+    const main={vanguard:'vanguard_0_0',emberwitch:'emberwitch_0_0',gravebinder:'gravebinder_2_2',veilranger:'veilranger_0_0',wildkeeper:'wildkeeper_1_0'}[p.classId];
     const summon={gravebinder:'raise_dead',wildkeeper:'call_wolf'}[p.classId];
     p.skills={};let budget=level-1;
     const rank=Math.min(10,Math.max(1,Math.ceil(budget/(summon?2:1))));
@@ -20,9 +20,11 @@ const BossLoadouts = {
     if(summon){p.skills[summon]=Math.min(10,budget);budget-=p.skills[summon];}
     let secondarySummon=null;
     if(p.classId==='gravebinder') {
-      p.skills={venom_spit:1,mark_of_frailty:1,raise_dead:Math.min(10,level-3)};
+      // A sustainable hybrid under the current companion aether upkeep rules.
+      // One warrior, Miasma, its prerequisite, and Frailty use legal point totals.
+      p.skills={venom_spit:1,mark_of_frailty:1,raise_dead:1,[main]:Math.min(10,level-4)};
       budget=level-1-Object.values(p.skills).reduce((a,b)=>a+b,0);
-      if(budget>0){secondarySummon='raise_plaguemage';p.skills[secondarySummon]=Math.min(10,budget);budget-=p.skills[secondarySummon];}
+      const curse=Math.min(9,budget);p.skills.mark_of_frailty+=curse;budget-=curse;
     }
     p.skillPts=budget;p.skillPerks={};p.skillL=main;p.skillR='basic';
     const tier=level<5?1:2;
@@ -32,7 +34,7 @@ const BossLoadouts = {
   },
   prepareSummons(p,summon,settle) {
     if(!summon||!p.skills[summon])return;
-    const sk=p.resolveSkill(summon),rank=p.effRank(summon),cap=sk.cap?sk.cap(rank):1;
+    const sk=p.resolveSkill(summon),rank=p.effRank(summon),cap=p.classId==='gravebinder'?1:sk.cap?sk.cap(rank):1;
     for(let i=0;i<cap;i++) {
       if(sk.needsCorpse)Game.spawnCorpse(p.x+1,p.y+.3*i,20);
       p.performSkill(summon,null,{x:p.x+1,y:p.y});settle(1);p.action=null;

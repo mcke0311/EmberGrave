@@ -1,0 +1,15 @@
+node:internal/modules/run_main:122
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: shrine attunement failed
+    at ok (file:///C:/Users/this_/Downloads/Claudediablo/tests/cinders_gameplay_contract.mjs:6:47)
+    at file:///C:/Users/this_/Downloads/Claudediablo/tests/cinders_gameplay_contract.mjs:23:3 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '=='
+}
+
+Node.js v22.11.0

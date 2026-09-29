@@ -12,7 +12,8 @@ const output = arg('output', `tests/qa/input_latency/latest_${zone}_${width}_${k
 const terrainVersion = arg('terrain', 'current');
 const boss = arg('boss','');
 const sourceRef=arg('source-ref','');
-const sourceFor=file=>sourceRef?execFileSync('git',['show',sourceRef+':js/'+file],{encoding:'utf8'}):fs.readFileSync(path.join(__dirname,'../js',file),'utf8');
+const sourceDirectory=arg('source-directory','');
+const sourceFor=file=>sourceRef?execFileSync('git',['show',sourceRef+':js/'+file],{encoding:'utf8'}):fs.readFileSync(path.join(sourceDirectory||path.join(__dirname,'../js'),file),'utf8');
 const warmupMs = +arg('warmup','1200');
 const summary = a => {
   if (!a.length) return null;
@@ -24,7 +25,7 @@ const summary = a => {
 (async () => {
   const browser = await chromium.launch({channel: 'chrome', headless: true,
     args: ['--disable-background-timer-throttling', '--disable-renderer-backgrounding']});
-  const report = {environment: {browser: browser.version(), platform: process.platform}, zone, key, width, height, seconds, warmupMs, terrainVersion, sourceRef:sourceRef||null, results: []};
+  const report = {environment: {browser: browser.version(), platform: process.platform}, zone, key, width, height, seconds, warmupMs, terrainVersion, sourceRef:sourceRef||null,sourceDirectory:sourceDirectory||null, results: []};
   try {
     const context = await browser.newContext({viewport: {width, height}}), page = await context.newPage();
     const errors = [], messages = [];
@@ -69,6 +70,10 @@ const summary = a => {
           }
         }).observe({type, buffered: false, ...(type === 'event' ? {durationThreshold: 16} : {})});
       }
+    });
+    if(sourceDirectory)await page.route(/\/js\/[^/]+\.js(?:\?|$)/,async route=>{
+      const file=new URL(route.request().url()).pathname.split('/').pop();
+      if(fs.existsSync(path.join(sourceDirectory,file)))await route.fulfill({contentType:'text/javascript',body:sourceFor(file)});else await route.continue();
     });
     await page.route('**/js/game.js*', async route => {
       let source = sourceFor('game.js').replace(/\r\n/g, '\n');
@@ -118,7 +123,7 @@ window.__latency.drawPlayer=window.__latency.wrap('player3d',Player3D.draw);`);
         await Game.newGame('Latency test', boss?'gravebinder':'vanguard', false); await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);
         Game.debugFlags.god = true; Game.options.screenShake = false; Game.state.seed = 12345;
         Math.random = U.rng(7331);
-        if(boss)zone=DATA.BOSS_ENCOUNTERS[boss].zone;
+        if(boss){zone=DATA.BOSS_ENCOUNTERS[boss].zone;Game.state.quests.q16={state:'done'};Game.state.quests.q17={state:'done'};}
         if (!await Game.enterMap(zone, 'from_camp')) throw Error('Map failed to load');
         UI.hideTitle(); UI.closeAll();
         if(boss){
@@ -132,6 +137,8 @@ window.__latency.drawPlayer=window.__latency.wrap('player3d',Player3D.draw);`);
           const e=m.encounter;e.active=true;
           if(e.statusText){const status=e.statusText;e.statusText=function(){const text=status.call(this);return window.__latency.mode==='static-boss-hud'?text.replace(/ · [\d.]+s$/,''):text;};}
           for(let i=1;i<e.config.phases.length;i++)e.phaseChange(i);
+          if(e.mechanic)e.completeMechanic('Benchmark opening');
+          e.seal?.(true);
           e.clearOwned();e.debris=[];
           // Exercise the final boss's longest sustained signature during this sample.
           if(boss==='vethriss')e.start('beam',p);

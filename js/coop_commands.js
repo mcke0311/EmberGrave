@@ -41,11 +41,13 @@ const CoopCommands=(()=>{
     const s=Game.state;
     if(!c||typeof c.type!=='string'||JSON.stringify(c).length>4096)fail('Invalid gameplay command');
     if(!p||!s.players.includes(p))fail('Hero is not in this session');
-    if(p.dead&&!['ready','bind','stop','returnManagement','cancelCarry'].includes(c.type))fail('Wait for a teammate to revive you.');
+    if(p.dead&&!['ready','bind','stop','returnManagement','cancelCarry','retryArena','respawn'].includes(c.type))fail('Wait for a teammate to revive you.');
     const pt=c.point;
     if(pt&&(!Number.isFinite(pt.x)||!Number.isFinite(pt.y)||pt.x<0||pt.y<0||pt.x>s.map.w||pt.y>s.map.h||![0,1].includes(pt.surfaceId??0)))fail('Invalid destination');
     if(['move','steer','attack','cast','stop','jump','interact','pickup'].includes(c.type))p.reviveTarget=null;
     switch(c.type){
+      case 'retryArena':return Coop.retryArena(p);
+      case 'respawn':return Coop.respawn(p);
       case 'move':case 'steer':
         if(!pt)fail('Missing destination');p.command={type:c.type,point:pt};
         if(c.type==='move')Game.repath(p,pt.x,pt.y,pt.surfaceId);

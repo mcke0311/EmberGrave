@@ -1,0 +1,123 @@
+{
+  "status": "PASS",
+  "walks": [
+    {
+      "from": "north_wild",
+      "to": "mines",
+      "frames": 150,
+      "distance": 6.286666666666775,
+      "companionDistance": 3.909283392159738,
+      "companionArrived": true,
+      "arrivalCheck": "full footprint",
+      "elevation": 0,
+      "input": "Playwright mouse → bindInput → physical threshold"
+    },
+    {
+      "from": "mines",
+      "to": "north_wild",
+      "frames": 60,
+      "distance": 6.28666666666663,
+      "companionDistance": 3.8400000000000056,
+      "companionArrived": true,
+      "arrivalCheck": "full footprint",
+      "elevation": 0,
+      "input": "Playwright mouse → bindInput → physical threshold"
+    },
+    {
+      "from": "weeping_marsh",
+      "to": "drowned_crypt",
+      "frames": 210,
+      "distance": 6.286666666666775,
+      "companionDistance": 3.8400000000000096,
+      "companionArrived": true,
+      "arrivalCheck": "full footprint",
+      "elevation": 0,
+      "input": "Playwright mouse → bindInput → physical threshold"
+    },
+    {
+      "from": "drowned_crypt",
+      "to": "weeping_marsh",
+      "frames": 60,
+      "distance": 6.28666666666663,
+      "companionDistance": 4.080000000000005,
+      "companionArrived": true,
+      "arrivalCheck": "full footprint",
+      "elevation": 0,
+      "input": "Playwright mouse → bindInput → physical threshold"
+    },
+    {
+      "from": "desert_wastes",
+      "to": "underground_market",
+      "frames": 210,
+      "distance": 6.286666666666775,
+      "companionDistance": 3.839999999999971,
+      "companionArrived": true,
+      "arrivalCheck": "full footprint",
+      "elevation": 0,
+      "input": "Playwright mouse → bindInput → physical threshold"
+    },
+    {
+      "from": "underground_market",
+      "to": "desert_wastes",
+      "frames": 60,
+      "distance": 6.286666666666775,
+      "companionDistance": 4.1452181165626465,
+      "companionArrived": true,
+      "arrivalCheck": "full footprint",
+      "elevation": 0,
+      "input": "Playwright mouse → bindInput → physical threshold"
+    },
+    {
+      "from": "cathedral1",
+      "to": "cathedral_cinderwatch",
+      "frames": 60,
+      "distance": 6.28666666666663,
+      "companionDistance": 3.8399999999999914,
+      "companionArrived": true,
+      "arrivalCheck": "legacy point walkability",
+      "elevation": 0,
+      "input": "Playwright mouse → bindInput → physical threshold"
+    },
+    {
+      "from": "cathedral_cinderwatch",
+      "to": "cathedral1",
+      "frames": 60,
+      "distance": 6.286666666666775,
+      "companionDistance": 4.080000000000017,
+      "companionArrived": true,
+      "arrivalCheck": "legacy point walkability",
+      "elevation": 0,
+      "input": "Playwright mouse → bindInput → physical threshold"
+    },
+    {
+      "from": "ash_wastes",
+      "to": "cinder_bastion",
+      "frames": 180,
+      "distance": 6.286666666666775,
+      "companionDistance": 3.890387884428702,
+      "companionArrived": true,
+      "arrivalCheck": "full footprint",
+      "elevation": 0,
+      "input": "Playwright mouse → bindInput → physical threshold"
+    },
+    {
+      "from": "cinder_bastion",
+      "to": "ash_wastes",
+      "frames": 60,
+      "distance": 6.28666666666663,
+      "companionDistance": 3.840000000000015,
+      "companionArrived": true,
+      "arrivalCheck": "full footprint",
+      "elevation": 0,
+      "input": "Playwright mouse → bindInput → physical threshold"
+    }
+  ],
+  "save": {
+    "version": 2,
+    "home": "khalcamp",
+    "oldSaveLoaded": true,
+    "questsAndGoldPreserved": true,
+    "newMigration": false
+  },
+  "errors": []
+}

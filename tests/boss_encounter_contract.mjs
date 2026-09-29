@@ -16,7 +16,7 @@ for(const id of ids) {
   let {s,p,m,e}=fresh(id);e.active=true;
   e.start(id==='mire_mother'?'bile':'cleave',p);const locked=JSON.stringify(e.attack.shapes),hp=p.hp;
   tick(s,.9);ok(p.hp===hp,id+' damaged during warning');
-  p.x=e.arena.cx-7;p.y=e.arena.cy-7;
+  p.x=e.arena.cx-5;p.y=e.arena.cy-5;
   ok(JSON.stringify(e.attack.shapes)===locked,id+' warning followed player');
   tick(s,.2);ok(p.hp===hp,id+' dodging still took damage');
   tick(s,.25);ok(e.stage==='recovery',id+' has no recovery');
@@ -34,7 +34,7 @@ for(const id of ids) {
   e.start('bile',p);e.execute();
   G.spawnProjectile({x:m.x,y:m.y,tx:p.x,ty:p.y,speed:5,kind:'soulbolt',mon:m,bossOwner:m,fromPlayer:false});
   m.poisonDot={dps:50,t:10};m.scorch={until:100,dps:50};
-  p.x=e.arena.x1+1;tick(s,.025);
+  p.x=e.arena.x1+1;tick(s,.025);ok(e.active&&B.insideArena(e.arena,p.x,p.y),id+' seal contains escape');e.reset();p.x=e.arena.x1+1;
   ok(!e.active&&e.phase===0&&m.hp===m.maxHp,id+' retreat did not reset');
   ok(e.owned.length===0&&e.pools.length===0&&!s.projectiles.some(p=>p.bossOwner===m),id+' retreat leaked threats');
   ok(!m.poisonDot&&!m.scorch,id+' retreat retained afflictions');
@@ -79,7 +79,7 @@ for(const offset of [.79,.81]){
 const damage=[];s.minions=[{x:p.x,y:p.y,dead:false,takeDamage:d=>damage.push(d)},{x:p.x,y:p.y,dead:false,groundImmune:true,takeDamage:()=>{throw Error('ground hit an airborne companion');}}];
 const originalDamage=p.takeDamage;p.takeDamage=d=>damage.push(d);m.def.dmg=[10,10];
 e.damage({kind:'circle',x:p.x,y:p.y,radius:2},1,'poison');
-ok(damage.length===2&&Math.abs(damage[1]/damage[0]-.45)<1e-8,'army collateral multiplier');p.takeDamage=originalDamage;
+ok(damage.length===2&&Math.abs(damage[1]/damage[0]-.14)<1e-8,'army collateral multiplier');p.takeDamage=originalDamage;
 
 // Normal, Nightmare and Hell each reset to their own already-scaled base stats.
 ({s,p,m,e}=fresh('empty_archangel'));e.active=true;p.x=m.x+2;p.y=m.y;e.start('wings',p);e.execute();
@@ -94,22 +94,22 @@ for(const difficulty of [0,1,2])for(const id of ids){
 }
 
 // Repeated death/damage calls cannot award another copy of a boss's loot.
-({s,p,m,e}=fresh('korvath'));e.active=true;m.takeDamage(1e9,p);
+({s,p,m,e}=fresh('korvath'));e.active=true;m.takeDamage(1e9,p);tick(s,.025);e.completeMechanic();m.takeDamage(1e9,p);
 const rewards={xp:p.xp,ground:s.ground.length,flags:JSON.stringify(s.flags)};
 m.takeDamage(1e9,p);m.die(p);tick(s,2);
 ok(p.xp===rewards.xp&&s.ground.length===rewards.ground&&JSON.stringify(s.flags)===rewards.flags,'duplicate boss rewards');
 
 ({s,p,m,e}=fresh('vethriss'));m.takeDamage(1e9,p);ok(Math.abs(m.hp/m.maxHp-.7)<1e-8&&!m.dead,'first form skipped');tick(s,.025);
-m.takeDamage(1e9,p);ok(Math.abs(m.hp/m.maxHp-.35)<1e-8&&!m.dead,'serpent skipped');tick(s,.025);
+e.completeMechanic();m.takeDamage(1e9,p);ok(Math.abs(m.hp/m.maxHp-.35)<1e-8&&!m.dead,'serpent skipped');tick(s,.025);
 ok(e.phase===2&&m.spriteOpts.bossPhase===2,'shadow art absent');
-for(const pair of [[['korvath','fissure'],['mire_mother','bile']],[['azram','chains'],['malthoron','beam']]]){
+for(const pair of [[['korvath','fissure'],['mire_mother','bile']],[['azram','chains'],['empty_archangel','wings']],[['malthoron','beam']]]){
  e.start('memory',p);
  for(const [i,[id,signature]] of pair.entries()){
   ok(e.attack.remembered===id&&e.attack.id===signature,'wrong remembered signature');
-  if(i===0){e.execute();tick(s,e.attack.duration+.025);}
+  if(i<pair.length-1){e.execute();tick(s,e.attack.duration+.025);}
  }
 }
-m.takeDamage(1e9,p);ok(m.dead&&s.flags['dead_vethriss@0']&&!e.active,'final victory missing');
+e.completeMechanic();m.takeDamage(1e9,p);ok(m.dead&&s.flags['dead_vethriss@0']&&!e.active,'final victory missing');
 
 // A lethal hit during an attack cannot recreate its hazards after reset.
 ({s,p,m,e}=fresh('mire_mother'));e.active=true;p.hp=1;e.start('bile',p);e.execute();
@@ -125,9 +125,9 @@ for(const reason of ['death','travel','replace']){
 // Arena generation never removes story requirements or seals a retreat path.
 for(const id of ids)for(let seed=0;seed<32;seed++){
  const map=M.generate(D.BOSS_ENCOUNTERS[id].zone,seed),a=map.bossArena;
- ok(a&&a.x1-a.x0===21&&a.y1-a.y0===21,id+' arena dimensions');
+ ok(a?.dedicated&&a.x1-a.x0===D.BOSS_ARENAS[id].rx*2,id+' arena dimensions');
  for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++){
-  const i=x+y*map.w;ok(!map.blocked[i]&&!map.hazard[i]&&!map.elev[i],id+' arena obstructed at '+x+','+y);
+  if(!B.insideArena(a,x+.5,y+.5,.7))continue;const i=x+y*map.w;ok(!map.blocked[i]&&!map.hazard[i]&&!map.elev[i],id+' arena obstructed at '+x+','+y);
  }
  const queue=[[map.spawns.default.x|0,map.spawns.default.y|0]],seen=new Set();
  for(let i=0;i<queue.length;i++){const [x,y]=queue[i],k=x+y*map.w;if(seen.has(k))continue;seen.add(k);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx>0&&ny>0&&nx<map.w-1&&ny<map.h-1&&!seen.has(nx+ny*map.w)&&M.canStep(map,x+.5,y+.5,nx+.5,ny+.5))queue.push([nx,ny]);}}

@@ -1,0 +1,542 @@
+{
+  "passed": true,
+  "arenaSeeds": 192,
+  "arenaChecks": 3500,
+  "classVictories": 30,
+  "fullBrowserEncounters": 18,
+  "viewports": [
+    1920,
+    3840,
+    844
+  ],
+  "motion": "Desktop normal motion; 844px reduced motion and touch emulation",
+  "existingMapsPreserved": 36,
+  "existingSpriteEntriesPreserved": 1131,
+  "newAuthoredSprites": 36,
+  "coop": "2, 3 and 4 player runtime cases; four independent browser clients over the production local relay/worker",
+  "coopRegressionTests": 24,
+  "walkingEscapes": 206,
+  "performanceCases": 12,
+  "performancePairsPerCase": 3,
+  "maximumP95ChangePercent": -2.22,
+  "browserEncounters": [
+    {
+      "boss": "korvath",
+      "width": 1920,
+      "reducedMotion": false,
+      "seconds": 181.5,
+      "won": true,
+      "hp": 208.7114749851246,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 3700
+        },
+        {
+          "phase": 1,
+          "time": 79,
+          "hp": 1850
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "mire_mother",
+      "width": 1920,
+      "reducedMotion": false,
+      "seconds": 160.5,
+      "won": true,
+      "hp": 309.5235759503522,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 5600
+        },
+        {
+          "phase": 1,
+          "time": 67,
+          "hp": 3080.0000000000005
+        },
+        {
+          "phase": 2,
+          "time": 120.5,
+          "hp": 1400
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "azram",
+      "width": 1920,
+      "reducedMotion": false,
+      "seconds": 208.5,
+      "won": true,
+      "hp": 372,
+      "healingLeft": 4,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 5500
+        },
+        {
+          "phase": 1,
+          "time": 61,
+          "hp": 3300
+        },
+        {
+          "phase": 2,
+          "time": 136,
+          "hp": 1650
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "empty_archangel",
+      "width": 1920,
+      "reducedMotion": false,
+      "seconds": 225.5,
+      "won": true,
+      "hp": 386,
+      "healingLeft": 2,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 6500
+        },
+        {
+          "phase": 1,
+          "time": 108.5,
+          "hp": 3250
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "malthoron",
+      "width": 1920,
+      "reducedMotion": false,
+      "seconds": 168,
+      "won": true,
+      "hp": 420,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 8000
+        },
+        {
+          "phase": 1,
+          "time": 54.5,
+          "hp": 5280
+        },
+        {
+          "phase": 2,
+          "time": 116,
+          "hp": 2640
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "vethriss",
+      "width": 1920,
+      "reducedMotion": false,
+      "seconds": 252,
+      "won": true,
+      "hp": 490,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 11500
+        },
+        {
+          "phase": 1,
+          "time": 63.5,
+          "hp": 8049.999999999999
+        },
+        {
+          "phase": 2,
+          "time": 161.5,
+          "hp": 4024.9999999999995
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "korvath",
+      "width": 3840,
+      "reducedMotion": false,
+      "seconds": 189,
+      "won": true,
+      "hp": 246,
+      "healingLeft": 5,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 3700
+        },
+        {
+          "phase": 1,
+          "time": 83,
+          "hp": 1850
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "mire_mother",
+      "width": 3840,
+      "reducedMotion": false,
+      "seconds": 163,
+      "won": true,
+      "hp": 330,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 5600
+        },
+        {
+          "phase": 1,
+          "time": 65.5,
+          "hp": 3080.0000000000005
+        },
+        {
+          "phase": 2,
+          "time": 120.5,
+          "hp": 1400
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "azram",
+      "width": 3840,
+      "reducedMotion": false,
+      "seconds": 207.5,
+      "won": true,
+      "hp": 372,
+      "healingLeft": 4,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 5500
+        },
+        {
+          "phase": 1,
+          "time": 69,
+          "hp": 3300
+        },
+        {
+          "phase": 2,
+          "time": 136.5,
+          "hp": 1650
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "empty_archangel",
+      "width": 3840,
+      "reducedMotion": false,
+      "seconds": 215,
+      "won": true,
+      "hp": 319.4641385594108,
+      "healingLeft": 3,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 6500
+        },
+        {
+          "phase": 1,
+          "time": 99.5,
+          "hp": 3250
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "malthoron",
+      "width": 3840,
+      "reducedMotion": false,
+      "seconds": 172,
+      "won": true,
+      "hp": 420,
+      "healingLeft": 5,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 8000
+        },
+        {
+          "phase": 1,
+          "time": 51.5,
+          "hp": 5280
+        },
+        {
+          "phase": 2,
+          "time": 112,
+          "hp": 2640
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "vethriss",
+      "width": 3840,
+      "reducedMotion": false,
+      "seconds": 243,
+      "won": true,
+      "hp": 490,
+      "healingLeft": 5,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 11500
+        },
+        {
+          "phase": 1,
+          "time": 55,
+          "hp": 8049.999999999999
+        },
+        {
+          "phase": 2,
+          "time": 148.5,
+          "hp": 4024.9999999999995
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "korvath",
+      "width": 844,
+      "reducedMotion": true,
+      "seconds": 187.5,
+      "won": true,
+      "hp": 169.24393551630675,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 3700
+        },
+        {
+          "phase": 1,
+          "time": 87,
+          "hp": 1850
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "mire_mother",
+      "width": 844,
+      "reducedMotion": true,
+      "seconds": 154.5,
+      "won": true,
+      "hp": 240.86394972172522,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 5600
+        },
+        {
+          "phase": 1,
+          "time": 64,
+          "hp": 3080.0000000000005
+        },
+        {
+          "phase": 2,
+          "time": 109.5,
+          "hp": 1400
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "azram",
+      "width": 844,
+      "reducedMotion": true,
+      "seconds": 198,
+      "won": true,
+      "hp": 238.62107115034465,
+      "healingLeft": 5,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 5500
+        },
+        {
+          "phase": 1,
+          "time": 55.5,
+          "hp": 3300
+        },
+        {
+          "phase": 2,
+          "time": 123,
+          "hp": 1650
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "empty_archangel",
+      "width": 844,
+      "reducedMotion": true,
+      "seconds": 209.5,
+      "won": true,
+      "hp": 357.23447173665744,
+      "healingLeft": 2,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 6500
+        },
+        {
+          "phase": 1,
+          "time": 102,
+          "hp": 3250
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "malthoron",
+      "width": 844,
+      "reducedMotion": true,
+      "seconds": 177,
+      "won": true,
+      "hp": 420,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 8000
+        },
+        {
+          "phase": 1,
+          "time": 51.5,
+          "hp": 5280
+        },
+        {
+          "phase": 2,
+          "time": 119.5,
+          "hp": 2640
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "vethriss",
+      "width": 844,
+      "reducedMotion": true,
+      "seconds": 225.5,
+      "won": true,
+      "hp": 490,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 11500
+        },
+        {
+          "phase": 1,
+          "time": 57,
+          "hp": 8049.999999999999
+        },
+        {
+          "phase": 2,
+          "time": 147,
+          "hp": 4024.9999999999995
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "balance": [
+    {
+      "boss": "korvath",
+      "medianSeconds": 161.2,
+      "fastest": 55.6,
+      "slowest": 181.7,
+      "wins": 5
+    },
+    {
+      "boss": "mire_mother",
+      "medianSeconds": 123.5,
+      "fastest": 75.8,
+      "slowest": 157.6,
+      "wins": 5
+    },
+    {
+      "boss": "azram",
+      "medianSeconds": 137.1,
+      "fastest": 81.8,
+      "slowest": 199.3,
+      "wins": 5
+    },
+    {
+      "boss": "empty_archangel",
+      "medianSeconds": 122.5,
+      "fastest": 86.6,
+      "slowest": 196.6,
+      "wins": 5
+    },
+    {
+      "boss": "malthoron",
+      "medianSeconds": 168.5,
+      "fastest": 88,
+      "slowest": 178.7,
+      "wins": 5
+    },
+    {
+      "boss": "vethriss",
+      "medianSeconds": 232.4,
+      "fastest": 109.3,
+      "slowest": 291.7,
+      "wins": 5
+    }
+  ]
+}

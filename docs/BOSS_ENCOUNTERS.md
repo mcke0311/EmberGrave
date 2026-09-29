@@ -1,118 +1,116 @@
 # Campaign boss encounters
 
-The six main story encounters use `js/boss_encounters.js`. Optional bosses and the
-Rimebound Captain keep their existing controllers. Story prerequisites, the
-Archangel/Malthoron wards, quest rewards, difficulty unlocks and ending choices
-remain in the campaign system.
+All six story bosses now occupy separate authored arena zones. Their original
+character artwork, lore, form counts, health thresholds, quest keys and defeated
+flags are preserved. Optional bosses and the Rimebound Captain keep their existing
+controllers. Player classes and loot generation are unchanged.
 
-| Boss | Phases and combat identity |
+| Boss / entrance | Arena and required counter |
 | --- | --- |
-| Korvath | Alternating committed cleaves and fissures. At 50%, two guards join once and each fissure gains a perpendicular second strike, separately warned, followed by a two-second opening. |
-| Mire Mother | Targeted bile and a grasping ring. Grasp removes whole pools overlapping its inner safe circle at the start of its warning, then grants 2.25 seconds of recovery. At 55%, recovery exposes the shard for 25% more incoming damage. At 25%, bile marks two pools. Transition adds remain capped at four. |
-| Azram | Chains and cleaves, with portals opening first at 60% and 30%; molten-gold cones join the last phase. Each later phase has one pair, each portal raising at most two enemies. Labels show the next spawn time and remaining charges. Destroying one interrupts him for 1.5 seconds; closing the pair grants 2.5 seconds. |
-| Empty Archangel | Separated wing projectiles alternate with descent. At 50%, descent chains into a freshly warned cross at her landing position, followed by two seconds of recovery. Crossing lanes from the same strike hit each actor only once. The soul-rescue ward still applies. |
-| Malthoron | At 66% and 33%, armor falls to 70% and 40% of his difficulty-scaled starting armor. Soul volleys and two knights accompany the first break; the last form alternates the beam's sweep direction and grants two seconds of recovery after it. The dashed preview follows that sweep. |
-| Vethriss | Wounded Seraneth uses borrowed light. At 70%, three one-hit illusions each mark a locked shadow lane for 1.25 seconds. Killing an illusion removes its lane. Surviving lanes fire one combined weak pulse, at most one hit per actor, then disappear. Clearing all early grants a two-second opening. At 35%, remembered fissure → bile and chains → beam pairs alternate, with 2.25 seconds of final recovery. |
+| Korvath / Shattered Temple | Octagonal frozen sanctuary with two ward braziers. Cleaves, committed charges and fissures. At 50%, light the marked brazier, then stand beyond its blue ward to bait the next charge through it. A missed charge leaves the armor intact; the brazier becomes available again. Final fissures have a separately warned crossing strike. |
+| Mire Mother / Choir's Ritual | Circular drowned basin with three platforms and broad connecting paths. Bile, grasping roots and rotating flood sectors. At 55% and 25%, turn the marked sluice to drain the surge and expose her heart. Later phases increase flood frequency without removing walking routes. |
+| Azram / Palace of Khal-Zahir | Long gilded court with sun mirrors and molten channels. Chain lanes, finite portal reinforcements and gold sweeps. At 60% and 30%, turn the marked mirror; his next sun beam reflects into the throne ward. Destroying a portal interrupts him; closing its pair grants a longer opening. |
+| Empty Archangel / Shattered Cathedral | Cruciform bell sanctuary over the void. Wing volleys and locked descents. At 50%, ring the marked bell to interrupt the protected choir. Final-phase descents lead into a separately warned crossing attack. Soul rescues remain in the parent Cathedral. |
+| Malthoron / Cathedral Heart | Circular soul-forge with chained armor monuments and three soul braziers. Heavy attacks develop into soul volleys and sweeping beams. At 66% and 33%, extinguish two marked braziers. Each completed counter drops armor and grants an extended opening. Quieting objectives remain in the parent level. |
+| Vethriss / Throne of Cinders | Broad shattered dais with three shard anchors and changing atmosphere. Wounded Seraneth, serpent and shadow forms remain. At 70% and 35%, activate the marked anchor. The last form cycles fissure → bile, chains → wing lanes, and a sweeping hollow beam. |
 
-## Fairness and encounter lifetime
+## Entering, fighting and retrying
 
-Each boss gets a flat 21 × 21 arena with a three-tile approach and nonblocking
-perimeter dressing. Random spawns and world events stay out of the room. Story
-objectives remain reachable; required kill rewards are placed near their boss.
+A doorway occupies each former boss location. Travel first enters a safe
+vestibule, with ordinary remains for preparation and an open return route.
+Crossing the combat threshold starts the encounter and seals the entrance.
+Prerequisites are checked before arena travel commits. Returning uses the exact
+cached parent instance, including a shifting Cathedral instance retained through
+other travel routes.
 
-Major attacks normally give a one-second warning and at least 1.25 seconds of
-recovery. Bile grants 2.25 seconds. Warnings lock their target when they begin.
-Ground damage tests the actor's ground anchor against the same circle, ring, cone
-or lane that is drawn. Overlapping shapes from an instantaneous strike share
-one hit set; beams and pools keep their explicit tick cadence.
-Lunge damage sweeps only the portion actually traveled;
-projectiles retain their original warning lane. Airborne companions ignore ground
-hazards, and boss area attacks deal 45% collateral damage to player summons.
+During a protected phase the HUD gives one short instruction and the required
+device has a highlighted ring and label. Off-screen labels point toward it.
+Use the existing click/tap controls; the character walks into interaction range.
+Devices cannot be destroyed or consumed. Outside required counters they provide
+hazard relief or interruption on cooldown. Successful required counters create a
+labeled three-second damage opening.
 
-The controller advances on simulation time. Pause pauses every warning and
-hazard. A transition cancels the previous attack. Leaving the gold arena boundary,
-dying or traveling resets the living boss's health, form, scaled base stats and
-afflictions. It removes all encounter-owned creatures, projectiles and pools.
-Defeating the boss ends its remaining threats. Owned adds award no XP, loot or
-quest progress. Mire Mother has no damaging death burst.
+Damage clamps at every pending health threshold, including simultaneous hits,
+damage over time and summons. Protected phases accept no damage. Major attacks
+warn for at least one second, lock their aim and have recovery windows. Floods
+warn for 2.5 seconds. Warning and damage use the same shapes. The beam also shows
+its sweep direction. Ground hazards leave collision-aware walking escapes;
+no movement skill is required. Reduced motion retains warnings, device cues and
+the Archangel's protected raised pose.
 
-Sequences contain at most two steps and lock each step when its warning starts.
-The HUD shows strike count, warning progress, phase thresholds, and recovery
-time; exposed-shard and mechanic-interruption openings get explicit labels.
-Cleave pursuit lasts at most 1.5 seconds before substituting the boss's existing
-ranged signature. The substitute consumes that rotation entry. Illusion channels
-are canceled with their sequence, including when a review preview replaces it.
+Death offers **Retry at arena entrance** and **Return to town**. Retry restores
+health and mana and resets boss health, form, armor, devices, hazards, adds,
+projectiles and summons. Death penalties and consumed supplies remain spent.
+Hardcore death behavior is unchanged. Checkpoints are session-local; loading a
+save continues through the existing hub flow. Victory clears encounter threats
+and opens the return route.
 
-At most three bile pools persist, each for six seconds. Living add limits are
-2 / 4 / 4 / 0 / 2 / 3 in campaign order. Portals count separately from Azram's
-four creatures. Summons cannot recursively spawn enemies or death explosions.
+Boss-owned adds award no XP, loot or quest progress. Their caps remain
+2 / 4 / 4 / 0 / 2 / 3 in campaign order. Azram's portals have finite reinforcement
+charges. Summons cannot recursively spawn enemies or death explosions. Boss area
+attacks deal 14% collateral damage to companions that cannot follow player dodge
+instructions. Ordinary enemy damage and companion skills are unchanged.
 
-## Art and loading
+## Campaign and co-op compatibility
 
-There are 96 authored poses: idle, movement, windup, impact, recovery and death
-for all 16 forms. Malthoron also has five separate falling armor pieces. These
-are key poses with horizontal facing changes. The attack animation layer adds
-continuous anticipation, recoil and recovery transforms, plus spell and impact
-effects; see [Boss attack animation](BOSS_ANIMATIONS.md).
-Vethriss's real serpent remains opaque; its illusions are translucent.
+The Mire shard, fortress map and Hell portal live in their boss arenas. Their
+ledger keys still resolve to the original parent zones, so old discoveries and
+uncollected rewards remain valid. Defeated bosses do not respawn. Quest turn-ins,
+difficulty unlocks, Cathedral objectives and ending choices retain their existing
+flow. Existing exploration connections remain present.
 
-Original generated PNGs, prompts and source locations are recorded in
-`assets/bosses/sources.json`. `tools/import_boss_art.py` extracts alpha-connected
-cutouts, registers each pose to a ground anchor, packs lossless WebP atlases and
-compiles per-pose targeting masks. It does not paint or synthesize poses. Source
-and packed hashes are recorded in `assets/bosses/import.json`; the main sprite
-compiler preserves these entries. `--check` verifies the installed sources.
+The Act I co-op beta includes Korvath's arena. The host worker owns device
+activation, damage, seals and hazards. The fight waits until every connected
+living player already in the arena crosses the threshold. Admission and travel
+are blocked during combat. Existing participants can reconnect to the same fight.
+After a wipe, retry resets the party at spaced entrance positions with full
+health and mana, retaining supplies and death penalties. Later acts remain
+outside the co-op beta. The protocol cache revision is `embergrave-coop-4`.
 
-Zone entry loads and decodes only the relevant boss bundle before committing the
-map. Every pose and hit flash is prepared before play, so a first strike
-does not allocate a canvas, clip a tall form in an ordinary actor buffer, or
-sample an adjacent pose. Drawing and pointer
-picking share the same transform and compiled silhouette. Reduced-motion mode
-removes body motion and traveling decoration; impacts and warnings remain readable.
+## Art and implementation
+
+`DATA.BOSS_ARENAS`, keyed by boss ID, contains frozen arena definitions: stable
+`arena_<bossId>` zone IDs, parent links, entrance and return anchors, boundaries
+and device placements. `MapGen` has a dedicated arena path; its combat floor is
+free of random packs, events and decorative collision. Attempt state lives in
+`BossEncounters.Encounter`, separate from definitions.
+
+Thirty-six new ImageGen sprites provide architecture, monuments, floor accents,
+entrances, and inactive/active devices. Source sheets, prompts and registrations
+are in `assets/sprites_src/gameplay_art_authored/boss_arenas/`.
+`python tools/import_boss_arenas.py --check` validates the source/packed hashes.
+The sprites use the existing pipeline and per-boss `arena:<bossId>` bundles.
+Arena, boss and required summon assets preload before travel commits. Existing
+boss designs and the in-progress campaign art refresh are retained.
 
 ## Review and validation
 
-Serve the repository with `python serve.py`, then open
-`http://localhost:8741/tests/boss_encounters.html`. The review uses an isolated
-save store and offers each boss, class, phase and pose, plus optional invulnerability.
-Normal game movement, skills and potions work inside the frame. Select an attack
-sequence and use **Preview sequence**, **Advance 0.25 s**, or **Resume** to inspect
-both strikes and their recovery.
+Run `python serve.py`, then open
+[the encounter review](http://localhost:8741/tests/boss_encounters.html).
+The review uses isolated saves and supports every boss, class, phase and pose,
+entrance travel, walking to the threshold or marked device, required-counter
+state, sequence previews, death and retry. It includes an optional movement and
+interaction driver. Invulnerability is optional and off for validation runs.
 
-Run `node tests/boss_encounter_contract.mjs` for geometry, phases, caps, cleanup,
-rewards, difficulty resets and 192 seeded arenas. Run
-`node tests/boss_playthrough.mjs` for all 30 ordinary-equipment combat simulations.
-The driver uses real player, monster, minion, projectile and effect updates;
-it follows visible warnings without teleporting or disabling damage. Gravebinder
-starts with an army raised from ordinary corpses, not empowered graves. Six
-healing and six aether draughts form a fixed consumable budget. Automated play
-checks viability and pacing, not first-time human difficulty.
+The core checks are:
 
-Run `node tests/boss_refinement_contract.mjs` for the new sequences, interruptions,
-armor changes, and complete-sequence walking escapes with real movement and body
-separation. The playthrough driver now retains useful attack range after dodging,
-preventing outward dodges followed by attack paths back through poison.
-For a comparable baseline, run `node tests/boss_playthrough.mjs --baseline=4258cf2`
-and `node tests/boss_refinement_balance.mjs`. The historical report is preserved
-separately from this comparison using the same driver on both controllers.
+- `node tests/boss_arenas_contract.mjs`: 32 seeds per arena, entrances, device and reward routes, thresholds, repeatable counters, resets and persistent keys.
+- `node tests/boss_playthrough.mjs --output=tests/qa/boss_arenas/playthrough.json`, then `node tests/boss_arenas_balance.mjs`: all 30 boss/class combinations, real movement and device interactions, damage enabled, ordinary equipment and six healing/six aether draughts. Gravebinder uses a sustainable Miasma build and one ordinary warrior.
+- `node tests/boss_arenas_browser.cjs`: complete rendered encounters at 1920, 3840 and 844 pixels; phone touch and reduced motion; pause, death, retry, failed preload, save reload, legacy rewards and exact cached Cathedral returns.
+- `node --test tests/boss_arenas_coop.test.cjs`: 2–4 player authority, concurrent devices, replication, admission, disconnects, revives, wipes and retries.
+- `node tests/boss_arenas_network.cjs`: four independent touch-enabled browser clients using the production relay and worker; synchronized seals and counters, reconnects, and the visible death-dialog retry action.
+- `node tests/boss_arenas_preservation.mjs`: existing terrain, routes, campaign presentation and sprite registrations against the initial working tree.
+- `node tests/boss_encounter_contract.mjs`, `node tests/boss_refinement_contract.mjs`, `node tests/boss_animation_contract.mjs`: damage geometry, walking escapes, sequence interruption and bounded animation effects.
+- `node tests/boss_arenas_performance.cjs --resume`: three alternating before/after samples per boss at desktop and 4K, production loop, matched gear, final phase and capped adds. Run without concurrent benchmarks. The compressed initial working-tree snapshot is retained in `tests/fixtures/boss_arenas_before.json.gz`.
 
-`node tests/boss_browser_review.cjs --width=1920 --check` reviews every sequence
-and all authored poses. Use `--width=3840` for 4K and `--motion` to exercise motion
-enabled. Captures go to `tmp/boss_refinement/scenes/`; reports go to
-`tests/qa/bosses/`. `node tests/boss_refinement_performance.cjs` compares three
-alternating pairs of production-loop samples against the prior authored
-controller and HUD at revision `4258cf2`, with identical gear and capped adds.
-Use `--resume` to retain completed samples after a capture failure. Above-budget
-cases can be reassessed with `--boss=korvath --width=1920 --seconds=12
---warmup=5000 --output-dir=tests/qa/bosses/refinement_performance_followup`.
-`--summarize` combines the initial series and these longer follow-ups without
-discarding the original failures.
+Reports and captures are under `tests/qa/boss_arenas/`; the performance summary is
+in `performance/summary.json`. [Measured results](../tests/boss_arenas_results.md)
+collect the final pacing, compatibility and performance checks. The target is roughly 2–3 minutes on Normal and
+3–4 minutes for Vethriss, measured by the median across five ordinary builds.
+Individual classes vary; automated execution does not predict first-time human
+difficulty. Browser phone checks use touch emulation. Co-op checks combine
+2–4 player simulations with four independent clients on a local WebSocket relay;
+they do not measure physical phones or internet latency.
 
-The intended Normal pace is roughly 2–3 minutes, or 3–4 for Vethriss. There are
-no forced time gates; class, build, resistances and execution produce substantial
-variation. Measured results and browser performance limits are recorded in
-`tests/boss_refinement_results.md`; earlier measurements are retained in
-`tests/boss_encounter_results.md`.
-
-On Windows, add `--preserve-symlinks --preserve-symlinks-main` to Node if the
-sandbox prevents entry-path canonicalization.
+On restricted Windows environments, add
+`--preserve-symlinks --preserve-symlinks-main` to Node invocations.

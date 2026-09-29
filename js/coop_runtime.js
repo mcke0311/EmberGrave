@@ -45,6 +45,7 @@ const CoopRuntime=(()=>{
         w.ground=(old.ground||[]).map(g=>({...C.decode(g,new Map()),item:g.item?Object.assign(Game.reviveItem(g.item),{_coopId:g.item.netId}):null}));
         C.restorePropMonsters(w,old.propMonsters);
       }
+      if(w.map.bossArena?.dedicated)for(const boss of w.monsters)if(boss.encounter&&!boss.dead)boss.encounter.reset();
       w._activated=!!old;if(w._activated)scale(w);C.register(w);
     });return w;
   }
@@ -108,7 +109,7 @@ const CoopRuntime=(()=>{
   }
   function viewRadius(v){return Math.max(18,Math.min(80,(Number(v?.width)||844)/128+(Number(v?.height)||390)/64+8));}
   function combat(p){const w=worldOf(p);return !p||p.dead||!p.connected||clock<(p.combatUntil||0)||(p._coopHurt||0)!==(p._lastCombatHurt||0)||w._cinematic||w.monsters.some(m=>!m.dead&&(m.encounter?.active||m.aggro&&Math.hypot(m.x-p.x,m.y-p.y)<10));}
-  function validZone(zone){if(!P.ZONES.includes(zone))fail('This destination is outside Act I.');if(zone==='shattered_temple'&&!campaign.flags.fn_temple_open)fail('Shatter the three beacons and defeat the Oathsworn first.');}
+  function validZone(zone){if(!P.ZONES.includes(zone))fail('This destination is outside Act I.');if(['shattered_temple','arena_korvath'].includes(zone)&&!campaign.flags.fn_temple_open)fail('Shatter the three beacons and defeat the Oathsworn first.');}
   function arrival(w,p,point,safe=false){return scope(w,()=>{
     const candidates=[];
     for(let r=0;r<=(safe?4:0);r+=.5)for(let i=0;i<(r?16:1);i++)candidates.push({x:point.x+Math.cos(i*Math.PI/8)*r,y:point.y+Math.sin(i*Math.PI/8)*r,surfaceId:point.surfaceId??0});
@@ -122,6 +123,7 @@ const CoopRuntime=(()=>{
   });}
   function prepareTransfer(p,zone,spawn='default',options={}){
     validZone(zone);if(transfers.has(p._coopId))fail('Travel is already loading.');
+    if(worlds.get(zone)?.map.bossArena?.sealed&&p.worldId!==zone)fail('The arena is sealed. Wait for the encounter to end.');
     const ticket={id:P.randomId(),playerId:p._coopId,from:p.worldId,generation:p.travelGeneration,zone,spawn,options,x:p.x,y:p.y,at:clock};
     transfers.set(p._coopId,ticket);send({kind:'prepareWorld',id:ticket.id,zone},p._coopId);return true;
   }
@@ -159,6 +161,7 @@ const CoopRuntime=(()=>{
       validZone(ticket.zone);
       if(ticket.options.targetId&&(Math.hypot(p.x-ticket.x,p.y-ticket.y)>.05||combat(p)||combat(target)||target.worldId!==ticket.zone||target.travelGeneration!==ticket.options.targetGeneration))fail('Your teammate moved or entered combat.');
       const to=getWorld(ticket.zone,p);if(to._busy||to._campaignBusy||to._cinematic)fail('The destination is busy. Try again.');
+      if(to.map.bossArena?.sealed&&from!==to)fail('The arena is sealed. Wait for the encounter to end.');
       const point=ticket.options.position|| (target?{x:target.x+1,y:target.y,surfaceId:target.surfaceId}:to.map.spawns[ticket.spawn]||to.map.spawns.default);
       const pos=arrival(to,p,point,!!target),minions=from.minions.filter(mi=>mi.owner===p&&!mi.dead);
       activateWorld(to);rebaseTimers(p,to.time-from.time);for(const mi of minions)rebaseTimers(mi,to.time-from.time);
@@ -249,6 +252,16 @@ const CoopRuntime=(()=>{
         let operation;
         scope(w,()=>{
           if(c.type==='teleportToPlayer')operation=teleport(p,c.targetId);
+          else if(c.type==='retryArena'){
+            if(!p.dead||!w.map.zone.arena)fail('No arena retry is available.');
+            if(w.players.some(h=>h.connected&&!h.dead))fail('Wait for a teammate to revive you or for the party to fall.');
+            for(const boss of w.monsters)if(boss.encounter&&!boss.dead)boss.encounter.reset();
+            for(const key of ['projectiles','minions','traps','fx'])w[key]=[];
+            for(const [index,hero] of w.players.entries()){
+              hero.dead=false;hero.hp=hero.stats.maxHp;hero.mana=hero.stats.maxMana;hero.reviveTarget=null;
+              Game.coop.resetActor(hero,arrival(w,hero,{x:w.map.spawns.retry.x-1.8+index*1.2,y:w.map.spawns.retry.y}));
+            }
+          }
           else if(c.type==='respawn'){if(!p.dead)fail('You are already alive.');operation=prepareTransfer(p,'frosthaven','default',{revive:true});}
           else if(c.type==='usePortal'){
             const portal=p._portal;if(!portal)fail('Open a town portal first.');

@@ -1,0 +1,35 @@
+{
+  "browser": "154.0.8037.57",
+  "errors": [],
+  "encounters": [
+    {
+      "boss": "malthoron",
+      "width": 3840,
+      "reducedMotion": false,
+      "seconds": 172,
+      "won": true,
+      "hp": 420,
+      "healingLeft": 5,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 8000
+        },
+        {
+          "phase": 1,
+          "time": 51.5,
+          "hp": 5280
+        },
+        {
+          "phase": 2,
+          "time": 112,
+          "hp": 2640
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "integration": []
+}

@@ -16,7 +16,7 @@ function fixture(disabled=false){
 }
 const current=fixture(),before=fixture(true),rows=[];
 const hash=value=>crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
-const gameplay=m=>({...m,zone:{...m.zone,dark:0},lights:[],act2Visual:null,act2:m.act2?{...m.act2,decals:[]}:null});
+const gameplay=({campaignVisual,act2Visual,...m})=>({...m,zone:{...m.zone,dark:0},lights:[],act2Visual:null,act2:m.act2?{...m.act2,decals:[]}:null});
 const zones=['weeping_marsh','drowned_crypt','hollow_reeds','spawn_pools','ritual_site','marshcamp'];
 let checks=0;
 const ok=(value,label)=>{checks++;assert.ok(value,label);};

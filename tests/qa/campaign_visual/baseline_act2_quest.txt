@@ -1,0 +1,15 @@
+node:internal/modules/run_main:122
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: boss and shard recovery {"q":{"state":"active","count":0},"dead":true,"flags":{"opening":{"v":2,"stage":"done","defeated":[],"hints":{},"barks":{},"waves":[]},"campaign":{"talk:marshcamp:voice":1,"talk:marshcamp:dreams":1,"talk:marshcamp:fear":1,"kill:ritual_site:mire_mother":1},"dead_mire_mother@0":true}}
+    at ok (file:///C:/Users/this_/Downloads/Claudediablo/tests/act2_quest_contract.mjs:7:49)
+    at file:///C:/Users/this_/Downloads/Claudediablo/tests/act2_quest_contract.mjs:26:19 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '=='
+}
+
+Node.js v22.11.0

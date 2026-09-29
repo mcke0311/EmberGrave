@@ -1,0 +1,215 @@
+{
+  "browser": "154.0.8037.57",
+  "errors": [],
+  "encounters": [
+    {
+      "boss": "korvath",
+      "width": 1920,
+      "reducedMotion": false,
+      "seconds": 181.5,
+      "won": true,
+      "hp": 208.7114749851246,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 3700
+        },
+        {
+          "phase": 1,
+          "time": 79,
+          "hp": 1850
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "mire_mother",
+      "width": 1920,
+      "reducedMotion": false,
+      "seconds": 160.5,
+      "won": true,
+      "hp": 309.5235759503522,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 5600
+        },
+        {
+          "phase": 1,
+          "time": 67,
+          "hp": 3080.0000000000005
+        },
+        {
+          "phase": 2,
+          "time": 120.5,
+          "hp": 1400
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "azram",
+      "width": 1920,
+      "reducedMotion": false,
+      "seconds": 208.5,
+      "won": true,
+      "hp": 372,
+      "healingLeft": 4,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 5500
+        },
+        {
+          "phase": 1,
+          "time": 61,
+          "hp": 3300
+        },
+        {
+          "phase": 2,
+          "time": 136,
+          "hp": 1650
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "empty_archangel",
+      "width": 1920,
+      "reducedMotion": false,
+      "seconds": 225.5,
+      "won": true,
+      "hp": 386,
+      "healingLeft": 2,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 6500
+        },
+        {
+          "phase": 1,
+          "time": 108.5,
+          "hp": 3250
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "malthoron",
+      "width": 1920,
+      "reducedMotion": false,
+      "seconds": 168,
+      "won": true,
+      "hp": 420,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 8000
+        },
+        {
+          "phase": 1,
+          "time": 54.5,
+          "hp": 5280
+        },
+        {
+          "phase": 2,
+          "time": 116,
+          "hp": 2640
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "vethriss",
+      "width": 1920,
+      "reducedMotion": false,
+      "seconds": 252,
+      "won": true,
+      "hp": 490,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 11500
+        },
+        {
+          "phase": 1,
+          "time": 63.5,
+          "hp": 8049.999999999999
+        },
+        {
+          "phase": 2,
+          "time": 161.5,
+          "hp": 4024.9999999999995
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "integration": [
+    {
+      "checks": [
+        "prerequisites checked before entry",
+        "failed entry preserves parent",
+        "arena loads",
+        "return opens",
+        "Cathedral parent instance retained",
+        "vestibule portal goes home",
+        "independent Cathedral visit shifts",
+        "arena remembers original parent across regeneration",
+        "paused rendering preserves simulation",
+        "combat travel blocked",
+        "combat portal blocked",
+        "death offers arena retry",
+        "death penalty and supplies retained",
+        "failed preload preserves retry",
+        "failed retry keeps death checkpoint",
+        "retry succeeds",
+        "retry restores resources",
+        "retry does not refund supplies or penalty",
+        "retry clears attempt",
+        "arena checkpoint remains session local",
+        "reload returns to existing hub flow",
+        "legacy reward arena loads",
+        "legacy defeated boss stays dead",
+        "legacy reward remains reachable",
+        "legacy collected reward stays unique",
+        "legacy reward arena loads",
+        "legacy defeated boss stays dead",
+        "legacy reward remains reachable",
+        "legacy collected reward stays unique",
+        "legacy reward arena loads",
+        "legacy defeated boss stays dead",
+        "legacy reward remains reachable",
+        "legacy collected reward stays unique",
+        "legacy reward arena loads",
+        "legacy defeated boss stays dead",
+        "legacy reward remains reachable",
+        "legacy collected reward stays unique",
+        "legacy reward arena loads",
+        "legacy defeated boss stays dead",
+        "legacy reward remains reachable",
+        "Hell portal remains usable",
+        "legacy reward arena loads",
+        "legacy defeated boss stays dead",
+        "legacy reward remains reachable",
+        "Hell portal remains usable"
+      ]
+    }
+  ]
+}

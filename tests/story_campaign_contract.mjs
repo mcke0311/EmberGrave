@@ -73,7 +73,7 @@ ok(!G.bossWard(king),'all cathedral objectives failed to remove ward');
 G.__test.questKillEvent(king);ok(s.quests.q17.state==='reward','cathedral objectives did not complete q17');
 
 // Boss kills before acceptance must leave a collectible, never an unwinnable quest.
-s=fresh('ritual_site');G.__test.questKillEvent({defId:'mire_mother'});
+s=fresh('arena_mire_mother');G.__test.questKillEvent({defId:'mire_mother'});
 ok(s.quests.q12.state==='active','early boss kill skipped shard recovery');
 const shard=s.map.props.find(p=>p.storyId==='mire_shard');G.__test.interactImmediate(shard);
 ok(s.quests.q12.state==='active','live boss did not guard shard');
@@ -122,11 +122,11 @@ ok(boss.spriteOpts.kind==='wraith'&&boss.def.copyBosses,'final phase is not a sh
 boss.aggro=true;
 boss.encounter.memoryIndex=0;
 s.player.hp=s.player.stats.maxHp=1e6; // Inspect both real sequence steps without ending the story fixture.
-for(const pair of [['korvath','mire_mother'],['azram','malthoron']]){
+for(const pair of [['korvath','mire_mother'],['azram','empty_archangel'],['malthoron']]){
   boss.encounter.start('memory',s.player);
   for(const [i,id] of pair.entries()){
-    ok(boss.encounter.attack.remembered===id&&boss.encounter.attack.id===({korvath:'fissure',mire_mother:'bile',azram:'chains',malthoron:'beam'})[id],'missing copied signature: '+id);
-    if(i===0){boss.encounter.execute();boss.update(.25,s.player,s.map);}
+    ok(boss.encounter.attack.remembered===id&&boss.encounter.attack.id===({korvath:'fissure',mire_mother:'bile',azram:'chains',empty_archangel:'wings',malthoron:'beam'})[id],'missing copied signature: '+id);
+    if(i<pair.length-1){boss.encounter.execute();boss.update(.25,s.player,s.map);}
   }
 }
 for(const ending of ['destroy','seal','give']){

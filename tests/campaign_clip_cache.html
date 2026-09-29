@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="../">
+<title>Campaign occlusion cache parity</title><pre id="result">Loading…</pre>
+<script src="js/utils.js"></script><script src="js/data.js"></script><script src="js/data_overrides.js"></script>
+<script src="js/boss_encounters.js"></script><script src="js/sprite_manifest.js"></script><script src="js/sprite_assets.js"></script>
+<script src="js/mapgen.js"></script><script src="js/navigation.js"></script><script src="js/level_terrain.js"></script>
+<script>
+(async()=>{try{
+ const source=await fetch('js/level_terrain.js').then(r=>r.text());
+ const condition='DATA.ACT1_ZONES?.includes(m.id)||m.campaignVisual?.act===2||m.campaignVisual?.act===5';
+ if(!source.includes(condition))throw Error('Missing candidate cache condition');
+ const direct=new Function(source.replace(condition,'false')+'\nreturn LevelTerrain;')();
+ await SpriteAssets.loadBundle('world');let checks=0;const rows=[];
+ for(const zone of ['weeping_marsh','spawn_pools','ash_wastes','cinder_bastion','throne']){
+  await SpriteAssets.loadBundle('zone:'+zone);const m=MapGen.generate(zone,12345),points=[];
+  for(let i=0;i<180;i++)points.push({x:1.5+(i*17)%(m.w-3),y:1.5+(i*31)%(m.h-3)});
+  for(const width of [1920,3840]){
+   const canvas=document.createElement('canvas');canvas.width=width;canvas.height=width*9/16;const ctx=canvas.getContext('2d');
+   for(const [dx,dy] of [[0,0],[193,77],[-317.4,-115.2],[0,0]]){
+    const cam={x:U.isoX(m.spawns.default.x,m.spawns.default.y)-width/2+dx,y:U.isoY(m.spawns.default.x,m.spawns.default.y)-canvas.height/2+dy};
+    for(const renderer of [direct,LevelTerrain]){
+     renderer.beginFrame(m);renderer[m.surfaceVersion?'drawSurface':'drawFloor'](ctx,m,cam,0,m.w-1,0,m.h-1,(x,y)=>x>-200&&x<width+200&&y>-300&&y<canvas.height+300,true);
+    }
+    const commands=(renderer,p)=>{
+     const list=[],spy={canvas};for(const name of ['beginPath','rect','moveTo','lineTo','closePath','clip'])spy[name]=(...args)=>list.push([name,...args]);
+     renderer.clipBehind(spy,m,cam,p.x,p.y);return JSON.stringify(list);
+    };
+    // Reverse and repeat queries to exercise reuse, eviction and view rebuilds.
+    for(const p of [...points,...points.toReversed()]){
+     if(commands(direct,p)!==commands(LevelTerrain,p))throw Error('Clipping changed: '+JSON.stringify({zone,width,cam,p}));checks++;
+    }
+    for(const renderer of [direct,LevelTerrain])renderer.endFrame();
+   }
+   canvas.width=canvas.height=0;
+  }
+  rows.push(zone);
+ }
+ document.getElementById('result').textContent=JSON.stringify({status:'PASS',checks,zones:rows,method:'Exact ordered clip-command parity against uncached geometry queries; repeated and reversed queries, camera pans, 1080p/4K.'},null,2);
+ document.body.dataset.testStatus='passed';
+}catch(e){document.getElementById('result').textContent='FAIL '+e.stack;document.body.dataset.testStatus='failed';}})();
+</script></html>

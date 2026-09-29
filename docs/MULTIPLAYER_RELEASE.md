@@ -1,13 +1,13 @@
 # Multiplayer protocol 2 release
 
-Frontend, worker and relay build: **embergrave-coop-3**. Wire protocol: **2**. Co-op campaign record schema: **2**. Scope: the six Act I areas, Normal difficulty, four seats. Deployment has not been performed by this implementation task.
+Frontend, worker and relay build: **embergrave-coop-4**. Wire protocol: **2**. Co-op campaign record schema: **2**. Scope: the six Act I areas plus Korvath's dedicated arena, Normal difficulty, four seats. Later-act arenas remain single player. See [deployment records](DEPLOYMENT.md) for publication status.
 
 ## Prepare and verify
 
 1. Keep the workspace's other ongoing frontend changes in the release checkout. Run `npm run test:coop`, `npm run test:coop:browser`, `npm run test:coop:ui`, `npm run test:coop:network`, `npm run test:coop:performance`, and `npm run test:phone`. Repeat the independent browser test with `COOP_TEST_PLAYERS=4` and `COOP_TEST_LAG_MS=300`.
 2. Run `npm run test:coop:release`. It checks the build, worker imports, frontend assets and relay contract, and writes `tmp/coop-qa/release-manifest.json` with file hashes. Retain that manifest and the previous frontend/relay artifacts for rollback.
 3. Package the static frontend using the project's existing deployment workflow. Include `js/coop_worker.js`, `js/coop_runtime.js`, `js/coop_replication.js`, every worker import, and the updated character renderer. Keep the worker and its imports on the game origin; an applicable CSP must permit `worker-src 'self'`. All frontend script cache versions and worker imports identify the same release.
-4. Build the relay from the same checkout with `docker build -f server/Dockerfile -t embergrave-relay:embergrave-coop-3 .`, or install its existing locked dependencies and run `server/relay.cjs`. The relay image includes the same `js/coop_protocol.js`; it does not run game simulation or store campaign saves.
+4. Build the relay from the same checkout with `docker build -f server/Dockerfile -t embergrave-relay:embergrave-coop-4 .`, or install its existing locked dependencies and run `server/relay.cjs`. The relay image includes the same `js/coop_protocol.js`; it does not run game simulation or store campaign saves.
 5. Before exposing the update, finish the physical Pixel 7a acceptance matrix below. The recorded desktop results are not a substitute. Retain browser-local co-op campaign exports before migration/rollback testing; do not clear site data.
 
 ## Coordinated rollout
@@ -15,7 +15,7 @@ Frontend, worker and relay build: **embergrave-coop-3**. Wire protocol: **2**. C
 - Let current hosts save and leave before replacing the relay. Rooms are in memory; restarting it ends active sessions.
 - Deploy the matching static files and relay during the same maintenance window. Mixed builds deliberately fail with an incompatible-version message.
 - Route `/rooms`, `/healthz`, and WebSocket upgrades for `/ws`. Configure the exact HTTPS game origin in `ALLOWED_ORIGINS`. Keep one relay instance unless routing explicitly keeps each room on its owning instance.
-- Verify `/healthz` and `/rooms` both report `embergrave-coop-3`. Confirm public discovery, a hidden password room, wrong-password rejection, a full public room, and a late arrival while the host is outside town. Verify worker requests and imported scripts have no cache/CSP errors.
+- Verify `/healthz` and `/rooms` both report `embergrave-coop-4`. Confirm public discovery, a hidden password room, wrong-password rejection, a full public room, and a late arrival while the host is outside town. Verify worker requests and imported scripts have no cache/CSP errors.
 - Resume an existing Act I campaign, travel separately, complete one shared objective, reconnect a guest, and save/leave. Confirm the resumed host still starts in Frosthaven and solo saves remain available.
 
 ## Rollback

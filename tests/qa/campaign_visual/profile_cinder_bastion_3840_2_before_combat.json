@@ -1,0 +1,27 @@
+{
+  "zone": "cinder_bastion",
+  "width": 3840,
+  "pair": 2,
+  "version": "before",
+  "mode": "combat",
+  "position": {
+    "x": 52.5,
+    "y": 24.5
+  },
+  "monsters": 120,
+  "distance": 0,
+  "attackFrames": 240,
+  "enemyAttackFrames": 2734,
+  "cpuMs": {
+    "median": 8.4,
+    "p95": 11.1,
+    "max": 17.9
+  },
+  "frameIntervalMs": {
+    "median": 16.7,
+    "p95": 16.8,
+    "max": 20.8
+  },
+  "builds": 0,
+  "warmCacheStable": true
+}

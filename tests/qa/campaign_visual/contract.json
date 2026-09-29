@@ -1,0 +1,205 @@
+{
+  "status": "PASS",
+  "checks": 121180,
+  "zones": 28,
+  "seeds": 30,
+  "rows": [
+    {
+      "zone": "frosthaven_approach",
+      "act": 1,
+      "scenery": 14,
+      "ground": 23,
+      "atmosphere": 0
+    },
+    {
+      "zone": "frosthaven",
+      "act": 1,
+      "scenery": 0,
+      "ground": 14,
+      "atmosphere": 1
+    },
+    {
+      "zone": "north_wild",
+      "act": 1,
+      "scenery": 19,
+      "ground": 62,
+      "atmosphere": 9
+    },
+    {
+      "zone": "mines",
+      "act": 1,
+      "scenery": 12,
+      "ground": 54,
+      "atmosphere": 8
+    },
+    {
+      "zone": "shattered_temple",
+      "act": 1,
+      "scenery": 17,
+      "ground": 38,
+      "atmosphere": 6
+    },
+    {
+      "zone": "shardpeak_shrine",
+      "act": 1,
+      "scenery": 16,
+      "ground": 40,
+      "atmosphere": 6
+    },
+    {
+      "zone": "deepfreeze_cavern",
+      "act": 1,
+      "scenery": 14,
+      "ground": 48,
+      "atmosphere": 7
+    },
+    {
+      "zone": "marshcamp",
+      "act": 2,
+      "scenery": 0,
+      "ground": 14,
+      "atmosphere": 2
+    },
+    {
+      "zone": "weeping_marsh",
+      "act": 2,
+      "scenery": 8,
+      "ground": 74,
+      "atmosphere": 9
+    },
+    {
+      "zone": "drowned_crypt",
+      "act": 2,
+      "scenery": 8,
+      "ground": 48,
+      "atmosphere": 7
+    },
+    {
+      "zone": "hollow_reeds",
+      "act": 2,
+      "scenery": 8,
+      "ground": 45,
+      "atmosphere": 7
+    },
+    {
+      "zone": "spawn_pools",
+      "act": 2,
+      "scenery": 8,
+      "ground": 46,
+      "atmosphere": 7
+    },
+    {
+      "zone": "ritual_site",
+      "act": 2,
+      "scenery": 8,
+      "ground": 42,
+      "atmosphere": 7
+    },
+    {
+      "zone": "khalcamp",
+      "act": 3,
+      "scenery": 0,
+      "ground": 12,
+      "atmosphere": 1
+    },
+    {
+      "zone": "desert_wastes",
+      "act": 3,
+      "scenery": 15,
+      "ground": 59,
+      "atmosphere": 9
+    },
+    {
+      "zone": "shard_flats",
+      "act": 3,
+      "scenery": 6,
+      "ground": 35,
+      "atmosphere": 6
+    },
+    {
+      "zone": "underground_market",
+      "act": 3,
+      "scenery": 11,
+      "ground": 36,
+      "atmosphere": 6
+    },
+    {
+      "zone": "sand_tombs",
+      "act": 3,
+      "scenery": 9,
+      "ground": 35,
+      "atmosphere": 6
+    },
+    {
+      "zone": "khal_palace",
+      "act": 3,
+      "scenery": 12,
+      "ground": 40,
+      "atmosphere": 7
+    },
+    {
+      "zone": "tomb_sanctum",
+      "act": 3,
+      "scenery": 9,
+      "ground": 32,
+      "atmosphere": 6
+    },
+    {
+      "zone": "cathedral1",
+      "act": 4,
+      "scenery": 0,
+      "ground": 20,
+      "atmosphere": 6
+    },
+    {
+      "zone": "cathedral2",
+      "act": 4,
+      "scenery": 0,
+      "ground": 20,
+      "atmosphere": 6
+    },
+    {
+      "zone": "cathedral_cinderwatch",
+      "act": 4,
+      "scenery": 0,
+      "ground": 20,
+      "atmosphere": 6
+    },
+    {
+      "zone": "cathedral_bastion",
+      "act": 4,
+      "scenery": 0,
+      "ground": 29,
+      "atmosphere": 6
+    },
+    {
+      "zone": "hellgate",
+      "act": 5,
+      "scenery": 0,
+      "ground": 14,
+      "atmosphere": 2
+    },
+    {
+      "zone": "ash_wastes",
+      "act": 5,
+      "scenery": 10,
+      "ground": 53,
+      "atmosphere": 7
+    },
+    {
+      "zone": "cinder_bastion",
+      "act": 5,
+      "scenery": 10,
+      "ground": 43,
+      "atmosphere": 6
+    },
+    {
+      "zone": "throne",
+      "act": 5,
+      "scenery": 8,
+      "ground": 26,
+      "atmosphere": 5
+    }
+  ],
+  "isolation": "Four independent processes. Non-campaign exclusion was checked in contract_initial.json; the only subsequent map change bounds new Act II/V scenery."
+}

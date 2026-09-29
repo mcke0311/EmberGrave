@@ -4,7 +4,7 @@ const {fixture}=require('./coop_runtime_fixture.cjs');
 test('worker boot, persistent admission and independent world simulation without a DOM',async()=>{
   const f=fixture();await f.runtime.start({hostId:'host',hero:f.hero('Host'),seed:123});
   await f.runtime.receive('guest',{kind:'hero',hero:f.hero('Guest','veilranger')});
-  assert.equal(f.runtime.players.size,2);assert.equal(f.runtime.worlds.size,6);
+  assert.equal(f.runtime.players.size,2);assert.equal(f.runtime.worlds.size,7);
   f.runtime.tick(1/30);
   assert.ok(f.messages.some(m=>m.type==='local'&&m.payload.kind==='snapshot'));
   assert.ok(f.saves.at(-1).campaign.schemaVersion===2);
@@ -230,7 +230,8 @@ test('four worlds share the full Act I campaign, area cinematics, reward ledger 
   assert.equal(trio.length,3);f.Game.coop.withWorld(wild,()=>trio.forEach(m=>m.die(wild.players[0])));
   assert.ok(town.flags.fn_temple_open);await quest('q8b',true);await quest('q9');
   await travel(f,'guest','shattered_temple');const temple=f.runtime.worlds.get('shattered_temple');
-  f.Game.coop.withWorld(temple,()=>{const boss=temple.monsters.find(m=>m.defId==='korvath'),p=temple.players[0];p.x=boss.x+1;p.y=boss.y;boss.takeDamage(1e8,p,{},'phys');});
+  await travel(f,'guest','arena_korvath');const arena=f.runtime.worlds.get('arena_korvath');
+  f.Game.coop.withWorld(arena,()=>{const boss=arena.monsters.find(m=>m.defId==='korvath'),p=arena.players[0];p.x=boss.x+1;p.y=boss.y;boss.encounter.update(.01,p,arena.map);boss.takeDamage(1e8,p,{},'phys');boss.encounter.phaseChange(1);boss.encounter.completeMechanic('Counter tested separately');boss.takeDamage(1e8,p,{},'phys');});
   assert.equal(town.quests.q9.state,'reward');await quest('q9',true);
   assert.equal(town.quests.q9.coopRewarded.length,4);
   assert.ok(town.flags.coopComplete);const gold=[...f.runtime.players.values()].map(p=>p.gold);

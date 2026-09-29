@@ -40,7 +40,7 @@ const LevelTerrain = (() => {
       terrainSnapshot={map:m,id:m.id,w:m.w,h:m.h,theme:m.zone?.theme,art:m.zone?.artZone,
         surfaceVersion:m.surfaceVersion,geometry:m._surfaceGeometry,outdoor:m.outdoor,decals:JSON.stringify(terrainDecals(m)),
         cathedralEnvironment:m.cathedral?.environment,cathedralRevision:m.cathedral?.environment?.revision,
-        act2Visual:m.act2Visual,boundaries:m.boundaries,act5Environment:m.act5Environment,imperialEnvironment:m.act3?.environment,grids:TERRAIN_GRIDS.map(k=>terrainGrid(m,k)?.slice())};
+        campaignVisual:m.campaignVisual,act2Visual:m.act2Visual,boundaries:m.boundaries,act5Environment:m.act5Environment,imperialEnvironment:m.act3?.environment,grids:TERRAIN_GRIDS.map(k=>terrainGrid(m,k)?.slice())};
     }
     terrainSnapshot.act1Environment=m.act1Environment;
     visible.clear();surfacePolygons=[];surfaceIndex=null;frameOpen=true;frame++;
@@ -48,6 +48,7 @@ const LevelTerrain = (() => {
   }
   function sameTerrain(m){
     const s=terrainSnapshot;
+    if(s&&s.campaignVisual!==m.campaignVisual)return false;
     if(s&&(s.act1Environment!==m.act1Environment||s.act2Visual!==m.act2Visual))return false;
     if(s&&(s.cathedralEnvironment!==m.cathedral?.environment||s.cathedralRevision!==m.cathedral?.environment?.revision))return false;
     if(!s||s.boundaries!==m.boundaries||s.act5Environment!==m.act5Environment||s.imperialEnvironment!==m.act3?.environment||s.map!==m||s.id!==m.id||s.w!==m.w||s.h!==m.h||s.theme!==m.zone?.theme||s.art!==m.zone?.artZone||
@@ -218,6 +219,7 @@ const LevelTerrain = (() => {
       masked(g,material(id,0,false,true),cellsMask(m,cx,cy,i=>!m.walls[i]&&m.hazard[i]===code,6),ox,oy,.92);
     }
     if(m.cathedral?.environment)CathedralEnvironment.decorateFloor(g,m,ox,oy,SIDE,TILE);
+    if(m.campaignVisual)CampaignEnvironment.decorateFloor(g,m,ox,oy,SIDE,TILE);
     for(const d of terrainDecals(m)){
       if(m.act3?.environment&&d.type.startsWith('act3_'))continue;
       const x=d.x*TILE-ox,y=d.y*TILE-oy;
@@ -543,7 +545,7 @@ const LevelTerrain = (() => {
     if(!surfaceIndex)return surfacePolygons;
     const index=surfaceIndex,ids=[];
     const x0=Math.floor((sx-160)/POLYGON_CELL),x1=Math.floor((sx+160)/POLYGON_CELL),y0=Math.floor((sy-252)/POLYGON_CELL),y1=Math.floor((sy+68)/POLYGON_CELL);
-    // Northern crowds repeatedly query the same spatial cells for bodies,
+    // Campaign crowds repeatedly query the same spatial cells for bodies,
     // weapon effects and overhead geometry. Keep their ordered candidates;
     // exact per-actor occlusion is still evaluated below. The cache belongs
     // to this geometry index and is discarded when the terrain view changes.
@@ -565,7 +567,7 @@ const LevelTerrain = (() => {
   function clipBehind(ctx,m,cam,x,y,surfaceId=0){
     if(!m.surfaceVersion)return;
     const sx=U.isoX(x,y),sy=U.isoY(x,y)-TerrainSurface.heightAt(m,x,y,surfaceId)*14,h=TerrainSurface.heightAt(m,x,y,surfaceId);
-    for(const poly of nearbyPolygons(sx,sy,DATA.ACT1_ZONES?.includes(m.id))) {
+    for(const poly of nearbyPolygons(sx,sy,DATA.ACT1_ZONES?.includes(m.id)||m.campaignVisual?.act===2||m.campaignVisual?.act===5)) {
       if(poly.right<sx-160||poly.left>sx+160||poly.bottom<sy-252||poly.top>sy+68||!poly.points.some(p=>p.z>h+1e-7))continue;
       if(poly.kind==='ground'&&poly.tx===Math.floor(x)&&poly.ty===Math.floor(y))continue;
       const points=TerrainSurface.inFront(poly,x+y);
@@ -619,7 +621,7 @@ const Act1Environment=(()=>{
       walls.push({kind:'act1Boundary',d:c.x+c.y+.04,x:c.x,y:c.y,s:{kit:c.kit,length:3},f:frame(c.kit,'outer'),wx:x,wy:y,cx:x,cy:y,scale:.78});
     }
     for(const c of env.natural){
-      const f=nature(c.part),scale=c.scale;
+      const f=c.refreshAsset?(reference||SpriteAssets.getFrame)(SpriteAssets.maps.props[c.refreshAsset],0):nature(c.part),scale=c.scale;
       const th=c.thresholdId&&m.thresholds.find(t=>t.id===c.thresholdId);
       walls.push({kind:'act1Boundary',d:th?Math.min(c.x+c.y,th.x+th.y-.2):c.x+c.y,x:c.x,y:c.y,s:{kit:'north',length:5},f,
         wx:U.isoX(c.x,c.y),wy:U.isoY(c.x,c.y)-c.height*14,cx:U.isoX(c.x,c.y),cy:U.isoY(c.x,c.y)-c.height*14,scale});
@@ -712,7 +714,7 @@ const Act2Boundaries=(()=>{
       saved.push({kind:'act2Boundary',d:x+y,x,y,s:{...s,kit:'growth'},f,scale,wx:U.isoX(x,y),wy:U.isoY(x,y),cx:U.isoX(x,y),cy:U.isoY(x,y)});
     }
     for(const d of m.act2Visual?.dressing||[]){
-      const f=getFrame(SpriteAssets.maps.props[d.type],0);
+      const f=getFrame(SpriteAssets.maps.props[d.refreshAsset||d.type],0);
       saved.push({kind:'act2Boundary',d:d.x+d.y,x:d.x,y:d.y,s:{kit:'dressing',length:d.type==='a2visual_cypress'?5:1},f,scale:d.scale,flip:d.flip,tree:d.type==='a2visual_cypress',
         wx:U.isoX(d.x,d.y),wy:U.isoY(d.x,d.y),cx:U.isoX(d.x,d.y),cy:U.isoY(d.x,d.y)});
     }
@@ -1039,7 +1041,7 @@ const ImperialEnvironment=(()=>{
     }
     for(const [i,p] of (e.natural||[]).entries()){
       const dune=p.material==='dune';if(dune&&i%3===1)continue;
-      const asset='a3env_'+p.material+'_'+p.part,f=reference?getFrame(SpriteAssets.maps.props[asset],0):softNatural(getFrame(SpriteAssets.maps.props[asset],0),dune);
+      const asset=p.refreshAsset||'a3env_'+p.material+'_'+p.part,f=reference?getFrame(SpriteAssets.maps.props[asset],0):softNatural(getFrame(SpriteAssets.maps.props[asset],0),dune);
       add(dune?ground:parts,asset,p.x,p.y,{natural:true,span:5,scale:p.scale*(dune?1.7:1.04),f});
     }
     for(const t of e.passages){
@@ -1413,8 +1415,9 @@ const CathedralEnvironment=(()=>{
         })]){
           const key=Math.round(p.sx/20)+':'+Math.round(p.sy/20);
           if(piers.has(key)||m.thresholds?.some(th=>Math.abs(p.x-th.opening.x)<8&&Math.abs(p.y-th.opening.y)<5))continue;
-          piers.add(key);const f=frame('pier_'+kit);
-          walls.push({kind:'cathedralWall',kit,wx:p.sx-f.sw/2,wy:p.sy,d:p.x+p.y+.08,span:f.sw,slope:0,height:f.sh,f,pier:true});
+          const refresh=m.campaignVisual&&hash(p.x,p.y,53)>.52?'a4refresh_'+(hash(p.x,p.y,67)>.5?0:3):null;
+          piers.add(key);const f=refresh?(reference||SpriteAssets.getFrame)(SpriteAssets.maps.props[refresh],0):frame('pier_'+kit);
+          walls.push({kind:'cathedralWall',kit,refresh,wx:p.sx-f.sw/2,wy:p.sy,d:p.x+p.y+.08,span:f.sw,slope:0,height:f.sh,f,pier:true});
         }
         // The near edge is a low plinth. Complete rear walls use identical
         // world-space UVs across depth-sorted spans, including trimmed corners.
@@ -1595,9 +1598,9 @@ const CathedralEnvironment=(()=>{
   }
   function describe(m,ref){
     const a=assembly(m,ref),rows=[];
-    const add=(key,sx,sy)=>rows.push(Object.freeze({assetId:SpriteAssets.maps.props['a4v2_'+key],index:0,x:U.unisoX(sx,sy),y:U.unisoY(sx,sy)}));
+    const add=(key,sx,sy)=>rows.push(Object.freeze({assetId:SpriteAssets.maps.props[key.startsWith('a4refresh_')?key:'a4v2_'+key],index:0,x:U.unisoX(sx,sy),y:U.unisoY(sx,sy)}));
     for(const d of a.walls){
-      const key=(d.door?'door_':d.pier?'pier_':'wall_')+d.kit;
+      const key=d.refresh||(d.door?'door_':d.pier?'pier_':'wall_')+d.kit;
       add(key,d.wx+d.span/2,d.wy+(d.door||d.pier?d.door?d.span/4:0:d.span*d.slope/2));
     }
     for(const d of a.faces)add('cliff_'+d.kit,(d.left.sx+d.right.sx)/2,(d.left.sy+d.right.sy)/2);
@@ -1614,3 +1617,81 @@ function EnvironmentReferenceRecords(draws){
     x:d.refX??d.x,y:d.refY??d.y,surfaceId:d.surfaceId||0,scale:d.scale||1,
     part:d.s?.kit||d.kit||null}));
 }
+
+/* Additional campaign dressing shares the terrain cache and actor depth list.
+   Only immutable presentation records are retained; no collision or save state. */
+const CampaignEnvironment=(()=>{
+  const assemblies=new WeakMap();
+  function assembly(m,reference){
+    const v=m.campaignVisual;
+    if(!reference&&assemblies.has(v))return assemblies.get(v);
+    const rows=v.scenery.map(p=>{
+      const f=(reference||SpriteAssets.getFrame)(SpriteAssets.maps.props[p.type],0);
+      return {...p,f,kind:'campaignScenery',d:p.x+p.y,wx:U.isoX(p.x,p.y),wy:U.isoY(p.x,p.y)-TerrainSurface.heightAt(m,p.x,p.y)*14};
+    });
+    if(!reference)assemblies.set(v,rows);return rows;
+  }
+  function decorateFloor(g,m,ox,oy,size,tile){
+    const v=m.campaignVisual;if(!v)return;
+    g.save();
+    // Clip presentation to existing supported, non-hazardous floor cells.
+    const mask=new Path2D();
+    for(let y=Math.max(0,Math.floor(oy/tile));y<Math.min(m.h,Math.ceil((oy+size)/tile));y++)for(let x=Math.max(0,Math.floor(ox/tile));x<Math.min(m.w,Math.ceil((ox+size)/tile));x++){
+      const i=x+y*m.w;if(!m.blocked[i]&&!m.void?.[i]&&!m.hazard[i])mask.rect(x*tile-ox,y*tile-oy,tile,tile);
+    }
+    g.clip(mask);
+    const arena=m.bossArena;
+    if(arena?.dedicated){
+      const at=p=>[p.x*tile-ox,p.y*tile-oy];
+      if(arena.platforms){
+        g.fillStyle='rgba(19,57,44,.45)';g.fillRect(0,0,size,size);
+        g.strokeStyle='#55564b';g.lineWidth=tile*4;g.lineJoin='round';g.beginPath();
+        arena.platforms.forEach((p,i)=>{const q=at(p);i?g.lineTo(...q):g.moveTo(...q);});g.closePath();g.stroke();
+        for(const p of arena.platforms){g.beginPath();g.arc(...at(p),tile*4.4,0,Math.PI*2);g.fillStyle='#51564b';g.fill();}
+      }else if(arena.bossId==='azram'){
+        g.fillStyle='rgba(233,155,46,.46)';for(const dx of [-11,11])g.fillRect((arena.cx+dx-.65)*tile-ox,(arena.cy-9)*tile-oy,tile*1.3,tile*18);
+      }
+    }
+    for(const d of v.ground){
+      const x=d.x*tile-ox,y=d.y*tile-oy;if(x<-400||x>size+400||y<-400||y>size+400)continue;
+      const f=SpriteAssets.getFrame(SpriteAssets.maps.props[d.type],0);
+      g.save();g.translate(x,y);g.transform(.5,-.5,1,1,0,0);g.scale(d.flip?-d.scale:d.scale,d.scale);g.globalAlpha=d.alpha;
+      g.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,-f.anchorX,-f.anchorY,f.sw,f.sh);g.restore();
+    }
+    for(const p of v.scenery){
+      const x=(p.x+.7)*tile-ox,y=(p.y+.7)*tile-oy,r=tile*2.4;
+      if(x+r<0||x-r>size||y+r<0||y-r>size)continue;
+      const shade=g.createRadialGradient(x,y,0,x,y,r);shade.addColorStop(0,'rgba(8,15,22,.24)');shade.addColorStop(1,'transparent');g.fillStyle=shade;g.fillRect(x-r,y-r,r*2,r*2);
+    }
+    g.restore();
+  }
+  function append(draws,m,cam,p,W,H){
+    const hx=U.isoX(p.x,p.y)-cam.x,hy=U.isoY(p.x,p.y)-cam.y-TerrainSurface.heightAt(m,p.x,p.y)*14;
+    for(const d of assembly(m)){
+      const f=d.f,s=d.scale;d.sx=d.wx-cam.x;d.sy=d.wy-cam.y;d.hx=hx;d.hy=hy;
+      if(d.sx-f.anchorX*s>W||d.sx+(f.sw-f.anchorX)*s<0||d.sy-f.anchorY*s>H||d.sy+(f.sh-f.anchorY)*s<0)continue;
+      draws.push(d);
+    }
+  }
+  function draw(ctx,d,p){
+    const f=d.f,s=d.scale;
+    ctx.save();
+    if(p.x+p.y<d.d+.5&&Math.abs(d.hx-d.sx)<f.sw*s*.45&&d.hy>d.sy-f.anchorY*s-12&&d.hy<d.sy+20)ctx.globalAlpha*=.22;
+    ctx.translate(d.sx,d.sy);if(d.flip)ctx.scale(-1,1);
+    ctx.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,-f.anchorX*s,-f.anchorY*s,f.sw*s,f.sh*s);ctx.restore();
+  }
+  function atmosphere(ctx,m,cam,W,H,time){
+    const v=m.campaignVisual;if(![3,4,5].includes(v.act))return; // Existing snow and marsh mist stay authoritative.
+    ctx.save();ctx.fillStyle=v.moteColor||(v.act===5?'#e8a474':v.act===4?'#b7c9e8':'#d9bd8f');
+    // Maximum 27 motes, anchored to landmarks, independently of viewport size.
+    for(const p of v.atmosphere)for(let i=0;i<3;i++){
+      const phase=p.phase+i*2.1,x=U.isoX(p.x,p.y)-cam.x+Math.sin(time*.15+phase)*85,
+        y=U.isoY(p.x,p.y)-cam.y-TerrainSurface.heightAt(m,p.x,p.y)*14-22-((time*4+phase*31)%90);
+      if(x<0||x>W||y<0||y>H)continue;
+      ctx.globalAlpha=.12+.09*Math.sin(time*.5+phase)**2;ctx.fillRect(x,y,1.4,1.4);
+    }
+    ctx.restore();
+  }
+  function describe(m,reference){return [...EnvironmentReferenceRecords(assembly(m,reference)),...m.campaignVisual.ground.map(p=>({assetId:SpriteAssets.maps.props[p.type],index:0,x:p.x,y:p.y,scale:p.scale}))];}
+  return Object.freeze({decorateFloor,append,draw,atmosphere,describe});
+})();

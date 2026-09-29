@@ -11,7 +11,8 @@ globalThis.document={createElement(){
   createLinearGradient:()=>gradient,createRadialGradient:()=>gradient,createPattern:()=>({})},
   {get:(o,k)=>k in o?o[k]:noop});canvas.getContext=()=>context;return canvas;
 }};
-for(const f of ['utils','data','data_overrides','sprite_manifest','mapgen'])vm.runInThisContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'));
+globalThis.Path2D=class {rect(){} moveTo(){} lineTo(){} closePath(){}};
+for(const f of ['utils','data','data_overrides','boss_encounters','sprite_manifest','mapgen','navigation'])vm.runInThisContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'));
 const {U,DATA,MapGen,TerrainSurface:S}=vm.runInThisContext('({U,DATA,MapGen,TerrainSurface})');
 globalThis.SpriteAssets={WALL_VIEW_H:128,maps:DATA.SPRITE_MANIFEST.maps,getFrame:()=>({image:{},sx:0,sy:0,sw:512,sh:512,anchorX:256,anchorY:256}),drawFrame:noop,drawCliffPolygon:noop,drawCliff:noop};
 vm.runInThisContext(fs.readFileSync(new URL('../js/level_terrain.js',import.meta.url),'utf8'));

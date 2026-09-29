@@ -4,7 +4,7 @@ const {fresh,tick,Game:G,BossEncounters:B,DATA:D}=fixture();
 let checks=0;
 const ok=(v,label)=>{checks++;assert.ok(v,label);};
 const close=(a,b,label)=>ok(Math.abs(a-b)<1e-7,label);
-function setup(id,phase=0){const f=fresh(id);f.e.active=true;for(let i=1;i<=phase;i++){f.m.hp=f.m.maxHp*f.m.def.phases[i-1].at;f.e.phaseChange(i);}return f;}
+function setup(id,phase=0){const f=fresh(id);f.e.active=true;for(let i=1;i<=phase;i++){f.m.hp=f.m.maxHp*f.m.def.phases[i-1].at;f.e.phaseChange(i);f.e.completeMechanic("Attack isolation");f.e.stage="transition";f.e.timer=1.5;}return f;}
 
 // Pursuit is bounded even if navigation makes no progress; the queue advances.
 for(const [id,phase,fallback] of [['korvath',0,'fissure'],['azram',0,'chains'],['malthoron',0,'chains'],['malthoron',1,'souls'],['vethriss',0,'light']]){
@@ -57,8 +57,8 @@ for(const phase of [1,2]){
 
 for(const difficulty of [0,1,2]){
  const {s,p,m,e}=fresh('malthoron',123,'vanguard',difficulty);e.active=true;const base=e.base.armor;
- e.phaseChange(1);close(m.def.armor,base*.7,'first armor loss');e.phaseChange(1);close(m.def.armor,base*.7,'armor compounded');
- e.phaseChange(2);close(m.def.armor,base*.4,'second armor loss');
+ e.phaseChange(1);close(m.def.armor,base,'armor stays until counter');e.completeMechanic();close(m.def.armor,base*.7,'first armor loss');e.phaseChange(1);e.completeMechanic();close(m.def.armor,base*.7,'armor compounded');
+ e.phaseChange(2);e.completeMechanic();close(m.def.armor,base*.4,'second armor loss');
  for(const direction of [1,-1]){
   e.start('beam',p);const a=e.attack,start=a.startAngle;
   ok(a.sweepDirection===direction,'beam direction did not alternate');e.execute();tick(s,1);
@@ -85,7 +85,7 @@ function echoes(){const f=setup('vethriss',1);f.e.start('decoys',f.p);f.e.execut
 for(const reason of ['phase','retreat','death','travel','interrupt']){
  const {s,p,m,e}=echoes();
  if(reason==='phase')e.phaseChange(2);
- if(reason==='retreat'){p.x=e.arena.x1+1;tick(s,.025);}
+ if(reason==='retreat'){p.x=e.arena.x1+1;tick(s,.025);ok(e.active&&B.insideArena(e.arena,p.x,p.y),'sealed boundary failed');e.reset();}
  if(reason==='death'){p.hp=1;G.onPlayerDeath(m);}
  if(reason==='travel')B.cancelAll();
  if(reason==='interrupt')e.clearAttacks();
@@ -109,7 +109,7 @@ function dodge(f){
  if(!danger.some(sh=>B.contains(sh,p.x,p.y)))return;
  let escape=null;
  const duration=Math.max(0,e.timer-.15);
- for(const distance of [1,1.8,2.6,3.4,4.2]){
+ for(const distance of [1,1.8,2.6,3.4,4.2,5.5,7,9]){
   for(let k=0;k<48&&!escape;k++){
    const x=origin.x+Math.cos(k*Math.PI/24)*distance,y=origin.y+Math.sin(k*Math.PI/24)*distance;
    if(!B.insideArena(e.arena,x,y,p.radius)||!B.footprint(s.map,x,y,p.radius))continue;
@@ -127,15 +127,15 @@ function dodge(f){
  p.x=escape.x;p.y=escape.y;routes++;
 }
 for(const id of Object.keys(D.BOSS_ENCOUNTERS))for(let phase=0;phase<D.BOSS_ENCOUNTERS[id].phases.length;phase++){
- for(const attack of [...new Set(D.BOSS_ENCOUNTERS[id].rotations[phase])].flatMap(id=>id==='memory'?['memory','memory_choir']:[id]))for(const position of ['near','edge','corner'])for(const populated of [false,true]){
+ for(const attack of [...new Set(D.BOSS_ENCOUNTERS[id].rotations[phase])].flatMap(id=>id==='memory'?['memory','memory_choir','memory_hollow']:[id]))for(const position of ['near','edge','corner'])for(const populated of [false,true]){
   const f=setup(id,phase),{s,p,m,e}=f;
   if(position!=='near'){
    m.x=e.arena.x1-4;m.y=position==='corner'?e.arena.y1-4:e.arena.cy;
-   p.x=e.arena.x1-1;p.y=position==='corner'?e.arena.y1-1:m.y;
+   const point=e.safePoint(e.arena.x1-1,position==='corner'?e.arena.y1-1:m.y,p.radius);p.x=point.x;p.y=point.y;const bossPoint=e.safePoint(m.x,m.y,m.radius);m.x=bossPoint.x;m.y=bossPoint.y;
   }
   if(populated){e.clearOwned();for(let i=0;i<e.config.cap;i++)e.spawn('drowned_dead',m.x-2-i,m.y+2);}
-  if(attack==='memory_choir')e.memoryIndex=1;
-  e.start(attack==='memory_choir'?'memory':attack,p);
+  if(attack==='memory_choir')e.memoryIndex=1;if(attack==='memory_hollow')e.memoryIndex=2;
+  e.start(attack.startsWith('memory')?'memory':attack,p);
   for(let step=0;step<2&&e.stage==='windup';step++){
    dodge(f);steps++;e.execute();
    // Advance only to the next warning, preserving the dodged ground position.

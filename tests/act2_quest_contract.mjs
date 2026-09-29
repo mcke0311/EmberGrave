@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import {fixture} from './boss_fixture.mjs';
-const f=fixture({gameExports:['setupRitualQuest','ritualQuestKill','ritualAnchor','placeEvents','syncOptionalQuests']}),
+const f=fixture({gameExports:['interactOnSurface','setupRitualQuest','ritualQuestKill','ritualAnchor','placeEvents','syncOptionalQuests']}),
  {Game:G,MapGen:M,Player,Monster,TerrainNavigation:N,DATA:D}=f,T=G.__bossTest,Npc=vm.runInContext('Npc',f.ctx);
 let checks=0;const ok=(v,msg)=>{checks++;assert.ok(v,msg);};
 function fresh(zone='marshcamp',seed=12345){
@@ -21,9 +21,10 @@ ok(s.quests.q11.siteDestroyed&&s.monsters.filter(m=>m.defId==='choirmaster').len
 T.ritualQuestKill(s.monsters.find(m=>m.defId==='choirmaster'));ok(s.quests.q11.state==='reward','Vorthel quest');
 G.completeQuest('q11');G.acceptQuest('q12');
 ok(await G.enterMap('ritual_site','from_wild'),'ritual entry');
-const boss=s.monsters.find(m=>m.defId==='mire_mother');Object.assign(s.player,{x:boss.x+2,y:boss.y});boss.encounter.active=true;boss.die(s.player);
-const shard=s.map.props.find(p=>p.storyId==='mire_shard');ok(shard.x===s.map.act2.anchors.story.mire_shard.x,'shard ignores authored placement');
-G.interact(shard);ok(s.quests.q12.state==='reward','boss and shard recovery '+JSON.stringify({q:s.quests.q12,dead:boss.dead,flags:s.flags}));G.completeQuest('q12');ok(s.shrines.includes('khalcamp'),'Act 3 travel unlock');
+ok(await G.enterMap('arena_mire_mother','default'),'dedicated basin entry');
+const boss=s.monsters.find(m=>m.defId==='mire_mother');Object.assign(s.player,{x:boss.x+2,y:boss.y});boss.encounter.active=true;boss.encounter.phaseChange(2);boss.encounter.completeMechanic('Counters covered by arena contract');boss.die(s.player);
+const shard=s.map.props.find(p=>p.storyId==='mire_shard');ok(shard.x===s.map.arenaStory.mire_shard.x,'shard ignores authored placement');
+T.interactOnSurface(shard,true);ok(s.quests.q12.state==='reward','boss and shard recovery '+JSON.stringify({q:s.quests.q12,dead:boss.dead,flags:s.flags}));G.completeQuest('q12');ok(s.shrines.includes('khalcamp'),'Act 3 travel unlock');
 ok(await G.enterMap('hollow_reeds','from_wild'),'reeds entry');G.acceptQuest('opt_marsh_1');
 for(const spawn of s.map.monsterSpawns.slice(0,15))T.questKillEvent({defId:spawn.id});
 ok(s.quests.opt_marsh_1.state==='reward','15 Songless kills');
@@ -43,10 +44,10 @@ for(const saved of [{state:'active'},{state:'active',siteDestroyed:true,bossAnch
  await G.enterMap('drowned_crypt','from_wild');ok(JSON.stringify(s.quests.q11)===original,'death reset ritual progress');
 }
 // Boss-first play cannot bypass Oris, and a later quest completion remains possible.
-s=fresh();await G.enterMap('ritual_site','from_wild');const early=s.monsters.find(m=>m.defId==='mire_mother');Object.assign(s.player,{x:early.x+2,y:early.y});early.encounter.active=true;early.die(s.player);
-G.interact(s.map.props.find(p=>p.storyId==='mire_shard'));ok(s.quests.q12.state==='active','early boss bypassed q11');
+s=fresh();await G.enterMap('arena_mire_mother','default');const early=s.monsters.find(m=>m.defId==='mire_mother');Object.assign(s.player,{x:early.x+2,y:early.y});early.encounter.active=true;early.encounter.phaseChange(2);early.encounter.completeMechanic('Counters covered by arena contract');early.die(s.player);
+T.interactOnSurface(s.map.props.find(p=>p.storyId==='mire_shard'),true);ok(s.quests.q12.state==='active','early boss bypassed q11');
 s.quests.q11={state:'done'};D.CAMPAIGN.sync(s);ok(s.quests.q12.state==='reward','early shard recovery became stuck');
-await G.enterMap('marshcamp','from_wild');await G.enterMap('ritual_site','from_wild');ok(!s.monsters.some(m=>m.defId==='mire_mother'&&!m.dead),'defeated boss returned');
+await G.enterMap('marshcamp','from_wild');await G.enterMap('arena_mire_mother','default');ok(!s.monsters.some(m=>m.defId==='mire_mother'&&!m.dead),'defeated boss returned');
 
 for(const zone of ['weeping_marsh','drowned_crypt','hollow_reeds','spawn_pools','ritual_site']){
  s=fresh();await G.enterMap(zone,'default');const original=s.map;

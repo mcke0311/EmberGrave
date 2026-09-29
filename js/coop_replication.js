@@ -1,7 +1,7 @@
 /* Wire baselines belong to recipients. Canonical records never contain render state. */
 const CoopReplication=(()=>{
   const groups=['players','monsters','minions','projectiles','ground','traps','fx','npcs'];
-  const shared=['props','campaign','vendorStock','party','terrainEdits'];
+  const shared=['props','campaign','vendorStock','party','terrainEdits','arena'];
   const equal=(a,b)=>a===b||(a!=null&&b!=null&&typeof a==='object'&&typeof b==='object'&&JSON.stringify(a)===JSON.stringify(b));
   const nested=new Set(['action','act1Visual','encounter']);
   const object=v=>v&&typeof v==='object'&&!Array.isArray(v)&&!v.$ref;

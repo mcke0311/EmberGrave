@@ -1,0 +1,18 @@
+PASS 1110 opening checks: five classes, rescue, captain phases, finite reinforcements, attack warnings, every checkpoint, migration, rewards, mandatory progression, death and failed-load retry.
+
+Could not load town sprites: Error: Expected test load failure
+    at Object.loadBundle (file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:14:65)
+    at requireSpriteBundle (evalmachine.<anonymous>:155:26)
+    at enterMap (evalmachine.<anonymous>:647:52)
+    at Object.returnToTown (evalmachine.<anonymous>:2005:29)
+    at file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:139:13
+Could not load town sprites: Error: Expected test load failure
+    at Object.loadBundle (file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:14:65)
+    at requireSpriteBundle (evalmachine.<anonymous>:155:26)
+    at Object.enterMap (evalmachine.<anonymous>:651:16)
+    at file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:143:43
+Could not load town sprites: Error: Expected test load failure
+    at Object.loadBundle (file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:14:65)
+    at requireSpriteBundle (evalmachine.<anonymous>:155:26)
+    at Object.enterMap (evalmachine.<anonymous>:659:92)
+    at async file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:147:31

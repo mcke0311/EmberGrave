@@ -1,0 +1,64 @@
+{
+  "checks": 3500,
+  "arenas": 192,
+  "scenes": [
+    {
+      "boss": "korvath",
+      "zone": "arena_korvath",
+      "shape": "octagon",
+      "devices": [
+        "korvath_device_0",
+        "korvath_device_1"
+      ]
+    },
+    {
+      "boss": "mire_mother",
+      "zone": "arena_mire_mother",
+      "shape": "circle",
+      "devices": [
+        "mire_mother_device_0",
+        "mire_mother_device_1",
+        "mire_mother_device_2"
+      ]
+    },
+    {
+      "boss": "azram",
+      "zone": "arena_azram",
+      "shape": "court",
+      "devices": [
+        "azram_device_0",
+        "azram_device_1"
+      ]
+    },
+    {
+      "boss": "empty_archangel",
+      "zone": "arena_empty_archangel",
+      "shape": "cross",
+      "devices": [
+        "empty_archangel_device_0",
+        "empty_archangel_device_1",
+        "empty_archangel_device_2"
+      ]
+    },
+    {
+      "boss": "malthoron",
+      "zone": "arena_malthoron",
+      "shape": "circle",
+      "devices": [
+        "malthoron_device_0",
+        "malthoron_device_1",
+        "malthoron_device_2"
+      ]
+    },
+    {
+      "boss": "vethriss",
+      "zone": "arena_vethriss",
+      "shape": "octagon",
+      "devices": [
+        "vethriss_device_0",
+        "vethriss_device_1",
+        "vethriss_device_2"
+      ]
+    }
+  ]
+}

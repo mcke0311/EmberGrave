@@ -1,6 +1,7 @@
 const CoopUI=(()=>{
   let dialog=null,statusEl=null,hud=null,screen='',travelId=null,lastTick=0,hudKey='',selectedHero=null,draft={};
   const healthBars=new Map();let browseTimer=null;
+  let arenaDeathVisible=false;
   function partyPlayers(){
     if(!Coop.party?.length)return Game.state?.players||[];
     return Coop.party.map(r=>{const local=Game.state?.players.find(p=>p._coopId===r.id);return local?Object.assign(Object.create(local),{zone:r.zone}):{...r,_coopId:r.id,stats:{maxHp:r.maxHp}};});
@@ -69,6 +70,10 @@ const CoopUI=(()=>{
     d.append(el('p','Co-op heroes are saved on this device. Solo heroes and progress stay separate.','coop-note'));
   }
   function refresh(){
+    const wiped=Coop.active&&Game.state?.map?.zone.arena&&Game.state.player.dead&&Game.state.players.every(p=>p.dead||p.connected===false);
+    // The normal death dialog remains accessible when touch mode hides the HUD.
+    if(wiped&&!arenaDeathVisible){arenaDeathVisible=true;UI.showDeath(0,'Frosthaven');}
+    else if(!wiped&&arenaDeathVisible){arenaDeathVisible=false;UI.hideDeath();}
     if(Game.state&&screen==='party')refreshParty();
     if(typeof MobileWorkspace!=='undefined')MobileWorkspace.sync();
     if(!Coop.active){if(hud)hud.hidden=true;hudKey='';return;}
@@ -85,6 +90,9 @@ const CoopUI=(()=>{
       healthBars.set(p._coopId,bar);
     }
     const actions=el('div',null,'coop-actions');actions.append(button('Party',party),button('Ready',()=>Coop.ready(!Coop.roster.find(p=>p.id===Coop.localId)?.ready)));hud.append(actions);
+    if(Game.state?.player.dead&&Game.state.map.zone.arena&&Game.state.players.every(p=>p.dead||p.connected===false))
+      actions.append(button('Retry at arena entrance',()=>Game.submitCommand({type:'retryArena'})));
+    if(Game.state?.player.dead)actions.append(button('Return to Frosthaven',()=>Game.submitCommand({type:'respawn'})));
     const pause=el('div',Coop.paused,'coop-pause');pause.id='coopPause';hud.append(pause);
     if(Coop.host&&Coop.paused==='Save failed')hud.append(button('Retry saving',()=>Coop.retrySave()));
     if(Coop.saveError){hud.append(el('div','Local hero save failed','coop-pause'),button('Retry local save',()=>Coop.retrySave()));}
@@ -107,6 +115,7 @@ const CoopUI=(()=>{
       const health=el('span');health.dataset.player=p._coopId;row.append(health);
       if(!p.dead&&p.connected!==false&&p._coopId!==Coop.localId){const teleport=button('Teleport to player',()=>Coop.teleportToPlayer(p._coopId));teleport.disabled=Game.state.player.dead||Math.max(p.combatUntil||0,Game.state.player.combatUntil||0,Game.state.player.teleportUntil||0)>Game.state.partyTime;row.append(teleport);}
       if(p.dead&&p._coopId===Coop.localId)row.append(button('Return to Frosthaven',()=>Game.submitCommand({type:'respawn'})));
+      if(p.dead&&p._coopId===Coop.localId&&Game.state.map.zone.arena&&Game.state.players.every(h=>h.dead||h.connected===false))row.append(button('Retry at arena entrance',()=>Game.submitCommand({type:'retryArena'})));
       if(p.dead&&p._coopId!==Coop.localId&&(!p.zone||p.zone===Game.state.map.id))row.append(button('Revive',()=>Game.submitCommand({type:'revive',targetId:p._coopId})));list.append(row);
     }}
     for(const label of list.querySelectorAll('[data-player]')){const p=players.find(p=>p._coopId===label.dataset.player);const text=(p.connected===false?'Offline':p.dead?'Fallen':'Connected')+' · '+Math.ceil(p.hp)+' / '+Math.ceil(p.stats.maxHp)+' Life';if(label.textContent!==text)label.textContent=text;}

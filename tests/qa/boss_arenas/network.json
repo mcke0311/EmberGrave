@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "players": 4,
+  "transport": "Production WebSocket relay and worker on localhost, independent Chrome contexts",
+  "checks": [
+    "client 1 travels to north_wild",
+    "client 1 travels to shattered_temple",
+    "client 1 travels to arena_korvath",
+    "client 2 travels to north_wild",
+    "client 2 travels to shattered_temple",
+    "client 2 travels to arena_korvath",
+    "client 3 travels to north_wild",
+    "client 3 travels to shattered_temple",
+    "client 3 travels to arena_korvath",
+    "client 4 travels to north_wild",
+    "client 4 travels to shattered_temple",
+    "client 4 travels to arena_korvath",
+    "threshold waits for the admitted party",
+    "guest cannot travel through the combat seal",
+    "four concurrent interactions are accepted without duplicate activation",
+    "network counter preserves the exact phase threshold",
+    "reconnecting browser retains the current encounter",
+    "guest retry button resets the full party and attempt"
+  ],
+  "errors": []
+}

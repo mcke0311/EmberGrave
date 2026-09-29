@@ -37585,6 +37585,66 @@ DATA.SPRITE_MANIFEST = {
       "revision": "46af6847b657",
       "src": "assets/sprites/packed/world/props/a1polish_standing_stone.webp"
     },
+    "world.prop.a1refresh_0": {
+      "anchor": [
+        99,
+        264
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "94dfe127ce8d",
+      "src": "assets/sprites/packed/world/props/a1refresh_0.webp"
+    },
+    "world.prop.a1refresh_1": {
+      "anchor": [
+        129,
+        251
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "9e37204613bd",
+      "src": "assets/sprites/packed/world/props/a1refresh_1.webp"
+    },
+    "world.prop.a1refresh_2": {
+      "anchor": [
+        130,
+        150
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "23a6bfd43af9",
+      "src": "assets/sprites/packed/world/props/a1refresh_2.webp"
+    },
+    "world.prop.a1refresh_3": {
+      "anchor": [
+        118,
+        172
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "6b83e6555e13",
+      "src": "assets/sprites/packed/world/props/a1refresh_3.webp"
+    },
+    "world.prop.a1refresh_4": {
+      "anchor": [
+        170,
+        82
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3fd746c35225",
+      "src": "assets/sprites/packed/world/props/a1refresh_4.webp"
+    },
+    "world.prop.a1refresh_5": {
+      "anchor": [
+        170,
+        78
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "90f81a11db23",
+      "src": "assets/sprites/packed/world/props/a1refresh_5.webp"
+    },
     "world.prop.a2boundary_masonry_broken_east": {
       "anchor": [
         60,
@@ -37864,6 +37924,66 @@ DATA.SPRITE_MANIFEST = {
       "kind": "static",
       "revision": "e00abb82268a",
       "src": "assets/sprites/packed/world/props/a2boundary_shore_south_alt.webp"
+    },
+    "world.prop.a2refresh_0": {
+      "anchor": [
+        170,
+        273
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "55a292d1eeb6",
+      "src": "assets/sprites/packed/world/props/a2refresh_0.webp"
+    },
+    "world.prop.a2refresh_1": {
+      "anchor": [
+        149,
+        246
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "108e8056df6d",
+      "src": "assets/sprites/packed/world/props/a2refresh_1.webp"
+    },
+    "world.prop.a2refresh_2": {
+      "anchor": [
+        99,
+        154
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "1003653b65e5",
+      "src": "assets/sprites/packed/world/props/a2refresh_2.webp"
+    },
+    "world.prop.a2refresh_3": {
+      "anchor": [
+        74,
+        172
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ad6ecf67dcf6",
+      "src": "assets/sprites/packed/world/props/a2refresh_3.webp"
+    },
+    "world.prop.a2refresh_4": {
+      "anchor": [
+        170,
+        81
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "39707711b466",
+      "src": "assets/sprites/packed/world/props/a2refresh_4.webp"
+    },
+    "world.prop.a2refresh_5": {
+      "anchor": [
+        170,
+        88
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "84eeb73ffac9",
+      "src": "assets/sprites/packed/world/props/a2refresh_5.webp"
     },
     "world.prop.a2threshold_monastery_in": {
       "anchor": [
@@ -39035,6 +39155,66 @@ DATA.SPRITE_MANIFEST = {
       "revision": "b83ea5845376",
       "src": "assets/sprites/packed/world/props/a3passage_tomb_out_south.webp"
     },
+    "world.prop.a3refresh_0": {
+      "anchor": [
+        180,
+        166
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "253adae5991b",
+      "src": "assets/sprites/packed/world/props/a3refresh_0.webp"
+    },
+    "world.prop.a3refresh_1": {
+      "anchor": [
+        180,
+        163
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8b053c065e0a",
+      "src": "assets/sprites/packed/world/props/a3refresh_1.webp"
+    },
+    "world.prop.a3refresh_2": {
+      "anchor": [
+        75,
+        158
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "883e1b88a3fa",
+      "src": "assets/sprites/packed/world/props/a3refresh_2.webp"
+    },
+    "world.prop.a3refresh_3": {
+      "anchor": [
+        70,
+        167
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "0083cd3dbff0",
+      "src": "assets/sprites/packed/world/props/a3refresh_3.webp"
+    },
+    "world.prop.a3refresh_4": {
+      "anchor": [
+        170,
+        84
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "d74c58d0c890",
+      "src": "assets/sprites/packed/world/props/a3refresh_4.webp"
+    },
+    "world.prop.a3refresh_5": {
+      "anchor": [
+        170,
+        83
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "2fc63b7651c9",
+      "src": "assets/sprites/packed/world/props/a3refresh_5.webp"
+    },
     "world.prop.a3visual_eclipse": {
       "anchor": [
         384,
@@ -39854,6 +40034,66 @@ DATA.SPRITE_MANIFEST = {
       "kind": "static",
       "revision": "fab66d77c9b8",
       "src": "assets/sprites/packed/world/props/a4env_transition_pale.webp"
+    },
+    "world.prop.a4refresh_0": {
+      "anchor": [
+        50,
+        176
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "fc7490216246",
+      "src": "assets/sprites/packed/world/props/a4refresh_0.webp"
+    },
+    "world.prop.a4refresh_1": {
+      "anchor": [
+        67,
+        172
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "950a9916cdec",
+      "src": "assets/sprites/packed/world/props/a4refresh_1.webp"
+    },
+    "world.prop.a4refresh_2": {
+      "anchor": [
+        130,
+        203
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "17eb2651cbef",
+      "src": "assets/sprites/packed/world/props/a4refresh_2.webp"
+    },
+    "world.prop.a4refresh_3": {
+      "anchor": [
+        72,
+        158
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "19de93e9c1e4",
+      "src": "assets/sprites/packed/world/props/a4refresh_3.webp"
+    },
+    "world.prop.a4refresh_4": {
+      "anchor": [
+        170,
+        94
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "8ff25ad4acea",
+      "src": "assets/sprites/packed/world/props/a4refresh_4.webp"
+    },
+    "world.prop.a4refresh_5": {
+      "anchor": [
+        170,
+        98
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "f5ea982f0385",
+      "src": "assets/sprites/packed/world/props/a4refresh_5.webp"
     },
     "world.prop.a4stone_paving": {
       "anchor": [
@@ -40745,6 +40985,66 @@ DATA.SPRITE_MANIFEST = {
       "revision": "30b73d193929",
       "src": "assets/sprites/packed/world/props/a5env_throne_south_alt.webp"
     },
+    "world.prop.a5refresh_0": {
+      "anchor": [
+        142,
+        192
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "2317f6430fc5",
+      "src": "assets/sprites/packed/world/props/a5refresh_0.webp"
+    },
+    "world.prop.a5refresh_1": {
+      "anchor": [
+        145,
+        144
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "0fbaccb7ceab",
+      "src": "assets/sprites/packed/world/props/a5refresh_1.webp"
+    },
+    "world.prop.a5refresh_2": {
+      "anchor": [
+        105,
+        167
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "3284f8becd3c",
+      "src": "assets/sprites/packed/world/props/a5refresh_2.webp"
+    },
+    "world.prop.a5refresh_3": {
+      "anchor": [
+        95,
+        145
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "46e5554bf285",
+      "src": "assets/sprites/packed/world/props/a5refresh_3.webp"
+    },
+    "world.prop.a5refresh_4": {
+      "anchor": [
+        170,
+        106
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "ddcba095bcdd",
+      "src": "assets/sprites/packed/world/props/a5refresh_4.webp"
+    },
+    "world.prop.a5refresh_5": {
+      "anchor": [
+        170,
+        93
+      ],
+      "bundle": "world",
+      "kind": "static",
+      "revision": "7a9cd3e16501",
+      "src": "assets/sprites/packed/world/props/a5refresh_5.webp"
+    },
     "world.prop.act2_bell_tower": {
       "anchor": [
         165,
@@ -41614,6 +41914,366 @@ DATA.SPRITE_MANIFEST = {
       "kind": "static",
       "revision": "0f09419f34d2",
       "src": "assets/sprites/packed/world/props/adobehouse.webp"
+    },
+    "world.prop.arena_azram_0": {
+      "anchor": [
+        201,
+        288
+      ],
+      "bundle": "arena:azram",
+      "kind": "static",
+      "revision": "4e38c16b2575",
+      "src": "assets/sprites/packed/world/props/arena_azram_0.webp"
+    },
+    "world.prop.arena_azram_1": {
+      "anchor": [
+        64,
+        198
+      ],
+      "bundle": "arena:azram",
+      "kind": "static",
+      "revision": "cfdff584bc7e",
+      "src": "assets/sprites/packed/world/props/arena_azram_1.webp"
+    },
+    "world.prop.arena_azram_2": {
+      "anchor": [
+        110,
+        205
+      ],
+      "bundle": "arena:azram",
+      "kind": "static",
+      "revision": "fb03b2097835",
+      "src": "assets/sprites/packed/world/props/arena_azram_2.webp"
+    },
+    "world.prop.arena_azram_3": {
+      "anchor": [
+        110,
+        205
+      ],
+      "bundle": "arena:azram",
+      "kind": "static",
+      "revision": "2c3115caaa16",
+      "src": "assets/sprites/packed/world/props/arena_azram_3.webp"
+    },
+    "world.prop.arena_azram_4": {
+      "anchor": [
+        300,
+        168
+      ],
+      "bundle": "arena:azram",
+      "kind": "static",
+      "revision": "9a7d9e65bbe6",
+      "src": "assets/sprites/packed/world/props/arena_azram_4.webp"
+    },
+    "world.prop.arena_azram_5": {
+      "anchor": [
+        110,
+        216
+      ],
+      "bundle": "arena:azram",
+      "kind": "static",
+      "revision": "97a55fe56821",
+      "src": "assets/sprites/packed/world/props/arena_azram_5.webp"
+    },
+    "world.prop.arena_empty_archangel_0": {
+      "anchor": [
+        172,
+        288
+      ],
+      "bundle": "arena:empty_archangel",
+      "kind": "static",
+      "revision": "98d7e940af72",
+      "src": "assets/sprites/packed/world/props/arena_empty_archangel_0.webp"
+    },
+    "world.prop.arena_empty_archangel_1": {
+      "anchor": [
+        64,
+        198
+      ],
+      "bundle": "arena:empty_archangel",
+      "kind": "static",
+      "revision": "fc9abde8676e",
+      "src": "assets/sprites/packed/world/props/arena_empty_archangel_1.webp"
+    },
+    "world.prop.arena_empty_archangel_2": {
+      "anchor": [
+        110,
+        205
+      ],
+      "bundle": "arena:empty_archangel",
+      "kind": "static",
+      "revision": "bae661dfe793",
+      "src": "assets/sprites/packed/world/props/arena_empty_archangel_2.webp"
+    },
+    "world.prop.arena_empty_archangel_3": {
+      "anchor": [
+        110,
+        205
+      ],
+      "bundle": "arena:empty_archangel",
+      "kind": "static",
+      "revision": "ab86abd0378d",
+      "src": "assets/sprites/packed/world/props/arena_empty_archangel_3.webp"
+    },
+    "world.prop.arena_empty_archangel_4": {
+      "anchor": [
+        300,
+        208
+      ],
+      "bundle": "arena:empty_archangel",
+      "kind": "static",
+      "revision": "f78de40ad01a",
+      "src": "assets/sprites/packed/world/props/arena_empty_archangel_4.webp"
+    },
+    "world.prop.arena_empty_archangel_5": {
+      "anchor": [
+        114,
+        216
+      ],
+      "bundle": "arena:empty_archangel",
+      "kind": "static",
+      "revision": "89dfd5e0e718",
+      "src": "assets/sprites/packed/world/props/arena_empty_archangel_5.webp"
+    },
+    "world.prop.arena_korvath_0": {
+      "anchor": [
+        188,
+        288
+      ],
+      "bundle": "arena:korvath",
+      "kind": "static",
+      "revision": "1ce8145a99ba",
+      "src": "assets/sprites/packed/world/props/arena_korvath_0.webp"
+    },
+    "world.prop.arena_korvath_1": {
+      "anchor": [
+        74,
+        198
+      ],
+      "bundle": "arena:korvath",
+      "kind": "static",
+      "revision": "a43eea4a2aef",
+      "src": "assets/sprites/packed/world/props/arena_korvath_1.webp"
+    },
+    "world.prop.arena_korvath_2": {
+      "anchor": [
+        110,
+        205
+      ],
+      "bundle": "arena:korvath",
+      "kind": "static",
+      "revision": "d9f494cc28fb",
+      "src": "assets/sprites/packed/world/props/arena_korvath_2.webp"
+    },
+    "world.prop.arena_korvath_3": {
+      "anchor": [
+        110,
+        205
+      ],
+      "bundle": "arena:korvath",
+      "kind": "static",
+      "revision": "76183a90ef5e",
+      "src": "assets/sprites/packed/world/props/arena_korvath_3.webp"
+    },
+    "world.prop.arena_korvath_4": {
+      "anchor": [
+        300,
+        168
+      ],
+      "bundle": "arena:korvath",
+      "kind": "static",
+      "revision": "08de6df96c84",
+      "src": "assets/sprites/packed/world/props/arena_korvath_4.webp"
+    },
+    "world.prop.arena_korvath_5": {
+      "anchor": [
+        103,
+        216
+      ],
+      "bundle": "arena:korvath",
+      "kind": "static",
+      "revision": "6ca52e50c693",
+      "src": "assets/sprites/packed/world/props/arena_korvath_5.webp"
+    },
+    "world.prop.arena_malthoron_0": {
+      "anchor": [
+        189,
+        288
+      ],
+      "bundle": "arena:malthoron",
+      "kind": "static",
+      "revision": "3f9d8695f616",
+      "src": "assets/sprites/packed/world/props/arena_malthoron_0.webp"
+    },
+    "world.prop.arena_malthoron_1": {
+      "anchor": [
+        68,
+        198
+      ],
+      "bundle": "arena:malthoron",
+      "kind": "static",
+      "revision": "486734a2602f",
+      "src": "assets/sprites/packed/world/props/arena_malthoron_1.webp"
+    },
+    "world.prop.arena_malthoron_2": {
+      "anchor": [
+        110,
+        205
+      ],
+      "bundle": "arena:malthoron",
+      "kind": "static",
+      "revision": "656a8f924ae5",
+      "src": "assets/sprites/packed/world/props/arena_malthoron_2.webp"
+    },
+    "world.prop.arena_malthoron_3": {
+      "anchor": [
+        110,
+        205
+      ],
+      "bundle": "arena:malthoron",
+      "kind": "static",
+      "revision": "95daffdc7b84",
+      "src": "assets/sprites/packed/world/props/arena_malthoron_3.webp"
+    },
+    "world.prop.arena_malthoron_4": {
+      "anchor": [
+        300,
+        210
+      ],
+      "bundle": "arena:malthoron",
+      "kind": "static",
+      "revision": "3a2af25b4555",
+      "src": "assets/sprites/packed/world/props/arena_malthoron_4.webp"
+    },
+    "world.prop.arena_malthoron_5": {
+      "anchor": [
+        114,
+        216
+      ],
+      "bundle": "arena:malthoron",
+      "kind": "static",
+      "revision": "1b5ddfdd27fd",
+      "src": "assets/sprites/packed/world/props/arena_malthoron_5.webp"
+    },
+    "world.prop.arena_mire_mother_0": {
+      "anchor": [
+        179,
+        288
+      ],
+      "bundle": "arena:mire_mother",
+      "kind": "static",
+      "revision": "db6a8cea9934",
+      "src": "assets/sprites/packed/world/props/arena_mire_mother_0.webp"
+    },
+    "world.prop.arena_mire_mother_1": {
+      "anchor": [
+        100,
+        198
+      ],
+      "bundle": "arena:mire_mother",
+      "kind": "static",
+      "revision": "ab916ebe65bb",
+      "src": "assets/sprites/packed/world/props/arena_mire_mother_1.webp"
+    },
+    "world.prop.arena_mire_mother_2": {
+      "anchor": [
+        110,
+        205
+      ],
+      "bundle": "arena:mire_mother",
+      "kind": "static",
+      "revision": "07c4efa86949",
+      "src": "assets/sprites/packed/world/props/arena_mire_mother_2.webp"
+    },
+    "world.prop.arena_mire_mother_3": {
+      "anchor": [
+        110,
+        205
+      ],
+      "bundle": "arena:mire_mother",
+      "kind": "static",
+      "revision": "cdadbf81f5a2",
+      "src": "assets/sprites/packed/world/props/arena_mire_mother_3.webp"
+    },
+    "world.prop.arena_mire_mother_4": {
+      "anchor": [
+        300,
+        162
+      ],
+      "bundle": "arena:mire_mother",
+      "kind": "static",
+      "revision": "67d625b8a4ae",
+      "src": "assets/sprites/packed/world/props/arena_mire_mother_4.webp"
+    },
+    "world.prop.arena_mire_mother_5": {
+      "anchor": [
+        104,
+        216
+      ],
+      "bundle": "arena:mire_mother",
+      "kind": "static",
+      "revision": "3543b7c6610c",
+      "src": "assets/sprites/packed/world/props/arena_mire_mother_5.webp"
+    },
+    "world.prop.arena_vethriss_0": {
+      "anchor": [
+        160,
+        288
+      ],
+      "bundle": "arena:vethriss",
+      "kind": "static",
+      "revision": "9c14153f073a",
+      "src": "assets/sprites/packed/world/props/arena_vethriss_0.webp"
+    },
+    "world.prop.arena_vethriss_1": {
+      "anchor": [
+        77,
+        198
+      ],
+      "bundle": "arena:vethriss",
+      "kind": "static",
+      "revision": "7dc74f960be6",
+      "src": "assets/sprites/packed/world/props/arena_vethriss_1.webp"
+    },
+    "world.prop.arena_vethriss_2": {
+      "anchor": [
+        110,
+        205
+      ],
+      "bundle": "arena:vethriss",
+      "kind": "static",
+      "revision": "75219574cb83",
+      "src": "assets/sprites/packed/world/props/arena_vethriss_2.webp"
+    },
+    "world.prop.arena_vethriss_3": {
+      "anchor": [
+        110,
+        205
+      ],
+      "bundle": "arena:vethriss",
+      "kind": "static",
+      "revision": "21059b8ecf96",
+      "src": "assets/sprites/packed/world/props/arena_vethriss_3.webp"
+    },
+    "world.prop.arena_vethriss_4": {
+      "anchor": [
+        300,
+        194
+      ],
+      "bundle": "arena:vethriss",
+      "kind": "static",
+      "revision": "0278818aa351",
+      "src": "assets/sprites/packed/world/props/arena_vethriss_4.webp"
+    },
+    "world.prop.arena_vethriss_5": {
+      "anchor": [
+        113,
+        216
+      ],
+      "bundle": "arena:vethriss",
+      "kind": "static",
+      "revision": "75da26beb571",
+      "src": "assets/sprites/packed/world/props/arena_vethriss_5.webp"
     },
     "world.prop.banner": {
       "anchor": [
@@ -58671,6 +59331,12 @@ DATA.SPRITE_MANIFEST = {
       "a1polish_pine": "world.prop.a1polish_pine",
       "a1polish_snow": "world.prop.a1polish_snow",
       "a1polish_standing_stone": "world.prop.a1polish_standing_stone",
+      "a1refresh_0": "world.prop.a1refresh_0",
+      "a1refresh_1": "world.prop.a1refresh_1",
+      "a1refresh_2": "world.prop.a1refresh_2",
+      "a1refresh_3": "world.prop.a1refresh_3",
+      "a1refresh_4": "world.prop.a1refresh_4",
+      "a1refresh_5": "world.prop.a1refresh_5",
       "a2boundary_masonry_broken_east": "world.prop.a2boundary_masonry_broken_east",
       "a2boundary_masonry_broken_south": "world.prop.a2boundary_masonry_broken_south",
       "a2boundary_masonry_door_east": "world.prop.a2boundary_masonry_door_east",
@@ -58699,6 +59365,12 @@ DATA.SPRITE_MANIFEST = {
       "a2boundary_shore_outer": "world.prop.a2boundary_shore_outer",
       "a2boundary_shore_south": "world.prop.a2boundary_shore_south",
       "a2boundary_shore_south_alt": "world.prop.a2boundary_shore_south_alt",
+      "a2refresh_0": "world.prop.a2refresh_0",
+      "a2refresh_1": "world.prop.a2refresh_1",
+      "a2refresh_2": "world.prop.a2refresh_2",
+      "a2refresh_3": "world.prop.a2refresh_3",
+      "a2refresh_4": "world.prop.a2refresh_4",
+      "a2refresh_5": "world.prop.a2refresh_5",
       "a2threshold_monastery_in": "world.prop.a2threshold_monastery_in",
       "a2threshold_monastery_out": "world.prop.a2threshold_monastery_out",
       "a2threshold_reeds_in_left": "world.prop.a2threshold_reeds_in_left",
@@ -58816,6 +59488,12 @@ DATA.SPRITE_MANIFEST = {
       "a3passage_tomb_in_south": "world.prop.a3passage_tomb_in_south",
       "a3passage_tomb_out_east": "world.prop.a3passage_tomb_out_east",
       "a3passage_tomb_out_south": "world.prop.a3passage_tomb_out_south",
+      "a3refresh_0": "world.prop.a3refresh_0",
+      "a3refresh_1": "world.prop.a3refresh_1",
+      "a3refresh_2": "world.prop.a3refresh_2",
+      "a3refresh_3": "world.prop.a3refresh_3",
+      "a3refresh_4": "world.prop.a3refresh_4",
+      "a3refresh_5": "world.prop.a3refresh_5",
       "a3visual_eclipse": "world.prop.a3visual_eclipse",
       "a3visual_palace": "world.prop.a3visual_palace",
       "a3visual_sand": "world.prop.a3visual_sand",
@@ -58898,6 +59576,12 @@ DATA.SPRITE_MANIFEST = {
       "a4env_transition_bastion": "world.prop.a4env_transition_bastion",
       "a4env_transition_dark": "world.prop.a4env_transition_dark",
       "a4env_transition_pale": "world.prop.a4env_transition_pale",
+      "a4refresh_0": "world.prop.a4refresh_0",
+      "a4refresh_1": "world.prop.a4refresh_1",
+      "a4refresh_2": "world.prop.a4refresh_2",
+      "a4refresh_3": "world.prop.a4refresh_3",
+      "a4refresh_4": "world.prop.a4refresh_4",
+      "a4refresh_5": "world.prop.a4refresh_5",
       "a4stone_paving": "world.prop.a4stone_paving",
       "a4v2_cliff_ash": "world.prop.a4v2_cliff_ash",
       "a4v2_cliff_bastion": "world.prop.a4v2_cliff_bastion",
@@ -58987,6 +59671,12 @@ DATA.SPRITE_MANIFEST = {
       "a5env_throne_pillar": "world.prop.a5env_throne_pillar",
       "a5env_throne_south": "world.prop.a5env_throne_south",
       "a5env_throne_south_alt": "world.prop.a5env_throne_south_alt",
+      "a5refresh_0": "world.prop.a5refresh_0",
+      "a5refresh_1": "world.prop.a5refresh_1",
+      "a5refresh_2": "world.prop.a5refresh_2",
+      "a5refresh_3": "world.prop.a5refresh_3",
+      "a5refresh_4": "world.prop.a5refresh_4",
+      "a5refresh_5": "world.prop.a5refresh_5",
       "act2_bell_tower": "world.prop.act2_bell_tower",
       "act2_black_water": "world.prop.act2_black_water",
       "act2_boardwalk_x": "world.prop.act2_boardwalk_x",
@@ -59074,6 +59764,42 @@ DATA.SPRITE_MANIFEST = {
       "act3_tomb_gate": "world.prop.act3_tomb_gate",
       "act3_tracks": "world.prop.act3_tracks",
       "adobehouse": "world.prop.adobehouse",
+      "arena_azram_0": "world.prop.arena_azram_0",
+      "arena_azram_1": "world.prop.arena_azram_1",
+      "arena_azram_2": "world.prop.arena_azram_2",
+      "arena_azram_3": "world.prop.arena_azram_3",
+      "arena_azram_4": "world.prop.arena_azram_4",
+      "arena_azram_5": "world.prop.arena_azram_5",
+      "arena_empty_archangel_0": "world.prop.arena_empty_archangel_0",
+      "arena_empty_archangel_1": "world.prop.arena_empty_archangel_1",
+      "arena_empty_archangel_2": "world.prop.arena_empty_archangel_2",
+      "arena_empty_archangel_3": "world.prop.arena_empty_archangel_3",
+      "arena_empty_archangel_4": "world.prop.arena_empty_archangel_4",
+      "arena_empty_archangel_5": "world.prop.arena_empty_archangel_5",
+      "arena_korvath_0": "world.prop.arena_korvath_0",
+      "arena_korvath_1": "world.prop.arena_korvath_1",
+      "arena_korvath_2": "world.prop.arena_korvath_2",
+      "arena_korvath_3": "world.prop.arena_korvath_3",
+      "arena_korvath_4": "world.prop.arena_korvath_4",
+      "arena_korvath_5": "world.prop.arena_korvath_5",
+      "arena_malthoron_0": "world.prop.arena_malthoron_0",
+      "arena_malthoron_1": "world.prop.arena_malthoron_1",
+      "arena_malthoron_2": "world.prop.arena_malthoron_2",
+      "arena_malthoron_3": "world.prop.arena_malthoron_3",
+      "arena_malthoron_4": "world.prop.arena_malthoron_4",
+      "arena_malthoron_5": "world.prop.arena_malthoron_5",
+      "arena_mire_mother_0": "world.prop.arena_mire_mother_0",
+      "arena_mire_mother_1": "world.prop.arena_mire_mother_1",
+      "arena_mire_mother_2": "world.prop.arena_mire_mother_2",
+      "arena_mire_mother_3": "world.prop.arena_mire_mother_3",
+      "arena_mire_mother_4": "world.prop.arena_mire_mother_4",
+      "arena_mire_mother_5": "world.prop.arena_mire_mother_5",
+      "arena_vethriss_0": "world.prop.arena_vethriss_0",
+      "arena_vethriss_1": "world.prop.arena_vethriss_1",
+      "arena_vethriss_2": "world.prop.arena_vethriss_2",
+      "arena_vethriss_3": "world.prop.arena_vethriss_3",
+      "arena_vethriss_4": "world.prop.arena_vethriss_4",
+      "arena_vethriss_5": "world.prop.arena_vethriss_5",
       "banner": "world.prop.banner",
       "barrel": "world.prop.barrel",
       "beacon": "world.prop.beacon",

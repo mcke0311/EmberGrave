@@ -1,0 +1,89 @@
+{
+  "status": "FAIL",
+  "rows": [
+    {
+      "suite": "act1_polish_contract.mjs",
+      "exit": 0,
+      "tail": "{\n  status: 'PASS',\n  checks: 13954,\n  zones: [\n    'frosthaven_approach',\n    'frosthaven',\n    'north_wild',\n    'mines',\n    'shattered_temple',\n    'shardpeak_shrine',\n    'deepfreeze_cavern'\n  ],\n  seeds: 5,\n  scope: 'Scenery and facade bases preserve walking space; assets exist; regional lighting stays local.'\n}\n",
+      "stderr": ""
+    },
+    {
+      "suite": "frontier_quest_contract.mjs",
+      "exit": 0,
+      "tail": "{\n  \"status\": \"PASS\",\n  \"checks\": 153,\n  \"scenarios\": [\n    \"beacon orders and duplicate deaths\",\n    \"reload/re-entry\",\n    \"legacy counts and invalid trio coordinates\",\n    \"main quest chain\",\n    \"three survivor IDs\",\n    \"both optional quests\",\n    \"seeded reserved events\"\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "suite": "act2_quest_contract.mjs",
+      "exit": 1,
+      "tail": "",
+      "stderr": "node:internal/modules/run_main:122\r\n    triggerUncaughtException(\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: boss and shard recovery {\"q\":{\"state\":\"active\",\"count\":0},\"dead\":true,\"flags\":{\"opening\":{\"v\":2,\"stage\":\"done\",\"defeated\":[],\"hints\":{},\"barks\":{},\"waves\":[]},\"campaign\":{\"talk:marshcamp:voice\":1,\"talk:marshcamp:dreams\":1,\"talk:marshcamp:fear\":1,\"kill:ritual_site:mire_mother\":1},\"dead_mire_mother@0\":true}}\r\n    at ok (file:///C:/Users/this_/Downloads/Claudediablo/tests/act2_quest_contract.mjs:7:49)\r\n    at file:///C:/Users/this_/Downloads/Claudediablo/tests/act2_quest_contract.mjs:26:19 {\r\n  generatedMessage: false,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v22.11.0\r\n"
+    },
+    {
+      "suite": "act3_navigation_contract.mjs",
+      "exit": 0,
+      "tail": "{\n  status: 'PASS',\n  checks: 121842,\n  seeds: 30,\n  areas: 7,\n  liveCompanionRoutes: 7,\n  coverage: 'Thirty seeds: skeletal routes, golem-width authored lanes, every enemy footprint, flat-sweep equivalence. Three seeds: complete golem and encounter paths. Seven live golem routes without teleport fallback.'\n}\n",
+      "stderr": ""
+    },
+    {
+      "suite": "act3_quest_contract.mjs",
+      "exit": 1,
+      "tail": "",
+      "stderr": "node:internal/modules/run_main:122\r\n    triggerUncaughtException(\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: relay did not become inert\r\n    at ok (file:///C:/Users/this_/Downloads/Claudediablo/tests/act3_quest_contract.mjs:7:36)\r\n    at file:///C:/Users/this_/Downloads/Claudediablo/tests/act3_quest_contract.mjs:14:51\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:268:25)\r\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:543:26)\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5) {\r\n  generatedMessage: false,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v22.11.0\r\n"
+    },
+    {
+      "suite": "cinders_gameplay_contract.mjs",
+      "exit": 1,
+      "tail": "",
+      "stderr": "node:internal/modules/run_main:122\r\n    triggerUncaughtException(\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: shrine attunement failed\r\n    at ok (file:///C:/Users/this_/Downloads/Claudediablo/tests/cinders_gameplay_contract.mjs:6:47)\r\n    at file:///C:/Users/this_/Downloads/Claudediablo/tests/cinders_gameplay_contract.mjs:23:3 {\r\n  generatedMessage: false,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v22.11.0\r\n"
+    },
+    {
+      "suite": "story_campaign_contract.mjs",
+      "exit": 0,
+      "tail": "PASS 214 story checks: dialogue, objectives, old saves, boss wards, seeded routes, factions, phases, quest chest states and all endings.\n",
+      "stderr": ""
+    },
+    {
+      "suite": "opening_contract.mjs",
+      "exit": 0,
+      "tail": "PASS 1110 opening checks: five classes, rescue, captain phases, finite reinforcements, attack warnings, every checkpoint, migration, rewards, mandatory progression, death and failed-load retry.\n",
+      "stderr": "Could not load town sprites: Error: Expected test load failure\n    at Object.loadBundle (file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:14:65)\n    at requireSpriteBundle (evalmachine.<anonymous>:155:26)\n    at enterMap (evalmachine.<anonymous>:647:52)\n    at Object.returnToTown (evalmachine.<anonymous>:2005:29)\n    at file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:139:13\nCould not load town sprites: Error: Expected test load failure\n    at Object.loadBundle (file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:14:65)\n    at requireSpriteBundle (evalmachine.<anonymous>:155:26)\n    at Object.enterMap (evalmachine.<anonymous>:651:16)\n    at file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:143:43\nCould not load town sprites: Error: Expected test load failure\n    at Object.loadBundle (file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:14:65)\n    at requireSpriteBundle (evalmachine.<anonymous>:155:26)\n    at Object.enterMap (evalmachine.<anonymous>:659:92)\n    at async file:///C:/Users/this_/Downloads/Claudediablo/tests/opening_contract.mjs:147:31\n"
+    },
+    {
+      "suite": "navigation_edge_contract.mjs",
+      "exit": 0,
+      "tail": "PASS 75272 navigation checks: optimized edges match swept collision for ramps, walls, cliffs, diagonals, hopping and six body radii.\n",
+      "stderr": ""
+    },
+    {
+      "suite": "world_reference_contract.cjs",
+      "exit": 0,
+      "tail": "PASS: 36 levels, seed 1\nPASS: 36 levels, seed 12345\nPASS: 36 levels, seed 4294967295\nPASS 503422 world reference, asset, state, and event parity checks.\n",
+      "stderr": ""
+    },
+    {
+      "suite": "act2_visual_contract.mjs",
+      "exit": 0,
+      "tail": "{ status: 'PASS', checks: 6142, maps: 30 }\n",
+      "stderr": ""
+    },
+    {
+      "suite": "terrain_surface_contract.mjs",
+      "exit": 0,
+      "tail": "{\n  \"status\": \"PASS\",\n  \"checks\": 10751,\n  \"maxWalkHeightDelta\": 0.07500000000000018,\n  \"seedResults\": [\n    {\n      \"seed\": 0,\n      \"ramps\": 2,\n      \"raisedTiles\": 5280,\n      \"targets\": 16,\n      \"ms\": 356\n    },\n    {\n      \"seed\": 1,\n      \"ramps\": 2,\n      \"raisedTiles\": 5280,\n      \"targets\": 16,\n      \"ms\": 161\n    },\n    {\n      \"seed\": 123,\n      \"ramps\": 2,\n      \"raisedTiles\": 5280,\n      \"targets\": 16,\n      \"ms\": 180\n    },\n    {\n      \"seed\": 12345,\n      \"ramps\": 2,\n      \"raisedTiles\": 5280,\n      \"targets\": 16,\n      \"ms\": 164\n    },\n    {\n      \"seed\": 4294967295,\n      \"ramps\": 2,\n      \"raisedTiles\": 5280,\n      \"targets\": 16,\n      \"ms\": 146\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "suite": "terrain_view_cache_contract.mjs",
+      "exit": 0,
+      "tail": "PASS 4007 projected terrain cache checks: raised and legacy floors, movement, resizing, grid/geometry changes, map identity, and released backing stores.\n",
+      "stderr": ""
+    },
+    {
+      "suite": "town_layout_contract.mjs",
+      "exit": 1,
+      "tail": "",
+      "stderr": "node:internal/modules/run_main:122\r\n    triggerUncaughtException(\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: hellgate building footprint carved\r\n    at ok (file:///C:/Users/this_/Downloads/Claudediablo/tests/town_layout_contract.mjs:8:36)\r\n    at file:///C:/Users/this_/Downloads/Claudediablo/tests/town_layout_contract.mjs:26:121\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:268:25)\r\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:543:26)\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5) {\r\n  generatedMessage: false,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v22.11.0\r\n"
+    }
+  ]
+}

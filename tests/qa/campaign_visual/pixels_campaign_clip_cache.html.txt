@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "checks": 14400,
+  "zones": [
+    "weeping_marsh",
+    "spawn_pools",
+    "ash_wastes",
+    "cinder_bastion",
+    "throne"
+  ],
+  "method": "Exact ordered clip-command parity against uncached geometry queries; repeated and reversed queries, camera pans, 1080p/4K."
+}

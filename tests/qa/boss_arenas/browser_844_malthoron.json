@@ -1,0 +1,41 @@
+{
+  "browser": "154.0.8037.57",
+  "errors": [],
+  "encounters": [
+    {
+      "boss": "malthoron",
+      "width": 844,
+      "reducedMotion": true,
+      "seconds": 177,
+      "won": true,
+      "hp": 420,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 8000
+        },
+        {
+          "phase": 1,
+          "time": 51.5,
+          "hp": 5280
+        },
+        {
+          "phase": 2,
+          "time": 119.5,
+          "hp": 2640
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "integration": [
+    {
+      "touch": true,
+      "queued": true,
+      "counterComplete": true
+    }
+  ]
+}

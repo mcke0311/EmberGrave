@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 globalThis.document={createElement:()=>({getContext:()=>({createImageData:(w,h)=>({data:new Uint8ClampedArray(w*h*4)}),putImageData(){}})})};
-for(const file of ['utils','data','data_overrides','sprite_manifest','mapgen'])vm.runInThisContext(fs.readFileSync(new URL('../js/'+file+'.js',import.meta.url),'utf8'));
+for(const file of ['utils','data','data_overrides','boss_encounters','sprite_manifest','mapgen','navigation'])vm.runInThisContext(fs.readFileSync(new URL('../js/'+file+'.js',import.meta.url),'utf8'));
 const {MapGen,U,DATA}=vm.runInThisContext('({MapGen,U,DATA})');
 const towns=['town','frosthaven','marshcamp','khalcamp','hellgate'];let checks=0;
 const ok=(v,msg)=>{checks++;assert.ok(v,msg)};

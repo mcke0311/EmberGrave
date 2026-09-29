@@ -72,9 +72,10 @@ Each act boss lights a **waystone** to the next act's camp. The finale ends in a
 
 Quests are handed out by the people and postings of each camp (look for the
 bobbing **!** / **?**). Bosses fight in **phases** — shedding armor, changing shape,
-gaining new attacks at health thresholds. The six main encounters have 96 authored
-poses, clear attack warnings, recovery openings and flat arenas. Stepping outside
-the arena resets a living boss and its summons. Read the
+gaining new attacks at health thresholds. The six main encounters have dedicated
+arenas with new environment art, 96 existing authored boss poses, clear warnings,
+required device counters and recovery openings. Crossing the threshold seals the
+fight; death offers an entrance retry or a return to town. Read the
 [boss encounter guide](docs/BOSS_ENCOUNTERS.md), or play each fight with an
 isolated hero at `tests/boss_encounters.html`.
 

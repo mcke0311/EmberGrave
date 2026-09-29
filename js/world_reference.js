@@ -30,6 +30,7 @@ const WorldReference = (() => {
     return result;
   }
   function generator(m){
+    if(m.zone.arena)return 'genBossArena / DATA.BOSS_ARENAS';
     if(m.cathedral)return 'genCathedral';
     if(m.settlement)return 'genSettlement / SETTLEMENTS';
     if(m.zone.opening)return 'genOpening';
@@ -117,6 +118,7 @@ const WorldReference = (() => {
     };
     map.props.forEach((p,i)=>add(p,'props',i));
     const environments=[
+      [map.campaignVisual,CampaignEnvironment,'campaignVisual','CampaignEnvironment / campaignVisuals'],
       [map.act1Environment,Act1Environment,'act1Environment','Act1Environment / act1Environment'],
       [map.boundaries,Act2Boundaries,'boundaries','Act2Boundaries / act2Boundaries / act2Visuals'],
       [map.act3?.architecture,ImperialArchitecture,'act3.architecture','ImperialArchitecture / imperialArchitecture'],
@@ -162,7 +164,7 @@ const WorldReference = (() => {
     const grouped=new Map();for(const p of instances){let g=grouped.get(p.groupKey);if(!g){g={...p,id:p.groupKey,instances:[],count:0};grouped.set(p.groupKey,g);}g.instances.push(p);g.count++;}
     const groups=[...grouped.values()].sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name));
     const eligibleEvents=[];
-    if(!map.cathedral&&!['town','camp'].includes(map.zone.kind)&&!map.zone.opening){
+    if(!map.zone.arena&&!map.cathedral&&!['town','camp'].includes(map.zone.kind)&&!map.zone.opening){
       const pool=DATA.EVENTS.filter(e=>(e.minLvl||1)<=DATA.effectiveLevel(map.zone.lvl,difficulty)+2),weight=pool.reduce((n,e)=>n+(e.weight||1),0);
       for(const e of pool.filter(e=>e.kind!=='goblin')){
         const p=MapGen.eventProp(map,e,0,0),v=PropInteractions.resolveVisual(p,{map,time:100,shrines:[]});

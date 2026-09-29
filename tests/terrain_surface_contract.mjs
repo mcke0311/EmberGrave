@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 globalThis.document={createElement:()=>({getContext:()=>({createImageData:(w,h)=>({data:new Uint8ClampedArray(w*h*4)}),putImageData(){}})})};
-for(const f of ['utils','data','data_overrides','sprite_manifest','mapgen','navigation','items','entities'])vm.runInThisContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'));
+for(const f of ['utils','data','data_overrides','boss_encounters','sprite_manifest','mapgen','navigation','items','entities'])vm.runInThisContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'));
 const {TerrainSurface:S,TerrainNavigation:N,U,MapGen,Entity}=vm.runInThisContext('({TerrainSurface,TerrainNavigation,U,MapGen,Entity})');
 let checks=0,maxWalkHeightDelta=0;
 const ok=(v,m)=>{checks++;assert.ok(v,m);};
@@ -75,7 +75,7 @@ const gameSource=fs.readFileSync(new URL('../js/game.js',import.meta.url),'utf8'
 const input=vm.createContext({TerrainLayers,state:{time:1,player:{dead:false,skillL:'basic',skillR:'basic',command:{type:'move'},path:[{cx:1,cy:1}]}},
  mouse:{x:100,y:100,l:true,r:false,shift:false},performance:{now:()=>0},groundHold:null,UI:{cursorItem:null},options:{leftClickMove:true},
  DATA:{BASIC_ATTACK:{type:'melee'},SKILLS:{}},screenToWorld:()=>null,updateHover(){},
- hoverPortal:null,hoverExit:null,hoverNpc:null,hoverLabel:null,hoverProp:null,hoverMon:null,heldTarget:null,
+ hoverPortal:null,hoverExit:null,hoverNpc:null,hoverLabel:null,hoverProp:null,hoverMon:null,heldTarget:null,touchUpdate:()=>false,
  repath(){throw Error('invalid ground click repathed');}});
 vm.runInContext(gameSource.slice(gameSource.indexOf('  function handleClick('),gameSource.indexOf('  function monsterGeometry(')),input);
 vm.runInContext(gameSource.slice(gameSource.indexOf('  function tryJump('),gameSource.indexOf('  /* records the chosen ending')),input);

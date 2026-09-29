@@ -2873,7 +2873,52 @@ const MapGen = (() => {
     }
   }
 
+  function genBossArena(zoneId, seed) {
+    const c=DATA.BOSS_ARENAS[DATA.ZONES[zoneId].arena],m=blank(zoneId,64,56),cx=c.center.x,cy=c.center.y;
+    const a=m.bossArena={...c.boundary,bossId:c.bossId,dedicated:true,sealed:false,
+      entrance:{...c.entrance},approach:{...c.entrance},devices:[],gateCells:[]};
+    m.outdoor=false;m.void=new Uint8Array(m.w*m.h).fill(1);m.blocked.fill(1);m.walls.fill(1);
+    for(let y=1;y<m.h-1;y++)for(let x=1;x<m.w-1;x++){
+      const lobby=Math.abs(x+.5-cx)<=3.5&&y+.5>=a.y1-1&&y+.5<=a.y1+8;
+      if(DATA.arenaContains(a,x+.5,y+.5,-.3)||lobby){const i=idx(m,x,y);m.blocked[i]=m.walls[i]=m.void[i]=0;m.floor[i]=2;
+        if(lobby&&y>=a.y1&&y<a.y1+2)a.gateCells.push(i);
+      }
+    }
+    m.spawns.default={...a.entrance};m.spawns.retry={...a.entrance};
+    for(let i=0;i<8;i++)addProp(m,'grave',cx-2.4+(i%4)*1.6,a.y1+4+Math.floor(i/4)*1.5,{blocks:false,arenaRemains:true,label:'Fallen pilgrim — ordinary remains',scale:.55});
+    m.exits.push({x0:cx-2,y0:a.y1+6,x1:cx+2,y1:a.y1+8,target:c.parentZone,spawnKey:'from_arena',label:'Return to '+DATA.ZONES[c.parentZone].name,reuseCachedMap:true});
+    m.monsterSpawns.push({id:c.bossId,x:cx,y:cy,boss:true});
+    const visual=index=>'arena_'+c.bossId+'_'+index;
+    for(const d of c.devices){const p=addProp(m,'boss_device',cx+d.x,cy+d.y,{blocks:false,interact:'boss_device',interactionRange:2.1,
+      deviceId:d.id,label:d.label,visual:visual(c.bossId==='malthoron'?3:2),visualDone:visual(c.bossId==='malthoron'?2:3),completed:false,required:false,cooldown:0});a.devices.push(p);addLight(m,p.x,p.y,3,c.color,false);}
+    addProp(m,'arena_backdrop',cx-6,cy-10,{blocks:false,building:true,visual:visual(0)});
+    for(const [dx,dy]of [[-11,-4],[4,-11],[11,4],[-4,11]])if(DATA.arenaContains(a,cx+dx,cy+dy,-1))
+      addProp(m,'arena_monument',cx+dx,cy+dy,{blocks:false,building:true,visual:visual(1)});
+    addProp(m,'arena_gate',cx,a.y1+1,{blocks:false,building:true,visual:visual(5)});
+    addLight(m,cx,cy,11,c.color,false);addLight(m,cx,a.entrance.y,4,'#d6b989',false);
+    m.arenaStory={};for(const [i,obj]of (DATA.STORY_OBJECTS[zoneId]||[]).entries())m.arenaStory[obj.id]={x:cx+3+i*2,y:cy-3};
+    m.campaignVisual={revision:1,act:c.act,outdoor:false,ambient:'#171d29',scenery:[],atmosphere:[],
+      ground:[{x:cx,y:cy,type:visual(4),scale:2.2,alpha:.72,flip:false},
+        ...c.devices.map(d=>({x:cx+d.x,y:cy+d.y,type:visual(4),scale:.4,alpha:.5,flip:false}))]};
+    if(c.bossId==='mire_mother'){
+      a.platforms=[{x:cx-6,y:cy+3},{x:cx+6,y:cy+3},{x:cx,y:cy-6}];
+      m.campaignVisual.ground=a.platforms.map(p=>({...p,type:visual(4),scale:1,alpha:.85,flip:false}));
+    }
+    if(c.bossId==='vethriss')m.campaignVisual.atmosphere=c.devices.map((d,i)=>({x:cx+d.x,y:cy+d.y,phase:i*2.1}));
+    bakeMinimap(m);return m;
+  }
+  function attachBossEntrance(m) {
+    const id=m.zone.arenaEntrance,c=DATA.BOSS_ARENAS?.[id];if(!c)return m;
+    const boss=m.monsterSpawns.find(s=>s.id===id),a=m.bossArena;if(!boss||!a)return m;
+    m.monsterSpawns=m.monsterSpawns.filter(s=>s.id!==id);
+    m.spawns.from_arena={x:a.cx,y:a.cy+3};
+    m.arenaEntrance={bossId:id,x:a.cx,y:a.cy,target:c.zone};
+    m.exits.push({x0:a.cx-1.5,y0:a.cy-.5,x1:a.cx+1.5,y1:a.cy+1.5,target:c.zone,spawnKey:'default',label:c.name,bossEntrance:id});
+    addProp(m,'arena_gate',a.cx,a.cy,{blocks:false,building:true,visual:'arena_'+id+'_5'});
+    addLight(m,a.cx,a.cy,4,c.color,false);delete m.bossArena;bakeMinimap(m);return m;
+  }
   function generateLayout(zoneId, worldSeed) {
+    if(DATA.ZONES[zoneId]?.arena)return genBossArena(zoneId,worldSeed);
     if(['cathedral1','cathedral2','cathedral_cinderwatch','cathedral_bastion'].includes(zoneId))return genCathedral(zoneId,worldSeed);
     if (CINDERS[zoneId]) return genCinders(zoneId, worldSeed);
     if (ACT3[zoneId]) return genAct3(zoneId, worldSeed);
@@ -3010,6 +3055,7 @@ const MapGen = (() => {
   }
 
   function reserveBossArena(m) {
+    if(m.bossArena?.dedicated)return;
     if (m.frontier?.arenaReserved || m.act2?.arenaReserved || m.composition?.arenaReserved || m.cathedral?.arenaReserved) return;
     const id=m.zone.boss;
     if(typeof BossEncounters==="undefined"||!BossEncounters.definitions[id])return;
@@ -3099,7 +3145,7 @@ const MapGen = (() => {
     for (const [i,obj] of objects.entries()) {
       const boss = obj.requireKill && m.monsterSpawns.find(sp=>sp.id===obj.requireKill);
       const frac=(i+1)/(objects.length+1), target={x:start.x+(m.w-2-start.x)*frac,y:start.y+(m.h-2-start.y)*frac};
-      const authored=m.cathedral?.anchors[obj.id] || (m.act3||m.act2)?.anchors.story[obj.id];
+      const authored=m.arenaStory?.[obj.id] || m.cathedral?.anchors[obj.id] || (m.act3||m.act2)?.anchors.story[obj.id];
       const point = authored || candidates.filter(p=>chosen.every(c=>U.dist(c.x,c.y,p.x,p.y)>3)&&
         (obj.requireKill||!m.bossArena||!BossEncounters.insideArena(m.bossArena,p.x,p.y)))
         .sort((a,b)=>U.dist2(a.x,a.y,(boss||target).x,(boss||target).y)-U.dist2(b.x,b.y,(boss||target).x,(boss||target).y))[0];
@@ -3107,7 +3153,7 @@ const MapGen = (() => {
       chosen.push(point);
       if (obj.npc) m.npcs.push({id:obj.npc,...point,npcArt:obj.art,displayName:obj.label,storyId:obj.id});
       else addProp(m,obj.type,point.x,point.y,{blocks:false,interact:"story",storyId:obj.id,label:obj.label,...(m.act3&&zoneId==='underground_market'?{artZone:'act3',visualType:'relay_active'}:{}),
-        ...(m.cathedral?{visual:obj.id==='hell_portal'?'cathedral_hell_portal':obj.type==='shrine'?'cathedral_seal':'cathedral_reliquary',visualDone:obj.type==='shrine'?'cathedral_seal_broken':'cathedral_reliquary_open',building:obj.id==='hell_portal'}:{})});
+        ...(m.cathedral||obj.id==='hell_portal'?{visual:obj.id==='hell_portal'?'cathedral_hell_portal':obj.type==='shrine'?'cathedral_seal':'cathedral_reliquary',visualDone:obj.type==='shrine'?'cathedral_seal_broken':'cathedral_reliquary_open',building:obj.id==='hell_portal'}:{})});
       addLight(m,point.x,point.y,3,obj.npc?'#c0dcff':'#d8b880',false);
       for (const [j,id] of (obj.guards||[]).entries()) {
         const guard = m.act3?.anchors.guards?.[obj.id]?.[j] || m.cathedral?.anchors['guard_'+obj.id.slice(-1)] || candidates.filter(p=>U.dist(p.x,p.y,point.x,point.y)>1.5&&(!m.bossArena||!BossEncounters.insideArena(m.bossArena,p.x,p.y))).sort((a,b)=>U.dist2(a.x,a.y,point.x,point.y)-U.dist2(b.x,b.y,point.x,point.y))[j];
@@ -3867,6 +3913,7 @@ const MapGen = (() => {
     return p;
   }
   function settleFamilies(map,seed){
+    if(map.zone.arena)return;
     if(!map.zone.spawns?.length||map.zone.opening||['town','camp'].includes(map.zone.kind))return map;
     const composition=map.frontier||map.act2||map.composition||map.cathedral;
     const encounters=composition?.encounters||[];
@@ -3914,6 +3961,7 @@ const MapGen = (() => {
   // Shared with the read-only world reference. Callbacks keep actor creation
   // and its random calls at the same point in the gameplay event sequence.
   function placeEvents(map, {seed=0, difficulty=0, random: suppliedRandom, onTreasure}={}) {
+    if(map.zone.arena)return;
     if (map.cathedral) return; // encounters and rewards have reserved places in these compositions
     if (map.eventsPlaced) return;                   // events are one-time per map instance — don't re-roll (or re-spawn used shrines) on re-entry
     map.eventsPlaced = true;
@@ -3949,9 +3997,94 @@ const MapGen = (() => {
       }
     }
   }
+  // Presentation is attached last: neither family placement nor interactive
+  // prop preparation sees this random stream or these nonblocking records.
+  function campaignVisuals(m,seed){
+    if(m.zone.arena)return m;
+    const act=m.act1Environment?1:m.act2Visual?2:m.act3?.environment?3:m.cathedral?.environment?4:m.act5Environment?5:0;
+    if(!act)return m;
+    const owner=m.act1Environment||m.act2Visual||m.act3?.environment||m.cathedral?.environment||m.act5Environment;
+    const r=U.rng(seed^U.hash(m.id)^0x53af071),outdoor=!!m.outdoor||!!m.settlement;
+    const colors=[null,['#253f59','#e8ae69'],['#102d30','#dfbd85'],['#483b2a','#d7b57a'],['#202b49','#96b5ee'],['#302026','#ed9555']][act];
+    if(act===1&&m.id==='mines')colors[0]='#362d25';
+    if(act===3&&!outdoor){colors[0]=m.id==='underground_market'?'#352d27':'#182a35';colors[1]=m.id==='underground_market'?'#e6b673':m.id==='khal_palace'?'#d6c8a0':'#8eb6ca';}
+    if(m.id==='cathedral_cinderwatch'){colors[0]='#342a30';colors[1]='#e4ae79';}
+    if(m.id==='cathedral_bastion'){colors[0]='#202a36';colors[1]='#b1c2da';}
+    const v=m.campaignVisual={revision:1,act,outdoor,ground:[],scenery:[],atmosphere:[],ambient:colors[0]};
+    owner.refresh=v;
+    const cap=act===1?(outdoor?.26:.43):act===2?(outdoor?.27:.35):act===3?(outdoor?.20:.32):act===4?.36:outdoor?.32:.39;
+    m.zone={...m.zone,dark:Math.min(m.zone.dark,cap)};
+    const inside=(x,y)=>x>=0&&y>=0&&x<m.w&&y<m.h;
+    const at=(x,y)=>Math.floor(x)+Math.floor(y)*m.w;
+    const solid=(x,y)=>inside(x,y)&&!!m.blocked[at(x,y)]&&!m.void?.[at(x,y)];
+    const floor=(x,y)=>inside(x,y)&&!m.blocked[at(x,y)]&&!m.void?.[at(x,y)]&&!m.hazard[at(x,y)];
+    const protectedPoints=[...Object.values(m.spawns),...m.props.filter(p=>p.interact||p.storyId||p.lootable||p.familySite||p.building),...(m.npcs||[])];
+    const entrances=(m.thresholds||[]).map(t=>t.opening||t);
+    const reserved=(x,y,radius=5)=>entrances.some(p=>(x-p.x)**2+(y-p.y)**2<(radius+2)**2)||
+      protectedPoints.some(p=>(x-p.x)**2+(y-p.y)**2<radius*radius)||
+      (m.bossArena&&BossEncounters.insideArena(m.bossArena,x,y,-4));
+    const asset=n=>'a'+act+'refresh_'+n;
+    // Retain existing positions and silhouettes in the mix; substitute complete
+    // paintings, not recolored copies or different collision footprints.
+    if(act===1)for(const [i,p] of owner.natural.entries())if(i%3!==0){
+      p.refreshAsset=asset(['fir','firs','pine'].includes(p.part)?i%2:2);
+    }
+    if(act===2)for(const [i,p] of owner.dressing.entries())if(p.type==='a2visual_cypress'&&i%3!==0)p.refreshAsset=asset(i%2);
+    if(act===3)for(const [i,p] of (owner.natural||[]).entries())if(p.material==='dune'&&i%3!==0)p.refreshAsset=asset(i%2);
+    const occupied=[];
+    // Sample the solid side of actual boundaries. Foreground art never acquires
+    // collision, and broad bases remain completely outside the walking surface.
+    const cells=[];
+    const step=act===4?1:3;
+    for(let y=1;y<m.h-1;y+=step)for(let x=1;x<m.w-1;x+=step)if(solid(x+.5,y+.5))cells.push({x,y,priority:r()});
+    cells.sort((a,b)=>a.priority-b.priority);
+    for(const {x,y} of cells){
+      if(v.scenery.length>=38||r()>.20||reserved(x+.5,y+.5))continue;
+      if(![[2,0],[-2,0],[0,2],[0,-2]].some(([dx,dy])=>floor(x+dx+.5,y+dy+.5)))continue;
+      const support=[[1,0],[-1,0],[0,1],[0,-1]].filter(([dx,dy])=>solid(x+dx+.5,y+dy+.5)).length;
+      if(support<(outdoor?3:2))continue;
+      if(occupied.some(p=>Math.hypot(p.x-x,p.y-y)<7))continue;
+      if(m.props.some(p=>Math.hypot(p.x-x,p.y-y)<4))continue;
+      const n=act===1?(m.id==='deepfreeze_cavern'?3:2):act===2?(outdoor?(r()<.3?2:1):2+Math.floor(r()*2)):act===3?2+(r()<.5?0:1):act===4?Math.floor(r()*4):outdoor?Math.floor(r()*2):2+Math.floor(r()*2);
+      const p={x:x+.5,y:y+.5,type:asset(n),scale:.65+r()*.30,flip:r()<.5};
+      if(m.id==='mines')p.type='a1env_mine_inner';
+      if(act===4)p.scale*=.8;
+      v.scenery.push(p);occupied.push(p);
+    }
+    const places=m.frontier?.landmarks||m.act2?.landmarks||m.act3?.landmarks||m.cathedral?.rooms||m.composition?.landmarks||m.settlement?.courts?.map(c=>({x:c.reduce((s,p)=>s+p.x,0)/c.length,y:c.reduce((s,p)=>s+p.y,0)/c.length}))||[];
+    const ground=(x,y,n,scale,alpha)=>{
+      if(!floor(x,y)||reserved(x,y,2)||v.ground.some(p=>Math.hypot(p.x-x,p.y-y)<3))return;
+      const type=m.id==='mines'?'a1env_mine_ground':m.id==='shattered_temple'?'a1env_temple_ground':m.id==='cathedral_cinderwatch'?asset(5):m.id==='cathedral_bastion'?asset(4):asset(n);
+      v.ground.push({x,y,type,scale,alpha,flip:r()<.5});
+    };
+    for(const p of places){
+      if(!Number.isFinite(p.x+p.y))continue;
+      for(let i=0;i<5;i++){const a=r()*Math.PI*2,d=3.5+r()*5;ground(p.x+Math.cos(a)*d,p.y+Math.sin(a)*d,4+(i%2),.8+r()*.65,outdoor?.40:.27);}
+      if(v.atmosphere.length<9)v.atmosphere.push({x:p.x,y:p.y,phase:r()*Math.PI*2});
+    }
+    if(m.settlement)for(const p of m.buildings||m.props.filter(p=>p.building)){
+      for(const side of [-1,1])ground(p.x+side*3.8,p.y+3.2,4,.9,.36);
+    }
+    // Dust, snow, moss and ash collect against structures; quiet floor centers
+    // keep combat telegraphs and loot silhouettes legible.
+    for(let y=3;y<m.h-3;y+=5)for(let x=3;x<m.w-3;x+=5){
+      if(v.ground.length>=90||r()>.42||!floor(x+.5,y+.5))continue;
+      if([[2,0],[-2,0],[0,2],[0,-2]].some(([dx,dy])=>solid(x+dx+.5,y+dy+.5)))ground(x+.5,y+.5,4+(r()<.55?0:1),.75+r()*.6,.25+r()*.14);
+    }
+    // These acts already have dense boundary assemblies. Keep the extra upright
+    // layer sparse at 4K; existing tree variants and all floor accents remain.
+    v.scenery.length=Math.min(v.scenery.length,act===2?8:act===5?10:38);
+    for(const p of v.scenery.slice(0,8)){
+      if(act===1&&outdoor||act===3&&outdoor)continue;
+      addLight(m,p.x,p.y,act===4?5.5:4,colors[1],act!==4);
+    }
+    return m;
+  }
   return { generate:(zoneId,seed)=>{
     const map=act5Environment(act1Environment(generateImperial(zoneId,seed),seed),seed);
     settleFamilies(map,seed);
-    return identifyProps(typeof PropInteractions==='undefined'?map:PropInteractions.prepare(map,seed));
+    // Preserve the parent map's authored scenery and reserved boss footprint;
+    // replace its encounter only after the existing presentation pass finishes.
+    return identifyProps(attachBossEntrance(campaignVisuals(identifyProps(typeof PropInteractions==='undefined'?map:PropInteractions.prepare(map,seed)),seed)));
   }, placeEvents, eventProp, propIdentity, denBoundary, denPosition, walkable, canStep, elevAt };
 })();

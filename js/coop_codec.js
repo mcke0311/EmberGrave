@@ -99,7 +99,7 @@ const CoopCodec=(()=>{
     for(const field of actorFields){if(o[field]===undefined)continue;
       if(['imperialCombat','act2Combat'].includes(field))continue;
       if(field==='encounter'){
-        if(o.encounter){const e=o.encounter;row.encounter=encode({active:e.active,phase:e.phase,config:e.config,stage:e.stage,timer:e.timer,attack:e.attack,recoveryDuration:e.recoveryDuration,pose:e.pose,label:e.label,arena:e.arena,pools:e.pools,owned:e.owned,debris:e.debris,visual:e.visual,statusLabel:e.statusText?.()},true);}
+        if(o.encounter){const e=o.encounter;row.encounter=encode({active:e.active,phase:e.phase,config:e.config,stage:e.stage,timer:e.timer,attack:e.attack,recoveryDuration:e.recoveryDuration,pose:e.pose,label:e.label,arena:e.arena,pools:e.pools,owned:e.owned,debris:e.debris,visual:e.visual,mechanic:e.mechanic,ward:e.ward,lifecycle:e.lifecycle,statusLabel:e.statusText?.()},true);}
       }else row[field]=encode(o[field]);
     }
     if(key==='players')for(const field of playerFields)if(!['inv','stash','equip','management'].includes(field)&&o[field]!==undefined)row[field]=encode(o[field]);
@@ -133,6 +133,7 @@ const CoopCodec=(()=>{
       cache.actors.set(o,row);return row;
     });
     out.terrainEdits=s.map._coopTerrain||{};
+    out.arena=s.map.bossArena?.dedicated?{sealed:s.map.bossArena.sealed}:null;
     // Cooldowns belong in durable area saves, not the presentation stream. A
     // ticking den must not retransmit the entire prop catalogue every frame.
     out.props=cache.props||(cache.props=s.map.props.map(p=>{const row=encode(p,true);delete row.spawnCooldown;return row;}));
@@ -154,7 +155,7 @@ const CoopCodec=(()=>{
       const row=saved.get(p.propId||MapGen.propIdentity(map,p));
       // A legacy decorative habitat/ambush is a different behavior. In particular,
       // its old deserted flag must not disable a newly destructible wolf den.
-      if(!row||row.behavior!==p.behavior)continue;
+      if(!row||row.behavior!==p.behavior||p.deviceId)continue;
       for(const field of fields)if(Object.hasOwn(row,field))p[field]=decode(row[field],new Map());
       if(!p.building&&!p.behavior&&(row.spent||row.completed)&&row.label)p.label=row.label;
       if(p.broken)PropInteractions.freeTile(map,p);
@@ -208,6 +209,11 @@ const CoopCodec=(()=>{
     if(!changes||Object.hasOwn(changes,'props'))s.map.props=(snap.props||[]).map(row=>Object.assign(refs.get(row._coopId),decode(row,refs)));
     if(snap.terrain)for(const [k,v]of Object.entries(snap.terrain))s.map[k]=decode(v,refs);
     applyTerrain(s.map,changes?changes.terrainEdits:snap.terrainEdits);
+    if(s.map.bossArena?.dedicated){
+      const a=s.map.bossArena;a.sealed=!!snap.arena?.sealed;a.devices=s.map.props.filter(p=>p.deviceId);
+      for(const i of a.gateCells)s.map.blocked[i]=a.sealed?1:0;
+      for(const m of s.monsters)if(m.encounter){m.encounter.arena=a;m.encounter.mon=m;}
+    }
     if(!changes||changes.campaign)Object.assign(s,decode(snap.campaign,refs));
     if(!changes||changes.vendorStock)s.vendorStock=decode(snap.vendorStock,refs);s.time=snap.time;s.partyTime=snap.partyTime??snap.time;s._snapshotAt=performance.now();
     return refs;

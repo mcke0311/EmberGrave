@@ -346,7 +346,7 @@ const Coop=(()=>{
         if(Object.keys(fields).length>1)rows.push(fields);prev.delete(row._coopId);
       }changes.groups[key]={rows,removed:[...prev.keys()]};
     }
-    for(const key of ['props','campaign','vendorStock'])if(JSON.stringify(before[key])!==JSON.stringify(after[key]))changes[key]=after[key];
+    for(const key of ['props','campaign','vendorStock','arena'])if(JSON.stringify(before[key])!==JSON.stringify(after[key]))changes[key]=after[key];
     return changes;
   }
   function sendSnapshot(full=false,to){
@@ -432,10 +432,26 @@ const Coop=(()=>{
       if(p.dead||!t?.dead||!CoopCommands.nearby(p,t,2)||U.dist(p.x,p.y,r.x,r.y)>.05||(p._coopHurt||0)!==r.hurt){p.reviveTarget=null;continue;}
       r.t+=dt;if(r.t>=3){t.dead=false;t.hp=t.stats.maxHp*.35;t.action=null;p.reviveTarget=null;critical=true;}
     }
-    if(s().players.length&&s().players.every(p=>p.dead)&&!travel&&!loading){
+    if(!s().map.zone.arena&&s().players.length&&s().players.every(p=>p.dead)&&!travel&&!loading){
       for(const p of s().players){p.dead=false;p.hp=p.stats.maxHp;p.mana=p.stats.maxMana;p.action=null;}
       requestTravel('frosthaven','default',{},true);
     }
+  }
+  function retryArena(p){
+    if(!authority||!p.dead||!s().map.zone.arena)throw Error('No arena retry is available.');
+    if(s().players.some(h=>h.connected!==false&&!h.dead))throw Error('Wait for a teammate to revive you or for the party to fall.');
+    for(const m of s().monsters)if(m.encounter&&!m.dead)m.encounter.reset();
+    for(const key of ['projectiles','minions','traps','fx'])s()[key]=[];
+    for(const [i,h]of s().players.entries()){
+      h.dead=false;h.hp=h.stats.maxHp;h.mana=h.stats.maxMana;
+      Game.coop.resetActor(h,Game.coop.arrival({x:s().map.spawns.retry.x-1.8+i*1.2,y:s().map.spawns.retry.y}));
+    }
+    critical=true;Game.coop.refresh();
+  }
+  function respawn(p){
+    if(!authority||!p.dead)throw Error('You are already alive.');
+    if(s().players.some(h=>h.connected!==false&&!h.dead))throw Error('A teammate can revive you.');
+    return requestTravel('frosthaven','default',{revive:true},true);
   }
   function died(p){
     if(!host||p.dead)return;
@@ -449,7 +465,7 @@ const Coop=(()=>{
     if(!host){notify('The host controls party travel.');return false;}
     if(busy&&!authority)await serial;
     if(!P.ZONES.includes(zone)){notify('This destination is outside the Act I co-op beta.');return false;}
-    if(zone==='shattered_temple'&&!s().flags.fn_temple_open){notify('Shatter the three beacons and defeat the Oathsworn first.');return false;}
+    if(['shattered_temple','arena_korvath'].includes(zone)&&!s().flags.fn_temple_open){notify('Shatter the three beacons and defeat the Oathsworn first.');return false;}
     if(travel||loading||busy&&!authority||!wipe&&s().players.some(p=>p.connected===false))return false;
     if(s().monsters.some(m=>m.encounter?.active)&&!wipe){notify('Finish the boss encounter before travelling.');return false;}
     const id=P.randomId();travel={id,zone,spawn,options,stage:'vote',answers:new Map(),wipe,at:Date.now()};paused='Party travel';wireAdmission();
@@ -529,7 +545,7 @@ const Coop=(()=>{
     }
   }
   return {listRooms,teleportToPlayer:targetId=>submit({type:'teleportToPlayer',targetId}),sampleFrame,diagnostics:async()=>({...diagnostics,inputResponseMs:CoopInput.responseTimes?.slice()||[],worker:worker?await workerRequest('metrics'):null}),connect,newHero,submit,runLocal,frame,event,visual,save,retrySave,died,checkpoint,requestTravel,answerTravel,leave,cinematic,cinematicDone,trackParticipants,rewardParticipants,resumeInfo,
-    enqueuePickup:(g,p)=>enqueueAction(g,p,'pickup'),enqueueInteraction:(o,p)=>enqueueAction(o,p,'interact'),finishInteraction:(o,p)=>enqueueAction(o,p,'interact',true),openInteraction,
+    retryArena,respawn,enqueuePickup:(g,p)=>enqueueAction(g,p,'pickup'),enqueueInteraction:(o,p)=>enqueueAction(o,p,'interact'),finishInteraction:(o,p)=>enqueueAction(o,p,'interact',true),openInteraction,
     ready:ready=>wire('ready',{ready}),notify,markCritical:()=>critical=true,register:()=>C.register(s()),
     monsterDied(mon){C.id(mon,'monster');const a=areas[s().map.id]||={};a.dead=[...new Set([...(a.dead||[]),mon._coopId])];critical=true;},
     get mobileQuality(){return mobileQuality;},get workerHost(){return !!worker;},get hostId(){return hostId;},get party(){return partyRecords;},get active(){return active;},get host(){return host;},get authority(){return authority;},get committing(){return committing;},get loading(){return loading;},

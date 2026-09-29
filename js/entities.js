@@ -2944,6 +2944,7 @@ class Monster extends Entity {
     };
   }
   loseHealth(amount) {
+    if(this.encounter)amount=this.encounter.limitDamage(amount);
     this.hp -= amount;
     if (amount > 0) this.healthBarUntil = Game.state.time + 3;
   }
@@ -2979,8 +2980,7 @@ class Monster extends Entity {
     if (this.sunder && Game.state.time < this.sunder.until) dmg *= 1 + 0.06 * this.sunder.stacks;
     if (this.killMark && Game.state.time < this.killMark.until) dmg *= 1 + (this.killMark.amp || 0) / 100;
     dmg = Math.max(detail?.uniqueDot ? 0 : 1, dmg);
-    const nextForm=this.defId==="vethriss" && this.def.phases?.[this.phaseIdx||0];
-    if (nextForm) dmg=Math.min(dmg,Math.max(0,this.hp-this.maxHp*nextForm.at));
+    if(this.encounter)dmg=this.encounter.limitDamage(dmg);
     this.loseHealth(dmg);
     if (!detail?.bleedDot) this.flashT = 0.1;
     if(!this.aggro)this.wakePack();
@@ -3072,7 +3072,7 @@ class Monster extends Entity {
   hostileTargets(){
     const world=Game.state,targets=[...(world.players||[world.player]),...world.minions];
     if(world.map.zone.infight&&!this.def.projectile&&!this.isBoss)for(const other of world.monsters)if(this.eligibleTarget(other))targets.push(other);
-    return targets.filter(t=>!t.dead&&!t.untargetable&&TerrainLayers.same(this,t));
+    return targets.filter(t=>!t.dead&&!t.untargetable&&t.connected!==false&&TerrainLayers.same(this,t));
   }
   combatLos(target,origin=this){return (target.surfaceId===undefined||TerrainLayers.same(this,target))&&U.los((x,y)=>MapGen.walkable(Game.state.map,x,y,this.surfaceId),origin.x,origin.y,target.x,target.y);}
   supportedPoint(x,y,radius=this.radius,map=Game.state.map){
@@ -3143,7 +3143,8 @@ class Monster extends Entity {
     if(this.encounter&&!this.encounter.canDamage())return;
     if (Game.bossWard?.(this)) { this.hp=Math.max(1,this.hp); return; }
     this.imperialCombat?.cancel();
-    const nextForm=this.defId==="vethriss" && this.def.phases?.[this.phaseIdx||0];
+    if(this.encounter?.mechanic){this.hp=Math.max(this.hp,this.maxHp*this.def.phases[this.encounter.phase-1].at);return;}
+    const nextForm=this.encounter && this.def.phases?.[this.encounter.phase];
     if (nextForm) { this.hp=Math.max(this.hp,this.maxHp*nextForm.at); return; }
     this.dead = true;
     if(this.packId&&Game.state.map.ecology){
@@ -4144,7 +4145,7 @@ class Projectile {
           if (mi.dead || mi.untargetable) continue;
           if (U.dist(this.x, this.y, mi.x, mi.y) < mi.radius + 0.25 &&
               (!this.bossLane||BossEncounters.contains(this.bossLane,mi.x,mi.y))) {
-            if (mon) mon.dealAttack(mi,hitDmg*(this.bossOwner?.45:1),elem||'phys','projectile');
+            if (mon) mon.dealAttack(mi,hitDmg*(this.bossOwner?.14:1),elem||'phys','projectile');
             if(this.enemySlow)Act2EnemyCombat.slow(mi,this.enemySlow);
             this.dead = true; return;
           }

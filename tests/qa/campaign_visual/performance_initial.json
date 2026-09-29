@@ -1,0 +1,3569 @@
+{
+  "status": "FAIL",
+  "method": "Three alternating before/after pairs, 600 warmup frames, 240 RAF-paced frames; real hero movement and attack exchange, full enemy roster, stable stationary terrain cache. CPU submission time, not GPU completion.",
+  "comparisons": [
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 3.1666666666666665,
+        "p95": 4.766666666666667
+      },
+      "after": {
+        "median": 3.266666666666667,
+        "p95": 5.133333333333333
+      },
+      "medianChange": 3.157894736842115,
+      "p95Change": 7.692307692307687,
+      "pass": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 4.066666666666666,
+        "p95": 5.6000000000000005
+      },
+      "after": {
+        "median": 4.066666666666666,
+        "p95": 5.533333333333334
+      },
+      "medianChange": 0,
+      "p95Change": -1.1904761904761862,
+      "pass": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 4.066666666666666,
+        "p95": 5.8
+      },
+      "after": {
+        "median": 4.133333333333334,
+        "p95": 6
+      },
+      "medianChange": 1.639344262295106,
+      "p95Change": 3.4482758620689724,
+      "pass": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 4.966666666666666,
+        "p95": 6.3
+      },
+      "after": {
+        "median": 5.000000000000001,
+        "p95": 6.1000000000000005
+      },
+      "medianChange": 0.6711409395973478,
+      "p95Change": -3.1746031746031633,
+      "pass": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 4.133333333333333,
+        "p95": 5.533333333333334
+      },
+      "after": {
+        "median": 4.066666666666666,
+        "p95": 5.533333333333334
+      },
+      "medianChange": -1.6129032258064502,
+      "p95Change": 0,
+      "pass": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 5.1000000000000005,
+        "p95": 6.733333333333333
+      },
+      "after": {
+        "median": 4.933333333333334,
+        "p95": 5.966666666666666
+      },
+      "medianChange": -3.267973856209161,
+      "p95Change": -11.386138613861396,
+      "pass": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 5.133333333333334,
+        "p95": 6.5
+      },
+      "after": {
+        "median": 5.166666666666666,
+        "p95": 6.533333333333334
+      },
+      "medianChange": 0.6493506493506329,
+      "p95Change": 0.5128205128205332,
+      "pass": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 6.8,
+        "p95": 8.433333333333334
+      },
+      "after": {
+        "median": 7.3,
+        "p95": 10.633333333333335
+      },
+      "medianChange": 7.352941176470584,
+      "p95Change": 26.086956521739136,
+      "pass": false
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 4.2,
+        "p95": 5.733333333333333
+      },
+      "after": {
+        "median": 3.8000000000000003,
+        "p95": 5.1
+      },
+      "medianChange": -9.523809523809524,
+      "p95Change": -11.046511627906986,
+      "pass": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 5.033333333333334,
+        "p95": 6.433333333333334
+      },
+      "after": {
+        "median": 4.933333333333334,
+        "p95": 6.7
+      },
+      "medianChange": -1.9867549668874274,
+      "p95Change": 4.145077720207246,
+      "pass": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 5.333333333333333,
+        "p95": 7.533333333333332
+      },
+      "after": {
+        "median": 5.433333333333334,
+        "p95": 7.2
+      },
+      "medianChange": 1.8750000000000044,
+      "p95Change": -4.424778761061932,
+      "pass": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 6.333333333333333,
+        "p95": 8.1
+      },
+      "after": {
+        "median": 6.3,
+        "p95": 8.766666666666667
+      },
+      "medianChange": -0.5263157894736858,
+      "p95Change": 8.230452674897126,
+      "pass": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 2.9666666666666663,
+        "p95": 4.1000000000000005
+      },
+      "after": {
+        "median": 2.9333333333333336,
+        "p95": 4
+      },
+      "medianChange": -1.123595505617958,
+      "p95Change": -2.4390243902439157,
+      "pass": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 3.9333333333333336,
+        "p95": 5.366666666666667
+      },
+      "after": {
+        "median": 3.733333333333334,
+        "p95": 5.033333333333332
+      },
+      "medianChange": -5.0847457627118615,
+      "p95Change": -6.211180124223626,
+      "pass": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 4.533333333333334,
+        "p95": 6.966666666666666
+      },
+      "after": {
+        "median": 4.3,
+        "p95": 6.566666666666666
+      },
+      "medianChange": -5.147058823529427,
+      "p95Change": -5.741626794258369,
+      "pass": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 5.266666666666667,
+        "p95": 7.466666666666666
+      },
+      "after": {
+        "median": 5.2,
+        "p95": 7.3
+      },
+      "medianChange": -1.2658227848101222,
+      "p95Change": -2.232142857142849,
+      "pass": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "mode": "moving",
+      "before": {
+        "median": 4.433333333333334,
+        "p95": 5.633333333333333
+      },
+      "after": {
+        "median": 4.533333333333334,
+        "p95": 5.833333333333333
+      },
+      "medianChange": 2.2556390977443774,
+      "p95Change": 3.5502958579881616,
+      "pass": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "mode": "combat",
+      "before": {
+        "median": 6.3,
+        "p95": 8.200000000000001
+      },
+      "after": {
+        "median": 6.633333333333333,
+        "p95": 9.066666666666666
+      },
+      "medianChange": 5.29100529100528,
+      "p95Change": 10.56910569105689,
+      "pass": false
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "mode": "moving",
+      "before": {
+        "median": 6.166666666666667,
+        "p95": 8.333333333333334
+      },
+      "after": {
+        "median": 6.533333333333334,
+        "p95": 8.866666666666667
+      },
+      "medianChange": 5.945945945945952,
+      "p95Change": 6.400000000000006,
+      "pass": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "mode": "combat",
+      "before": {
+        "median": 8.266666666666666,
+        "p95": 10.966666666666667
+      },
+      "after": {
+        "median": 8.466666666666667,
+        "p95": 10.4
+      },
+      "medianChange": 2.4193548387096975,
+      "p95Change": -5.167173252279634,
+      "pass": true
+    }
+  ],
+  "failures": [],
+  "runs": [
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "pair": 0,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 6.5,
+        "y": 80.5
+      },
+      "monsters": 92,
+      "distance": 18.286666666666683,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3,
+        "p95": 3.9,
+        "max": 8.9
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 17.2
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "pair": 0,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 42.5,
+        "y": 76.5
+      },
+      "monsters": 92,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1217,
+      "cpuMs": {
+        "median": 4.4,
+        "p95": 6.2,
+        "max": 8.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 17.4
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "pair": 0,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 6.5,
+        "y": 80.5
+      },
+      "monsters": 92,
+      "distance": 18.286666666666683,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.1,
+        "p95": 5.1,
+        "max": 8.3
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.2
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "pair": 0,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 42.5,
+        "y": 76.5
+      },
+      "monsters": 92,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1217,
+      "cpuMs": {
+        "median": 4.2,
+        "p95": 5.8,
+        "max": 9.7
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.4
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "pair": 1,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 6.5,
+        "y": 80.5
+      },
+      "monsters": 92,
+      "distance": 18.286666666666683,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.4,
+        "p95": 5.3,
+        "max": 10.7
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 17.4
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "pair": 1,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 42.5,
+        "y": 76.5
+      },
+      "monsters": 92,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1217,
+      "cpuMs": {
+        "median": 4,
+        "p95": 5.7,
+        "max": 9.3
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.3
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "pair": 1,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 6.5,
+        "y": 80.5
+      },
+      "monsters": 92,
+      "distance": 18.286666666666683,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3,
+        "p95": 5.1,
+        "max": 8.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.3
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "pair": 1,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 42.5,
+        "y": 76.5
+      },
+      "monsters": 92,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1217,
+      "cpuMs": {
+        "median": 4,
+        "p95": 5.8,
+        "max": 11.9
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.4
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "pair": 2,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 6.5,
+        "y": 80.5
+      },
+      "monsters": 92,
+      "distance": 18.286666666666683,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.5,
+        "p95": 5.3,
+        "max": 13.9
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 19.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "pair": 2,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 42.5,
+        "y": 76.5
+      },
+      "monsters": 92,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1217,
+      "cpuMs": {
+        "median": 3.8,
+        "p95": 4.8,
+        "max": 6.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "pair": 2,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 6.5,
+        "y": 80.5
+      },
+      "monsters": 92,
+      "distance": 18.286666666666683,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.3,
+        "p95": 5,
+        "max": 7.9
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 1920,
+      "pair": 2,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 42.5,
+        "y": 76.5
+      },
+      "monsters": 92,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1217,
+      "cpuMs": {
+        "median": 4,
+        "p95": 5.1,
+        "max": 8.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 18.7
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "pair": 0,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 6.5,
+        "y": 80.5
+      },
+      "monsters": 92,
+      "distance": 18.286666666666683,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.8,
+        "p95": 5.3,
+        "max": 12.7
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.1
+      },
+      "builds": 1,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "pair": 0,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 42.5,
+        "y": 76.5
+      },
+      "monsters": 92,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1217,
+      "cpuMs": {
+        "median": 5,
+        "p95": 6.8,
+        "max": 10.9
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 18.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "pair": 0,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 6.5,
+        "y": 80.5
+      },
+      "monsters": 92,
+      "distance": 18.286666666666683,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.2,
+        "p95": 5.3,
+        "max": 12.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 19.5
+      },
+      "builds": 1,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "pair": 0,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 42.5,
+        "y": 76.5
+      },
+      "monsters": 92,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1217,
+      "cpuMs": {
+        "median": 4.9,
+        "p95": 6.1,
+        "max": 9.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "pair": 1,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 6.5,
+        "y": 80.5
+      },
+      "monsters": 92,
+      "distance": 18.286666666666683,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.2,
+        "p95": 7.3,
+        "max": 13.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 17.3
+      },
+      "builds": 1,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "pair": 1,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 42.5,
+        "y": 76.5
+      },
+      "monsters": 92,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1217,
+      "cpuMs": {
+        "median": 5.2,
+        "p95": 6.2,
+        "max": 8.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 19.7
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "pair": 1,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 6.5,
+        "y": 80.5
+      },
+      "monsters": 92,
+      "distance": 18.286666666666683,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.4,
+        "p95": 6,
+        "max": 18.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 20.7
+      },
+      "builds": 1,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "pair": 1,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 42.5,
+        "y": 76.5
+      },
+      "monsters": 92,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1217,
+      "cpuMs": {
+        "median": 5.2,
+        "p95": 6.5,
+        "max": 9.7
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 53.9
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "pair": 2,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 6.5,
+        "y": 80.5
+      },
+      "monsters": 92,
+      "distance": 18.286666666666683,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4,
+        "p95": 6.1,
+        "max": 12.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 18.7
+      },
+      "builds": 1,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "pair": 2,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 42.5,
+        "y": 76.5
+      },
+      "monsters": 92,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1217,
+      "cpuMs": {
+        "median": 4.7,
+        "p95": 5.6,
+        "max": 6.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 18
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "pair": 2,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 6.5,
+        "y": 80.5
+      },
+      "monsters": 92,
+      "distance": 18.286666666666683,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4,
+        "p95": 5.4,
+        "max": 13.9
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 16.9
+      },
+      "builds": 1,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "north_wild",
+      "width": 3840,
+      "pair": 2,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 42.5,
+        "y": 76.5
+      },
+      "monsters": 92,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1217,
+      "cpuMs": {
+        "median": 4.9,
+        "p95": 6,
+        "max": 11.7
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 44.8
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "pair": 0,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 2.5,
+        "y": 86.5
+      },
+      "monsters": 137,
+      "distance": 18.28666666666667,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.9,
+        "p95": 5.4,
+        "max": 8.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.2
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "pair": 0,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 37.5,
+        "y": 84.5
+      },
+      "monsters": 137,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1482,
+      "cpuMs": {
+        "median": 5.2,
+        "p95": 6.5,
+        "max": 14.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.3
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "pair": 0,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 2.5,
+        "y": 86.5
+      },
+      "monsters": 137,
+      "distance": 18.28666666666667,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4,
+        "p95": 5.5,
+        "max": 8.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 19.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "pair": 0,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 37.5,
+        "y": 84.5
+      },
+      "monsters": 137,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1482,
+      "cpuMs": {
+        "median": 4.8,
+        "p95": 5.7,
+        "max": 8.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 35
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "pair": 1,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 2.5,
+        "y": 86.5
+      },
+      "monsters": 137,
+      "distance": 18.28666666666667,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.8,
+        "p95": 5.1,
+        "max": 8.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 18.7
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "pair": 1,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 37.5,
+        "y": 84.5
+      },
+      "monsters": 137,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1482,
+      "cpuMs": {
+        "median": 5.2,
+        "p95": 6.5,
+        "max": 8.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.6
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "pair": 1,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 2.5,
+        "y": 86.5
+      },
+      "monsters": 137,
+      "distance": 18.28666666666667,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.3,
+        "p95": 5.7,
+        "max": 8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 18
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "pair": 1,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 37.5,
+        "y": 84.5
+      },
+      "monsters": 137,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1482,
+      "cpuMs": {
+        "median": 5.1,
+        "p95": 6.9,
+        "max": 12.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 18.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "pair": 2,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 2.5,
+        "y": 86.5
+      },
+      "monsters": 137,
+      "distance": 18.28666666666667,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.2,
+        "p95": 5.5,
+        "max": 10.7
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 19.7
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "pair": 2,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 37.5,
+        "y": 84.5
+      },
+      "monsters": 137,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1482,
+      "cpuMs": {
+        "median": 5,
+        "p95": 6.8,
+        "max": 9.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 19
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "pair": 2,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 2.5,
+        "y": 86.5
+      },
+      "monsters": 137,
+      "distance": 18.28666666666667,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.4,
+        "p95": 6,
+        "max": 8.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 1920,
+      "pair": 2,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 37.5,
+        "y": 84.5
+      },
+      "monsters": 137,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1482,
+      "cpuMs": {
+        "median": 4.8,
+        "p95": 5.7,
+        "max": 6.7
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 16.9
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "pair": 0,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 2.5,
+        "y": 86.5
+      },
+      "monsters": 137,
+      "distance": 18.28666666666667,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.9,
+        "p95": 6.2,
+        "max": 10.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 19.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "pair": 0,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 37.5,
+        "y": 84.5
+      },
+      "monsters": 137,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1482,
+      "cpuMs": {
+        "median": 7.1,
+        "p95": 9.1,
+        "max": 14.7
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 19.2
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "pair": 0,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 2.5,
+        "y": 86.5
+      },
+      "monsters": 137,
+      "distance": 18.28666666666667,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 5.1,
+        "p95": 6.4,
+        "max": 11.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 19.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "pair": 0,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 37.5,
+        "y": 84.5
+      },
+      "monsters": 137,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1482,
+      "cpuMs": {
+        "median": 7.1,
+        "p95": 11.3,
+        "max": 26.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 17.2,
+        "max": 27.7
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "pair": 1,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 2.5,
+        "y": 86.5
+      },
+      "monsters": 137,
+      "distance": 18.28666666666667,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 5.3,
+        "p95": 7.3,
+        "max": 14.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 18.3
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "pair": 1,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 37.5,
+        "y": 84.5
+      },
+      "monsters": 137,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1482,
+      "cpuMs": {
+        "median": 7.1,
+        "p95": 9.8,
+        "max": 30.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 33.6
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "pair": 1,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 2.5,
+        "y": 86.5
+      },
+      "monsters": 137,
+      "distance": 18.28666666666667,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 5.1,
+        "p95": 6.8,
+        "max": 16.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 43.8
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "pair": 1,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 37.5,
+        "y": 84.5
+      },
+      "monsters": 137,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1482,
+      "cpuMs": {
+        "median": 6.7,
+        "p95": 7.9,
+        "max": 9.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 16.9
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "pair": 2,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 2.5,
+        "y": 86.5
+      },
+      "monsters": 137,
+      "distance": 18.28666666666667,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 5.4,
+        "p95": 6.5,
+        "max": 11.4
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.7
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "pair": 2,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 37.5,
+        "y": 84.5
+      },
+      "monsters": 137,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1482,
+      "cpuMs": {
+        "median": 6.6,
+        "p95": 8.3,
+        "max": 11.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "pair": 2,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 2.5,
+        "y": 86.5
+      },
+      "monsters": 137,
+      "distance": 18.28666666666667,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 5.1,
+        "p95": 5.9,
+        "max": 10.4
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 41.3
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "weeping_marsh",
+      "width": 3840,
+      "pair": 2,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 37.5,
+        "y": 84.5
+      },
+      "monsters": 137,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 1482,
+      "cpuMs": {
+        "median": 7.7,
+        "p95": 10.8,
+        "max": 17.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 21.6
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "pair": 0,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 24.5,
+        "y": 76.5
+      },
+      "monsters": 44,
+      "distance": 18.28485452984008,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.2,
+        "p95": 5.8,
+        "max": 11.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 36.8
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "pair": 0,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 48.5,
+        "y": 73.5
+      },
+      "monsters": 44,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2546,
+      "cpuMs": {
+        "median": 5.2,
+        "p95": 7.6,
+        "max": 10.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 17.4
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "pair": 0,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 24.5,
+        "y": 76.5
+      },
+      "monsters": 44,
+      "distance": 18.28485452984008,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.8,
+        "p95": 4.6,
+        "max": 7.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 24.3
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "pair": 0,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 48.5,
+        "y": 73.5
+      },
+      "monsters": 44,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2546,
+      "cpuMs": {
+        "median": 4.7,
+        "p95": 5.8,
+        "max": 7.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 54.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "pair": 1,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 24.5,
+        "y": 76.5
+      },
+      "monsters": 44,
+      "distance": 18.28485452984008,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.7,
+        "p95": 4.8,
+        "max": 8.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 27.6
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "pair": 1,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 48.5,
+        "y": 73.5
+      },
+      "monsters": 44,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2546,
+      "cpuMs": {
+        "median": 4.7,
+        "p95": 5.7,
+        "max": 10.4
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 40.4
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "pair": 1,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 24.5,
+        "y": 76.5
+      },
+      "monsters": 44,
+      "distance": 18.28485452984008,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.9,
+        "p95": 4.8,
+        "max": 10.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 35.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "pair": 1,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 48.5,
+        "y": 73.5
+      },
+      "monsters": 44,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2546,
+      "cpuMs": {
+        "median": 5.1,
+        "p95": 6,
+        "max": 11
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 41.4
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "pair": 2,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 24.5,
+        "y": 76.5
+      },
+      "monsters": 44,
+      "distance": 18.28485452984008,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.5,
+        "p95": 6.6,
+        "max": 10
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 35
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "pair": 2,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 48.5,
+        "y": 73.5
+      },
+      "monsters": 44,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2546,
+      "cpuMs": {
+        "median": 4.8,
+        "p95": 5.7,
+        "max": 6.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 32.5
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "pair": 2,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 24.5,
+        "y": 76.5
+      },
+      "monsters": 44,
+      "distance": 18.28485452984008,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.9,
+        "p95": 5.9,
+        "max": 9.7
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 24.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 1920,
+      "pair": 2,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 48.5,
+        "y": 73.5
+      },
+      "monsters": 44,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2546,
+      "cpuMs": {
+        "median": 5.4,
+        "p95": 8.6,
+        "max": 16.3
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 29.8
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "pair": 0,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 24.5,
+        "y": 76.5
+      },
+      "monsters": 44,
+      "distance": 18.28485452984008,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 5.1,
+        "p95": 7.6,
+        "max": 15.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 54.4
+      },
+      "builds": 4,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "pair": 0,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 48.5,
+        "y": 73.5
+      },
+      "monsters": 44,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2546,
+      "cpuMs": {
+        "median": 6.3,
+        "p95": 8.2,
+        "max": 15.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 71.7
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "pair": 0,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 24.5,
+        "y": 76.5
+      },
+      "monsters": 44,
+      "distance": 18.28485452984008,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 5.4,
+        "p95": 7.1,
+        "max": 16.9
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 47.8
+      },
+      "builds": 4,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "pair": 0,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 48.5,
+        "y": 73.5
+      },
+      "monsters": 44,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2546,
+      "cpuMs": {
+        "median": 6.4,
+        "p95": 8.4,
+        "max": 11.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 73.6
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "pair": 1,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 24.5,
+        "y": 76.5
+      },
+      "monsters": 44,
+      "distance": 18.28485452984008,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 5.5,
+        "p95": 7.7,
+        "max": 16
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 63.5
+      },
+      "builds": 4,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "pair": 1,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 48.5,
+        "y": 73.5
+      },
+      "monsters": 44,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2546,
+      "cpuMs": {
+        "median": 6.3,
+        "p95": 10.2,
+        "max": 14.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 71.3
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "pair": 1,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 24.5,
+        "y": 76.5
+      },
+      "monsters": 44,
+      "distance": 18.28485452984008,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 5.2,
+        "p95": 6.8,
+        "max": 18.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 47.5
+      },
+      "builds": 4,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "pair": 1,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 48.5,
+        "y": 73.5
+      },
+      "monsters": 44,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2546,
+      "cpuMs": {
+        "median": 6.1,
+        "p95": 7.3,
+        "max": 9.4
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 64.9
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "pair": 2,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 24.5,
+        "y": 76.5
+      },
+      "monsters": 44,
+      "distance": 18.28485452984008,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 5.7,
+        "p95": 8.2,
+        "max": 17
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 75.4
+      },
+      "builds": 4,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "pair": 2,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 48.5,
+        "y": 73.5
+      },
+      "monsters": 44,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2546,
+      "cpuMs": {
+        "median": 6.6,
+        "p95": 8.8,
+        "max": 12.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 83.3
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "pair": 2,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 24.5,
+        "y": 76.5
+      },
+      "monsters": 44,
+      "distance": 18.28485452984008,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 5.4,
+        "p95": 6.8,
+        "max": 18.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 54.7
+      },
+      "builds": 4,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "khal_palace",
+      "width": 3840,
+      "pair": 2,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 48.5,
+        "y": 73.5
+      },
+      "monsters": 44,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2546,
+      "cpuMs": {
+        "median": 6.2,
+        "p95": 7.7,
+        "max": 9.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 68.2
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "pair": 0,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 88.5
+      },
+      "monsters": 25,
+      "distance": 18.28666666666674,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.4,
+        "p95": 5,
+        "max": 7.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 43.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "pair": 0,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 41.5,
+        "y": 68.5
+      },
+      "monsters": 25,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 802,
+      "cpuMs": {
+        "median": 3.7,
+        "p95": 4.5,
+        "max": 5.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 56.3
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "pair": 0,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 88.5
+      },
+      "monsters": 25,
+      "distance": 18.28666666666674,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 2.7,
+        "p95": 3.6,
+        "max": 4.3
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 45.6
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "pair": 0,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 41.5,
+        "y": 68.5
+      },
+      "monsters": 25,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 802,
+      "cpuMs": {
+        "median": 3.6,
+        "p95": 5.1,
+        "max": 6.4
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 52.9
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "pair": 1,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 88.5
+      },
+      "monsters": 25,
+      "distance": 18.28666666666674,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 2.8,
+        "p95": 4.4,
+        "max": 8.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 44.6
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "pair": 1,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 41.5,
+        "y": 68.5
+      },
+      "monsters": 25,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 802,
+      "cpuMs": {
+        "median": 3.7,
+        "p95": 5.3,
+        "max": 6.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 61.4
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "pair": 1,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 88.5
+      },
+      "monsters": 25,
+      "distance": 18.28666666666674,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 2.8,
+        "p95": 3.8,
+        "max": 5.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 40.9
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "pair": 1,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 41.5,
+        "y": 68.5
+      },
+      "monsters": 25,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 802,
+      "cpuMs": {
+        "median": 3.6,
+        "p95": 4.4,
+        "max": 5.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 54.4
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "pair": 2,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 88.5
+      },
+      "monsters": 25,
+      "distance": 18.28666666666674,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 2.7,
+        "p95": 3.5,
+        "max": 4.4
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 40.4
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "pair": 2,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 41.5,
+        "y": 68.5
+      },
+      "monsters": 25,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 802,
+      "cpuMs": {
+        "median": 4.5,
+        "p95": 7.2,
+        "max": 16.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 17.3,
+        "max": 61.9
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "pair": 2,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 88.5
+      },
+      "monsters": 25,
+      "distance": 18.28666666666674,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 3.3,
+        "p95": 4,
+        "max": 4.4
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 49.9
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 1920,
+      "pair": 2,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 41.5,
+        "y": 68.5
+      },
+      "monsters": 25,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 802,
+      "cpuMs": {
+        "median": 3.9,
+        "p95": 4.7,
+        "max": 5.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 50
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "pair": 0,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 88.5
+      },
+      "monsters": 25,
+      "distance": 18.28666666666674,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.5,
+        "p95": 7.1,
+        "max": 11.3
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 79.3
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "pair": 0,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 41.5,
+        "y": 68.5
+      },
+      "monsters": 25,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 802,
+      "cpuMs": {
+        "median": 5.3,
+        "p95": 7.6,
+        "max": 9.9
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 154.8
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "pair": 0,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 88.5
+      },
+      "monsters": 25,
+      "distance": 18.28666666666674,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.1,
+        "p95": 6,
+        "max": 8.7
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 88.5
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "pair": 0,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 41.5,
+        "y": 68.5
+      },
+      "monsters": 25,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 802,
+      "cpuMs": {
+        "median": 5,
+        "p95": 7.2,
+        "max": 10.4
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 17.2,
+        "max": 129.7
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "pair": 1,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 88.5
+      },
+      "monsters": 25,
+      "distance": 18.28666666666674,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4,
+        "p95": 6.5,
+        "max": 8.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 93.2
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "pair": 1,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 41.5,
+        "y": 68.5
+      },
+      "monsters": 25,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 802,
+      "cpuMs": {
+        "median": 5.8,
+        "p95": 8.5,
+        "max": 14.2
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 18,
+        "max": 134.7
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "pair": 1,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 88.5
+      },
+      "monsters": 25,
+      "distance": 18.28666666666674,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.8,
+        "p95": 5.9,
+        "max": 8.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 83.8
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "pair": 1,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 41.5,
+        "y": 68.5
+      },
+      "monsters": 25,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 802,
+      "cpuMs": {
+        "median": 5.4,
+        "p95": 7.9,
+        "max": 10.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 17.5,
+        "max": 124
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "pair": 2,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 88.5
+      },
+      "monsters": 25,
+      "distance": 18.28666666666674,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.3,
+        "p95": 7.9,
+        "max": 12.9
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 17,
+        "max": 88.3
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "pair": 2,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 41.5,
+        "y": 68.5
+      },
+      "monsters": 25,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 802,
+      "cpuMs": {
+        "median": 5.1,
+        "p95": 6.9,
+        "max": 12.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 17.6,
+        "max": 121.3
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "pair": 2,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 14.5,
+        "y": 88.5
+      },
+      "monsters": 25,
+      "distance": 18.28666666666674,
+      "attackFrames": 0,
+      "enemyAttackFrames": 0,
+      "cpuMs": {
+        "median": 4.8,
+        "p95": 7.2,
+        "max": 9.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 88.9
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cathedral1",
+      "width": 3840,
+      "pair": 2,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 41.5,
+        "y": 68.5
+      },
+      "monsters": 25,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 802,
+      "cpuMs": {
+        "median": 4.8,
+        "p95": 6.2,
+        "max": 11
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 138.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "pair": 0,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "monsters": 121,
+      "distance": 17.55490277422544,
+      "attackFrames": 0,
+      "enemyAttackFrames": 331,
+      "cpuMs": {
+        "median": 4.4,
+        "p95": 5.6,
+        "max": 10.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 17
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "pair": 0,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 52.5,
+        "y": 24.5
+      },
+      "monsters": 120,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2734,
+      "cpuMs": {
+        "median": 6,
+        "p95": 7.4,
+        "max": 12.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 16.9
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "pair": 0,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "monsters": 121,
+      "distance": 17.591335605073343,
+      "attackFrames": 0,
+      "enemyAttackFrames": 239,
+      "cpuMs": {
+        "median": 4.4,
+        "p95": 5.6,
+        "max": 9.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "pair": 0,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 52.5,
+        "y": 24.5
+      },
+      "monsters": 121,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2442,
+      "cpuMs": {
+        "median": 7.1,
+        "p95": 9.6,
+        "max": 15.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 20.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "pair": 1,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "monsters": 121,
+      "distance": 17.591335605073343,
+      "attackFrames": 0,
+      "enemyAttackFrames": 239,
+      "cpuMs": {
+        "median": 4.7,
+        "p95": 6.5,
+        "max": 10
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 19.6
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "pair": 1,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 52.5,
+        "y": 24.5
+      },
+      "monsters": 121,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2442,
+      "cpuMs": {
+        "median": 6.5,
+        "p95": 9.8,
+        "max": 11.3
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 57.5
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "pair": 1,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "monsters": 121,
+      "distance": 17.55490277422544,
+      "attackFrames": 0,
+      "enemyAttackFrames": 331,
+      "cpuMs": {
+        "median": 4.5,
+        "p95": 5.7,
+        "max": 9.4
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "pair": 1,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 52.5,
+        "y": 24.5
+      },
+      "monsters": 120,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2734,
+      "cpuMs": {
+        "median": 7,
+        "p95": 10.1,
+        "max": 23.1
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 42.4
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "pair": 2,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "monsters": 121,
+      "distance": 17.55490277422544,
+      "attackFrames": 0,
+      "enemyAttackFrames": 331,
+      "cpuMs": {
+        "median": 4.4,
+        "p95": 5.6,
+        "max": 10.3
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 19.8
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "pair": 2,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 52.5,
+        "y": 24.5
+      },
+      "monsters": 120,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2734,
+      "cpuMs": {
+        "median": 5.9,
+        "p95": 7.1,
+        "max": 12.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 47.8
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "pair": 2,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "monsters": 121,
+      "distance": 17.591335605073343,
+      "attackFrames": 0,
+      "enemyAttackFrames": 239,
+      "cpuMs": {
+        "median": 4.5,
+        "p95": 5.4,
+        "max": 9.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 17.1
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 1920,
+      "pair": 2,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 52.5,
+        "y": 24.5
+      },
+      "monsters": 121,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2442,
+      "cpuMs": {
+        "median": 6.3,
+        "p95": 7.8,
+        "max": 10.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 63.7
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "pair": 0,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "monsters": 121,
+      "distance": 17.55490277422544,
+      "attackFrames": 0,
+      "enemyAttackFrames": 331,
+      "cpuMs": {
+        "median": 6.1,
+        "p95": 7.7,
+        "max": 29
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 31.6
+      },
+      "builds": 7,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "pair": 0,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 52.5,
+        "y": 24.5
+      },
+      "monsters": 120,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2734,
+      "cpuMs": {
+        "median": 7.9,
+        "p95": 11.1,
+        "max": 14
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 46
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "pair": 0,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "monsters": 121,
+      "distance": 17.591335605073343,
+      "attackFrames": 0,
+      "enemyAttackFrames": 239,
+      "cpuMs": {
+        "median": 6.3,
+        "p95": 8.5,
+        "max": 29.3
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.9,
+        "max": 43.7
+      },
+      "builds": 7,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "pair": 0,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 52.5,
+        "y": 24.5
+      },
+      "monsters": 121,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2442,
+      "cpuMs": {
+        "median": 8.7,
+        "p95": 10.2,
+        "max": 17
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 21.2
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "pair": 1,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "monsters": 121,
+      "distance": 17.591335605073343,
+      "attackFrames": 0,
+      "enemyAttackFrames": 239,
+      "cpuMs": {
+        "median": 6.7,
+        "p95": 9.1,
+        "max": 23.9
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 26.8
+      },
+      "builds": 7,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "pair": 1,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 52.5,
+        "y": 24.5
+      },
+      "monsters": 121,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2442,
+      "cpuMs": {
+        "median": 8.2,
+        "p95": 10.8,
+        "max": 12.4
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 16.9
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "pair": 1,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "monsters": 121,
+      "distance": 17.55490277422544,
+      "attackFrames": 0,
+      "enemyAttackFrames": 331,
+      "cpuMs": {
+        "median": 6,
+        "p95": 8.6,
+        "max": 26
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 43.4
+      },
+      "builds": 7,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "pair": 1,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 52.5,
+        "y": 24.5
+      },
+      "monsters": 120,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2734,
+      "cpuMs": {
+        "median": 8.5,
+        "p95": 10.7,
+        "max": 18.8
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 23
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "pair": 2,
+      "version": "before",
+      "mode": "moving",
+      "position": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "monsters": 121,
+      "distance": 17.55490277422544,
+      "attackFrames": 0,
+      "enemyAttackFrames": 331,
+      "cpuMs": {
+        "median": 6.4,
+        "p95": 8.7,
+        "max": 36.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 40.6
+      },
+      "builds": 7,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "pair": 2,
+      "version": "before",
+      "mode": "combat",
+      "position": {
+        "x": 52.5,
+        "y": 24.5
+      },
+      "monsters": 120,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2734,
+      "cpuMs": {
+        "median": 8.4,
+        "p95": 11.1,
+        "max": 17.9
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 20.8
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "pair": 2,
+      "version": "after",
+      "mode": "moving",
+      "position": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "monsters": 121,
+      "distance": 17.591335605073343,
+      "attackFrames": 0,
+      "enemyAttackFrames": 239,
+      "cpuMs": {
+        "median": 6.6,
+        "p95": 9,
+        "max": 28.5
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 31.2
+      },
+      "builds": 7,
+      "warmCacheStable": true
+    },
+    {
+      "zone": "cinder_bastion",
+      "width": 3840,
+      "pair": 2,
+      "version": "after",
+      "mode": "combat",
+      "position": {
+        "x": 52.5,
+        "y": 24.5
+      },
+      "monsters": 121,
+      "distance": 0,
+      "attackFrames": 240,
+      "enemyAttackFrames": 2442,
+      "cpuMs": {
+        "median": 8.5,
+        "p95": 10.2,
+        "max": 17.6
+      },
+      "frameIntervalMs": {
+        "median": 16.7,
+        "p95": 16.8,
+        "max": 74.5
+      },
+      "builds": 0,
+      "warmCacheStable": true
+    }
+  ]
+}

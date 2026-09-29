@@ -6,7 +6,7 @@ const BossVFX=(()=>{
   const motionPreference=window.matchMedia?.('(prefers-reduced-motion: reduce)');
   const LIMITS=Object.freeze({events:24,particles:96});
   const recipes=Object.freeze({
-    cleave:'steel',fissure:'fire',bile:'poison',grasp:'poison',chains:'gold',portals:'gold',gold:'fire',
+    cleave:'steel',charge:'fire',sunbeam:'gold',flood:'poison',fissure:'fire',bile:'poison',grasp:'poison',chains:'gold',portals:'gold',gold:'fire',
     wings:'light',descent:'light',cross:'light',souls:'shadow',beam:'shadow',light:'light',lunge:'shadow',decoys:'shadow',echoes:'shadow',
   });
   const colors={steel:['#fff0c9','#bf9670'],fire:['#ffe8a6','#ec803d'],poison:['#e8efb8','#91b657'],
@@ -63,13 +63,14 @@ const BossVFX=(()=>{
     for(let i=v.particles.length-1;i>=0;i--){const p=v.particles[i];p.t+=dt;if(p.t>=p.dur||reduced()){v.particles.splice(i,1);continue;}
       p.x+=p.vx*dt;p.y+=p.vy*dt;p.z=Math.max(0,p.z+p.vz*dt);p.vz-=100*dt;
     }
-    if(e.stage==='execute'&&e.attack?.id==='lunge'&&!reduced()&&v.time>=v.trailAt){
+    if(e.stage==='execute'&&['lunge','charge'].includes(e.attack?.id)&&!reduced()&&v.time>=v.trailAt){
       v.trailAt=v.time+.07;push(e,{kind:'trail',x:e.mon.x,y:e.mon.y,angle:e.attack.shapes[0].angle,col:'#9ea3c6',dur:.24,shapes:[]});
     }
   }
   // Called by Entity.pose; reuse its cached descriptor for rendering and picking.
   function sampleActor(m,out){
     out.x=out.y=out.rot=0;out.sx=out.sy=out.alpha=1;
+    if(m.encounter?.mechanic&&m.defId==='empty_archangel')out.y=-45;
     if(!enabled||reduced()||m.dead)return out;
     const e=m.encounter||m.bossOwner?.encounter;
     if(!e?.active)return out;
@@ -83,7 +84,7 @@ const BossVFX=(()=>{
     const angle=a.visual?.angle??a.shapes[0]?.angle??0,ix=Math.cos(angle)-Math.sin(angle),iy=(Math.cos(angle)+Math.sin(angle))*.5;
     const len=Math.hypot(ix,iy)||1,dx=ix/len,dy=iy/len,sign=dx<0?-1:1;
     const p=clamp(e.stage==='windup'?1-e.timer/a.windup:e.stage==='execute'?a.age/a.duration:1-e.timer/e.recoveryDuration);
-    const ease=p*p*(3-2*p),id=a.id,heavy=['cleave','fissure','grasp','gold','lunge'].includes(id);
+    const ease=p*p*(3-2*p),id=a.id,heavy=['cleave','fissure','grasp','gold','lunge','charge'].includes(id);
     let advance=0,lift=0,tilt=0,squash=0;
     if(e.stage==='windup'){
       advance=-(heavy?7:4)*ease;tilt=-(heavy?.065:.035)*ease;squash=(heavy?.035:.02)*ease;
@@ -93,11 +94,11 @@ const BossVFX=(()=>{
     }else if(e.stage==='execute'){
       const k=(1-p)*(1-p);advance=(heavy?8:4)*k;tilt=(heavy?.08:.035)*k;squash=-(heavy?.025:.015)*k;
       if(id==='descent'){advance=0;squash=.04*k;}
-      if(id==='lunge'){advance=0;tilt=.055*Math.sin(p*Math.PI);squash=-.03*Math.sin(p*Math.PI);}
+      if(id==='lunge'||id==='charge'){advance=0;tilt=.055*Math.sin(p*Math.PI);squash=-.03*Math.sin(p*Math.PI);}
       if(id==='beam'){advance=-3;tilt=-.02;squash=0;}
     }else{const k=Math.sin(p*Math.PI)*Math.exp(-p*5);advance=-2*k;tilt=-.025*k;squash=.012*k;}
     if(m.defId==='malthoron'&&e.phase>0&&id!=='descent'){lift+=2*Math.sin(p*Math.PI);tilt*=.7;}
-    out.x=dx*advance;out.y=dy*advance-lift;out.rot=clamp(tilt*sign,-Math.PI/36,Math.PI/36);
+    out.x=dx*advance;out.y+=dy*advance-lift;out.rot=clamp(tilt*sign,-Math.PI/36,Math.PI/36);
     out.sx=1+clamp(squash,-.04,.04);out.sy=1-clamp(squash,-.04,.04);return out;
   }
   const px=(x,y,cam)=>U.isoX(x,y)-cam.x,py=(x,y,cam)=>U.isoY(x,y)-cam.y;

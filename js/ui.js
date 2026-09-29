@@ -99,6 +99,13 @@ const UI = (() => {
     };
     // Escape/backdrop clicks must not dismiss the only way out of death.
     els.deathScreen.addEventListener("cancel", e => e.preventDefault());
+    $('retryBossArena').addEventListener('click',async()=>{
+      const button=$('retryBossArena');if(button.disabled)return;
+      button.disabled=true;els.backToTown.disabled=true;els.deathStatus.textContent='Preparing the arena…';
+      try{if(await Game.retryBossArena())return;els.deathStatus.textContent='The arena could not load. Please try again.';}
+      catch(error){console.error(error);els.deathStatus.textContent='The arena could not load. Please try again.';}
+      finally{button.disabled=false;els.backToTown.disabled=false;}
+    });
     els.backToTown.addEventListener("click", async () => {
       if (els.backToTown.disabled) return;
       els.backToTown.disabled = true;
@@ -429,8 +436,10 @@ const UI = (() => {
     els.backToTown.dataset.opening=String(retryOpening);
     els.deathStatus.textContent = "";
     els.backToTown.disabled = false;
+    const arenaRetry=$('retryBossArena'),canRetry=Game.canRetryArena();
+    arenaRetry.classList.toggle('hidden',!canRetry);arenaRetry.disabled=false;
     if (!els.deathScreen.open) els.deathScreen.showModal();
-    els.backToTown.focus();
+    (canRetry?arenaRetry:els.backToTown).focus();
   }
   function hideDeath() { if (els.deathScreen.open) els.deathScreen.close(); }
 

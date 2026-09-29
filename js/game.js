@@ -630,6 +630,13 @@ const Game = (() => {
   async function enterMap(zoneId, spawnKey, { revive = false, openingMode = null, arrivalPosition = null, reuseCachedMap = false, recoverable: recoverableTravel = false, quietQuestAudio = false, difficultyChange = null } = {}) {
     if(typeof Coop!=="undefined"&&Coop.active&&!Coop.loading)return Coop.requestTravel(zoneId,spawnKey,arguments[2]||{});
     if (!state || (state.difficultyTransition && state.difficultyTransition !== difficultyChange)) return false;
+    if(state.map?.bossArena?.sealed&&!revive){msg('Defeat the boss before leaving the arena.','#d8b880');return false;}
+    const arenaBoss=DATA.ZONES[zoneId]?.arena;
+    if(reuseCachedMap===true&&state.map?.zone.arena&&zoneId===state.map.zone.parentZone)
+      reuseCachedMap=state.arenaParents?.[state.map.id]||true;
+    if(arenaBoss&&!DATA.CAMPAIGN.bossDead(state,arenaBoss)){
+      const ward=bossWard({defId:arenaBoss});if(ward){msg(ward+' before entering this arena.','#d8b880');return false;}
+    }
     if(!opening.allowsTravel(zoneId,openingMode))return false;
     if(typeof PropInteractions!=='undefined')PropInteractions.cancel(state);
     if(openingMode === "gate" && !opening.ready) {
@@ -643,6 +650,7 @@ const Game = (() => {
     const resumeRunning = running;
     running = false;
     const zoneName = DATA.ZONES[zoneId] ? DATA.ZONES[zoneId].name.toUpperCase() : zoneId.toUpperCase();
+    const combatZone=DATA.ZONES[zoneId]?.parentZone||zoneId;
     const recoverable = recoverableTravel || revive || opening.active();
     if (zoneId === "frosthaven_approach" && !await requireSpriteBundle("zone:frosthaven", "PREPARING FROSTHAVEN", {recoverable})) {
       if(state===enteringState && transition===mapTransitionSeq)running=resumeRunning;
@@ -656,27 +664,31 @@ const Game = (() => {
       return false;
     }
     if(state!==enteringState || transition!==mapTransitionSeq)return false;
-    if(typeof Act1EnemyAnimation!=='undefined'&&Act1EnemyAnimation.hasZone(zoneId)&&!await requireSpriteBundle('actors:act1',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
+    const arenaArt=DATA.ZONES[zoneId]?.arena||DATA.ZONES[zoneId]?.arenaEntrance;
+    if(arenaArt&&!await requireSpriteBundle('arena:'+arenaArt,`PREPARING ${zoneName} ARENA`,{recoverable})){
+      if(state===enteringState&&transition===mapTransitionSeq)running=resumeRunning;return false;
+    }
+    if(typeof Act1EnemyAnimation!=='undefined'&&Act1EnemyAnimation.hasZone(combatZone)&&!await requireSpriteBundle('actors:act1',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
       if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
       return false;
     }
-    if(DATA.ACT2_COMBAT?.pools[zoneId]&&!await requireSpriteBundle('actors:act2',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
-      if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
-      return false;
-    }
-    if(state!==enteringState || transition!==mapTransitionSeq)return false;
-    if(typeof Act4EnemyAnimation!=='undefined'&&Act4EnemyAnimation.hasZone(zoneId)&&!await requireSpriteBundle('actors:act4',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
-      if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
-      return false;
-    }
-    if(state!==enteringState || transition!==mapTransitionSeq)return false;
-    if(typeof Act5EnemyAnimation!=='undefined'&&Act5EnemyAnimation.hasZone(zoneId)&&Act5EnemyAnimation.hasAssets()&&!await requireSpriteBundle('actors:act5',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
+    if(DATA.ACT2_COMBAT?.pools[combatZone]&&!await requireSpriteBundle('actors:act2',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
       if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
       return false;
     }
     if(state!==enteringState || transition!==mapTransitionSeq)return false;
-    const encounterBoss=DATA.ZONES[zoneId]?.boss;
-    if(DATA.ACT3_ROSTERS[zoneId]&&!await requireSpriteBundle('actors:act3',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
+    if(typeof Act4EnemyAnimation!=='undefined'&&Act4EnemyAnimation.hasZone(combatZone)&&!await requireSpriteBundle('actors:act4',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
+      if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
+      return false;
+    }
+    if(state!==enteringState || transition!==mapTransitionSeq)return false;
+    if(typeof Act5EnemyAnimation!=='undefined'&&Act5EnemyAnimation.hasZone(combatZone)&&Act5EnemyAnimation.hasAssets()&&!await requireSpriteBundle('actors:act5',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
+      if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
+      return false;
+    }
+    if(state!==enteringState || transition!==mapTransitionSeq)return false;
+    const encounterBoss=DATA.ZONES[zoneId]?.arenaEntrance?null:DATA.ZONES[zoneId]?.boss;
+    if(DATA.ACT3_ROSTERS[combatZone]&&!await requireSpriteBundle('actors:act3',`PREPARING ${zoneName} ENEMIES`,{recoverable})) {
       if(state===enteringState&&transition===mapTransitionSeq&&recoverable)running=resumeRunning;
       return false;
     }
@@ -710,6 +722,8 @@ const Game = (() => {
       /* Ordinary travel remembers the departing area's entities for this session. */
       state.monstersByMap[state.map.id] = state.monsters;
       state.groundByMap[state.map.id] = state.ground;
+      if(arenaBoss&&state.map.id===DATA.BOSS_ARENAS[arenaBoss].parentZone)
+        (state.arenaParents||={})[zoneId]={map:state.map,monsters:state.monsters,ground:state.ground};
       if (state.portal?.instance?.map === state.map) Object.assign(state.portal.instance,{monsters:state.monsters,ground:state.ground});
     }
     // A portal owns its original session instance, even if another entrance has
@@ -738,6 +752,7 @@ const Game = (() => {
     for(const mon of state.monsters)mon.imperialCombat?.cancel();
     state.player.clearVeilState();
     state.map = map;
+    state.bossCheckpoint=map.zone.arena?{zone:map.id,spawn:'retry'}:null;
     /* monsters: restore session set or spawn fresh */
     if (state.monstersByMap[zoneId]) {
       state.monsters = state.monstersByMap[zoneId].filter(m => !m.dead || m.corpseT > 0);
@@ -1065,9 +1080,7 @@ const Game = (() => {
       prop.interact = !obj.travel && DATA.CAMPAIGN.found(state,zone,obj.id) ? null : "story";
       prop.completed = !obj.travel && DATA.CAMPAIGN.found(state,zone,obj.id);
       if (prop.type === "chest") prop.opened = !prop.interact;
-      if (state.map.cathedral) {
-        if (obj.travel) prop.hidden=!DATA.CAMPAIGN.bossDead(state,obj.requireKill);
-      }
+      if (obj.travel&&obj.requireKill) prop.hidden=!DATA.CAMPAIGN.bossDead(state,obj.requireKill);
       if(state.map.act3 && zone==='underground_market')prop.visualType=prop.interact?'relay_active':'relay_disabled';
       // Keep the reward marker visible; interaction explains any unmet condition.
     }
@@ -1467,7 +1480,7 @@ const Game = (() => {
     }
     if (mon.isBoss) {
       state.flags["dead_" + mon.defId + "@" + state.difficulty] = true;
-      if (state.map.cathedral) syncStoryObjects();
+      if (state.map.cathedral||state.map.zone.arena) syncStoryObjects();
       const bossMsgs = {
         morthul: ["MORTHUL HAS FALLEN", "the Sunken Vigil is silent"],
         gravecaller: ["GRAVECALLER HESH IS SILENCED", ""],
@@ -1994,6 +2007,21 @@ const Game = (() => {
   }
 
   let returningToTown = false;
+  function canRetryArena(){
+    if(!state?.player.dead||state.player.hardcore||!state.map?.zone.arena||DATA.CAMPAIGN.bossDead(state,state.map.zone.arena))return false;
+    if(typeof Coop!=='undefined'&&Coop.active)return state.players.every(p=>p.dead||p.connected===false);
+    return !!state.bossCheckpoint;
+  }
+  async function retryBossArena(){
+    if(typeof Coop!=='undefined'&&Coop.active)return Coop.submit({type:'retryArena'});
+    if(returningToTown||!canRetryArena())return false;
+    returningToTown=true;
+    try{
+      const checkpoint=state.bossCheckpoint;
+      const ok=await enterMap(checkpoint.zone,checkpoint.spawn,{revive:true,reuseCachedMap:true,recoverable:true});
+      if(ok){UI.hideDeath();saveGame();}return !!ok;
+    }finally{returningToTown=false;}
+  }
   async function returnToTown() {
     if(typeof Coop!=="undefined"&&Coop.active)return Coop.submit({type:"respawn"});
     if (returningToTown || !state?.player.dead || state.player.hardcore) return false;
@@ -2017,6 +2045,10 @@ const Game = (() => {
     return TerrainLayers.scope(state.map,p,()=>interactOnSurface(prop,false,p));
   }
   function interactOnSurface(prop, committed=false, p=state.player) {
+    if(prop.interact==='boss_device'){
+      const boss=state.monsters.find(m=>m.encounter&&!m.dead);
+      return boss?.encounter.interactDevice(prop,p)||false;
+    }
     if(!committed&&PropInteractions.profile(prop))return PropInteractions.begin(state,prop,()=>{if(typeof Coop!=="undefined"&&Coop.active)Coop.finishInteraction(prop,p);else interactOnSurface(prop,true,p);},p);
     if(typeof Coop!=="undefined"&&Coop.active&&Coop.openInteraction(prop,p))return;
     if(opening.interact(prop))return;
@@ -2083,6 +2115,7 @@ const Game = (() => {
   function castPortal() {
     if(typeof Coop!=="undefined"&&Coop.active&&!Coop.committing)return Coop.submit({type:"portal"});
     if(opening.active()){opening.allowsTravel("portal",null);return false;}
+    if(state.map.bossArena?.sealed){msg('The arena is sealed until the fight ends.','#d8b880');return false;}
     if (isHub(state.map.id)) { msg("You are already home.", "#9b8a60"); return false; }
     state.portal = { surfaceId:state.player.surfaceId, mapId: state.map.id, x: state.player.x, y: state.player.y + 0.4, returnPosition:{x:state.player.x,y:state.player.y,surfaceId:state.player.surfaceId}, home: state.home || "frosthaven",
       instance:{map:state.map,monsters:state.monsters,ground:state.ground} };
@@ -2874,6 +2907,7 @@ const Game = (() => {
     for (let i = 0; i < m.props.length; i++) {
       const p = m.props[i];
       if (!p || p.type !== "grave" || p.corpseConsumed || p.storyId || p.event || p.ev || !TerrainLayers.same(self,p)) continue;
+      if(m.bossArena?.sealed&&!BossEncounters.insideArena(m.bossArena,p.x,p.y))continue;
       if (U.dist2(self.x, self.y, p.x, p.y) > r2) continue;     // must be within reach of the caster
       const dd = U.dist2(ax, ay, p.x, p.y);
       if (dd < bd) { bd = dd; best = p; }
@@ -2885,7 +2919,7 @@ const Game = (() => {
     spawnCorpse(best.x, best.y, 12);
     const husk = state.monsters[state.monsters.length - 1];
     husk.surfaceId=best.surfaceId??self.surfaceId??0;
-    husk.fromGrave = true;                                       // marks summons raised here as Empowered
+    husk.fromGrave = !best.arenaRemains;                          // arena preparation provides ordinary corpses
     return husk;
   }
   /* a thrown undead body crashes down: impact AoE, then it rises as fresh monsters */
@@ -3348,6 +3382,7 @@ const Game = (() => {
 
     /* ---- depth-sorted drawables: walls, props, entities, projectiles ---- */
     const draws = [];
+    if(m.campaignVisual)CampaignEnvironment.append(draws,m,cam,p,W,H);
     if(m.cathedral?.environment)CathedralEnvironment.append(draws,m,cam,p,W,H);
     if(m.boundaries)Act2Boundaries.append(draws,m,cam,p,W,H);
     if(m.act1Environment)Act1Environment.append(draws,m,cam,p,W,H);
@@ -3482,6 +3517,7 @@ const Game = (() => {
           ctx.save();LevelTerrain.clipBehind(ctx,m,cam,d.x,d.y);BossVFX.drawItem(ctx,d,cam);ctx.restore();break;
         case "skillvfx":
           ctx.save();LevelTerrain.clipBehind(ctx,m,cam,d.x,d.y,d.surfaceId);SkillVFX.drawItem(ctx,d,cam);ctx.restore();break;
+        case "campaignScenery": CampaignEnvironment.draw(ctx,d,p);break;
         case "act5Boundary": CindersBoundaries.draw(ctx,d,p);break;
         case "act2Boundary": Act2Boundaries.draw(ctx,d,p);break;
         case "cathedralWall": CathedralEnvironment.draw(ctx,d,p);break;
@@ -3839,6 +3875,7 @@ const Game = (() => {
     renderLighting(cam);
     if(m.cathedral?.environment)CathedralEnvironment.atmosphere(ctx,m,cam,W,H,state.time);
     if(m.act2Visual)Act2Boundaries.atmosphere(ctx,m,cam,W,H,state.time);
+    if(m.campaignVisual)CampaignEnvironment.atmosphere(ctx,m,cam,W,H,state.time);
     if(typeof SkillVFX!=='undefined')SkillVFX.drawLights(ctx,state,cam);
 
     /* ---- restrained color grade + lens vignette ---- */
@@ -4013,10 +4050,10 @@ const Game = (() => {
       ctx.font = "10px Exocet, Georgia, serif"; ctx.fillStyle = bt.color;
       ctx.fillText(bt.name.toUpperCase(), bossCenter, by + 25);
       if(b.encounter){
-        ctx.fillStyle=b.encounter.config.color;ctx.font="12px Exocet, Georgia, serif";
+        ctx.fillStyle=b.encounter.config.color;ctx.font="14px Georgia, serif";
         const e=b.encounter;
         const phase=e.config.phases[e.phase],status=typeof e.statusText==='function'?e.statusText():e.statusLabel||phase;
-        ctx.fillText(status.startsWith(phase)?status:phase+" · "+status,bossCenter,by+43,Math.min(W-40,bw+180));
+        ctx.fillText(e.mechanic?status:status.startsWith(phase)?status:phase+" · "+status,bossCenter,by+43,Math.min(W-40,bw+180));
         if(e.stage==="windup"||e.stage==="recovery") {
           const progress=e.stage==="windup"?1-e.timer/e.attack.windup:e.timer/e.recoveryDuration;
           ctx.fillStyle="rgba(5,4,3,.85)";ctx.fillRect(bx,by+49,bw,4);
@@ -4370,7 +4407,7 @@ const Game = (() => {
     const m = state.map;
     const W = canvas.width, H = canvas.height;
     lightCtx.clearRect(0, 0, W, H);
-    lightCtx.fillStyle = m.act3?.environment ? `rgba(8,17,24,${m.zone.dark})` : `rgba(0,0,0,${m.zone.dark})`;
+    lightCtx.fillStyle = m.campaignVisual ? m.campaignVisual.ambient+Math.round(m.zone.dark*255).toString(16).padStart(2,'0') : m.act3?.environment ? `rgba(8,17,24,${m.zone.dark})` : `rgba(0,0,0,${m.zone.dark})`;
     lightCtx.fillRect(0, 0, W, H);
     lightCtx.globalCompositeOperation = "destination-out";
     const punch = (wx, wy, r, intensity, flicker, height=10, surfaceId=0) => {
@@ -4394,11 +4431,11 @@ const Game = (() => {
     ctx.save();
     ctx.globalCompositeOperation = "overlay";
     for (const l of m.lights) {
-      if (l.color !== "#ff9c50"&&!m.cathedral&&!m.act1Environment&&!m.act2Visual&&!m.act3?.environment) continue;
+      if (l.color !== "#ff9c50"&&!m.cathedral&&!m.act1Environment&&!m.act2Visual&&!m.act3?.environment&&!m.act5Environment) continue;
       const sx = U.isoX(l.x, l.y) - cam.x, sy = U.isoY(l.x, l.y) - cam.y - surfaceLift(l.x,l.y);
       if (sx < -200 || sx > W + 200 || sy < -200 || sy > H + 200) continue;
       const rr = l.r * 26;
-      ctx.drawImage(m.cathedral||m.act1Environment||m.act2Visual||m.act3?.environment?cathedralLightMask(l.color):warmMask, sx - rr, sy - 20 - rr, rr * 2, rr * 2);
+      ctx.drawImage(m.cathedral||m.act1Environment||m.act2Visual||m.act3?.environment||m.act5Environment?cathedralLightMask(l.color):warmMask, sx - rr, sy - 20 - rr, rr * 2, rr * 2);
     }
     ctx.restore();
   }
@@ -4592,7 +4629,7 @@ const Game = (() => {
     if(command.type==='cast')return p.performSkill(command.skill,null,command.point);
   }
   function playerOwner(source){return source instanceof Player?source:source?.owner instanceof Player?source.owner:null;}
-  function closestPlayer(actor){return (state.players||[state.player]).filter(p=>!p.dead&&TerrainLayers.same(p,actor)).sort((a,b)=>U.dist2(a.x,a.y,actor.x,actor.y)-U.dist2(b.x,b.y,actor.x,actor.y))[0]||null;}
+  function closestPlayer(actor){return (state.players||[state.player]).filter(p=>!p.dead&&p.connected!==false&&TerrainLayers.same(p,actor)).sort((a,b)=>U.dist2(a.x,a.y,actor.x,actor.y)-U.dist2(b.x,b.y,actor.x,actor.y))[0]||null;}
   function makeCoopHero(name,classId){
     if(!DATA.CLASSES[classId])throw Error('Unknown class');
     const p=new Player(String(name||'Hero').slice(0,24),classId),kit=DATA.PLAYER_STARTER_LOADOUTS[classId];
@@ -4610,6 +4647,8 @@ const Game = (() => {
     if(!CoopProtocol.ZONES.includes(zone))throw Error('Unsupported co-op area');
     await SpriteAssets.loadBundle('zone:'+(DATA.ZONES[zone].artZone||zone));
     await SpriteAssets.loadBundle('actors:act1');
+    const arenaArt=DATA.ZONES[zone]?.arena||DATA.ZONES[zone]?.arenaEntrance;
+    if(arenaArt)await SpriteAssets.loadBundle('arena:'+arenaArt);
     const boss=DATA.ZONES[zone]?.boss;
     if(boss&&DATA.BOSS_ENCOUNTERS[boss])await SpriteAssets.loadBundle('boss:'+boss);
   }
@@ -4730,7 +4769,7 @@ const Game = (() => {
     submitCommand,playerOwner,closestPlayer,renderPosition,
     init, newGame, loadGame, saveGame, listSaves, deleteSave, saveAndQuit,
     preparePlayerEquipment, commitPlayerEquipment, discardPlayerEquipment,
-    enterMap, interact, castPortal, usePortal, travelToShrine, canTradeWith, setDifficulty,
+    enterMap, interact, castPortal, usePortal, travelToShrine, canTradeWith, setDifficulty, canRetryArena, retryBossArena,
     acceptQuest, completeQuest, doRespec, storyTopic, bossWard,
     afterDelay, addFloat, minionFloat, playerHurtFloat, addParticle, bloodBurst, dustPuff, addNova, lightningBolt, beamFx,
     knockMonster, detonateMark, detonateDoom, spawnCorpse, corpseFromGrave, throwUndeadLand,
