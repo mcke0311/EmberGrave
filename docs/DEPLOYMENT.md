@@ -1,6 +1,6 @@
 # Sites deployment
 
-Current website (updated 2026-09-13): https://embergravegame.com
+Current website (updated 2026-09-29): https://embergravegame.com
 The original address https://embergravegame.mcke0311.chatgpt.site also remains live.
 The existing Site is now public. Preserve its current audience and project ID
 when updating; the private access and earlier URL recorded below are historical.
@@ -283,3 +283,45 @@ testing was not repeated for this publication. The multiplayer relay is unchange
 The pushed remote SHA was verified. The local packaging helper could not start
 Bash on Windows, so Sites packaged the exact pushed source using the existing
 remote-build fallback.
+
+## Dedicated story arenas and campaign artwork — 2026-09-29
+
+Version 16 publishes the six dedicated story arenas, required device counters,
+entrance retries, and campaign environment refresh from game commit
+`a55f3b260cf7b9e1400238548128c4a64580f0bf`. The GitHub release, including the
+generated-archive ignore rule, was pushed to `main` at
+`293a5121d4eb467e02629d7c9ec5c7b3d8a7ff3b`.
+
+Sites confirmed **succeeded** at 13:18:07 UTC and returned
+https://embergravegame.mcke0311.chatgpt.site. Existing public access and the
+custom domain https://embergravegame.com are preserved.
+
+Release source: `b9a8e9366dc58bc721bb45b1ff16fdfd11d8417f`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_792284c86d848191bf1f6950deda7723`.
+Deployment: `appgdep_6abbba003a508191b08d3cccff90452c`.
+
+The compact website contains 1,368 runtime files (209.63 MiB), including all
+36 new arena sprites and the read-only world reference page. The compressed
+cinematic, donation destination, and local editor exclusion remain in place.
+All 75 JavaScript syntax checks and 1,243 runtime reference checks passed with
+no missing files. Encounter, progression, co-op and performance evidence is
+recorded in [arena validation](../tests/boss_arenas_results.md).
+
+An archive built from the exact committed release passed local validation
+(201.08 MiB; 1,369 files including the hosting manifest). The native archive
+transfer failed, so Sites built the same verified, pushed source through its
+existing remote-build fallback. The release source push and publication were
+both confirmed.
+
+**Render was explicitly skipped at the user's request.** The frontend and
+worker identify as `embergrave-coop-4`; the live relay remains
+`embergrave-coop-3`. Multiplayer requires the matching relay deployment before
+new clients can connect. The server was not restarted or reconfigured.
+
+GitHub initially rejected three generated launch ZIPs from earlier unpublished
+commits because each exceeded its 100 MiB limit. Only those ZIPs were removed
+from the five unpublished commits, and a scoped ignore rule prevents recurrence.
+All three archives remain on disk. The original local history is retained on
+`codex/before-arena-release-publish-20260929`; published history was preserved
+and the corrected push was a normal fast-forward. Unrelated Emberwitch source
+art remains uncommitted.
