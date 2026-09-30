@@ -34,7 +34,7 @@ const Coop=(()=>{
       if(m.type==='fatal'){workerFailed(m.message);return;}
       if(m.type==='local')incoming=incoming.then(()=>onData(hostId,m.payload,true)).catch(e=>workerFailed(e.message));
     };
-    await workerRequest('start',{args:{hero:heroRecord,hostId:localId,campaign:record,seed:connectOptions.seed,view:{width:innerWidth,height:innerHeight}}});
+    await workerRequest('start',{args:{echoesUnlocked:typeof Echoes!=="undefined"&&Echoes.accountUnlocked(),hero:heroRecord,hostId:localId,campaign:record,seed:connectOptions.seed,view:{width:innerWidth,height:innerHeight}}});
     await incoming;loading=false;paused='';workerStatus='';worker.postMessage({type:'status',hidden:document.hidden,offline:ws?.readyState!==WebSocket.OPEN});wire('roomState',{open:true});
   }
   async function listRooms(){

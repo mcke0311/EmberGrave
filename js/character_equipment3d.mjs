@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three/three.module.min.js';
-import {equipmentMaterials} from './character_materials3d.mjs';
-export {equipmentMaterials} from './character_materials3d.mjs';
+import {equipmentMaterials} from './character_materials3d.mjs?v=2';
+export {equipmentMaterials} from './character_materials3d.mjs?v=2';
 import {disposeObject,mesh,box,orb,rod,curved,plate,edge,rivet,band,wrap,combineStatic,formedPlate} from './character_mesh3d.mjs';
 export {disposeObject,mesh,box,orb,rod} from './character_mesh3d.mjs';
 import {createClassArmorDetails,createClassWearable} from './character_armor3d.mjs?v=4';

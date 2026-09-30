@@ -91,7 +91,7 @@ const Game = (() => {
     ctx.fillStyle = topShade; ctx.fillRect(0, 0, W, H);
     ctx.restore();
   }
-  const options = { alwaysLabels: false, lootFilter: 0, dmgNumbers: true, screenShake: true, minionBars: "hit", leftClickMove: false, minionDamage: false, monResist: false };
+  const options = { alwaysLabels: false, lootFilter: 0, dmgNumbers: true, screenShake: true, minionBars: "hit", leftClickMove: false, minionDamage: false, monResist: false, directCast: false };
   /* options persist across sessions, separately from saves */
   try {
     const o = JSON.parse(localStorage.getItem("embergrave_options") || "{}");
@@ -634,7 +634,7 @@ const Game = (() => {
     const arenaBoss=DATA.ZONES[zoneId]?.arena;
     if(reuseCachedMap===true&&state.map?.zone.arena&&zoneId===state.map.zone.parentZone)
       reuseCachedMap=state.arenaParents?.[state.map.id]||true;
-    if(arenaBoss&&!DATA.CAMPAIGN.bossDead(state,arenaBoss)){
+    if(arenaBoss&&!DATA.ZONES[zoneId].echo&&!DATA.CAMPAIGN.bossDead(state,arenaBoss)){
       const ward=bossWard({defId:arenaBoss});if(ward){msg(ward+' before entering this arena.','#d8b880');return false;}
     }
     if(!opening.allowsTravel(zoneId,openingMode))return false;
@@ -706,6 +706,7 @@ const Game = (() => {
       return false;
     }
     /* All destination assets are ready. Only now commit a difficulty change. */
+    if(typeof CursedEvents!=='undefined')CursedEvents.capture(state);
     for(const mon of state.monsters||[])mon.cancelAttacks?.();
     if(typeof BossEncounters!=="undefined")BossEncounters.cancelAll();
     if(typeof EnemySkills!=="undefined")EnemySkills.cancelAll();
@@ -752,7 +753,7 @@ const Game = (() => {
     for(const mon of state.monsters)mon.imperialCombat?.cancel();
     state.player.clearVeilState();
     state.map = map;
-    state.bossCheckpoint=map.zone.arena?{zone:map.id,spawn:'retry'}:null;
+    state.bossCheckpoint=map.zone.arena&&!map.zone.echo?{zone:map.id,spawn:'retry'}:null;
     /* monsters: restore session set or spawn fresh */
     if (state.monstersByMap[zoneId]) {
       state.monsters = state.monstersByMap[zoneId].filter(m => !m.dead || m.corpseT > 0);
@@ -766,7 +767,7 @@ const Game = (() => {
       for (const sp of map.monsterSpawns) {
         /* bosses stay dead per difficulty tier (legacy flags count as Normal) */
         const deadKey = "dead_" + sp.id + "@" + state.difficulty;
-        if (sp.boss && (state.flags[deadKey] || (state.difficulty === 0 && state.flags["dead_" + sp.id]))) continue;
+        if (!map.zone.echo && sp.boss && (state.flags[deadKey] || (state.difficulty === 0 && state.flags["dead_" + sp.id]))) continue;
         const extraElite = !sp.boss && !sp.elite && !sp.minion && Math.random() < diff.eliteBoost;
         const pos = sp.boss ? { x: sp.x, y: sp.y } : nearestReach(map, reach, sp.x, sp.y);   // keep hand-placed bosses put
         const mon = new Monster(sp.id, pos.x, pos.y, { elite: sp.elite || extraElite, minion: sp.minion, skillProfile:sp.skillProfile,
@@ -791,6 +792,9 @@ const Game = (() => {
     setupRitualQuest(map);   // Choir ritual sites (q10/q11) + the Choirmaster boss
     syncOptionalQuests();    // offer act-appropriate optional side quests
     placeEvents(map);        // random world events
+    if(typeof CursedEvents!=='undefined')CursedEvents.restore(state);
+    if(typeof TacticalElites!=='undefined')TacticalElites.setup(state);
+    if(typeof Echoes!=='undefined')Echoes.prepare(state);
     state.bossBar = null;
     particles = []; floats = []; novas = []; bolts = []; delayed = [];
     if(typeof SkillVFX!=='undefined')SkillVFX.reset();
@@ -814,6 +818,7 @@ const Game = (() => {
       mi.path = null; clearTraversal(mi);
     }
     clearTraversal(p);
+    if(typeof CombatCast!=='undefined')CombatCast.clear(p);
     p.path = null; p.command = null; p.dashing = null; p.leaping = null; p.spinning = null; p.jumping = null; p.lastTarget = null;
     exitGrace = 0.8;
     explore();
@@ -866,7 +871,7 @@ const Game = (() => {
       k: it.kind, b: it.baseId, r: it.rarity, il: it.ilvl, n: it.name,
       af: it.affixes, u: it.uniqueId, id: it.identified, c: it.count,
       so: it.sockets, cb: it.combo, se: it.setItemId, cs: it.charmSize, jc: it.jcol, pc: it.procs, gx: it.gx, gy: it.gy,
-      uv: it.uniqueVersion,
+      uv: it.uniqueVersion, pr: it.precision,
     };
   }
   function reviveItem(s) {
@@ -887,6 +892,7 @@ const Game = (() => {
       if (s.cb) it.combo = s.cb;
       if (s.pc) it.procs = s.pc;
     }
+    if(s.pr&&Number.isInteger(s.pr.index)&&s.pr.index>=0&&s.pr.index<(it.affixes?.length||0)&&Number.isInteger(s.pr.rolls)&&s.pr.rolls>=0)it.precision={index:s.pr.index,rolls:s.pr.rolls};
     it.gx = s.gx; it.gy = s.gy;
     if (typeof UniquePowers !== "undefined") UniquePowers.migrate(it);
     return it;
@@ -896,6 +902,7 @@ const Game = (() => {
     if (!state) return;
     if (state.player.dead && state.player.hardcore) return;
     opening.captureLoot();
+    if(typeof CursedEvents!=='undefined')CursedEvents.capture(state);
     state.campaignsByDifficulty[state.difficulty] = campaignSnapshot();
     const p = state.player;
     const data = {
@@ -1108,6 +1115,7 @@ const Game = (() => {
     prop.completed=true;syncStoryObjects(); saveGame();
   }
   function bossWard(mon) {
+    if(state.map?.zone.echo)return null;
     const qid = mon.defId === "empty_archangel" ? "q16" : mon.defId === "malthoron" ? "q17" : null;
     if (!qid || state.quests[qid]?.state === "done") return null;
     const q=DATA.QUESTS.find(q=>q.id===qid);
@@ -1445,7 +1453,7 @@ const Game = (() => {
     if (!state || !["destroy","seal","give"].includes(key) || state.flags.ending || !DATA.CAMPAIGN.bossDead(state,"vethriss")) return;
     if (state.quests.q18?.state === "reward") completeQuest("q18");
     state.flags.ending = key;
-    state.flags.sagaComplete = true;
+    state.flags.sagaComplete = true;state.characterFlags.echoesUnlocked=true;
     saveGame();
   }
 
@@ -1453,6 +1461,13 @@ const Game = (() => {
   function onMonsterDeath(mon, source) {
     const p = playerOwner(source) || closestPlayer(mon) || state.player;
     if(typeof Coop!=="undefined"&&Coop.active)Coop.monsterDied(mon);
+    if(typeof Echoes!=='undefined'&&state.map.zone.echo){
+      if(!mon.bossOwner){
+        for(const hero of (typeof Coop!=='undefined'&&Coop.active?state.players.filter(h=>h.connected!==false):[p]))hero.gainXp(Math.max(0,Math.floor(mon.def.xp*(1+Math.max(0,hero.lvl-mon.lvl)*-.08))));
+        scatterDrops(Items.rollDrops(mon.lvl,mon.isBoss?'boss':'normal',p.stats.mf,p.stats.goldFind),mon.x,mon.y);
+      }
+      Echoes.killed(state,mon);updateBossEncounter();return;
+    }
     if(mon.bossOwner)return; // Encounter-owned adds are never a reward or quest farm.
     if(mon.openingId && state.flags.opening?.defeated.includes(mon.openingId))return;
     for(const hero of (typeof Coop!=="undefined"&&Coop.active ? state.players.filter(p=>p.connected!==false) : [p])) hero.gainXp(Math.max(0,Math.floor(mon.def.xp * (1 + Math.max(0, (hero.lvl - mon.lvl)) * -0.08))));
@@ -1469,6 +1484,7 @@ const Game = (() => {
     const sourceKind = mon.isBoss ? "boss" : (mon.elite ? "elite" : "normal");
     const drops = Items.rollDrops(mon.lvl, sourceKind, p.stats.mf, p.stats.goldFind);
     scatterDrops(drops, mon.x, mon.y);
+    if(typeof CursedEvents!=='undefined')CursedEvents.killed(state,mon,p);
     questKillEvent(mon);
     beaconQuestKill(mon);
     ritualQuestKill(mon);
@@ -1738,6 +1754,7 @@ const Game = (() => {
   }
   function triggerEvent(prop, actor = state.player) {
     if (prop.interact !== "event" || !state.map.props.includes(prop)) return;
+    if(typeof CursedEvents!=="undefined"&&CursedEvents.eligible(prop)){if(!headless)UpgradeUI.event(prop);return;}
     const ev = prop.ev, p = actor;
     prop.spent=true;prop.interact=null;prop.event=false;prop.lootable=false;
     if (prop.type === "chest" || prop.type === "strongbox") prop.opened=true;
@@ -1780,22 +1797,7 @@ const Game = (() => {
         break;
       }
       case "ambush": case "curse": {
-        const ids = enemiesByFamily(ev.fam || U.pick(["undead", "demon", "beast"]), lvl,prop);
-        const group=[];
-        for (let k = 0; k < (ev.count || 4); k++) {
-          const a = Math.random() * Math.PI * 2, r = 1.5 + Math.random() * 2.5;
-          const x = prop.x + Math.cos(a) * r, y = prop.y + Math.sin(a) * r;
-          if (!state.map.act2 && !MapGen.walkable(state.map, x, y)) continue;
-          const options={elite:ev.kind==='curse'&&k===0,monsterFamily:DATA.monsterFamily(ids[0]),packId:state.map.id+':event:'+prop.x+':'+prop.y};
-          const m = state.map.act2?Act2EnemyCombat.eventSpawn(ids,prop.x,prop.y,options,group):new Monster(U.pick(ids),x,y,options);
-          if(!m)continue;group.push(m);
-          m.aggro = true; state.monsters.push(m);
-        }
-        Sfx.play("vox_boss"); fx.shake = 4;
-        msg(ev.kind === "curse" ? "Something stirs — and it left an offering." : "An ambush! Cut them down.", "#ff9060");
-        /* the dare pays out immediately */
-        scatterDrops(Items.rollDrops(lvl + 3, "boss", p.stats.mf + 30, p.stats.goldFind), prop.x, prop.y + 0.5);
-        if (ev.rarity) { const it = Items.rollGear(lvl + 2, ev.rarity); it.identified = false; dropAtFeet(it); }
+        // Handled by the sealed encounter flow before consuming the prop.
         break;
       }
     }
@@ -1831,6 +1833,7 @@ const Game = (() => {
     prop.breakable=false;
     PropInteractions.freeTile(m,prop);PropInteractions.effect(prop,state,'break');
     Sfx.play(PropInteractions.sound(prop));
+    if(typeof TacticalElites!=='undefined'&&TacticalElites.broken(state,prop))return true;
     if(prop.behavior){
       const lvl=DATA.effectiveLevel(m.zone.lvl,state.difficulty),rules=DATA.ACT1_PROP_RULES;
       prop.interact=null;prop.event=false;prop.spawnCooldown=0;
@@ -1950,7 +1953,7 @@ const Game = (() => {
 
   /* play a boss's first-sight cutscene exactly once per character */
   function firstSightCutscene(id, src) {
-    if (!state || !state.player || state.player.dead) return;
+    if (!state || !state.player || state.player.dead || state.map.zone.echo) return;
     const key = "sawCine_" + id;
     if (state.characterFlags[key]) return;
     state.characterFlags[key] = true;
@@ -1958,6 +1961,8 @@ const Game = (() => {
     UI.playVideo(src, () => {});   // pauses the game; resumes when the clip ends/skips
   }
   function onPlayerDeath(source, hero = state.player) {
+    if(typeof CombatCast!=='undefined')CombatCast.clear(hero);
+    if(typeof Echoes!=='undefined'&&state.map.zone.echo&&(state.players||[hero]).every(p=>p.dead||p===hero||p.connected===false))Echoes.fail(state);
     if(typeof Coop!=="undefined"&&Coop.active)return Coop.died(hero);
     resetTouch();
     if(typeof EnemySkills!=="undefined")EnemySkills.cancelAll();
@@ -2008,7 +2013,7 @@ const Game = (() => {
 
   let returningToTown = false;
   function canRetryArena(){
-    if(!state?.player.dead||state.player.hardcore||!state.map?.zone.arena||DATA.CAMPAIGN.bossDead(state,state.map.zone.arena))return false;
+    if(!state?.player.dead||state.player.hardcore||!state.map?.zone.arena||state.map.zone.echo||DATA.CAMPAIGN.bossDead(state,state.map.zone.arena))return false;
     if(typeof Coop!=='undefined'&&Coop.active)return state.players.every(p=>p.dead||p.connected===false);
     return !!state.bossCheckpoint;
   }
@@ -2045,6 +2050,7 @@ const Game = (() => {
     return TerrainLayers.scope(state.map,p,()=>interactOnSurface(prop,false,p));
   }
   function interactOnSurface(prop, committed=false, p=state.player) {
+    if(prop.interact==='sealed_cache'){if(prop.cursedKey&&state.flags.cursedEvents?.[prop.cursedKey]?.status==='ready')return CursedEvents.claim(state,prop,p);msg('Defeat every defender to unseal the cache.','#d8b880');return false;}
     if(prop.interact==='boss_device'){
       const boss=state.monsters.find(m=>m.encounter&&!m.dead);
       return boss?.encounter.interactDevice(prop,p)||false;
@@ -2114,6 +2120,7 @@ const Game = (() => {
   let travelPending=false;
   function castPortal() {
     if(typeof Coop!=="undefined"&&Coop.active&&!Coop.committing)return Coop.submit({type:"portal"});
+    if(state.map.zone.echo){msg('Use Echoes to claim or forfeit your expedition.','#d8b880');return false;}
     if(opening.active()){opening.allowsTravel("portal",null);return false;}
     if(state.map.bossArena?.sealed){msg('The arena is sealed until the fight ends.','#d8b880');return false;}
     if (isHub(state.map.id)) { msg("You are already home.", "#9b8a60"); return false; }
@@ -2196,7 +2203,7 @@ const Game = (() => {
         case "q": UI.togglePanel("quest"); break;
         case "m": mapOverlay = !mapOverlay; break;
         case "l": LootFilter.setEnabled(!LootFilter.config.enabled); msg("Loot filter " + (LootFilter.config.enabled ? "on." : "off."), "#9b8a60"); break;
-        case "f1": case "f2": case "f3": case "f4": UI.quickCast(+k[1] - 1); e.preventDefault(); break;
+        case "f1": case "f2": case "f3": case "f4": if(!e.repeat&&!UI.anyOpen()&&!UI.cinematicActive())UI.quickCast(+k[1] - 1); e.preventDefault(); break;
         case " ": case "spacebar": tryJump(); e.preventDefault(); break;   // hop toward the cursor
         case "escape":
           if (UI.anyOpen()) UI.closeAll();
@@ -2210,7 +2217,15 @@ const Game = (() => {
       if (e.key === "Alt") mouse.alt = false;
       if (e.key.toLowerCase() === LootFilter.config.revealKey) LootFilter.setReveal(false);
     });
-    window.addEventListener("blur", () => { cancelGroundHold(); heldTarget = null; mouse.l = mouse.r = mouse.shift = mouse.alt = false; LootFilter.setReveal(false); });
+    window.addEventListener("blur", () => { if(typeof CombatCast!=='undefined')CombatCast.clear(state?.player);cancelGroundHold(); heldTarget = null; mouse.l = mouse.r = mouse.shift = mouse.alt = false; LootFilter.setReveal(false); });
+  }
+
+  function directCast(i){
+    const p=state?.player,id=p?.quickSlots?.[i],point=screenToWorld(mouse.x,mouse.y);
+    if(!id||!point||p.dead||UI.anyOpen()||UI.escOpen()||UI.cinematicActive())return false;
+    cancelGroundHold();heldTarget=null;mouse.l=mouse.r=false;
+    if(typeof Coop!=='undefined'&&Coop.active)return Coop.submit({type:'quickCast',skill:id,point,targetId:hoverMon?._coopId});
+    return CombatCast.request(p,id,point,hoverMon);
   }
 
   let camPos = null, shakeOx = 0, shakeOy = 0;
@@ -2275,6 +2290,7 @@ const Game = (() => {
     const p = state?.player;
     if (!p) return;
     PropInteractions.cancel(state);
+    if(typeof CombatCast!=='undefined')CombatCast.clear(p);
     p.command = null; p.path = null; p.drawing = null;p._coopMotion=null;p._predictPath=null;
     p._navGoal = null; p._navCache = null; p._navPendingGoal = null; p._pendingClick = null;
     if (!p.jumping) { p.moving = false; p.curSpeed = 0; }
@@ -3184,8 +3200,7 @@ const Game = (() => {
       ctx.shadowColor = "#ff5a10"; ctx.shadowBlur = 10; stroke("#ff7a20", 3.2);    // molten glow
       ctx.shadowBlur = 0;
     } else if (f.type === 'enemywarning') {
-      if(typeof Act1EnemyAnimation!=='undefined'&&!Act1EnemyAnimation.showsAttackRadius(f.owner||f.projectile?.lob?.owner)){ctx.restore();return;}
-      if(f.ttl<=0||state.player.dead||((typeof Act2EnemyAnimation!=='undefined'&&!Act2EnemyAnimation.showsAttackRadius(f.owner))||(typeof Act5EnemyAnimation!=='undefined'&&!Act5EnemyAnimation.showsAttackRadius(f.owner||f.projectile?.lob?.owner)))){ctx.restore();return;}
+      if(f.ttl<=0||state.player.dead){ctx.restore();return;}
       const s=f.shape,count=s.kind==='line'?4:48;
       // Static warnings reuse their projected vertices. Camera motion changes
       // only the draw offset; moving whirlwinds refresh the same small buffer.
@@ -3200,13 +3215,13 @@ const Game = (() => {
         }
       }
       ctx.beginPath();for(let i=0;i<f.vertices.length;i+=2){const x=f.vertices[i]-cam.x,y=f.vertices[i+1]-cam.y;if(i)ctx.lineTo(x,y);else ctx.moveTo(x,y);}ctx.closePath();
-      ctx.globalAlpha=.20;ctx.fillStyle=f.col;ctx.fill();
-      ctx.globalAlpha=.96;ctx.lineWidth=3;ctx.strokeStyle=f.col;ctx.stroke();
+      if(typeof CombatReadability!=='undefined')CombatReadability.warning(ctx,()=>{ctx.beginPath();for(let i=0;i<f.vertices.length;i+=2){const x=f.vertices[i]-cam.x,y=f.vertices[i+1]-cam.y;i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();},s,cam,1-f.ttl/f.maxTtl,state.map.zone,f.col);
+      else{ctx.globalAlpha=.20;ctx.fillStyle=f.col;ctx.fill();ctx.globalAlpha=.96;ctx.lineWidth=3;ctx.strokeStyle=f.col;ctx.stroke();}
     } else if (f.type === "slamwarning") {
-      if(typeof Act1EnemyAnimation!=='undefined'&&!Act1EnemyAnimation.showsAttackRadius(f.owner)){ctx.restore();return;}
-      if(f.owner.dead||state.player.dead||f.owner.slamWarning!==f||((typeof Act2EnemyAnimation!=='undefined'&&!Act2EnemyAnimation.showsAttackRadius(f.owner))||(typeof Act5EnemyAnimation!=='undefined'&&!Act5EnemyAnimation.showsAttackRadius(f.owner||f.projectile?.lob?.owner)))){ctx.restore();return;}
+      if(f.owner.dead||state.player.dead||f.owner.slamWarning!==f){ctx.restore();return;}
       // A world-space circle projects to radii sqrt(2)*32 and sqrt(2)*16.
       const rr=f.radius*32*Math.SQRT2,ry=rr*.5,k=1-U.clamp(f.ttl/f.maxTtl,0,1);
+      if(typeof CombatReadability!=='undefined'){CombatReadability.warning(ctx,()=>{ctx.beginPath();ctx.ellipse(sx,sy,rr,ry,0,0,Math.PI*2);},f,cam,k,state.map.zone,f.col);ctx.restore();return;}
       ctx.globalAlpha=.22;ctx.fillStyle="#142939";
       ctx.beginPath();ctx.ellipse(sx,sy,rr,ry,0,0,Math.PI*2);ctx.fill();
       ctx.globalAlpha=.95;ctx.strokeStyle=f.col;ctx.lineWidth=3;
@@ -3468,6 +3483,7 @@ const Game = (() => {
       const sx = U.isoX(ps.x, ps.y) - cam.x, sy = U.isoY(ps.x, ps.y) - cam.y - surfaceLift(ps.x,ps.y,ps.surfaceId);
       draws.push({ d: ps.x + ps.y, kind: "portal", sx, sy, ps });
     }
+    if(typeof TacticalElites!=='undefined')TacticalElites.draw(ctx,state,cam);
     /* transient fields/banners/totems/weather, beneath the actors */
     for (const f of state.fx) if(!f.surfaceId&&f.type!=="slamwarning"&&f.type!=='enemywarning'&&!(typeof SkillVFX!=='undefined'&&SkillVFX.isStyled(f)))drawFx(f, cam);
     if(typeof SkillVFX!=='undefined'){
@@ -4593,6 +4609,7 @@ const Game = (() => {
       updateCamera(dtRaw);           // camera eases on real time, even during hit-pause
       if(typeof Coop!=='undefined'&&Coop.active)Coop.sampleFrame?.(dtRaw);
       render();
+      if(typeof UpgradeUI!=='undefined')UpgradeUI.tick();
     } catch (err) {
       fatalRuntime(err, "Gameplay update/render");
     }
@@ -4676,13 +4693,16 @@ const Game = (() => {
       world.map=MapGen.generate(zone,seed);world.mapsCache[zone]=world.map;
       const arrival=safeArrival(world.map,world.map.spawns.default),reach=computeReach(world.map,arrival.x,arrival.y);
       for(const [index,sp]of world.map.monsterSpawns.entries()){
-        if(sp.boss&&(world.flags['dead_'+sp.id+'@0']||world.flags['dead_'+sp.id]))continue;
+        if(!world.map.zone.echo&&sp.boss&&(world.flags['dead_'+sp.id+'@0']||world.flags['dead_'+sp.id]))continue;
         const pos=sp.boss?sp:nearestReach(world.map,reach,sp.x,sp.y);
         const mon=new Monster(sp.id,pos.x,pos.y,{elite:sp.elite,minion:sp.minion,skillProfile:sp.skillProfile,packId:sp.packId,monsterFamily:sp.monsterFamily,familyHome:sp.familyHome});
         mon._coopId='spawn_'+zone+'_'+(zone==='mines'?U.hash(sp.id+':'+sp.x+':'+sp.y):index);world.monsters.push(mon);
       }
       world.npcs=world.map.npcs.filter(n=>!(n.survivor&&rescuedSurvivors().includes(n.sid))).map(n=>new Npc(n.id,n.x,n.y,{survivor:n.survivor,sid:n.sid,npcArt:n.npcArt,displayName:n.displayName,storyId:n.storyId}));
       syncStoryObjects();syncConditionalNpcs();setupBeaconQuest(world.map);syncOptionalQuests();placeEvents(world.map);
+      if(typeof CursedEvents!=="undefined")CursedEvents.restore(world);
+      if(typeof TacticalElites!=="undefined")TacticalElites.setup(world);
+      if(typeof Echoes!=="undefined")Echoes.prepare(world);
       for(const n of world.map.npcs){const def=DATA.NPCS[n.id];if(def?.role==='vendor')world.vendorStock[n.id]=Items.vendorStock(def.stock,player.lvl);}
       return world;
     });
@@ -4744,7 +4764,7 @@ const Game = (() => {
   }
   function openCoopInteraction(o){
     if(o.isNpc||o.def&&DATA.NPCS[o.id]){if(o.def?.role==='board')UI.openBoard();else UI.openDialog(o);}
-    else if(o.interact==='storage')UI.openStorage();else if(o.interact==='forge')UI.openForge();else if(o.interact==='board')UI.openBoard();else if(['shrine','caravan'].includes(o.interact))UI.openShrine(o.interact==='caravan');
+    else if(o.interact==='event'&&typeof UpgradeUI!=='undefined')UpgradeUI.event(o);else if(o.interact==='storage')UI.openStorage();else if(o.interact==='forge')UI.openForge();else if(o.interact==='board')UI.openBoard();else if(['shrine','caravan'].includes(o.interact))UI.openShrine(o.interact==='caravan');
   }
   function planCoopReward(q,p){
     const reward=q.reward||{},items=[];
@@ -4766,7 +4786,7 @@ const Game = (() => {
 
   return {
     coop: {enterWorld:()=>campaignEvent({kind:'enter',zone:state.map.id,target:state.map.id},{silent:true}),withWorld:withCoopWorld,createWorld:createCoopWorld,resetActor:resetCoopActor,syncWorld:(beacons=false)=>{syncStoryObjects();syncConditionalNpcs();if(beacons)setupBeaconQuest(state.map);},makeHero:makeCoopHero,prepareHero:prepareCoopHero,start:startCoop,stop:stopCoop,preload:preloadCoop,update,presentation:coopPresentation,hostPresentation,refresh:coopRefresh,repeatSkill,arrival:safeCoopArrival,pickup:pickupGround,interact:(o,p)=>interactOnSurface(o,false,p),interactCommitted:(o,p)=>interactOnSurface(o,true,p),openInteraction:openCoopInteraction,drop:dropAtFeet,respec:doRespec,castPortal,acceptQuest,completeQuest,rewardQuest:rewardCoopQuest,planReward:planCoopReward,jump:coopJump,airAttack:coopAirAttack,visual:coopVisual},
-    submitCommand,playerOwner,closestPlayer,renderPosition,
+    directCast,submitCommand,playerOwner,closestPlayer,renderPosition,
     init, newGame, loadGame, saveGame, listSaves, deleteSave, saveAndQuit,
     preparePlayerEquipment, commitPlayerEquipment, discardPlayerEquipment,
     enterMap, interact, castPortal, usePortal, travelToShrine, canTradeWith, setDifficulty, canRetryArena, retryBossArena,
@@ -4774,7 +4794,7 @@ const Game = (() => {
     afterDelay, addFloat, minionFloat, playerHurtFloat, addParticle, bloodBurst, dustPuff, addNova, lightningBolt, beamFx,
     knockMonster, detonateMark, detonateDoom, spawnCorpse, corpseFromGrave, throwUndeadLand,
     breakProp, breakPropsNear, breakPropsSeg,
-    spawnProjectile, repath, finishTraversal, onMonsterDeath, onPlayerDeath, returnToTown, firstSightCutscene,
+    spawnPropMonster, spawnProjectile, repath, finishTraversal, onMonsterDeath, onPlayerDeath, returnToTown, firstSightCutscene,
     fireProc, serializeItem, reviveItem,
     pickupGround, dropAtFeet,
     debugDrop, debugSpawnElites, debugGotoBoss,

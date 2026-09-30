@@ -1,6 +1,6 @@
 /* Wildkeeper shapes share the live Three.js scene and world-space foot anchor. */
 import * as THREE from './vendor/three/three.module.min.js';
-import {surfaceMaterial,disposeMaterials} from './character_materials3d.mjs';
+import {surfaceMaterial,disposeMaterials} from './character_materials3d.mjs?v=2';
 import {smooth,animationPhase} from './character_animation3d.mjs?v=10';
 import {gaitProfile,footPath} from './character_motion3d.mjs';
 import {combineStatic,curved} from './character_mesh3d.mjs';

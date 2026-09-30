@@ -6,7 +6,7 @@ window.Player3D=(()=>{
   async function init(){
     if(!pending)pending=(async()=>{
       if(new URL(document.baseURI).protocol==='file:')throw new Error('3D characters need the local server. Run python serve.py, then open http://localhost:8741/index.html');
-      const [module,definitions,shapes]=await Promise.all([import('./character3d.mjs?v=embergrave-coop-4'),import('./character_catalog3d.mjs'),import('./character_forms3d.mjs?v=10')]);
+      const [module,definitions,shapes]=await Promise.all([import('./character3d.mjs?v=embergrave-coop-5'),import('./character_catalog3d.mjs'),import('./character_forms3d.mjs?v=11')]);
       catalog=definitions;forms=shapes.FORM_STYLES;rendererFactory=module.createCharacterRenderer;controllerFactory=module.createAnimationController;shiftFactory=module.createWildshapeController;view=rendererFactory();
     })();
     return pending;
@@ -36,6 +36,7 @@ window.Player3D=(()=>{
     return {playerVisual:visual,threePlayer:player,scale:visual.footprint||1};
   }
   function draw(ctx,player,pose){
+    view.setRegion?.(Game.state?.map?.zone);
     if(typeof Coop!=='undefined'&&Coop.active)view.setResolution?.(Coop.mobileQuality==='low'?256:384);
     const visual=player._formVisual||player._playerVisual;require3D(visual);
     const shift=!player.dead&&shiftFrames.get(player);

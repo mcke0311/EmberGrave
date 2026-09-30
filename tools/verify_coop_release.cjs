@@ -1,7 +1,7 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),P=require('../js/coop_protocol.js');
 const read=file=>fs.readFileSync(path.join(root,file),'utf8');
-assert.equal(P.VERSION,2);assert.equal(P.BUILD,'embergrave-coop-4');
+assert.equal(P.VERSION,2);assert.equal(P.BUILD,'embergrave-coop-5');
 const html=read('index.html'),files=new Set(['index.html','js/coop_worker.js','js/coop_runtime.js','js/character3d.mjs','server/relay.cjs','server/package.json','server/package-lock.json','server/Dockerfile']);
 for(const [,url]of html.matchAll(/(?:src|href)="((?:js|css)\/[^" ]+)"/g)){
   const [file,query]=url.split('?');files.add(file);

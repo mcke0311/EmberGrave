@@ -217,8 +217,13 @@ const EnemySkills=(()=>{
       if(encounter.attack.shapes.some(b=>U.dist(b.x,b.y,s.x,s.y)<=10)&&++kept>1)c.cancel();
     }
   }
-  // Warning geometry still governs targeting, scheduling and boss priority.
-  // Act IV communicates windups through authored poses, without warning UI.
-  function draw(){}
+  function draw(ctx,cam){
+    if(typeof CombatReadability==='undefined')return;
+    for(const m of Game.state.monsters){
+      const a=m.enemySkills?.active,s=m.enemySkills?.warning();if(m.dead||!s||a.id==='heal')continue;
+      const duration=a.id==='blink'&&a.step?a.s.strikeWindup:a.id==='cleave'&&a.step?a.s.secondWindup:a.s.windup;
+      CombatReadability.warning(ctx,()=>CombatReadability.trace(ctx,s,cam,Game.state.map,m.surfaceId),s,cam,1-a.remaining/duration,Game.state.map.zone,'#ddbadf');
+    }
+  }
   return {profiles,profile,eliteModifier,create,cancelAll,reserveBossWarning,draw,contains};
 })();

@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three/three.module.min.js';
-import {equipmentMaterials,surfaceMaterial} from './character_materials3d.mjs';
+import {equipmentMaterials,surfaceMaterial} from './character_materials3d.mjs?v=2';
 import {mesh,box,orb,rod,curved,plate,edge,rivet,band,wrap,combineStatic,formedPlate} from './character_mesh3d.mjs';
 
 export const ARMOR_THEMES={

@@ -19,6 +19,12 @@ function surfaceTexture(kind){
         const row=Math.floor(y/16),dx=((x+(row%2)*8)%16-8)/6,dy=(y%16-8)/6;
         const d=Math.sqrt(dx*dx+dy*dy);value=d>.64&&d<1.05?205+dy*36+noise*13:92+noise*22;
       }
+      // Broad painted values survive the small gameplay silhouette. Fine grain
+      // alone disappeared at that scale and left cloth looking uniformly smooth.
+      const fold=Math.pow(.5+.5*Math.sin(x*.145+Math.sin(y*.035)*.6),3);
+      if(kind==='cloth'||kind==='leather')value=value*.79+fold*35+Math.sin(y*.043)*10;
+      if(kind==='metal')value=value*.87+Math.pow(.5+.5*Math.sin(x*.058+y*.017),12)*31;
+      if(kind==='skin')value=218+noise*9+Math.sin(y*.036)*15+Math.cos(x*.042)*9;
       const i=(y*size+x)*4;bytes[i]=bytes[i+1]=bytes[i+2]=Math.max(0,Math.min(255,value));bytes[i+3]=255;
     }
     patterns.set(kind,bytes);
@@ -31,7 +37,7 @@ function surfaceTexture(kind){
 export function surfaceMaterial(color,kind='metal',extra={}){
   const map=surfaceTexture(kind),metal=kind==='metal'||kind==='mail';
   return new THREE.MeshStandardMaterial({color,map,bumpMap:map,bumpScale:kind==='mail'?.006:metal?.0008:.0016,
-    metalness:metal?.72:0,roughness:metal?.53:.91,...extra});
+    metalness:metal?.58:0,roughness:metal?.68:.94,...extra});
 }
 export function equipmentMaterials(item){
   const p=item.material;

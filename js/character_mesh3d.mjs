@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three/three.module.min.js';
-import {disposeMaterials} from './character_materials3d.mjs';
+import {disposeMaterials} from './character_materials3d.mjs?v=2';
 
 export function disposeObject(root){
   const geometries=new Set(),materials=new Set();root.traverse(o=>{if(o.geometry)geometries.add(o.geometry);if(o.material)materials.add(o.material);});

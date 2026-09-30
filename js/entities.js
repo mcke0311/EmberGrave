@@ -2107,6 +2107,7 @@ class Player extends Entity {
   updatePlayer(dt) {
     if(this.stunT>0&&this.action?.veilPending)this.action.interrupted=true;
     this.updateAnim(dt);
+    if(typeof CombatCast!=='undefined')CombatCast.tick(this);
     /* the dead do not walk, drink, or whirl — they wait to rise */
     if (this.dead) { this.moving = false; return; }
     this.checkAetherDepletion();
@@ -2142,11 +2143,12 @@ class Player extends Entity {
     /* regen + potion pools */
     const beasts=TerrainLayers.targets(Game.state.minions).filter(m=>!m.dead && m.owner===this && m.beast).length;
     const potionMana=Math.min(this.manaPool || 0,22*dt);
-    const manaFlow=(st.manaRegen + beasts*(st.pManaPerBeast || 0)-this.companionUpkeep())*dt+potionMana;
+    const regeneration=typeof Echoes!=='undefined'?Echoes.regen(Game.state):1;
+    const manaFlow=(st.manaRegen*regeneration + beasts*(st.pManaPerBeast || 0)-this.companionUpkeep())*dt+potionMana;
     this.mana=Math.min(st.maxMana,Math.max(0,this.mana+manaFlow));
     this.manaPool=(this.manaPool || 0)-potionMana;
     this.checkAetherDepletion();
-    this.healLife((0.25 + (st.lifeRegen || 0)) * dt);
+    this.healLife((0.25 + (st.lifeRegen || 0)) * dt * regeneration);
     if (this.healPool > 0) { const t = Math.min(this.healPool, 28 * dt); this.healLife(t); this.healPool -= t; }
     this.tileHazardTick(dt, Game.state.map, true);   // ice/lava/bog under the player
 
@@ -2765,7 +2767,7 @@ class ImperialCombat {
   }
   draw(ctx,cam,debug=false){
     const a=this.active,m=this.mon;if(!this.valid())return;
-    const showWarnings=debug||this.profile.role==='boss';
+    const showWarnings=true;
     if(!debug&&!(showWarnings&&a?.shape&&a.stage!=='recovery')&&!(this.blockUntil>this.world.time))return;
     const project=(x,y)=>({x:U.isoX(x,y)-cam.x,y:U.isoY(x,y)-cam.y-TerrainSurface.heightAt(this.map,x,y,m.surfaceId)*TerrainSurface.LIFT});
     const trace=s=>{
@@ -2780,7 +2782,7 @@ class ImperialCombat {
       const col=a.kind==='blink'?'#b598d9':a.spec.elem==='light'?'#f0ce78':'#a3d1e5';ctx.fillStyle=col;ctx.strokeStyle=col;ctx.lineWidth=2;
       const shapes=a.shape.kind==='fan'?Array.from({length:a.shape.count},(_,i)=>({...a.shape,kind:'line',angle:a.shape.angle+(i-(a.shape.count-1)/2)*a.shape.spread})): [a.shape];
       if(a.kind==='blink')shapes.push({kind:'circle',x:a.origin.x,y:a.origin.y,radius:m.radius+.4});
-      for(const s of shapes){trace(s);ctx.globalAlpha=.14;ctx.fill();ctx.globalAlpha=.9;ctx.stroke();}
+      for(const s of shapes){if(typeof CombatReadability!=='undefined')CombatReadability.warning(ctx,()=>trace(s),s,cam,1-a.remaining/(a.spec.windup||1),this.map.zone,col);else{trace(s);ctx.globalAlpha=.14;ctx.fill();ctx.globalAlpha=.9;ctx.stroke();}}
       const names={bash:'Shield Bash',sweep:'Gilded Sweep',pulse:m.defId==='chained_sovereign'?'Sovereign’s Slam':'Sunderstone Pulse',charge:'Charge',leap:'Stonefall',blink:'Shadow Step',fan:'Crystal Fan'};
       const p=project(m.x,m.y);ctx.globalAlpha=1;ctx.font='12px Exocet, Georgia, serif';ctx.textAlign='center';ctx.fillStyle=col;ctx.fillText(names[a.kind]+(a.stage==='windup'?' · '+a.remaining.toFixed(1):''),p.x,p.y-65*m.scale);
     }
@@ -2961,6 +2963,7 @@ class Monster extends Entity {
     // snapshots opt out. Raw player item procs use this final damage boundary.
     const elemental = (source instanceof Player) && !detail?.elementScaled && !detail?.environment ? DATA.elementMultiplier(source, elem) : 1;
     let dmg = amount * elemental * (this.enemySkills?.physicalMult(source,elem,detail) ?? 1);
+    if(typeof TacticalElites!=='undefined')dmg*=TacticalElites.multiplier(Game.state,this);
     const hpBefore = this.hp;
     if (typeof UniquePowers !== "undefined") dmg *= 1 + UniquePowers.exposed(this) / 100;
     if(this.encounter && this.defId==="mire_mother" && this.encounter.phase>0 && this.encounter.stage==="recovery")dmg*=1.25;

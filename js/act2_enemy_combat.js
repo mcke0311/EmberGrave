@@ -223,8 +223,11 @@ class Act2EnemyCombat {
   }
   static draw(ctx,cam){
     for(const f of Game.state.fx){
-      if(f.type!=='act2warning'||(typeof Act2EnemyAnimation!=='undefined'&&!Act2EnemyAnimation.showsAttackRadius(f.owner))||f.ttl<=0||f.hidden||!f.controller.valid()||f.owner.dead&&!f.corpse)continue;
+      if(f.type!=='act2warning'||f.ttl<=0||f.hidden||f.controller?.valid&&!f.controller.valid()||!f.owner||f.owner.dead&&!f.corpse)continue;
       const project=(x,y)=>[U.isoX(x,y)-cam.x,U.isoY(x,y)-cam.y],k=1-U.clamp(f.ttl/f.maxTtl,0,1);
+      if(typeof CombatReadability!=='undefined'){
+        CombatReadability.warning(ctx,()=>CombatReadability.trace(ctx,f,cam,Game.state.map,f.owner.surfaceId),f,cam,k,Game.state.map.zone,f.col);continue;
+      }
       ctx.save();ctx.beginPath();
       if(f.kind==='line'){
         const dx=Math.cos(f.angle),dy=Math.sin(f.angle),w=f.width/2;

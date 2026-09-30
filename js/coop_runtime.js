@@ -24,8 +24,9 @@ const CoopRuntime=(()=>{
     if(w._visuals.length<128)w._visuals.push({effect,...detail});
   }
   function capture(w){return scope(w,()=>{
+    if(typeof CursedEvents!=='undefined')CursedEvents.capture(w);
     C.register(w);
-    return {props:w.map.props.map(p=>C.encode(p,true)),terrainEdits:structuredClone(w.map._coopTerrain||{}),terrain:C.encode(Object.fromEntries(['blocked','walls','hazard'].map(k=>[k,w.map[k]]))),
+    return {echoRun:w._echoRun,props:w.map.props.map(p=>C.encode(p,true)),terrainEdits:structuredClone(w.map._coopTerrain||{}),terrain:C.encode(Object.fromEntries(['blocked','walls','hazard'].map(k=>[k,w.map[k]]))),
       dead:[...new Set([...(campaign.areas[w.worldId]?.dead||[]),...w.monsters.filter(m=>m.dead).map(m=>m._coopId)])],
       monsters:w.monsters.filter(m=>!m.bossOwner&&!m.sourcePropId).map(m=>({id:m._coopId,hp:m.hp,maxHp:m.maxHp,dead:m.dead})),propMonsters:C.propMonsters(w),
       ground:w.ground.map(g=>({...C.encode(g,true),item:g.item?{...Game.serializeItem(g.item),netId:g.item._coopId}:null})),partySize:w.map._coopSize||1};
@@ -33,10 +34,10 @@ const CoopRuntime=(()=>{
   function getWorld(zone,p){
     if(!P.ZONES.includes(zone))fail('This destination is outside Act I.');
     if(worlds.has(zone))return worlds.get(zone);
-    const w=Game.coop.createWorld(p,campaign.seed,campaign,zone);w._visuals=[];w._busy=false;w._queue=Promise.resolve();
+    const w=Game.coop.createWorld(p,campaign.seed,campaign,zone);w._visuals=[];w._busy=false;w._queue=Promise.resolve();if(w.map.zone.echo)w._echoRun=campaign.flags.echoRun?.id;
     worlds.set(zone,w);
     scope(w,()=>{
-      C.register(w);const old=campaign.areas[zone];w.map._coopSize=old?.partySize||Math.max(1,players.size);
+      C.register(w);const saved=campaign.areas[zone],old=w.map.zone.echo&&saved?.echoRun!==w._echoRun?null:saved;w.map._coopSize=old?.partySize||Math.max(1,players.size);
       if(old){
         if(old.terrain)Object.assign(w.map,C.decode(old.terrain,new Map()));
         if(old.terrainEdits){w.map._coopTerrain=structuredClone(old.terrainEdits);C.applyTerrain(w.map,old.terrainEdits);}
@@ -85,13 +86,14 @@ const CoopRuntime=(()=>{
     if(campaign.ownerHeroId!==args.hero.id)fail('Select the hero that owns this campaign.');
     if(campaign.schemaVersion>2)fail('This campaign needs a newer game version.');
     campaign.schemaVersion=2;campaign.areas||={};campaign.heroes||={};campaign.quests||={};campaign.flags||={};campaign.shrines||=['frosthaven'];
+    if(args.echoesUnlocked)campaign.flags.echoesUnlocked=true;
     if(!Object.keys(campaign.quests).length)campaign.quests.q7={state:'active',count:0};
     campaign.shrines=campaign.shrines.filter(z=>P.ZONES.includes(z));
     campaign.flags.opening={v:2,stage:'complete',rescued:true,defeated:[]};delete campaign.quests.q1;
     // Prepare the six deterministic worlds before live play, so later arrivals never
     // block occupied worlds on map generation. Empty worlds still do not simulate.
     const preview=C.restoreHero(campaign.heroes[args.hero.id]||args.hero);
-    for(const zone of P.ZONES)getWorld(zone,preview);
+    for(const zone of P.ZONES.filter(z=>!z.startsWith('echo_')))getWorld(zone,preview);
     await admit(hostId,args.hero,args.view);active=true;return true;
   }
   async function admit(id,record,view){
@@ -109,7 +111,7 @@ const CoopRuntime=(()=>{
   }
   function viewRadius(v){return Math.max(18,Math.min(80,(Number(v?.width)||844)/128+(Number(v?.height)||390)/64+8));}
   function combat(p){const w=worldOf(p);return !p||p.dead||!p.connected||clock<(p.combatUntil||0)||(p._coopHurt||0)!==(p._lastCombatHurt||0)||w._cinematic||w.monsters.some(m=>!m.dead&&(m.encounter?.active||m.aggro&&Math.hypot(m.x-p.x,m.y-p.y)<10));}
-  function validZone(zone){if(!P.ZONES.includes(zone))fail('This destination is outside Act I.');if(['shattered_temple','arena_korvath'].includes(zone)&&!campaign.flags.fn_temple_open)fail('Shatter the three beacons and defeat the Oathsworn first.');}
+  function validZone(zone){if(!P.ZONES.includes(zone))fail('This destination is unavailable.');if(zone.startsWith('echo_')&&(!campaign.flags.echoesUnlocked||campaign.flags.echoRun?.zone!==zone||campaign.flags.echoRun?.phase!=='combat'))fail('Choose an unlocked Echo first.');if(['shattered_temple','arena_korvath'].includes(zone)&&!campaign.flags.fn_temple_open)fail('Shatter the three beacons and defeat the Oathsworn first.');}
   function arrival(w,p,point,safe=false){return scope(w,()=>{
     const candidates=[];
     for(let r=0;r<=(safe?4:0);r+=.5)for(let i=0;i<(r?16:1);i++)candidates.push({x:point.x+Math.cos(i*Math.PI/8)*r,y:point.y+Math.sin(i*Math.PI/8)*r,surfaceId:point.surfaceId??0});
@@ -136,6 +138,42 @@ const CoopRuntime=(()=>{
     }else if(!exit)fail('Move closer to the exit.');
     return prepareTransfer(p,zone,exit?.spawnKey||spawn,{via:options.via==='shrine'?'shrine':'exit'});
   }
+  function echoAction(p,c){
+    const w=worldOf(p),leader=p._coopId===hostId;
+    if(!['start','choose','resume','claim','abandon','return','collect'].includes(c.action))fail('Unknown expedition action.');
+    if(w.map.id!=='frosthaven'&&!w.map.zone.echo)fail('Use the Frosthaven waystone or your current Echo.');
+    if(!leader&&!['resume','return','collect'].includes(c.action))fail('The host leads this expedition.');
+    if(c.action==='collect'){if(!Echoes.collect(w,p))fail('Make room in your pack to collect your reward.');return;}
+    if(c.action==='start'){
+      if([...players.values()].some(h=>h.connected&&h.worldId!=='frosthaven'))fail('Gather your party in Frosthaven first.');
+      if(!Echoes.start(w,p,c.slot))fail('Complete the solo saga and return to Frosthaven first.');
+      Echoes.run(w).participants=[...players.values()].filter(h=>h.connected).map(h=>h.heroId);
+      Echoes.run(w).level=Math.max(...[...players.values()].filter(h=>h.connected).map(h=>h.lvl));
+      // Clear old arena instances only after the new run is durably committed.
+      return ()=>{for(const [zone]of Echoes.stages){
+        const old=worlds.get(zone);
+        for(const h of old?.players||[]){
+          // Disconnected members retain their saved award and reconnect in town.
+          h.worldId='frosthaven';h.travelGeneration++;scope(w,()=>Game.coop.resetActor(h,arrival(w,h,w.map.spawns.default)));w.players.push(h);
+        }
+        worlds.delete(zone);delete campaign.areas[zone];
+      }};
+    }
+    if(c.action==='choose'&&!Echoes.choose(w,c.curse))fail('That curse is no longer available.');
+    if(c.action==='claim'&&!Echoes.claim(w,p))fail('The expedition reward is not ready.');
+    if(c.action==='abandon')Echoes.fail(w);
+    const entering=['choose','resume'].includes(c.action),run=Echoes.run(w);
+    if(entering&&run?.phase!=='combat')fail('No encounter is waiting.');
+    if(entering&&!run.participants.includes(p.heroId))fail('Join the party in Frosthaven before the next expedition begins.');
+    if(!entering&&!['claimed','failed'].includes(run?.phase))fail('Claim or forfeit the bonus before leaving.');
+    const zone=entering?run.zone:'frosthaven';
+    const moving=leader?[...players.values()].filter(h=>h.connected&&run.participants.includes(h.heroId)):[p];
+    // Loading tickets must never escape a transaction that later rolls back.
+    return ()=>{for(const h of moving)if(h.worldId!==zone&&!transfers.has(h._coopId)){
+      try{prepareTransfer(h,zone,'default',{via:'echo',echoRun:run.id,echoPhase:run.phase,revive:h.dead});}
+      catch(e){send({kind:'travelCancel',message:e.message},h._coopId);}
+    }};
+  }
   function teleport(p,targetId){
     const target=players.get(targetId);if(!target||target===p)fail('Choose a connected teammate.');
     if(combat(p)||combat(target))fail('Both players must be outside combat for five seconds.');
@@ -159,6 +197,7 @@ const CoopRuntime=(()=>{
       if(ticket.options.via==='shrine'&&(!campaign.shrines.includes(ticket.zone)||!from.map.props.some(o=>['shrine','caravan'].includes(o.interact)&&CoopCommands.nearby(p,o,3))))fail('Use a nearby waystone to travel.');
       if(ticket.options.via==='portal'&&(!p._portal||p.worldId!=='frosthaven'&&p._portal.mapId!==p.worldId||!CoopCommands.nearby(p,p.worldId==='frosthaven'?from.map.spawns.portal:p._portal,3)))fail('Move closer to your portal.');
       validZone(ticket.zone);
+      if(ticket.options.via==='echo'&&(campaign.flags.echoRun?.id!==ticket.options.echoRun||campaign.flags.echoRun?.phase!==ticket.options.echoPhase))fail('The expedition changed.');
       if(ticket.options.targetId&&(Math.hypot(p.x-ticket.x,p.y-ticket.y)>.05||combat(p)||combat(target)||target.worldId!==ticket.zone||target.travelGeneration!==ticket.options.targetGeneration))fail('Your teammate moved or entered combat.');
       const to=getWorld(ticket.zone,p);if(to._busy||to._campaignBusy||to._cinematic)fail('The destination is busy. Try again.');
       if(to.map.bossArena?.sealed&&from!==to)fail('The arena is sealed. Wait for the encounter to end.');
@@ -182,12 +221,13 @@ const CoopRuntime=(()=>{
   }
   function rebaseTimers(actor,offset){
     // Area clocks stop when empty; transfer deadlines with their remaining duration.
+    if(typeof CombatCast!=='undefined')CombatCast.clear(actor);
     for(const key of Object.keys(actor))if((/Until$/.test(key)||['frozen','feared'].includes(key))&&!['combatUntil','teleportUntil'].includes(key)&&Number.isFinite(actor[key])&&actor[key]>0)actor[key]+=offset;
     for(const b of actor.buffs||[])if(Number.isFinite(b.until))b.until+=offset;
     for(const key of Object.keys(actor.skillCd||{}))actor.skillCd[key]+=offset;
     for(const key of ['boneWard','retalCold','coat','form','poisonDot','bleedDot','scorch','rabies'])if(Number.isFinite(actor[key]?.until))actor[key].until+=offset;
   }
-  function openPortal(p){if(p.worldId==='frosthaven')fail('You are already home.');p._portal={mapId:p.worldId,x:p.x,y:p.y+.4,surfaceId:p.surfaceId,home:'frosthaven',returnPosition:{x:p.x,y:p.y,surfaceId:p.surfaceId}};return true;}
+  function openPortal(p){if(worldOf(p)?.map.zone.echo)fail('Use Echoes to claim or forfeit your expedition.');if(p.worldId==='frosthaven')fail('You are already home.');p._portal={mapId:p.worldId,x:p.x,y:p.y+.4,surfaceId:p.surfaceId,home:'frosthaven',returnPosition:{x:p.x,y:p.y,surfaceId:p.surfaceId}};return true;}
   function backup(w){
     const contextKey=k=>['combatWorld','combatMap','world','map','originWorld','originMap'].includes(k);
     const persistentKey=k=>!contextKey(k)&&(!k.startsWith('_')||['_coopId','_portal','_skillEpoch','_veilEpoch'].includes(k));
@@ -229,15 +269,15 @@ const CoopRuntime=(()=>{
     if(!internalCommand&&m.seq<=(sequences.get(id)||0)){const ack=acknowledgments.get(id)?.get(m.seq);if(ack)send(ack,id);return;}
     if(!internalCommand)sequences.set(id,m.seq);const c=m.command;
     if(!c||typeof c.type!=='string')return;
-    if(['move','steer','attack','cast','jump'].includes(c.type)&&(channels.has(id)||transfers.get(id)?.options.targetId))cancelTransfer(id,'Teleport interrupted.');
-    if(['attack','cast'].includes(c.type))p.combatUntil=clock+5;
+    if(['move','steer','attack','cast','quickCast','jump'].includes(c.type)&&(channels.has(id)||transfers.get(id)?.options.targetId))cancelTransfer(id,'Teleport interrupted.');
+    if(['attack','cast','quickCast'].includes(c.type))p.combatUntil=clock+5;
     w._pending=(w._pending||0)+1;metrics.maxPendingCommands=Math.max(metrics.maxPendingCommands,w._pending);if(w._pending>128){w._pending--;if(!internalCommand)acknowledge(id,m.seq,false,'Too many pending commands.');return;}
     w._queue=w._queue.catch(()=>{}).then(async()=>{
       w._pending--;let restore=null,commandEvents=[];
       if(!p.connected||p.worldId!==m.worldId||p.travelGeneration!==m.generation){if(!internalCommand)acknowledge(id,m.seq,false,'Your area changed.');return;}
       const economic=CoopCommands.economic.has(c.type);let unlock=null,shared=null,detached=false,worldBackups=[],grants=[];
       if(economic){const previous=economyChain;economyChain=new Promise(resolve=>unlock=resolve);await previous;transactionActive=true;}
-      const campaignChange=['acceptQuest','completeQuest','interact'].includes(c.type);
+      const campaignChange=['acceptQuest','completeQuest','interact','startEvent','echoAction'].includes(c.type);
       if(campaignChange){
         const original=Object.fromEntries(['quests','flags','shrines','heroes','pendingRewards'].map(key=>[key,campaign[key]||{}]));
         shared={original,before:structuredClone(original),staged:structuredClone(original)};bindCampaign(shared.staged);
@@ -253,7 +293,7 @@ const CoopRuntime=(()=>{
         scope(w,()=>{
           if(c.type==='teleportToPlayer')operation=teleport(p,c.targetId);
           else if(c.type==='retryArena'){
-            if(!p.dead||!w.map.zone.arena)fail('No arena retry is available.');
+            if(!p.dead||!w.map.zone.arena||w.map.zone.echo)fail('No arena retry is available.');
             if(w.players.some(h=>h.connected&&!h.dead))fail('Wait for a teammate to revive you or for the party to fall.');
             for(const boss of w.monsters)if(boss.encounter&&!boss.dead)boss.encounter.reset();
             for(const key of ['projectiles','minions','traps','fx'])w[key]=[];
@@ -262,7 +302,7 @@ const CoopRuntime=(()=>{
               Game.coop.resetActor(hero,arrival(w,hero,{x:w.map.spawns.retry.x-1.8+index*1.2,y:w.map.spawns.retry.y}));
             }
           }
-          else if(c.type==='respawn'){if(!p.dead)fail('You are already alive.');operation=prepareTransfer(p,'frosthaven','default',{revive:true});}
+          else if(c.type==='respawn'){if(w.map.zone.echo&&w.players.every(h=>h.dead||!h.connected))Echoes.fail(w);if(!p.dead)fail('You are already alive.');operation=prepareTransfer(p,'frosthaven','default',{revive:true});}
           else if(c.type==='usePortal'){
             const portal=p._portal;if(!portal)fail('Open a town portal first.');
             const home=p.worldId==='frosthaven',near=home?w.map.spawns.portal:portal;
@@ -270,7 +310,7 @@ const CoopRuntime=(()=>{
             operation=prepareTransfer(p,home?portal.mapId:'frosthaven',home?'default':'portal',{via:'portal',position:home?portal.returnPosition:undefined});
           }else operation=CoopCommands.execute(p,c);
         });
-        commandEvents=stagedEvents;stagedEvents=[];committing=false;stagingRewards=null;await operation;if(!internalCommand)p.coopInputSeq=m.seq;
+        commandEvents=stagedEvents;stagedEvents=[];committing=false;stagingRewards=null;operation=await operation;if(!internalCommand)p.coopInputSeq=m.seq;
         if(economic){
           p.coopRevision=(p.coopRevision||0)+1;
           if(shared){
@@ -286,12 +326,13 @@ const CoopRuntime=(()=>{
             for(const area of worlds.values())scope(area,()=>Game.coop.syncWorld(c.type==='acceptQuest'&&c.questId==='q8b'));
           }else await checkpoint(true);
         }
+        if(typeof operation==='function')operation();
         for(const e of commandEvents)event(e.type,e.detail,e.to);
         if(!internalCommand)acknowledge(id,m.seq,true);
       }catch(e){if(restore)scope(w,restore);
         if(shared&&!detached){for(const [area,restoreWorld]of worldBackups)scope(area,restoreWorld);bindCampaign(shared.original);}
         if(!internalCommand){p.coopInputSeq=m.seq;acknowledge(id,m.seq,false,e.message);}}
-      finally{stagedEvents=[];stagingRewards=null;committing=false;w._busy=false;if(unlock){transactionActive=false;unlock();}}
+      finally{stagedEvents=[];stagingRewards=null;committing=false;w._busy=false;if(c.type==='echoAction')snapshot(p,true);if(unlock){transactionActive=false;unlock();}}
     });return w._queue;
   }
   function tick(dt){
@@ -342,12 +383,13 @@ const CoopRuntime=(()=>{
     C.register(Game.state);const id=p._coopId,key=id+':'+o._coopId+':'+type;if(queuedActions.has(key))return;
     queuedActions.add(key);return Promise.resolve(command(id,{seq:(sequences.get(id)||0)+1,worldId:p.worldId,generation:p.travelGeneration,command:{type,targetId:o._coopId,committed}},true)).finally(()=>queuedActions.delete(key));
   };
-  return {start,receive,roster,depart,tick,checkpoint,metrics,party,worlds,players,event,visual,died,trackParticipants,rewardParticipants,requestTravel,openPortal,
+  return {start,receive,roster,depart,tick,checkpoint,metrics,party,worlds,players,event,visual,died,trackParticipants,rewardParticipants,requestTravel,openPortal,echoAction,
+    echoReady:w=>!w.map.zone.echo||![...players.values()].some(p=>p.connected&&campaign.flags.echoRun?.participants?.includes(p.heroId)&&p.worldId!==w.worldId),
     get active(){return active;},get host(){return true;},get hostId(){return hostId;},get authority(){return true;},get committing(){return committing;},get loading(){return false;},
     setStatus(s){hidden=!!s.hidden;offline=!!s.offline;},async retrySave(){await checkpoint();},
     async stop(){await checkpoint();active=false;},save(){saveClock=5;},markCritical(){saveClock=5;},register(){C.register(Game.state);},
     monsterDied(mon){const a=campaign.areas[Game.state.worldId]||={};a.dead=[...new Set([...(a.dead||[]),mon._coopId])];saveClock=5;},
     enqueuePickup:(o,p)=>internal(o,p,'pickup'),enqueueInteraction:(o,p)=>internal(o,p,'interact'),finishInteraction:(o,p)=>internal(o,p,'interact',true),
-    openInteraction(o,p){if(o.survivor||o.storyId)return false;if(o.isNpc||o.def&&DATA.NPCS[o.id]||['storage','forge','board','caravan','shrine'].includes(o.interact)){if(o.interact==='shrine'&&!campaign.shrines.includes(p.worldId))campaign.shrines.push(p.worldId);event('panel',{id:o._coopId},p._coopId);return true;}return false;},
+    openInteraction(o,p){if(o.survivor||o.storyId)return false;if(o.isNpc||o.def&&DATA.NPCS[o.id]||(['storage','forge','board','caravan','shrine'].includes(o.interact)||o.interact==='event'&&CursedEvents.eligible(o))){if(o.interact==='shrine'&&!campaign.shrines.includes(p.worldId))campaign.shrines.push(p.worldId);event('panel',{id:o._coopId},p._coopId);return true;}return false;},
     cinematic,notify:message=>event('message',{message})};
 })();

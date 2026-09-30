@@ -1,6 +1,6 @@
 /* All decisions use host-owned objects. Commands contain IDs, never item data. */
 const CoopCommands=(()=>{
-  const economic=new Set(['quaff','pickup','equip','unequip','moveItem','drop','belt','unbelt','use','identify','socket','buy','sell','craft','attribute','learn','perk','bind','acceptQuest','completeQuest','interact','portal','carry','place','offer','tidy','identifyAll','returnManagement','cancelCarry']);
+  const economic=new Set(['quaff','pickup','equip','unequip','moveItem','drop','belt','unbelt','use','identify','socket','buy','sell','craft','attribute','learn','perk','bind','acceptQuest','completeQuest','interact','portal','carry','place','offer','tidy','identifyAll','returnManagement','cancelCarry','startEvent','echoAction']);
   const fail=message=>{throw Error(message);};
   function nearby(p,o,range=2.5){return o&&TerrainLayers.same(p,o)&&U.dist(p.x,p.y,o.x,o.y)<=range;}
   function management(p){return p.management||(p.management={carried:null,origin:null,offer:[null,null,null,null],origins:[null,null,null,null]});}
@@ -44,20 +44,23 @@ const CoopCommands=(()=>{
     if(p.dead&&!['ready','bind','stop','returnManagement','cancelCarry','retryArena','respawn'].includes(c.type))fail('Wait for a teammate to revive you.');
     const pt=c.point;
     if(pt&&(!Number.isFinite(pt.x)||!Number.isFinite(pt.y)||pt.x<0||pt.y<0||pt.x>s.map.w||pt.y>s.map.h||![0,1].includes(pt.surfaceId??0)))fail('Invalid destination');
-    if(['move','steer','attack','cast','stop','jump','interact','pickup'].includes(c.type))p.reviveTarget=null;
+    if(['move','steer','attack','cast','quickCast','stop','jump','interact','pickup'].includes(c.type))p.reviveTarget=null;
     switch(c.type){
+      case 'startEvent':{const o=s.map.props.find(o=>o._coopId===c.targetId);if(!nearby(p,o)||!CursedEvents.start(s,o,p))fail('The event is no longer available');return;}
+      case 'echoAction':return Coop.echoAction(p,c);
       case 'retryArena':return Coop.retryArena(p);
       case 'respawn':return Coop.respawn(p);
       case 'move':case 'steer':
         if(!pt)fail('Missing destination');p.command={type:c.type,point:pt};
         if(c.type==='move')Game.repath(p,pt.x,pt.y,pt.surfaceId);
         else{p.path=null;p._navGoal=null;p._navCache=null;}return;
-      case 'stop':p.command=null;p.path=null;p._navGoal=null;p._navCache=null;p.drawing=null;p.moving=false;return;
+      case 'stop':if(typeof CombatCast!=='undefined')CombatCast.clear(p);p.command=null;p.path=null;p._navGoal=null;p._navCache=null;p.drawing=null;p.moving=false;return;
       case 'release':p.releaseDraw();p.command=null;return;
       case 'attack':{
         checkSkill(p,c.skill);const t=s.monsters.find(m=>m._coopId===c.targetId&&!m.dead);
         if(!t)fail('Target is gone');p.command={type:'attack',target:t,skill:c.skill,hold:!!c.hold&&Game.coop.repeatSkill(c.skill)};p.path=null;return;
       }
+      case 'quickCast':checkSkill(p,c.skill);if(!pt)fail('Missing cast destination');return CombatCast.request(p,c.skill,pt,s.monsters.find(m=>m._coopId===c.targetId&&!m.dead));
       case 'cast':checkSkill(p,c.skill);if(p.resolveSkill(c.skill).type==='melee')return Game.coop.airAttack(p,c.skill,pt);p.command={type:'skillPoint',skill:c.skill,point:pt||{x:p.x,y:p.y,surfaceId:p.surfaceId}};p.path=null;return;
       case 'jump':return Game.coop.jump(p,pt);
       case 'quaff':if(!Number.isInteger(c.slot)||c.slot<0||c.slot>3)fail('Invalid belt slot');return p.quaff(c.slot);
@@ -152,8 +155,13 @@ const CoopCommands=(()=>{
         const entries=c.items.map(id=>item(p,id));if(entries.some(v=>!v||!['inv','offer'].includes(v.name)))fail('Offering item is missing');
         const check=ForgeRecipes.evaluate(entries.map(v=>v.it),c.recipe);if(!check.valid)fail('Offering does not match this recipe');
         const {glyphs,gear,pots,total,upgrade}=check;let result,left=[];
+        if(c.recipe==='precision'){
+          const it=gear[0],cost=Items.precisionCost(it);if(p.gold<cost||!Items.precisionPool(it,c.affixIndex).length)fail('Choose the unlocked property and supply enough gold');
+          if(!Items.precisionReforge(it,c.affixIndex))fail('No eligible property');p.gold-=cost;result=it;
+        }
         for(const v of entries)remove(p,v);
-        if(c.recipe==='glyph')result=Items.reforgeGlyph(glyphs[0]);
+        if(c.recipe==='precision'){}
+        else if(c.recipe==='glyph')result=Items.reforgeGlyph(glyphs[0]);
         else if(c.recipe==='temper'||c.recipe==='reweave'){result=gear[0];Items.rollAffixesOnto(result,c.recipe==='temper'?'enhanced':'rare');result.identified=true;}
         else{result=Items.makeConsumable(upgrade,1);let n=total-3;while(n>0){const take=Math.min(10,n);left.push(Items.makeConsumable(pots[0].baseId,take));n-=take;}}
         for(const it of [result,...left])if(!Items.autoPlace(p.inv,it))Game.coop.drop(it,p);p.computeStats();return;

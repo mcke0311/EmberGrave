@@ -171,6 +171,7 @@ const BossEncounters = (() => {
       this.clearAttacks();this.clearOwned();this.resetDevices();this.seal(false);this.lifecycle='victory';this.active=false;this.stage="dead";this.pose="death";this.setArt();
     }
     prepare(player,map) {
+      if(map?.zone.echo&&typeof Coop!=='undefined'&&Coop.active&&Coop.echoReady&&!Coop.echoReady(this.world))return false;
       const players=(this.world.players||[player]).filter(p=>p.connected!==false&&!p.dead);
       if(this.active&&map===this.map&&Game.state===this.world&&!players.length&&this.world.players?.some(p=>!p.dead&&p.connected===false))return false;
       if(map!==this.map||Game.state!==this.world||!players.length||(!this.arena.dedicated&&!players.some(p=>insideArena(this.arena,p.x,p.y)))) {
@@ -545,7 +546,8 @@ const BossEncounters = (() => {
       const attack=e.attack;
       if(attack&&(e.stage==="windup"||e.stage==="execute"))for(const s of attack.shapes) {
         ctx.fillStyle=e.config.color;ctx.lineWidth=e.stage==="windup"?2.5:4;
-        trace(ctx,s,cam);ctx.globalAlpha=e.stage==="windup"?.14+.18*(1-e.timer/attack.windup):(typeof BossVFX!=='undefined'&&BossVFX.enabled?.18:.52);ctx.fill();ctx.globalAlpha=.95;ctx.stroke();
+        if(typeof CombatReadability!=='undefined')CombatReadability.warning(ctx,()=>trace(ctx,s,cam),s,cam,e.stage==='windup'?1-e.timer/attack.windup:1,Game.state.map.zone,e.config.color);
+        else{trace(ctx,s,cam);ctx.globalAlpha=e.stage==="windup"?.14+.18*(1-e.timer/attack.windup):(typeof BossVFX!=='undefined'&&BossVFX.enabled?.18:.52);ctx.fill();ctx.globalAlpha=.95;ctx.stroke();}
         if(attack.id==="beam") {
           const progress=e.stage==="windup"?0:attack.age/attack.duration;
           trace(ctx,{...s,angle:attack.startAngle+Math.min(1,progress+.22/.9)*.9*attack.sweepDirection},cam);

@@ -90,8 +90,10 @@ These broader story visuals remain outside the boss encounter pass:
 
 - Dedicated rivers of ash and fields of impaled demons. Existing Hell terrain
   still uses its lava/scorch materials and shared ruins.
-- Authored cinematic depictions of villagers disappearing and Seraneth’s
-  visibly altered return. These beats currently appear in dialogue/ending text.
+- Longer cinematic sequences beyond the compact, skippable scenes now shown on
+  the first Weeping Marsh visit and the “Give to the Warden” ending. These scenes
+  use the existing painted characters, mist, and an altered Seraneth silhouette;
+  reduced motion disables their walking movement.
 
 ## Regression checks
 

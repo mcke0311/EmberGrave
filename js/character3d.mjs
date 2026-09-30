@@ -2,11 +2,11 @@
    Three.js is pinned in vendor/three. Coordinates: Y up, character faces +Z. */
 import * as THREE from './vendor/three/three.module.min.js';
 import {CLASS_STYLES,ARMOR_FAMILIES} from './character_catalog3d.mjs';
-import {createWeapon,createWearable,createArmorDetails,disposeObject,rod} from './character_equipment3d.mjs?v=7';
-import {surfaceMaterial,disposeMaterials} from './character_materials3d.mjs';
-import {armorPalette,armorRank} from './character_armor3d.mjs?v=4';
+import {createWeapon,createWearable,createArmorDetails,disposeObject,rod} from './character_equipment3d.mjs?v=8';
+import {surfaceMaterial,disposeMaterials} from './character_materials3d.mjs?v=2';
+import {armorPalette,armorRank} from './character_armor3d.mjs?v=5';
 import {CLASS_ANIMATIONS,classPoseAt,sampleHumanoid,smooth} from './character_animation3d.mjs?v=11';
-import {createWildshape} from './character_forms3d.mjs?v=10';
+import {createWildshape} from './character_forms3d.mjs?v=11';
 import {shiftLayers,applyShiftPose,drawShiftEffect} from './character_wildshape3d.mjs';
 export {createWildshapeController} from './character_wildshape3d.mjs';
 export {createAnimationController} from './character_motion3d.mjs?props=1';
@@ -23,7 +23,7 @@ export function createCharacter(classId='emberwitch') {
   const bones = [], joints = {}, rest = {};
   const material = (color, extra = {}) => new THREE.MeshStandardMaterial({color, roughness: .83, ...extra});
   const materials = {
-    skin: material(profile.skin), hair: material(profile.hair), hairLight: material(profile.hair),
+    skin: surfaceMaterial(profile.skin,'skin',{bumpScale:.0003}), hair: surfaceMaterial(profile.hair,'fur'), hairLight: surfaceMaterial(profile.hair,'fur'),
     cloth: surfaceMaterial(profile.cloth,'cloth'), lining: surfaceMaterial(profile.lining,'cloth'), dark: surfaceMaterial('#25252b','cloth'),
     leather: surfaceMaterial('#3a2b24','leather'), gold: surfaceMaterial(profile.trim,'metal',{metalness:.65,roughness:.55}),
     steel: material('#6e7d8c', {metalness:.7, roughness:.46}),
@@ -436,7 +436,7 @@ export function createCharacterRenderer({size=384,classId='emberwitch',presentat
   const camera=new THREE.OrthographicCamera(-span/2,span/2,span/2,-span/2,.01,30);
   const target=new THREE.Vector3(0,presentation?1:.83,0);
   camera.position.set(0,target.y+(presentation?1.8:5),presentation?10:Math.sqrt(75));camera.lookAt(target);
-  scene.add(new THREE.HemisphereLight('#bccbd4','#28231f',1.65));
+  const ambient=new THREE.HemisphereLight('#bccbd4','#28231f',1.3);scene.add(ambient);
   const key=new THREE.DirectionalLight('#f3dcc0',2.7);key.position.set(-3,5,5);scene.add(key);
   const rim=new THREE.DirectionalLight('#8eabc2',1.8);rim.position.set(3,2,-4);scene.add(rim);
   // The selection portrait has a physical floor, visible from its lower camera.
@@ -462,7 +462,16 @@ export function createCharacterRenderer({size=384,classId='emberwitch',presentat
   ]){const card=new THREE.Mesh(new THREE.BoxGeometry(...dimensions),new THREE.MeshBasicMaterial({color}));card.position.set(...position);studio.add(card);}
   let pmrem=new THREE.PMREMGenerator(renderer);
   let environment=pmrem.fromScene(studio,.06,.1,20,{size:128});
-  scene.environment=environment.texture;scene.environmentIntensity=.65;
+  scene.environment=environment.texture;scene.environmentIntensity=.46;
+  let regionKey=null;
+  function setRegion(zone){
+    if(presentation)return;
+    const id=(zone?.id||'')+' '+(zone?.parentZone||''),act=zone?.act||0;
+    const region=/north|frost|mine|shard|freeze|korvath/.test(id)?'north':/marsh|crypt|mire|choir|greywater/.test(id)?'marsh':/desert|sand|khal|tomb|azram/.test(id)?'sand':/cathedral|malthoron|archangel/.test(id)?'cathedral':act===5||/cinder|infernal|vethriss/.test(id)?'cinder':'default';
+    if(regionKey===region)return;regionKey=region;
+    const palettes={north:['#afc6d8','#333843','#e4d5bf','#849cc1'],marsh:['#b5c2b0','#242d28','#ddd3ae','#7eaaa4'],sand:['#d4c7b0','#493525','#efd4a5','#9999b3'],cathedral:['#b8b8d2','#262434','#d5c8ad','#9494bf'],cinder:['#c9aea5','#352329','#e0b68d','#9a828c'],default:['#bccbd4','#28231f','#e7d6ba','#8eabc2']};
+    const [sky,ground,sun,edge]=palettes[region];ambient.color.set(sky);ambient.groundColor.set(ground);key.color.set(sun);rim.color.set(edge);key.intensity=2.1;rim.intensity=1.15;
+  }
   const models=new Map(),baseScales=new WeakMap();let model=null;
   function setClass(id,form=null){const key=form||id;if(!models.has(key)){const next=form?createWildshape(form):createCharacter(id);models.set(key,next);baseScales.set(next,next.root.scale.clone());scene.add(next.root);}if(model)model.root.visible=false;model=models.get(key);model.root.visible=true;}
   setClass(classId);
@@ -540,5 +549,5 @@ export function createCharacterRenderer({size=384,classId='emberwitch',presentat
     size=next;renderer.setSize(size,size,false);anchor.x=(origin.x+1)*size/2;anchor.y=(1-origin.y)*size/2;
   }
   function dispose(){renderer.domElement.removeEventListener('webglcontextlost',onLost);renderer.domElement.removeEventListener('webglcontextrestored',onRestored);models.forEach(m=>m.dispose());environment.dispose();pmrem.dispose();disposeObject(studio);if(pedestal)disposeObject(pedestal);renderer.dispose();renderer.forceContextLoss();}
-  return {setResolution,renderer,scene,camera,get model(){return model;},setClass,anchor,render,presentationBounds,draw,projectileOrigin,effectAnchors,dispose,get lost(){return lost;}};
+  return {setRegion,setResolution,renderer,scene,camera,get model(){return model;},setClass,anchor,render,presentationBounds,draw,projectileOrigin,effectAnchors,dispose,get lost(){return lost;}};
 }

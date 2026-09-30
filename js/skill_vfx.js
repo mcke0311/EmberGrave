@@ -470,13 +470,14 @@ wildkeeper_2_6 fire apexform`;
     const r=fieldRecipe(f);if(!r||!enabled)return false;
     const col=palettes[r.material],[x,y]=project({x:f.x,y:f.y,z:terrain(f.x,f.y,f.surfaceId)},cam),rad=(f.radius||1)*32;
     const life=Math.min(1,(f.ttl??1)/.55),seed=r.seed;
-    c.save();c.globalAlpha*=life;
+    const crowd=Game.state.players?.length>1?.68:1;
+    c.save();c.globalAlpha*=life*crowd;
     if(ground){
       if(['groundfield','rain','outbreak','totem','banner','meteorfall','cyclone'].includes(f.type)){
         const rr=f.type==='outbreak'?(f.r||.1)*32:rad;
-        glow(c,r,x,y,rr*2.25,rr*1.05,.16);
+        glow(c,r,x,y,rr*2.25,rr*1.05,.09*crowd);
         if(!['cyclone','meteorfall'].includes(f.type)){
-          c.strokeStyle=col[1];c.globalAlpha*=.45;c.lineWidth=1.3;c.beginPath();c.ellipse(x,y,rr,rr*.5,0,0,TAU);c.stroke();c.globalAlpha=life;
+          c.strokeStyle=col[1];c.globalAlpha*=.45;c.lineWidth=1.3;c.beginPath();c.ellipse(x,y,rr,rr*.5,0,0,TAU);c.stroke();c.globalAlpha=life*crowd;
           for(let i=0;i<16;i++){const a=i*TAU/16;line(c,[[x+Math.cos(a)*(rr-3),y+Math.sin(a)*(rr-3)*.5],[x+Math.cos(a)*(rr+2),y+Math.sin(a)*(rr+2)*.5]],col[0],1,.35);}
         }
       }
@@ -492,8 +493,8 @@ wildkeeper_2_6 fire apexform`;
         else if(f.fieldKind==='caltrop'){for(let j=0;j<3;j++)line(c,[[px-5,py+2],[px,py-6],[px+4,py+3]],col[j],1.1,.9);}
         else if(f.fieldKind==='quake'){const h=3+Math.max(0,Math.sin(phase*3))*12;shard(c,px,py-h,5+q*8,-Math.PI/2,col);line(c,[[px-10,py+4],[px-3,py],[px+5,py+2],[px+12,py-4]],col[2],2,.7);}
         else { // smoke and miasma leave silhouettes visible through moving wisps.
-          const w=24+q*24;c.globalAlpha=life*(f.fieldKind==='smoke'?.23:.17);c.drawImage(stamp(r.material,true),px-w/2+Math.sin(phase)*8,py-w*.45-Math.sin(phase*.7)*5,w,w*.7);
-          if(f.fieldKind!=='smoke'&&i%4===0){c.strokeStyle=col[1];c.lineWidth=1;c.beginPath();c.arc(px,py-8-(phase%1)*9,2+q*2,0,TAU);c.stroke();}c.globalAlpha=life;
+          const w=24+q*24;c.globalAlpha=life*crowd*(f.fieldKind==='smoke'?.23:.17);c.drawImage(stamp(r.material,true),px-w/2+Math.sin(phase)*8,py-w*.45-Math.sin(phase*.7)*5,w,w*.7);
+          if(f.fieldKind!=='smoke'&&i%4===0){c.strokeStyle=col[1];c.lineWidth=1;c.beginPath();c.arc(px,py-8-(phase%1)*9,2+q*2,0,TAU);c.stroke();}c.globalAlpha=life*crowd;
         }
       }
     }else if(f.type==='firewall'){
@@ -530,7 +531,7 @@ wildkeeper_2_6 fire apexform`;
         for(let i=0;i<3;i++){c.beginPath();c.ellipse(x,y-22,14,5+i*4,now+i,0,TAU);c.stroke();}lightning(c,r,x-12,y-25,x+12,y-17,seed,now,1.5);
       }else{
         const h=70+(f.radius||1)*12;
-        for(let band=0;band<8;band++){const u=band/7,rr=rad*(.15+u*.42),yy=y-u*h,sway=Math.sin(now*5-u*4)*7;c.strokeStyle=col[1];c.lineWidth=4+u*3;c.globalAlpha=life*(.12+u*.04);c.beginPath();c.ellipse(x+sway,yy,rr,rr*.34,0,now*6+u*3,now*6+u*3+Math.PI*1.65);c.stroke();c.globalAlpha=life*.7;for(let j=0;j<2;j++){const a=now*8+u*5+j*Math.PI;shard(c,x+sway+Math.cos(a)*rr,yy+Math.sin(a)*rr*.34,1.8+u*2,a,col);}}
+        for(let band=0;band<8;band++){const u=band/7,rr=rad*(.15+u*.42),yy=y-u*h,sway=Math.sin(now*5-u*4)*7;c.strokeStyle=col[1];c.lineWidth=4+u*3;c.globalAlpha=life*crowd*(.12+u*.04);c.beginPath();c.ellipse(x+sway,yy,rr,rr*.34,0,now*6+u*3,now*6+u*3+Math.PI*1.65);c.stroke();c.globalAlpha=life*crowd*.7;for(let j=0;j<2;j++){const a=now*8+u*5+j*Math.PI;shard(c,x+sway+Math.cos(a)*rr,yy+Math.sin(a)*rr*.34,1.8+u*2,a,col);}}
       }
     }else if(f.type==='meteorfall'){
       const k=clamp(1-f.ttl/f.maxTtl),fall=250*(1-k),px=x-46*(1-k),py=y-fall;

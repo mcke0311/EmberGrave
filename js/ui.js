@@ -330,6 +330,7 @@ const UI = (() => {
     const p = Game.state.player;
     if (!p.quickSlots) p.quickSlots = [null, null, null, null];
     const id = p.quickSlots[i];
+    if(id&&Game.options.directCast)return Game.directCast(i);
     if(typeof Coop!=="undefined"&&Coop.active){if(id)Coop.submit({type:"bind",slot:"R",skill:id});else CoopUI.skillPick("Q"+i);return;}
     if (id && (id === "basic" || p.skills[id] > 0)) { p.skillR = id; refreshHUD(); Sfx.play("click"); }
     else openSkillPick("Q" + i);
@@ -1607,7 +1608,7 @@ const UI = (() => {
   }
 
   /* ---------- Forge Altar (crafting) ---------- */
-  let forgeSlots = [null, null, null, null];
+  let forgeSlots = [null, null, null, null], precisionIndex=0;
   function returnForgeItems() {
     if(!Game.state?.player){forgeSlots=[null,null,null,null];return;}
     if(coopItems()){forgeSlots=[null,null,null,null];return;}
@@ -1645,21 +1646,34 @@ const UI = (() => {
       if(it){slot.appendChild(SpriteAssets.itemIcon(it));if(it.count>1)slot.appendChild(textNode("span","stk",it.count));slot.addEventListener("mouseenter",()=>{const r=slot.getBoundingClientRect();showItemTooltip(it,r.right,r.top);});slot.addEventListener("mouseleave",hideTooltip);}
       else slot.appendChild(textNode("span","slot-number",String(i+1)));row.appendChild(slot);
     }el.appendChild(row);
+    if(forgeRecipe==='precision'&&check.gear.length===1){
+      const it=check.gear[0];precisionIndex=it.precision?.index??Math.min(precisionIndex,Math.max(0,it.affixes.length-1));
+      const label=textNode('label','pack-help','Property to reforge'),select=document.createElement('select');select.id='precisionAffix';select.setAttribute('aria-label','Property to reforge');
+      it.affixes.forEach((a,i)=>{const o=textNode('option','',(DATA.STAT_TEXT[a.stat]?.(a.val)||a.stat+' '+a.val)+(it.precision?.index===i?' · locked slot':''));o.value=i;o.disabled=!Items.precisionPool(it,i).length;select.append(o);});
+      select.value=precisionIndex;select.addEventListener('change',()=>{precisionIndex=+select.value;renderForge();});label.append(select);el.append(label);
+      const cost=Items.precisionCost(it);el.append(textNode('p','recipe-outcome',cost.toLocaleString()+' gold · You have '+Game.state.player.gold.toLocaleString()));
+      check.valid=check.valid&&Game.state.player.gold>=cost&&Items.precisionPool(it,precisionIndex).length>0;
+    }
     const needs=textNode("ul","recipe-requirements");for(const [valid,label] of check.requirements)needs.appendChild(textNode("li",valid?"met":"missing",(valid?"✓ ":"○ ")+label));el.appendChild(needs);
     el.appendChild(textNode("div","recipe-outcome",recipe.outcome));
-    const status=textNode("p",check.valid?"forge-status ready":"forge-status",check.valid?"Offering ready. Strike when you are ready.":"Place the required materials from your pack into the offering slots.");status.setAttribute("role","status");el.appendChild(status);
+    const status=textNode("p",check.valid?"forge-status ready":"forge-status",check.valid?"Offering ready. Strike when you are ready.":forgeRecipe==='precision'?"Supply the listed materials and gold, then choose an eligible property.":"Place the required materials from your pack into the offering slots.");status.setAttribute("role","status");el.appendChild(status);
     const strike=actionButton("Strike the anvil",tryTransmute,"manage-primary");strike.id="forgeCraft";strike.disabled=!check.valid;el.appendChild(strike);
     el.appendChild(textNode("p","pack-help","Click a material to carry it. Closing the altar returns your offering to your pack; overflow is placed at your feet."));
   }
   function tryTransmute() {
-    if(coopItems())return InventoryActions.submit({type:'craft',recipe:forgeRecipe,items:forgeSlots.filter(Boolean).map(it=>it._coopId)});
+    if(coopItems())return InventoryActions.submit({type:'craft',recipe:forgeRecipe,affixIndex:precisionIndex,items:forgeSlots.filter(Boolean).map(it=>it._coopId)});
     const check=ForgeRecipes.evaluate(forgeSlots,forgeRecipe);if(!check.valid)return;
     const {glyphs,gear,pots,total,upgrade}=check;let result,leftovers=[];
-    if(forgeRecipe === "glyph")result=Items.reforgeGlyph(glyphs[0]);
+    if(forgeRecipe==='precision'){
+      const it=gear[0],cost=Items.precisionCost(it);if(Game.state.player.gold<cost||!Items.precisionReforge(it,precisionIndex))return;
+      Game.state.player.gold-=cost;result=it;
+    }
+    else if(forgeRecipe === "glyph")result=Items.reforgeGlyph(glyphs[0]);
     else if(forgeRecipe === "temper" || forgeRecipe === "reweave") {result=gear[0];Items.rollAffixesOnto(result,forgeRecipe === "temper"?"enhanced":"rare");result.identified=true;}
     else {result=Items.makeConsumable(upgrade,1);let remaining=total-3;while(remaining>0){const n=Math.min(10,remaining);leftovers.push(Items.makeConsumable(pots[0].baseId,n));remaining-=n;}}
     const outputs=[result,...leftovers];forgeSlots=[null,null,null,null];outputs.slice(0,4).forEach((it,i)=>forgeSlots[i]=it);
     for(const extra of outputs.slice(4))if(!Items.autoPlace(Game.state.player.inv,extra)){Game.dropAtFeet(extra);msg("Extra draughts were placed at your feet.","#d8b860");}
+    if(forgeRecipe==='precision'){returnForgeItems();Game.saveGame();}
     Sfx.play("forge");msg("Forged: "+itemName(result),Items.RARITY_COLOR[result.rarity]);
     Game.addNova(Game.state.player.x,Game.state.player.y,1.2,"#ff9c50");renderForge();refreshGrids();refreshHUD();
   }
@@ -1781,6 +1795,7 @@ const UI = (() => {
     el.classList.remove("hidden");
     el.classList.add("waypoint-panel");
     header(el, asCaravan ? "THE CARAVAN" : "THE WAYSTONES", "center");
+    if(typeof UpgradeUI!=="undefined"&&Game.state.map.id==='frosthaven')el.append(actionButton("Sunderstone Echoes"+(Echoes.unlocked(Game.state)?"":" · Complete the saga"),()=>UpgradeUI.echoes(),"manage-primary"));
     const here = Game.state.map.id;
     const groups = DATA.ACTS;
     const attuned=id=>(Game.state.shrines || []).includes(id);
@@ -2028,7 +2043,7 @@ const UI = (() => {
       }
       return;
     }
-    const toggles = tab === "gameplay" ? [["leftClickMove", "Left-click: move only", "Move and interact without attacking. Hold Shift and left-click to attack in place."]] : [
+    const toggles = tab === "gameplay" ? [["directCast", "F1–F4: cast directly", "Cast toward the cursor. A press in the final 150 ms of an attack queues one skill; off retains classic skill selection."],["leftClickMove", "Left-click: move only", "Move and interact without attacking. Hold Shift and left-click to attack in place."]] : [
       ["dmgNumbers", "Player damage numbers", "Show floating damage numbers from your attacks."],
       ["minionDamage", "Minion damage numbers", "Show your minions’ damage independently of player damage numbers."],
       ["monResist", "Monster resistances", "Show resistances when you point at a monster."],
@@ -2081,7 +2096,7 @@ const UI = (() => {
       ["Skills & potions", [
         [["Right-click"], "Use your secondary skill. Hold to repeat supported attacks."],
         [["1", "–", "4"], "Drink the potion in the matching belt slot."],
-        [["F1", "–", "F4"], "Select an assigned right-click skill. Empty slots open the skill picker."],
+        [["F1", "–", "F4"], "Select an assigned skill, or cast toward the cursor with direct casting enabled. Empty slots open the skill picker."],
         [["Skill icons"], "Click a skill icon on the action bar to change its assignment."]]],
       ["Panels & interactions", [
         [["I"], "Inventory"], [["C"], "Character"], [["T", "/", "S"], "Talents"], [["Q"], "Quests"], [["M"], "Show or hide the map overlay."],
@@ -2208,7 +2223,7 @@ const UI = (() => {
 
   /* ================================================== in-game video cinematic */
   let videoOn = false;
-  function cinematicActive() { return videoOn || !els.cinematic.classList.contains("hidden"); }
+  function cinematicActive() { return (typeof UpgradeUI!=="undefined"&&UpgradeUI.active) || videoOn || !els.cinematic.classList.contains("hidden"); }
   /* play a full-screen video, pausing the game; fade in, then fade back and call onDone */
   function playVideo(src, onDone, coopLocal=false) {
     if(typeof Coop!=="undefined"&&Coop.active&&!coopLocal)return Coop.cinematic(src,onDone);
@@ -2287,9 +2302,10 @@ const UI = (() => {
       list.appendChild(b);
     }
   }
-  function showEnding(key) {
+  function showEnding(key,afterScene=false) {
+    if(key==='give'&&!afterScene&&typeof UpgradeUI!=='undefined'){Game.recordEnding(key);els.cinematic.classList.add('hidden');UpgradeUI.story('warden',()=>showEnding(key,true));return;}
     const e = ENDINGS[key];
-    const el = els.cinematic;
+    const el = els.cinematic;el.classList.remove("hidden");
     el.innerHTML = `<div class="cinwrap"><div class="cintext"></div><div class="cintitle">THE EMBERGRAVE SAGA</div><div class="cinskip">click to return to the title</div></div>`;
     const txt = el.querySelector(".cintext"), titleEl = el.querySelector(".cintitle"), skip = el.querySelector(".cinskip");
     txt.innerHTML = `<span class="ln em">${e.name}</span>` + e.lines.map(l => `<span class="ln">${l}</span>`).join("") +

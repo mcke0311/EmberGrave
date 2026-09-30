@@ -5,6 +5,7 @@ const ForgeRecipes = (() => {
     {id:"glyph", name:"Reforge a glyph", needs:"3 identical glyphs", outcome:"A random different glyph of the same rarity. The offering is consumed."},
     {id:"temper", name:"Temper equipment", needs:"1 common weapon or armor + 1 glyph", outcome:"The equipment gains random enhanced powers. The glyph is consumed."},
     {id:"reweave", name:"Reweave a rare", needs:"1 identified rare item + 3 glyphs", outcome:"The rare item's powers are rolled again. All three glyphs are consumed."},
+    {id:"precision", name:"Precision reforge", needs:"1 identified rare + 1 ordinary glyph + gold", outcome:"Reroll one property. The first choice locks its slot for future precision reforges. Other properties and sockets stay intact. Rolls may be lower."},
     {id:"potion", name:"Distill draughts", needs:"3 matching lesser or greater Life / Aether draughts", outcome:"One stronger draught. Unused quantities are returned."},
   ];
   function evaluate(slots, id) {
@@ -14,7 +15,8 @@ const ForgeRecipes = (() => {
     const conditions = {
       glyph: [[glyphs.length === 3,"Three glyphs"],[glyphs.length > 0 && glyphs.every(g=>g.glyph === glyphs[0].glyph),"Matching glyphs"],[items.length === 3 && glyphs.length === 3,"Only the required materials"]],
       temper: [[gear.length === 1 && gear[0].rarity === "common","One common equipment item"],[glyphs.length === 1,"One glyph"],[items.length === 2 && gear.length === 1 && glyphs.length === 1,"Only the required materials"]],
-      reweave: [[gear.length === 1 && gear[0].rarity === "rare" && gear[0].identified,"One identified rare item"],[glyphs.length === 3,"Three glyphs"],[items.length === 4 && gear.length === 1 && glyphs.length === 3,"Only the required materials"]],
+      reweave: [[gear.length === 1 && gear[0].rarity === "rare" && gear[0].identified,"One identified rare item"],[!gear[0]?.precision,"No precision lock (locked items use Precision reforge)"],[glyphs.length === 3,"Three glyphs"],[items.length === 4 && gear.length === 1 && glyphs.length === 3,"Only the required materials"]],
+      precision: [[gear.length===1&&gear[0].rarity==="rare"&&gear[0].identified&&gear[0].affixes?.length>0,"One identified rare with properties"],[glyphs.length===1&&!DATA.GLYPHS[glyphs[0].glyph]?.unique,"One ordinary glyph"],[items.length===2&&glyphs.length===1&&gear.length===1,"Only the required materials"]],
       potion: [[total >= 3,"At least three draughts"],[pots.length > 0 && pots.every(i=>i.baseId === pots[0].baseId),"Matching draughts"],[!!upgrade,"A stronger recipe exists"],[items.length === pots.length,"Only draughts in the offering"]],
     };
     const requirements = conditions[id] || [];

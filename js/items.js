@@ -197,6 +197,21 @@ const Items = (() => {
     return it;
   }
 
+  function precisionCost(it){return Math.min(10000000,Math.max(100,(it?.ilvl||1)*35)*(1+(it?.precision?.rolls||0))**2);}
+  function precisionPool(it,index){
+    if(it?.kind!=='gear'||it.rarity!=='rare'||!it.identified||!Number.isInteger(index)||!it.affixes?.[index]||it.precision&&it.precision.index!==index)return [];
+    const b=DATA.BASES[it.baseId];if(!b)return [];
+    const other=it.affixes.filter((_,i)=>i!==index);
+    const used=new Set(other.flatMap(af=>DATA.AFFIXES.filter(a=>a.stat===af.stat||a.tiers.some(t=>t.mods?.some(m=>m.stat===af.stat))).map(a=>a.group||a.stat)));
+    return DATA.AFFIXES.filter(a=>a.stat&&!a.proc&&!used.has(a.group||a.stat)&&(a.slots.includes('any')||a.slots.includes(b.slot))&&(!a.cats||a.cats.includes(b.cat))&&a.tiers.some(t=>t.ilvl<=it.ilvl&&!t.mods));
+  }
+  function precisionReforge(it,index){
+    const pool=precisionPool(it,index);if(!pool.length)return false;
+    const a=U.pick(pool),tiers=a.tiers.filter(t=>t.ilvl<=it.ilvl&&!t.mods),t=Math.random()<.6?tiers[tiers.length-1]:U.pick(tiers);
+    const affix={stat:a.stat,val:U.ri(t.min,t.max)};if(a.perLevel)affix.perLevel=true;
+    it.affixes[index]=affix;it.precision={index,rolls:(it.precision?.rolls||0)+1};return true;
+  }
+
   function rollGear(ilvl, rarity, opts) {
     opts = opts || {};
     /* choose a base near the target ilvl: prefer a band so high-level heroes get
@@ -436,6 +451,7 @@ const Items = (() => {
       lines.push({ t: "In armor: " + Object.entries(g.arm).map(([k, v]) => DATA.STAT_TEXT[k](v)).join(", "), c: "glyph" });
       lines.push({ t: "Pick up on cursor, click a socketed item", c: "base" });
     }
+    if(it.precision&&it.identified)lines.push({t:'Precision reforge: property '+(it.precision.index+1)+' is locked for future reforges · '+it.precision.rolls+' used',c:'base'});
     return lines;
   }
 
@@ -563,7 +579,7 @@ const Items = (() => {
     RARITY_COLOR, RARITY_ORDER, DROP_CONFIG,
     fromBase, makeConsumable, makeUnique, makeSetItem, makeGlyph, makeCharm, makeJewel, makeUniqueCharm, makeUniqueJewel, rollGear, rollDrops, rollRarity,
     uniqueMultiplier, rollGlyph, reforgeGlyph, eligibleSocketables,
-    rollAffixesOnto, socketGlyph,
+    precisionCost, precisionPool, precisionReforge, rollAffixesOnto, socketGlyph,
     value, sellValue, statLines,
     makeGrid, fits, itemAt, place, remove, autoPlace, canAutoPlace, tidy,
     EQUIP_SLOTS, slotFor, canEquip, effReqLvl, vendorStock,
