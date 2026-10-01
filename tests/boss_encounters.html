@@ -26,7 +26,7 @@ try {
   win=frame.contentWindow;const doc=win.document;
   for(let i=0;i<600&&!doc.querySelector('#titleMenu button');i++){if(doc.getElementById('appFatal'))throw Error(doc.getElementById('appFatal').textContent);await delay(30);}
   api=win.eval('({DATA,Game,UI,Monster,SpriteAssets,BossEncounters,BossLoadouts,BossDriver,MapGen,TerrainNavigation,Items,U,BossVFX})');game=api.Game;ui=api.UI;
-  win.eval('Sfx').setVol('master',0);game.firstSightCutscene=()=>{};
+  win.eval('Sfx').setVol('master',0);game.firstSightCutscene=()=>{};game.bossCinematic=()=>false;game.options.cinematics=false;
   const test=game.__bossReview;
   for(const [id,d] of Object.entries(api.DATA.BOSS_ENCOUNTERS)){const o=document.createElement('option');o.value=id;o.textContent=api.DATA.ENEMIES[id].name;document.getElementById('boss').append(o);}
   for(const c of Object.values(api.DATA.CLASSES).filter(c=>c.playable)){const o=document.createElement('option');o.value=c.id;o.textContent=c.name;document.getElementById('hero').append(o);}
