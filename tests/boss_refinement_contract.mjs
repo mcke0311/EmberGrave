@@ -27,10 +27,11 @@ for(const dt of [1/120,1/60,1/30,.05]){
 }
 
 {
- const {s,p,m,e}=setup('empty_archangel',1);e.start('descent',p);const landing={...e.attack.shapes[0]};
+ const {s,p,m,e}=setup('empty_archangel',1);e.start('descent',p);
+ e.execute();tick(s,.25);const dive={...e.attack.shapes[0]};
  p.x+=4;e.execute();tick(s,.25);
  ok(e.attack.id==='cross'&&e.stage==='windup','descent did not chain cross');
- close(m.x,landing.x,'landing drifted');close(e.attack.shapes[0].x,m.x-6,'cross not based on landing');
+ close(m.x,dive.x,'landing drifted');close(e.attack.shapes[0].x,m.x-6,'cross not based on landing');
  p.x=m.x;p.y=m.y;let hits=0;p.takeDamage=()=>hits++;e.execute();
  ok(hits===1,'cross intersection applied multiple hits');
  e.execute();ok(hits===1,'same instantaneous strike repeated damage');
@@ -40,7 +41,7 @@ for(const dt of [1/120,1/60,1/30,.05]){
  const {p,m,e}=setup('mire_mother',1);
  e.pools=[{x:m.x+4,y:m.y,radius:1.6},{x:m.x+7,y:m.y,radius:1.6}];e.start('grasp',p);
  ok(e.pools.length===1&&e.pools[0].x===m.x+7,'Grasp did not clear entire overlapping pool');
- close(e.attack.recovery,2.25,'Grasp recovery');e.recover(2.25);
+ close(e.attack.recovery,2.25,'ordinary Grasp recovery');e.floodPending=true;e.start('grasp',p);e.recover(4);
  ok(e.statusText().includes('+25%'),'exposed shard not communicated');
  const hp=m.hp;m.takeDamage(100,p,null,'shadow');close(hp-m.hp,125,'shard bonus changed');
 }
@@ -57,8 +58,8 @@ for(const phase of [1,2]){
 
 for(const difficulty of [0,1,2]){
  const {s,p,m,e}=fresh('malthoron',123,'vanguard',difficulty);e.active=true;const base=e.base.armor;
- e.phaseChange(1);close(m.def.armor,base,'armor stays until counter');e.completeMechanic();close(m.def.armor,base*.7,'first armor loss');e.phaseChange(1);e.completeMechanic();close(m.def.armor,base*.7,'armor compounded');
- e.phaseChange(2);e.completeMechanic();close(m.def.armor,base*.4,'second armor loss');
+ e.phaseChange(1);close(m.def.armor,base,'armor stays until souls are defeated');for(const soul of [...e.owned])soul.takeDamage(1e9,p);close(m.def.armor,base*.7,'first armor loss');
+ e.phaseChange(2);for(const soul of [...e.owned])soul.takeDamage(1e9,p);close(m.def.armor,base*.4,'second armor loss');
  for(const direction of [1,-1]){
   e.start('beam',p);const a=e.attack,start=a.startAngle;
   ok(a.sweepDirection===direction,'beam direction did not alternate');e.execute();tick(s,1);
@@ -69,7 +70,7 @@ for(const difficulty of [0,1,2]){
 
 function echoes(){const f=setup('vethriss',1);f.e.start('decoys',f.p);f.e.execute();tick(f.s,.25);return f;}
 {
- const {s,p,e}=echoes();ok(e.attack.id==='echoes'&&e.attack.windup===1.25,'illusion channel warning absent');
+ const {s,p,e}=echoes();ok(e.attack.id==='echoes'&&e.attack.windup===1.5,'illusion channel warning absent');
  const decoys=e.owned.filter(m=>!m.dead),removed=decoys[0].echoLane;
  decoys[0].takeDamage(1e9,p);ok(e.attack.shapes.length===2&&!e.attack.shapes.includes(removed),'dead illusion retained lane');
  for(const d of decoys.slice(1))d.takeDamage(1e9,p);

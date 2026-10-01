@@ -1,0 +1,179 @@
+{
+  "browser": "154.0.8037.58",
+  "errors": [],
+  "encounters": [
+    {
+      "boss": "korvath",
+      "width": 844,
+      "reducedMotion": true,
+      "seconds": 237.5,
+      "won": true,
+      "hp": 170.49865223821132,
+      "healingLeft": 5,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 3700
+        },
+        {
+          "phase": 1,
+          "time": 124.5,
+          "hp": 1850
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "mire_mother",
+      "width": 844,
+      "reducedMotion": true,
+      "seconds": 180.5,
+      "won": true,
+      "hp": 203.25941689887458,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 6200
+        },
+        {
+          "phase": 1,
+          "time": 78,
+          "hp": 3410.0000000000005
+        },
+        {
+          "phase": 2,
+          "time": 135,
+          "hp": 1550
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "azram",
+      "width": 844,
+      "reducedMotion": true,
+      "seconds": 210,
+      "won": true,
+      "hp": 372,
+      "healingLeft": 4,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 5500
+        },
+        {
+          "phase": 1,
+          "time": 67.5,
+          "hp": 3300
+        },
+        {
+          "phase": 2,
+          "time": 139.5,
+          "hp": 1650
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "empty_archangel",
+      "width": 844,
+      "reducedMotion": true,
+      "seconds": 206,
+      "won": true,
+      "hp": 386,
+      "healingLeft": 3,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 7100
+        },
+        {
+          "phase": 1,
+          "time": 93,
+          "hp": 3550
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "malthoron",
+      "width": 844,
+      "reducedMotion": true,
+      "seconds": 214.5,
+      "won": true,
+      "hp": 420,
+      "healingLeft": 5,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 8000
+        },
+        {
+          "phase": 1,
+          "time": 48.5,
+          "hp": 5280
+        },
+        {
+          "phase": 2,
+          "time": 119,
+          "hp": 2640
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boss": "vethriss",
+      "width": 844,
+      "reducedMotion": true,
+      "seconds": 239.5,
+      "won": true,
+      "hp": 490,
+      "healingLeft": 6,
+      "aetherLeft": 0,
+      "events": [
+        {
+          "phase": 0,
+          "time": 1,
+          "hp": 11500
+        },
+        {
+          "phase": 1,
+          "time": 61,
+          "hp": 8049.999999999999
+        },
+        {
+          "phase": 2,
+          "time": 162.5,
+          "hp": 4024.9999999999995
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "integration": [
+    {
+      "touch": true,
+      "queued": true,
+      "counterComplete": true
+    },
+    {
+      "touch": true,
+      "reducedMotion": true,
+      "checks": [
+        "touch selects and damages a bound soul with a basic melee attack",
+        "touch selects the real body and interrupts the illusion under reduced motion"
+      ]
+    }
+  ]
+}

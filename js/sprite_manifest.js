@@ -42327,6 +42327,66 @@ DATA.SPRITE_MANIFEST = {
       "revision": "675a8458cdb5",
       "src": "assets/sprites/packed/world/props/board.webp"
     },
+    "world.prop.boss_entrance_azram": {
+      "anchor": [
+        114,
+        225
+      ],
+      "bundle": "arena:azram",
+      "kind": "static",
+      "revision": "9ad9dab79ae3",
+      "src": "assets/sprites/packed/world/props/boss_entrance_azram.webp"
+    },
+    "world.prop.boss_entrance_empty_archangel": {
+      "anchor": [
+        117,
+        221
+      ],
+      "bundle": "arena:empty_archangel",
+      "kind": "static",
+      "revision": "9ce14a31960b",
+      "src": "assets/sprites/packed/world/props/boss_entrance_empty_archangel.webp"
+    },
+    "world.prop.boss_entrance_korvath": {
+      "anchor": [
+        104,
+        225
+      ],
+      "bundle": "arena:korvath",
+      "kind": "static",
+      "revision": "788f1606d83d",
+      "src": "assets/sprites/packed/world/props/boss_entrance_korvath.webp"
+    },
+    "world.prop.boss_entrance_malthoron": {
+      "anchor": [
+        117,
+        220
+      ],
+      "bundle": "arena:malthoron",
+      "kind": "static",
+      "revision": "951e0b6cd2b2",
+      "src": "assets/sprites/packed/world/props/boss_entrance_malthoron.webp"
+    },
+    "world.prop.boss_entrance_mire_mother": {
+      "anchor": [
+        107,
+        225
+      ],
+      "bundle": "arena:mire_mother",
+      "kind": "static",
+      "revision": "4c19ea9c88b1",
+      "src": "assets/sprites/packed/world/props/boss_entrance_mire_mother.webp"
+    },
+    "world.prop.boss_entrance_vethriss": {
+      "anchor": [
+        117,
+        225
+      ],
+      "bundle": "arena:vethriss",
+      "kind": "static",
+      "revision": "86b6701bb6d3",
+      "src": "assets/sprites/packed/world/props/boss_entrance_vethriss.webp"
+    },
     "world.prop.brazier": {
       "anchor": [
         19,
@@ -59804,6 +59864,12 @@ DATA.SPRITE_MANIFEST = {
       "barrel": "world.prop.barrel",
       "beacon": "world.prop.beacon",
       "board": "world.prop.board",
+      "boss_entrance_azram": "world.prop.boss_entrance_azram",
+      "boss_entrance_empty_archangel": "world.prop.boss_entrance_empty_archangel",
+      "boss_entrance_korvath": "world.prop.boss_entrance_korvath",
+      "boss_entrance_malthoron": "world.prop.boss_entrance_malthoron",
+      "boss_entrance_mire_mother": "world.prop.boss_entrance_mire_mother",
+      "boss_entrance_vethriss": "world.prop.boss_entrance_vethriss",
       "brazier": "world.prop.brazier",
       "cart": "world.prop.cart",
       "cathedral_arrival": "world.prop.cathedral_arrival",

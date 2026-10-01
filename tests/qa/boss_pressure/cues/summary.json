@@ -1,0 +1,1055 @@
+{
+  "checks": 224,
+  "cases": [
+    {
+      "id": "korvath",
+      "phase": 0,
+      "width": 1920,
+      "attack": "charge",
+      "label": "Oathbreaker Pursuit · 1.2s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "kind": "line",
+          "x": 32,
+          "y": 25,
+          "angle": 0.5191461142465229,
+          "width": 1.7,
+          "length": 8.06225774829855
+        },
+        {
+          "kind": "circle",
+          "x": 39,
+          "y": 29,
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        50,
+        95
+      ]
+    },
+    {
+      "id": "korvath",
+      "phase": 1,
+      "width": 1920,
+      "attack": "charge",
+      "label": "Oathbreaker Pursuit · 1.2s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "kind": "line",
+          "x": 32,
+          "y": 25,
+          "angle": 0.5191461142465229,
+          "width": 1.7,
+          "length": 8.06225774829855
+        },
+        {
+          "kind": "circle",
+          "x": 39,
+          "y": 29,
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        50,
+        95
+      ]
+    },
+    {
+      "id": "mire_mother",
+      "phase": 0,
+      "width": 1920,
+      "attack": "grasp",
+      "label": "The Pursuing Grasp · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ]
+    },
+    {
+      "id": "mire_mother",
+      "phase": 1,
+      "width": 1920,
+      "attack": "grasp",
+      "label": "The Pursuing Grasp · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ]
+    },
+    {
+      "id": "mire_mother",
+      "phase": 2,
+      "width": 1920,
+      "attack": "grasp",
+      "label": "The Pursuing Grasp · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ]
+    },
+    {
+      "id": "azram",
+      "phase": 0,
+      "width": 1920,
+      "attack": "chains",
+      "label": "The Throne Reclaims · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        100,
+        170
+      ]
+    },
+    {
+      "id": "azram",
+      "phase": 1,
+      "width": 1920,
+      "attack": "chains",
+      "label": "The Throne Reclaims · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        100,
+        170
+      ]
+    },
+    {
+      "id": "azram",
+      "phase": 2,
+      "width": 1920,
+      "attack": "chains",
+      "label": "The Throne Reclaims · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        100,
+        170
+      ]
+    },
+    {
+      "id": "empty_archangel",
+      "phase": 0,
+      "width": 1920,
+      "attack": "descent",
+      "label": "Empty Benediction · 2/2 · 1.1s",
+      "cooldown": 6.549999999999951,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.3
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ]
+    },
+    {
+      "id": "empty_archangel",
+      "phase": 1,
+      "width": 1920,
+      "attack": "descent",
+      "label": "Empty Benediction · 2/3 · 1.1s",
+      "cooldown": 6.549999999999951,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.3
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ]
+    },
+    {
+      "id": "malthoron",
+      "phase": 0,
+      "width": 1920,
+      "attack": "chains",
+      "label": "Quieting Chains · Reclaim · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        120,
+        200
+      ]
+    },
+    {
+      "id": "malthoron",
+      "phase": 1,
+      "width": 1920,
+      "attack": "chains",
+      "label": "Quieting Chains · Reclaim · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        120,
+        200
+      ]
+    },
+    {
+      "id": "malthoron",
+      "phase": 2,
+      "width": 1920,
+      "attack": "chains",
+      "label": "Quieting Chains · Reclaim · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        120,
+        200
+      ]
+    },
+    {
+      "id": "vethriss",
+      "phase": 0,
+      "width": 1920,
+      "attack": "light",
+      "label": "Borrowed Light · Veiled Step · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        140,
+        230
+      ]
+    },
+    {
+      "id": "vethriss",
+      "phase": 1,
+      "width": 1920,
+      "attack": "lunge",
+      "label": "Serpent's Pursuit · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "kind": "line",
+          "x": 32,
+          "y": 25,
+          "angle": 0.5191461142465229,
+          "width": 1.6,
+          "length": 8.06225774829855
+        },
+        {
+          "kind": "circle",
+          "x": 39,
+          "y": 29,
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        140,
+        230
+      ]
+    },
+    {
+      "id": "vethriss",
+      "phase": 2,
+      "width": 1920,
+      "attack": "chains",
+      "label": "Malthoron · Quieting Chains · Reclaim · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        140,
+        230
+      ]
+    },
+    {
+      "id": "korvath",
+      "phase": 0,
+      "width": 3840,
+      "attack": "charge",
+      "label": "Oathbreaker Pursuit · 1.2s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "kind": "line",
+          "x": 32,
+          "y": 25,
+          "angle": 0.5191461142465229,
+          "width": 1.7,
+          "length": 8.06225774829855
+        },
+        {
+          "kind": "circle",
+          "x": 39,
+          "y": 29,
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        50,
+        95
+      ]
+    },
+    {
+      "id": "korvath",
+      "phase": 1,
+      "width": 3840,
+      "attack": "charge",
+      "label": "Oathbreaker Pursuit · 1.2s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "kind": "line",
+          "x": 32,
+          "y": 25,
+          "angle": 0.5191461142465229,
+          "width": 1.7,
+          "length": 8.06225774829855
+        },
+        {
+          "kind": "circle",
+          "x": 39,
+          "y": 29,
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        50,
+        95
+      ]
+    },
+    {
+      "id": "mire_mother",
+      "phase": 0,
+      "width": 3840,
+      "attack": "grasp",
+      "label": "The Pursuing Grasp · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ]
+    },
+    {
+      "id": "mire_mother",
+      "phase": 1,
+      "width": 3840,
+      "attack": "grasp",
+      "label": "The Pursuing Grasp · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ]
+    },
+    {
+      "id": "mire_mother",
+      "phase": 2,
+      "width": 3840,
+      "attack": "grasp",
+      "label": "The Pursuing Grasp · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ]
+    },
+    {
+      "id": "azram",
+      "phase": 0,
+      "width": 3840,
+      "attack": "chains",
+      "label": "The Throne Reclaims · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        100,
+        170
+      ]
+    },
+    {
+      "id": "azram",
+      "phase": 1,
+      "width": 3840,
+      "attack": "chains",
+      "label": "The Throne Reclaims · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        100,
+        170
+      ]
+    },
+    {
+      "id": "azram",
+      "phase": 2,
+      "width": 3840,
+      "attack": "chains",
+      "label": "The Throne Reclaims · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        100,
+        170
+      ]
+    },
+    {
+      "id": "empty_archangel",
+      "phase": 0,
+      "width": 3840,
+      "attack": "descent",
+      "label": "Empty Benediction · 2/2 · 1.1s",
+      "cooldown": 6.549999999999951,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.3
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ]
+    },
+    {
+      "id": "empty_archangel",
+      "phase": 1,
+      "width": 3840,
+      "attack": "descent",
+      "label": "Empty Benediction · 2/3 · 1.1s",
+      "cooldown": 6.549999999999951,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.3
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ]
+    },
+    {
+      "id": "malthoron",
+      "phase": 0,
+      "width": 3840,
+      "attack": "chains",
+      "label": "Quieting Chains · Reclaim · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        120,
+        200
+      ]
+    },
+    {
+      "id": "malthoron",
+      "phase": 1,
+      "width": 3840,
+      "attack": "chains",
+      "label": "Quieting Chains · Reclaim · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        120,
+        200
+      ]
+    },
+    {
+      "id": "malthoron",
+      "phase": 2,
+      "width": 3840,
+      "attack": "chains",
+      "label": "Quieting Chains · Reclaim · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        120,
+        200
+      ]
+    },
+    {
+      "id": "vethriss",
+      "phase": 0,
+      "width": 3840,
+      "attack": "light",
+      "label": "Borrowed Light · Veiled Step · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        140,
+        230
+      ]
+    },
+    {
+      "id": "vethriss",
+      "phase": 1,
+      "width": 3840,
+      "attack": "lunge",
+      "label": "Serpent's Pursuit · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "kind": "line",
+          "x": 32,
+          "y": 25,
+          "angle": 0.5191461142465229,
+          "width": 1.6,
+          "length": 8.06225774829855
+        },
+        {
+          "kind": "circle",
+          "x": 39,
+          "y": 29,
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        140,
+        230
+      ]
+    },
+    {
+      "id": "vethriss",
+      "phase": 2,
+      "width": 3840,
+      "attack": "chains",
+      "label": "Malthoron · Quieting Chains · Reclaim · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        140,
+        230
+      ]
+    },
+    {
+      "id": "korvath",
+      "phase": 0,
+      "width": 844,
+      "attack": "charge",
+      "label": "Oathbreaker Pursuit · 1.2s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "kind": "line",
+          "x": 32,
+          "y": 25,
+          "angle": 0.5191461142465229,
+          "width": 1.7,
+          "length": 8.06225774829855
+        },
+        {
+          "kind": "circle",
+          "x": 39,
+          "y": 29,
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        50,
+        95
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "korvath",
+      "phase": 1,
+      "width": 844,
+      "attack": "charge",
+      "label": "Oathbreaker Pursuit · 1.2s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "kind": "line",
+          "x": 32,
+          "y": 25,
+          "angle": 0.5191461142465229,
+          "width": 1.7,
+          "length": 8.06225774829855
+        },
+        {
+          "kind": "circle",
+          "x": 39,
+          "y": 29,
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        50,
+        95
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "mire_mother",
+      "phase": 0,
+      "width": 844,
+      "attack": "grasp",
+      "label": "The Pursuing Grasp · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "mire_mother",
+      "phase": 1,
+      "width": 844,
+      "attack": "grasp",
+      "label": "The Pursuing Grasp · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "mire_mother",
+      "phase": 2,
+      "width": 844,
+      "attack": "grasp",
+      "label": "The Pursuing Grasp · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "azram",
+      "phase": 0,
+      "width": 844,
+      "attack": "chains",
+      "label": "The Throne Reclaims · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        100,
+        170
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "azram",
+      "phase": 1,
+      "width": 844,
+      "attack": "chains",
+      "label": "The Throne Reclaims · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        100,
+        170
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "azram",
+      "phase": 2,
+      "width": 844,
+      "attack": "chains",
+      "label": "The Throne Reclaims · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        100,
+        170
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "empty_archangel",
+      "phase": 0,
+      "width": 844,
+      "attack": "descent",
+      "label": "Empty Benediction · 2/2 · 1.1s",
+      "cooldown": 6.549999999999951,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.3
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "empty_archangel",
+      "phase": 1,
+      "width": 844,
+      "attack": "descent",
+      "label": "Empty Benediction · 2/3 · 1.1s",
+      "cooldown": 6.549999999999951,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.3
+        }
+      ],
+      "damage": [
+        90,
+        150
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "malthoron",
+      "phase": 0,
+      "width": 844,
+      "attack": "chains",
+      "label": "Quieting Chains · Reclaim · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        120,
+        200
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "malthoron",
+      "phase": 1,
+      "width": 844,
+      "attack": "chains",
+      "label": "Quieting Chains · Reclaim · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        120,
+        200
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "malthoron",
+      "phase": 2,
+      "width": 844,
+      "attack": "chains",
+      "label": "Quieting Chains · Reclaim · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        120,
+        200
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "vethriss",
+      "phase": 0,
+      "width": 844,
+      "attack": "light",
+      "label": "Borrowed Light · Veiled Step · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        140,
+        230
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "vethriss",
+      "phase": 1,
+      "width": 844,
+      "attack": "lunge",
+      "label": "Serpent's Pursuit · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "kind": "line",
+          "x": 32,
+          "y": 25,
+          "angle": 0.5191461142465229,
+          "width": 1.6,
+          "length": 8.06225774829855
+        },
+        {
+          "kind": "circle",
+          "x": 39,
+          "y": 29,
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        140,
+        230
+      ],
+      "touchEscape": true
+    },
+    {
+      "id": "vethriss",
+      "phase": 2,
+      "width": 844,
+      "attack": "chains",
+      "label": "Malthoron · Quieting Chains · Reclaim · 1.1s",
+      "cooldown": 9.799999999999997,
+      "shapes": [
+        {
+          "x": 39,
+          "y": 29,
+          "kind": "circle",
+          "radius": 2.2
+        }
+      ],
+      "damage": [
+        140,
+        230
+      ],
+      "touchEscape": true
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

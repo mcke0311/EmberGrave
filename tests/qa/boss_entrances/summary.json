@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "bosses": 6,
+  "newSprites": 6,
+  "sourceAndPrompts": "assets/sprites_src/gameplay_art_authored/boss_entrances/",
+  "tool": "built-in image_gen",
+  "arenaAndDoorChecks": 6254,
+  "seedsPerBoss": 32,
+  "browserRoundTrips": 18,
+  "sealedDoorTouchEscape": true,
+  "cathedralCompatibilityChecks": 15500,
+  "preservedCampaignMaps": 36,
+  "savedRemainsLayouts": 30,
+  "cooperativePartySizes": [
+    2,
+    3,
+    4
+  ],
+  "frameCostCases": 12,
+  "worstMeasuredFrameCostIncreasePercent": 8.33,
+  "baselineArchive": "tests/fixtures/boss_entrances_before.json.gz",
+  "cacheBuild": "embergrave-coop-8"
+}

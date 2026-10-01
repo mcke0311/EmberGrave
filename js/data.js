@@ -1169,7 +1169,7 @@ DATA.ENEMIES = {
     speed:1.6, atkRate:0.55, range:1.2, sight:8, big:1.35, sprite:"brute",
     pal:{ skin:"#9ab0bc", trim:"#5a3a2a", eye:"#9fe0ff" }, sounds:"brute",
     flavor:"sworn to a mountain that no longer stands" },
-  korvath: { id:"korvath", name:"Korvath, the Oathbreaker", family:"barbarian", lvl:8, hp:3700, dmg:[10,19], armor:10, def:40, xp:1300,
+  korvath: { id:"korvath", name:"Korvath, the Oathbreaker", family:"barbarian", lvl:8, hp:3700, dmg:[50,95], armor:10, def:40, xp:1300,
     speed:2.0, atkRate:0.8, range:1.8, sight:22, boss:"act", big:1.9, sprite:"ironlord", weapon:"none",
     pal:{ bone:"#c8c1ad", steel:"#8a8a90", iron:"#16161c", eye:"#ff8a24", fur:"#070707", armor:"#16161c", trim:"#34343e" },
     slam:{ cd:7, radius:3.0, mult:1.4 }, voice:{ pitch:80, formant:560, rate:6 },
@@ -1287,7 +1287,7 @@ DATA.ENEMIES = {
     pal:{ bone:"#e8d880", trim:"#8a6a20", eye:"#ff9040", armor:"#c0a850" }, sounds:"bone",
     aggroLines:["I remember being worshipped.","This tomb was meant to hold a god."], title:"who remembers being a god" },
 
-  mire_mother: { id:"mire_mother", name:"The Mire Mother", family:"swampdemon", lvl:14, hp:5600, dmg:[18,30], armor:14, def:40, xp:5200,
+  mire_mother: { id:"mire_mother", name:"The Mire Mother", family:"swampdemon", lvl:14, hp:6200, dmg:[90,150], armor:14, def:40, xp:5200,
     speed:1.3, atkRate:0.7, range:1.8, sight:24, boss:"act", big:2.4, sprite:"boss",
     pal:{ bone:"#6a7a52", trim:"#2a3820", eye:"#c0ff60", armor:"#3a4a30" },
     slam:{ cd:6, radius:3.6, mult:1.4 }, summons:{ id:["drowned_dead","bog_bloat"], count:3, cd:12 }, poison:8,
@@ -1317,7 +1317,7 @@ DATA.ENEMIES = {
   dune_shade: { id:"dune_shade", name:"Dune Shade", family:"demon", lvl:16, hp:48, dmg:[12,22], armor:4, def:65, xp:130,
     speed:2.8, atkRate:1.1, range:0.9, sight:13, teleports:{ cd:4, minDist:4 }, sprite:"robed",
     pal:{ robe:"#2e2820", trim:"#8a7040", skin:"#1a160e", eye:"#ffce70" }, sounds:"metal" },
-  azram: { id:"azram", name:"Azram the Gilded", family:"undead", lvl:17, hp:5500, dmg:[20,34], armor:18, def:55, xp:7600,
+  azram: { id:"azram", name:"Azram the Gilded", family:"undead", lvl:17, hp:5500, dmg:[100,170], armor:18, def:55, xp:7600,
     speed:1.9, atkRate:0.8, range:1.6, sight:26, boss:"act", big:2.0, sprite:"boss",
     pal:{ bone:"#e0c870", trim:"#8a6a20", eye:"#ff4030", armor:"#b89a4a" },
     slam:{ cd:7, radius:3.2, mult:1.4 }, summons:{ id:["sand_raider","tomb_guard"], count:3, cd:12 },
@@ -1343,7 +1343,7 @@ DATA.ENEMIES = {
     speed:2.6, atkRate:1.0, range:0.9, sight:14, teleports:{ cd:4, minDist:4 }, sprite:"robed",
     pal:{ robe:"#26222e", trim:"#7868a0", skin:"#16141c", eye:"#d0c0ff" }, sounds:"metal",
     flavor:"wears a face you almost recognize" },
-  empty_archangel: { id:"empty_archangel", name:"The Empty Archangel", family:"demon", lvl:18, hp:6500, dmg:[18,30], armor:14, def:60, xp:5400,
+  empty_archangel: { id:"empty_archangel", name:"The Empty Archangel", family:"demon", lvl:18, hp:7100, dmg:[90,150], armor:14, def:60, xp:5400,
     speed:2.4, atkRate:0.9, range:1.6, sight:24, boss:"mini", big:2.0, sprite:"boss",
     pal:{ bone:"#e8e4d0", trim:"#9088b0", eye:"#c080ff", armor:"#c8c4b8" },
     volley:{ cd:5, count:5, spread:0.8 }, slam:{ cd:8, radius:3, mult:1.4 },
@@ -1351,7 +1351,7 @@ DATA.ENEMIES = {
     aggroLines:["I remember being trusted.","This armor is all that is left of her.","I have her voice. I do not have her mercy."],
     phases:[ { at:0.5, msg:["THE FALSE ANGEL UNFOLDS","Sunderstone light pours from the seams"], set:{ atkMul:1.3, dmgMul:1.2, tint:"#c080ff", volley:{ cd:3.5, count:7, spread:1.1 } } } ],
     sounds:"boss", title:"The Warden's Voice, and Nothing Else" },
-  malthoron: { id:"malthoron", name:"Malthoron, the Hollow King", family:"demon", lvl:20, hp:8000, dmg:[24,40], armor:20, def:60, xp:11000,
+  malthoron: { id:"malthoron", name:"Malthoron, the Hollow King", family:"demon", lvl:20, hp:8000, dmg:[120,200], armor:20, def:60, xp:11000,
     speed:2.0, atkRate:0.85, range:1.7, sight:26, boss:"act", big:2.1, sprite:"boss",
     pal:{ bone:"#3a3440", trim:"#8a7440", eye:"#c080ff", armor:"#5a5260" },
     slam:{ cd:7, radius:3.4, mult:1.5 }, voice:{ pitch:88, formant:600, rate:5.5 },
@@ -1379,7 +1379,7 @@ DATA.ENEMIES = {
     summons:{ id:["ash_fiend","cinder_hound"], count:2, cd:11 }, big:1.3, sprite:"robed",
     pal:{ robe:"#3a1812", trim:"#c06020", skin:"#5a2418", eye:"#ffa030" }, sounds:"human" },
   /* the mastermind — three phases */
-  vethriss: { id:"vethriss", name:"Vethriss, the Veiled Lord", family:"hellspawn", lvl:25, hp:11500, dmg:[28,46], armor:22, def:70, xp:20000,
+  vethriss: { id:"vethriss", name:"Vethriss, the Veiled Lord", family:"hellspawn", lvl:25, hp:11500, dmg:[140,230], armor:22, def:70, xp:20000,
     speed:2.2, atkRate:0.9, range:1.6, sight:30, boss:"act", big:2.0, sprite:"boss",
     pal:{ bone:"#e8e4d0", trim:"#9088b0", eye:"#80e0ff", armor:"#c8c4b8" },
     voice:{ pitch:120, formant:820, rate:6 },
@@ -2968,6 +2968,14 @@ DATA.WORLD_SPRITE_SOURCES = {
   prop_mine_crystal: { src: "assets/sprites_src/gameplay_art/world/props/mine_crystal.png", raw: true },
   prop_mine_crystal_broken: { src: "assets/sprites_src/gameplay_art/world/props/mine_crystal_broken.png", raw: true },
   /* End Act I habitats artwork. */
+  /* Boss destination entrance art. */
+  prop_boss_entrance_korvath: { src: "assets/sprites_src/gameplay_art/world/props/boss_entrance_korvath.png", raw: true },
+  prop_boss_entrance_mire_mother: { src: "assets/sprites_src/gameplay_art/world/props/boss_entrance_mire_mother.png", raw: true },
+  prop_boss_entrance_azram: { src: "assets/sprites_src/gameplay_art/world/props/boss_entrance_azram.png", raw: true },
+  prop_boss_entrance_empty_archangel: { src: "assets/sprites_src/gameplay_art/world/props/boss_entrance_empty_archangel.png", raw: true },
+  prop_boss_entrance_malthoron: { src: "assets/sprites_src/gameplay_art/world/props/boss_entrance_malthoron.png", raw: true },
+  prop_boss_entrance_vethriss: { src: "assets/sprites_src/gameplay_art/world/props/boss_entrance_vethriss.png", raw: true },
+  /* End boss destination entrance art. */
   /* Dedicated boss arena art. */
   prop_arena_korvath_0: { src: "assets/sprites_src/gameplay_art/world/props/arena_korvath_0.png", raw: true },
   prop_arena_korvath_1: { src: "assets/sprites_src/gameplay_art/world/props/arena_korvath_1.png", raw: true },
@@ -4117,7 +4125,8 @@ DATA.BOSS_ARENAS = Object.freeze(Object.fromEntries([
   ['vethriss','throne','The Last Veil','octagon',15,14,'Shard anchor',3,'#95ffe0',5],
 ].map(([bossId,parentZone,name,shape,rx,ry,deviceLabel,deviceCount,color,act])=>{
   const zone='arena_'+bossId;
-  const devices=Object.freeze((deviceCount===2?[[-8,0],[8,0]]:[[-8,0],[8,0],[0,-8]]).map(([x,y],i)=>Object.freeze({id:bossId+'_device_'+i,x,y,label:deviceLabel})));
+  const role=bossId==='azram'?'mirror':bossId==='korvath'?'chargeTarget':'scenery';
+  const devices=Object.freeze((deviceCount===2?[[-8,0],[8,0]]:[[-8,0],[8,0],[0,-8]]).map(([x,y],i)=>Object.freeze({id:bossId+'_device_'+i,x,y,role,label:role==='chargeTarget'?'Oath charge target':deviceLabel})));
   DATA.ZONES[zone]={...DATA.ZONES[parentZone],id:zone,name,boss:bossId,arena:bossId,parentZone,campaignZone:parentZone,artZone:parentZone,shifting:false,spawns:[],dark:.35};
   DATA.ZONES[parentZone].arenaEntrance=bossId;
   DATA.ACTS.find(a=>a.id===act).zones.push(zone);
@@ -4126,7 +4135,7 @@ DATA.BOSS_ARENAS = Object.freeze(Object.fromEntries([
   if(moved.length)DATA.STORY_OBJECTS[parentZone]=DATA.STORY_OBJECTS[parentZone].filter(o=>!moved.includes(o));
   const center=Object.freeze({x:32,y:25}),entrance=Object.freeze({x:32,y:25+ry+5});
   const boundary=Object.freeze({shape,rx,ry,cx:center.x,cy:center.y,x0:32-rx,x1:32+rx,y0:25-ry,y1:25+ry});
-  return [bossId,Object.freeze({bossId,zone,parentZone,name,shape,rx,ry,center,entrance,returnAnchor:'from_arena',boundary,deviceLabel,devices,color,act})];
+  return [bossId,Object.freeze({bossId,zone,parentZone,name,shape,rx,ry,center,entrance,entranceVisual:'boss_entrance_'+bossId,returnAnchor:'from_arena',boundary,deviceLabel,devices,color,act})];
 })));
 DATA.campaignZone = zone => DATA.ZONES[zone]?.campaignZone || zone;
 DATA.arenaContains = (a,x,y,margin=0) => {

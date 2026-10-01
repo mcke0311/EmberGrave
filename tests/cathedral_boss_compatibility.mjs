@@ -15,18 +15,17 @@ for(const id of ['empty_archangel','malthoron']){
   const hp=m.hp;m.takeDamage(1e9,p);ok(m.hp===hp,'prerequisite blocks damage');s.quests[quest]={state:'done'};
   current.tick(s,.1,dt);ok(e.active&&e.arena.sealed,'threshold activates arena');
   for(let phase=1;phase<e.config.phases.length;phase++){
-   m.takeDamage(1e9,p);current.tick(s,dt,dt);ok(e.phase===phase&&e.mechanic,'threshold requires counter');
-   const held=m.hp;m.takeDamage(1e9,p);m.loseHealth(1e9);ok(m.hp===held,'protected form blocks all damage');
+   m.takeDamage(1e9,p);current.tick(s,dt,dt);ok(e.phase===phase&&!e.mechanic?.blocksDamage,'threshold changes form without a device gate');
+   const held=m.hp;m.takeDamage(1,p,null,'shadow');m.loseHealth(1);ok(m.hp<held,'combat form accepts direct and DoT damage');
    if(id==='malthoron')ok(m.def.armor===e.base.armor*(phase===1?1:.7),'armor remains chained');
-   for(const device of e.arena.devices.filter(d=>d.required)){
-    Object.assign(p,{x:device.x,y:device.y+1});ok(e.interactDevice(device,p),'required device works');
-   }
-   ok(!e.mechanic&&e.stage==='recovery'&&e.recoveryDuration>=2,'counter opens damage window');
+   if(id==='malthoron')for(const soul of [...e.owned])soul.takeDamage(1e9,p);
+   else{e.start('descent',p);m.loseHealth(e.mechanic.goal);}
+   ok(!e.mechanic&&e.stage==='recovery'&&e.recoveryDuration>=2,'combat counter opens damage window');
    if(id==='malthoron')ok(m.def.armor===e.base.armor*(phase===1?.7:.4),'counter drops scaled armor');
    for(let t=0;t<10;t+=dt){current.tick(s,dt,dt);ok(Number.isFinite(m.x+m.y+m.hp+e.timer),'valid ongoing encounter');}
   }
   e.reset();ok(m.hp===m.maxHp&&e.phase===0&&m.def.armor===e.base.armor&&!e.arena.sealed,'complete retry reset');
  }
 }
-fs.writeFileSync('tests/qa/cathedral/enemy_boss_compatibility.json',JSON.stringify({status:'PASS',checks,method:'Existing Act IV story prerequisites, lore and thresholds; required devices, difficulty-scaled armor, combat and retry at 120/30/20 Hz.'},null,2)+'\n');
+fs.writeFileSync('tests/qa/cathedral/enemy_boss_compatibility.json',JSON.stringify({status:'PASS',checks,method:'Existing Act IV story prerequisites, lore and thresholds; optional combat counters, difficulty-scaled armor, combat and retry at 120/30/20 Hz.'},null,2)+'\n');
 console.log('PASS '+checks+' Act IV boss compatibility checks');

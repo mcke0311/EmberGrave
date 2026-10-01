@@ -88,8 +88,12 @@ Quests are handed out by the people and postings of each camp (look for the
 bobbing **!** / **?**). Bosses fight in **phases** — shedding armor, changing shape,
 gaining new attacks at health thresholds. The six main encounters have dedicated
 arenas with new environment art, 96 existing authored boss poses, clear warnings,
-required device counters and recovery openings. Crossing the threshold seals the
-fight; death offers an entrance retry or a return to town. Read the
+distinct combat counters, Azram's mirror puzzle and recovery openings. Their attacks
+deal five times the previous damage, and warned interception moves punish sustained
+retreat. Korvath's oath targets recharge in 24 seconds. Their entrances now use
+destination-specific art set against the room walls, with clear walking approaches
+and safe returns. Choose **Campaign doorway** in the review to inspect them. Crossing
+the threshold seals the fight; death offers an entrance retry or a return to town. Read the
 [boss encounter guide](docs/BOSS_ENCOUNTERS.md), or play each fight with an
 isolated hero at `tests/boss_encounters.html`.
 

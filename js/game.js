@@ -1444,7 +1444,7 @@ const Game = (() => {
   function tryJump(point = null) {
     if(typeof Coop!=="undefined"&&Coop.active&&!Coop.authority)return Coop.submit({type:"jump",point:point||steeringPoint()});
     const p = state.player;
-    if (!p || p.dead || p.jumping || p.leaping || p.dashing || p.charging || p.spinning) return;
+    if (!p || p.dead || p.movementLocked() || p.jumping || p.leaping || p.dashing || p.charging || p.spinning) return;
     if (state.time < (p.jumpCdUntil || 0)) return;
     if (UI.anyOpen && UI.anyOpen()) return;
     const w = point || screenToWorld(mouse.x, mouse.y);
@@ -2665,6 +2665,16 @@ const Game = (() => {
     /* portals */
     const portalSpots = portalPositions();
     for (const ps of portalSpots) if (TerrainLayers.same(ps,state.player)&&test(ps.x, ps.y, 70, 30)) { hoverPortal = ps; return; }
+    // The painted boss doorway and its destination label are travel targets.
+    // This geometry is shared by mouse and touch picking.
+    for(const ex of state.map.exits){
+      if(ex.doorId&&state.map.bossArena?.sealed)continue;
+      const g=bossDoorGeometry(ex,cam);if(!g)continue;
+      if((mouse.x>=g.left&&mouse.x<=g.right&&mouse.y>=g.top&&mouse.y<=g.bottom)||
+        (g.showLabel&&Math.abs(mouse.x-g.x)<g.labelWidth/2&&mouse.y>g.labelY-16&&mouse.y<g.labelY+7)){
+        hoverExit=ex;return;
+      }
+    }
     /* Authored passages share their opening and label hit geometry with drawing. */
     for(const ex of state.map.exits){
       const th=state.map.thresholds?.find(t=>t.id===ex.thresholdId);
@@ -2710,6 +2720,7 @@ const Game = (() => {
     const wm = screenToWorld(mouse.x, mouse.y);
     if(!wm)return;
     for (const ex of state.map.exits) {
+      if(ex.doorId&&state.map.bossArena?.sealed)continue;
       if(ex.thresholdId&&state.map.thresholds?.some(t=>t.id===ex.thresholdId))continue;
       if (TerrainLayers.same(wm,ex)&&wm.x >= ex.x0 - 0.7 && wm.x <= ex.x1 + 0.7 && wm.y >= ex.y0 - 0.7 && wm.y <= ex.y1 + 0.7) { hoverExit = ex; return; }
     }
@@ -2729,6 +2740,15 @@ const Game = (() => {
       out.push({ x: state.actGate.x, y: state.actGate.y, gate: true, target: state.actGate.target });
     }
     return out;
+  }
+  function bossDoorGeometry(ex,cam){
+    if(!ex.doorId)return null;
+    const pr=state.map.props.find(p=>p.doorId===ex.doorId);if(!pr||pr.hidden||!TerrainLayers.same(pr,state.player))return null;
+    const f=propSpriteFrame(pr),scale=PropInteractions.scale(pr),anchorX=pr.flipX?f.sw-f.anchorX:f.anchorX;
+    const x=U.isoX(pr.x,pr.y)-cam.x,y=U.isoY(pr.x,pr.y)-cam.y-elevLift(pr.x,pr.y,pr.surfaceId);
+    return {x,y,left:x-anchorX*scale,right:x+(f.sw-anchorX)*scale,top:y-f.anchorY*scale,bottom:y+(f.sh-f.anchorY)*scale,
+      labelY:Math.max(22,y-f.anchorY*scale-14),labelWidth:Math.max(120,(ex.label||'Travel').length*8+30),
+      showLabel:ex===hoverExit||U.dist(state.player.x,state.player.y,pr.x,pr.y)<7};
   }
   function thresholdGeometry(th,ex,cam){
     const o=th.opening,x=U.isoX(o.x,o.y)-cam.x,y=U.isoY(o.x,o.y)-cam.y-((th.act===1||th.act===3||th.act===5)?surfaceLift(o.x,o.y,th.surfaceId??0):0);
@@ -2880,7 +2900,7 @@ const Game = (() => {
         let dmg = U.rf(tr.dmgLo, tr.dmgHi) * tr.mult;
         let crit = false;
         if (Math.random() * 100 < p.stats.critChance) { dmg *= p.stats.critDmg / 100; crit = true; }
-        const actual = p.withSkillSource(tr.skillId, () => p.snareHit(mon, dmg));
+        const actual = p.withSkillSource(tr.skillId, () => p.snareHit(mon, dmg, {periodic:true}));
         if(typeof SkillVFX!=='undefined')SkillVFX.scope(p,tr.skillId,()=>SkillVFX.hit(p,mon,tr.elem,crit));
         addFloat(mon.x, mon.y, Math.floor(actual), crit ? "#ffb030" : col, crit);
         if (tr.slowPct) mon.applySlow(tr.slowDur, tr.slowPct);
@@ -2928,7 +2948,7 @@ const Game = (() => {
     addNova(mon.x, mon.y, 2.5, "#c080e0");
     for (const m of TerrainLayers.targets(state.monsters)) {
       if (m.dead || !TerrainLayers.same(mon,m) || U.dist(mon.x, mon.y, m.x, m.y) > 2.5 + m.radius) continue;
-      o.spellHit(m, det, "shadow", {});
+      o.spellHit(m, det, "shadow", {periodic:true});
       if (m !== mon && !m.dead && !m._detonatingMark && !m.killMark) m.killMark = { owner:o, until: state.time + 3, amp: amp / 2, det: det / 2 };
     }
     } finally {if(mon.killMark===mark)mon.killMark=null;mon._detonatingMark=false;}
@@ -2942,7 +2962,7 @@ const Game = (() => {
     addNova(mon.x, mon.y, d.radius, "#9a40c0"); fx.shake = Math.max(fx.shake, 4);
     for (const m of TerrainLayers.targets(state.monsters)) {
       if (m.dead || U.dist(mon.x, mon.y, m.x, m.y) > d.radius + m.radius) continue;
-      o.spellHit(m, U.rf(d.dmgLo, d.dmgHi) * k, "shadow", {});
+      o.spellHit(m, U.rf(d.dmgLo, d.dmgHi) * k, "shadow", {periodic:true});
     }
     mon.doom = null;
   }
@@ -3097,9 +3117,13 @@ const Game = (() => {
         case "cyclone": updateCyclone(f, o, dt); break;
         case "wisp": updateWisp(f, o, dt); break;
       }};
-      const present=()=>typeof SkillVFX!=='undefined'?SkillVFX.scope(o,f.sourceSkill,runEffect):runEffect();
-      if (o.withSkillSource) o.withSkillSource(f.sourceSkill || "basic", runEffect, f);
-      else if(typeof SkillAudio!=='undefined')SkillAudio.scope(f.sourceSkill,{owner:o,emitter:f},present);else present();
+      const periodic=o._periodicHit;
+      o._periodicHit=periodic||['groundfield','totem','roamaoe','firewall','rain','cyclone','wisp','decoy','tripwire'].includes(f.type);
+      try{
+        const present=()=>typeof SkillVFX!=='undefined'?SkillVFX.scope(o,f.sourceSkill,runEffect):runEffect();
+        if (o.withSkillSource) o.withSkillSource(f.sourceSkill || "basic", runEffect, f);
+        else if(typeof SkillAudio!=='undefined')SkillAudio.scope(f.sourceSkill,{owner:o,emitter:f},present);else present();
+      }finally{o._periodicHit=periodic;}
     }
   }
   /* one flickering flame tongue rising from (px,py); layered calls build a fire */
@@ -3447,6 +3471,7 @@ const Game = (() => {
     const draws = [];
     if(m.campaignVisual)CampaignEnvironment.append(draws,m,cam,p,W,H);
     if(m.cathedral?.environment)CathedralEnvironment.append(draws,m,cam,p,W,H);
+    if(m.arenaVestibule)CathedralEnvironment.appendVestibule(draws,m,cam,p,W,H);
     if(m.boundaries)Act2Boundaries.append(draws,m,cam,p,W,H);
     if(m.act1Environment)Act1Environment.append(draws,m,cam,p,W,H);
     if(m.act3?.architecture)ImperialArchitecture.append(draws,m,cam,p,W,H);
@@ -4024,6 +4049,12 @@ const Game = (() => {
 
     /* ---- map exits: click-to-travel markers (ground ring + rising chevrons; brighter + labelled on hover) ---- */
     for (const ex of state.map.exits) {
+      const door=bossDoorGeometry(ex,cam);
+      if(door){
+        if(door.right<0||door.left>W||door.bottom<0||door.top-40>H)continue;
+        if(door.showLabel)nameplate('→ '+(ex.label||'Travel')+(state.map.bossArena?.sealed?' (sealed)':''),door.x,door.labelY,ex===hoverExit?'#fff0c5':'#d5d2ba');
+        continue;
+      }
       const th=state.map.thresholds?.find(t=>t.id===ex.thresholdId);
       if(th){
         const g=thresholdGeometry(th,ex,cam),hl=ex===hoverExit;
@@ -4845,7 +4876,7 @@ const Game = (() => {
     exploreT-=dt;if(exploreT<=0){exploreT=.25;explore();}updateBossEncounter();
   }
   function coopJump(p,point){
-    if(p.jumping||p.action||p.stunT>0||state.time<(p.jumpCdUntil||0)||!point)return;
+    if(p.movementLocked()||p.jumping||p.action||p.stunT>0||state.time<(p.jumpCdUntil||0)||!point)return;
     const d=U.dist(p.x,p.y,point.x,point.y)||.001;
     let distance=Math.min(4.2,d),dst=null;
     for(;distance>=.5;distance-=.5){const x=p.x+(point.x-p.x)/d*distance,y=p.y+(point.y-p.y)/d*distance;if(state.map.surfaceVersion?TerrainSurface.supported(state.map,x,y,p.radius):MapGen.walkable(state.map,x,y)){dst={x,y};break;}}

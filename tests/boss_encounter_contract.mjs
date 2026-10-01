@@ -19,7 +19,7 @@ for(const id of ids) {
   p.x=e.arena.cx-5;p.y=e.arena.cy-5;
   ok(JSON.stringify(e.attack.shapes)===locked,id+' warning followed player');
   tick(s,.2);ok(p.hp===hp,id+' dodging still took damage');
-  tick(s,.25);ok(e.stage==='recovery',id+' has no recovery');
+  tick(s,e.attack.windup+e.attack.duration-1.1+.05);ok(e.stage==='recovery',id+' has no recovery');
   tick(s,1);ok(e.stage==='recovery',id+' recovery too short');
   const defBefore=JSON.stringify(e.base);
   for(let phase=1;phase<e.config.phases.length;phase++){

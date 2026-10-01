@@ -2,7 +2,7 @@
 const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
 const selected=process.argv.find(x=>x.startsWith('--width='))?.slice(8),widths=selected?[+selected]:[1920,3840,844];
 const onlyBoss=process.argv.find(x=>x.startsWith('--boss='))?.slice(7);
-const out='tests/qa/boss_arenas';fs.mkdirSync(out,{recursive:true});
+const out=process.argv.find(x=>x.startsWith('--output-dir='))?.slice(13)||'tests/qa/boss_arenas';fs.mkdirSync(out,{recursive:true});
 (async()=>{
  const browser=await chromium.launch({channel:'chrome',headless:true,args:['--disable-background-timer-throttling']}),report={browser:browser.version(),errors:[],encounters:[],integration:[]};
  try{
@@ -30,13 +30,42 @@ const out='tests/qa/boss_arenas';fs.mkdirSync(out,{recursive:true});
    }
    if(width===844){
     const touch=await page.evaluate(async()=>{
-      const q=bossQA,{Game:G,U}=q.api,{boss:m,player:p}=await q.setup('mire_mother','vanguard',1);q.setPaused(true);G.debugFlags.god=true;
+      const q=bossQA,{Game:G,U}=q.api,{boss:m,player:p}=await q.setup('azram','vanguard',1);q.setPaused(true);G.debugFlags.god=true;
       const d=m.encounter.arena.devices.find(d=>d.required);p.x=d.x;p.y=d.y+2.5;G.__bossReview.updateCamera(5);q.render();
       const cam=G.__bossReview.camera,view=q.frame.contentWindow.document.getElementById('view'),r=view.getBoundingClientRect();
       G.touchTap(r.left+(U.isoX(d.x,d.y)-cam.x)*r.width/view.width,r.top+(U.isoY(d.x,d.y)-cam.y-60)*r.height/view.height);
-      const queued=p.command?.obj===d;q.advance(1.5,.025);
-      if(!queued||m.encounter.mechanic)throw Error('Tap did not walk to and activate marked sluice');return {touch:true,queued,counterComplete:true};
+      const queued=p.command?.obj===d;q.advance(.7,.025);G.__bossReview.updateCamera(5);q.render();
+      const nextCam=G.__bossReview.camera;
+      G.touchTap(r.left+(U.isoX(d.x,d.y)-nextCam.x)*r.width/view.width,r.top+(U.isoY(d.x,d.y)-nextCam.y-60)*r.height/view.height);
+      q.advance(4,.025);
+      if(!queued||m.encounter.mechanic?.blocksDamage)throw Error('Two taps did not walk to, turn and reflect the marked mirror');return {touch:true,queued,counterComplete:true};
     });report.integration.push(touch);
+    const combatTouch=await page.evaluate(async()=>{
+      const q=bossQA,{Game:G,SpriteAssets:S,U}=q.api,checks=[];
+      const tap=actor=>{
+        G.__bossReview.updateCamera(5);q.render();
+        const cam=G.__bossReview.camera,view=q.frame.contentWindow.document.getElementById('view'),rect=view.getBoundingClientRect();
+        const g=S.actorGeometry(actor.spriteOpts,actor.pose(),U.isoX(actor.x,actor.y)-cam.x,U.isoY(actor.x,actor.y)-cam.y,1.1);
+        for(let y=Math.max(1,g.top);y<Math.min(view.height-1,g.bottom);y+=5)for(let x=Math.max(1,g.left);x<Math.min(view.width-1,g.right);x+=5){
+          if(!S.hitTestGeometry(g,x,y))continue;
+          G.touchTap(rect.left+x*rect.width/view.width,rect.top+y*rect.height/view.height);
+          if(G.state.player.command?.target===actor)return true;
+        }
+        return false;
+      };
+      let v=await q.setup('malthoron','vanguard',1);q.setPaused(true);G.debugFlags.god=true;
+      const soul=v.boss.encounter.owned.find(m=>m.encounterKind==='boundSoul');
+      Object.assign(v.player,{x:soul.x+.8,y:soul.y+.8,skillL:'basic'});
+      const hp=soul.hp;if(!tap(soul))throw Error('Touch cannot select the bound soul');q.advance(.9,.025);
+      if(soul.hp>=hp)throw Error('Touch-selected soul cannot be hit in melee');checks.push('touch selects and damages a bound soul with a basic melee attack');
+      v=await q.setup('vethriss','vanguard',1);q.setPaused(true);G.debugFlags.god=true;
+      const e=v.boss.encounter;e.start('decoys',v.player);e.execute();q.advance(.25,.025);
+      Object.assign(v.player,{x:v.boss.x+.8,y:v.boss.y+.8,skillL:'basic'});
+      if(!tap(v.boss))throw Error('Touch cannot select the real serpent');q.advance(.9,.025);
+      if(e.mechanic?.kind==='illusion'||!e.counterEvents.some(c=>c.kind==='trueSerpent'))throw Error('Touch-selected basic attack did not identify the real serpent');
+      checks.push('touch selects the real body and interrupts the illusion under reduced motion');
+      return {touch:true,reducedMotion:true,checks};
+    });report.integration.push(combatTouch);
    }
    if(width===1920){
     const integration=await page.evaluate(async()=>{

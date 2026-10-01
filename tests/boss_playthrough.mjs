@@ -14,6 +14,7 @@ const god=process.argv.includes('--durability');
 const selected=process.argv.find(a=>a.startsWith('--boss='))?.split('=')[1];
 const chosenClass=process.argv.find(a=>a.startsWith('--class='))?.split('=')[1];
 const results=[];
+if(process.argv.includes('--trace')){const take=f.Player.prototype.takeDamage;f.Player.prototype.takeDamage=function(raw,source,elem){const e=source?.encounter;console.log('HERO HIT',JSON.stringify({time:G.state.time,raw,elem,boss:source?.defId,attack:e?.attack?.id,pressure:e?.attack?.pressure,stage:e?.stage,timer:e?.timer,x:this.x,y:this.y,hp:this.hp,action:this.action&&{state:this.action.state,t:this.action.t,dur:this.action.dur},command:this.command?.type}));return take.call(this,raw,source,elem);};}
 if(process.argv.includes('--trace')){const damage=f.Minion.prototype.takeDamage;f.Minion.prototype.takeDamage=function(n,o){if(G.state.time<35)console.log('PET HIT',G.state.time,n,o?.defId,this.hp);return damage.call(this,n,o);};const die=f.Minion.prototype.die;f.Minion.prototype.die=function(...args){if(G.state.time<35)console.log('PET DIED',G.state.time,this.hp,new Error().stack.split('\n').slice(1,4));return die.apply(this,args);};}
 for(const id of selected?[selected]:Object.keys(D.BOSS_ENCOUNTERS))for(const classId of chosenClass?[chosenClass]:Object.keys(D.PLAYER_STARTER_LOADOUTS)){
  const {s,p,m,e}=f.fresh(id,123,classId),spec=loadouts.apply(p,D.ENEMIES[id].lvl);
@@ -35,7 +36,7 @@ for(const id of selected?[selected]:Object.keys(D.BOSS_ENCOUNTERS))for(const cla
   if(p.hp<prevHp){damage+=prevHp-p.hp;hits++;}prevHp=p.hp;
  }
  phases.push({phase:lastPhase,seconds:+(t-phaseStart).toFixed(1)});
- const result={boss:id,class:classId,mode:god?'durability diagnostic':'ordinary playthrough',won:m.dead,dead:p.dead,seconds:+t.toFixed(1),bossRemaining:Math.round(m.hp/m.maxHp*100),playerHp:Math.round(p.hp),maxHp:p.stats.maxHp,damage:Math.round(damage),hits,healingLeft:p.belt[0]?.count||0,manaLeft:p.belt[1]?.count||0,phases,counters:pilot.counters,attacks:[...attacks],loadout:spec};
+ const result={boss:id,class:classId,mode:god?'durability diagnostic':'ordinary playthrough',won:m.dead,dead:p.dead,seconds:+t.toFixed(1),bossRemaining:Math.round(m.hp/m.maxHp*100),playerHp:Math.round(p.hp),maxHp:p.stats.maxHp,damage:Math.round(damage),hits,healingLeft:p.belt[0]?.count||0,manaLeft:p.belt[1]?.count||0,phases,counters:pilot.counters,pressureCasts:pilot.pressureCasts,attacks:[...attacks],loadout:spec};
  results.push(result);console.log(JSON.stringify(result));
 }
 fs.mkdirSync('tests/qa/bosses',{recursive:true});
