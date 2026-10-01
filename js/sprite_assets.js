@@ -350,6 +350,10 @@ const SpriteAssets = (() => {
   function tierOfBase(id) { const m = id && /_t(\d+)$/.exec(id); return m ? +m[1] : null; }
   function tierMat(t) { return TIER_MATS[Math.max(0, Math.min(TIER_MATS.length - 1, t | 0))]; }
 
+  const uniqueItemIds = new Set([
+    ...(DATA.UNIQUES || []), ...(DATA.UNIQUE_CHARMS || []), ...(DATA.UNIQUE_JEWELS || []),
+  ].map(def => def.id));
+
   function itemIconInfo(item) {
     const maps = manifest.maps;
     item = item || {};
@@ -363,7 +367,16 @@ const SpriteAssets = (() => {
     // Resolve saved items from their identity first. Stale icon fields must never
     // turn a jewel into a cache or let a rolled item level change its base art.
     const iconOnly = !base && !supply && !glyph;
-    if (item.uniqueId === "uj_oak") return { assetId: "ui.items.oak", index: 0 };
+    const uniqueId = uniqueItemIds.has(item.uniqueId) ? item.uniqueId : glyph?.unique ? glyph.id : null;
+    if (uniqueId) {
+      const art = maps.uniqueItemIcons?.[uniqueId], def = art && manifest.entries[art.assetId];
+      if (!art || !def || def.kind !== "atlas" || !Number.isInteger(def.cols) || def.cols < 1 || !Number.isInteger(def.rows) || def.rows < 1 || !Number.isInteger(art.index) || art.index < 0 || art.index >= def.cols * def.rows) {
+        throw new SpriteAssetError(`Missing unique item artwork: ${uniqueId}`, art?.assetId || "ui.items.uniques", def?.src);
+      }
+      // Identification, saved icon/color fields and affix rolls cannot replace
+      // the named item's own pixels. Unknown legacy IDs still use base art.
+      return { assetId: art.assetId, index: art.index };
+    }
     if (item.kind === "jewel" || item.baseId === "jewel" || (iconOnly && item.icon === "jewel")) return variant("jewel", item.jcol || "#b060d0");
     if (glyph || item.kind === "glyph" || (iconOnly && item.icon === "glyph")) return { assetId: "ui.items.misc", index: maps.miscIcons.glyph, tint: glyph?.color || "#7fd8c0" };
     if (item.kind === "charm" || item.charmSize || /^charm/.test(item.baseId || "")) {

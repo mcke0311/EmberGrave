@@ -13,6 +13,7 @@ const ok = (value, message) => { checks++; assert.ok(value, message); };
 const info = it => S.itemIconInfo(it);
 const signature = it => JSON.stringify(info(it));
 const report = [];
+const ordinaryBefore = JSON.parse(fs.readFileSync(new URL('fixtures/ordinary_item_art_before.json', import.meta.url), 'utf8'));
 for (const {group,key,item} of rows) {
   const art = info(item), asset = D.SPRITE_MANIFEST.entries[art.assetId];
   ok(asset && fs.existsSync(new URL('../'+asset.src,import.meta.url)), `${key}: missing asset`);
@@ -23,8 +24,36 @@ for (const {group,key,item} of rows) {
   if (item.kind === 'gear') {
     ok(signature({...item,ilvl:99,identified:!item.identified,rarity:'rare'}) === signature(item), `${key}: affix level/identification changed base art`);
   }
+  if (item.rarity !== 'unique' && ordinaryBefore[key]) {
+    assert.deepEqual(art, ordinaryBefore[key], `${key}: ordinary artwork changed`); checks++;
+  }
   report.push({group,key,name:item.name,base:item.baseName,...art});
 }
+const uniques = rows.filter(row => row.item.rarity === 'unique');
+const uniqueMap = D.SPRITE_MANIFEST.maps.uniqueItemIcons;
+assert.deepEqual(Object.keys(uniqueMap).sort(), uniques.map(row => row.key).sort(), 'unique artwork coverage differs from evaluated catalogue'); checks++;
+ok(new Set(uniques.map(({item}) => `${info(item).assetId}|${info(item).index}`)).size === uniques.length, 'uniques share authored frames');
+for (const {key,item} of uniques) {
+  assert.deepEqual(info(item), uniqueMap[key], `${key}: canonical unique mapping ignored`); checks++;
+  ok(!info(item).tint, `${key}: unique design reduced to a tint`);
+  ok(signature({...item,identified:false,ilvl:99,icon:'cache',jcol:'#00ff00'}) === signature(item), `${key}: saved fields or identification replace unique art`);
+  if (item.kind === 'gear') ok(signature(item) !== signature(I.fromBase(item.baseId)), `${key}: unique still uses its base frame`);
+  const saved = uniqueMap[key]; delete uniqueMap[key];
+  try { assert.throws(() => info(item), /Missing unique item artwork/, `${key}: missing unique art silently falls back`); checks++; }
+  finally { uniqueMap[key] = saved; }
+}
+const originalEntry = D.SPRITE_MANIFEST.entries['ui.items.uniques'];
+const firstUnique = uniques.find(row => row.key !== 'uj_oak');
+const firstRef = uniqueMap[firstUnique.key];
+uniqueMap[firstUnique.key] = {...firstRef,index:originalEntry.cols * originalEntry.rows};
+try { assert.throws(() => info(firstUnique.item), /Missing unique item artwork/); checks++; }
+finally { uniqueMap[firstUnique.key] = firstRef; }
+delete D.SPRITE_MANIFEST.entries['ui.items.uniques'];
+try { assert.throws(() => info(uniques.find(row => row.key !== 'uj_oak').item), /Missing unique item artwork/); checks++; }
+finally { D.SPRITE_MANIFEST.entries['ui.items.uniques'] = originalEntry; }
+const base = I.fromBase('handaxe');
+ok(signature({...base,uniqueId:'unknown-legacy-unique',rarity:'unique'}) === signature(base), 'unknown saved unique loses base art');
+assert.deepEqual(info(I.makeUniqueJewel(D.UNIQUE_JEWELS.find(def => def.id === 'uj_oak'))), {assetId:'ui.items.oak',index:0}, 'existing Oak art replaced'); checks++;
 for (const pair of [['cap','warhelm'],['quiltvest','hauberk'],['buckler','kiteshield'],['cudgel','flangedmace'],['sword_t3','sword2h_t3'],['axe_t3','axe2h_t3'],['mace_t3','mace2h_t3'],['chest_t1','chest_t4'],['chest_t4','chest_t5']]) {
   ok(signature(I.fromBase(pair[0])) !== signature(I.fromBase(pair[1])), `${pair.join('/')}: silhouettes collapsed`);
 }

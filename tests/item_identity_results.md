@@ -1,32 +1,55 @@
-# Item identity and dialogue review
+# Item identity and unique-art review
 
-- Catalogue: **498 entries**, covering 300 bases, 139 unique equipment items,
-  13 set items, 8 consumables, 12 glyphs, 3 charm sizes, 9 unique charms,
-  6 rolled jewel colors and 8 unique jewels.
-- `node tests/item_identity_contract.mjs`: **2,956 checks passed**. Every entry
-  resolves to an existing, in-bounds frame, never the chest fallback; JSON save
-  round trips, stale icon fields, identification and rolled item levels preserve
-  identity. Potion types, charm sizes, glyph/jewel colors, starter silhouettes,
-  armor families and one-/two-handed weapons have distinct mappings.
-- Browser catalogue: **all 498 icons decoded and painted**. Visually reviewed
-  the equipment atlas, all 30 supplemental silhouettes, jewel colors, supplies,
-  starter gear, item tooltips and dialogue.
-- Management browser suite: **60 checks passed at 1366 × 768**, **59 at
-  390 × 844**. Tests use isolated saves. The count differs because desktop
-  verifies two side-by-side panel bounds and narrow screens verify stacking.
-- `node tests/management_contract.mjs`: **897 checks passed**.
-- Authored gameplay sprite audit: **no errors**. The imported and packed item
-  atlas is RGBA, 384 × 320, with alpha ranging from 0 to 255. World/item lookup
-  validation also passes.
+All **163 uniques** have individual painted inventory artwork: 139 equipment
+items, nine charms, nine jewels and six glyphs. The 162 new designs were generated
+individually with built-in ImageGen. Old Oak's Heart keeps its existing artwork.
+The transparent originals, full prompts and source/prompt hashes are retained in
+[the authored catalogue](../assets/sprites_src/gameplay_art_authored/items/uniques/catalog_v1.json)
+and [import provenance](../assets/sprites_src/gameplay_art_authored/items/uniques/import_v1.json).
 
-The full legacy `validate_sprite_assets.py` suite still reports terrain alpha,
-outdated NPC/prop role counts and missing character rig families outside this
-change. Its item-atlas expectations were updated for the supplemental atlas;
-the complete suite is not reported as passing.
+- Catalogue: **499 entries**, covering 300 bases, 139 unique equipment items,
+  13 set items, eight consumables, 12 glyphs, three charm sizes, nine unique
+  charms, six rolled jewel colors and nine unique jewels.
+- `python tools/import_unique_item_art.py --check`: **passed**. All originals
+  have real transparency; the 18 by 9 lossless WebP atlas contains 162 nonempty,
+  distinct 64px frames with at least four pixels of padding. The manifest covers
+  all 163 evaluated canonical IDs. Source, prompt, normalized and packed hashes
+  match the provenance records.
+- `node tests/item_identity_contract.mjs`: **4,094 checks passed**. Every item
+  resolves to an existing, in-bounds frame. Unique save round trips, stale icon
+  fields, identification and rolled item levels preserve its artwork. Missing
+  known unique artwork throws the existing asset error. Unknown saved unique
+  IDs retain base resolution. All **336 ordinary mappings** match their snapshot.
+- Browser checks: **all 499 icons decoded and painted**, including **163
+  distinct unique pixel signatures** at desktop and mobile sizes. All six unique
+  catalogue pages were visually reviewed at 64px, including items sharing a
+  base. Production pack, equipment, stash, held items, unidentified tooltips,
+  shop and ground loot were inspected at 1366 by 900 and 390 by 844. HTTP and
+  direct-file catalogue loading passed with no missing assets or runtime errors.
+  Direct-file checks use image decode/painting because browser origin rules
+  prohibit pixel reads from file-loaded canvases.
+- Mechanics contracts passed: unique equipment **6,079**, unique powers
+  **794**, unique drops **8,792** and co-op inventory **25** checks.
+- Normal compiler encoding reproduced the packed atlas hash and preserved every
+  normalized RGBA pixel. The compiler registered all 163 canonical references;
+  its pack-only source guard also passed.
 
-On restricted Windows environments, use Node's `--preserve-symlinks
---preserve-symlinks-main` flags if resolving the user directory raises EPERM.
+The full authored gameplay source audit still reports **476 existing environment
+art errors**, with **zero unique-item-art errors**. These are recorded separately
+in [the global audit](qa/unique_item_art/global_audit.json). The complete legacy
+sprite suite and full sprite rebuild are not reported as passing.
 
-Review: [catalogue](item_catalog.html), [management screens](management_ui.html),
-[complete audit](item_identity_audit.json),
-[built-in ImageGen prompts](../assets/sprites_src/gameplay_art_authored/items/prompts.json).
+The previous management review recorded 60 desktop and 59 mobile browser checks,
+plus 897 management-contract checks. Those results concern the prior item and
+dialogue work and were not rerun for this artwork change.
+
+Run `npm run test:unique-art` for the focused asset, identity and browser suite.
+On restricted Windows environments, individual Node commands need
+`--preserve-symlinks --preserve-symlinks-main` if resolving the user directory
+raises EPERM.
+
+Review: [unique catalogue](item_catalog.html?group=uniques),
+[all 163 designs](qa/unique_item_art/contact_sheet.jpg),
+[identity audit](item_identity_audit.json),
+[browser results](qa/unique_item_art/browser.json),
+[compiler results](qa/unique_item_art/compiler.json).

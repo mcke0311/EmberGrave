@@ -33977,6 +33977,22 @@ DATA.SPRITE_MANIFEST = {
       "rows": 1,
       "src": "assets/sprites/packed/ui/items_oak.webp"
     },
+    "ui.items.uniques": {
+      "anchor": [
+        32,
+        32
+      ],
+      "bundle": "core",
+      "cell": [
+        64,
+        64
+      ],
+      "cols": 18,
+      "kind": "atlas",
+      "revision": "8b2d4a153378",
+      "rows": 9,
+      "src": "assets/sprites/packed/ui/items_uniques.webp"
+    },
     "ui.items.variants": {
       "anchor": [
         32,
@@ -60193,6 +60209,660 @@ DATA.SPRITE_MANIFEST = {
     },
     "uiScenes": {
       "titleCamp": "ui.scene.titleCamp"
+    },
+    "uniqueItemIcons": {
+      "g_aegis": {
+        "assetId": "ui.items.uniques",
+        "index": 160
+      },
+      "g_doom": {
+        "assetId": "ui.items.uniques",
+        "index": 156
+      },
+      "g_titan": {
+        "assetId": "ui.items.uniques",
+        "index": 158
+      },
+      "g_venom": {
+        "assetId": "ui.items.uniques",
+        "index": 161
+      },
+      "g_void": {
+        "assetId": "ui.items.uniques",
+        "index": 157
+      },
+      "g_wraith": {
+        "assetId": "ui.items.uniques",
+        "index": 159
+      },
+      "u_cinder": {
+        "assetId": "ui.items.uniques",
+        "index": 2
+      },
+      "u_crown": {
+        "assetId": "ui.items.uniques",
+        "index": 4
+      },
+      "u_gen_0_0": {
+        "assetId": "ui.items.uniques",
+        "index": 9
+      },
+      "u_gen_0_10": {
+        "assetId": "ui.items.uniques",
+        "index": 14
+      },
+      "u_gen_0_12": {
+        "assetId": "ui.items.uniques",
+        "index": 15
+      },
+      "u_gen_0_2": {
+        "assetId": "ui.items.uniques",
+        "index": 10
+      },
+      "u_gen_0_4": {
+        "assetId": "ui.items.uniques",
+        "index": 11
+      },
+      "u_gen_0_6": {
+        "assetId": "ui.items.uniques",
+        "index": 12
+      },
+      "u_gen_0_8": {
+        "assetId": "ui.items.uniques",
+        "index": 13
+      },
+      "u_gen_10_0": {
+        "assetId": "ui.items.uniques",
+        "index": 74
+      },
+      "u_gen_10_10": {
+        "assetId": "ui.items.uniques",
+        "index": 79
+      },
+      "u_gen_10_12": {
+        "assetId": "ui.items.uniques",
+        "index": 80
+      },
+      "u_gen_10_2": {
+        "assetId": "ui.items.uniques",
+        "index": 75
+      },
+      "u_gen_10_4": {
+        "assetId": "ui.items.uniques",
+        "index": 76
+      },
+      "u_gen_10_6": {
+        "assetId": "ui.items.uniques",
+        "index": 77
+      },
+      "u_gen_10_8": {
+        "assetId": "ui.items.uniques",
+        "index": 78
+      },
+      "u_gen_11_1": {
+        "assetId": "ui.items.uniques",
+        "index": 81
+      },
+      "u_gen_11_11": {
+        "assetId": "ui.items.uniques",
+        "index": 86
+      },
+      "u_gen_11_3": {
+        "assetId": "ui.items.uniques",
+        "index": 82
+      },
+      "u_gen_11_5": {
+        "assetId": "ui.items.uniques",
+        "index": 83
+      },
+      "u_gen_11_7": {
+        "assetId": "ui.items.uniques",
+        "index": 84
+      },
+      "u_gen_11_9": {
+        "assetId": "ui.items.uniques",
+        "index": 85
+      },
+      "u_gen_12_0": {
+        "assetId": "ui.items.uniques",
+        "index": 87
+      },
+      "u_gen_12_10": {
+        "assetId": "ui.items.uniques",
+        "index": 92
+      },
+      "u_gen_12_12": {
+        "assetId": "ui.items.uniques",
+        "index": 93
+      },
+      "u_gen_12_2": {
+        "assetId": "ui.items.uniques",
+        "index": 88
+      },
+      "u_gen_12_4": {
+        "assetId": "ui.items.uniques",
+        "index": 89
+      },
+      "u_gen_12_6": {
+        "assetId": "ui.items.uniques",
+        "index": 90
+      },
+      "u_gen_12_8": {
+        "assetId": "ui.items.uniques",
+        "index": 91
+      },
+      "u_gen_13_1": {
+        "assetId": "ui.items.uniques",
+        "index": 94
+      },
+      "u_gen_13_11": {
+        "assetId": "ui.items.uniques",
+        "index": 99
+      },
+      "u_gen_13_3": {
+        "assetId": "ui.items.uniques",
+        "index": 95
+      },
+      "u_gen_13_5": {
+        "assetId": "ui.items.uniques",
+        "index": 96
+      },
+      "u_gen_13_7": {
+        "assetId": "ui.items.uniques",
+        "index": 97
+      },
+      "u_gen_13_9": {
+        "assetId": "ui.items.uniques",
+        "index": 98
+      },
+      "u_gen_14_0": {
+        "assetId": "ui.items.uniques",
+        "index": 100
+      },
+      "u_gen_14_10": {
+        "assetId": "ui.items.uniques",
+        "index": 105
+      },
+      "u_gen_14_12": {
+        "assetId": "ui.items.uniques",
+        "index": 106
+      },
+      "u_gen_14_2": {
+        "assetId": "ui.items.uniques",
+        "index": 101
+      },
+      "u_gen_14_4": {
+        "assetId": "ui.items.uniques",
+        "index": 102
+      },
+      "u_gen_14_6": {
+        "assetId": "ui.items.uniques",
+        "index": 103
+      },
+      "u_gen_14_8": {
+        "assetId": "ui.items.uniques",
+        "index": 104
+      },
+      "u_gen_15_1": {
+        "assetId": "ui.items.uniques",
+        "index": 107
+      },
+      "u_gen_15_11": {
+        "assetId": "ui.items.uniques",
+        "index": 112
+      },
+      "u_gen_15_3": {
+        "assetId": "ui.items.uniques",
+        "index": 108
+      },
+      "u_gen_15_5": {
+        "assetId": "ui.items.uniques",
+        "index": 109
+      },
+      "u_gen_15_7": {
+        "assetId": "ui.items.uniques",
+        "index": 110
+      },
+      "u_gen_15_9": {
+        "assetId": "ui.items.uniques",
+        "index": 111
+      },
+      "u_gen_16_0": {
+        "assetId": "ui.items.uniques",
+        "index": 113
+      },
+      "u_gen_16_10": {
+        "assetId": "ui.items.uniques",
+        "index": 118
+      },
+      "u_gen_16_12": {
+        "assetId": "ui.items.uniques",
+        "index": 119
+      },
+      "u_gen_16_2": {
+        "assetId": "ui.items.uniques",
+        "index": 114
+      },
+      "u_gen_16_4": {
+        "assetId": "ui.items.uniques",
+        "index": 115
+      },
+      "u_gen_16_6": {
+        "assetId": "ui.items.uniques",
+        "index": 116
+      },
+      "u_gen_16_8": {
+        "assetId": "ui.items.uniques",
+        "index": 117
+      },
+      "u_gen_17_1": {
+        "assetId": "ui.items.uniques",
+        "index": 120
+      },
+      "u_gen_17_11": {
+        "assetId": "ui.items.uniques",
+        "index": 125
+      },
+      "u_gen_17_3": {
+        "assetId": "ui.items.uniques",
+        "index": 121
+      },
+      "u_gen_17_5": {
+        "assetId": "ui.items.uniques",
+        "index": 122
+      },
+      "u_gen_17_7": {
+        "assetId": "ui.items.uniques",
+        "index": 123
+      },
+      "u_gen_17_9": {
+        "assetId": "ui.items.uniques",
+        "index": 124
+      },
+      "u_gen_18_0": {
+        "assetId": "ui.items.uniques",
+        "index": 126
+      },
+      "u_gen_18_10": {
+        "assetId": "ui.items.uniques",
+        "index": 131
+      },
+      "u_gen_18_12": {
+        "assetId": "ui.items.uniques",
+        "index": 132
+      },
+      "u_gen_18_2": {
+        "assetId": "ui.items.uniques",
+        "index": 127
+      },
+      "u_gen_18_4": {
+        "assetId": "ui.items.uniques",
+        "index": 128
+      },
+      "u_gen_18_6": {
+        "assetId": "ui.items.uniques",
+        "index": 129
+      },
+      "u_gen_18_8": {
+        "assetId": "ui.items.uniques",
+        "index": 130
+      },
+      "u_gen_19_1": {
+        "assetId": "ui.items.uniques",
+        "index": 133
+      },
+      "u_gen_19_11": {
+        "assetId": "ui.items.uniques",
+        "index": 138
+      },
+      "u_gen_19_3": {
+        "assetId": "ui.items.uniques",
+        "index": 134
+      },
+      "u_gen_19_5": {
+        "assetId": "ui.items.uniques",
+        "index": 135
+      },
+      "u_gen_19_7": {
+        "assetId": "ui.items.uniques",
+        "index": 136
+      },
+      "u_gen_19_9": {
+        "assetId": "ui.items.uniques",
+        "index": 137
+      },
+      "u_gen_1_1": {
+        "assetId": "ui.items.uniques",
+        "index": 16
+      },
+      "u_gen_1_11": {
+        "assetId": "ui.items.uniques",
+        "index": 21
+      },
+      "u_gen_1_3": {
+        "assetId": "ui.items.uniques",
+        "index": 17
+      },
+      "u_gen_1_5": {
+        "assetId": "ui.items.uniques",
+        "index": 18
+      },
+      "u_gen_1_7": {
+        "assetId": "ui.items.uniques",
+        "index": 19
+      },
+      "u_gen_1_9": {
+        "assetId": "ui.items.uniques",
+        "index": 20
+      },
+      "u_gen_2_0": {
+        "assetId": "ui.items.uniques",
+        "index": 22
+      },
+      "u_gen_2_10": {
+        "assetId": "ui.items.uniques",
+        "index": 27
+      },
+      "u_gen_2_12": {
+        "assetId": "ui.items.uniques",
+        "index": 28
+      },
+      "u_gen_2_2": {
+        "assetId": "ui.items.uniques",
+        "index": 23
+      },
+      "u_gen_2_4": {
+        "assetId": "ui.items.uniques",
+        "index": 24
+      },
+      "u_gen_2_6": {
+        "assetId": "ui.items.uniques",
+        "index": 25
+      },
+      "u_gen_2_8": {
+        "assetId": "ui.items.uniques",
+        "index": 26
+      },
+      "u_gen_3_1": {
+        "assetId": "ui.items.uniques",
+        "index": 29
+      },
+      "u_gen_3_11": {
+        "assetId": "ui.items.uniques",
+        "index": 34
+      },
+      "u_gen_3_3": {
+        "assetId": "ui.items.uniques",
+        "index": 30
+      },
+      "u_gen_3_5": {
+        "assetId": "ui.items.uniques",
+        "index": 31
+      },
+      "u_gen_3_7": {
+        "assetId": "ui.items.uniques",
+        "index": 32
+      },
+      "u_gen_3_9": {
+        "assetId": "ui.items.uniques",
+        "index": 33
+      },
+      "u_gen_4_0": {
+        "assetId": "ui.items.uniques",
+        "index": 35
+      },
+      "u_gen_4_10": {
+        "assetId": "ui.items.uniques",
+        "index": 40
+      },
+      "u_gen_4_12": {
+        "assetId": "ui.items.uniques",
+        "index": 41
+      },
+      "u_gen_4_2": {
+        "assetId": "ui.items.uniques",
+        "index": 36
+      },
+      "u_gen_4_4": {
+        "assetId": "ui.items.uniques",
+        "index": 37
+      },
+      "u_gen_4_6": {
+        "assetId": "ui.items.uniques",
+        "index": 38
+      },
+      "u_gen_4_8": {
+        "assetId": "ui.items.uniques",
+        "index": 39
+      },
+      "u_gen_5_1": {
+        "assetId": "ui.items.uniques",
+        "index": 42
+      },
+      "u_gen_5_11": {
+        "assetId": "ui.items.uniques",
+        "index": 47
+      },
+      "u_gen_5_3": {
+        "assetId": "ui.items.uniques",
+        "index": 43
+      },
+      "u_gen_5_5": {
+        "assetId": "ui.items.uniques",
+        "index": 44
+      },
+      "u_gen_5_7": {
+        "assetId": "ui.items.uniques",
+        "index": 45
+      },
+      "u_gen_5_9": {
+        "assetId": "ui.items.uniques",
+        "index": 46
+      },
+      "u_gen_6_0": {
+        "assetId": "ui.items.uniques",
+        "index": 48
+      },
+      "u_gen_6_10": {
+        "assetId": "ui.items.uniques",
+        "index": 53
+      },
+      "u_gen_6_12": {
+        "assetId": "ui.items.uniques",
+        "index": 54
+      },
+      "u_gen_6_2": {
+        "assetId": "ui.items.uniques",
+        "index": 49
+      },
+      "u_gen_6_4": {
+        "assetId": "ui.items.uniques",
+        "index": 50
+      },
+      "u_gen_6_6": {
+        "assetId": "ui.items.uniques",
+        "index": 51
+      },
+      "u_gen_6_8": {
+        "assetId": "ui.items.uniques",
+        "index": 52
+      },
+      "u_gen_7_1": {
+        "assetId": "ui.items.uniques",
+        "index": 55
+      },
+      "u_gen_7_11": {
+        "assetId": "ui.items.uniques",
+        "index": 60
+      },
+      "u_gen_7_3": {
+        "assetId": "ui.items.uniques",
+        "index": 56
+      },
+      "u_gen_7_5": {
+        "assetId": "ui.items.uniques",
+        "index": 57
+      },
+      "u_gen_7_7": {
+        "assetId": "ui.items.uniques",
+        "index": 58
+      },
+      "u_gen_7_9": {
+        "assetId": "ui.items.uniques",
+        "index": 59
+      },
+      "u_gen_8_0": {
+        "assetId": "ui.items.uniques",
+        "index": 61
+      },
+      "u_gen_8_10": {
+        "assetId": "ui.items.uniques",
+        "index": 66
+      },
+      "u_gen_8_12": {
+        "assetId": "ui.items.uniques",
+        "index": 67
+      },
+      "u_gen_8_2": {
+        "assetId": "ui.items.uniques",
+        "index": 62
+      },
+      "u_gen_8_4": {
+        "assetId": "ui.items.uniques",
+        "index": 63
+      },
+      "u_gen_8_6": {
+        "assetId": "ui.items.uniques",
+        "index": 64
+      },
+      "u_gen_8_8": {
+        "assetId": "ui.items.uniques",
+        "index": 65
+      },
+      "u_gen_9_1": {
+        "assetId": "ui.items.uniques",
+        "index": 68
+      },
+      "u_gen_9_11": {
+        "assetId": "ui.items.uniques",
+        "index": 73
+      },
+      "u_gen_9_3": {
+        "assetId": "ui.items.uniques",
+        "index": 69
+      },
+      "u_gen_9_5": {
+        "assetId": "ui.items.uniques",
+        "index": 70
+      },
+      "u_gen_9_7": {
+        "assetId": "ui.items.uniques",
+        "index": 71
+      },
+      "u_gen_9_9": {
+        "assetId": "ui.items.uniques",
+        "index": 72
+      },
+      "u_gravebite": {
+        "assetId": "ui.items.uniques",
+        "index": 0
+      },
+      "u_kingsplit": {
+        "assetId": "ui.items.uniques",
+        "index": 8
+      },
+      "u_marrow": {
+        "assetId": "ui.items.uniques",
+        "index": 5
+      },
+      "u_oath": {
+        "assetId": "ui.items.uniques",
+        "index": 3
+      },
+      "u_stormknot": {
+        "assetId": "ui.items.uniques",
+        "index": 6
+      },
+      "u_stride": {
+        "assetId": "ui.items.uniques",
+        "index": 7
+      },
+      "u_widow": {
+        "assetId": "ui.items.uniques",
+        "index": 1
+      },
+      "uc_ember": {
+        "assetId": "ui.items.uniques",
+        "index": 140
+      },
+      "uc_grave": {
+        "assetId": "ui.items.uniques",
+        "index": 143
+      },
+      "uc_hunt": {
+        "assetId": "ui.items.uniques",
+        "index": 145
+      },
+      "uc_mystic": {
+        "assetId": "ui.items.uniques",
+        "index": 142
+      },
+      "uc_quick": {
+        "assetId": "ui.items.uniques",
+        "index": 141
+      },
+      "uc_thief": {
+        "assetId": "ui.items.uniques",
+        "index": 139
+      },
+      "uc_vampire": {
+        "assetId": "ui.items.uniques",
+        "index": 144
+      },
+      "uc_warlord": {
+        "assetId": "ui.items.uniques",
+        "index": 146
+      },
+      "uc_wyrm": {
+        "assetId": "ui.items.uniques",
+        "index": 147
+      },
+      "uj_frost": {
+        "assetId": "ui.items.uniques",
+        "index": 150
+      },
+      "uj_leech": {
+        "assetId": "ui.items.uniques",
+        "index": 152
+      },
+      "uj_oak": {
+        "assetId": "ui.items.oak",
+        "index": 0
+      },
+      "uj_rage": {
+        "assetId": "ui.items.uniques",
+        "index": 149
+      },
+      "uj_rainbow": {
+        "assetId": "ui.items.uniques",
+        "index": 148
+      },
+      "uj_seer": {
+        "assetId": "ui.items.uniques",
+        "index": 155
+      },
+      "uj_storm": {
+        "assetId": "ui.items.uniques",
+        "index": 153
+      },
+      "uj_titan": {
+        "assetId": "ui.items.uniques",
+        "index": 154
+      },
+      "uj_ward": {
+        "assetId": "ui.items.uniques",
+        "index": 151
+      }
     },
     "walls": {
       "bastion": "world.wall.bastion",

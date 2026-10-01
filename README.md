@@ -334,6 +334,11 @@ jewels no longer fall back to a chest and item-level rolls cannot change a
 base's material tier. The supplemental atlas adds 30 silhouettes for jewels,
 tonics, scrolls, charm sizes, starter clothing, mail and plate armor, shields,
 clubs, and two-handed weapons. Jewel and glyph colors follow their item data.
+All 163 named Uniques have their own painted inventory designs: 139 equipment
+items, nine charms, nine jewels and six glyphs. Their artwork resolves by Unique
+identity before base art and remains stable through identification and save
+round trips. Old Oak's Heart retains its original bespoke image. The same icons
+appear in the pack, equipment slots, stash, shop, ground loot and item details.
 Inventory icons preserve their aspect ratio. Tooltips and shop details include
 the matching preview, item type, potion recovery amounts, and contextual actions.
 Dialogue offers keyboard-accessible choices, readable text, and quest summaries.
@@ -342,13 +347,24 @@ Review every item at `tests/item_catalog.html`, or use the **Jewels & supplies**
 and **Dialogue** controls in `tests/management_ui.html`. These pages use isolated
 data and do not alter saved heroes. Run `node tests/item_identity_contract.mjs`
 for catalogue-wide mapping and save-compatibility checks. The generated
-`tests/item_identity_audit.json` records all 498 entries.
+`tests/item_identity_audit.json` records all 499 entries.
 
 The built-in ImageGen source and prompts live in
 `assets/sprites_src/gameplay_art_authored/items/`. Import with
 `python tools/import_item_variants.py`, then pack with
 `python tools/build_sprite_assets.py`. The importer keys the source background,
 preserves object proportions, and updates the existing authorship ledger.
+
+Unique originals, per-item designs and built-in ImageGen prompts are retained in
+`assets/sprites_src/gameplay_art_authored/items/uniques/`. Rebuild just their
+64px atlas and generated manifest references with
+`python tools/import_unique_item_art.py`, or verify source/prompt hashes,
+transparency, frame bounds and complete identity coverage without writing with
+`python tools/import_unique_item_art.py --check`. The normal sprite compiler
+also registers the imported atlas. Review all Uniques with
+`tests/item_catalog.html?group=uniques`; run
+`npm run test:unique-art` for asset, identity and desktop/mobile catalogue and
+production UI coverage plus direct-file rendering checks.
 
 ### Try the five-class Three.js armory
 

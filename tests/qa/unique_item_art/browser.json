@@ -1,0 +1,77 @@
+{
+  "errors": [],
+  "missing": [],
+  "catalog": {
+    "desktop": {
+      "total": 499,
+      "unique": 163,
+      "distinctPixels": 163,
+      "countLabel": "163 items · Page 1 / 6",
+      "overflow": false
+    },
+    "mobile": {
+      "total": 499,
+      "unique": 163,
+      "distinctPixels": 163,
+      "countLabel": "163 items · Page 1 / 6",
+      "overflow": false
+    },
+    "file": {
+      "total": 499,
+      "unique": 163,
+      "distinctPixels": 0,
+      "countLabel": "163 items · Page 1 / 6",
+      "overflow": false
+    }
+  },
+  "production": {
+    "desktop": {
+      "pack": 4,
+      "stash": 4,
+      "equipment": 1,
+      "tooltip": 1,
+      "held": 1,
+      "expected": {
+        "expectedPack": [
+          "Cindershroud",
+          "Huntress Talisman",
+          "Prismfire Jewel",
+          "Voidglyph"
+        ],
+        "expectedStash": [
+          "Thunderspire",
+          "Diadem of the Drowned King",
+          "Old Oak's Heart",
+          "Wyrmscale Charm"
+        ],
+        "equipped": "Gravebite"
+      },
+      "shop": 4,
+      "groundLoot": 3
+    },
+    "mobile": {
+      "pack": 4,
+      "stash": 4,
+      "equipment": 1,
+      "tooltip": 1,
+      "held": 1,
+      "expected": {
+        "expectedPack": [
+          "Cindershroud",
+          "Huntress Talisman",
+          "Prismfire Jewel",
+          "Voidglyph"
+        ],
+        "expectedStash": [
+          "Thunderspire",
+          "Diadem of the Drowned King",
+          "Old Oak's Heart",
+          "Wyrmscale Charm"
+        ],
+        "equipped": "Gravebite"
+      },
+      "shop": 4,
+      "groundLoot": 3
+    }
+  }
+}

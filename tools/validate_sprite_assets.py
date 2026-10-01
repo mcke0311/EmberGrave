@@ -2612,6 +2612,17 @@ def validate_item_resolution(data: dict[str, Any], manifest: dict[str, Any], err
 
 
 def validate_world_coverage(manifest: dict[str, Any], errors: list[str]) -> None:
+    try:
+        from import_unique_item_art import install as unique_art_install
+        unique_entries, unique_maps = {}, {}
+        unique_art_install(unique_entries, unique_maps)
+        if manifest.get('maps', {}).get('uniqueItemIcons') != unique_maps['uniqueItemIcons']:
+            add(errors, 'unique inventory art: manifest coverage differs from the evaluated catalogue')
+        for asset_id, entry in unique_entries.items():
+            if manifest.get('entries', {}).get(asset_id) != entry:
+                add(errors, f'unique inventory art: manifest entry changed for {asset_id}')
+    except Exception as exc:
+        add(errors, f'unique inventory art: {exc}')
     maps = manifest.get("maps", {})
     required_items = {"sword", "axe", "mace", "dagger", "spear", "bow", "crossbow", "wand", "staff", "shield", "helm", "chest", "gloves", "boots", "belt", "ring", "amulet"}
     if required_items - set(maps.get("itemCategories", {})):
@@ -3635,7 +3646,7 @@ def validate_gameplay_art_authorship(
         add(errors, f"gameplay art forms: expected {sorted(required_forms)}, found {sorted(actual_forms)}")
     expected_role_counts = {
         "backdrop": 8, "cliff": 20, "form": 4, "ground": 32, "hazard": 9,
-        "item-icons": 3, "massif": 36, "monster": 19, "npc": 9, "path": 20,
+        "item-icons": 5, "massif": 36, "monster": 19, "npc": 9, "path": 20,
         "prop": 51, "skill-icons": 1, "summon": 8, "trap": 3, "wall": 18,
     }
     actual_role_counts = {

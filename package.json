@@ -2,6 +2,7 @@
   "name": "embergrave-game",
   "private": true,
   "scripts": {
+    "test:unique-art": "python tools/import_unique_item_art.py --check && node --preserve-symlinks --preserve-symlinks-main tests/item_identity_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/unique_item_art_browser.cjs",
     "test:cinematics": "node tests/cinematic_pose_contract.mjs && node tests/cinematics_contract.mjs && node tests/cinematics_browser.cjs && node tests/cinematics_progression_browser.cjs && node tests/cinematics_direction_browser.cjs && node tests/cinematics_review_browser.cjs",
     "test:cinematics:performance": "node tests/cinematics_performance.cjs",
     "test:upgrades": "node --test tests/upgrades_contract.test.cjs && node tests/upgrades_browser.cjs && node tests/upgrades_coop_browser.cjs",

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+from collections import Counter
 import json
 import hashlib
 import math
@@ -1760,6 +1761,8 @@ def _expected_gameplay_descriptors(art: dict, monsters: dict, npcs: dict, summon
           (384, 320), (64, 64), 6, 5, (32, 32), "core", "ui.items.variants")
     atlas("item-icons", "oak", "assets/sprites_src/gameplay_art/ui/items_oak.png",
           (1254, 1254), (1254, 1254), 1, 1, (627, 627), "core", "ui.items.oak")
+    from import_unique_item_art import expected_descriptor as unique_art_descriptor
+    descriptors["item-icons:uniques"] = unique_art_descriptor()
     atlas("skill-icons", "skills", "assets/sprites_src/gameplay_art/ui/skills.png",
           (528, 396), (44, 44), 12, 9, (22, 22), "core", "ui.skills")
     return descriptors
@@ -2371,6 +2374,9 @@ def build_gameplay_art(descriptors: dict[str, dict], entries: dict, maps: dict,
             if target and (role, target) in resolved_actors:
                 mapping[key] = resolved_actors[(role, target)]
 
+    from import_unique_item_art import install as install_unique_item_art
+    install_unique_item_art(entries, maps)
+
 
 def build_ui_scenes(descriptors: dict[str, dict], entries: dict, maps: dict) -> None:
     maps["uiScenes"] = {}
@@ -2422,6 +2428,7 @@ def rel(path: Path) -> str:
 
 def emit_manifest(entries: dict, maps: dict, player_rig_report: dict,
                   manifest_path: Path = MANIFEST, coverage_path: Path = COVERAGE) -> None:
+    from import_unique_item_art import evaluated_catalogue
     manifest = {
         "version": 1,
         "directions": list(PLAYER_DIRS),
@@ -2459,6 +2466,8 @@ def emit_manifest(entries: dict, maps: dict, player_rig_report: dict,
         "npcs": sorted(maps["npcs"]),
         "summons": sorted(maps["summons"]),
         "itemCategories": sorted(maps["itemCategories"]),
+        "uniqueItemIcons": sorted(maps["uniqueItemIcons"]),
+        "uniqueItemArtCounts": dict(Counter(row['group'] for row in evaluated_catalogue())),
         "materialTiers": len(TIER_MATERIALS),
         "skillIcons": sorted(maps["skillIcons"]),
         "uiScenes": sorted(maps["uiScenes"]),

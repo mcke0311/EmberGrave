@@ -1,0 +1,3941 @@
+{
+  "version": 1,
+  "method": "built-in-imagegen-alpha-crop-uniform-scale",
+  "catalogueSha256": "3ea9593fd6a52aabb57f339d3e02c498c6c81bce4f1fb57f67e72eceb06066a1",
+  "normalized": {
+    "source": "assets/sprites_src/gameplay_art/ui/items_uniques.png",
+    "sha256": "70b9740c47dd1b26cdb7d8934dcc645c55c03605f6e001c5620089193cea8875"
+  },
+  "packed": {
+    "source": "assets/sprites/packed/ui/items_uniques.webp",
+    "sha256": "8b2d4a153378ec2da632b3df05ca71fb486483ec38bb342acd6458f65971fc67"
+  },
+  "sources": {
+    "u_gravebite": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gravebite.png",
+      "sourceSha256": "4efaa01b4e6d9d37da86235fe9b814f3bfbfc52ec1004fbbd41a3171ee58aa23",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        78,
+        55,
+        1202,
+        1196
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "ddae94e271d4d07fa194e4be14926ffb02b505124bf1fb5092ab5372f69510e3",
+      "index": 0
+    },
+    "u_widow": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_widow.png",
+      "sourceSha256": "727bdd226b459b58080ffa4382bbf7ef794e25faf1efb757fc6b8acffc9dfcfe",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        83,
+        47,
+        1225,
+        1210
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "41ccef1867e2931a942014a7d1ce3f4460dbfc24d95d72811c0c261b6063efc1",
+      "index": 1
+    },
+    "u_cinder": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_cinder.png",
+      "sourceSha256": "0450e9f511328990b1a1a36f150a0a683490e084d4fe3a18830f30e598195c40",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        240,
+        57,
+        1016,
+        1221
+      ],
+      "outputSize": [
+        37,
+        56
+      ],
+      "promptSha256": "bb0366d6227f5d9fce0bb4221738cfc8ab55782c966dca5de707480210bcdceb",
+      "index": 2
+    },
+    "u_oath": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_oath.png",
+      "sourceSha256": "0051e67774c0cd988420ceba6ec274c214ef7a396be3283fdc963f333c26bcd3",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        280,
+        7,
+        974,
+        1244
+      ],
+      "outputSize": [
+        31,
+        56
+      ],
+      "promptSha256": "58b23855ec8fbfbaa39659607ac908195e6ed66493ada1814bd4e0ee9d169265",
+      "index": 3
+    },
+    "u_crown": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_crown.png",
+      "sourceSha256": "a298c289abfcd1ae40a92285e9375959f099aafe44b37be8e01a7f97e9aa0dcb",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        64,
+        45,
+        1190,
+        1218
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "ee9a050c7ff4e7a015b568dc32ed8cfe431402eae13f003c80d2f78379af5e71",
+      "index": 4
+    },
+    "u_marrow": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_marrow.png",
+      "sourceSha256": "da841f5bcd8bca24624b6b854bfd47863b56d46febdefd78fb2823f9dc574ae2",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        126,
+        98,
+        1132,
+        1095
+      ],
+      "outputSize": [
+        56,
+        55
+      ],
+      "promptSha256": "c28a62e3e8e1bf09b1f87b8a5f7795bae8369768f9e0313755cc5b388b863909",
+      "index": 5
+    },
+    "u_stormknot": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_stormknot.png",
+      "sourceSha256": "e59ba0f5746c87e13be8828c115acab7c028ec413c57622558a793617c7230d8",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        230,
+        46,
+        1103,
+        1204
+      ],
+      "outputSize": [
+        42,
+        56
+      ],
+      "promptSha256": "3ceaf934c4dc3c543a31dda28206a3fd3dad2e9157d91f268a24284a9178972a",
+      "index": 6
+    },
+    "u_stride": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_stride.png",
+      "sourceSha256": "180d20642e9b49c8a52f9ecb608e44955f24ae4fa32ed1d3eb8b632f7e19f585",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        118,
+        81,
+        1180,
+        1183
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "71c866ef9f52c9c974d5b43c99b409f136b47a0824e16847e48e528d334b51d7",
+      "index": 7
+    },
+    "u_kingsplit": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_kingsplit.png",
+      "sourceSha256": "87be4769c54b7d3ad079371c1942caaca48aa573fceb126e4532acf04d146638",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        39,
+        32,
+        1223,
+        1213
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "3f8355ab7f1ec48d9e50aeff246be65991adf8ed08ac1f6a3d9afd2e0d5768e8",
+      "index": 8
+    },
+    "u_gen_0_0": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_0_0.png",
+      "sourceSha256": "2ab7904d814931a743cf8ec5853f9d218bf76471c64139d54bd3a3dc8fa94b3d",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        78,
+        43,
+        1220,
+        1212
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "df76a11bee95a8bda7ba24faec576a910aa611117497f2d9525b6186f5e6f9bf",
+      "index": 9
+    },
+    "u_gen_0_2": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_0_2.png",
+      "sourceSha256": "f400af0a414472a5d06e1ca0e38cde99f34c82d5397aa9196dfb11673b19ea88",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        65,
+        50,
+        1204,
+        1201
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "139a67e3dfea0e14c95cb4b23c6cc7cf1954c5a6499eb4cf04b42d537b4aea6e",
+      "index": 10
+    },
+    "u_gen_0_4": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_0_4.png",
+      "sourceSha256": "73e8341177d6f4d77760c22a4c56886de06ed41d52385f4465548258e81f213b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        20,
+        13,
+        1242,
+        1241
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "dacaacd8fdbe10fc341dacc4754ad7c374d8cc633ff7cdd2c98638b8257db33c",
+      "index": 11
+    },
+    "u_gen_0_6": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_0_6.png",
+      "sourceSha256": "1bea2c592d34f5b1eaf0e6a19e5675293ab1339529b8ac1d3d1e91fff5a58a52",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        31,
+        37,
+        1226,
+        1214
+      ],
+      "outputSize": [
+        56,
+        55
+      ],
+      "promptSha256": "e5bac7a36bf56e7e10437c93860353060ff951da521ab2ef8dffddbd09c45f0b",
+      "index": 12
+    },
+    "u_gen_0_8": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_0_8.png",
+      "sourceSha256": "6f94d90fa52e6f0cfc41b36cac836296734d50689076d1c9c57b58be712c5dfc",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        47,
+        31,
+        1228,
+        1225
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "c1b7a1d67cef0b2fa28d535c983ef2da5c8999224bb017c6b2d1de9ff398014a",
+      "index": 13
+    },
+    "u_gen_0_10": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_0_10.png",
+      "sourceSha256": "10e059ef9b0aa9b99210221bdf2cec2de9582e7a5ae52b986f3ccef842232327",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        72,
+        57,
+        1198,
+        1191
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "ce426f01c43984037ebba1764ec29de47b6ee015b7c277a0c350c39ab37c2b5c",
+      "index": 14
+    },
+    "u_gen_0_12": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_0_12.png",
+      "sourceSha256": "9cf1569514799b21aa963e43026c4a043147efef89f2b749b878abedba3f3571",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        43,
+        28,
+        1222,
+        1218
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "8f44d6fb08c96278e3fd346d1d93098c9753d41321c2982b2df8cd939c55b21b",
+      "index": 15
+    },
+    "u_gen_1_1": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_1_1.png",
+      "sourceSha256": "8f2004cb1fce27de8a76ebcf7f2dc8ab366b399581a0d13c2ac568bba7801c0d",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        38,
+        30,
+        1237,
+        1226
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "e63d08f1bbd37f0ccec4f5e8a9142f7543acd6f4bd8a8d7b4fd3ffdf1f8a9d12",
+      "index": 16
+    },
+    "u_gen_1_3": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_1_3.png",
+      "sourceSha256": "e7b4af3ac88444f31952a9ee11cee1f7b79be0ffdac7ac958e92b0b31c7d07b5",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        121,
+        14,
+        1239,
+        1215
+      ],
+      "outputSize": [
+        52,
+        56
+      ],
+      "promptSha256": "0605f6cb68abd815736100ba36023d9423696b7fbaa2ae69d2f321a8a145444e",
+      "index": 17
+    },
+    "u_gen_1_5": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_1_5.png",
+      "sourceSha256": "f29b6d65d204f545e5ce3ea8fcb8e5b0cb5aeb5dd7783fe9555c00acc5c84e0a",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        84,
+        16,
+        1223,
+        1205
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "f7eb035324598faf454e1f4272c90d1386a73f367080c17c38ff278feec1ca39",
+      "index": 18
+    },
+    "u_gen_1_7": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_1_7.png",
+      "sourceSha256": "3b2916cad7d8b86cb6787416d9f60f22aacab921e9e0503c10c3545f4fcab7ec",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        81,
+        26,
+        1208,
+        1218
+      ],
+      "outputSize": [
+        53,
+        56
+      ],
+      "promptSha256": "771e4320c3165f2dd5278b3e96b22dd63ecdc69d2d86a2eac6309866ecd50a21",
+      "index": 19
+    },
+    "u_gen_1_9": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_1_9.png",
+      "sourceSha256": "b1090f5e6153d4171e2545e0cc5ebc847a3898e3a55f79cdc44b6efb4c30c976",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        34,
+        23,
+        1240,
+        1237
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "4d1db4e68dea18f74cfb88583f2164212e3b10e7818a513512c9f043403cc5f5",
+      "index": 20
+    },
+    "u_gen_1_11": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_1_11.png",
+      "sourceSha256": "71fde3a5df7dd0d6de90c3eec6e7d276b17750d12470e0326b4b5e5527566bbc",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        110,
+        18,
+        1236,
+        1228
+      ],
+      "outputSize": [
+        52,
+        56
+      ],
+      "promptSha256": "65bfe5f557fd7f8c4f69e88f64870e0c0d0051f7ee99bd9a44e16b7fbdcd0865",
+      "index": 21
+    },
+    "u_gen_2_0": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_2_0.png",
+      "sourceSha256": "dd1d0bf0bf0c34550e5b991873345f3788019820866f51dd8c3500c0458e5d3b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        73,
+        54,
+        1198,
+        1203
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "1793115d551c5bb6d6c605b6532dc6f2ed4ab358f6dea245ac9dbd91216e7759",
+      "index": 22
+    },
+    "u_gen_2_2": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_2_2.png",
+      "sourceSha256": "031c64670bf0ee7af6add131096b5c0f8321943fae737a076899dc50109d57ca",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        99,
+        81,
+        1154,
+        1157
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "c53e66a9c0e923781e6e3e6fc1fd1a9175619926947ad4edd02b934faa1975d4",
+      "index": 23
+    },
+    "u_gen_2_4": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_2_4.png",
+      "sourceSha256": "f0c59fa4f6eb5ce195efdaa4a52acbd5ad77ed7af7c68a4efeaac956fc12a9f4",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        48,
+        34,
+        1206,
+        1222
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "824ba340b309c07afe7b55195c80aa80cf48adb05051b45a00832c3d6f305b4d",
+      "index": 24
+    },
+    "u_gen_2_6": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_2_6.png",
+      "sourceSha256": "3070e81425a07115d857934e37e5992dc50e19067fd788a662b82559d0137a6d",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        87,
+        58,
+        1188,
+        1190
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "b181d1396acc9bc003d96405be0d2bfafd20ac02fa2800c7325951e0e449f0bb",
+      "index": 25
+    },
+    "u_gen_2_8": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_2_8.png",
+      "sourceSha256": "59a9f5c089828d5ef22c2f9395e46c2606cf88d2657232ddae7ee5566693f239",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        88,
+        54,
+        1227,
+        1199
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "0438453de0cb0ed16d42e3eadddb3d9f0fc0e625e5489d2fa5a71b5fd8213749",
+      "index": 26
+    },
+    "u_gen_2_10": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_2_10.png",
+      "sourceSha256": "8545b6f5b33ad354ab08c08a5d3fccee7a14f74f728e247861b08748ea20713e",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        184,
+        62,
+        1166,
+        1193
+      ],
+      "outputSize": [
+        49,
+        56
+      ],
+      "promptSha256": "b97c20aefc987771fcbd6928a22b66de6c143d045b227ffd96c75be7834855f3",
+      "index": 27
+    },
+    "u_gen_2_12": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_2_12.png",
+      "sourceSha256": "9e510cb19cd53c8631cd593e3f7257faca1b5fc9a84aa3ac7569ebfb9fb004d8",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        71,
+        66,
+        1193,
+        1191
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "93631f68ac20e52138d37b6140204b6762c359ea17d773697d3e0aade375f997",
+      "index": 28
+    },
+    "u_gen_3_1": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_3_1.png",
+      "sourceSha256": "af5f49b4960f5eedba75b134cdf7c2ff2eef707e3229da674b7621162a7e119d",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        38,
+        46,
+        1227,
+        1225
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "293e8d6b6ae1ffaf3188be93f09098cd47a9c900f23c2e12aa18f68d689feffe",
+      "index": 29
+    },
+    "u_gen_3_3": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_3_3.png",
+      "sourceSha256": "4749fb89ca5cdc9f51f75587265066d5631461274f5a138b32e3ed2db143dc0e",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        51,
+        33,
+        1221,
+        1216
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "c8172d45f041408026b46299b2b9233b2b8b2e27dd231d3eef7d1f7a71f8af0d",
+      "index": 30
+    },
+    "u_gen_3_5": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_3_5.png",
+      "sourceSha256": "bcfc8cd978b54fb88f89b432ab5bfeec24cd55a258fd8f9d52348bc7994bd074",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        92,
+        29,
+        1211,
+        1224
+      ],
+      "outputSize": [
+        52,
+        56
+      ],
+      "promptSha256": "eb945575ac3828a46694c76c9f8df7a613ee418cfac38a64aaa8f2040030cb9c",
+      "index": 31
+    },
+    "u_gen_3_7": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_3_7.png",
+      "sourceSha256": "754cfb1d71ba52d1128bc4491bebba3ff4ba5468571948397dbf4a2000ee901d",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        27,
+        50,
+        1227,
+        1204
+      ],
+      "outputSize": [
+        56,
+        54
+      ],
+      "promptSha256": "6cc87f4bde05a32dc9ab44a66f1f8426550a750e2281db91401c3e532689f20f",
+      "index": 32
+    },
+    "u_gen_3_9": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_3_9.png",
+      "sourceSha256": "1d169c555ea517a1e0ee8a0630f4231dc398c2bc3a38022326901daea3b37357",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        41,
+        39,
+        1236,
+        1216
+      ],
+      "outputSize": [
+        56,
+        55
+      ],
+      "promptSha256": "8c7b5c057c577ff945111bb024c47f47480f243c61d55570a389575e34a06661",
+      "index": 33
+    },
+    "u_gen_3_11": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_3_11.png",
+      "sourceSha256": "ad376888e6407002b1f1d9ba10882794333451f8265f7fb4a33685f4060b3a5d",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        40,
+        24,
+        1227,
+        1204
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "7de6be099f332b6e1d69f1d0660ed994248cf2ed8136d4221e3e8fb1336571ac",
+      "index": 34
+    },
+    "u_gen_4_0": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_4_0.png",
+      "sourceSha256": "686c31abd5f0baccecbd06365528f4fd262c12ba2118b1b79277b640c9e2bb77",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        117,
+        31,
+        1206,
+        1209
+      ],
+      "outputSize": [
+        52,
+        56
+      ],
+      "promptSha256": "a2b89ee0b76a16c806cfd0811412e65331e68b582ca7cefd4165517a49a17034",
+      "index": 35
+    },
+    "u_gen_4_2": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_4_2.png",
+      "sourceSha256": "89f4337e9f2a4d99fbebf81a796c35d56613387331b4699337c079a57158eb8d",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        111,
+        34,
+        1192,
+        1210
+      ],
+      "outputSize": [
+        51,
+        56
+      ],
+      "promptSha256": "bb875d299644b2062294f4fd5ae3b4d2d0847474bc39d7b004037bc92d192288",
+      "index": 36
+    },
+    "u_gen_4_4": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_4_4.png",
+      "sourceSha256": "ae072b31a25ebb75a4b5810f7bbd4c161dca4c54e0c26543a7ec6714a7aaa5ae",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        140,
+        32,
+        1209,
+        1201
+      ],
+      "outputSize": [
+        51,
+        56
+      ],
+      "promptSha256": "b791d1304db46c6b7b1ddfbd6db3d0f525754ae7c0bd582df07032de43a6db0b",
+      "index": 37
+    },
+    "u_gen_4_6": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_4_6.png",
+      "sourceSha256": "11d59097ee850c85d4d980b646340c7b4fd3249070878ac49ca64bd7880d31a6",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        167,
+        16,
+        1166,
+        1224
+      ],
+      "outputSize": [
+        46,
+        56
+      ],
+      "promptSha256": "5ac0d84646236d5b309959ad1949e0c72fb6c56d0a06d26062cc3ef750c972ae",
+      "index": 38
+    },
+    "u_gen_4_8": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_4_8.png",
+      "sourceSha256": "adc3d61283a84ebf936099452710042ea81374cc4252dd2364d93b109c212d21",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        80,
+        17,
+        1203,
+        1238
+      ],
+      "outputSize": [
+        52,
+        56
+      ],
+      "promptSha256": "50dcbb8108f542a80e28b95735edccbd78d9c9969338085adbd2e1ccce2b077d",
+      "index": 39
+    },
+    "u_gen_4_10": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_4_10.png",
+      "sourceSha256": "4a51f42cd389d67d21870394114dfbfcacae33b80963be7d809bd58e809cadd8",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        73,
+        25,
+        1214,
+        1234
+      ],
+      "outputSize": [
+        53,
+        56
+      ],
+      "promptSha256": "46467face7c42a15b27d6f1494c54729f1ea2db7772a5a4ea5764f44b7b70f88",
+      "index": 40
+    },
+    "u_gen_4_12": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_4_12.png",
+      "sourceSha256": "f5a303d7ba5b675cbab615256fc05eb4e0265acfa992e91d237ffa3b361124b4",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        135,
+        10,
+        1207,
+        1238
+      ],
+      "outputSize": [
+        49,
+        56
+      ],
+      "promptSha256": "5a270510320a1e325c19382cb6e3b2f4accdef19cc38affb0d6b9680c1579993",
+      "index": 41
+    },
+    "u_gen_5_1": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_5_1.png",
+      "sourceSha256": "7170f343b7ce1a72c19e28164dd86e5956a714920053438339a856aa66f6acc5",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        157,
+        126,
+        1180,
+        1154
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "c7d721c1dd37943416a539137881926d0f1c4bc5b1fd1f6cb6b07518dcca94a8",
+      "index": 42
+    },
+    "u_gen_5_3": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_5_3.png",
+      "sourceSha256": "979461cc91b3f63d07bde71b7d75ee3aede21bc22c380071d4517d910d714880",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        122,
+        66,
+        1172,
+        1186
+      ],
+      "outputSize": [
+        52,
+        56
+      ],
+      "promptSha256": "f520aa452f36e9885a7949b50c59c1ac16db6d4836fab3ea365f5e0581063e2b",
+      "index": 43
+    },
+    "u_gen_5_5": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_5_5.png",
+      "sourceSha256": "c230052711e184467fbd3be574e7873f2cd5d5c69aee5870c736deb53bfa43d3",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        192,
+        60,
+        1149,
+        1183
+      ],
+      "outputSize": [
+        48,
+        56
+      ],
+      "promptSha256": "cc93d74a0915c3a513e18fa57d9fc7535a82214affae4f57fab1bc1e850d0c94",
+      "index": 44
+    },
+    "u_gen_5_7": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_5_7.png",
+      "sourceSha256": "ffcf412b6e1b3954728f06505013d34aea6af26ce66945135362431bfffe4bf5",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        210,
+        56,
+        1189,
+        1179
+      ],
+      "outputSize": [
+        49,
+        56
+      ],
+      "promptSha256": "0602556dba555d8866dc5fe2d1be4acf817647b7fdcdd582c5257e4c5ab8acca",
+      "index": 45
+    },
+    "u_gen_5_9": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_5_9.png",
+      "sourceSha256": "979149a17d0ce80da865f07ebe2fe50f6c1392c5a5602fbc0956c0f6fb22a736",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        101,
+        76,
+        1175,
+        1187
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "b537c4f2d5a056d1868a6c6287ef64d92bf9d031491df55af0e790faa918770a",
+      "index": 46
+    },
+    "u_gen_5_11": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_5_11.png",
+      "sourceSha256": "2cfc0281223c58302bdb6fa56dd1d4da501ccda0c839a84b72c7c84863be63af",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        164,
+        83,
+        1201,
+        1179
+      ],
+      "outputSize": [
+        53,
+        56
+      ],
+      "promptSha256": "56dba03404415d36e914d3165723c9e3abb2c21eb300f373096ae56f26888baf",
+      "index": 47
+    },
+    "u_gen_6_0": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_6_0.png",
+      "sourceSha256": "130587b9232067712c590b36edb544d91d88f681a62aecc156e90766364594df",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        135,
+        48,
+        1150,
+        1207
+      ],
+      "outputSize": [
+        49,
+        56
+      ],
+      "promptSha256": "557362cc5a644885de2d513b06476ab9a58ea5c03b371bcab829f519960cea61",
+      "index": 48
+    },
+    "u_gen_6_2": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_6_2.png",
+      "sourceSha256": "f305090776673a22d0d435023d7c3d0a589b067cc551fdbe8e6bfda6612d354f",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        153,
+        54,
+        1104,
+        1216
+      ],
+      "outputSize": [
+        46,
+        56
+      ],
+      "promptSha256": "a92dbad72ab44bd73fc098bc805e3ae87ddaf4429bb597578ae56a530fd1a5e9",
+      "index": 49
+    },
+    "u_gen_6_4": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_6_4.png",
+      "sourceSha256": "6f99bc6713634c1bd18d67c18894eb4e60440499c19d86bbdd6611c75c689c6e",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        112,
+        82,
+        1143,
+        1173
+      ],
+      "outputSize": [
+        53,
+        56
+      ],
+      "promptSha256": "cae16143713591ab8cbf03f2ea19d857a5015feaca45da888519585555636300",
+      "index": 50
+    },
+    "u_gen_6_6": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_6_6.png",
+      "sourceSha256": "9406c6997eaca9f858b96d7cbd41c727c89e21a77997431d83883bc672ba297e",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        131,
+        32,
+        1129,
+        1215
+      ],
+      "outputSize": [
+        47,
+        56
+      ],
+      "promptSha256": "254af5a8bc4b5bbc1fb137ecfe83caddad44931990764d25840f51c0dbe77e6d",
+      "index": 51
+    },
+    "u_gen_6_8": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_6_8.png",
+      "sourceSha256": "f8afa1b73ffb934831069e8c5be223d02eb1b954f26ea6d8ddace8c3bd829c7b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        210,
+        46,
+        1048,
+        1208
+      ],
+      "outputSize": [
+        40,
+        56
+      ],
+      "promptSha256": "5d190678c8fd16afd3bb57d93908320b55538273a0a09256e3ba32e28e0decea",
+      "index": 52
+    },
+    "u_gen_6_10": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_6_10.png",
+      "sourceSha256": "0c9551b27b9b3a5f7c3c9b8105c392e2b09b89f8d54262dcedba7cb439bd94ad",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        155,
+        49,
+        1104,
+        1216
+      ],
+      "outputSize": [
+        46,
+        56
+      ],
+      "promptSha256": "54ee08fe9e6b41e6982d8b5693d5b76c42a26d0b028f682cfb47720af8cbf61f",
+      "index": 53
+    },
+    "u_gen_6_12": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_6_12.png",
+      "sourceSha256": "8dd3eba592eb7c4ab7b99d4fd3f939e017b9b1660ab4d0e74c0d78481f9cb99c",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        120,
+        19,
+        1136,
+        1242
+      ],
+      "outputSize": [
+        47,
+        56
+      ],
+      "promptSha256": "dc3106d33b39e999136583d9bc61a00402f33b1e1696aa22f16bd3711e19446d",
+      "index": 54
+    },
+    "u_gen_7_1": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_7_1.png",
+      "sourceSha256": "488449ce8c238ac04bc379218a516e48f12fefdad736c20b7ce79a2b30cd30ed",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        228,
+        16,
+        1074,
+        1202
+      ],
+      "outputSize": [
+        40,
+        56
+      ],
+      "promptSha256": "79d75d3e370b790ab711edc87c717b8a8f5e415e1ff8ac4f4b42b102f231ae22",
+      "index": 55
+    },
+    "u_gen_7_3": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_7_3.png",
+      "sourceSha256": "6ae5b00fe53025602066837ac0fa99f1d52d19e1cb1895f1ba04cbfe99c1374a",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        157,
+        37,
+        1079,
+        1207
+      ],
+      "outputSize": [
+        44,
+        56
+      ],
+      "promptSha256": "53de3c323bf82905a1cc26e4bf6f672d65e1f036301fea8410bcf38a56f503bb",
+      "index": 56
+    },
+    "u_gen_7_5": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_7_5.png",
+      "sourceSha256": "030911fda30fdd89cf084888e278515497f5498e4ac1075adc0aafa49a66e8c1",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        209,
+        18,
+        1028,
+        1228
+      ],
+      "outputSize": [
+        38,
+        56
+      ],
+      "promptSha256": "c07ff6914733fefd4c82f67f3d6c3541f91862faa2d431b3dfc8f1624753caf6",
+      "index": 57
+    },
+    "u_gen_7_7": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_7_7.png",
+      "sourceSha256": "53e328be887d81d834c484ca00e9ef3a2788b5e90b46a1029f4442a82ea4131b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        242,
+        72,
+        1123,
+        1174
+      ],
+      "outputSize": [
+        45,
+        56
+      ],
+      "promptSha256": "66878e0819aa69ea84043722258ccb67794b75018ec61293e60baf31f047f21f",
+      "index": 58
+    },
+    "u_gen_7_9": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_7_9.png",
+      "sourceSha256": "fb0823aabc0cb2912d2d9e2f1e1b56095a721e216c943a5bfac2dd643d348ce6",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        142,
+        42,
+        1140,
+        1190
+      ],
+      "outputSize": [
+        49,
+        56
+      ],
+      "promptSha256": "574e7261d13f429bee001ac7f405208a3c7e8b527909633278d5d588e0799eec",
+      "index": 59
+    },
+    "u_gen_7_11": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_7_11.png",
+      "sourceSha256": "0c7a619ef87cfd6bd5ddf728d67de7e0603cd8224d5955ef6884e2d26f7fab8f",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        220,
+        29,
+        1036,
+        1223
+      ],
+      "outputSize": [
+        38,
+        56
+      ],
+      "promptSha256": "454c7528882381b9e7ba063c158494d34ee97a7eb03f428937a08bd9e230effa",
+      "index": 60
+    },
+    "u_gen_8_0": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_8_0.png",
+      "sourceSha256": "4754789979dacd44e74bafb8a55c796f683adf8fe0ae946f021ad738d762e749",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        159,
+        65,
+        1093,
+        1201
+      ],
+      "outputSize": [
+        46,
+        56
+      ],
+      "promptSha256": "63f1a00e3934cc72986cc40a3ee39634b715fd349e081fd87cd9347a074a43f0",
+      "index": 61
+    },
+    "u_gen_8_2": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_8_2.png",
+      "sourceSha256": "e08b099ef1b70ebf4a12d025b226308c88088b7d57be912d7ffb8820338d09dd",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        168,
+        50,
+        1126,
+        1193
+      ],
+      "outputSize": [
+        47,
+        56
+      ],
+      "promptSha256": "141cfac644493afcd3dee1613d71265dfa458ff7dbbd1942d530e324b908a653",
+      "index": 62
+    },
+    "u_gen_8_4": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_8_4.png",
+      "sourceSha256": "67f9f6cdeb4bb4610a1851d051d5aa3c2cdb7f392600bc53365f375c64df48bc",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        221,
+        83,
+        1126,
+        1182
+      ],
+      "outputSize": [
+        46,
+        56
+      ],
+      "promptSha256": "2bd2f4d19160af75c47603b6ddae9d5d3ca4157c51b2277465ea0386b8834928",
+      "index": 63
+    },
+    "u_gen_8_6": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_8_6.png",
+      "sourceSha256": "ed208bc3a8fa80fbf9ffa9a07e9fd8cd60437a9ab937ab59fb567ba1783ac483",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        176,
+        73,
+        1104,
+        1182
+      ],
+      "outputSize": [
+        47,
+        56
+      ],
+      "promptSha256": "b67c876b679d03421599c9ec6be308f021364930c5178797d0495efe6ec923a7",
+      "index": 64
+    },
+    "u_gen_8_8": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_8_8.png",
+      "sourceSha256": "bba0e0c925ea3328da81819dfdcfc27ba8b4296899eb26052904efcfff4c709f",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        194,
+        68,
+        1077,
+        1177
+      ],
+      "outputSize": [
+        45,
+        56
+      ],
+      "promptSha256": "509a6effd21b1d1db378f6d77faa968ff3be69d564d95fa4c4681e6cb95efe03",
+      "index": 65
+    },
+    "u_gen_8_10": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_8_10.png",
+      "sourceSha256": "cd2f6cd055f1cb1f79376e14d9438640f54be1f36b0a8b848f457a930dd5783d",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        222,
+        67,
+        1083,
+        1197
+      ],
+      "outputSize": [
+        43,
+        56
+      ],
+      "promptSha256": "e4d6f30e2e055af8f0f31693736f667fa1689cf36a3580fd5eafc31f478e1a9b",
+      "index": 66
+    },
+    "u_gen_8_12": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_8_12.png",
+      "sourceSha256": "2d1ccd22c00e950fe431ccd12505fba439119879601bc322d94a09bcc5a0d749",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        40,
+        43,
+        1209,
+        1212
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "99da7395d187a75caa89e7f42d35933648bd1883befb0929791b8e00fced004a",
+      "index": 67
+    },
+    "u_gen_9_1": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_9_1.png",
+      "sourceSha256": "0007cf609b83e44442a73493d8521cba1356d3d1c76503af3783c0a4ba2952e5",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        301,
+        29,
+        1211,
+        1175
+      ],
+      "outputSize": [
+        44,
+        56
+      ],
+      "promptSha256": "ffe83fd63cbaabdef5a5a22e4623b92a42301600e8bcb3a134c70b112f7992e7",
+      "index": 68
+    },
+    "u_gen_9_3": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_9_3.png",
+      "sourceSha256": "823a67316437539bb0f26150b949bd36e986a47c60c0c99ec094cbb5910db67e",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        267,
+        0,
+        992,
+        1181
+      ],
+      "outputSize": [
+        34,
+        56
+      ],
+      "promptSha256": "a91d8f7b8b8595021f52e362185e5f6b6ea7b89a0b76ec581ed0b7a9f58a442f",
+      "index": 69
+    },
+    "u_gen_9_5": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_9_5.png",
+      "sourceSha256": "b76b32bb7ab8ceca8099ec7fc5668b943d1061603ee2544788ba0996deb0a0b3",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        240,
+        108,
+        1161,
+        1167
+      ],
+      "outputSize": [
+        49,
+        56
+      ],
+      "promptSha256": "a4964524c616030923020d33d944262c42ef06e0cb0bc38475a72f9786951470",
+      "index": 70
+    },
+    "u_gen_9_7": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_9_7.png",
+      "sourceSha256": "d3598a96143c6fda0ccfbe1c898df8c02d413d5c9bd4b206b78e973b50fef679",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        176,
+        33,
+        1081,
+        1200
+      ],
+      "outputSize": [
+        43,
+        56
+      ],
+      "promptSha256": "eae35e69407a6161a4bcc707d20cb194a83e7355df240641f44f5bcb84fcd35c",
+      "index": 71
+    },
+    "u_gen_9_9": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_9_9.png",
+      "sourceSha256": "41db4c8b57223322f635296949ef58b333929bedd79aa0f5996bb00848ec252b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        137,
+        51,
+        1156,
+        1188
+      ],
+      "outputSize": [
+        50,
+        56
+      ],
+      "promptSha256": "6620069de2ba59dad5afebe625a5e4a603dbf574901d8a9c424a85f7285d9639",
+      "index": 72
+    },
+    "u_gen_9_11": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_9_11.png",
+      "sourceSha256": "a6771cd51ee7c9139c9877e3ff1496d0a8d681a168fad23bfa53f5df288aab5d",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        249,
+        36,
+        972,
+        1212
+      ],
+      "outputSize": [
+        34,
+        56
+      ],
+      "promptSha256": "dd89fac668409f960ba3d2d884c86b44948c35b1713397895eac2b57fb5215e7",
+      "index": 73
+    },
+    "u_gen_10_0": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_10_0.png",
+      "sourceSha256": "ff4c19bfb11cffe0ad4be7fab5f8afaa2c092da8d46b6e446ae029ce1fc69f8e",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        224,
+        93,
+        1090,
+        1071
+      ],
+      "outputSize": [
+        50,
+        56
+      ],
+      "promptSha256": "aab8941abc65911f61dad690bf6ec9c45ff9e3392e775ee4ffbdbcbbdcf2dcfd",
+      "index": 74
+    },
+    "u_gen_10_2": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_10_2.png",
+      "sourceSha256": "10246e95af8fa571ed1354ae1204617a1bcc3c8ed24bd6189f9df3f82f79c49b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        113,
+        54,
+        1141,
+        1124
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "089a388bdf97ebcfc3c182b8316142eb7fdcd4492f93bb2b5a752d3cdc03b49d",
+      "index": 75
+    },
+    "u_gen_10_4": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_10_4.png",
+      "sourceSha256": "93de234d5823aef46cb84b7506667f5d7d52c7d03f4f7ae0a247743da879ff30",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        180,
+        81,
+        1098,
+        1157
+      ],
+      "outputSize": [
+        48,
+        56
+      ],
+      "promptSha256": "4f2a8dbdb6281ac5b7440fb1e020e858917004d8ed48588542e65665cdabba56",
+      "index": 76
+    },
+    "u_gen_10_6": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_10_6.png",
+      "sourceSha256": "086a5bb96f7e04d74199574dba41b17c46b6c5542a13186fa91ca2d8ac1c4f8d",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        209,
+        71,
+        1096,
+        1133
+      ],
+      "outputSize": [
+        47,
+        56
+      ],
+      "promptSha256": "3f026eb62e49a8ec6f7c87f639daa445462545ecb2fff808d7247bd987cc4eed",
+      "index": 77
+    },
+    "u_gen_10_8": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_10_8.png",
+      "sourceSha256": "fa4daecc37df1b2a7c4235b9121b670b6e99be595b680a55e7e5b8f859d875b3",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        212,
+        77,
+        1100,
+        1124
+      ],
+      "outputSize": [
+        47,
+        56
+      ],
+      "promptSha256": "bbae5d4ebb6da5d54be46348c709332ed0ece42deb7bb6b1f839c94a25026f84",
+      "index": 78
+    },
+    "u_gen_10_10": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_10_10.png",
+      "sourceSha256": "854b523ba02cec779a9c267b8666c32dcaabedb1a9feceabef747af243f36bc6",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        153,
+        82,
+        1170,
+        1129
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "e0b1be6ad1414cebc955557516bc408a86e4933fe30287d0f08c4890d5e75c71",
+      "index": 79
+    },
+    "u_gen_10_12": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_10_12.png",
+      "sourceSha256": "0d6b67cb3c8189d937de473f9788f02daa92af5aa39d4ec79ba0e7858ce3be1e",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        175,
+        41,
+        1122,
+        1187
+      ],
+      "outputSize": [
+        46,
+        56
+      ],
+      "promptSha256": "de1943e37823e7c9bc2aba8d3a714e302b1bebebe52f4a72b2e8e784e12f78f0",
+      "index": 80
+    },
+    "u_gen_11_1": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_11_1.png",
+      "sourceSha256": "9f94843ec3b06fdda8d602b6aacf0f70d97a3b7f848bc52dc4a69f00ddaf6c26",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        52,
+        17,
+        1243,
+        1217
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "dfb6781fce49a17d1c4aef51c5dedb48d9d452b0b95893da51c03cbaba64add2",
+      "index": 81
+    },
+    "u_gen_11_3": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_11_3.png",
+      "sourceSha256": "0cdc2473120b717613060cbb6cbc8e87d05569287f0001b05f27354ec6a13a14",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        34,
+        25,
+        1228,
+        1210
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "9b15ebe120136187279b399abaf63f58388e32f15c4b54100651ea29f1d18177",
+      "index": 82
+    },
+    "u_gen_11_5": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_11_5.png",
+      "sourceSha256": "912d2ad085e20b43c495fe46ab49f27ae7929984f26c9365d084afbaba88b012",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        20,
+        13,
+        1245,
+        1234
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "031fd09cf83f02210e666de01fb62f66d9d82bd2951d06b5c5eecfbcb19260a0",
+      "index": 83
+    },
+    "u_gen_11_7": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_11_7.png",
+      "sourceSha256": "f604e04c0c3d1a6a81fbbedeceb75bdfa449b8fa2d6feea0c2ae0989fd26cc63",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        59,
+        40,
+        1232,
+        1214
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "4be7424ac3a5d786f77f8cb5f3262c67fdbae5927c6c79cfa2ccda9df2c572c9",
+      "index": 84
+    },
+    "u_gen_11_9": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_11_9.png",
+      "sourceSha256": "2ddcde5930f7f8e1d06074612e2dcc1fecb13b2c6089f03079847a5d3221e798",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        55,
+        22,
+        1251,
+        1209
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "feabd3b642a95a4e56c0c3d18264c3c9eb2fab29236eaf0246d1830672c78640",
+      "index": 85
+    },
+    "u_gen_11_11": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_11_11.png",
+      "sourceSha256": "64fdac06a858739b88ea85600ed24d1c9cc4e3f77ddac271717e5d782700a85f",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        46,
+        25,
+        1220,
+        1225
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "c9313c731110b59e5cf18099e2ab5d28d248fe02399157dd01d25e2cf20e1aa6",
+      "index": 86
+    },
+    "u_gen_12_0": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_12_0.png",
+      "sourceSha256": "7970ddd2479d4f4ec13ed3d2dc80295353ad6314a91f1094ebbd08d9a7d84263",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        96,
+        39,
+        1211,
+        1209
+      ],
+      "outputSize": [
+        53,
+        56
+      ],
+      "promptSha256": "245564876808a2196cb801132fe77e8f34a0c6cafa90529035316f60eee22025",
+      "index": 87
+    },
+    "u_gen_12_2": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_12_2.png",
+      "sourceSha256": "c4631894dfb2a5a6ddde11d600e704015501612e09ec3c3d1b5f6b6a37d27cb3",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        78,
+        45,
+        1217,
+        1208
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "662c452f22d1d85fa65de7c782df856c429cd7936307d9dec1d05051e8d818bb",
+      "index": 88
+    },
+    "u_gen_12_4": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_12_4.png",
+      "sourceSha256": "a873e613cb374e0e0f6de20dc770c882abda81654f7973be53351b4d2b4f65d1",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        98,
+        60,
+        1214,
+        1202
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "9e9c17834bf5e9301d1033f2d98c73a39aa4209a289158eed5eff6aa2dffa779",
+      "index": 89
+    },
+    "u_gen_12_6": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_12_6.png",
+      "sourceSha256": "4b79baa0cb09ac2b60f9557523fd2cbac5ae4f4654935eab3d8d1e65571a437a",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        83,
+        43,
+        1205,
+        1196
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "556f9c5cbe28f1a97bac5ef99a64daab64c557c7d1b4508ee353dedd35696fa3",
+      "index": 90
+    },
+    "u_gen_12_8": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_12_8.png",
+      "sourceSha256": "291a7fe1a64f3694f5e0b8179f6272e94492b57ddaa9f7e5d14ac7b8605d1a6f",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        61,
+        55,
+        1202,
+        1209
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "91c3b1910b7e328db5af68a6c276be14c6e9df395057f310bd4433cca62d1e55",
+      "index": 91
+    },
+    "u_gen_12_10": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_12_10.png",
+      "sourceSha256": "7041fa9ac36be97ed5f60d66628f3f28e8db8bcc8cdb8ec16c123ac0e33194c4",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        61,
+        24,
+        1231,
+        1209
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "34e36cdc23660b7ec8be3b04f0a95449a370dc05af64a47f3436c70062e2ebb4",
+      "index": 92
+    },
+    "u_gen_12_12": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_12_12.png",
+      "sourceSha256": "27658ccb0fc416cd4de92417ce5e26ea4ad545e1f1c9a16e29e2d12deaf74a44",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        97,
+        60,
+        1206,
+        1188
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "a684fc7680324c67e2bc7ab8325b5dab2812e856564277b6db008a9e50a2a073",
+      "index": 93
+    },
+    "u_gen_13_1": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_13_1.png",
+      "sourceSha256": "f5134e3e27e13da3e6e1f3997406061dfdfc7d2262c5b063a964d01e4b2ef190",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        89,
+        86,
+        1215,
+        1175
+      ],
+      "outputSize": [
+        56,
+        54
+      ],
+      "promptSha256": "eeaecebcfad2c0aa90f68e42436a8cd57bc7df3223e916b152f6d12ab7fd6d3e",
+      "index": 94
+    },
+    "u_gen_13_3": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_13_3.png",
+      "sourceSha256": "7a2a3847c3ac2810e74d97514fa1dd9a2c09ea7ab3851adffeef1dd9f6a7ca28",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        86,
+        29,
+        1176,
+        1192
+      ],
+      "outputSize": [
+        52,
+        56
+      ],
+      "promptSha256": "473d4e122c8f7b269aeb0b67f430def092a831e3e6d1f1f0ebfc8c14b90b1a7b",
+      "index": 95
+    },
+    "u_gen_13_5": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_13_5.png",
+      "sourceSha256": "13b2bbabc440b5e5be7347655475e6f4c8d23eca63481733497dd61f8db09d63",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        131,
+        87,
+        1190,
+        1183
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "ec13555516d6e2da9c9d3e9b8145a78ae426d44d9f73823ebc7a7ecbbe96fc76",
+      "index": 96
+    },
+    "u_gen_13_7": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_13_7.png",
+      "sourceSha256": "d0c8acc17d425230790c404f29de42f99019c1811c7d4d2a4cbb9e0b4f8cdc3b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        187,
+        82,
+        1184,
+        1176
+      ],
+      "outputSize": [
+        51,
+        56
+      ],
+      "promptSha256": "49ead0bfdbfa36bc69b6efe886699941e6bdd70201615654acde2a8dc7691abc",
+      "index": 97
+    },
+    "u_gen_13_9": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_13_9.png",
+      "sourceSha256": "97b01e961cedcb03be1c52d3894f9adbadea3a98276bb4171f318df94d514311",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        39,
+        14,
+        1212,
+        1240
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "87e41bc4ef8c9fb026dacdef4baef415df8423a35793c27aeda2cc35a17b1514",
+      "index": 98
+    },
+    "u_gen_13_11": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_13_11.png",
+      "sourceSha256": "1229581119f19e10152ecf4813f86a00b3f5a1871c9c77fec35084141c3324e8",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        47,
+        41,
+        1223,
+        1209
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "dcfe791425e40a0713dbad7588f4a582802c400b9b377e175dcab630be1ffc7c",
+      "index": 99
+    },
+    "u_gen_14_0": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_14_0.png",
+      "sourceSha256": "5c8fae2af832e49d9680fed09b14f181b4ce6c6d9efdf87f04fe151633d17b31",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        121,
+        43,
+        1168,
+        1164
+      ],
+      "outputSize": [
+        52,
+        56
+      ],
+      "promptSha256": "d280688bb51bf9529899d620b7b97036c5fa9e42e0d1031eedb9fa3999d401c9",
+      "index": 100
+    },
+    "u_gen_14_2": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_14_2.png",
+      "sourceSha256": "7c23a0095fb959527e3e48df71e7c326bdb8c9018aa0b4d8b962c03eb1839092",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        109,
+        71,
+        1165,
+        1183
+      ],
+      "outputSize": [
+        53,
+        56
+      ],
+      "promptSha256": "090911704dcb658c39734653b060ed8bc86d6bc9046214327bf2973e463fb5ed",
+      "index": 101
+    },
+    "u_gen_14_4": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_14_4.png",
+      "sourceSha256": "b9fdb2e9ed877dc68998d89a849539407e615106483d8f447d4aca013b999c29",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        192,
+        56,
+        1157,
+        1198
+      ],
+      "outputSize": [
+        47,
+        56
+      ],
+      "promptSha256": "5507d6531097caac2358a922a1e6c614b2af26f88782424de8af91469e12c1c1",
+      "index": 102
+    },
+    "u_gen_14_6": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_14_6.png",
+      "sourceSha256": "0e868b54a01aa00ac46a95a4ace88721dcbcf8d91e15c195b7c481b754563d6e",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        54,
+        22,
+        1242,
+        1220
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "bd0909e506cc4dbf5547dd418d8568f6e741482cd7f8d83787a71a1ed7d1e546",
+      "index": 103
+    },
+    "u_gen_14_8": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_14_8.png",
+      "sourceSha256": "eae165688f6b03f70129f82fbd53870a1e338029a276c819ece3650fb9b82a13",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        81,
+        36,
+        1219,
+        1201
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "24db9deea5220bdc685214ddde0df07a3c1cda2318068efdc9ef579769a12bcb",
+      "index": 104
+    },
+    "u_gen_14_10": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_14_10.png",
+      "sourceSha256": "35f6608721c8e9306a01c8c62b46d807ff116fc7b726650606b11d66f3ac6315",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        208,
+        50,
+        1165,
+        1193
+      ],
+      "outputSize": [
+        47,
+        56
+      ],
+      "promptSha256": "efd38a495923309ba863c21fa2f945b7c2c06378cba5e45606c8190ef834ae02",
+      "index": 105
+    },
+    "u_gen_14_12": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_14_12.png",
+      "sourceSha256": "1f0013f63ca58872dd087f59126fcf6c11cef5a59861dd5a1cba192a7bb4df08",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        138,
+        14,
+        1171,
+        1238
+      ],
+      "outputSize": [
+        47,
+        56
+      ],
+      "promptSha256": "146a15918802cf2a14bb270f94a46a08f0f5f47ba78deda08e4bdf5a9911fe52",
+      "index": 106
+    },
+    "u_gen_15_1": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_15_1.png",
+      "sourceSha256": "0d66db9f887a1eb6c4f808291c2b227d7bb564019e7322e52859f99d015d00ec",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        68,
+        23,
+        1226,
+        1232
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "eace5291bbd27c79170c5743207c44299c20c947acbe2b9643beeb15b3b9b820",
+      "index": 107
+    },
+    "u_gen_15_3": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_15_3.png",
+      "sourceSha256": "8fe4f8b497d2f8925951ccb1c4bb7c52bbb6413c1595c48ff7d37a7bb1bd4fab",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        40,
+        37,
+        1219,
+        1224
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "799e69bdff66e5d99f61bb8a225393656e023df7ad3f3b53d081d4594a693574",
+      "index": 108
+    },
+    "u_gen_15_5": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_15_5.png",
+      "sourceSha256": "77c4a96a91af01a25b05a321cec3ae59b07e849c8d12b2edf11555d4205dfdc5",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        34,
+        16,
+        1222,
+        1239
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "919b5c01ecee055f797151c305cfc5274b7afc78f7cac27ab9514df83b71a9da",
+      "index": 109
+    },
+    "u_gen_15_7": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_15_7.png",
+      "sourceSha256": "dcdd3804760b3975e167ad9d69cf2375c3614982cbde7575bbd17e59bd3bc334",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        63,
+        30,
+        1219,
+        1220
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "2fa567e6a41240b55c01003aa0473bc058281ac018d12404be8617e8cb61a35c",
+      "index": 110
+    },
+    "u_gen_15_9": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_15_9.png",
+      "sourceSha256": "17256ca0cd5113e689a2aa713ead7754b8d787d87cf02f8417fc6845c167806b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        16,
+        14,
+        1238,
+        1241
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "383bde672db7314aa80a0d7ebea9ae2460718251bcc923fa8e1b43e52f41a576",
+      "index": 111
+    },
+    "u_gen_15_11": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_15_11.png",
+      "sourceSha256": "44d63397aaa71633a99d030a3ee74df89e3df38ad92d88f4eb0c45363542d5a8",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        66,
+        43,
+        1231,
+        1228
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "e583a6ecbcfaa7b11dddf28ff04a1751e17c21a91641b7d53eab3fb42b25a03c",
+      "index": 112
+    },
+    "u_gen_16_0": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_16_0.png",
+      "sourceSha256": "56c5aa01b99f417e72be4367684fd6352ff7a819aa1cdc11381289e072267ff2",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        43,
+        48,
+        1225,
+        1210
+      ],
+      "outputSize": [
+        56,
+        55
+      ],
+      "promptSha256": "78e9de202144e6c511d34cca6b736351f66142f5b53f61dbadf343f76b1beb03",
+      "index": 113
+    },
+    "u_gen_16_2": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_16_2.png",
+      "sourceSha256": "e1141c73bf9d467fe6639b826008a49b62681b63761fd2484478723ce10ea2da",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        65,
+        83,
+        1232,
+        1175
+      ],
+      "outputSize": [
+        56,
+        52
+      ],
+      "promptSha256": "a4453121850fe11283cf045a2f298e72800ff39c89683942b630fe8df3a8cc22",
+      "index": 114
+    },
+    "u_gen_16_4": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_16_4.png",
+      "sourceSha256": "31bfaa1439d79f4614151b7c38fb274687c0687f4ff0ef4ac3f37a303271c966",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        28,
+        33,
+        1243,
+        1207
+      ],
+      "outputSize": [
+        56,
+        54
+      ],
+      "promptSha256": "cdb6c32d9d066bc741b2bad6a6522a4e7b4d74ed53dfaabc1ba405ebeb9be9ff",
+      "index": 115
+    },
+    "u_gen_16_6": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_16_6.png",
+      "sourceSha256": "2953e4d6607d843036dc528f4d95a99bcf225ea2fa38d834864ade00a8d487b0",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        44,
+        96,
+        1221,
+        1160
+      ],
+      "outputSize": [
+        56,
+        51
+      ],
+      "promptSha256": "45af5d4e471ee66a2348264315d085db1a0f0a97ebce91b6a6b385b773ae837c",
+      "index": 116
+    },
+    "u_gen_16_8": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_16_8.png",
+      "sourceSha256": "eab174e05c3c539c360d393bd0368cd69b3ae7095852d38775b55759cf09891b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        32,
+        9,
+        1252,
+        1231
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "e28a34355318b8eb10f04508758e62a5c36942bc1153a995666b17ea6880e7b4",
+      "index": 117
+    },
+    "u_gen_16_10": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_16_10.png",
+      "sourceSha256": "4172aa516a27d0c33db436c99a121df26d2ccdbbc7a689f0cdbe3fd0ff9bbe58",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        52,
+        42,
+        1224,
+        1215
+      ],
+      "outputSize": [
+        56,
+        56
+      ],
+      "promptSha256": "f63687b9556cd3693a8930d32d9c79180c2d0625a863504062c0d43c91fea187",
+      "index": 118
+    },
+    "u_gen_16_12": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_16_12.png",
+      "sourceSha256": "dcfb796b9e180a4eb8e6b99a22a0debe24067688350227c7466bf5efa9c7551b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        60,
+        25,
+        1240,
+        1225
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "d0c657925466810ed40d0ab569d2b1cb1898e3c001f75d0be36257f5f3d6b4dc",
+      "index": 119
+    },
+    "u_gen_17_1": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_17_1.png",
+      "sourceSha256": "32f8b4394b3b406aff82bf7965c1f10d8dd25a39fa2179536d1598226f9922ce",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        265,
+        29,
+        955,
+        1207
+      ],
+      "outputSize": [
+        33,
+        56
+      ],
+      "promptSha256": "8f3dd5dda9a76060c0cf26d3dea9ea434b94eea89a57b197bf062a6d957fddea",
+      "index": 120
+    },
+    "u_gen_17_3": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_17_3.png",
+      "sourceSha256": "1ed074ed6f9859a9e20509928f89e869474c5ed86f45ddad3b6e71b655f1effa",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        243,
+        40,
+        1018,
+        1214
+      ],
+      "outputSize": [
+        37,
+        56
+      ],
+      "promptSha256": "58e67533131004f6dce25565d55541fc1b6c1fc3d31b1ece782b01c243171609",
+      "index": 121
+    },
+    "u_gen_17_5": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_17_5.png",
+      "sourceSha256": "5fa83a026978aa974fd3636750a8a68a18839ea5992893cf56c177b5c47994d7",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        90,
+        28,
+        1164,
+        1221
+      ],
+      "outputSize": [
+        50,
+        56
+      ],
+      "promptSha256": "9daf05cc2972f4c398e9ce7d57380f639b491bff0243288d59d20d908ee622a9",
+      "index": 122
+    },
+    "u_gen_17_7": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_17_7.png",
+      "sourceSha256": "cd304ee94e31dbc1c1187d16a8eb5f2a10b4cd3871a9987c1d151aed67d8e3cd",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        98,
+        65,
+        1156,
+        1171
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "9500496ebcb5f94412d918e1f00fffadc1b10166100da27de1515882ff209b78",
+      "index": 123
+    },
+    "u_gen_17_9": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_17_9.png",
+      "sourceSha256": "09c4f3cbc83264c81da5bd42e211fee372a1413cfde31c0d1e93bb8b988fa068",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        274,
+        11,
+        986,
+        1235
+      ],
+      "outputSize": [
+        33,
+        56
+      ],
+      "promptSha256": "2c8ecf3acfacb132d787ac3e898a4038f88d0efd04399a3b972cea84b7080cb4",
+      "index": 124
+    },
+    "u_gen_17_11": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_17_11.png",
+      "sourceSha256": "c6180681cf4f05899734756883fc07d9cf016c4401a1b764bd64c53dbe0e0cb3",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        211,
+        26,
+        1072,
+        1211
+      ],
+      "outputSize": [
+        41,
+        56
+      ],
+      "promptSha256": "1446636383a69d3707aad79329bae1f644127a56e52c53b6fe17afbaad8836ab",
+      "index": 125
+    },
+    "u_gen_18_0": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_18_0.png",
+      "sourceSha256": "c65f49aae08716d93df1e9d528d090afeb2ab6f416904fff167b282f84cd3a34",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        120,
+        107,
+        1196,
+        1170
+      ],
+      "outputSize": [
+        56,
+        55
+      ],
+      "promptSha256": "bfa2485c2867cb0cd93cc74168fcc193c01e2256f525b62f84c3790443eeb752",
+      "index": 126
+    },
+    "u_gen_18_2": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_18_2.png",
+      "sourceSha256": "eb762de319f30ca39c42d1ac33552a9f6d030a64ed9aab8a7b047088a39354bf",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        63,
+        80,
+        1210,
+        1172
+      ],
+      "outputSize": [
+        56,
+        53
+      ],
+      "promptSha256": "a6f1ba0f23d6973ec4dbb42f58c2cc7e1e4107408945362bbac68196f7226598",
+      "index": 127
+    },
+    "u_gen_18_4": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_18_4.png",
+      "sourceSha256": "77c1d13397c01a0490491368740256d48e335ec2765b8c560e35d3f7cf5a08d6",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        34,
+        99,
+        1235,
+        1169
+      ],
+      "outputSize": [
+        56,
+        50
+      ],
+      "promptSha256": "2df6d82b92c5bae65be69cb5bedf63f7a605998edc173aaf2acd6173b85166db",
+      "index": 128
+    },
+    "u_gen_18_6": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_18_6.png",
+      "sourceSha256": "a474d84dc29203a7a7ac7927987eece442ee4aee3697a70936c73b51bb505d6b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        124,
+        97,
+        1192,
+        1176
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "f36ad8594f167c2d9ffad22569c17c554df8116d6e9be5946ec106140b9f987c",
+      "index": 129
+    },
+    "u_gen_18_8": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_18_8.png",
+      "sourceSha256": "528f0152ae61d017c144b71b89d801a6933ed99305b4ca60c31caacbfea22fa3",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        61,
+        16,
+        1186,
+        1191
+      ],
+      "outputSize": [
+        54,
+        56
+      ],
+      "promptSha256": "1e6bb50c03cd283eb83a195795b56b8d06e2275a346292901b335ff5dcf8c27b",
+      "index": 130
+    },
+    "u_gen_18_10": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_18_10.png",
+      "sourceSha256": "cf523ac649790dc5b12241969e4a997df153416c4b61fe7ce44d0a320c915652",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        108,
+        106,
+        1146,
+        1156
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "ede4a5735d8492629c3deebea2d1bf1a1385f178a9781139e6b269e467a4e999",
+      "index": 131
+    },
+    "u_gen_18_12": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_18_12.png",
+      "sourceSha256": "9815e5d8840564d10fcdc783d4062daf14275fdf79fded12fb7cf22b5bb5ef1d",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        52,
+        61,
+        1205,
+        1191
+      ],
+      "outputSize": [
+        56,
+        55
+      ],
+      "promptSha256": "9b7a201984b201c4eac7443473946883559623e8ddc20ec05a8b86b9ce896dd0",
+      "index": 132
+    },
+    "u_gen_19_1": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_19_1.png",
+      "sourceSha256": "a3248c6cf4e94178d7aca6d1912898ca500f451e9cb7b56c09bc93e37f0adf1c",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        110,
+        109,
+        1157,
+        1182
+      ],
+      "outputSize": [
+        55,
+        56
+      ],
+      "promptSha256": "2650d3d1d5165ef91b2ec41f684ff3f688a2a445ed7a49523c1792b0bc726236",
+      "index": 133
+    },
+    "u_gen_19_3": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_19_3.png",
+      "sourceSha256": "43d877fda6c244a089b9de5cbd02712d7f82424a0dd25f7c5c926d1c31641045",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        27,
+        292,
+        1233,
+        975
+      ],
+      "outputSize": [
+        56,
+        32
+      ],
+      "promptSha256": "fd655ca3d3431d3468d5db5b4d55a6092ffabe9285f8c2e1a631bce6436b1661",
+      "index": 134
+    },
+    "u_gen_19_5": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_19_5.png",
+      "sourceSha256": "2ddbc68c78a637dbd2df82619525ef1bae6673e67d77f547379b310ff307981b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        45,
+        223,
+        1221,
+        1081
+      ],
+      "outputSize": [
+        56,
+        41
+      ],
+      "promptSha256": "403842e18bd69cfea96964acd7dc33712040318a12973e0ebd0ac1d1f582a88a",
+      "index": 135
+    },
+    "u_gen_19_7": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_19_7.png",
+      "sourceSha256": "74d62012e90f899f7dee97c1fde1f143a09633b87061381fe8e431bf5fe51585",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        31,
+        290,
+        1224,
+        969
+      ],
+      "outputSize": [
+        56,
+        32
+      ],
+      "promptSha256": "5908eeb2e934c7fca96f0af70e234d819655c35ab7a484f67d237af61e155edc",
+      "index": 136
+    },
+    "u_gen_19_9": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_19_9.png",
+      "sourceSha256": "509477ba162c061ff52a3406b63fb73c9227dec78b5f76f53127600196c8e6a3",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        49,
+        233,
+        1215,
+        1026
+      ],
+      "outputSize": [
+        56,
+        38
+      ],
+      "promptSha256": "5ab559b21db417a5dfbb374c9d538b71695cbb6f0d66584b9b1977ee6d57b0a5",
+      "index": 137
+    },
+    "u_gen_19_11": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/u_gen_19_11.png",
+      "sourceSha256": "9cc299060dd7bb97a0a5ec451db701f7cd8922a441367b45f0d619156f86720b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        66,
+        139,
+        1217,
+        1154
+      ],
+      "outputSize": [
+        56,
+        49
+      ],
+      "promptSha256": "de4e2cc38554427f63682406771c2ba12c82c757e1e06d61ec3738a7f9d47f53",
+      "index": 138
+    },
+    "uc_thief": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uc_thief.png",
+      "sourceSha256": "6e946bce36377c1e68ad43c2346a9ee394be067fbf2bc2bfc35c3d21e5d7a2a1",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        246,
+        48,
+        1191,
+        1191
+      ],
+      "outputSize": [
+        46,
+        56
+      ],
+      "promptSha256": "3a1b11a610084c0ec340732cf6409ab495f9f5d94d13b2c39bb9e4c4cb00c760",
+      "index": 139
+    },
+    "uc_ember": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uc_ember.png",
+      "sourceSha256": "7843b9da6e92958b10de1362bb6fba71ca7970cbfbce3cf12e99623eb714773c",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        190,
+        99,
+        1046,
+        1139
+      ],
+      "outputSize": [
+        46,
+        56
+      ],
+      "promptSha256": "0d39ebe38c1a79b1fe9f95d28e5413e5c025f190c61f0fae9ac1c55afb947565",
+      "index": 140
+    },
+    "uc_quick": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uc_quick.png",
+      "sourceSha256": "ae09dac65f3cc3e23433a8393a495c0738be190a66160fa0a0cd8492598b64d5",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        187,
+        96,
+        1142,
+        1172
+      ],
+      "outputSize": [
+        50,
+        56
+      ],
+      "promptSha256": "7ecc7b508978c62ec307001298cdd58750354d27d53b036e2a105f52d3012302",
+      "index": 141
+    },
+    "uc_mystic": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uc_mystic.png",
+      "sourceSha256": "4124e924a00324009d3d6e36be7023e56e916e8c1b4f5bc53429abbd5694a25b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        206,
+        24,
+        1107,
+        1213
+      ],
+      "outputSize": [
+        42,
+        56
+      ],
+      "promptSha256": "5378e6cddce1826bb3996cd54eab2a616cdc2d83999535e7189e13a9992c00e4",
+      "index": 142
+    },
+    "uc_grave": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uc_grave.png",
+      "sourceSha256": "41ad1199198fea5cbf54b90b69c395faab7e0e152734e930d156ed8eab030aed",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        271,
+        32,
+        1187,
+        1218
+      ],
+      "outputSize": [
+        43,
+        56
+      ],
+      "promptSha256": "d064b4486e143ef9f66a50a03fdd36fb9ea954b2ea34b4eeef08b947185b07d3",
+      "index": 143
+    },
+    "uc_vampire": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uc_vampire.png",
+      "sourceSha256": "7e5b8589ec6f4621472d7b0264f68d73f36c5f16b724742450ceee3c7b617efb",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        265,
+        32,
+        1157,
+        1193
+      ],
+      "outputSize": [
+        43,
+        56
+      ],
+      "promptSha256": "bf41238bdc06fed0ee566dde1029dd3fa66ff1974b85967bede5b97fb26db900",
+      "index": 144
+    },
+    "uc_hunt": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uc_hunt.png",
+      "sourceSha256": "a85497d46efe601e6db337e637eb73ddc5d78ce1e317d15d483009c6f2094449",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        251,
+        26,
+        1146,
+        1222
+      ],
+      "outputSize": [
+        42,
+        56
+      ],
+      "promptSha256": "3111d52c530c5358542694c8876fa3738e673343facb36b40d73a9faf09d62d2",
+      "index": 145
+    },
+    "uc_warlord": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uc_warlord.png",
+      "sourceSha256": "9de099ea813bbfca374fc484c8a1647af3d10202c1f3ca334c231c4054c4554e",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        268,
+        16,
+        1012,
+        1224
+      ],
+      "outputSize": [
+        34,
+        56
+      ],
+      "promptSha256": "cc4deca4602195785efc107230e410f3cebcb9cf0d5e1bd5ca816ea69df0db1d",
+      "index": 146
+    },
+    "uc_wyrm": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uc_wyrm.png",
+      "sourceSha256": "72c2836574782f3025f2964d8f664ea383ee66d6b3c586cc902faee06ce5e68c",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        411,
+        41,
+        1042,
+        1166
+      ],
+      "outputSize": [
+        31,
+        56
+      ],
+      "promptSha256": "1725ddb1ba086d70c09dfe07e023cd221c135535fc8a5a40d9a3184a4389ce1f",
+      "index": 147
+    },
+    "uj_rainbow": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uj_rainbow.png",
+      "sourceSha256": "36ec5a2715d7c6ce07245513f7c621b7e872a65c5b3566ff0a6835b66e5029dd",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        300,
+        91,
+        1018,
+        1127
+      ],
+      "outputSize": [
+        39,
+        56
+      ],
+      "promptSha256": "fb1151ab474f019f22e0a8854233a04315d0256d89e3f0833601fe0e7439ca19",
+      "index": 148
+    },
+    "uj_rage": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uj_rage.png",
+      "sourceSha256": "008cee1bec9d54eee8b488b0d21d56474144d13a02565a57d0a314756fb96011",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        258,
+        61,
+        1021,
+        1150
+      ],
+      "outputSize": [
+        39,
+        56
+      ],
+      "promptSha256": "ee77fbc04a3d7e4970a8eef15b7a63452baa416086d3bb2cb6f2ef6ad628e8e3",
+      "index": 149
+    },
+    "uj_frost": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uj_frost.png",
+      "sourceSha256": "b66a563f335d3082a44b067f4e3b5545fd8d2cce1e03ece1b47a4694d44d71ec",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        201,
+        154,
+        1059,
+        1116
+      ],
+      "outputSize": [
+        50,
+        56
+      ],
+      "promptSha256": "f3ee65c689f021bdf4c87692435a37a1a3344ef98038ec7f7d5306b831e4b6d3",
+      "index": 150
+    },
+    "uj_ward": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uj_ward.png",
+      "sourceSha256": "e9065094e5ba55b719e874ba851f146ffdce12507adbccfc7e9a94a74a40a8d5",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        240,
+        111,
+        1014,
+        1142
+      ],
+      "outputSize": [
+        42,
+        56
+      ],
+      "promptSha256": "495945d5201482885c20476f83464994ac4c130269ac5824a6a1d0a1396160c1",
+      "index": 151
+    },
+    "uj_leech": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uj_leech.png",
+      "sourceSha256": "23ed96bb424128b587152b941663b6dcc8df43b3e9e0dde755e131859c29497b",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        281,
+        64,
+        974,
+        1178
+      ],
+      "outputSize": [
+        35,
+        56
+      ],
+      "promptSha256": "7a4f93bb038558929bad6ea4337b75afc28ba99494af9870d368397fb8ca7da8",
+      "index": 152
+    },
+    "uj_storm": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uj_storm.png",
+      "sourceSha256": "a88d019c29bc192d4058ee62ce497c12643a6a9aca07f9962118be0ae4b2fb11",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        338,
+        49,
+        922,
+        1200
+      ],
+      "outputSize": [
+        28,
+        56
+      ],
+      "promptSha256": "8c4c4f7bf9498735815a4579256d305559201205513025bce93c8db7f640d615",
+      "index": 153
+    },
+    "uj_titan": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uj_titan.png",
+      "sourceSha256": "8c932882b67c526a7046604bf8d03880994534f25236230fd3172b8c92891737",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        153,
+        78,
+        1130,
+        1167
+      ],
+      "outputSize": [
+        50,
+        56
+      ],
+      "promptSha256": "ff0c890e5aaa3918c6593d2468a9bcbf792df1a36b0620f1878999385d8cdfd3",
+      "index": 154
+    },
+    "uj_seer": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/uj_seer.png",
+      "sourceSha256": "851ed841c6448fa2c0bb077c83bf154056f8721729341285b5e1a4679239fa4c",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        177,
+        87,
+        1077,
+        1166
+      ],
+      "outputSize": [
+        47,
+        56
+      ],
+      "promptSha256": "8ae959fbf79aed245027d101b566415f68624b95bd2f2fe808fb8bc129d02012",
+      "index": 155
+    },
+    "g_doom": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/g_doom.png",
+      "sourceSha256": "6866d316733be4af679a7df385c6b0d41015e47e1d5a2f9112a41512dd964d06",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        257,
+        63,
+        1045,
+        1195
+      ],
+      "outputSize": [
+        39,
+        56
+      ],
+      "promptSha256": "13888e2bd8aee071fcb58dd07154516afe81d85d749f1ecec9a1430ec6ae07d0",
+      "index": 156
+    },
+    "g_void": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/g_void.png",
+      "sourceSha256": "6475081e2ceb6c81baa37e73619969cf5bd6d035d9b8de5d209935bfb75f718e",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        136,
+        86,
+        1120,
+        1172
+      ],
+      "outputSize": [
+        51,
+        56
+      ],
+      "promptSha256": "a9d3313ad963f6ad9607ef883471f3a88f40e94c5750933e1fda42da9a430621",
+      "index": 157
+    },
+    "g_titan": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/g_titan.png",
+      "sourceSha256": "cf1207f39b89c454a37a4d8f8d7a21e6514af9b61bfc8309502ec1216e3ffec6",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        189,
+        97,
+        1091,
+        1134
+      ],
+      "outputSize": [
+        49,
+        56
+      ],
+      "promptSha256": "5aba10419b947180ba9791b4922c58d36b3dbabe8ed312a8572fd98ee3d69693",
+      "index": 158
+    },
+    "g_wraith": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/g_wraith.png",
+      "sourceSha256": "fe74e58aa896ccb896e24857b414262f19360096c42ec86a5e076017796f3a5e",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        404,
+        17,
+        896,
+        1231
+      ],
+      "outputSize": [
+        23,
+        56
+      ],
+      "promptSha256": "3fa53d0b407182f2a82ae40d64e5ea040aad38266f760c22bc79f6383434d77a",
+      "index": 159
+    },
+    "g_aegis": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/g_aegis.png",
+      "sourceSha256": "233d053bb631738b114da14aa529bfb38646c53e0d79da17cc969abeb214174d",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        204,
+        24,
+        1049,
+        1213
+      ],
+      "outputSize": [
+        40,
+        56
+      ],
+      "promptSha256": "c80147713df92deb3980d7889685b8c16bfe14c6fcf6600680ab9882105a019e",
+      "index": 160
+    },
+    "g_venom": {
+      "source": "assets/sprites_src/gameplay_art_authored/items/uniques/g_venom.png",
+      "sourceSha256": "3d701ca80f99ffc6a55ab3e735dd0030649c9e92ddda3c0882edf67aa2f0f2da",
+      "size": [
+        1254,
+        1254
+      ],
+      "sourceBox": [
+        396,
+        61,
+        864,
+        1188
+      ],
+      "outputSize": [
+        23,
+        56
+      ],
+      "promptSha256": "32118653db7d52abe2105755c694884d0e48acea8ab0fede9e96c94af622f2af",
+      "index": 161
+    }
+  },
+  "retainedSources": {
+    "uj_oak": {
+      "source": "assets/sprites_src/gameplay_art/ui/items_oak.png",
+      "sha256": "3804fc418123952241fa689fa9a1cbaf6702e91314860ee93836e688ae3a10e6"
+    }
+  },
+  "entries": {
+    "ui.items.uniques": {
+      "src": "assets/sprites/packed/ui/items_uniques.webp",
+      "revision": "8b2d4a153378",
+      "kind": "atlas",
+      "cell": [
+        64,
+        64
+      ],
+      "cols": 18,
+      "rows": 9,
+      "anchor": [
+        32,
+        32
+      ],
+      "bundle": "core"
+    }
+  },
+  "maps": {
+    "uniqueItemIcons": {
+      "uj_oak": {
+        "assetId": "ui.items.oak",
+        "index": 0
+      },
+      "u_gravebite": {
+        "assetId": "ui.items.uniques",
+        "index": 0
+      },
+      "u_widow": {
+        "assetId": "ui.items.uniques",
+        "index": 1
+      },
+      "u_cinder": {
+        "assetId": "ui.items.uniques",
+        "index": 2
+      },
+      "u_oath": {
+        "assetId": "ui.items.uniques",
+        "index": 3
+      },
+      "u_crown": {
+        "assetId": "ui.items.uniques",
+        "index": 4
+      },
+      "u_marrow": {
+        "assetId": "ui.items.uniques",
+        "index": 5
+      },
+      "u_stormknot": {
+        "assetId": "ui.items.uniques",
+        "index": 6
+      },
+      "u_stride": {
+        "assetId": "ui.items.uniques",
+        "index": 7
+      },
+      "u_kingsplit": {
+        "assetId": "ui.items.uniques",
+        "index": 8
+      },
+      "u_gen_0_0": {
+        "assetId": "ui.items.uniques",
+        "index": 9
+      },
+      "u_gen_0_2": {
+        "assetId": "ui.items.uniques",
+        "index": 10
+      },
+      "u_gen_0_4": {
+        "assetId": "ui.items.uniques",
+        "index": 11
+      },
+      "u_gen_0_6": {
+        "assetId": "ui.items.uniques",
+        "index": 12
+      },
+      "u_gen_0_8": {
+        "assetId": "ui.items.uniques",
+        "index": 13
+      },
+      "u_gen_0_10": {
+        "assetId": "ui.items.uniques",
+        "index": 14
+      },
+      "u_gen_0_12": {
+        "assetId": "ui.items.uniques",
+        "index": 15
+      },
+      "u_gen_1_1": {
+        "assetId": "ui.items.uniques",
+        "index": 16
+      },
+      "u_gen_1_3": {
+        "assetId": "ui.items.uniques",
+        "index": 17
+      },
+      "u_gen_1_5": {
+        "assetId": "ui.items.uniques",
+        "index": 18
+      },
+      "u_gen_1_7": {
+        "assetId": "ui.items.uniques",
+        "index": 19
+      },
+      "u_gen_1_9": {
+        "assetId": "ui.items.uniques",
+        "index": 20
+      },
+      "u_gen_1_11": {
+        "assetId": "ui.items.uniques",
+        "index": 21
+      },
+      "u_gen_2_0": {
+        "assetId": "ui.items.uniques",
+        "index": 22
+      },
+      "u_gen_2_2": {
+        "assetId": "ui.items.uniques",
+        "index": 23
+      },
+      "u_gen_2_4": {
+        "assetId": "ui.items.uniques",
+        "index": 24
+      },
+      "u_gen_2_6": {
+        "assetId": "ui.items.uniques",
+        "index": 25
+      },
+      "u_gen_2_8": {
+        "assetId": "ui.items.uniques",
+        "index": 26
+      },
+      "u_gen_2_10": {
+        "assetId": "ui.items.uniques",
+        "index": 27
+      },
+      "u_gen_2_12": {
+        "assetId": "ui.items.uniques",
+        "index": 28
+      },
+      "u_gen_3_1": {
+        "assetId": "ui.items.uniques",
+        "index": 29
+      },
+      "u_gen_3_3": {
+        "assetId": "ui.items.uniques",
+        "index": 30
+      },
+      "u_gen_3_5": {
+        "assetId": "ui.items.uniques",
+        "index": 31
+      },
+      "u_gen_3_7": {
+        "assetId": "ui.items.uniques",
+        "index": 32
+      },
+      "u_gen_3_9": {
+        "assetId": "ui.items.uniques",
+        "index": 33
+      },
+      "u_gen_3_11": {
+        "assetId": "ui.items.uniques",
+        "index": 34
+      },
+      "u_gen_4_0": {
+        "assetId": "ui.items.uniques",
+        "index": 35
+      },
+      "u_gen_4_2": {
+        "assetId": "ui.items.uniques",
+        "index": 36
+      },
+      "u_gen_4_4": {
+        "assetId": "ui.items.uniques",
+        "index": 37
+      },
+      "u_gen_4_6": {
+        "assetId": "ui.items.uniques",
+        "index": 38
+      },
+      "u_gen_4_8": {
+        "assetId": "ui.items.uniques",
+        "index": 39
+      },
+      "u_gen_4_10": {
+        "assetId": "ui.items.uniques",
+        "index": 40
+      },
+      "u_gen_4_12": {
+        "assetId": "ui.items.uniques",
+        "index": 41
+      },
+      "u_gen_5_1": {
+        "assetId": "ui.items.uniques",
+        "index": 42
+      },
+      "u_gen_5_3": {
+        "assetId": "ui.items.uniques",
+        "index": 43
+      },
+      "u_gen_5_5": {
+        "assetId": "ui.items.uniques",
+        "index": 44
+      },
+      "u_gen_5_7": {
+        "assetId": "ui.items.uniques",
+        "index": 45
+      },
+      "u_gen_5_9": {
+        "assetId": "ui.items.uniques",
+        "index": 46
+      },
+      "u_gen_5_11": {
+        "assetId": "ui.items.uniques",
+        "index": 47
+      },
+      "u_gen_6_0": {
+        "assetId": "ui.items.uniques",
+        "index": 48
+      },
+      "u_gen_6_2": {
+        "assetId": "ui.items.uniques",
+        "index": 49
+      },
+      "u_gen_6_4": {
+        "assetId": "ui.items.uniques",
+        "index": 50
+      },
+      "u_gen_6_6": {
+        "assetId": "ui.items.uniques",
+        "index": 51
+      },
+      "u_gen_6_8": {
+        "assetId": "ui.items.uniques",
+        "index": 52
+      },
+      "u_gen_6_10": {
+        "assetId": "ui.items.uniques",
+        "index": 53
+      },
+      "u_gen_6_12": {
+        "assetId": "ui.items.uniques",
+        "index": 54
+      },
+      "u_gen_7_1": {
+        "assetId": "ui.items.uniques",
+        "index": 55
+      },
+      "u_gen_7_3": {
+        "assetId": "ui.items.uniques",
+        "index": 56
+      },
+      "u_gen_7_5": {
+        "assetId": "ui.items.uniques",
+        "index": 57
+      },
+      "u_gen_7_7": {
+        "assetId": "ui.items.uniques",
+        "index": 58
+      },
+      "u_gen_7_9": {
+        "assetId": "ui.items.uniques",
+        "index": 59
+      },
+      "u_gen_7_11": {
+        "assetId": "ui.items.uniques",
+        "index": 60
+      },
+      "u_gen_8_0": {
+        "assetId": "ui.items.uniques",
+        "index": 61
+      },
+      "u_gen_8_2": {
+        "assetId": "ui.items.uniques",
+        "index": 62
+      },
+      "u_gen_8_4": {
+        "assetId": "ui.items.uniques",
+        "index": 63
+      },
+      "u_gen_8_6": {
+        "assetId": "ui.items.uniques",
+        "index": 64
+      },
+      "u_gen_8_8": {
+        "assetId": "ui.items.uniques",
+        "index": 65
+      },
+      "u_gen_8_10": {
+        "assetId": "ui.items.uniques",
+        "index": 66
+      },
+      "u_gen_8_12": {
+        "assetId": "ui.items.uniques",
+        "index": 67
+      },
+      "u_gen_9_1": {
+        "assetId": "ui.items.uniques",
+        "index": 68
+      },
+      "u_gen_9_3": {
+        "assetId": "ui.items.uniques",
+        "index": 69
+      },
+      "u_gen_9_5": {
+        "assetId": "ui.items.uniques",
+        "index": 70
+      },
+      "u_gen_9_7": {
+        "assetId": "ui.items.uniques",
+        "index": 71
+      },
+      "u_gen_9_9": {
+        "assetId": "ui.items.uniques",
+        "index": 72
+      },
+      "u_gen_9_11": {
+        "assetId": "ui.items.uniques",
+        "index": 73
+      },
+      "u_gen_10_0": {
+        "assetId": "ui.items.uniques",
+        "index": 74
+      },
+      "u_gen_10_2": {
+        "assetId": "ui.items.uniques",
+        "index": 75
+      },
+      "u_gen_10_4": {
+        "assetId": "ui.items.uniques",
+        "index": 76
+      },
+      "u_gen_10_6": {
+        "assetId": "ui.items.uniques",
+        "index": 77
+      },
+      "u_gen_10_8": {
+        "assetId": "ui.items.uniques",
+        "index": 78
+      },
+      "u_gen_10_10": {
+        "assetId": "ui.items.uniques",
+        "index": 79
+      },
+      "u_gen_10_12": {
+        "assetId": "ui.items.uniques",
+        "index": 80
+      },
+      "u_gen_11_1": {
+        "assetId": "ui.items.uniques",
+        "index": 81
+      },
+      "u_gen_11_3": {
+        "assetId": "ui.items.uniques",
+        "index": 82
+      },
+      "u_gen_11_5": {
+        "assetId": "ui.items.uniques",
+        "index": 83
+      },
+      "u_gen_11_7": {
+        "assetId": "ui.items.uniques",
+        "index": 84
+      },
+      "u_gen_11_9": {
+        "assetId": "ui.items.uniques",
+        "index": 85
+      },
+      "u_gen_11_11": {
+        "assetId": "ui.items.uniques",
+        "index": 86
+      },
+      "u_gen_12_0": {
+        "assetId": "ui.items.uniques",
+        "index": 87
+      },
+      "u_gen_12_2": {
+        "assetId": "ui.items.uniques",
+        "index": 88
+      },
+      "u_gen_12_4": {
+        "assetId": "ui.items.uniques",
+        "index": 89
+      },
+      "u_gen_12_6": {
+        "assetId": "ui.items.uniques",
+        "index": 90
+      },
+      "u_gen_12_8": {
+        "assetId": "ui.items.uniques",
+        "index": 91
+      },
+      "u_gen_12_10": {
+        "assetId": "ui.items.uniques",
+        "index": 92
+      },
+      "u_gen_12_12": {
+        "assetId": "ui.items.uniques",
+        "index": 93
+      },
+      "u_gen_13_1": {
+        "assetId": "ui.items.uniques",
+        "index": 94
+      },
+      "u_gen_13_3": {
+        "assetId": "ui.items.uniques",
+        "index": 95
+      },
+      "u_gen_13_5": {
+        "assetId": "ui.items.uniques",
+        "index": 96
+      },
+      "u_gen_13_7": {
+        "assetId": "ui.items.uniques",
+        "index": 97
+      },
+      "u_gen_13_9": {
+        "assetId": "ui.items.uniques",
+        "index": 98
+      },
+      "u_gen_13_11": {
+        "assetId": "ui.items.uniques",
+        "index": 99
+      },
+      "u_gen_14_0": {
+        "assetId": "ui.items.uniques",
+        "index": 100
+      },
+      "u_gen_14_2": {
+        "assetId": "ui.items.uniques",
+        "index": 101
+      },
+      "u_gen_14_4": {
+        "assetId": "ui.items.uniques",
+        "index": 102
+      },
+      "u_gen_14_6": {
+        "assetId": "ui.items.uniques",
+        "index": 103
+      },
+      "u_gen_14_8": {
+        "assetId": "ui.items.uniques",
+        "index": 104
+      },
+      "u_gen_14_10": {
+        "assetId": "ui.items.uniques",
+        "index": 105
+      },
+      "u_gen_14_12": {
+        "assetId": "ui.items.uniques",
+        "index": 106
+      },
+      "u_gen_15_1": {
+        "assetId": "ui.items.uniques",
+        "index": 107
+      },
+      "u_gen_15_3": {
+        "assetId": "ui.items.uniques",
+        "index": 108
+      },
+      "u_gen_15_5": {
+        "assetId": "ui.items.uniques",
+        "index": 109
+      },
+      "u_gen_15_7": {
+        "assetId": "ui.items.uniques",
+        "index": 110
+      },
+      "u_gen_15_9": {
+        "assetId": "ui.items.uniques",
+        "index": 111
+      },
+      "u_gen_15_11": {
+        "assetId": "ui.items.uniques",
+        "index": 112
+      },
+      "u_gen_16_0": {
+        "assetId": "ui.items.uniques",
+        "index": 113
+      },
+      "u_gen_16_2": {
+        "assetId": "ui.items.uniques",
+        "index": 114
+      },
+      "u_gen_16_4": {
+        "assetId": "ui.items.uniques",
+        "index": 115
+      },
+      "u_gen_16_6": {
+        "assetId": "ui.items.uniques",
+        "index": 116
+      },
+      "u_gen_16_8": {
+        "assetId": "ui.items.uniques",
+        "index": 117
+      },
+      "u_gen_16_10": {
+        "assetId": "ui.items.uniques",
+        "index": 118
+      },
+      "u_gen_16_12": {
+        "assetId": "ui.items.uniques",
+        "index": 119
+      },
+      "u_gen_17_1": {
+        "assetId": "ui.items.uniques",
+        "index": 120
+      },
+      "u_gen_17_3": {
+        "assetId": "ui.items.uniques",
+        "index": 121
+      },
+      "u_gen_17_5": {
+        "assetId": "ui.items.uniques",
+        "index": 122
+      },
+      "u_gen_17_7": {
+        "assetId": "ui.items.uniques",
+        "index": 123
+      },
+      "u_gen_17_9": {
+        "assetId": "ui.items.uniques",
+        "index": 124
+      },
+      "u_gen_17_11": {
+        "assetId": "ui.items.uniques",
+        "index": 125
+      },
+      "u_gen_18_0": {
+        "assetId": "ui.items.uniques",
+        "index": 126
+      },
+      "u_gen_18_2": {
+        "assetId": "ui.items.uniques",
+        "index": 127
+      },
+      "u_gen_18_4": {
+        "assetId": "ui.items.uniques",
+        "index": 128
+      },
+      "u_gen_18_6": {
+        "assetId": "ui.items.uniques",
+        "index": 129
+      },
+      "u_gen_18_8": {
+        "assetId": "ui.items.uniques",
+        "index": 130
+      },
+      "u_gen_18_10": {
+        "assetId": "ui.items.uniques",
+        "index": 131
+      },
+      "u_gen_18_12": {
+        "assetId": "ui.items.uniques",
+        "index": 132
+      },
+      "u_gen_19_1": {
+        "assetId": "ui.items.uniques",
+        "index": 133
+      },
+      "u_gen_19_3": {
+        "assetId": "ui.items.uniques",
+        "index": 134
+      },
+      "u_gen_19_5": {
+        "assetId": "ui.items.uniques",
+        "index": 135
+      },
+      "u_gen_19_7": {
+        "assetId": "ui.items.uniques",
+        "index": 136
+      },
+      "u_gen_19_9": {
+        "assetId": "ui.items.uniques",
+        "index": 137
+      },
+      "u_gen_19_11": {
+        "assetId": "ui.items.uniques",
+        "index": 138
+      },
+      "uc_thief": {
+        "assetId": "ui.items.uniques",
+        "index": 139
+      },
+      "uc_ember": {
+        "assetId": "ui.items.uniques",
+        "index": 140
+      },
+      "uc_quick": {
+        "assetId": "ui.items.uniques",
+        "index": 141
+      },
+      "uc_mystic": {
+        "assetId": "ui.items.uniques",
+        "index": 142
+      },
+      "uc_grave": {
+        "assetId": "ui.items.uniques",
+        "index": 143
+      },
+      "uc_vampire": {
+        "assetId": "ui.items.uniques",
+        "index": 144
+      },
+      "uc_hunt": {
+        "assetId": "ui.items.uniques",
+        "index": 145
+      },
+      "uc_warlord": {
+        "assetId": "ui.items.uniques",
+        "index": 146
+      },
+      "uc_wyrm": {
+        "assetId": "ui.items.uniques",
+        "index": 147
+      },
+      "uj_rainbow": {
+        "assetId": "ui.items.uniques",
+        "index": 148
+      },
+      "uj_rage": {
+        "assetId": "ui.items.uniques",
+        "index": 149
+      },
+      "uj_frost": {
+        "assetId": "ui.items.uniques",
+        "index": 150
+      },
+      "uj_ward": {
+        "assetId": "ui.items.uniques",
+        "index": 151
+      },
+      "uj_leech": {
+        "assetId": "ui.items.uniques",
+        "index": 152
+      },
+      "uj_storm": {
+        "assetId": "ui.items.uniques",
+        "index": 153
+      },
+      "uj_titan": {
+        "assetId": "ui.items.uniques",
+        "index": 154
+      },
+      "uj_seer": {
+        "assetId": "ui.items.uniques",
+        "index": 155
+      },
+      "g_doom": {
+        "assetId": "ui.items.uniques",
+        "index": 156
+      },
+      "g_void": {
+        "assetId": "ui.items.uniques",
+        "index": 157
+      },
+      "g_titan": {
+        "assetId": "ui.items.uniques",
+        "index": 158
+      },
+      "g_wraith": {
+        "assetId": "ui.items.uniques",
+        "index": 159
+      },
+      "g_aegis": {
+        "assetId": "ui.items.uniques",
+        "index": 160
+      },
+      "g_venom": {
+        "assetId": "ui.items.uniques",
+        "index": 161
+      }
+    }
+  },
+  "counts": {
+    "equipment": 139,
+    "charm": 9,
+    "jewel": 9,
+    "glyph": 6
+  }
+}
