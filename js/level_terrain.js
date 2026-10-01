@@ -1239,7 +1239,7 @@ const CindersBoundaries=(()=>{
 /* Act IV painted assemblies. Collision remains in the map's floor/void grids.
    Immutable boundary records are shared by the terrain cache and actor layer. */
 const CathedralEnvironment=(()=>{
-  const cache=new WeakMap(),textures=new Map();
+  const cache=new WeakMap(),vestibules=new WeakMap(),textures=new Map();
   const kits=['pale','dark','ash','bastion'];
   const hash=(x,y,s=0)=>{let h=Math.imul(x,374761393)^Math.imul(y,668265263)^s;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967295;};
   const frame=key=>SpriteAssets.getFrame(SpriteAssets.maps.props['a4v2_'+key],0);
@@ -1510,6 +1510,21 @@ const CathedralEnvironment=(()=>{
       draws.push(d);
     }
   }
+  function appendVestibule(draws,m,cam,player,W,H){
+    const v=m.arenaVestibule;if(!v)return;
+    let rows=vestibules.get(v);
+    if(!rows){
+      const height=frame('wall_'+v.kit).sh;
+      rows=v.walls.map(w=>({kind:'cathedralWall',kit:v.kit,wx:U.isoX(w.x,w.y1),wy:U.isoY(w.x,w.y1),
+        d:w.x+(w.y0+w.y1)/2,span:(w.y1-w.y0)*32,slope:-.5,uv:U.isoX(w.x,w.y1),height,front:false,end:true}));
+      vestibules.set(v,rows);
+    }
+    for(const d of rows){
+      d.sx=d.wx-cam.x;d.sy=d.wy-cam.y;
+      if(d.sx>W||d.sx+d.span<0||d.sy-d.height>H||d.sy+d.span*d.slope<0)continue;
+      draws.push(d);
+    }
+  }
   function draw(ctx,d,p){
     const px=U.isoX(p.x,p.y),py=U.isoY(p.x,p.y);
     ctx.save();
@@ -1608,7 +1623,7 @@ const CathedralEnvironment=(()=>{
     for(const n of m.cathedral.rooms)if(inlayKey(m,n))add(inlayKey(m,n),U.isoX(n.x,n.y),U.isoY(n.x,n.y));
     return rows;
   }
-  return Object.freeze({decorateFloor,drawGround,clipFloor,drawRim,append,draw,drawBackdrop,atmosphere,describe});
+  return Object.freeze({decorateFloor,drawGround,clipFloor,drawRim,append,appendVestibule,draw,drawBackdrop,atmosphere,describe});
 })();
 
 // Detached, read-only records for developer references. Rendering keeps its caches.

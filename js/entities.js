@@ -38,7 +38,7 @@ class Entity {
     if(typeof Act1EnemyAnimation!=='undefined')Act1EnemyAnimation.action(this);
   }
   /* generic walk along this.path with collision against walls & entities */
-  movementLocked() { return !!this.snarePull || (this.snareRootUntil || 0) > Game.state.time; }
+  movementLocked() { return !!this.snarePull || !!this.bossPull || (this.snareRootUntil || 0) > Game.state.time; }
   moveAlong(dt, speed, map, others) {
     if (this.movementLocked()) { this.moving=false; this.curSpeed=0; return; }
     if (!this.path || !this.path.length) { this.moving = false; this.curSpeed = 0; return; }
@@ -79,7 +79,8 @@ class Entity {
     if (this.movementLocked()) { this.moving=false; this.curSpeed=0; return; }
     const d = U.dist(this.x, this.y, tx, ty);
     if (!Number.isFinite(d) || d < .001) { this.moving = false; this.curSpeed = 0; return; }
-    if (this.slowT > 0) speed *= (1 - this.slowPct / 100);
+    const slow=Math.max(this.slowT>0?this.slowPct:0,this.bossSlow?.until>Game.state.time?this.bossSlow.pct:0);
+    if(slow>0)speed*=1-slow/100;
     const step = Math.min(speed * dt, d);
     const ox = this.x, oy = this.y;
     let nx = this.x + (tx - this.x) / d * step;
@@ -148,6 +149,8 @@ class Entity {
     }
   }
   updateAnim(dt) {
+    if(this.bossSlow&&(this.bossSlow.until<=Game.state.time||this.bossSlow.owner?.dead||!this.bossSlow.owner?.encounter?.active))delete this.bossSlow;
+    if(this.bossPull&&(this.dead||this.bossPull.owner?.dead||!this.bossPull.owner?.encounter?.active))delete this.bossPull;
     this.animT += dt;
     /* smooth facing toward target (shortest arc) */
     this.visAng = U.angLerp(this.visAng, this.angT, Math.min(1, dt * 11));
@@ -607,8 +610,8 @@ class Player extends Entity {
     const count = Number(mon.slowT > 0 && mon.slowPct > 0) + Number(mon.snareRootUntil > Game.state.time) + Number(mon.bleedDot?.t > 0 && mon.bleedDot.dps > 0);
     return 1 + count * (this.stats.snareConditionPct || 0) / 100;
   }
-  snareHit(mon, damage) {
-    const actual = mon.takeDamage(damage * this.snareDamageMult(mon), this, { sourceSkill: this._castingSkillId || "basic" }, "phys");
+  snareHit(mon, damage, opts) {
+    const actual = mon.takeDamage(damage * this.snareDamageMult(mon), this, { sourceSkill: this._castingSkillId || "basic", periodic:!!(opts?.periodic||this._periodicHit) }, "phys");
     this.applyHuntBleed(mon, actual);
     return actual;
   }
@@ -726,7 +729,7 @@ class Player extends Entity {
     if (!opts.elementScaled) dmg = DATA.scaleElement(this, dmg, elem);
     if (typeof UniquePowers !== "undefined") dmg = UniquePowers.empower(this,"spell",dmg,mon);
     const elementBaseRatios = opts.elementBaseRatios || { [elem]: 1 / DATA.elementMultiplier(this, elem) };
-    const actual = mon.takeDamage(dmg, this, { uniqueEvent: "spell", crit: !!opts.crit, elem, elementScaled: true, elementBaseRatios, sourceSkill: this._castingSkillId || opts.sourceSkill || "basic" }, elem);
+    const actual = mon.takeDamage(dmg, this, { uniqueEvent: "spell", crit: !!opts.crit, elem, elementScaled: true, elementBaseRatios, sourceSkill: this._castingSkillId || opts.sourceSkill || "basic", periodic:!!(opts.periodic||this._periodicHit||this._castingSkillId==='stormshell') }, elem);
     this.applyHuntBleed(mon, actual);
     this.skillSound('impact',{elem,target:mon,crit:!!opts.crit});
     if(typeof SkillAudio!=='undefined'&&elem==='cold'&&mon.frozen)SkillAudio.passive(this,'frozen',{target:mon,elem});
@@ -811,7 +814,7 @@ class Player extends Entity {
     if (d.crit) { Game.fx.hitPause = Math.max(Game.fx.hitPause, 0.055); }
     this.skillSound('impact',{target:mon,elem:fireMode||primal?'fire':'phys',crit:d.crit});
     if (typeof UniquePowers !== "undefined") total = UniquePowers.empower(this,"strike",total,mon);
-    const actual = mon.takeDamage(total, this, { ...d, uniqueEvent: "strike", elem: fireMode ? "fire" : "phys", elementScaled: true, elementBaseRatios, sourceSkill: this._castingSkillId || "basic" }, fireMode ? "fire" : undefined);
+    const actual = mon.takeDamage(total, this, { ...d, uniqueEvent: "strike", elem: fireMode ? "fire" : "phys", elementScaled: true, elementBaseRatios, sourceSkill: this._castingSkillId || "basic", periodic:!!(d.periodic||this._periodicHit) }, fireMode ? "fire" : undefined);
     this.applyHuntBleed(mon, actual);
     if(typeof SkillVFX!=='undefined'){
       SkillVFX.hit(this,mon,fireMode?'fire':'phys',d.crit);
@@ -929,6 +932,7 @@ class Player extends Entity {
 
   /* execute a skill *now* (caller has verified range etc.) */
   performSkill(skillId,target,point) {
+    if(this.bossPull)return false;
     if(typeof Coop!=="undefined"&&Coop.active&&!Coop.authority)return Coop.submit(target?{type:"attack",skill:skillId,targetId:target._coopId}:{type:"cast",skill:skillId,point});
     if (DATA.SKILLS[skillId]?.type === "passive") return false;
     if (this.rejectSkillWeapon(skillId)) return false;
@@ -1594,7 +1598,7 @@ class Player extends Entity {
       case "shout": {   // Rallying Cry — heal + cleanse + run
         this.pay(sk, rk);
         const heal = Math.floor(this.stats.maxHp * sk.healPct(rk) / 100);
-        this.healLife(heal); this.slowT = 0; this.slowPct = 0;
+        this.healLife(heal); this.slowT = 0; this.slowPct = 0; delete this.bossSlow;
         this.buffs = this.buffs.filter(b => b.id !== "rally_run");
         this.buffs.push({ id: "rally_run", label: "Rally", emoji: "📯", stats: { frw: sk.runPct(rk) }, until: Game.state.time + sk.rallyDur(rk) });
         this.computeStats();
@@ -1856,7 +1860,7 @@ class Player extends Entity {
         if (!corpse) corpse = Game.corpseFromGrave(this, aim, searchRadius);
         if (!corpse) { Game.msg("No corpse or grave to devour.", "#9a9a9a"); return false; }
         this.pay(sk, rk); corpse.exploded = true; corpse.corpseT = 0;
-        const heal = this.stats.maxHp * sk.healPct(rk) / 100; this.healLife(heal); this.slowT = 0; this.slowPct = 0; this.poisonDot = null;
+        const heal = this.stats.maxHp * sk.healPct(rk) / 100; this.healLife(heal); this.slowT = 0; this.slowPct = 0; delete this.bossSlow; this.poisonDot = null;
         for (const mi of TerrainLayers.targets(Game.state.minions)) if (!mi.dead && U.dist(this.x, this.y, mi.x, mi.y) < 4) mi.hp = Math.min(mi.maxHp, mi.hp + mi.maxHp * (sk.devourMinionHeal?.(rk)??10)/100);
         this.mana=Math.min(this.stats.maxMana,this.mana+this.stats.maxMana*(sk.devourMana?.(rk)??0)/100);
         Sfx.play("potion"); Game.addNova(this.x, this.y, 1.5, "#90ff70"); Game.addFloat(this.x, this.y, "+" + Math.floor(heal), "#80ff90");
@@ -2151,6 +2155,7 @@ class Player extends Entity {
     this.healLife((0.25 + (st.lifeRegen || 0)) * dt * regeneration);
     if (this.healPool > 0) { const t = Math.min(this.healPool, 28 * dt); this.healLife(t); this.healPool -= t; }
     this.tileHazardTick(dt, Game.state.map, true);   // ice/lava/bog under the player
+    if(this.bossPull){this.moving=false;return;}
 
     /* ---- bespoke resource & channel upkeep ---- */
     if (this.tempo > 0 && Game.state.time > this.tempoUntil) this.tempo = 0;          // Tempo decays out of combat
@@ -2945,10 +2950,14 @@ class Monster extends Entity {
       fire: this.elemRes("fire"), cold: this.elemRes("cold"), light: this.elemRes("light"), poison: this.elemRes("poison"),
     };
   }
-  loseHealth(amount) {
-    if(this.encounter)amount=this.encounter.limitDamage(amount);
+  loseHealth(amount,source,detail) {
+    const before=this.hp;
+    if(this.encounter)amount=this.encounter.limitDamage(amount*this.encounter.damageMultiplier());
     this.hp -= amount;
     if (amount > 0) this.healthBarUntil = Game.state.time + 3;
+    const actual=Math.max(0,Math.min(before,before-this.hp));
+    this.encounter?.onDamage(actual,source,detail);
+    return actual;
   }
   takeDamage(amount, source, detail, elem) {
     if (this.dead) return 0;
@@ -2966,7 +2975,6 @@ class Monster extends Entity {
     if(typeof TacticalElites!=='undefined')dmg*=TacticalElites.multiplier(Game.state,this);
     const hpBefore = this.hp;
     if (typeof UniquePowers !== "undefined") dmg *= 1 + UniquePowers.exposed(this) / 100;
-    if(this.encounter && this.defId==="mire_mother" && this.encounter.phase>0 && this.encounter.stage==="recovery")dmg*=1.25;
     if (elem && elem !== "phys") {
       /* elemental hit: armor doesn't apply — use the element's resistance (resAll + per-element) */
       const er = this.elemRes(elem);
@@ -2983,8 +2991,7 @@ class Monster extends Entity {
     if (this.sunder && Game.state.time < this.sunder.until) dmg *= 1 + 0.06 * this.sunder.stacks;
     if (this.killMark && Game.state.time < this.killMark.until) dmg *= 1 + (this.killMark.amp || 0) / 100;
     dmg = Math.max(detail?.uniqueDot ? 0 : 1, dmg);
-    if(this.encounter)dmg=this.encounter.limitDamage(dmg);
-    this.loseHealth(dmg);
+    this.loseHealth(dmg,source,detail);
     if (!detail?.bleedDot) this.flashT = 0.1;
     if(!this.aggro)this.wakePack();
     this.aggro = true;
@@ -3146,7 +3153,7 @@ class Monster extends Entity {
     if(this.encounter&&!this.encounter.canDamage())return;
     if (Game.bossWard?.(this)) { this.hp=Math.max(1,this.hp); return; }
     this.imperialCombat?.cancel();
-    if(this.encounter?.mechanic){this.hp=Math.max(this.hp,this.maxHp*this.def.phases[this.encounter.phase-1].at);return;}
+    if(this.encounter?.mechanic?.blocksDamage){this.hp=Math.max(this.hp,this.maxHp*this.def.phases[this.encounter.phase-1].at);return;}
     const nextForm=this.encounter && this.def.phases?.[this.encounter.phase];
     if (nextForm) { this.hp=Math.max(this.hp,this.maxHp*nextForm.at); return; }
     this.dead = true;
@@ -3189,7 +3196,7 @@ class Monster extends Entity {
     if (this.frozen && Game.state.time < this.frozen && (this.freezeOwner||credit)?.stats.shatterRank > 0) {
       const pl0=this.freezeOwner||credit, sr=pl0.stats.shatterRank;
       Game.addNova(this.x, this.y, 2.2, "#9fd8ff"); Sfx.playSkill?.('emberwitch_1_2','impact',{owner:pl0,emitter:this,elem:'cold',trigger:'frozen'});
-      for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this) continue; if (U.dist(this.x, this.y, m.x, m.y) < 2.2 + m.radius) pl0.spellHit(m, 6 + 3 * sr, "cold", {}); }
+      for (const m of TerrainLayers.targets(Game.state.monsters)) { if (m.dead || m === this) continue; if (U.dist(this.x, this.y, m.x, m.y) < 2.2 + m.radius) pl0.spellHit(m, 6 + 3 * sr, "cold", {periodic:true}); }
     }
     /* Heat Haze: a Scorched corpse erupts, scattering its stacks to the pack */
     if (this.scorch && (this.scorch.owner||credit)?.stats.scorchSpread > 0) {
@@ -3376,7 +3383,7 @@ class Monster extends Entity {
     if(this.act2Grace>0){this.act2Grace-=dt;this.moving=false;return;}
     if(this.act2Combat?.update(dt))return;
     if(this.enemySkills?.tick(dt,player,map))return;
-    if(this.encounterKind==="portal"||this.encounterKind==="decoy"){this.moving=false;return;}
+    if(this.encounterKind==="portal"||this.encounterKind==="decoy"||this.encounterKind==='boundSoul'){this.moving=false;return;}
     /* boss phase transitions: shed armor, change shape, gain new weapons */
     if (this.def.phases) {
       this.phaseIdx = this.phaseIdx || 0;

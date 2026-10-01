@@ -17,6 +17,17 @@ for(const id of ids)for(let seed=0;seed<32;seed++){
   }
   const arrival=N.findPath(parent,parent.spawns.default,parent.spawns.from_arena,{radius:.4,hop:false,speed:4});
   ok(arrival?.length,id+'/'+seed+' reachable parent entrance');
+  const door=parent.arenaEntrance,entry=parent.exits.find(ex=>ex.bossEntrance===id);
+  ok(door.wall.axis===0&&door.x===door.wall.x&&door.y-door.wall.y<=1.2,id+' seated against real rear wall');
+  for(let dx=-2;dx<=2;dx++){
+    ok(parent.blocked[Math.floor(door.wall.x+dx)+Math.floor(door.wall.y-.5)*parent.w],id+' continuous solid backing');
+    ok(B.footprint(parent,door.x+dx,door.y,.45),id+' supported threshold apron');
+  }
+  ok(N.findPath(parent,door.arrival,{x:(entry.x0+entry.x1)/2,y:(entry.y0+entry.y1)/2},{radius:.45,hop:false})?.length,id+' return-to-door walking route');
+  ok(!parent.thresholds?.some(t=>Math.hypot(t.opening.x-door.x,t.opening.y-door.y)<8),id+' onward passage remains clear');
+  ok(parent.props.find(p=>p.doorId===entry.doorId)?.visual===c.entranceVisual,id+' registered destination artwork');
+  const back=map.props.find(p=>p.doorId==='boss_return_'+id);
+  ok(back&&map.blocked[Math.floor(back.x-1.4)+Math.floor(back.y)*map.w]&&B.footprint(map,back.x,back.y,.35),id+' vestibule return arch against wall');
   const before=map.monsterSpawns.length,props=map.props.length;M.placeEvents(map,{seed,difficulty:0});ok(map.monsterSpawns.length===before&&map.props.length===props,id+' no random events');
   if(!seed)scenes.push({boss:id,zone:map.id,shape:a.shape,devices:a.devices.map(d=>d.deviceId)});
 }
@@ -29,13 +40,14 @@ for(const id of ids){
 }
 function counter(v){
   const {s,p,e}=v;
-  for(const device of e.arena.devices.filter(d=>d.required)){
-    Object.assign(p,{x:device.x,y:device.y+1.5});
-    ok(e.interactDevice(device,p),'required device accepts nearby interaction');
-    ok(!e.interactDevice(device,p),'same interaction cannot complete twice');
-    if(e.ward){f.tick(s,.65);const attack=e.attack;ok(attack&&['charge','sunbeam'].includes(attack.id),'armed counter chooses its signature');f.tick(s,2.3);}
-  }
-  ok(!e.mechanic&&e.stage==='recovery','counter creates an opening');
+  if(e.mon.defId!=='azram'){ok(!e.mechanic?.blocksDamage,'combat counters do not gate damage');return;}
+  const device=e.arena.devices.find(d=>d.required);
+  Object.assign(p,{x:device.x,y:device.y+1.5});
+  ok(e.interactDevice(device,p),'mirror accepts nearby turn');
+  ok(!e.interactDevice(device,p),'duplicate turn is debounced');
+  f.tick(s,.3);ok(e.interactDevice(device,p),'mirror can be aligned with a second turn');
+  e.start('sunbeam',p);e.execute();
+  ok(!e.mechanic&&e.stage==='recovery','reflection creates an opening');
   ok(e.recoveryDuration>=2,'counter recovery is long enough');
 }
 for(const id of ids)for(const dt of [1/120,1/30,.05]){
@@ -46,14 +58,13 @@ for(const id of ids)for(const dt of [1/120,1/30,.05]){
     m.takeDamage(1e9,p);ok(Math.abs(m.hp-m.maxHp*m.def.phases[phase-1].at)<1e-6,id+' burst clamps at threshold');
     const thresholdHp=m.hp;m.takeDamage(1e9,p);m.loseHealth(1e9);m.takeDamage(1e9,{owner:p});
     ok(m.hp===thresholdHp&&!m.dead,id+' simultaneous hits, DOT and summon damage cannot skip a pending transition');
-    f.tick(s,dt,dt);ok(e.phase===phase&&!!e.mechanic,id+' phase defense starts');
-    const hp=m.hp;m.takeDamage(1e9,p);m.loseHealth(1e9);ok(m.hp===hp,id+' direct and DOT damage blocked by defense');
-    const d=e.arena.devices.find(d=>d.required);p.x=e.arena.cx;p.y=e.arena.cy;ok(!e.interactDevice(d,p),id+' cannot use device remotely');
-    if(['korvath','azram'].includes(id)){
-      p.x=d.x;p.y=d.y+1.5;ok(e.interactDevice(d,p),id+' arm failed counter');
-      if(id==='korvath'){p.x=e.arena.cx+4;p.y=e.arena.cy;f.tick(s,3);ok(!!e.mechanic&&!!e.ward,id+' charge missing the ward keeps the armor');}
-      e.ward.ttl=dt/2;f.tick(s,dt,dt);
-      ok(e.mechanic&&!e.mechanic.armed&&!d.completed&&d.cooldown===0,id+' expired counter re-arms');
+    f.tick(s,dt,dt);ok(e.phase===phase,id+' health threshold changes form');
+    const hp=m.hp;m.takeDamage(1,p,null,'shadow');m.loseHealth(1);
+    ok(id==='azram'?m.hp===hp:m.hp<hp,id+' correct direct and DOT damage policy');
+    if(id==='azram'){
+      const d=e.arena.devices.find(d=>d.required);p.x=e.arena.cx;p.y=e.arena.cy;ok(!e.interactDevice(d,p),id+' cannot turn mirror remotely');
+      e.start('sunbeam',p);e.execute();
+      ok(e.mechanic?.blocksDamage&&!e.mechanic.armed,id+' misaligned beam leaves puzzle available');
     }
     counter(v);
     f.tick(s,3.1,dt);p.x=e.arena.cx+2;p.y=e.arena.cy+2;
@@ -73,8 +84,9 @@ for(const id of ids){
 for(const id of ids){
  const v=enter(id),{p,e}=v,d=e.arena.devices[0];
  e.pools.push({kind:'circle',x:p.x,y:p.y,radius:1,ttl:6,tick:1});Object.assign(p,{x:d.x,y:d.y+1});
- ok(e.interactDevice(d,p),id+' optional device available');ok(e.pools.length===0,id+' optional device clears hazards');
- ok(!e.interactDevice(d,p)&&d.cooldown>0,id+' optional relief has a cooldown');
+ ok(!e.interactDevice(d,p),id+' no generic device relief outside Azram wards');
+ ok(e.pools.length===1,id+' decorative objects cannot erase hazards');
+ ok(e.arena.devices.every(d=>d.arenaRole==='mirror'?d.interact==='boss_device':!d.interact),id+' only mirrors are clickable');
 }
 for(const [id,object,parent]of [['mire_mother','mire_shard','ritual_site'],['azram','fortress_map','khal_palace']]){
   const {s}=f.fresh(id);const zone=D.BOSS_ARENAS[id].zone;
@@ -92,4 +104,4 @@ for(const id of ids){
 }
 fs.mkdirSync('tests/qa/boss_arenas',{recursive:true});
 fs.writeFileSync('tests/qa/boss_arenas/contract.json',JSON.stringify({checks,arenas:192,scenes},null,2)+'\n');
-console.log('PASS '+checks+' arena, device, progression and lifecycle checks');
+console.log('PASS '+checks+' arena, wall entrances, device, progression and lifecycle checks');

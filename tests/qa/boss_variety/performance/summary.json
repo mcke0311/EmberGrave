@@ -1,0 +1,255 @@
+{
+  "method": "Median of alternating production-loop samples; same class, ordinary gear, capped adds, final phase, seed and canvas size. Run without concurrent tests.",
+  "beforeDirectory": "tmp/boss_variety/before/js",
+  "seconds": 6,
+  "warmupMs": 2000,
+  "pairs": 3,
+  "cases": [
+    {
+      "boss": "korvath",
+      "width": 1920,
+      "samples": {
+        "before": [
+          4.4,
+          4.5,
+          4.4
+        ],
+        "after": [
+          4.5,
+          4.8,
+          4.4
+        ]
+      },
+      "beforeP95": 4.4,
+      "afterP95": 4.5,
+      "changePercent": 2.27,
+      "withinBudget": true
+    },
+    {
+      "boss": "korvath",
+      "width": 3840,
+      "samples": {
+        "before": [
+          5,
+          4.5,
+          4.8
+        ],
+        "after": [
+          4.6,
+          4.4,
+          4.7
+        ]
+      },
+      "beforeP95": 4.8,
+      "afterP95": 4.6,
+      "changePercent": -4.17,
+      "withinBudget": true
+    },
+    {
+      "boss": "mire_mother",
+      "width": 1920,
+      "samples": {
+        "before": [
+          4.3,
+          4.7,
+          4.8
+        ],
+        "after": [
+          5.1,
+          4.6,
+          4.5
+        ]
+      },
+      "beforeP95": 4.7,
+      "afterP95": 4.6,
+      "changePercent": -2.13,
+      "withinBudget": true
+    },
+    {
+      "boss": "mire_mother",
+      "width": 3840,
+      "samples": {
+        "before": [
+          4.7,
+          4.6,
+          4.6
+        ],
+        "after": [
+          4.5,
+          5.2,
+          4.8
+        ]
+      },
+      "beforeP95": 4.6,
+      "afterP95": 4.8,
+      "changePercent": 4.35,
+      "withinBudget": true
+    },
+    {
+      "boss": "azram",
+      "width": 1920,
+      "samples": {
+        "before": [
+          5.3,
+          4.8,
+          4.9
+        ],
+        "after": [
+          4.9,
+          4.8,
+          4.7
+        ]
+      },
+      "beforeP95": 4.9,
+      "afterP95": 4.8,
+      "changePercent": -2.04,
+      "withinBudget": true
+    },
+    {
+      "boss": "azram",
+      "width": 3840,
+      "samples": {
+        "before": [
+          5,
+          5.6,
+          4.7
+        ],
+        "after": [
+          4.7,
+          5.6,
+          5.1
+        ]
+      },
+      "beforeP95": 5,
+      "afterP95": 5.1,
+      "changePercent": 2,
+      "withinBudget": true
+    },
+    {
+      "boss": "empty_archangel",
+      "width": 1920,
+      "samples": {
+        "before": [
+          4.5,
+          4.6,
+          4.8
+        ],
+        "after": [
+          4.7,
+          4.7,
+          4.7
+        ]
+      },
+      "beforeP95": 4.6,
+      "afterP95": 4.7,
+      "changePercent": 2.17,
+      "withinBudget": true
+    },
+    {
+      "boss": "empty_archangel",
+      "width": 3840,
+      "samples": {
+        "before": [
+          4.6,
+          4.6,
+          4.6
+        ],
+        "after": [
+          4.6,
+          4.2,
+          4.5
+        ]
+      },
+      "beforeP95": 4.6,
+      "afterP95": 4.5,
+      "changePercent": -2.17,
+      "withinBudget": true
+    },
+    {
+      "boss": "malthoron",
+      "width": 1920,
+      "samples": {
+        "before": [
+          4.6,
+          5.1,
+          4.6
+        ],
+        "after": [
+          5,
+          4.5,
+          4.2
+        ]
+      },
+      "beforeP95": 4.6,
+      "afterP95": 4.5,
+      "changePercent": -2.17,
+      "withinBudget": true
+    },
+    {
+      "boss": "malthoron",
+      "width": 3840,
+      "samples": {
+        "before": [
+          4.1,
+          4.3,
+          4.7
+        ],
+        "after": [
+          4.3,
+          4.3,
+          4.1
+        ]
+      },
+      "beforeP95": 4.3,
+      "afterP95": 4.3,
+      "changePercent": 0,
+      "withinBudget": true
+    },
+    {
+      "boss": "vethriss",
+      "width": 1920,
+      "samples": {
+        "before": [
+          4.2,
+          4.5,
+          4.6
+        ],
+        "after": [
+          4.3,
+          4.4,
+          4.3
+        ]
+      },
+      "beforeP95": 4.5,
+      "afterP95": 4.3,
+      "changePercent": -4.44,
+      "withinBudget": true
+    },
+    {
+      "boss": "vethriss",
+      "width": 3840,
+      "samples": {
+        "before": [
+          4.2,
+          4.4,
+          4.5
+        ],
+        "after": [
+          4.4,
+          4.8,
+          4.6
+        ]
+      },
+      "beforeP95": 4.4,
+      "afterP95": 4.6,
+      "changePercent": 4.55,
+      "withinBudget": true
+    }
+  ],
+  "baselineArchive": {
+    "path": "tests/fixtures/boss_variety_before.json.gz",
+    "sha256": "f6c33ef9a23be46ef7dec02ecdad4ef9d1ab12edbfa8ef579931722a616baaba",
+    "files": 77,
+    "verifiedSourceDirectory": true
+  }
+}

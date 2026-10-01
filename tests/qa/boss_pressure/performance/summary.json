@@ -1,0 +1,253 @@
+{
+  "method": "Median of alternating production-loop samples; same class, ordinary gear, capped adds, final phase, seed and canvas size. Run without concurrent tests.",
+  "pressureStress": true,
+  "healthPolicy": "Damage enabled; diagnostic player, companion and add health pools preserve matched actor populations while allowing actual control hits.",
+  "beforeDirectory": "C:\\Users\\this_\\.codex\\worktrees\\c9f0\\Claudediablo\\tmp\\boss_pressure_before\\before\\js",
+  "beforeArchive": "tests/fixtures/boss_pressure_before.json.gz",
+  "seconds": 6,
+  "warmupMs": 2000,
+  "pairs": 3,
+  "cases": [
+    {
+      "boss": "korvath",
+      "width": 1920,
+      "samples": {
+        "before": [
+          5.1,
+          4.8,
+          4.2
+        ],
+        "after": [
+          4.5,
+          4.4,
+          4.4
+        ]
+      },
+      "beforeP95": 4.8,
+      "afterP95": 4.4,
+      "changePercent": -8.33,
+      "withinBudget": true
+    },
+    {
+      "boss": "korvath",
+      "width": 3840,
+      "samples": {
+        "before": [
+          4.3,
+          6,
+          4.3
+        ],
+        "after": [
+          4.4,
+          4.2,
+          4.8
+        ]
+      },
+      "beforeP95": 4.3,
+      "afterP95": 4.4,
+      "changePercent": 2.33,
+      "withinBudget": true
+    },
+    {
+      "boss": "mire_mother",
+      "width": 1920,
+      "samples": {
+        "before": [
+          4.7,
+          4.5,
+          5.4
+        ],
+        "after": [
+          5.3,
+          5.1,
+          4.7
+        ]
+      },
+      "beforeP95": 4.7,
+      "afterP95": 5.1,
+      "changePercent": 8.51,
+      "withinBudget": true
+    },
+    {
+      "boss": "mire_mother",
+      "width": 3840,
+      "samples": {
+        "before": [
+          4.3,
+          4.6,
+          4.6
+        ],
+        "after": [
+          4.5,
+          4.5,
+          4.5
+        ]
+      },
+      "beforeP95": 4.6,
+      "afterP95": 4.5,
+      "changePercent": -2.17,
+      "withinBudget": true
+    },
+    {
+      "boss": "azram",
+      "width": 1920,
+      "samples": {
+        "before": [
+          4.8,
+          4.5,
+          4.4
+        ],
+        "after": [
+          4.6,
+          4.8,
+          4.4
+        ]
+      },
+      "beforeP95": 4.5,
+      "afterP95": 4.6,
+      "changePercent": 2.22,
+      "withinBudget": true
+    },
+    {
+      "boss": "azram",
+      "width": 3840,
+      "samples": {
+        "before": [
+          4.6,
+          4.4,
+          4.1
+        ],
+        "after": [
+          4.5,
+          4.4,
+          4.6
+        ]
+      },
+      "beforeP95": 4.4,
+      "afterP95": 4.5,
+      "changePercent": 2.27,
+      "withinBudget": true
+    },
+    {
+      "boss": "empty_archangel",
+      "width": 1920,
+      "samples": {
+        "before": [
+          4,
+          3.7,
+          4.1
+        ],
+        "after": [
+          3.7,
+          3.8,
+          4
+        ]
+      },
+      "beforeP95": 4,
+      "afterP95": 3.8,
+      "changePercent": -5,
+      "withinBudget": true
+    },
+    {
+      "boss": "empty_archangel",
+      "width": 3840,
+      "samples": {
+        "before": [
+          4,
+          4.3,
+          4.5
+        ],
+        "after": [
+          3.9,
+          5.7,
+          4.1
+        ]
+      },
+      "beforeP95": 4.3,
+      "afterP95": 4.1,
+      "changePercent": -4.65,
+      "withinBudget": true
+    },
+    {
+      "boss": "malthoron",
+      "width": 1920,
+      "samples": {
+        "before": [
+          4.3,
+          4.3,
+          4
+        ],
+        "after": [
+          4,
+          4.3,
+          4.1
+        ]
+      },
+      "beforeP95": 4.3,
+      "afterP95": 4.1,
+      "changePercent": -4.65,
+      "withinBudget": true
+    },
+    {
+      "boss": "malthoron",
+      "width": 3840,
+      "samples": {
+        "before": [
+          4.2,
+          4.2,
+          4.5
+        ],
+        "after": [
+          4.6,
+          4.3,
+          4.7
+        ]
+      },
+      "beforeP95": 4.2,
+      "afterP95": 4.6,
+      "changePercent": 9.52,
+      "withinBudget": true
+    },
+    {
+      "boss": "vethriss",
+      "width": 1920,
+      "samples": {
+        "before": [
+          3.9,
+          4.2,
+          4.1
+        ],
+        "after": [
+          4.3,
+          4.3,
+          4.2
+        ]
+      },
+      "beforeP95": 4.1,
+      "afterP95": 4.3,
+      "changePercent": 4.88,
+      "withinBudget": true
+    },
+    {
+      "boss": "vethriss",
+      "width": 3840,
+      "samples": {
+        "before": [
+          4,
+          4.3,
+          4
+        ],
+        "after": [
+          4.2,
+          4.3,
+          4.1
+        ]
+      },
+      "beforeP95": 4,
+      "afterP95": 4.2,
+      "changePercent": 5,
+      "withinBudget": true
+    }
+  ],
+  "pressureScene": "After warmup, a stationary distant hero faces the previous corresponding attack in the baseline and a directly started pressure move in the current controller."
+}

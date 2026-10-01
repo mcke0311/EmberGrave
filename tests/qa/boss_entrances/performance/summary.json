@@ -1,0 +1,250 @@
+{
+  "method": "Median of alternating production-loop samples; same class, ordinary gear, capped adds, final phase, seed and canvas size. Run without concurrent tests.",
+  "pressureStress": false,
+  "beforeDirectory": "tmp/boss_entrances/before/js",
+  "seconds": 3,
+  "warmupMs": 1000,
+  "pairs": 3,
+  "cases": [
+    {
+      "boss": "korvath",
+      "width": 1920,
+      "samples": {
+        "before": [
+          6.5,
+          5.3,
+          6
+        ],
+        "after": [
+          5.2,
+          5.2,
+          6.3
+        ]
+      },
+      "beforeP95": 6,
+      "afterP95": 5.2,
+      "changePercent": -13.33,
+      "withinBudget": true
+    },
+    {
+      "boss": "korvath",
+      "width": 3840,
+      "samples": {
+        "before": [
+          7,
+          5.7,
+          6.1
+        ],
+        "after": [
+          6.6,
+          5.6,
+          5.5
+        ]
+      },
+      "beforeP95": 6.1,
+      "afterP95": 5.6,
+      "changePercent": -8.2,
+      "withinBudget": true
+    },
+    {
+      "boss": "mire_mother",
+      "width": 1920,
+      "samples": {
+        "before": [
+          6.3,
+          7.5,
+          7.9
+        ],
+        "after": [
+          7.5,
+          7.3,
+          6.8
+        ]
+      },
+      "beforeP95": 7.5,
+      "afterP95": 7.3,
+      "changePercent": -2.67,
+      "withinBudget": true
+    },
+    {
+      "boss": "mire_mother",
+      "width": 3840,
+      "samples": {
+        "before": [
+          7.9,
+          7.7,
+          8.7
+        ],
+        "after": [
+          7.6,
+          8.4,
+          7.3
+        ]
+      },
+      "beforeP95": 7.9,
+      "afterP95": 7.6,
+      "changePercent": -3.8,
+      "withinBudget": true
+    },
+    {
+      "boss": "azram",
+      "width": 1920,
+      "samples": {
+        "before": [
+          6.9,
+          6,
+          6.5
+        ],
+        "after": [
+          6.2,
+          6.3,
+          5.9
+        ]
+      },
+      "beforeP95": 6.5,
+      "afterP95": 6.2,
+      "changePercent": -4.62,
+      "withinBudget": true
+    },
+    {
+      "boss": "azram",
+      "width": 3840,
+      "samples": {
+        "before": [
+          7,
+          6,
+          5.6
+        ],
+        "after": [
+          6.5,
+          8.8,
+          5.4
+        ]
+      },
+      "beforeP95": 6,
+      "afterP95": 6.5,
+      "changePercent": 8.33,
+      "withinBudget": true
+    },
+    {
+      "boss": "empty_archangel",
+      "width": 1920,
+      "samples": {
+        "before": [
+          5.9,
+          4.6,
+          5.4
+        ],
+        "after": [
+          4.7,
+          4.6,
+          4.9
+        ]
+      },
+      "beforeP95": 5.4,
+      "afterP95": 4.7,
+      "changePercent": -12.96,
+      "withinBudget": true
+    },
+    {
+      "boss": "empty_archangel",
+      "width": 3840,
+      "samples": {
+        "before": [
+          4.9,
+          5.6,
+          6.6
+        ],
+        "after": [
+          4.8,
+          4.9,
+          6.6
+        ]
+      },
+      "beforeP95": 5.6,
+      "afterP95": 4.9,
+      "changePercent": -12.5,
+      "withinBudget": true
+    },
+    {
+      "boss": "malthoron",
+      "width": 1920,
+      "samples": {
+        "before": [
+          7.4,
+          6.1,
+          5.8
+        ],
+        "after": [
+          6,
+          6.1,
+          6.9
+        ]
+      },
+      "beforeP95": 6.1,
+      "afterP95": 6.1,
+      "changePercent": 0,
+      "withinBudget": true
+    },
+    {
+      "boss": "malthoron",
+      "width": 3840,
+      "samples": {
+        "before": [
+          6.4,
+          6.5,
+          8.2
+        ],
+        "after": [
+          6.6,
+          6.4,
+          6
+        ]
+      },
+      "beforeP95": 6.5,
+      "afterP95": 6.4,
+      "changePercent": -1.54,
+      "withinBudget": true
+    },
+    {
+      "boss": "vethriss",
+      "width": 1920,
+      "samples": {
+        "before": [
+          7.7,
+          6.3,
+          6.1
+        ],
+        "after": [
+          6.1,
+          6.5,
+          6.5
+        ]
+      },
+      "beforeP95": 6.3,
+      "afterP95": 6.5,
+      "changePercent": 3.17,
+      "withinBudget": true
+    },
+    {
+      "boss": "vethriss",
+      "width": 3840,
+      "samples": {
+        "before": [
+          6.2,
+          6.1,
+          7.3
+        ],
+        "after": [
+          6.6,
+          6,
+          7.5
+        ]
+      },
+      "beforeP95": 6.2,
+      "afterP95": 6.6,
+      "changePercent": 6.45,
+      "withinBudget": true
+    }
+  ]
+}

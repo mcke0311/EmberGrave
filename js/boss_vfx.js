@@ -7,7 +7,7 @@ const BossVFX=(()=>{
   const LIMITS=Object.freeze({events:24,particles:96});
   const recipes=Object.freeze({
     cleave:'steel',charge:'fire',sunbeam:'gold',flood:'poison',fissure:'fire',bile:'poison',grasp:'poison',chains:'gold',portals:'gold',gold:'fire',
-    wings:'light',descent:'light',cross:'light',souls:'shadow',beam:'shadow',light:'light',lunge:'shadow',decoys:'shadow',echoes:'shadow',
+    wings:'light',choir:'light',descent:'light',cross:'light',souls:'shadow',beam:'shadow',light:'light',lunge:'shadow',decoys:'shadow',echoes:'shadow',
   });
   const colors={steel:['#fff0c9','#bf9670'],fire:['#ffe8a6','#ec803d'],poison:['#e8efb8','#91b657'],
     gold:['#fff0c3','#d7ad64'],light:['#fff6e8','#c5b9ef'],shadow:['#e5d6ff','#9981c2']};
@@ -70,7 +70,7 @@ const BossVFX=(()=>{
   // Called by Entity.pose; reuse its cached descriptor for rendering and picking.
   function sampleActor(m,out){
     out.x=out.y=out.rot=0;out.sx=out.sy=out.alpha=1;
-    if(m.encounter?.mechanic&&m.defId==='empty_archangel')out.y=-45;
+    if(m.encounter?.mechanic?.kind==='choir'&&m.defId==='empty_archangel')out.y=-18;
     if(!enabled||reduced()||m.dead)return out;
     const e=m.encounter||m.bossOwner?.encounter;
     if(!e?.active)return out;
@@ -183,7 +183,7 @@ const BossVFX=(()=>{
     for(const m of world.monsters){const e=m.encounter;if(!e?.active||m.dead)continue;
       const add=(item,x,y)=>{const sx=px(x,y,cam),sy=py(x,y,cam);if(sx<-250||sx>w+250||sy<-250||sy>h+250)return;
         draws.push({kind:'bossvfx',d:x+y+.002,x,y,e,...item});};
-      if((e.stage==='windup'&&e.attack)||m.defId==='mire_mother'&&e.phase>0&&e.stage==='recovery')add({actor:m},m.x,m.y);
+      if((e.stage==='windup'&&e.attack)||m.defId==='mire_mother'&&world.time<e.heartExposedUntil)add({actor:m},m.x,m.y);
       for(const f of e.visual?.events||[])add({effect:f},f.x,f.y);
       // One terrain clip per occupied ground tile, rather than per spark.
       // Cache only rendering scratch; encounter state remains read-only here.
@@ -207,9 +207,10 @@ const BossVFX=(()=>{
     }else if(d.actor){
       const m=d.actor,e=d.e,a=e.attack,p=a?clamp(1-e.timer/a.windup):0;
       const g=SpriteAssets.actorGeometry(m.spriteOpts,m.pose(),px(m.x,m.y,cam),py(m.x,m.y,cam),1.1);
-      const x=(g.left+g.right)/2,y=g.top+(g.bottom-g.top)*(m.defId==='mire_mother'&&e.stage==='recovery'?.33:.55);
+      const exposed=m.defId==='mire_mother'&&Game.state.time<e.heartExposedUntil;
+      const x=(g.left+g.right)/2,y=g.top+(g.bottom-g.top)*(exposed?.33:.55);
       const [bright,col]=palette(a);ctx.strokeStyle=col;ctx.fillStyle=bright;ctx.lineWidth=1.5;
-      if(m.defId==='mire_mother'&&e.stage==='recovery'){
+      if(exposed){
         ctx.globalAlpha=.7;ctx.fillStyle='#e6f5ba';ctx.beginPath();ctx.moveTo(x,y-8);ctx.lineTo(x+4,y);ctx.lineTo(x,y+8);ctx.lineTo(x-4,y);ctx.closePath();ctx.fill();
         ctx.globalAlpha=.25;ctx.strokeStyle='#b9d778';ctx.beginPath();ctx.ellipse(x,y,11,18,0,0,TAU);ctx.stroke();
       }else if(a?.id==='bile'){

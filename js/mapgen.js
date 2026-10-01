@@ -2885,16 +2885,31 @@ const MapGen = (() => {
       }
     }
     m.spawns.default={...a.entrance};m.spawns.retry={...a.entrance};
-    for(let i=0;i<8;i++)addProp(m,'grave',cx-2.4+(i%4)*1.6,a.y1+4+Math.floor(i/4)*1.5,{blocks:false,arenaRemains:true,label:'Fallen pilgrim — ordinary remains',scale:.55});
-    m.exits.push({x0:cx-2,y0:a.y1+6,x1:cx+2,y1:a.y1+8,target:c.parentZone,spawnKey:'from_arena',label:'Return to '+DATA.ZONES[c.parentZone].name,reuseCachedMap:true});
+    for(let i=0;i<8;i++){
+      // Keep durable remains identities and loot selection when moving the art.
+      const oldX=cx-2.4+(i%4)*1.6,oldY=a.y1+4+Math.floor(i/4)*1.5;
+      addProp(m,'grave',cx+1.2+(i%2)*1.4,a.y1+2.8+Math.floor(i/2)*1.3,{blocks:false,arenaRemains:true,
+        propId:propIdentity(m,{type:'grave',x:oldX,y:oldY}),seed:(oldX*31+oldY*17)|0,label:'Fallen pilgrim — ordinary remains',scale:.55});
+    }
+    // The return arch sits against the vestibule's west wall, clear of the
+    // combat seal and arrival. Click the arch to walk to its return apron.
+    const returnDoor={x:cx-3.1,y:a.y1+4.5};
+    m.exits.push({x0:returnDoor.x-.4,y0:returnDoor.y-1.2,x1:returnDoor.x+1.2,y1:returnDoor.y+1.2,target:c.parentZone,spawnKey:'from_arena',label:'Return to '+DATA.ZONES[c.parentZone].name,reuseCachedMap:true,doorId:'boss_return_'+c.bossId});
     m.monsterSpawns.push({id:c.bossId,x:cx,y:cy,boss:true});
     const visual=index=>'arena_'+c.bossId+'_'+index;
-    for(const d of c.devices){const p=addProp(m,'boss_device',cx+d.x,cy+d.y,{blocks:false,interact:'boss_device',interactionRange:2.1,
-      deviceId:d.id,label:d.label,visual:visual(c.bossId==='malthoron'?3:2),visualDone:visual(c.bossId==='malthoron'?2:3),completed:false,required:false,cooldown:0});a.devices.push(p);addLight(m,p.x,p.y,3,c.color,false);}
+    for(const d of c.devices){const p=addProp(m,'boss_device',cx+d.x,cy+d.y,{blocks:false,interact:d.role==='mirror'?'boss_device':null,interactionRange:2.1,
+      deviceId:d.id,arenaRole:d.role,label:d.label,visual:visual(c.bossId==='malthoron'?3:2),visualDone:visual(c.bossId==='malthoron'?2:3),completed:false,required:false,cooldown:0,orientation:0});a.devices.push(p);addLight(m,p.x,p.y,3,c.color,false);}
     addProp(m,'arena_backdrop',cx-6,cy-10,{blocks:false,building:true,visual:visual(0)});
     for(const [dx,dy]of [[-11,-4],[4,-11],[11,4],[-4,11]])if(DATA.arenaContains(a,cx+dx,cy+dy,-1))
       addProp(m,'arena_monument',cx+dx,cy+dy,{blocks:false,building:true,visual:visual(1)});
-    addProp(m,'arena_gate',cx,a.y1+1,{blocks:false,building:true,visual:visual(5)});
+    addProp(m,'arena_gate',returnDoor.x,returnDoor.y,{blocks:false,building:true,visual:visual(5),flipX:true,doorId:'boss_return_'+c.bossId});
+    if(c.act===4){
+      m.arenaVestibule={kit:c.bossId==='empty_archangel'?'pale':'dark',walls:[
+        {x:cx-3.5,y0:a.y1,y1:a.y1+3},{x:cx-3.5,y0:a.y1+6,y1:a.y1+8}]};
+    }else{
+      const wall={korvath:'a1env_temple_end_south',mire_mother:'a2boundary_root_south',azram:'a3env_palace_south',vethriss:'a5env_throne_end_south'}[c.bossId];
+      for(const offset of [1.5,7])addProp(m,'arena_door_wall',cx-3.5,a.y1+offset,{blocks:false,building:true,visual:wall});
+    }
     addLight(m,cx,cy,11,c.color,false);addLight(m,cx,a.entrance.y,4,'#d6b989',false);
     m.arenaStory={};for(const [i,obj]of (DATA.STORY_OBJECTS[zoneId]||[]).entries())m.arenaStory[obj.id]={x:cx+3+i*2,y:cy-3};
     m.campaignVisual={revision:1,act:c.act,outdoor:false,ambient:'#171d29',scenery:[],atmosphere:[],
@@ -2907,15 +2922,41 @@ const MapGen = (() => {
     if(c.bossId==='vethriss')m.campaignVisual.atmosphere=c.devices.map((d,i)=>({x:cx+d.x,y:cy+d.y,phase:i*2.1}));
     bakeMinimap(m);return m;
   }
+  function bossEntranceSeat(m,a) {
+    const env=m.act1Environment||m.boundaries||m.act3?.environment||m.cathedral?.environment||m.act5Environment;
+    const candidates=[],seen=new Set();
+    // Use a real rear wall of the old boss chamber. Keep the original terrain,
+    // scenery and onward passages; no isolated wall or room-center arch.
+    for(const s of env?.segments||[]){
+      if(s.axis!==0||s.side!==-1||Math.abs(s.y-a.cy)>20)continue;
+      for(let x=s.x+.5;x<s.x+s.length;x++){
+        const y=s.y+1.1,key=x+':'+y;if(seen.has(key)||Math.abs(x-a.cx)>17)continue;seen.add(key);
+        let backed=true;
+        for(let dx=-2;dx<=2;dx++){
+          if(walkable(m,x+dx,s.y-.5)||!TerrainSurface.supported(m,x+dx,y,.45)){backed=false;break;}
+        }
+        if(!backed||!TerrainSurface.supported(m,x,y+3.5,.7)||m.hazard[idx(m,x|0,y|0)])continue;
+        if(m.thresholds?.some(t=>{const p=t.opening||t;return Math.hypot(p.x-x,p.y-y)<8;}))continue;
+        if(m.props.some(p=>!p.hidden&&Math.hypot(p.x-x,p.y-y)<(p.building?6:2.8)))continue;
+        if(m.monsterSpawns.some(p=>p.id!==a.bossId&&Math.hypot(p.x-x,p.y-y)<3))continue;
+        candidates.push({x,y,wall:{x,y:s.y,axis:0},approach:{x,y:y+2},arrival:{x,y:y+3.5},score:Math.hypot(x-a.cx,y-a.cy)+Math.abs(x-a.cx)*.12});
+      }
+    }
+    candidates.sort((p,q)=>p.score-q.score||p.y-q.y||p.x-q.x);
+    const seat=candidates.find(p=>TerrainNavigation.findPath(m,{x:a.cx,y:a.cy},p.arrival,{radius:.45,hop:false})?.length);
+    if(!seat)throw Error('Boss entrance has no clear wall seat: '+m.id);
+    return seat;
+  }
   function attachBossEntrance(m) {
     const id=m.zone.arenaEntrance,c=DATA.BOSS_ARENAS?.[id];if(!c)return m;
     const boss=m.monsterSpawns.find(s=>s.id===id),a=m.bossArena;if(!boss||!a)return m;
     m.monsterSpawns=m.monsterSpawns.filter(s=>s.id!==id);
-    m.spawns.from_arena={x:a.cx,y:a.cy+3};
-    m.arenaEntrance={bossId:id,x:a.cx,y:a.cy,target:c.zone};
-    m.exits.push({x0:a.cx-1.5,y0:a.cy-.5,x1:a.cx+1.5,y1:a.cy+1.5,target:c.zone,spawnKey:'default',label:c.name,bossEntrance:id});
-    addProp(m,'arena_gate',a.cx,a.cy,{blocks:false,building:true,visual:'arena_'+id+'_5'});
-    addLight(m,a.cx,a.cy,4,c.color,false);delete m.bossArena;bakeMinimap(m);return m;
+    const seat=bossEntranceSeat(m,a),{x,y}=seat,doorId='boss_entry_'+id;
+    m.spawns.from_arena={...seat.arrival};
+    m.arenaEntrance={bossId:id,x,y,target:c.zone,wall:seat.wall,approach:seat.approach,arrival:seat.arrival,room:{x:a.cx,y:a.cy}};
+    m.exits.push({x0:x-1.2,y0:y-.45,x1:x+1.2,y1:y+1.2,target:c.zone,spawnKey:'default',label:c.name,bossEntrance:id,doorId});
+    addProp(m,'arena_gate',x,y,{blocks:false,building:true,visual:c.entranceVisual,doorId});
+    addLight(m,x,y,4,c.color,false);delete m.bossArena;bakeMinimap(m);return m;
   }
   function generateLayout(zoneId, worldSeed) {
     if(DATA.ZONES[zoneId]?.arena)return genBossArena(zoneId,worldSeed);

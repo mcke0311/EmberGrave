@@ -11,6 +11,7 @@ const modes = arg('modes', 'normal,no-ai,no-enemy-draw,no-enemies').split(',');
 const output = arg('output', `tests/qa/input_latency/latest_${zone}_${width}_${key}.json`);
 const terrainVersion = arg('terrain', 'current');
 const boss = arg('boss','');
+const pressureStress=process.argv.includes('--pressure');
 const sourceRef=arg('source-ref','');
 const sourceDirectory=arg('source-directory','');
 const sourceFor=file=>sourceRef?execFileSync('git',['show',sourceRef+':js/'+file],{encoding:'utf8'}):fs.readFileSync(path.join(sourceDirectory||path.join(__dirname,'../js'),file),'utf8');
@@ -25,7 +26,7 @@ const summary = a => {
 (async () => {
   const browser = await chromium.launch({channel: 'chrome', headless: true,
     args: ['--disable-background-timer-throttling', '--disable-renderer-backgrounding']});
-  const report = {environment: {browser: browser.version(), platform: process.platform}, zone, key, width, height, seconds, warmupMs, terrainVersion, sourceRef:sourceRef||null,sourceDirectory:sourceDirectory||null, results: []};
+  const report = {environment: {browser: browser.version(), platform: process.platform}, zone, key, width, height, seconds, warmupMs, terrainVersion, pressureStress, sourceRef:sourceRef||null,sourceDirectory:sourceDirectory||null, results: []};
   try {
     const context = await browser.newContext({viewport: {width, height}}), page = await context.newPage();
     const errors = [], messages = [];
@@ -82,7 +83,7 @@ const summary = a => {
         source = source.replace(before, after);
       };
       replace('  function tick(t) {', '  function tick(t) {\n    window.__latency.begin(t);');
-      replace('      render();\n    } catch (err) {', '      render();\n      window.__latency.end();\n    } catch (err) {');
+      replace('    } catch (err) {\n      fatalRuntime(err, "Gameplay update/render");', '      window.__latency.end();\n    } catch (err) {\n      fatalRuntime(err, "Gameplay update/render");');
       replace('      if (mon.husk) continue;', '      if (window.__latency.mode === "no-enemy-draw" || mon.husk) continue;');
       replace('    if (state.bossBar) {','    if (state.bossBar && window.__latency.mode !== "no-boss-hud") {');
       const names = ['update', 'render', 'updateHover', 'drawEntity', 'repath', 'renderLighting', 'renderMinimap', 'drawBackdrop', 'drawProp', 'renderMapOverlay'];
@@ -117,11 +118,11 @@ window.__latency.drawPlayer=window.__latency.wrap('player3d',Player3D.draw);`);
     });
     for (const mode of modes) {
       console.log('Preparing', mode, zone, width);
-      const scene = await page.evaluate(async ({zone, mode, boss}) => {
+      const scene = await page.evaluate(async ({zone, mode, boss, pressureStress}) => {
         const diag = window.__latency; diag.collecting = false; diag.mode = 'setup';
         Sfx.setVol('master', 0);
         await Game.newGame('Latency test', boss?'gravebinder':'vanguard', false); await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);
-        Game.debugFlags.god = true; Game.options.screenShake = false; Game.state.seed = 12345;
+        Game.debugFlags.god = !pressureStress; Game.options.screenShake = false; Game.state.seed = 12345;
         Math.random = U.rng(7331);
         if(boss){zone=DATA.BOSS_ENCOUNTERS[boss].zone;Game.state.quests.q16={state:'done'};Game.state.quests.q17={state:'done'};}
         if (!await Game.enterMap(zone, 'from_camp')) throw Error('Map failed to load');
@@ -132,7 +133,7 @@ window.__latency.drawPlayer=window.__latency.wrap('player3d',Player3D.draw);`);
           s.quests.q16={state:'done'};s.quests.q17={state:'done'};s.monsters=[];s.map.explored.fill(1);
           const spec=BossLoadouts.apply(p,DATA.ENEMIES[boss].lvl);
           Game.commitPlayerEquipment(await Game.preparePlayerEquipment(p.equip));
-          Game.__latency.place(a.cx+3,a.cy+2);
+          Game.__latency.place(a.cx+(pressureStress?8:3),a.cy+(pressureStress?4:2));
           const m=new Monster(boss,a.cx,a.cy);m.aggro=true;s.monsters=[m];
           const e=m.encounter;e.active=true;
           if(e.statusText){const status=e.statusText;e.statusText=function(){const text=status.call(this);return window.__latency.mode==='static-boss-hud'?text.replace(/ · [\d.]+s$/,''):text;};}
@@ -141,15 +142,21 @@ window.__latency.drawPlayer=window.__latency.wrap('player3d',Player3D.draw);`);
           e.seal?.(true);
           e.clearOwned();e.debris=[];
           // Exercise the final boss's longest sustained signature during this sample.
-          if(boss==='vethriss')e.start('beam',p);
+          if(boss==='vethriss'&&!pressureStress)e.start('beam',p);
           for(let i=0;i<e.config.cap;i++)e.spawn('drowned_dead',a.cx-3+i*1.5,a.cy+3);
           if(boss==='azram'){e.spawn('boss_portal',a.cx-3,a.cy-2,'portal');e.spawn('boss_portal',a.cx+3,a.cy-2,'portal');}
           BossLoadouts.prepareSummons(p,spec.summon,Game.__latency.settle);p.mana=p.stats.maxMana;
           BossLoadouts.prepareSummons(p,spec.secondarySummon,Game.__latency.settle);p.mana=p.stats.maxMana;
           const monsters=s.monsters.filter(m=>!m.dead).length,army=s.minions.filter(m=>!m.dead).length;
-          p.command={type:'attack',target:m,skill:spec.main,hold:true};
+          // Keep the matched actor population alive while still exercising actual
+          // damaging hits, slows and pulls. These pools are diagnostic only.
+          if(pressureStress){
+            p.hp=p.stats.maxHp=100000;
+            for(const actor of [...s.minions,...s.monsters.filter(n=>n!==m)])actor.hp=actor.maxHp=100000;
+          }
+          p.command=pressureStress?null:{type:'attack',target:m,skill:spec.main,hold:true};
           diag.mode=mode;Math.random=U.rng(7331);
-          return {boss,phase:e.phase,monsters,army,baseline:mode==='legacy'?'Existing generic boss AI; same new arena, art, gear and initial entities':'Authored controller'};
+          return {boss,phase:e.phase,monsters,army,pressureStress,diagnosticHealth:pressureStress?100000:null,baseline:mode==='legacy'?'Existing generic boss AI; same new arena, art, gear and initial entities':'Authored controller'};
         }
         const state = Game.state, map = state.map, entry = {...state.player}, candidates = [];
         for (let y = 0; y < map.h; y++) for (let x = 0; x < map.w; x++) {
@@ -167,8 +174,14 @@ window.__latency.drawPlayer=window.__latency.wrap('player3d',Player3D.draw);`);
         diag.mode = mode; Math.random = U.rng(7331);
         Game.repath(state.player, target.x, target.y); state.player.command = {type:'move'};
         return {center, target, monsters};
-      }, {zone, mode, boss});
+      }, {zone, mode, boss, pressureStress});
       await page.waitForTimeout(warmupMs);
+      if(boss&&pressureStress)await page.evaluate(boss=>{
+        const s=Game.state,p=s.player,e=s.monsters.find(m=>m.defId===boss).encounter,a=s.map.bossArena;
+        Game.__latency.place(a.cx+8,a.cy+4);e.clearAttacks();
+        if(e.startPressure)e.startPressure(p);
+        else e.start(boss==='korvath'?'charge':boss==='mire_mother'?'grasp':boss==='empty_archangel'?'descent':'chains',p);
+      },boss);
       let traceSession;
       if (arg('trace', '0') === '1') {
         traceSession = await context.newCDPSession(page);
@@ -180,7 +193,9 @@ window.__latency.drawPlayer=window.__latency.wrap('player3d',Player3D.draw);`);
       await page.waitForTimeout(100);
       const raw = await page.evaluate(() => {
         const p=window.__latency;p.collecting=false;
+        const e=Game.state.monsters.find(m=>m.encounter)?.encounter;
         return {frames:p.frames,events:p.events,loafs:p.loafs, endPosition:{x:Game.state.player.x,y:Game.state.player.y},
+          encounter:e?{pressureCasts:e.pressure?.casts??null,attack:e.attack?.id,stage:e.stage,heroHp:Game.state.player.hp,monsters:Game.state.monsters.filter(m=>!m.dead).length,army:Game.state.minions.filter(m=>!m.dead).length}:null,
           running:Game.__latency.running,visibility:document.visibilityState,lastFrame:p.last,now:performance.now(),
           titleHidden:getComputedStyle(document.getElementById('title')).display==='none',fatal:document.getElementById('appFatal')?.textContent};
       });
@@ -208,7 +223,7 @@ window.__latency.drawPlayer=window.__latency.wrap('player3d',Player3D.draw);`);
         frameIntervals:summary(raw.frames.map(f=>f.interval)),
         parts:Object.fromEntries(parts.map(n=>[n,summary(raw.frames.map(f=>f.parts[n]||0))])),
         inputEvents:raw.events, longAnimationFrames:raw.loafs,
-        slowFrames:raw.frames.filter(f=>f.duration>30||f.interval>50),endPosition:raw.endPosition,traceSummary:raw.traceSummary};
+        slowFrames:raw.frames.filter(f=>f.duration>30||f.interval>50),endPosition:raw.endPosition,encounter:raw.encounter,traceSummary:raw.traceSummary};
       report.results.push(result);
       console.log(JSON.stringify({mode,cpu:result.cpuMs,interval:result.frameIntervals,AI:result.parts.enemyAI,
         events:raw.events.length,slowEvents:raw.events.filter(e=>e.duration>=200).length,loafs:raw.loafs.length}));

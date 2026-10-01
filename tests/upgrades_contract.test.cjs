@@ -103,7 +103,33 @@ test('three Echo encounters, host authority, durable rewards and a fresh subsequ
     await command(f,'host',{type:'echoAction',action:'choose',curse:f.Echoes.choices(r)[0].id});assert.equal(messages(f,'host','ack').at(-1).ok,true);
     await arrive(f,'host');await arrive(f,'guest');w=f.runtime.worlds.get(host.worldId);
     assert.equal(w.map.id,f.Echoes.stages[stage][0]);assert.equal(w.monsters.filter(m=>m.isBoss&&!m.dead).length,1);assert.equal(f.runtime.echoReady(w),true);
-    const boss=w.monsters.find(m=>m.isBoss&&!m.dead);assert.equal(boss.lvl,30+2*stage);f.scope(w,()=>{boss.dead=true;boss.encounter.finish();f.Echoes.killed(w,boss);});
+    const boss=w.monsters.find(m=>m.isBoss&&!m.dead);assert.equal(boss.lvl,30+2*stage);
+    f.scope(w,()=>{
+      const e=boss.encounter,a=e.arena;
+      for(const p of w.players)Object.assign(p,{x:a.cx+3,y:a.cy+2,hp:100000});
+      e.update(.05,host,w.map);assert.ok(e.active&&a.sealed);
+      const tick=seconds=>{for(let t=0;t<seconds;t+=.025){w.time+=.025;e.update(.025,host,w.map);}};
+      if(stage===0){
+        const d=a.devices.find(d=>d.arenaRole==='chargeTarget');
+        Object.assign(host,{x:d.x-2.5,y:d.y});e.start('charge',host);host.y+=4;e.execute();tick(.72);
+        assert.ok(d.cooldown>23&&e.stage==='recovery');assert.equal(e.recoveryDuration,3);
+      }
+      for(let phase=1;phase<e.config.phases.length;phase++){
+        boss.takeDamage(1e9,host,{},'shadow');e.update(.025,host,w.map);
+        assert.equal(e.phase,phase);assert.ok(!e.mechanic?.blocksDamage);
+        if(stage===1){
+          e.start('flood',host);assert.equal(e.attack.shapes.length,2);e.execute();
+          e.start('grasp',host);e.execute();tick(.25);assert.ok(e.heartExposedUntil>w.time);
+          const hp=boss.hp;boss.loseHealth(40);assert.equal(hp-boss.hp,50);
+        }else if(stage===2){
+          const souls=e.owned.filter(m=>!m.dead&&m.encounterKind==='boundSoul');assert.equal(souls.length,2);
+          for(const soul of souls){assert.equal(soul.maxHp,Math.round(boss.maxHp*.03));soul.takeDamage(1e9,host,{},'shadow');}
+          assert.ok(Math.abs(boss.def.armor-e.base.armor*(phase===1?.7:.4))<1e-6);
+          assert.equal(e.recoveryDuration,3);
+        }
+      }
+      boss.takeDamage(1e9,host,{},'shadow');assert.ok(boss.dead&&!a.sealed&&e.lifecycle==='victory');
+    });
     r=w.flags.echoRun;assert.equal(r.phase,'reward');assert.equal(r.rewards.length,stage+1);assert.equal(host.inv.items.length,0);
     assert.equal(f.Game.reviveItem(r.rewards.at(-1)).slot,'boots');
     if(stage===0){
