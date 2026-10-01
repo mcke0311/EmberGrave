@@ -1,6 +1,6 @@
 # Sites deployment
 
-Current website (updated 2026-09-29): https://embergravegame.com
+Current website (updated 2026-09-30): https://embergravegame.com
 The original address https://embergravegame.mcke0311.chatgpt.site also remains live.
 The existing Site is now public. Preserve its current audience and project ID
 when updating; the private access and earlier URL recorded below are historical.
@@ -325,3 +325,36 @@ All three archives remain on disk. The original local history is retained on
 `codex/before-arena-release-publish-20260929`; published history was preserved
 and the corrected push was a normal fast-forward. Unrelated Emberwitch source
 art remains uncommitted.
+
+## Live cinematics and distinct boss combat — 2026-09-30
+
+Version 17 publishes GitHub `main` at
+`9d7228324530f2f2e755fabffd8c5ea3ac2a96e1`, including the adventure upgrades,
+20 live campaign cinematics, distinct boss counters, distant-pressure attacks,
+and six painted wall entrances. Publication **succeeded** at 23:13:40 Toronto
+time on September 30 (2026-10-01 03:13:40 UTC).
+
+Live website: https://embergravegame.com. Site access is public; the original
+https://embergravegame.mcke0311.chatgpt.site address also serves this release.
+
+Release source: `cd3b41b3da13189b7e28ea845e3dde095f07ae45`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_044c57833c148191a888f5eb4cb7249d`.
+Deployment: `appgdep_6abdcf5f1a808191962c8b7da2918c00`.
+
+The compact release contains 1,388 runtime files (215.58 MiB). Its validated
+local archive contains 1,389 files including the hosting manifest (206.91 MiB
+compressed). Native archive transfer failed; Sites built the exact verified,
+pushed source. The compressed legacy cinematic and editor exclusions are retained.
+`tmp/sync_site_release.py` selects runtime dependencies without recursively
+importing the source artwork referenced by provenance catalogs.
+
+Validation passed: 82 JavaScript syntax checks, 1,263 runtime references with
+no missing files, and Chrome checks against both the prepared release and live
+custom domain. New-game startup, all six arena bundles, 20 registered scenes,
+and cinematic asset preparation passed without runtime or HTTP errors. Hashes
+of 24 live scripts, stylesheets and new artwork files match the published commit.
+
+The frontend and worker identify as `embergrave-coop-8`. The Render relay was
+not deployed and still reports `embergrave-coop-3`; multiplayer requires a
+matching relay update. The preceding publication had also left the relay on
+that older build.
