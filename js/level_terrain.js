@@ -462,7 +462,11 @@ const LevelTerrain = (() => {
     if(m.act1Environment)Act1Environment.drawGround(ctx,m,cam,inView,damage);
   }
   function drawSurfaceView(ctx,m,cam,legacy=false){
-    const w=ctx.canvas.width,h=ctx.canvas.height;
+    const zoom=cam.zoom||1;
+    // Cinematic framing uses world pixels. Quantized bounds retain the cache
+    // during a slow zoom without building an entire physical-screen floor.
+    const w=zoom===1?ctx.canvas.width:Math.ceil(ctx.canvas.width/zoom/128)*128,
+      h=zoom===1?ctx.canvas.height:Math.ceil(ctx.canvas.height/zoom/128)*128;
     let entry=surfaceView;
     const compatible=entry&&entry.map===m&&entry.geometry===m._surfaceGeometry&&entry.legacy===legacy&&entry.w===w&&entry.h===h;
     if(!compatible||
@@ -581,7 +585,7 @@ const LevelTerrain = (() => {
     }
   }
   const imperialMaterial=key=>material(SpriteAssets.maps.props[key],0,false,true);
-  return Object.freeze({beginFrame,drawTile,drawSurfaceTile,drawEnvironmentBackdrop,drawSurface,drawFloor,clipBehind,endFrame,getDiagnostics,imperialMaterial,groundMaterialKey});
+  return Object.freeze({beginFrame,drawTile,drawSurfaceTile,drawEnvironmentBackdrop,drawSurface,drawFloor,clipBehind,endFrame,getDiagnostics,imperialMaterial,groundMaterialKey,resetView:releaseSurfaceView});
 })();
 
 /* Complete painted Act I sections follow collision contours. */

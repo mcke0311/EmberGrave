@@ -149,9 +149,53 @@ const Sfx = (() => {
     });
   }
   function applyRecordedVolume() {
-    for (const track of recorded.values()) track.volume = Math.max(0, Math.min(1, vol.master * vol.music * (track._fade ?? 1)));
+    for (const track of recorded.values()) track.volume = Math.max(0, Math.min(1, vol.master * vol.music * cinematicGain * (track._fade ?? 1)));
   }
   const vol = { master: 0.8, sfx: 0.9, music: 0.55 };
+  let cinematicGain=1;
+  let filmBus=null;const filmSources=new Set();
+  function cinematicAudioScope(){
+    if(!ac)return ()=>{};
+    const bus=ac.createGain();bus.gain.value=.8;bus.connect(sfxBus);filmBus=bus;let released=false;
+    return ()=>{if(released)return;released=true;bus.gain.setTargetAtTime(0,ac.currentTime,.01);for(const source of [...filmSources])if(source._filmBus===bus){try{source.stop(ac.currentTime+.04);}catch{}}if(filmBus===bus)filmBus=null;setTimeout(()=>bus.disconnect(),80);};
+  }
+  function cinematicEnvelope(visual,time){
+    cinematicGain=visual==='destroy'?(time>=9&&time<14?.28:time>=14&&time<16?.1:.65):visual==='quieting'&&time>=14?.2:.65;
+    applyRecordedVolume();if(musBus)musBus.gain.setTargetAtTime(vol.music*cinematicGain,ac.currentTime,.12);
+  }
+  function cinematicCue(id){
+    if(!ac||ac.state!=='running'||!filmBus)return;const t=ac.currentTime,b=filmBus;
+    const tone=(f,d,p=.08,to)=>osc('sine',f,t,d,p,b,to);
+    const grain=(d,p,f,to,kind='bandpass')=>noise(t,d,p,kind,f,to,1.3,b);
+    switch(id){
+      case 'coreHum':tone(47,3.5,.09,43);tone(94,3.3,.035,88);tone(705,2.5,.012,660);break;
+      case 'crystal':tone(970,.6,.055,480);tone(1455,.9,.03,700);grain(.22,.08,3300,1200);break;
+      case 'fracture':grain(.12,.2,3100,750);grain(.32,.09,650,180,'lowpass');tone(160,.18,.16,70);for(let i=0;i<4;i++)osc('sine',1500+i*470,t+i*.023,.24,.025,b,500+i*130);break;
+      case 'coreBreak':grain(.24,.26,3300,900);grain(1.6,.25,800,80,'lowpass');tone(82,2.4,.22,29);tone(123,1.1,.065,45);for(let i=0;i<7;i++)osc('sine',1800+i*310,t+i*.05,.4,.018,b,500);break;
+      case 'stone':grain(.8,.14,430,90,'lowpass');tone(70,.7,.075,40);break;
+      case 'settle':grain(1.4,.09,1700,180);break;
+      case 'armor':grain(.35,.13,1500,450);tone(240,.4,.04,150);break;
+      case 'chains':for(let i=0;i<6;i++)noise(t+i*.08,.07,.08,'bandpass',1900-i*140,500,3,b);tone(175,.55,.025,145);break;
+      case 'chainBreak':grain(.08,.22,2600,1400);tone(470,.4,.07,220);grain(.32,.09,1200,400);break;
+      case 'water':grain(2.5,.085,730,300,'lowpass');grain(1.1,.03,3100,1600);break;
+      case 'paper':grain(.35,.08,2300,1300,'highpass');break;
+      case 'ward':for(const [i,f]of [220,330,440,660].entries())osc('sine',f,t+i*.08,2,.045,b,f*.94);grain(1.5,.045,650,1200);break;
+      case 'mechanism':tone(93,2,.08,116);for(let i=0;i<5;i++)noise(t+i*.27,.12,.07,'bandpass',700,200,2,b);break;
+      case 'portalOpen':grain(2.8,.12,180,1500);tone(60,2.4,.08,145);tone(121,2,.035,280);break;
+      case 'portalClose':grain(1.6,.1,1900,170);tone(150,1.4,.07,38);break;
+      case 'whisper':grain(1.7,.045,1050,350);tone(162,1.6,.015,145);break;
+      case 'wind':grain(3,.06,650,350,'lowpass');break;
+      case 'fire':grain(1.1,.085,350,900,'lowpass');break;
+      case 'bossBreath':grain(1.3,.1,270,90,'lowpass');tone(64,.9,.08,46);break;
+      case 'distantBattle':grain(.8,.055,500,110,'lowpass');tone(80,.4,.045,45);break;
+      case 'hush':break;
+    }
+  }
+  function cinematicMix(theme){
+    const previous=curTheme;cinematicGain=.65;
+    if(theme)music(theme);applyRecordedVolume();if(musBus)musBus.gain.value=vol.music*cinematicGain;
+    let released=false;return ()=>{if(released)return;released=true;cinematicGain=1;applyRecordedVolume();if(musBus)musBus.gain.value=vol.music;if(previous)music(previous);};
+  }
 
   function init() {
     if (ac) { loadSkills(); loadInteractionSounds(); return Promise.all([ac.state === "suspended" ? ac.resume().catch(() => {}) : null, loadClick(), loadDeath()]); }
@@ -180,7 +224,7 @@ const Sfx = (() => {
     if (!ac) return;
     if (k === "master") master.gain.value = v;
     if (k === "sfx") sfxBus.gain.value = v;
-    if (k === "music") musBus.gain.value = v;
+    if (k === "music") musBus.gain.value = v*cinematicGain;
   }
 
   /* ---------- primitive builders ---------- */
@@ -195,6 +239,7 @@ const Sfx = (() => {
     if (slideTo) o.frequency.exponentialRampToValueAtTime(Math.max(slideTo, 1), t0 + dur);
     env(g, t0, 0.005, peak, dur);
     o.connect(g); g.connect(dest || sfxBus);
+    if(dest&&dest===filmBus){o._filmBus=filmBus;filmSources.add(o);o.onended=()=>{filmSources.delete(o);o.disconnect();g.disconnect();};}
     o.start(t0); o.stop(t0 + dur + 0.1);
   }
   function noise(t0, dur, peak, filterType, f0, f1, q, dest) {
@@ -205,6 +250,7 @@ const Sfx = (() => {
     f.Q.value = q || 1;
     const g = ac.createGain(); env(g, t0, 0.004, peak, dur);
     s.connect(f); f.connect(g); g.connect(dest || sfxBus);
+    if(dest&&dest===filmBus){s._filmBus=filmBus;filmSources.add(s);s.onended=()=>{filmSources.delete(s);s.disconnect();f.disconnect();g.disconnect();};}
     s.start(t0); s.stop(t0 + dur + 0.1);
   }
 
@@ -398,6 +444,7 @@ const Sfx = (() => {
 
   fetchClick(); // Fetch early; decoding and playback wait for a user gesture.
   fetchDeath();
-  return { init, play, playSkill, stopSkills, voice, music, chooseZoneMusic, stopMusic, stopDeath, setVol, vol, TRACKS, EFFECTS, INTERACTIONS, loadInteractionSounds,
+  return { init, play, playSkill, stopSkills, voice, music, chooseZoneMusic, stopMusic, stopDeath, setVol, cinematicMix,cinematicAudioScope,cinematicCue,cinematicEnvelope, vol, TRACKS, EFFECTS, INTERACTIONS, loadInteractionSounds,
+    get cinematicVoices(){return filmSources.size;},
     get interactionStats(){return {loaded:interactionBuffers.size,voices:interactionVoices.size};}, get ctx() { return ac; } };
 })();

@@ -5,8 +5,8 @@ import {CLASS_STYLES,ARMOR_FAMILIES} from './character_catalog3d.mjs';
 import {createWeapon,createWearable,createArmorDetails,disposeObject,rod} from './character_equipment3d.mjs?v=8';
 import {surfaceMaterial,disposeMaterials} from './character_materials3d.mjs?v=2';
 import {armorPalette,armorRank} from './character_armor3d.mjs?v=5';
-import {CLASS_ANIMATIONS,classPoseAt,sampleHumanoid,smooth} from './character_animation3d.mjs?v=11';
-import {createWildshape} from './character_forms3d.mjs?v=11';
+import {CLASS_ANIMATIONS,classPoseAt,sampleHumanoid,smooth} from './character_animation3d.mjs?v=12';
+import {createWildshape} from './character_forms3d.mjs?v=12';
 import {shiftLayers,applyShiftPose,drawShiftEffect} from './character_wildshape3d.mjs';
 export {createWildshapeController} from './character_wildshape3d.mjs';
 export {createAnimationController} from './character_motion3d.mjs?props=1';
@@ -211,6 +211,11 @@ export function createCharacter(classId='emberwitch') {
   // Evaluate the authored curves directly. Scrubbing backwards, revisiting a
   // completed death, or rendering eight views cannot leave a mixer action frozen.
   function animate(pose) {
+    // Stowed gear is a presentation transform; restore it before every sample.
+    for(const object of [weapon,...(attachments.get('off')?.objects||[])].filter(Boolean)){
+      const home=object.userData.cinematicHome;
+      if(home){home.parent.add(object);object.position.copy(home.position);object.quaternion.copy(home.rotation);}
+    }
     const sample=sampleHumanoid(classId,pose,equipment),{name,time:t,phase,body,motion,feet}=sample;
     const airborne=name==='airborne',twoHand=!!equipment.main?.twoHand,category=equipment.main?.family.split('_')[0];
     applyBody(sample);
@@ -305,6 +310,19 @@ export function createCharacter(classId='emberwitch') {
       solveArm('R',root.worldToLocal(weapon.localToWorld(right)),grip('R'),motion.poleR);
       solveArm('L',root.worldToLocal(weapon.localToWorld(left)),grip('L'),motion.poleL);
       root.updateMatrixWorld(true);
+    }
+    const film=pose.ex?.cinematic;
+    if(film&&sample.cinematic?.stow){
+      for(const object of [weapon,...(attachments.get('off')?.objects||[])].filter(Boolean)){
+        object.userData.cinematicHome||={parent:object.parent,position:object.position.clone(),rotation:object.quaternion.clone()};
+        chest.add(object);object.position.set(object===weapon ? .13 : -.16,.04,-.19);object.rotation.set(.15,0,object===weapon?-.55:.25);
+      }
+      root.updateMatrixWorld(true);
+      if(film.hand){
+        const pixels=44,target=new THREE.Vector3((film.hand.x-film.hand.y)*32/pixels,film.hand.lift/(Math.sqrt(3)/2*pixels),(film.hand.x+film.hand.y)*32/pixels);
+        solveArm('R',root.worldToLocal(target),new THREE.Quaternion(),[-1,-.1,-.4]);
+      }
+      if(['examine','offer','ward'].includes(film.clip))solveArm('L',new THREE.Vector3(-.20,1.06,.38),new THREE.Quaternion(),[1,-.2,-.3]);
     }
     // Pauldrons hinge over the sleeve instead of swinging through the head.
     for(const object of attachments.get('chest')?.objects||[]){if(object.parent.name.startsWith('UpperArm'))object.quaternion.copy(object.parent.quaternion).invert().slerp(neutralRotation,.32);}
@@ -428,7 +446,7 @@ export function weaponProjectileOrigin(model,scale=1) {
   return {x:(world.x+world.z)*pixels/64,y:(world.z-world.x)*pixels/64,lift:world.y*Math.sqrt(3)/2*pixels};
 }
 
-export function createCharacterRenderer({size=384,classId='emberwitch',presentation=false}={}) {
+export function createCharacterRenderer({size=384,classId='emberwitch',presentation=false,cinematic=false}={}) {
   const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,preserveDrawingBuffer:false,powerPreference:'low-power'});
   renderer.setPixelRatio(1);renderer.setSize(size,size,false);renderer.setClearColor(0x000000,0);
   renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.04;
@@ -436,9 +454,11 @@ export function createCharacterRenderer({size=384,classId='emberwitch',presentat
   const camera=new THREE.OrthographicCamera(-span/2,span/2,span/2,-span/2,.01,30);
   const target=new THREE.Vector3(0,presentation?1:.83,0);
   camera.position.set(0,target.y+(presentation?1.8:5),presentation?10:Math.sqrt(75));camera.lookAt(target);
-  const ambient=new THREE.HemisphereLight('#bccbd4','#28231f',1.3);scene.add(ambient);
+  const ambient=new THREE.HemisphereLight('#bccbd4','#28231f',cinematic?.95:1.3);scene.add(ambient);
   const key=new THREE.DirectionalLight('#f3dcc0',2.7);key.position.set(-3,5,5);scene.add(key);
   const rim=new THREE.DirectionalLight('#8eabc2',1.8);rim.position.set(3,2,-4);scene.add(rim);
+  if(cinematic){const fill=new THREE.DirectionalLight('#cbd5e0',.7);fill.position.set(4,3,5);scene.add(fill);key.position.set(-3,5,2);}
+  const filmLight=cinematic?new THREE.PointLight('#ffdda3',0,8,1):null;if(filmLight)scene.add(filmLight);
   // The selection portrait has a physical floor, visible from its lower camera.
   // The world renderer retains its existing terrain and foot anchor.
   let pedestal=null;
@@ -470,10 +490,19 @@ export function createCharacterRenderer({size=384,classId='emberwitch',presentat
     const region=/north|frost|mine|shard|freeze|korvath/.test(id)?'north':/marsh|crypt|mire|choir|greywater/.test(id)?'marsh':/desert|sand|khal|tomb|azram/.test(id)?'sand':/cathedral|malthoron|archangel/.test(id)?'cathedral':act===5||/cinder|infernal|vethriss/.test(id)?'cinder':'default';
     if(regionKey===region)return;regionKey=region;
     const palettes={north:['#afc6d8','#333843','#e4d5bf','#849cc1'],marsh:['#b5c2b0','#242d28','#ddd3ae','#7eaaa4'],sand:['#d4c7b0','#493525','#efd4a5','#9999b3'],cathedral:['#b8b8d2','#262434','#d5c8ad','#9494bf'],cinder:['#c9aea5','#352329','#e0b68d','#9a828c'],default:['#bccbd4','#28231f','#e7d6ba','#8eabc2']};
-    const [sky,ground,sun,edge]=palettes[region];ambient.color.set(sky);ambient.groundColor.set(ground);key.color.set(sun);rim.color.set(edge);key.intensity=2.1;rim.intensity=1.15;
+    const [sky,ground,sun,edge]=palettes[region];ambient.color.set(sky);ambient.groundColor.set(ground);key.color.set(sun);rim.color.set(edge);key.intensity=cinematic?3.4:2.1;rim.intensity=cinematic?1.7:1.15;
   }
   const models=new Map(),baseScales=new WeakMap();let model=null;
-  function setClass(id,form=null){const key=form||id;if(!models.has(key)){const next=form?createWildshape(form):createCharacter(id);models.set(key,next);baseScales.set(next,next.root.scale.clone());scene.add(next.root);}if(model)model.root.visible=false;model=models.get(key);model.root.visible=true;}
+  function refineFilmGeometry(body){
+    // Close framing uses the same rig and outfit, with smoother face/hand contours
+    // and rounded starter boot toes. These meshes belong only to the film renderer.
+    body.root.traverse(o=>{if(!o.isMesh||o.isSkinnedMesh)return;const g=o.geometry,p=g?.parameters;let next=null;
+      if(g.type==='SphereGeometry'&&p.widthSegments<24)next=new THREE.SphereGeometry(p.radius,24,16,p.phiStart,p.phiLength,p.thetaStart,p.thetaLength);
+      if(/^Boot[LR]$/.test(o.name)){next=new THREE.CapsuleGeometry(.0565,.107,6,16);next.rotateX(Math.PI/2);next.scale(1,.086/.113,1);}
+      if(next){o.geometry=next;g.dispose();}
+    });
+  }
+  function setClass(id,form=null){const key=form||id;if(!models.has(key)){const next=form?createWildshape(form):createCharacter(id);if(cinematic)refineFilmGeometry(next);models.set(key,next);baseScales.set(next,next.root.scale.clone());scene.add(next.root);}if(model)model.root.visible=false;model=models.get(key);model.root.visible=true;}
   setClass(classId);
   camera.updateMatrixWorld(true);
   const origin=new THREE.Vector3(0,0,0).project(camera);
@@ -500,12 +529,13 @@ export function createCharacterRenderer({size=384,classId='emberwitch',presentat
       const v=object.localToWorld(new THREE.Vector3(...local)),pixels=40*scale;
       return {x:(v.x+v.z)*pixels/64,y:(v.z-v.x)*pixels/64,lift:v.y*Math.sqrt(3)/2*pixels};
     };
-    const hand=project(model.joints?.HandR||model.rightPalm);
+    const hand=model.formId&&model.joints?.Forearm1?project(model.joints.Forearm1,[0,-.36,.075]):project(model.rightPalm||model.joints?.HandR||model.joints?.['Paw1:0']);
     const cat=model.weapon?.userData.category,two=equipment.main?.twoHand;
     const tip={sword:two?1.11:.82,dagger:.44,axe:two?.9:.54,mace:two?.84:.6,spear:1.52,staff:1.17,wand:.5}[cat]||.5;
-    return {hand,weapon:project(model.weapon,model.weapon?.userData.projectileSocket||[0,tip,0])||hand};
+    return {hand,leftHand:project(model.joints?.HandL||model.joints?.['Paw-1:0']),head:project(model.joints?.Head),weapon:project(model.weapon,model.weapon?.userData.projectileSocket||[0,tip,0])||hand};
   }
   function render(pose,equipment,id=classId,form=null) {
+    if(filmLight){const light=pose.ex?.cinematic?.light;filmLight.intensity=light?.intensity||0;if(light)filmLight.position.set((light.x-light.y)*32/44,light.lift/(Math.sqrt(3)/2*44),(light.x+light.y)*32/44);}
     prepare(pose,equipment,id,form);renderer.render(scene,camera);
     return renderer.domElement;
   }
@@ -545,7 +575,7 @@ export function createCharacterRenderer({size=384,classId='emberwitch',presentat
     }
   }
   function setResolution(value){
-    const next=Math.max(192,Math.min(384,Math.round(value)));if(presentation||next===size)return;
+    const next=Math.max(192,Math.min(cinematic?768:384,Math.round(value)));if(presentation||next===size)return;
     size=next;renderer.setSize(size,size,false);anchor.x=(origin.x+1)*size/2;anchor.y=(1-origin.y)*size/2;
   }
   function dispose(){renderer.domElement.removeEventListener('webglcontextlost',onLost);renderer.domElement.removeEventListener('webglcontextrestored',onRestored);models.forEach(m=>m.dispose());environment.dispose();pmrem.dispose();disposeObject(studio);if(pedestal)disposeObject(pedestal);renderer.dispose();renderer.forceContextLoss();}

@@ -588,6 +588,7 @@ const BossEncounters = (() => {
       if(!this.active) {
         if(!this.arena.dedicated&&!m.aggro&&m.hp===m.maxHp&&U.dist(m.x,m.y,player.x,player.y)>10)return;
         if(Game.bossWard?.(m))return;
+        if(Game.bossCinematic?.(m))return;
         this.active=true;m.aggro=true;this.lifecycle='combat';this.seal(true);
         if(m.def.cutscene)Game.firstSightCutscene(m.defId,m.def.cutscene);
         if(!m.spoke){m.spoke=true;Game.msg(m.name+": “"+m.def.aggroLines[0]+"”",this.config.color);}

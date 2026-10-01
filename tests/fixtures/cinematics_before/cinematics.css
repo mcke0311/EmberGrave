@@ -1,0 +1,44 @@
+/* The live game remains the scene's image. Only titles, captions and controls
+   sit above it; gameplay controls cannot receive a scene-dismissal gesture. */
+.cine-playing :is(#hud,#buffs,#minimap,#zonelabel,#msglog,#centerMsg,#mobileControls,#tooltip,#tooltipCmp,.opening-ui,.mobile-topbar,.phone-hud,.phone-actionbar) { visibility:hidden!important;pointer-events:none!important; }
+.cine-scene { position:absolute;inset:0;z-index:320;pointer-events:auto;color:#eee4ce;font-family:var(--font-game);background:linear-gradient(#04070bf2 0,#04070bc2 75px,transparent 130px,transparent calc(100% - 175px),#04070bc2 calc(100% - 125px),#04070bf5 100%); }
+.cine-heading { position:absolute;top:max(18px,env(safe-area-inset-top));left:max(28px,env(safe-area-inset-left));right:180px;text-shadow:0 2px 5px #000; }
+.cine-act { color:var(--cine-color,#cbb78d);font-size:10px;letter-spacing:3px; }
+.cine-heading h2 { margin:8px 0 0;font-size:clamp(18px,2.3vw,28px);font-weight:normal;letter-spacing:2px; }
+.cine-caption { position:absolute;bottom:max(30px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(780px,calc(100% - 90px));text-align:center;text-shadow:0 2px 5px #000; }
+.cine-speaker { color:var(--cine-color,#cbb78d);display:block;font-size:12px;letter-spacing:2px;margin-bottom:10px; }
+.cine-speaker:empty { display:none; }
+.cine-line { font-size:clamp(16px,1.8vw,22px);line-height:1.65;margin:0; }
+.cine-button { pointer-events:auto;min-height:46px;padding:10px 20px;border:1px solid #9b8869;background:#141a20ed;color:#eee4ce;font:14px/1.5 var(--font-game);cursor:pointer; }
+.cine-button:hover { background:#29323c; }
+.cine-button:focus-visible,.cine-transcript summary:focus-visible { outline:2px solid #ead5a6;outline-offset:4px; }
+.cine-skip { position:absolute;right:max(24px,env(safe-area-inset-right));top:max(20px,env(safe-area-inset-top)); }
+.cine-fallback { background:#0a1018f5;pointer-events:auto;overflow:auto; }
+.cine-fallback .cine-caption { position:relative;left:auto;bottom:auto;transform:none;text-align:left;width:min(800px,calc(100% - 50px));margin:140px auto 40px; }
+.cine-fallback .cine-line { margin:18px 0; }
+.cine-fallback-note { color:#b5c3d1;font:14px/1.6 var(--font-game); }
+.cine-library { position:absolute;inset:0;z-index:319;background:#080d15ef;color:#eee4ce;overflow:auto;overscroll-behavior:contain;padding:24px max(24px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left));font:15px/1.6 var(--font-game); }
+.cine-library[hidden] { display:none; }
+.cine-library-box { max-width:960px;margin:auto; }
+.cine-library h2 { font-weight:normal;font-size:28px; }
+.cine-library-intro,.cine-duration,.cine-locked { color:#a9b6c5; }
+.cine-library-list { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:24px 0; }
+.cine-library-row { padding:18px;background:#17202ae6;border:1px solid #3b4757; }
+.cine-library-row h3 { font-weight:normal;margin:0;font-size:18px; }
+.cine-duration { margin:5px 0 12px;font-size:12px; }
+.cine-transcript { margin-top:14px; }
+.cine-transcript summary { cursor:pointer;min-height:32px;color:#d7c7a4; }
+.cine-transcript p { color:#c7d0da;font-size:14px; }
+@media (max-height:500px) and (orientation:landscape) {
+  .cine-scene { background:linear-gradient(#04070bd9,transparent 65px,transparent calc(100% - 100px),#04070bf5); }
+  .cine-heading { top:max(8px,env(safe-area-inset-top));left:max(18px,env(safe-area-inset-left)); }
+  .cine-heading h2 { font-size:17px;margin:3px 0;letter-spacing:1px; }
+  .cine-act { font-size:9px; }
+  .cine-skip { top:max(8px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));padding:7px 14px; }
+  .cine-caption { bottom:max(10px,env(safe-area-inset-bottom));width:min(680px,calc(100% - 70px)); }
+  .cine-line { font-size:15px;line-height:1.5; }
+  .cine-speaker { font-size:10px;margin-bottom:4px; }
+  .cine-fallback .cine-caption { margin-top:80px; }
+}
+@media(max-width:650px) { .cine-library-list { grid-template-columns:1fr; } .cine-library { padding-top:max(16px,env(safe-area-inset-top)); } }
+@media(prefers-reduced-motion:reduce) { .cine-scene,.cine-button { transition:none; } }
