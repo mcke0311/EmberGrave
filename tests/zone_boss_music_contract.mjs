@@ -27,7 +27,7 @@ const scope = vm.createContext({
   SpriteAssets: { loadBundle: async () => {}, actorGeometry: () => null, hitTestGeometry: () => false },
   UI: new Proxy({}, { get: () => () => {} }),
 });
-for (const name of ['utils', 'data', 'data_overrides', 'boss_encounters', 'audio', 'sprite_manifest', 'mapgen', 'navigation', 'items', 'lootfilter', 'entities']) {
+for (const name of ['utils', 'data', 'data_overrides', 'boss_encounters', 'audio', 'sprite_manifest', 'prop_interactions', 'mapgen', 'navigation', 'items', 'lootfilter', 'entities']) {
   vm.runInContext(fs.readFileSync(new URL('../js/' + name + '.js', import.meta.url), 'utf8'), scope);
 }
 const source = fs.readFileSync(new URL('../js/game.js', import.meta.url), 'utf8').replace(
@@ -118,6 +118,10 @@ ok(active() === 'music-fallenNorth', 'first area outside town lost its theme');
 const townBoss = boss(); townBoss.aggro = true; tick();
 await enter('marshcamp');
 ok(active() === 'music-marshTown' && !state.bossBar, 'leaving a boss for another zone retained boss music');
+const preferences=JSON.stringify(Sfx.vol),release=Sfx.cinematicMix('boss');settle();
+ok(active()==='music-boss'&&JSON.stringify(Sfx.vol)===preferences,'cinematic mix preserves volume preferences');
+ok(Math.abs(players.find(p=>p.id==='music-boss').volume-.5*.4*.65)<.0001,'cinematic music uses temporary gain');
+release();release();settle();ok(active()==='music-marshTown'&&JSON.stringify(Sfx.vol)===preferences,'cinematic cleanup restores previous theme exactly once');
 Sfx.stopMusic(); Sfx.music('title'); settle();
 ok(active() === 'titleMusic', 'title handoff retained gameplay music');
 ok(players.length === new Set(players.map(a => a.id)).size, 'duplicate recorded audio players');

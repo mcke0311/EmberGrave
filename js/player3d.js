@@ -1,12 +1,12 @@
 /* Player bodies, equipment, previews and transformations use live 3D models. */
 'use strict';
 window.Player3D=(()=>{
-  let view=null,catalog=null,forms=null,pending=null,rendererFactory=null,controllerFactory=null,shiftFactory=null;
+  let view=null,filmView=null,catalog=null,forms=null,pending=null,rendererFactory=null,controllerFactory=null,shiftFactory=null;
   const prepared=new WeakSet(),previews=new Map(),shifts=new WeakMap(),shiftFrames=new WeakMap();
   async function init(){
     if(!pending)pending=(async()=>{
       if(new URL(document.baseURI).protocol==='file:')throw new Error('3D characters need the local server. Run python serve.py, then open http://localhost:8741/index.html');
-      const [module,definitions,shapes]=await Promise.all([import('./character3d.mjs?v=embergrave-coop-5'),import('./character_catalog3d.mjs'),import('./character_forms3d.mjs?v=11')]);
+      const [module,definitions,shapes]=await Promise.all([import('./character3d.mjs?v=cinematics-2'),import('./character_catalog3d.mjs'),import('./character_forms3d.mjs?v=12')]);
       catalog=definitions;forms=shapes.FORM_STYLES;rendererFactory=module.createCharacterRenderer;controllerFactory=module.createAnimationController;shiftFactory=module.createWildshapeController;view=rendererFactory();
     })();
     return pending;
@@ -36,6 +36,10 @@ window.Player3D=(()=>{
     return {playerVisual:visual,threePlayer:player,scale:visual.footprint||1};
   }
   function draw(ctx,player,pose){
+    if(pose.ex?.cinematic){
+      const stage=cinematicRenderer();stage.setRegion(Game.state?.map?.zone);stage.setResolution(innerWidth<900?512:768);
+      const visual=drawOptions(player).playerVisual;stage.draw(ctx,pose,visual.equipment,{classId:visual.classId,form:visual.form||null});return;
+    }
     view.setRegion?.(Game.state?.map?.zone);
     if(typeof Coop!=='undefined'&&Coop.active)view.setResolution?.(Coop.mobileQuality==='low'?256:384);
     const visual=player._formVisual||player._playerVisual;require3D(visual);
@@ -120,5 +124,7 @@ window.Player3D=(()=>{
       dispose(){stage.dispose();looks.clear();fitBoxes.clear();}
     };
   }
-  return Object.freeze({init,assets,drawOptions,draw,projectileOrigin,effectAnchors,effectImage,drawPreview,createShowcase,update,only3D:true});
+  function cinematicRenderer(){if(!filmView)filmView=rendererFactory({size:768,cinematic:true});return filmView;}
+  function cinematicAnchors(player,pose,scale=1.1){const visual=drawOptions(player).playerVisual;return cinematicRenderer().effectAnchors(pose,visual.equipment,{classId:visual.classId,form:visual.form||null,scale});}
+  return Object.freeze({init,assets,drawOptions,draw,projectileOrigin,effectAnchors,effectImage,drawPreview,createShowcase,update,cinematicAnchors,only3D:true});
 })();

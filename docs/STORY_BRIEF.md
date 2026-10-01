@@ -84,16 +84,24 @@ transitions. Their arena, warning, recovery, summon and retreat rules are descri
 in [the encounter guide](BOSS_ENCOUNTERS.md). The shard and map recoveries remain
 separate interactive story actions after the kill.
 
+## Live campaign cinematics
+
+The main saga now has 20 live scenes, including the three distinct endings.
+They use the equipped hero, installed environments and authored boss poses.
+Major story-object actions, quest turn-ins, first eligible boss encounters and
+act arrivals trigger them once per hero across difficulties. The opening remains
+playable, with brief camera emphasis at the awakening, captain and hearth arrival.
+Skip, automatic-play settings, transcripts, reduced motion and isolated replay
+are described in [the cinematic guide](CINEMATICS.md).
+
 ## Remaining environment and cinematic art
 
 These broader story visuals remain outside the boss encounter pass:
 
 - Dedicated rivers of ash and fields of impaled demons. Existing Hell terrain
   still uses its lava/scorch materials and shared ruins.
-- Longer cinematic sequences beyond the compact, skippable scenes now shown on
-  the first Weeping Marsh visit and the “Give to the Warden” ending. These scenes
-  use the existing painted characters, mist, and an altered Seraneth silhouette;
-  reduced motion disables their walking movement.
+- Additional side-quest, Ashen Marches and endgame scenes, voice acting and new
+  co-op integration. The current release covers the five-act solo saga.
 
 ## Regression checks
 
@@ -107,6 +115,10 @@ These broader story visuals remain outside the boss encounter pass:
   NPC dialogue UI, playable objectives, portal transition, loaded/rendered
   scenes, final silhouettes and ending choices. Its controls provide review
   scenes without modifying a real saved hero.
+- `tests/cinematics_contract.mjs`, `tests/cinematics_browser.cjs` and
+  `tests/cinematics_progression_browser.cjs`: scene lifecycle, combat freeze,
+  viewing migration, every scene/class/form, replay isolation, campaign hooks,
+  portal continuation, ending persistence and trusted phone input.
 
 Run the Node check with `node tests/story_campaign_contract.mjs`. If a Windows
 sandbox blocks Node’s entry-path canonicalization, use

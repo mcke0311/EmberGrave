@@ -1,0 +1,42 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const runtime=path.join(process.env.USERPROFILE||'','.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules');
+const {chromium}=require(require.resolve('playwright',{paths:[__dirname,runtime]}));
+const base=process.env.GAME_REVIEW_URL||'http://127.0.0.1:8741',out=path.join(__dirname,'../tmp/cinematics');
+(async()=>{
+ const browser=await chromium.launch({channel:'chrome',headless:true}),page=await browser.newPage({viewport:{width:1366,height:1000}}),errors=[];let checks=0;
+ page.on('pageerror',e=>errors.push(e.stack));
+ try{
+  await page.goto(base+'/tests/cinematics_review.html?scene=ilyan');await page.waitForFunction(()=>window.cinematicReview,{},{timeout:120000});
+  assert.equal(await page.getByLabel('Scene',{exact:true}).inputValue(),'ilyan');assert.equal(await page.locator('#scene option').count(),20);checks+=2;
+  await page.getByRole('button',{name:'Play scene',exact:true}).click();await page.waitForFunction(()=>cinematicReview.cine.state?.ready);
+  assert.equal(await page.evaluate(()=>cinematicReview.cine.state.fallback),false);checks++;
+  await page.getByRole('button',{name:'Pause / resume',exact:true}).click();const time=await page.evaluate(()=>cinematicReview.cine.state.time);
+  await page.waitForTimeout(150);assert.equal(await page.evaluate(()=>cinematicReview.cine.state.time),time);checks++;
+  await page.getByRole('button',{name:'Advance 5 seconds',exact:true}).click();assert.equal(await page.evaluate(()=>cinematicReview.cine.state.time),time+5);checks++;
+  await page.getByRole('button',{name:'Skip',exact:true}).click();assert.equal(await page.evaluate(()=>cinematicReview.cine.playing),false);checks++;
+  await page.getByLabel('Hero class',{exact:true}).selectOption('emberwitch');await page.getByLabel('Scene',{exact:true}).selectOption('ending_seal');await page.getByLabel('Reduced motion',{exact:true}).check();
+  await page.getByRole('button',{name:'Play scene',exact:true}).click();await page.waitForFunction(()=>cinematicReview.cine.state?.ready);assert.equal(await page.evaluate(()=>cinematicReview.game.state.player.classId),'emberwitch');checks++;
+  await page.getByRole('button',{name:'Skip',exact:true}).click();await page.getByLabel('Missing asset fallback',{exact:true}).check();await page.getByRole('button',{name:'Play scene',exact:true}).click();await page.waitForFunction(()=>cinematicReview.cine.state?.fallback);
+  assert.ok((await page.frameLocator('iframe').locator('.cine-caption').innerText()).includes('Render'));await page.getByRole('button',{name:'Skip',exact:true}).click();checks++;
+  await page.getByLabel('Missing asset fallback',{exact:true}).uncheck();await page.getByLabel('Reduced motion',{exact:true}).uncheck();await page.getByLabel('Scene',{exact:true}).selectOption('ending_destroy');
+  await page.getByRole('button',{name:'Play scene',exact:true}).click();await page.waitForFunction(()=>cinematicReview.cine.state?.ready);
+  await page.evaluate(()=>cinematicReview.seek(10.38));assert.equal(await page.evaluate(()=>cinematicReview.cine.state.time),10.38);checks++;
+  await page.getByRole('button',{name:'Step one frame',exact:true}).click();assert.ok(Math.abs(await page.evaluate(()=>cinematicReview.cine.state.time)-(10.38+1/30))<1e-8);checks++;
+  await page.evaluate(()=>cinematicReview.seek(15.3));await page.getByLabel('Show captions',{exact:true}).uncheck();assert.equal(await page.evaluate(()=>getComputedStyle(cinematicReview.win.document.querySelector('.cine-caption')).visibility),'hidden');checks++;
+  await page.getByRole('button',{name:/27s · The road home/}).click();await page.waitForFunction(()=>cinematicReview.cine.state.stage==='home');checks++;
+  await page.getByLabel('Compare original',{exact:true}).check();await page.waitForFunction(()=>cinematicReview.baseline?.cine.state?.ready,null,{timeout:120000});
+  assert.equal(await page.evaluate(()=>cinematicReview.baseline.catalog.get('ending_destroy').shots),undefined,'original direction is a frozen fixture');assert.equal(await page.evaluate(()=>cinematicReview.baseline.cine.state.time),await page.evaluate(()=>cinematicReview.cine.state.time));checks+=2;
+  const comparison=await page.locator('iframe').first().boundingBox();assert.ok(comparison.width>comparison.height,'comparison keeps the game in landscape');checks++;
+  await page.getByRole('button',{name:'Skip',exact:true}).click();assert.equal(await page.evaluate(()=>cinematicReview.baseline.cine.playing),false);checks++;
+  await page.getByLabel('Compare original',{exact:true}).uncheck();await page.getByLabel('Wildkeeper form',{exact:true}).selectOption('form_apex');await page.getByLabel('Equipment',{exact:true}).selectOption('mythic');
+  await page.getByRole('button',{name:'Play scene',exact:true}).click();await page.waitForFunction(()=>cinematicReview.cine.state?.ready);
+  assert.equal(await page.evaluate(()=>cinematicReview.game.state.player.classId),'wildkeeper');assert.equal(await page.evaluate(()=>cinematicReview.game.state.player.equip.main.baseId),'staff2h_t7');assert.ok(await page.evaluate(()=>cinematicReview.game.state.player.buffs.some(b=>b.id==='form_apex')));checks+=3;
+  await page.getByRole('button',{name:'Skip',exact:true}).click();
+  assert.equal(await page.evaluate(()=>localStorage.length),0,'review cannot access real saved heroes');checks++;
+  await page.screenshot({path:out+'/review-controls.png'});
+  await page.goto(base+'/tests/story_campaign.html');await page.waitForFunction(()=>document.body.dataset.testStatus,{},{timeout:120000});
+  assert.equal(await page.evaluate(()=>document.body.dataset.testStatus),'passed',await page.locator('#result').innerText());checks++;
+  assert.deepEqual(errors,[]);checks++;console.log(`PASS ${checks} isolated review checks, plus `+await page.locator('#result').innerText());
+  fs.writeFileSync(out+'/review.json',JSON.stringify({checks,errors},null,2));
+ }catch(e){await page.screenshot({path:out+'/review-failure.png'});throw e;}finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

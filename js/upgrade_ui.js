@@ -67,6 +67,7 @@ const UpgradeUI=(()=>{
     button(d,'Close',close,true);
   }
   async function story(kind,done=()=>{}){
+    if(typeof Cinematics!=='undefined'&&!(typeof Coop!=='undefined'&&Coop.active))return Cinematics.request(kind==='warden'?'ending_give':'quieting').then(result=>{if(result!=='cancelled')done();});
     if(scene)return;const s=Game.state;Game.cancelMenuInput();UI.closeAll();
     const overlay=node('section',null,'upgrade-story');overlay.setAttribute('role','dialog');overlay.setAttribute('aria-label',kind==='quieting'?'The Quieting':'The Warden returns');overlay.setAttribute('aria-modal','true');
     const canvas=node('canvas');canvas.width=1080;canvas.height=540;overlay.append(canvas);
@@ -105,7 +106,7 @@ const UpgradeUI=(()=>{
     const r=Echoes.run(s),sig=r?.id+':'+r?.cleared+':'+r?.phase;
     if(refreshEcho&&(refreshEcho.action==='start'?r&&r.id!==refreshEcho.previous:!s.flags.echoAwards?.[s.player.heroId||s.player.name])){refreshEcho=false;echoes();return;}
     if(s.map.zone.echo&&r?.phase==='reward'&&notice!==sig){notice=sig;echoes();return;}
-    if(s.map.id==='weeping_marsh'&&!s.characterFlags.scene_quieting&&s.quests.q10)story('quieting');
+    if(s.map.id==='weeping_marsh'&&s.quests.q10&&(typeof Cinematics!=='undefined'?Cinematics.eligible('quieting',s):!s.characterFlags.scene_quieting))story('quieting');
   }
   return {event,echoes,echoAction,story,tick,close,get active(){return !!dialog||!!scene;}};
 })();

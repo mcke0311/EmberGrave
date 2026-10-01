@@ -76,11 +76,13 @@ const out=path.resolve(__dirname,'../tmp/upgrades-qa');fs.mkdirSync(out,{recursi
     await phone.getByRole('button',{name:/Iron Memory/}).click();
     await phone.waitForFunction(()=>Game.state.map.id==='echo_north',null,{timeout:60000});
     await phone.waitForTimeout(600);await phone.screenshot({path:path.join(out,'echo-arena-phone.png')});
-    await phone.evaluate(()=>{Game.state.monsters.forEach(m=>m.stunT=999);UpgradeUI.story('quieting');});
+    const storyBook=await phone.evaluate(()=>JSON.stringify(Game.state.characterFlags));
+    await phone.evaluate(()=>{Game.state.monsters.forEach(m=>m.stunT=999);Cinematics.request('quieting',{replay:true});});
+    await phone.waitForFunction(()=>Cinematics.state?.ready);
     await phone.waitForTimeout(2200);await phone.screenshot({path:path.join(out,'quieting-phone.png')});
-    await phone.getByRole('button',{name:'Skip scene'}).click();assert.ok(await phone.evaluate(()=>Game.state.characterFlags.scene_quieting));
-    await phone.evaluate(()=>UpgradeUI.story('warden'));await phone.waitForTimeout(4400);await phone.screenshot({path:path.join(out,'warden-phone.png')});
-    await phone.keyboard.press('Escape');assert.ok(await phone.evaluate(()=>Game.state.characterFlags.scene_warden));
+    await phone.getByRole('button',{name:'Skip scene'}).click();assert.equal(await phone.evaluate(()=>JSON.stringify(Game.state.characterFlags)),storyBook);
+    await phone.evaluate(()=>{Cinematics.request('ending_give',{replay:true});});await phone.waitForFunction(()=>Cinematics.state?.ready);await phone.waitForTimeout(4400);await phone.screenshot({path:path.join(out,'warden-phone.png')});
+    await phone.keyboard.press('Escape');assert.equal(await phone.evaluate(()=>JSON.stringify(Game.state.characterFlags)),storyBook);
     assert.deepEqual(errors,[],'Browser runtime errors');assert.deepEqual(httpErrors,[],'Missing resources');
     fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({results,errors,httpErrors},null,2));console.log('PASS all five classes on snow, marsh and cathedral at desktop/phone sizes; direct casting, Echo entry, skippable scenes and reduced motion');
   }finally{fs.writeFileSync(path.join(out,'errors.json'),JSON.stringify({errors,httpErrors},null,2));await browser.close();}

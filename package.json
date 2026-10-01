@@ -2,6 +2,8 @@
   "name": "embergrave-game",
   "private": true,
   "scripts": {
+    "test:cinematics": "node tests/cinematic_pose_contract.mjs && node tests/cinematics_contract.mjs && node tests/cinematics_browser.cjs && node tests/cinematics_progression_browser.cjs && node tests/cinematics_direction_browser.cjs && node tests/cinematics_review_browser.cjs",
+    "test:cinematics:performance": "node tests/cinematics_performance.cjs",
     "test:upgrades": "node --test tests/upgrades_contract.test.cjs && node tests/upgrades_browser.cjs && node tests/upgrades_coop_browser.cjs",
     "test:world": "node tests/world_reference_contract.cjs && node tests/world_reference_browser.cjs",
     "test:phone": "node tests/phone_screens_browser.cjs && node tests/mobile_controls_browser.cjs && node tests/mobile_redesign_browser.cjs && node tests/settings_menu_browser.cjs",
