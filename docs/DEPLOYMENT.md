@@ -1,6 +1,6 @@
 # Sites deployment
 
-Current website (updated 2026-09-30): https://embergravegame.com
+Current website (updated 2026-10-01): https://embergravegame.com
 The original address https://embergravegame.mcke0311.chatgpt.site also remains live.
 The existing Site is now public. Preserve its current audience and project ID
 when updating; the private access and earlier URL recorded below are historical.
@@ -358,3 +358,38 @@ The frontend and worker identify as `embergrave-coop-8`. The Render relay was
 not deployed and still reports `embergrave-coop-3`; multiplayer requires a
 matching relay update. The preceding publication had also left the relay on
 that older build.
+
+## Unique equipment and full-body armor — 2026-10-01
+
+Version 18 publishes game commit
+`0aeb677bb3b4c88422de49bbe726565bc2797a30` on GitHub `main`. It includes
+the 163 unique inventory icons, 118 refined bespoke equipment models, and
+coordinated torso, arm and leg appearances for all 27 body armors on five classes.
+Sites confirmed publication **succeeded** at 21:30:56 UTC (17:30:56 Toronto).
+The live custom domain is https://embergravegame.com; public access is preserved.
+
+Release source: `aad13bee9a6380b68cf04ba1f582711ee2cee797`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_4cdc6025078c8191adc9b17e002ee27c`.
+Deployment: `appgdep_6abed0a5b14081919ae67c45fe7fd6aa`.
+
+The compact release contains 1,394 runtime files (216.47 MiB). All 87 script
+syntax checks and 1,269 runtime reference checks passed with no missing files;
+112 runtime code, style and entrypoint files match the pushed game source, with
+the established editor-link exclusions. The inventory renderer uses the packed
+unique icon atlas; 118 high-resolution art references retained by the model
+recipes are authoring provenance and are excluded from the website package.
+
+The local archive contains 1,395 files including its hosting manifest
+(207.44 MiB compressed) and passed source/manifest validation. Native archive
+transfer failed, so Sites built the exact verified, pushed release source through
+the existing fallback. The Windows packaging workflow succeeds with Git Bash
+and `TAR_OPTIONS=--force-local`; its release checkout also needs an explicitly
+scoped `safe.directory` setting when running as the desktop user.
+
+Equipment verification and captures are recorded in
+[body armor results](../tests/body_armor3d_results.md) and
+[unique refinement results](../tests/unique_models3d_refinement_results.md).
+Publication metadata and the archive hash are retained in
+[the release record](qa/body_armor_site_publication.json). Publication was
+confirmed through Sites deployment status; the earlier equipment browser review
+was reused. The multiplayer relay was not part of this static equipment update.
