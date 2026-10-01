@@ -1,0 +1,459 @@
+{
+  "revision": 2,
+  "models": 118,
+  "classes": 5,
+  "geometryChanges": 590,
+  "triangleLimit": 10904,
+  "drawCallLimit": 73,
+  "proceduralMapSize": [
+    128,
+    128
+  ],
+  "before": {
+    "maxTriangles": 10904,
+    "meanTriangles": 3222.1949152542375,
+    "totalTriangles": 380219
+  },
+  "after": {
+    "maxTriangles": 5224,
+    "meanTriangles": 2422.686440677966,
+    "totalTriangles": 285877,
+    "maxCalls": 71,
+    "memory": {
+      "vanguard": {
+        "warm": {
+          "geometries": 84,
+          "textures": 29,
+          "programs": 11
+        },
+        "settled": {
+          "geometries": 84,
+          "textures": 29,
+          "programs": 11
+        }
+      },
+      "emberwitch": {
+        "warm": {
+          "geometries": 154,
+          "textures": 55,
+          "programs": 11
+        },
+        "settled": {
+          "geometries": 154,
+          "textures": 55,
+          "programs": 11
+        }
+      },
+      "gravebinder": {
+        "warm": {
+          "geometries": 230,
+          "textures": 81,
+          "programs": 11
+        },
+        "settled": {
+          "geometries": 230,
+          "textures": 81,
+          "programs": 11
+        }
+      },
+      "wildkeeper": {
+        "warm": {
+          "geometries": 309,
+          "textures": 107,
+          "programs": 11
+        },
+        "settled": {
+          "geometries": 309,
+          "textures": 107,
+          "programs": 11
+        }
+      },
+      "veilranger": {
+        "warm": {
+          "geometries": 385,
+          "textures": 133,
+          "programs": 11
+        },
+        "settled": {
+          "geometries": 385,
+          "textures": 133,
+          "programs": 11
+        }
+      }
+    }
+  },
+  "captures": {
+    "before": {
+      "comparison-01.png": {
+        "path": "tests/qa/unique_models3d/comparison-01.png",
+        "sha256": "fc8d2ba0c127fcd1830fabe5165a7e82ab3d7e58dfafa0e581e7d2eee69e9012"
+      },
+      "comparison-02.png": {
+        "path": "tests/qa/unique_models3d/comparison-02.png",
+        "sha256": "a2dbf66f7ca5cc1a2a21cfd846727caacb1d708db94ea991ed6da983dd5befeb"
+      },
+      "comparison-03.png": {
+        "path": "tests/qa/unique_models3d/comparison-03.png",
+        "sha256": "0f621c479fc129cd0682d2d023ef1d986b594368aabb49fc8db2a3c6a02c2414"
+      },
+      "comparison-04.png": {
+        "path": "tests/qa/unique_models3d/comparison-04.png",
+        "sha256": "2a370b226615f24726daae36493898b1e33778fbf47dcd7f6fadbbcb4f41303f"
+      },
+      "comparison-05.png": {
+        "path": "tests/qa/unique_models3d/comparison-05.png",
+        "sha256": "8141980694bdc00953102930e120d3564a998088c48db2a177b759a509d669ea"
+      },
+      "comparison-06.png": {
+        "path": "tests/qa/unique_models3d/comparison-06.png",
+        "sha256": "dfbfd7c547ebc98c830543695d96e9d71df9efe7ce7d15183f6ac169a2fd0152"
+      },
+      "comparison-07.png": {
+        "path": "tests/qa/unique_models3d/comparison-07.png",
+        "sha256": "de16d7b466ac49dd751f0f5f4b3735dcf98fa2df0a21ab6afa8d15de2b9a6808"
+      },
+      "comparison-08.png": {
+        "path": "tests/qa/unique_models3d/comparison-08.png",
+        "sha256": "cedcd02e54a75cfa43a115ece9904e54da7abc8e01505764f89a7ad2f6c5d4ba"
+      },
+      "comparison-09.png": {
+        "path": "tests/qa/unique_models3d/comparison-09.png",
+        "sha256": "e498c1e363d9301ce689a6e9fb3460032ae379ac11650109e117ad473c42e4f2"
+      },
+      "comparison-10.png": {
+        "path": "tests/qa/unique_models3d/comparison-10.png",
+        "sha256": "a8ff6f864782cc66de8860261eba3ae0103b77aba2549f5144f7e0a878f983d7"
+      },
+      "comparison-11.png": {
+        "path": "tests/qa/unique_models3d/comparison-11.png",
+        "sha256": "1610603fdeca9137a36c7d2c3bf1c2eef9c05ac0a735f1d3f2161ca204d1237e"
+      },
+      "comparison-12.png": {
+        "path": "tests/qa/unique_models3d/comparison-12.png",
+        "sha256": "140e82fb2960de1d9f403643be7877c1f6b4e84cdd3b2ed41b87218eeda74813"
+      },
+      "comparison-13.png": {
+        "path": "tests/qa/unique_models3d/comparison-13.png",
+        "sha256": "79e021fa0f9096569064926b4f3b8c73131e0a667f11d044913ab159da974b13"
+      },
+      "comparison-14.png": {
+        "path": "tests/qa/unique_models3d/comparison-14.png",
+        "sha256": "0d7b39294f6088d6f275cd64c5a6655bf2a658cc0dd97c18debfa25b887d3781"
+      },
+      "comparison-15.png": {
+        "path": "tests/qa/unique_models3d/comparison-15.png",
+        "sha256": "f52d2fc3cad414ad15a202583e353b0c1412e0edf634486ee250d3480ca9ff52"
+      },
+      "comparison-16.png": {
+        "path": "tests/qa/unique_models3d/comparison-16.png",
+        "sha256": "558a72a718e1341f2ae9878bc4746594665b259ab3fbbb7636e069316af1399a"
+      },
+      "comparison-17.png": {
+        "path": "tests/qa/unique_models3d/comparison-17.png",
+        "sha256": "8c654f06ee3ce7a693f5bb42ef6087868887d783e2ebd884525e95185024ae8f"
+      },
+      "comparison-18.png": {
+        "path": "tests/qa/unique_models3d/comparison-18.png",
+        "sha256": "ac3375047df3709bf425e828cd9649b9a60d1da485b39d79b2f5859d3bbed7de"
+      },
+      "comparison-19.png": {
+        "path": "tests/qa/unique_models3d/comparison-19.png",
+        "sha256": "cc36fd12c3cf0162eb5103f49377aeb2f3ae16138c92eece0dd0f2812df93bbd"
+      },
+      "comparison-20.png": {
+        "path": "tests/qa/unique_models3d/comparison-20.png",
+        "sha256": "d6a66d1df1e4eb683ab19efa7fb45e41d835d0468bdcc5ea576f63ff2250ab20"
+      },
+      "desktop-armory.png": {
+        "path": "tests/qa/unique_models3d/desktop-armory.png",
+        "sha256": "c9344b970d70676376cc98853d61de83ac8e3f24ad753d01ea59d72650c78328"
+      },
+      "desktop-game-emberwitch.png": {
+        "path": "tests/qa/unique_models3d/desktop-game-emberwitch.png",
+        "sha256": "f4bccb608027bb1b12a57ae34b8a3f8edb531895a948a6d26d767fcd1b1789d0"
+      },
+      "desktop-game-gravebinder.png": {
+        "path": "tests/qa/unique_models3d/desktop-game-gravebinder.png",
+        "sha256": "bab264e302054deb14b2ad20f22f5be3ec25a663dbc961595fad449f2699e880"
+      },
+      "desktop-game-inventory.png": {
+        "path": "tests/qa/unique_models3d/desktop-game-inventory.png",
+        "sha256": "af9512fc5a377f8fa932f81002ba622227bdb6dce57e53be06e8d301d77dca65"
+      },
+      "desktop-game-vanguard.png": {
+        "path": "tests/qa/unique_models3d/desktop-game-vanguard.png",
+        "sha256": "1cf5e133c7bce2160ac82bcbf54651993ffd1440f5ac7ae5a8b60c62c3761d73"
+      },
+      "desktop-game-veilranger.png": {
+        "path": "tests/qa/unique_models3d/desktop-game-veilranger.png",
+        "sha256": "f7be985ae3d48389de73cc3cadea1ccb1b59823dccc93ef3183429cb1a1d490c"
+      },
+      "desktop-game-wildkeeper.png": {
+        "path": "tests/qa/unique_models3d/desktop-game-wildkeeper.png",
+        "sha256": "87d433917cc84ff02d2e3717b763fff567175b4445de87e1b0774ec283420820"
+      },
+      "desktop-outfit-emberwitch.png": {
+        "path": "tests/qa/unique_models3d/desktop-outfit-emberwitch.png",
+        "sha256": "f688ba57e7c9694b1a3abfd6a972cb240aa37e6174fa9070c6f305d786f23e17"
+      },
+      "desktop-outfit-gravebinder.png": {
+        "path": "tests/qa/unique_models3d/desktop-outfit-gravebinder.png",
+        "sha256": "3a757ca09fa30aaa8cdc779f590bcf25342fe9c03fd4e52aee99e0fef523f9f8"
+      },
+      "desktop-outfit-vanguard.png": {
+        "path": "tests/qa/unique_models3d/desktop-outfit-vanguard.png",
+        "sha256": "544b9b584a8cb68775afdb2fffd0543b4ab6cc59f9f54d571289e29df644007c"
+      },
+      "desktop-outfit-veilranger.png": {
+        "path": "tests/qa/unique_models3d/desktop-outfit-veilranger.png",
+        "sha256": "d43aec3fdeb258bc4364ff1aa37e0e1a05b7fb70a3eb9249dd19894370371f60"
+      },
+      "desktop-outfit-wildkeeper.png": {
+        "path": "tests/qa/unique_models3d/desktop-outfit-wildkeeper.png",
+        "sha256": "d0bbf769e528bbdb5894d421e67265b5971df8eb4f91311b7d953a5c99b88628"
+      },
+      "game-integration.png": {
+        "path": "tests/qa/unique_models3d/game-integration.png",
+        "sha256": "f892a0a262d8532dd645eda440e7225d145de5a7f234dbc220bb74226168ab3d"
+      },
+      "mobile-armory.png": {
+        "path": "tests/qa/unique_models3d/mobile-armory.png",
+        "sha256": "d9b11ff8d686b4ea794555bdf6b562922cb908bf4ce285633dd3449f0b4cb711"
+      },
+      "mobile-game-emberwitch.png": {
+        "path": "tests/qa/unique_models3d/mobile-game-emberwitch.png",
+        "sha256": "bf157888c57afd32112ad00a731d4af6d6cd81e15556149f1a034055d8098ac0"
+      },
+      "mobile-game-gravebinder.png": {
+        "path": "tests/qa/unique_models3d/mobile-game-gravebinder.png",
+        "sha256": "f6fa14f82fbb02485358f2d22474bd8b18123109fb5ccc62e420e4844c4cd034"
+      },
+      "mobile-game-inventory.png": {
+        "path": "tests/qa/unique_models3d/mobile-game-inventory.png",
+        "sha256": "5aa3e9285b3f05b2090c37e04e6b4f190aee1149453a147a840c25770a8db400"
+      },
+      "mobile-game-vanguard.png": {
+        "path": "tests/qa/unique_models3d/mobile-game-vanguard.png",
+        "sha256": "0447c4b63c7b46b0b9f5b3994165c834cbdc91d6639f6195234e67317976f60e"
+      },
+      "mobile-game-veilranger.png": {
+        "path": "tests/qa/unique_models3d/mobile-game-veilranger.png",
+        "sha256": "060850380581d099f91396df552543277c5e4b5a462e6c9075a16d9ef6ff149c"
+      },
+      "mobile-game-wildkeeper.png": {
+        "path": "tests/qa/unique_models3d/mobile-game-wildkeeper.png",
+        "sha256": "b3a5750aeb3efed0002f0afa9b407aa0247b3ee2f4781433fee9c8decc60362f"
+      },
+      "mobile-outfit-emberwitch.png": {
+        "path": "tests/qa/unique_models3d/mobile-outfit-emberwitch.png",
+        "sha256": "9873c119cc319577e2d521b6e7acf967ea9a6c1a252ebb7522a02e83c70a6e46"
+      },
+      "mobile-outfit-gravebinder.png": {
+        "path": "tests/qa/unique_models3d/mobile-outfit-gravebinder.png",
+        "sha256": "d73c4c9ae53b1d9ca1d993d2f88a3a2b3d586cce0975b38ace6fffddff99bbe4"
+      },
+      "mobile-outfit-vanguard.png": {
+        "path": "tests/qa/unique_models3d/mobile-outfit-vanguard.png",
+        "sha256": "726334bee4cd53e2f45b810bd4d644f5bc37c9f2d5c46e662be3477317d26c45"
+      },
+      "mobile-outfit-veilranger.png": {
+        "path": "tests/qa/unique_models3d/mobile-outfit-veilranger.png",
+        "sha256": "393d953797b278f3ec255b7e797d2470dc37cba01f68f0e45a87da0b33149211"
+      },
+      "mobile-outfit-wildkeeper.png": {
+        "path": "tests/qa/unique_models3d/mobile-outfit-wildkeeper.png",
+        "sha256": "64e5ff21f713e73bd6ec990398fef07e7ccb28c9fb6f33a841898fadee4f3fcc"
+      },
+      "ordinary-render-contract.png": {
+        "path": "tests/qa/unique_models3d/ordinary-render-contract.png",
+        "sha256": "5e8b43edd5b5fbfe3b395b0968ac452b53b7e942230629509f9923872b1736b2"
+      }
+    },
+    "after": {
+      "comparison-01.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-01.png",
+        "sha256": "d0fa897f573997235ce7252f239c6ac48fdb2695274edafa60de40054d0112f2"
+      },
+      "comparison-02.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-02.png",
+        "sha256": "d077c3cb49ff0119f0a1b7f648124131c6b78f7a2346893cbbf0ec0e36817446"
+      },
+      "comparison-03.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-03.png",
+        "sha256": "975596c631b8cd0f88170355d6d458beef260d12c24481fead6beabaf81fe000"
+      },
+      "comparison-04.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-04.png",
+        "sha256": "f7233fa5d53eb7caf8e55029cddaa0d5b0a678db3f34ba5906c53ed4cda8608e"
+      },
+      "comparison-05.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-05.png",
+        "sha256": "4a073003f936eb68b960c93ed4116b3b8f175d22598a558ad558924c17ca6f24"
+      },
+      "comparison-06.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-06.png",
+        "sha256": "916b513f3a962cb1709baaee936392cf487e88a8795e43f3803ef5859a1e4289"
+      },
+      "comparison-07.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-07.png",
+        "sha256": "3b0ce175c94dd55697762acabab4b9c7dbf1cc53b5afdbacaf992335df8224ae"
+      },
+      "comparison-08.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-08.png",
+        "sha256": "d896cbd9bf8a5f561ddec3fe975db6726266f4fb867cf035196e3b7b5756d80e"
+      },
+      "comparison-09.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-09.png",
+        "sha256": "96f72cde5b33d5ec805b4674873eb7aa242a8b16acb37846f21c4941efd6113b"
+      },
+      "comparison-10.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-10.png",
+        "sha256": "9945cb4bd252d27d256f2e17d27569db11309cc6a25809717a7d1de5c8178151"
+      },
+      "comparison-11.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-11.png",
+        "sha256": "588e7f9b4b3326b984f4a019dd1161b4feed3c325fcd6fd8900011bced5a02c2"
+      },
+      "comparison-12.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-12.png",
+        "sha256": "e44e11b60ee10d82dd0bdc244331f1c50589e372f2e42cf72488da9fc21be0de"
+      },
+      "comparison-13.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-13.png",
+        "sha256": "49fb2afc990cabea34b7669157efa8ab783df8f19df7488076f11b15419ef74f"
+      },
+      "comparison-14.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-14.png",
+        "sha256": "4b7ba76b9bd2434a4ec054eb9eda98635d4143f287de1e04623dcb78bc9bade5"
+      },
+      "comparison-15.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-15.png",
+        "sha256": "01ddb461a75ec62849b4c6f7be7daf09f8d0cda39e6399ccc0190ce68b439ea7"
+      },
+      "comparison-16.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-16.png",
+        "sha256": "9dca470686a20857122a72ce5fff35bae7acddee932ad4b128d0c2bc68114aba"
+      },
+      "comparison-17.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-17.png",
+        "sha256": "a137b9f2361f5a057c145405ad5bc1a241f72334af5dfefbb4c25b70afd13ed0"
+      },
+      "comparison-18.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-18.png",
+        "sha256": "da1cfa56c04601378dd430b63d9449d00f94be40a0f9ea064e95c8c5dfdf1041"
+      },
+      "comparison-19.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-19.png",
+        "sha256": "dc24efa8ca4223332c16dad1c332608924013e820e2c17f80fec265bfd821eed"
+      },
+      "comparison-20.png": {
+        "path": "tests/qa/unique_models3d_refined/comparison-20.png",
+        "sha256": "3db104b76b548c46657908688e11233339811b147fbd4f31f97fd2c2abf68293"
+      },
+      "desktop-armory.png": {
+        "path": "tests/qa/unique_models3d_refined/desktop-armory.png",
+        "sha256": "afc6ee44376b1735d793ca7518e6bb24f52aba5786c802d54e2e81dd7f2ce6f7"
+      },
+      "desktop-game-emberwitch.png": {
+        "path": "tests/qa/unique_models3d_refined/desktop-game-emberwitch.png",
+        "sha256": "be133b891b45578b3f05238b2f91e2e34341f9e17518a1f15aaa030f2a6de7ca"
+      },
+      "desktop-game-gravebinder.png": {
+        "path": "tests/qa/unique_models3d_refined/desktop-game-gravebinder.png",
+        "sha256": "3f5dcd36915b2a83c9764871b81438670f19f9a1769822afb38fbf12a3a73d25"
+      },
+      "desktop-game-inventory.png": {
+        "path": "tests/qa/unique_models3d_refined/desktop-game-inventory.png",
+        "sha256": "6d280a99a4f1fcebc26a0980bd2befcae12f1bf07d4700a4b8b28c11fba4c267"
+      },
+      "desktop-game-vanguard.png": {
+        "path": "tests/qa/unique_models3d_refined/desktop-game-vanguard.png",
+        "sha256": "08d8686bcd2448f5b22f8dec97dd71fde0d79535f49267df7eb4a957dc12c3bc"
+      },
+      "desktop-game-veilranger.png": {
+        "path": "tests/qa/unique_models3d_refined/desktop-game-veilranger.png",
+        "sha256": "e518999bfd8d2b661672105312539e287b27f360e0ee215e0b63d848bec22486"
+      },
+      "desktop-game-wildkeeper.png": {
+        "path": "tests/qa/unique_models3d_refined/desktop-game-wildkeeper.png",
+        "sha256": "1c6057e50184a0ee5e9796be9a6ceb2cbedf28fe95731c3daa689b889e1edd0a"
+      },
+      "desktop-outfit-emberwitch.png": {
+        "path": "tests/qa/unique_models3d_refined/desktop-outfit-emberwitch.png",
+        "sha256": "e456f2331746e1cc05897465f5ad0d5871cb9f5d9a9114ac9f34666f55942271"
+      },
+      "desktop-outfit-gravebinder.png": {
+        "path": "tests/qa/unique_models3d_refined/desktop-outfit-gravebinder.png",
+        "sha256": "db44410d753e8bbdfa5465aeffb7129593ebb6fdc436b2f0dca2a43ecf2a1e81"
+      },
+      "desktop-outfit-vanguard.png": {
+        "path": "tests/qa/unique_models3d_refined/desktop-outfit-vanguard.png",
+        "sha256": "77f61175406c3b04dd8320b375ba5bdb492d1f16a74813b0d4c57d3f75fc3e69"
+      },
+      "desktop-outfit-veilranger.png": {
+        "path": "tests/qa/unique_models3d_refined/desktop-outfit-veilranger.png",
+        "sha256": "a8b62ce7ec25a8aad258195d8b8baab674761addf72764684719315a60fd9fc0"
+      },
+      "desktop-outfit-wildkeeper.png": {
+        "path": "tests/qa/unique_models3d_refined/desktop-outfit-wildkeeper.png",
+        "sha256": "1247b6347a8c2ffcbc2af880584bf64a12bd7d3aa2092c3e11b880acbf994943"
+      },
+      "game-integration.png": {
+        "path": "tests/qa/unique_models3d_refined/game-integration.png",
+        "sha256": "85e0664b6d53587b89dd3e99d179a310d6112ef516010394bcddf56a57d4604f"
+      },
+      "mobile-armory.png": {
+        "path": "tests/qa/unique_models3d_refined/mobile-armory.png",
+        "sha256": "da7e1fc31001245d729bb3312827c4e0755b7f7a1ba990e47a821bfff05e6b33"
+      },
+      "mobile-game-emberwitch.png": {
+        "path": "tests/qa/unique_models3d_refined/mobile-game-emberwitch.png",
+        "sha256": "30b8666d13cd3c8908d1bd9964aa4fcca4c226af62def5e7e7324043ea65f135"
+      },
+      "mobile-game-gravebinder.png": {
+        "path": "tests/qa/unique_models3d_refined/mobile-game-gravebinder.png",
+        "sha256": "f8bf7ec8e9d2a29414f5a49c6c841d1aa8c2e3357db667a5e777deb1c2a35d27"
+      },
+      "mobile-game-inventory.png": {
+        "path": "tests/qa/unique_models3d_refined/mobile-game-inventory.png",
+        "sha256": "5aa3e9285b3f05b2090c37e04e6b4f190aee1149453a147a840c25770a8db400"
+      },
+      "mobile-game-vanguard.png": {
+        "path": "tests/qa/unique_models3d_refined/mobile-game-vanguard.png",
+        "sha256": "6c7086ab0b8ea201143b7ecf6e5d95c069a0228f69ef42735dced4e134cec5f4"
+      },
+      "mobile-game-veilranger.png": {
+        "path": "tests/qa/unique_models3d_refined/mobile-game-veilranger.png",
+        "sha256": "a8ef5cfa61c414e22d17bde2dbd05e809cf0d722239f61bd058f2fbd332e49c7"
+      },
+      "mobile-game-wildkeeper.png": {
+        "path": "tests/qa/unique_models3d_refined/mobile-game-wildkeeper.png",
+        "sha256": "b44f1cf6eaf79a1d3fb0c743322ef0ab07b86405fe19a1122dc4a83f9652c768"
+      },
+      "mobile-outfit-emberwitch.png": {
+        "path": "tests/qa/unique_models3d_refined/mobile-outfit-emberwitch.png",
+        "sha256": "75547c6f987bf6ca0c20900c198b129261e42643920ee37084f6d9ec3a0cacc9"
+      },
+      "mobile-outfit-gravebinder.png": {
+        "path": "tests/qa/unique_models3d_refined/mobile-outfit-gravebinder.png",
+        "sha256": "1f45131184d3278f48e3059b01c94a3c6d6e5d5fbbab1852dcc6ddaebb409447"
+      },
+      "mobile-outfit-vanguard.png": {
+        "path": "tests/qa/unique_models3d_refined/mobile-outfit-vanguard.png",
+        "sha256": "c46d158b27ec202b62fc6e6b77ea64755fbb5ae96008cc903c0260a85622b410"
+      },
+      "mobile-outfit-veilranger.png": {
+        "path": "tests/qa/unique_models3d_refined/mobile-outfit-veilranger.png",
+        "sha256": "0ce5298789032f016e883cf083ae32a572eb44fb128082437d4f6e0483bfae11"
+      },
+      "mobile-outfit-wildkeeper.png": {
+        "path": "tests/qa/unique_models3d_refined/mobile-outfit-wildkeeper.png",
+        "sha256": "d59a0c55c3684d0c6ae9aaa5aaab0e89fd0094bc8606e68f3c8bf91b4712bbd7"
+      },
+      "ordinary-render-contract.png": {
+        "path": "tests/qa/unique_models3d_refined/ordinary-render-contract.png",
+        "sha256": "f04829dfbe4d6d337740c92e375360dcea64bcadb2523cf5a662bb7e431d3bce"
+      }
+    }
+  }
+}

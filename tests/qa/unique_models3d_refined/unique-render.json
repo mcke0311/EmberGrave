@@ -1,0 +1,75 @@
+{
+  "errors": [],
+  "missing": [],
+  "gallery": [],
+  "armory": {},
+  "production": {},
+  "render": {
+    "models": 118,
+    "classes": 5,
+    "frames": 8970,
+    "checks": 17236,
+    "memory": {
+      "vanguard": {
+        "warm": {
+          "geometries": 84,
+          "textures": 29
+        },
+        "settled": {
+          "geometries": 84,
+          "textures": 29
+        }
+      },
+      "emberwitch": {
+        "warm": {
+          "geometries": 154,
+          "textures": 55
+        },
+        "settled": {
+          "geometries": 154,
+          "textures": 55
+        }
+      },
+      "gravebinder": {
+        "warm": {
+          "geometries": 230,
+          "textures": 81
+        },
+        "settled": {
+          "geometries": 230,
+          "textures": 81
+        }
+      },
+      "wildkeeper": {
+        "warm": {
+          "geometries": 309,
+          "textures": 107
+        },
+        "settled": {
+          "geometries": 309,
+          "textures": 107
+        }
+      },
+      "veilranger": {
+        "warm": {
+          "geometries": 385,
+          "textures": 133
+        },
+        "settled": {
+          "geometries": 385,
+          "textures": 133
+        }
+      }
+    },
+    "maxCalls": 71,
+    "peak": {
+      "classId": "wildkeeper",
+      "models": [
+        "u_gen_3_1"
+      ],
+      "state": "cast",
+      "t": 0.55,
+      "calls": 71
+    }
+  }
+}

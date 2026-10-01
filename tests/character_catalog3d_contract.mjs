@@ -13,7 +13,7 @@ for(const classId of Object.keys(CLASS_STYLES)) {
     const meshes=[];model.root.traverse(o=>{if(o.isMesh&&o.visible)meshes.push(o);});
     ok(meshes.length>0,`${classId}/${entry.id}: no meshes`);
     const item=visual.equipment[slot];
-    ok(slot==='chest'?model.armor[item.family].visible:model.attachments.get(slot)?.key===item.key,`${classId}/${slot}/${entry.id}: missing attachment`);
+    ok(slot==='chest'?(item.modelId?model.uniqueTorso?.userData.modelId===item.modelId:model.armor[item.family].visible):model.attachments.get(slot)?.key===item.key,`${classId}/${slot}/${entry.id}: missing attachment`);
     coverage.push(`${classId}/${slot}/${entry.id}`);
   }
   for(const family of WEAPON_FAMILIES) {
@@ -27,7 +27,7 @@ for(const classId of Object.keys(CLASS_STYLES)) {
         const support=model.weapon.localToWorld(new Vector3(...model.weapon.userData.support));
         const actual=model.supportSocket.getWorldPosition(new Vector3()),error=actual.distanceTo(support);maxGripError=Math.max(maxGripError,error);
         ok(error<.015,`${classId}/${family}/${state}/${t}: support hand detached by ${error.toFixed(4)} model units`);
-        const right=new Vector3();if(family==='bow_2h')right.z=model.weapon.userData.string.geometry.attributes.position.getZ(1);
+        const right=new Vector3(...model.weapon.userData.primary);
         const primary=model.weapon.localToWorld(right),primaryError=primary.distanceTo(model.rightPalm.getWorldPosition(new Vector3()));
         ok(primaryError<.015,`${classId}/${family}/${state}/${t}: primary grip detached by ${primaryError}`);
       } else ok(model.weapon.getWorldPosition(new Vector3()).distanceTo(model.socket.getWorldPosition(new Vector3()))<1e-8,'one-handed grip detached');

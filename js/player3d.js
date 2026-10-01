@@ -6,7 +6,7 @@ window.Player3D=(()=>{
   async function init(){
     if(!pending)pending=(async()=>{
       if(new URL(document.baseURI).protocol==='file:')throw new Error('3D characters need the local server. Run python serve.py, then open http://localhost:8741/index.html');
-      const [module,definitions,shapes]=await Promise.all([import('./character3d.mjs?v=embergrave-coop-8'),import('./character_catalog3d.mjs'),import('./character_forms3d.mjs?v=12')]);
+      const [module,definitions,shapes]=await Promise.all([import('./character3d.mjs?v=body-armor-1'),import('./character_catalog3d.mjs?v=body-armor-1'),import('./character_forms3d.mjs?v=12')]);
       catalog=definitions;forms=shapes.FORM_STYLES;rendererFactory=module.createCharacterRenderer;controllerFactory=module.createAnimationController;shiftFactory=module.createWildshapeController;view=rendererFactory();
     })();
     return pending;

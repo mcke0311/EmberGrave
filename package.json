@@ -2,6 +2,7 @@
   "name": "embergrave-game",
   "private": true,
   "scripts": {
+    "test:unique-models": "python tools/author_unique_models3d.py --check && node --preserve-symlinks --preserve-symlinks-main tests/body_armor3d_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/unique_models3d_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/character_catalog3d_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/character_animation3d_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/weapon_projectile_origin_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/character_forms3d_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/cinematic_pose_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/unique_equipment_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/item_identity_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/unique_drops_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/coop_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/coop_inventory_contract.mjs && node --preserve-symlinks --preserve-symlinks-main --test tests/coop_replication.test.cjs tests/coop_runtime.test.cjs && node --preserve-symlinks --preserve-symlinks-main tests/unique_models3d_browser.cjs && node --preserve-symlinks --preserve-symlinks-main tests/body_armor3d_browser.cjs",
     "test:unique-art": "python tools/import_unique_item_art.py --check && node --preserve-symlinks --preserve-symlinks-main tests/item_identity_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/unique_item_art_browser.cjs",
     "test:cinematics": "node tests/cinematic_pose_contract.mjs && node tests/cinematics_contract.mjs && node tests/cinematics_browser.cjs && node tests/cinematics_progression_browser.cjs && node tests/cinematics_direction_browser.cjs && node tests/cinematics_review_browser.cjs",
     "test:cinematics:performance": "node tests/cinematics_performance.cjs",
@@ -15,7 +16,8 @@
     "test:coop:network": "node tests/coop_network_browser.cjs",
     "test:mobile-fixes": "node tests/mobile_fixes_browser.cjs && node tests/mobile_shop_trades_browser.cjs && node tests/mobile_opening_browser.cjs && node tests/mobile_captain_route_browser.cjs && node tests/boss_activation_contract.mjs && node tests/mobile_boss_activation_browser.cjs && node tests/mobile_scripted_boss_browser.cjs && python tests/app_icons_contract.py",
     "test:phone:webkit": "node tests/mobile_safari_browser.cjs",
-    "test:coop:release": "node tools/verify_coop_release.cjs"
+    "test:coop:release": "node tools/verify_coop_release.cjs",
+    "test:body-armor": "node --preserve-symlinks --preserve-symlinks-main tests/body_armor3d_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/body_armor3d_browser.cjs"
   },
   "devDependencies": {
     "playwright": "^1.55.0"

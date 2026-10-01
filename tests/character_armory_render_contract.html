@@ -2,7 +2,7 @@
 <h1>Five-class 3D armory rendering</h1><pre id="result">Running…</pre><canvas id="sheet" width="1440" height="1300" aria-label="All five classes with each weapon family"></canvas>
 <script src="../js/utils.js"></script><script src="../js/data.js"></script><script>window.TestData=DATA;</script>
 <script type="module">
-import {createCharacterRenderer,STATES} from '../js/character3d.mjs?v=14';
+import {createCharacterRenderer,STATES} from '../js/character3d.mjs?v=body-armor-1';
 import {CLASS_STYLES,WEAPON_FAMILIES,resolveCharacterVisual} from '../js/character_catalog3d.mjs';
 const data=window.TestData,out=document.getElementById('result'),sx=document.getElementById('sheet').getContext('2d');
 const cell=document.createElement('canvas');cell.width=cell.height=256;const cx=cell.getContext('2d',{willReadFrequently:true});
@@ -39,7 +39,7 @@ try{
     ok(view.renderer.info.memory.textures<=warm.textures,classId+': equipment changes leaked GPU textures');
     ok(view.renderer.info.memory.geometries<=warm.geometries,classId+': equipment changes leaked GPU geometry');
   }
-  out.textContent=`PASS: ${checks} rendered checks; five classes × 12 weapon families × eight states × eight directions × six timeline samples, with full mythic armor.\nCompleted in ${Math.round(performance.now()-start)} ms. The sheet also shows light armor and attacks.`;document.body.dataset.testStatus='passed';
+  out.textContent=`PASS: ${checks} rendered checks; five classes × 12 weapon families × ${STATES.length} states × eight directions × six timeline samples, with full mythic armor.\nCompleted in ${Math.round(performance.now()-start)} ms. The sheet also shows light armor and attacks.`;document.body.dataset.testStatus='passed';
 }catch(error){out.textContent='FAIL: '+error.stack;document.body.dataset.testStatus='failed';}finally{view?.dispose();}
 </script></html>
 

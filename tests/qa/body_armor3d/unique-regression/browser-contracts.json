@@ -1,0 +1,87 @@
+{
+  "errors": [],
+  "missing": [],
+  "gallery": [],
+  "armory": {},
+  "production": {},
+  "render": {
+    "models": 118,
+    "classes": 5,
+    "frames": 8970,
+    "checks": 17236,
+    "memory": {
+      "vanguard": {
+        "warm": {
+          "geometries": 85,
+          "textures": 31,
+          "programs": 12
+        },
+        "settled": {
+          "geometries": 85,
+          "textures": 31,
+          "programs": 12
+        }
+      },
+      "emberwitch": {
+        "warm": {
+          "geometries": 156,
+          "textures": 59,
+          "programs": 12
+        },
+        "settled": {
+          "geometries": 156,
+          "textures": 59,
+          "programs": 12
+        }
+      },
+      "gravebinder": {
+        "warm": {
+          "geometries": 233,
+          "textures": 87,
+          "programs": 12
+        },
+        "settled": {
+          "geometries": 233,
+          "textures": 87,
+          "programs": 12
+        }
+      },
+      "wildkeeper": {
+        "warm": {
+          "geometries": 313,
+          "textures": 115,
+          "programs": 12
+        },
+        "settled": {
+          "geometries": 313,
+          "textures": 115,
+          "programs": 12
+        }
+      },
+      "veilranger": {
+        "warm": {
+          "geometries": 390,
+          "textures": 143,
+          "programs": 12
+        },
+        "settled": {
+          "geometries": 390,
+          "textures": 143,
+          "programs": 12
+        }
+      }
+    },
+    "maxCalls": 71,
+    "peak": {
+      "classId": "wildkeeper",
+      "models": [
+        "u_gen_3_1"
+      ],
+      "state": "cast",
+      "t": 0.55,
+      "calls": 71
+    }
+  },
+  "ordinaryRender": "PASS: 57620 rendered checks; five classes × 12 weapon families × 10 states × eight directions × six timeline samples, with full mythic armor.\nCompleted in 109580 ms. The sheet also shows light armor and attacks.",
+  "integration": "PASS: 781 checks: mandatory 3D, class selection, older saves and URLs, 118 uniques × five classes, equipment transactions and missing-model rollback, all four transformations, After-Image identity, unique save/reload, zero legacy player sprite calls or downloads, and WebGL failure handling.\nAll saves were isolated in memory."
+}

@@ -1,26 +1,38 @@
-import {createCharacterRenderer,STATES} from '../js/character3d.mjs?v=15';
+import {createCharacterRenderer,STATES} from '../js/character3d.mjs?v=body-armor-1';
 import {CLASS_ANIMATIONS} from '../js/character_animation3d.mjs?v=10';
-import {CLASS_STYLES,EQUIPMENT_SLOTS,resolveCharacterVisual,catalogEntries,armorFamily} from '../js/character_catalog3d.mjs';
+import {CLASS_STYLES,EQUIPMENT_SLOTS,resolveCharacterVisual,catalogEntries} from '../js/character_catalog3d.mjs?v=body-armor-1';
 import {ARMOR_THEMES,ARMOR_LEVELS,armorRank} from '../js/character_armor3d.mjs?v=4';
+import {UNIQUE_MODELS3D} from '../js/character_unique_catalog3d.mjs?v=body-armor-1';
 const data=window.CharacterPreviewData;
 const ui=id=>document.getElementById(id),ctx=ui('stage').getContext('2d'),dx=ui('directions').getContext('2d');
 const catalog=Object.fromEntries(EQUIPMENT_SLOTS.map(slot=>[slot,catalogEntries(data,slot)]));
-let view,classId='emberwitch',animation='idle',paused=false,phase=0,last=0,stripDirty=true,frames=0,fpsStart=0,turnAngle=65,equip={},visual=null;
+let view,classId='emberwitch',animation='idle',paused=false,phase=0,last=0,stripDirty=true,frames=0,fpsStart=0,turnAngle=65,equip={},visual=null,referenceId=null;
 const pretty={main:'Weapon',off:'Shield',head:'Head',chest:'Chest',gloves:'Gloves',boots:'Boots',belt:'Belt',ring1:'Left ring',ring2:'Right ring',amulet:'Amulet'};
+const models=Object.values(catalog).flat().filter(entry=>UNIQUE_MODELS3D[entry.id]);
+function reference(){
+  const entries=Object.values(equip).filter(Boolean),id=entries.some(item=>item.uniqueId===referenceId)?referenceId:entries.find(item=>UNIQUE_MODELS3D[item.uniqueId])?.uniqueId;
+  referenceId=id||null;ui('reference').hidden=!id;ui('uniqueModel').value=id||'';
+  if(!id)return;
+  const r=UNIQUE_MODELS3D[id],entry=models.find(entry=>entry.id===id);
+  ui('referenceName').textContent=r.name;ui('referenceCategory').textContent=pretty[r.slot]+' · '+CLASS_STYLES[classId].name;
+  ui('referenceImage').replaceChildren(window.CharacterPreviewSprites.itemIcon(entry.item,64));
+}
 function refresh(){
   visual=resolveCharacterVisual(data,classId,equip);stripDirty=true;
   ui('name').textContent=CLASS_STYLES[classId].name;ui('classDescription').textContent=data.CLASSES[classId].desc;
   ui('animationTheme').textContent=CLASS_ANIMATIONS[classId].name+' · '+CLASS_ANIMATIONS[classId].description;
-  ui('armorTheme').textContent=(visual.equipment.chest?ARMOR_LEVELS[classId][armorRank(visual.equipment.chest)]:ARMOR_THEMES[classId].name)+' · '+ARMOR_THEMES[classId].description;
-  ui('play').href=`../index.html?player3d=1&class=${classId}`;
+  ui('armorTheme').textContent=visual.equipment.chest?.modelId?visual.equipment.chest.name+' · Bespoke unique armor':(visual.equipment.chest?ARMOR_LEVELS[classId][armorRank(visual.equipment.chest)]:ARMOR_THEMES[classId].name)+' · '+ARMOR_THEMES[classId].description;
+  ui('play').href=`index.html?player3d=1&class=${classId}`;
   const two=visual.equipment.main?.twoHand;ui('gear-off').disabled=!!two;
   ui('gripNote').textContent=two?'Two-handed grip · shield unavailable':'One-handed / unarmed · shield available';
   ui('status').textContent='Ready · '+(visual.equipment.main?.name||'Unarmed')+' · '+(visual.equipment.chest?.name||'Base clothing');
+  reference();
 }
 function fillSelect(slot){
   const select=ui('gear-'+slot),query=ui('search').value.trim().toLowerCase(),selected=select.value;
   select.replaceChildren(new Option('None',''));
   const groups={};for(const entry of catalog[slot]){
+    if(ui('scope').value==='unique'&&!UNIQUE_MODELS3D[entry.id])continue;
     if(query&&!entry.label.toLowerCase().includes(query)&&entry.id!==selected)continue;
     const group=entry.item.rarity||'base';if(!groups[group]){const g=document.createElement('optgroup');g.label=group==='base'?'Base items':group==='unique'?'Unique items':'Set items';select.add(g);groups[group]=g;}
     groups[group].append(new Option(entry.label,entry.id));
@@ -32,26 +44,47 @@ for(const slot of EQUIPMENT_SLOTS){
   const select=document.createElement('select');select.id='gear-'+slot;
   ui('equipment').append(label,select);fillSelect(slot);
   select.onchange=()=>{
-    const entry=catalog[slot].find(e=>e.id===select.value);if(entry)equip[slot]={...entry.item};else delete equip[slot];
+    const entry=catalog[slot].find(e=>e.id===select.value);if(entry){equip[slot]={...entry.item};if(UNIQUE_MODELS3D[entry.id])referenceId=entry.id;}else delete equip[slot];
     if(slot==='main'&&data.BASES[equip.main?.baseId]?.twoHand){delete equip.off;ui('gear-off').value='';}
     refresh();
   };
 }
 ui('search').oninput=()=>EQUIPMENT_SLOTS.forEach(fillSelect);
+ui('scope').onchange=()=>{EQUIPMENT_SLOTS.forEach(fillSelect);syncSelects();};
+ui('uniqueModel').add(new Option('Select a unique model…',''));
+for(const slot of ['main','off','head','chest','gloves','boots']){
+  const group=document.createElement('optgroup');group.label=pretty[slot];
+  for(const entry of models.filter(entry=>UNIQUE_MODELS3D[entry.id].slot===slot))group.append(new Option(UNIQUE_MODELS3D[entry.id].name,entry.id));
+  ui('uniqueModel').append(group);
+}
+ui('modelCount').textContent=models.length+' unique models · five classes';
+function selectModel(id,{isolated=false}={}){
+  const entry=models.find(entry=>entry.id===id);if(!entry)throw Error('Unknown bespoke model: '+id);
+  const slot=UNIQUE_MODELS3D[id].slot;if(isolated)equip={};equip[slot]={...entry.item};referenceId=id;
+  if(slot==='main'&&data.BASES[entry.item.baseId].twoHand)delete equip.off;
+  if(slot==='off'&&data.BASES[equip.main?.baseId]?.twoHand)delete equip.main;
+  ui('scope').value='unique';ui('search').value='';EQUIPMENT_SLOTS.forEach(fillSelect);syncSelects();refresh();
+}
+ui('uniqueModel').onchange=()=>{if(ui('uniqueModel').value)selectModel(ui('uniqueModel').value);};
+for(const [id,step] of [['previousModel',-1],['nextModel',1]])ui(id).onclick=()=>{
+  const index=models.findIndex(entry=>entry.id===referenceId);selectModel(models[(index+step+models.length)%models.length].id);
+};
 function syncSelects(){for(const slot of EQUIPMENT_SLOTS){const it=equip[slot];ui('gear-'+slot).value=it?(it.uniqueId||it.setItemId||it.baseId):'';}}
 function starter(){
   const ids=data.PLAYER_STARTER_LOADOUTS[classId];equip={main:{baseId:ids.main},chest:{baseId:ids.chest}};
+  referenceId=null;ui('scope').value='all';
   ui('search').value='';EQUIPMENT_SLOTS.forEach(fillSelect);syncSelects();refresh();
 }
 for(const [id,profile] of Object.entries(CLASS_STYLES)){
   const button=document.createElement('button');button.textContent=profile.name;button.type='button';button.setAttribute('aria-pressed',id===classId);
-  button.onclick=()=>{classId=id;starter();document.querySelectorAll('#classes button').forEach(b=>b.setAttribute('aria-pressed',b===button));};ui('classes').append(button);
+  button.dataset.classId=id;button.onclick=()=>{classId=id;refresh();document.querySelectorAll('#classes button').forEach(b=>b.setAttribute('aria-pressed',b===button));};ui('classes').append(button);
 }
 ui('starter').onclick=starter;
-ui('unequip').onclick=()=>{equip={};syncSelects();refresh();};
+ui('unequip').onclick=()=>{equip={};referenceId=null;syncSelects();refresh();};
 ui('tier').oninput=()=>{ui('tierValue').textContent=ui('tier').value;};
 ui('fullSet').onclick=()=>{
   const tier=+ui('tier').value,old=data.BASES[equip.main?.baseId]||data.BASES[data.PLAYER_STARTER_LOADOUTS[classId].main];
+  referenceId=null;ui('scope').value='all';
   const weapon=Object.values(data.BASES).find(b=>b.slot==='main'&&b.playerVisualFamily===old.playerVisualFamily&&b.id.endsWith('_t'+tier));
   equip={main:{baseId:weapon.id},head:{baseId:`helm_t${tier}`},chest:{baseId:`chest_t${tier}`},gloves:{baseId:`gloves_t${tier}`},boots:{baseId:`boots_t${tier}`},belt:{baseId:`belt_t${tier}`},ring1:{baseId:tier?'ring_t'+tier:'ring'},ring2:{baseId:tier?'ring_t'+tier:'ring'},amulet:{baseId:tier?'amulet_t'+tier:'amulet'}};
   if(!weapon.twoHand)equip.off={baseId:'shield_t'+tier};ui('search').value='';EQUIPMENT_SLOTS.forEach(fillSelect);syncSelects();refresh();
@@ -89,5 +122,16 @@ function tick(ms){
     requestAnimationFrame(tick);
   }catch(error){ui('status').className='error';ui('status').textContent=error.message;document.body.dataset.testStatus='failed';}
 }
-try{view=createCharacterRenderer({size:640});starter();ui('boneCount').textContent=view.model.bones.length;document.body.dataset.testStatus='ready';requestAnimationFrame(tick);}catch(error){ui('status').textContent=error.message;document.body.dataset.testStatus='failed';}
+try{
+  await window.CharacterPreviewSprites.loadBundle('core');view=createCharacterRenderer({size:640});
+  const query=new URLSearchParams(location.search);if(CLASS_STYLES[query.get('class')])classId=query.get('class');starter();
+  document.querySelectorAll('#classes button').forEach(button=>button.setAttribute('aria-pressed',button.dataset.classId===classId));
+  if(UNIQUE_MODELS3D[query.get('unique')])selectModel(query.get('unique'));
+  ui('boneCount').textContent=view.model.bones.length;document.body.dataset.testStatus='ready';requestAnimationFrame(tick);
+  window.armoryQA={models:models.map(entry=>entry.id),selectModel,
+    setClass:id=>{ui('classes').querySelector('[data-class-id="'+id+'"]').click();},
+    pose:(state,t,angle)=>{animation=state;phase=t;paused=true;ui('rotate').checked=false;turnAngle=angle;ui('facing').value=angle;stripDirty=true;},
+    capture:angle=>{const canvas=view.render({state:animation,t:phase,ang:angle,ex:{walkPh:phase*Math.PI*2}},visual.equipment,classId);return canvas.toDataURL();},
+    get visual(){return visual;},get model(){return view.model;},get memory(){return {...view.renderer.info.memory};},get calls(){return view.renderer.info.render.calls;}};
+}catch(error){ui('status').textContent=error.message;document.body.dataset.testStatus='failed';}
 window.addEventListener('pagehide',event=>{if(!event.persisted)view?.dispose();});

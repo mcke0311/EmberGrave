@@ -370,23 +370,26 @@ production UI coverage plus direct-file rendering checks.
 
 The ordinary game at `http://localhost:8741/index.html` now enables 3D characters
 automatically, including heroes saved with the old sprite renderer. The title
-screen identifies the current renderer. Use `?player3d=0` or its **Use sprites**
-link to select sprites explicitly. Direct file launches retain sprites and show
-an **Open the 3D game** link to the local server.
+screen identifies the current renderer. HTTP and WebGL2 are required; older
+sprite preferences and URLs also load the current 3D renderer.
 
 Run `python serve.py` and open
 `http://localhost:8741/tests/three_character.html`. The armory includes Vanguard,
 Ember Witch, Gravebinder, Wildkeeper and Veil Ranger with distinct proportions,
 clothing, hair and class details. Select exact base, unique or set items, search
-by name, equip a complete material tier, and inspect all seven animation states
+by name, equip a complete material tier, and inspect all ten animation states
 and eight directional references. The game itself retains continuous facing.
 
 Coverage includes all **300 base items, 139 unique items and 13 set items**:
 12 weapon families, 14 material tiers, light/mail/plate/mythic chest and head
-armor, shields, gloves, boots, belts, both rings and amulets. Equipment uses
-family models with tier materials and the named items' existing art colors;
-these are original models authored in code, not individual production sculpts
-for every affix roll. Weapons have distinct silhouettes. Two-handed grips use
+armor, shields, gloves, boots, belts, both rings and amulets. **118 uniques have
+bespoke volumetric models matching their inventory artwork**: 81 weapons, seven
+shields, seven helmets, eight chest pieces, seven glove pairs and eight boot
+pairs. Their canonical IDs select individual geometry recipes, palettes and
+attachment metadata from `js/character_unique_catalog3d.mjs`; the shared builders
+in `js/character_unique_equipment3d.mjs` supply the same designs in gameplay,
+co-op, armory previews, afterimages and cinematics. Rings, amulets, belts and
+ordinary/set equipment retain their existing models. Two-handed grips use
 arm IK, bows animate their string and arrow, and melee weapons use swing poses.
 
 Equipment now uses a grounded dark-fantasy art treatment: fitted breastplates,
@@ -396,13 +399,15 @@ Deterministic surface maps add metal wear, leather grain, cloth weave and chain
 mail. Tier palettes use aged steel and muted brass; magical accents stay small.
 Static detail meshes are combined by material within each bone attachment.
 
-Armor appearance is class-specific at every tier. Vanguard keeps legion plate;
+Ordinary and set armor appearance is class-specific at every tier. Vanguard keeps legion plate;
 Ember Witch uses split robes, flame embroidery and bronze circlets; Gravebinder
 uses cowls, burial cloth, rib bones and skull charms; Wildkeeper uses fur, hides,
 bark and antlers; Veil Ranger uses a shadow hood, fitted leather and utility
 gear. The treatment covers chest, head, gloves, boots, belt, shield and jewelry.
 Item names, stats and equip requirements stay unchanged, and named-item colors
-remain accents within the class palette. Compare twenty outfits at
+remain accents within the class palette for these items. Unique armor owns its
+shell, shoulders, hems and palette; the class rig supplies fitting and animation.
+Compare twenty ordinary outfits at
 `tests/class_armor_styles.html`, or use the comparison link in the armory.
 
 The four other classes now have pronounced silhouette and palette progression:
@@ -435,24 +440,54 @@ so missing authored sprite families no longer prevent equipping items in 3D.
 Failed and superseded transactions retain the previous appearance. Saves record
 the renderer preference and automatically restore 3D mode when loaded.
 
-**Compare sprites** loads the exact original sprite appearance when it exists.
-If its sprite art is incomplete, the game explains this and keeps 3D active.
-Changing equipment returns the comparison to 3D. Wildkeeper beast transformations
-keep their existing authored form sprites and return to the equipped 3D body.
-Maps, combat, effects and item statistics are preserved; the sprite renderer
-remains available through the explicit sprite option.
+The armory's **Bespoke uniques (118)** filter shows the matching inventory image
+beside the character, keeps equipment when changing classes, and supports
+rotation and animation scrubbing. `tests/unique_models3d_review.html` provides
+paginated front, side and back comparisons of every design. Identification and
+item level do not change a unique's appearance. `modelId` is derived at runtime;
+existing saves acquire the models without a schema migration. Known included
+uniques with missing models fail equipment preparation. Unknown saved identities
+retain their existing resolution. Rebuild the retained registry with
+`python tools/author_unique_models3d.py`; `--check` verifies it without rewriting.
+
+Unique recipe revision 2 adds forged blade sections, shaped guards, sculpted bone
+ornaments, layered shield rims, curved shoulder shells, collars and back plates,
+articulated gauntlets and tapered greaves with overlapping toe plates. Each item
+retains an individually authored refinement profile and artwork palette. Unique
+surfaces use 128 × 128 procedural maps, painted vertex wear and an atlas carrying
+roughness, metalness and restrained emission. Static batches retain these colors;
+animated bow limbs, arrows and strings remain separate. Ordinary materials are
+unchanged. The refinement contract enforces 10,904 triangles per unique and 73
+draw calls for the animation matrix. Close-up comparisons frame the actual
+equipment, including each glove or boot separately, beside gameplay thumbnails.
+The original captures stay in `tests/qa/unique_models3d/`; refined evidence and
+measurements are in `tests/qa/unique_models3d_refined/`. See
+[the refinement results](tests/unique_models3d_refinement_results.md).
+
+All **27 body armors** now dress the torso, upper/lower arms and upper/lower legs
+on all five classes. Ordinary and set pieces retain their class themes; the eight
+unique chest recipes use revision 3 with individually authored limb profiles.
+Flexible sleeves and trousers blend across the existing joints, while rigid
+defenses use a single bone. They share one skinned surface batch. Gloves and boots
+retain their own models and suppress overlapping armor guards; removing body
+armor restores the default limbs without changing their materials. Appearance
+revisions are derived, so existing saves acquire the full outfit automatically.
+Open `tests/body_armor3d_review.html` over HTTP for all 135 class/armor comparisons.
+Run `npm run test:body-armor`; before/after captures and resource measurements are
+in `tests/qa/body_armor3d/`. See [body armor results](tests/body_armor3d_results.md).
 
 The player is rendered into a transparent WebGL canvas and composited at the
 existing depth-sorted position, including elevation, shadows, hit flashes and
 screen lighting. Three.js 0.185.1 is vendored in `js/vendor/three/`; no CDN or
 package install is required. 3D mode requires HTTP and WebGL2. Opening the
-ordinary game from disk still uses sprites; 3D saves should be opened over HTTP.
+game requires the local HTTP server, including older URLs and saves. Wildkeeper
+transformations use the current 3D form renderer and recover the equipped outfit.
 
 Implementation: `js/character_catalog3d.mjs` resolves the item catalog;
 `js/character_equipment3d.mjs` builds equipment; `js/character_materials3d.mjs`
 builds surface materials and disposes their textures; `js/character3d.mjs` contains
 class models, skinning, animations, IK and rendering; `js/player3d.js` provides
-the game asset facade and sprite comparison; `tests/character_armory.mjs`
+the game asset facade; `tests/character_armory.mjs`
 controls the armory. The original Ember Witch study remains a reference fixture.
 
 `js/character_armor3d.mjs` owns the four non-Vanguard armor themes;
@@ -464,6 +499,7 @@ four family levels; the render contract also checks GPU cleanup for all classes.
 Checks:
 
 ```text
+npm run test:unique-models
 node tests/character_catalog3d_contract.mjs
 node tests/character_animation3d_contract.mjs
 http://localhost:8741/tests/character_armory_render_contract.html
@@ -473,12 +509,12 @@ http://localhost:8741/tests/character_game_integration.html
 The catalog test covers every class/item combination and both hands across
 weapon animations. The WebGL suite checks visibility and canvas clipping for
 all classes, families, states and directions at six points along each clip.
-The animation contract checks 35 distinct clips, loop and recovery seams,
+The animation contract checks 50 distinct clips, loop and recovery seams,
 history-independent scrubbing, ground contact, bow timing and grip continuity.
 The integration test exercises
 the actual game equipment transaction, new heroes, stale/invalid changes, saved
-3D loadouts, default 3D startup, legacy/sprite save upgrades, explicit sprite
-selection, sprite comparison and Wildkeeper transformations using an isolated
+3D loadouts, default 3D startup, legacy save upgrades, all 118 unique models,
+co-op restoration and Wildkeeper transformations using an isolated
 in-memory save store. Existing sprite contracts remain under `tests/`.
 
 ### Launching the game
@@ -490,8 +526,7 @@ python serve.py
 ```
 then open http://localhost:8741
 
-**Direct file launch (sprite characters):** double-click `index.html` to use the
-original sprite renderer. The title includes a link to the local-server 3D game.
+**Direct file launch:** use the local server above to load the 3D game.
 
 Click once on the title screen first — browsers require a user gesture before audio starts.
 

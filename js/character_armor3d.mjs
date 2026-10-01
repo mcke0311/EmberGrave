@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three/three.module.min.js';
 import {equipmentMaterials,surfaceMaterial} from './character_materials3d.mjs?v=2';
-import {mesh,box,orb,rod,curved,plate,edge,rivet,band,wrap,combineStatic,formedPlate} from './character_mesh3d.mjs';
+import {mesh,box,orb,rod,curved,plate,edge,rivet,band,wrap,combineStatic,formedPlate} from './character_mesh3d.mjs?v=body-armor-1';
 
 export const ARMOR_THEMES={
   vanguard:{name:'Legion plate',description:'Forged steel, layered defenses and heraldic shields.',cloth:'#263b52',leather:'#3a2b24',trim:'#947a4e'},
@@ -28,7 +28,7 @@ export function armorPalette(item,classId){
   if(item?.namedId)cloth.lerp(new THREE.Color(item.material.cloth),.16);
   return {...item?.material,cloth:'#'+cloth.getHexString(),leather:theme.leather,trim:item?.namedId?item.material.trim:colors?.[2]||theme.trim,glow:item?.material.glow||theme.magic,contrast:colors?.[1]||theme.cloth};
 }
-function classMaterials(item,id){
+export function classMaterials(item,id){
   const rank=armorRank(item),palette=armorPalette(item,id);
   return {...equipmentMaterials({...item,material:palette}),lining:surfaceMaterial(palette.contrast,'cloth'),
     bone:surfaceMaterial(['#a08d6f','#b5a386','#cdc1a2','#e0d5bc'][rank],'leather',{roughness:.8}),

@@ -1,0 +1,59 @@
+[
+  {
+    "name": "character_catalog3d_contract.mjs",
+    "status": "PASS",
+    "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 12532,\n  \"baseItems\": 300,\n  \"uniques\": 139,\n  \"setItems\": 13,\n  \"classItemCombinations\": 2375,\n  \"maxGripError\": 9.321907481344796e-16\n}\n"
+  },
+  {
+    "name": "character_animation3d_contract.mjs",
+    "status": "PASS",
+    "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 68720,\n  \"distinctClips\": 50,\n  \"maxGripError\": 1.1471651716295253e-15,\n  \"maxStep\": 0.2551908222012508,\n  \"maxStepCase\": \"wildkeeper/axe_1h/attack/0.4\",\n  \"maxDeadChestHeight\": 0.5667321171693596\n}\n"
+  },
+  {
+    "name": "weapon_projectile_origin_contract.mjs",
+    "status": "PASS",
+    "output": "{\"status\":\"PASS\",\"checks\":40328,\"maxPixelError\":1.0174974457029638e-13}"
+  },
+  {
+    "name": "character_forms3d_contract.mjs",
+    "status": "PASS",
+    "output": "PASS: 2596 Wildkeeper shape, animation, grounding and bounds checks.\n"
+  },
+  {
+    "name": "cinematic_pose_contract.mjs",
+    "status": "PASS",
+    "output": "PASS 1331 cinematic pose checks: all clips/classes/forms, history independence, finite transforms, planted feet and equipment restoration\n"
+  },
+  {
+    "name": "unique_equipment_contract.mjs",
+    "status": "PASS",
+    "output": "PASS 6079 equipment checks: 139 fresh powers, 127 combat casts, all classes/trees, support budgets, gating and migration.\n"
+  },
+  {
+    "name": "coop_contract.mjs",
+    "status": "PASS",
+    "output": "PASS 85 co-op ownership, command, snapshot and persistence contract checks\n"
+  },
+  {
+    "name": "coop_inventory_contract.mjs",
+    "status": "PASS",
+    "output": "PASS 25 shared inventory ownership, placement, crafting and persistence checks\n"
+  },
+  {
+    "name": "unique_drops_contract.mjs",
+    "status": "PASS",
+    "checks": 8792
+  },
+  {
+    "name": "coop_replication.test.cjs + coop_runtime.test.cjs",
+    "status": "PASS",
+    "tests": 21,
+    "failures": 0
+  },
+  {
+    "name": "item_identity_contract.mjs",
+    "status": "PASS",
+    "checks": 4094,
+    "catalogueEntries": 499
+  }
+]

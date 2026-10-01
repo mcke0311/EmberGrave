@@ -1,16 +1,18 @@
 /* Original five-class characters. Geometry, skeleton and clips are authored here;
    Three.js is pinned in vendor/three. Coordinates: Y up, character faces +Z. */
 import * as THREE from './vendor/three/three.module.min.js';
-import {CLASS_STYLES,ARMOR_FAMILIES} from './character_catalog3d.mjs';
-import {createWeapon,createWearable,createArmorDetails,disposeObject,rod} from './character_equipment3d.mjs?v=8';
+import {CLASS_STYLES,ARMOR_FAMILIES} from './character_catalog3d.mjs?v=body-armor-1';
+import {createWeapon,createWearable,createArmorDetails,disposeObject,rod} from './character_equipment3d.mjs?v=body-armor-1';
+import {uniqueTorsoGeometry,uniqueTorsoMaterial} from './character_unique_equipment3d.mjs?v=body-armor-1';
 import {surfaceMaterial,disposeMaterials} from './character_materials3d.mjs?v=2';
-import {armorPalette,armorRank} from './character_armor3d.mjs?v=5';
+import {armorPalette,armorRank} from './character_armor3d.mjs?v=body-armor-1';
+import {createArmorLimbs,updateArmorLimbCoverage} from './character_body_armor3d.mjs?v=body-armor-1';
 import {CLASS_ANIMATIONS,classPoseAt,sampleHumanoid,smooth} from './character_animation3d.mjs?v=12';
 import {createWildshape} from './character_forms3d.mjs?v=12';
 import {shiftLayers,applyShiftPose,drawShiftEffect} from './character_wildshape3d.mjs';
 export {createWildshapeController} from './character_wildshape3d.mjs';
 export {createAnimationController} from './character_motion3d.mjs?props=1';
-export {CLASS_STYLES} from './character_catalog3d.mjs';
+export {CLASS_STYLES} from './character_catalog3d.mjs?v=body-armor-1';
 
 const TAU = Math.PI * 2;
 const clamp = THREE.MathUtils.clamp;
@@ -51,16 +53,16 @@ export function createCharacter(classId='emberwitch') {
   root.updateMatrixWorld(true);
   const skeleton = new THREE.Skeleton(bones);
   const bindPositions = Object.fromEntries(bones.map(b => [b.name,b.getWorldPosition(new THREE.Vector3())]));
-  function skinGeometry(geometry, weights, mat, name) {
+  function skinGeometry(geometry, weights, mat, name, bindMatrix) {
     const positions = geometry.getAttribute('position'); const indices = [], values = [];
-    for(let i=0;i<positions.count;i++) {
+    if(weights)for(let i=0;i<positions.count;i++) {
       const assignments = weights(new THREE.Vector3().fromBufferAttribute(positions,i));
       for(let j=0;j<4;j++) { indices.push(assignments[j] ? bones.indexOf(joints[assignments[j][0]]) : 0); values.push(assignments[j] ? assignments[j][1] : 0); }
     }
-    geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(indices,4));
-    geometry.setAttribute('skinWeight',new THREE.Float32BufferAttribute(values,4));
+    if(weights){geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(indices,4));
+    geometry.setAttribute('skinWeight',new THREE.Float32BufferAttribute(values,4));}
     const mesh = new THREE.SkinnedMesh(geometry,mat); mesh.name=name; mesh.frustumCulled=false;
-    root.add(mesh); mesh.bind(skeleton); return mesh;
+    root.add(mesh); mesh.bind(skeleton,bindMatrix); return mesh;
   }
   function rings(name, rows, mat, weight, segments=12) {
     const p=[], indices=[],uv=[];
@@ -103,14 +105,14 @@ export function createCharacter(classId='emberwitch') {
       const w=clamp((t-.72)/.28,0,1)*.55;return [[start,1-w],[end,w]];
     },mat,name);
   }
-  const bareHands=[],baseBoots=[],hairParts=[],shoulderPadding=[];
+  const bareHands=[],baseBoots=[],hairParts=[],shoulderPadding=[],classChestProps=[],baseArmorLimbs=[];
   for(const side of ['L','R']) {
     const sign=side==='L'?1:-1;
-    limb(`UpperArm${side}`,`Forearm${side}`,.086,.064,materials.cloth,`Sleeve${side}`);
-    limb(`Forearm${side}`,`Hand${side}`,.066,.042,materials.leather,`Bracer${side}`);
+    baseArmorLimbs.push(limb(`UpperArm${side}`,`Forearm${side}`,.086,.064,materials.cloth,`Sleeve${side}`));
+    baseArmorLimbs.push(limb(`Forearm${side}`,`Hand${side}`,.066,.042,materials.leather,`Bracer${side}`));
     bareHands.push(ellipsoid(joints[`Hand${side}`],materials.skin,[0,-.046,.007],[.045,.069,.042],`HandMesh${side}`));
-    limb(`Thigh${side}`,`Shin${side}`,.086,.062,materials.dark,`Leg${side}`);
-    limb(`Shin${side}`,`Foot${side}`,.068,.047,materials.leather,`BootShaft${side}`);
+    baseArmorLimbs.push(limb(`Thigh${side}`,`Shin${side}`,.086,.062,materials.dark,`Leg${side}`));
+    baseArmorLimbs.push(limb(`Shin${side}`,`Foot${side}`,.068,.047,materials.leather,`BootShaft${side}`));
     baseBoots.push(box(joints[`Foot${side}`],materials.leather,[0,-.035,.055],[.113,.086,.22],`Boot${side}`));
     shoulderPadding.push(ellipsoid(joints[`UpperArm${side}`],materials.cloth,[0,0,0],[.12,.09,.127]));
     mesh(joints[`Forearm${side}`],new THREE.CylinderGeometry(.069,.069,.023,10),materials.gold,[0,-.07,0]);
@@ -159,7 +161,7 @@ export function createCharacter(classId='emberwitch') {
     mesh(headStyle,new THREE.SphereGeometry(.15,12,8,0,Math.PI*2,0,Math.PI*.65),materials.lining,[0,.073,-.032],[1,1.28,1]);
     for(const sign of [-1,1])ellipsoid(headStyle,materials.lining,[sign*.125,-.025,-.028],[.036,.16,.115]);
     if(classId==='veilranger')box(head,materials.lining,[0,-.027,.109],[.164,.07,.027]);
-    else {ellipsoid(chest,materials.gold,[0,.065,.157],[.063,.059,.034]);for(const sign of [-1,1])ellipsoid(chest,materials.dark,[sign*.022,.077,.186],[.014,.019,.009]);}
+    else {classChestProps.push(ellipsoid(chest,materials.gold,[0,.065,.157],[.063,.059,.034]));for(const sign of [-1,1])classChestProps.push(ellipsoid(chest,materials.dark,[sign*.022,.077,.186],[.014,.019,.009]));}
   }
   if(classId==='wildkeeper')for(const sign of [-1,1]){
     rod(headStyle,materials.gold,[sign*.10,.15,0],[sign*.22,.36,-.07],.019);
@@ -168,7 +170,7 @@ export function createCharacter(classId='emberwitch') {
     rod(headStyle,materials.gold,[sign*.24,.39,-.08],[sign*.34,.40,-.15],.01);
   }
   if(classId==='vanguard'||classId==='veilranger'||classId==='gravebinder'){
-    const cape=mesh(chest,new THREE.CylinderGeometry(.16,.29,classId==='gravebinder'?.95:.71,10,1,true,Math.PI/2,Math.PI),materials.lining,[0,-.29,-.072]);cape.name='ClassCape';cape.material=materials.lining.clone();cape.material.side=THREE.DoubleSide;
+    const cape=mesh(chest,new THREE.CylinderGeometry(.16,.29,classId==='gravebinder'?.95:.71,10,1,true,Math.PI/2,Math.PI),materials.lining,[0,-.29,-.072]);cape.name='ClassCape';cape.material=materials.lining.clone();cape.material.side=THREE.DoubleSide;classChestProps.push(cape);
   }
   if(classId==='veilranger'){
     const quiver=mesh(chest,new THREE.CylinderGeometry(.074,.066,.48,9),materials.leather,[-.17,-.11,-.20]);quiver.rotation.z=-.24;
@@ -180,7 +182,7 @@ export function createCharacter(classId='emberwitch') {
   const twoHandRig=new THREE.Group();twoHandRig.name='TwoHandWeaponRig';chest.add(twoHandRig);
   const palmOffset=new THREE.Vector3(0,-.045,.026),supportSocket=new THREE.Group();supportSocket.name='SupportSocket';supportSocket.position.copy(palmOffset);joints.HandL.add(supportSocket);
   const rightPalm=new THREE.Group();rightPalm.position.copy(palmOffset);joints.HandR.add(rightPalm);
-  let equipment={},equipmentKey='',weapon=null;
+  let equipment={},equipmentKey='',weapon=null,uniqueTorso=null,armorLimbs=null;
   const attachments=new Map();
   const spell=new THREE.Group();spell.name='ClassCastingFocus';joints.HandL.add(spell);spell.position.set(0,-.03,.13);spell.visible=false;
   const focusMaterial=new THREE.MeshBasicMaterial({color:profile.magic,transparent:true,opacity:.8,depthWrite:false});
@@ -284,14 +286,16 @@ export function createCharacter(classId='emberwitch') {
       }
       let right=new THREE.Vector3(...weapon.userData.primary),left=new THREE.Vector3(...weapon.userData.support);
       if(category==='bow'){
-        right.z=-.08-motion.handDraw*.30;weapon.userData.primary[2]=right.z;
-        const line=weapon.userData.string;line.geometry.attributes.position.setZ(1,-.08-motion.draw*.30);line.geometry.attributes.position.needsUpdate=true;
-        for(const limb of weapon.userData.bowLimbs){const sign=limb.userData.side;limb.rotation.x=-sign*.11*motion.draw;const tip=new THREE.Vector3(0,sign*.53,-.27).applyEuler(limb.rotation).add(limb.position);line.geometry.attributes.position.setXYZ(sign<0?0:2,...tip.toArray());}
-        weapon.userData.arrow.visible=motion.arrow;weapon.userData.arrow.position.z=-motion.draw*.30;
+        const ranged=weapon.userData.ranged,rest=ranged?.handRest||[0,0,-.08],travel=ranged?.drawDistance??.30;
+        right.set(rest[0],rest[1],rest[2]-motion.handDraw*travel);weapon.userData.primary=right.toArray();
+        const line=weapon.userData.string;line.geometry.attributes.position.setZ(1,(ranged?.stringRest??-.08)-motion.draw*travel);line.geometry.attributes.position.needsUpdate=true;
+        for(const limb of weapon.userData.bowLimbs){const sign=limb.userData.side;limb.rotation.x=-sign*(limb.userData.flex??.11)*motion.draw;const tip=new THREE.Vector3(...(limb.userData.tip||[0,sign*.53,-.27])).applyEuler(limb.rotation).add(limb.position);line.geometry.attributes.position.setXYZ(sign<0?0:2,...tip.toArray());}
+        weapon.userData.arrow.visible=motion.arrow;weapon.userData.arrow.position.z=-motion.draw*travel;
       }else if(category==='crossbow'){
-        weapon.userData.string.geometry.attributes.position.setZ(1,.19-motion.draw*.17);weapon.userData.string.geometry.attributes.position.needsUpdate=true;
+        const ranged=weapon.userData.ranged,rest=ranged?.handRest||[0,-.07,-.065],travel=ranged?.drawDistance??.17;
+        weapon.userData.string.geometry.attributes.position.setZ(1,(ranged?.stringRest??.19)-motion.draw*travel);weapon.userData.string.geometry.attributes.position.needsUpdate=true;
         weapon.userData.arrow.visible=motion.arrow;
-        right.set(.032*motion.reload,-.07+.125*motion.reload,-.065+(.255-motion.draw*.17)*motion.reload);
+        right.set(rest[0]+(ranged?.reloadSide??.032)*motion.reload,rest[1]+(ranged?.reloadLift??.125)*motion.reload,rest[2]+((ranged?.reloadAdvance??.255)-motion.draw*travel)*motion.reload);
         weapon.userData.primary=right.toArray();
       }
       const q=relativeQuaternion(weapon);
@@ -325,7 +329,7 @@ export function createCharacter(classId='emberwitch') {
       if(['examine','offer','ward'].includes(film.clip))solveArm('L',new THREE.Vector3(-.20,1.06,.38),new THREE.Quaternion(),[1,-.2,-.3]);
     }
     // Pauldrons hinge over the sleeve instead of swinging through the head.
-    for(const object of attachments.get('chest')?.objects||[]){if(object.parent.name.startsWith('UpperArm'))object.quaternion.copy(object.parent.quaternion).invert().slerp(neutralRotation,.32);}
+    for(const object of attachments.get('chest')?.objects||[])object.traverse(part=>{if(part.userData.armorPauldron)part.quaternion.copy(object.parent.quaternion).invert().slerp(neutralRotation,.32);});
     root.updateMatrixWorld(true);
     if(!airborne)groundPose(name);
   }
@@ -390,14 +394,24 @@ export function createCharacter(classId='emberwitch') {
   function equip(next={}) {
     if(next===equipment)return;
     const key=JSON.stringify(next);if(key===equipmentKey)return;equipmentKey=key;equipment=next;
-    for(const family of ARMOR_FAMILIES)armor[family].visible=next.chest?.family===family;
-    if(next.chest){const chosen=armor[next.chest.family],p=next.chest.material;chosen.material.color.set(next.chest.family==='light'?p.cloth:p.metal);
+    const bespokeChest=!!next.chest?.modelId;
+    if(armorLimbs?.userData.itemKey!==next.chest?.key&&armorLimbs){disposeObject(armorLimbs);armorLimbs=null;}
+    if(uniqueTorso?.userData.itemKey!==next.chest?.key){
+      if(uniqueTorso){disposeObject(uniqueTorso);uniqueTorso=null;}
+      // Equipment geometry is authored in the original body rest pose. Passing
+      // its bind matrix preserves the shared skeleton's inverses during swaps.
+      if(bespokeChest){uniqueTorso=skinGeometry(uniqueTorsoGeometry(next.chest),torsoWeight,uniqueTorsoMaterial(next.chest),next.chest.name,new THREE.Matrix4());uniqueTorso.userData.itemKey=next.chest.key;uniqueTorso.userData.modelId=next.chest.modelId;}
+    }
+    for(const family of ARMOR_FAMILIES)armor[family].visible=!bespokeChest&&next.chest?.family===family;
+    classChestProps.forEach(p=>p.visible=!bespokeChest);
+    if(next.chest&&!bespokeChest){const chosen=armor[next.chest.family],p=next.chest.material;chosen.material.color.set(next.chest.family==='light'?p.cloth:p.metal);
       if(classId!=='vanguard')chosen.material.color.set(armorPalette(next.chest,classId).cloth);
       else if(next.chest.family==='light')chosen.material.color.lerp(new THREE.Color(profile.cloth),.55);
       else chosen.material.color.multiplyScalar(.75);
     }
     const heavy=['plate','mythic'].includes(next.chest?.family);
     coatPanels.forEach((p,i)=>{
+      if(bespokeChest){p.visible=false;return;}
       if(classId==='vanguard'){p.scale.y=profile.coat*(heavy?.64:next.chest?.family==='mail'?.85:1);p.visible=!heavy||(i>=2&&i<=6);}
       else {
         const rank=armorRank(next.chest),length={emberwitch:[.68,1.05,1.28,1.5],gravebinder:[.8,1.1,1.32,1.48],wildkeeper:[.45,.66,.8,.9],veilranger:[.3,.48,.76,1]};
@@ -411,27 +425,35 @@ export function createCharacter(classId='emberwitch') {
     hairParts.forEach(p=>p.visible=!next.head||classId==='emberwitch');headStyle.visible=!next.head;
     bareHands.forEach(p=>p.visible=!next.gloves);baseBoots.forEach(p=>p.visible=!next.boots);
     shoulderPadding.forEach(p=>p.visible=!next.chest);
+    baseArmorLimbs.forEach(p=>p.visible=!next.chest);
     for(const slot of ['chest','main','off','head','gloves','boots','belt','ring1','ring2','amulet']){
       const item=next[slot],installed=attachments.get(slot);
       if(installed?.key===item?.key)continue;
       if(installed){installed.objects.forEach(disposeObject);attachments.delete(slot);}
       if(slot==='main')weapon=null;if(!item)continue;
       const objects=[];
-      if(slot==='chest'){for(const [joint,object] of Object.entries(createArmorDetails(item,classId))){joints[joint].add(object);objects.push(object);}}
+      if(slot==='chest'){
+        const limbs=createArmorLimbs(item,classId,bindPositions,bones.map(b=>b.name));
+        armorLimbs=skinGeometry(limbs.shell.geometry,null,limbs.shell.material,limbs.shell.name,new THREE.Matrix4());armorLimbs.userData={...limbs.shell.userData};
+        for(const [joint,object] of Object.entries(createArmorDetails(item,classId,limbs.parts))){joints[joint].add(object);objects.push(object);}
+      }
       else if(slot==='main'){weapon=createWeapon(item);(item.twoHand?twoHandRig:socket).add(weapon);objects.push(weapon);}
       else {
         const parents=slot==='head'?[head]:slot==='off'?[joints.HandL]:slot==='gloves'?[joints.HandL,joints.HandR]:
           slot==='boots'?[joints.FootL,joints.FootR]:slot==='belt'?[hips]:slot==='amulet'?[chest]:[slot==='ring1'?joints.HandL:joints.HandR];
-        for(const parent of parents){const object=createWearable(item,classId);parent.add(object);objects.push(object);if(slot==='off'){object.position.set(.075,-.07,.03);object.rotation.x=1.05;}}
+        for(const parent of parents){const object=createWearable(item,classId,parent.name.endsWith('R')?'R':'L');parent.add(object);objects.push(object);if(slot==='off'){object.position.set(...(object.userData.attachment?.position||[.075,-.07,.03]));object.rotation.set(...(object.userData.attachment?.rotation||[1.05,0,0]));}}
       }
       attachments.set(slot,{key:item.key,objects});
     }
+    for(const object of attachments.get('chest')?.objects||[])if(object.userData.armorOverlapSlot)object.visible=!next[object.userData.armorOverlapSlot];
+    updateArmorLimbCoverage(armorLimbs,next);
     root.updateMatrixWorld(true);
+    if(next.head?.modelId)hairParts.forEach(p=>p.visible=!!attachments.get('head')?.objects[0]?.userData.openHelmet);
   }
   root.scale.set(profile.width,profile.height,profile.width);
   equip();animate({state:'idle',t:0});
   function dispose(){skeleton.dispose();const geometries=new Set(),mats=new Set();root.traverse(o=>{if(o.geometry)geometries.add(o.geometry);if(o.material)mats.add(o.material);});geometries.forEach(g=>g.dispose());disposeMaterials(mats);}
-  return {root,classId,bones,joints,skeleton,socket,supportSocket,rightPalm,armor,clips,animate,equip,dispose,rest,attachments,get weapon(){return weapon;}};
+  return {root,classId,bones,joints,skeleton,socket,supportSocket,rightPalm,armor,clips,animate,equip,dispose,rest,attachments,get weapon(){return weapon;},get uniqueTorso(){return uniqueTorso;},get armorLimbs(){return armorLimbs;}};
 }
 
 // Game angles describe screen vectors; undo the 2:1 ground foreshortening.

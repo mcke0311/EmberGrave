@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import {createCharacter,facingYaw,weaponProjectileOrigin} from '../js/character3d.mjs';
 import {resolveCharacterVisual,CLASS_STYLES} from '../js/character_catalog3d.mjs';
 import {OrthographicCamera,Vector3} from '../js/vendor/three/three.module.min.js';
+import {UNIQUE_MODELS3D} from '../js/character_unique_catalog3d.mjs';
 
 let checks=0,maxPixelError=0,sampledPose;
 const ok=(v,m)=>{assert.ok(v,m);checks++;};
@@ -24,7 +25,7 @@ scope.Player3D.__setView({projectileOrigin(pose,equipment,{classId,scale}){
   model.root.rotation.y=facingYaw(pose.ang);model.equip(equipment);model.animate(pose);
   return weaponProjectileOrigin(model,scale);
 }});
-for(const name of ['utils','data','data_overrides','sprite_manifest','mapgen','navigation','items','entities'])vm.runInContext(read(name+'.js'),scope);
+for(const name of ['utils','data','data_overrides','unique_powers','sprite_manifest','mapgen','navigation','items','entities'])vm.runInContext(read(name+'.js'),scope);
 vm.runInContext(read('game.js').replace('    init, newGame, loadGame,',
   '    __setState:s=>state=s,\n    init, newGame, loadGame,'),scope);
 const {Game,Player,Projectile,DATA,U}=vm.runInContext('({Game,Player,Projectile,DATA,U})',scope);
@@ -37,10 +38,13 @@ const state={time:10,map,monsters:[],minions:[],projectiles:[]};Game.__setState(
 for(const id of Object.keys(CLASS_STYLES)){
   const model=createCharacter(id);models.set(id,model);
   const p=new Player('Projectile contract',id);p.x=p.y=20.5;state.player=p;
-  for(const family of ['bow','crossbow'])for(const tier of [0,13]){
-    p._playerVisual=resolveCharacterVisual(DATA,id,{main:{baseId:family+'2h_t'+tier},chest:{baseId:'chest_t'+tier}});
-    for(let direction=0;direction<16;direction++)for(const release of [0,.4,.73])for(const elevation of [0,3]){
-      map.elev.fill(elevation);p.jumpZ=elevation?11:0;p.visAng=direction*Math.PI/8;
+  const cases=[...['bow','crossbow'].flatMap(family=>[0,13].map(tier=>({family,tier,item:{baseId:family+'2h_t'+tier}}))),
+    ...Object.values(UNIQUE_MODELS3D).filter(r=>['bow','crossbow'].includes(r.category)).map(r=>({family:r.category,tier:13,item:{baseId:r.baseId,uniqueId:r.id,rarity:'unique'}}))];
+  for(const {family,tier,item} of cases){
+    p._playerVisual=resolveCharacterVisual(DATA,id,{main:item,chest:{baseId:'chest_t'+tier}});
+    const directions=item.uniqueId?8:16;
+    for(let direction=0;direction<directions;direction++)for(const release of [0,.4,.73])for(const elevation of [0,3]){
+      map.elev.fill(elevation);p.jumpZ=elevation?11:0;p.visAng=direction*Math.PI*2/directions;
       p.startAction('attack',.5);p.markActionRelease(.5*release);
       state.time=p.action.visual.startedAt+.5*release;
       // Deliberately leave the render snapshot on a different state/facing.
@@ -49,8 +53,8 @@ for(const id of Object.keys(CLASS_STYLES)){
       const [wx,wy]=U.screenVecToWorld(p.visAng),tx=p.x+wx*8,ty=p.y+wy*8;
       const input={x:p.x,y:p.y,tx,ty,speed:12,kind:'arrow',fromPlayer:true,mult:2,pierce:true};
       state.projectiles=[];Game.spawnProjectile(input);const pr=state.projectiles[0];
-      const label=[id,family,tier,direction,release,elevation].join('/');
-      const muzzle=model.weapon.localToWorld(new Vector3(...(family==='bow'?[0,0,.2]:[0,.055,.36])));
+      const label=[id,item.uniqueId||family,tier,direction,release,elevation].join('/');
+      const muzzle=model.weapon.localToWorld(new Vector3(...(model.weapon.userData.projectileSocket||(family==='bow'?[0,0,.2]:[0,.055,.36]))));
       const projected=screen(muzzle);
       const error=Math.hypot(U.isoX(pr.x-p.x,pr.y-p.y)-projected.x,
         U.isoY(pr.x-p.x,pr.y-p.y)-pr.lift+elevation*14+p.jumpZ-projected.y);

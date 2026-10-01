@@ -1,6 +1,7 @@
 <!doctype html><html lang="en"><meta charset="utf-8"><title>3D player game integration</title><style>body{background:#191820;color:#dccab8;font:14px system-ui;margin:20px}pre{white-space:pre-wrap}iframe{width:100%;height:700px;border:1px solid #756343}</style>
 <h1>3D-only player integration</h1><p>This isolated test uses an in-memory save store. It does not read or write your heroes.</p><pre id="result">Running…</pre><button id="classes" disabled>Show class selection</button><div id="host"></div>
 <script type="module">
+import {UNIQUE_MODELS3D} from '../js/character_unique_catalog3d.mjs';
 const out=document.getElementById('result'),store=new Map();window.integrationStore=store;
 let checks=0;const ok=(v,m)=>{checks++;if(!v)throw new Error(m);};
 const source=await fetch('../index.html',{cache:'no-store'}).then(r=>r.text());
@@ -54,9 +55,29 @@ try{
     const before=p._playerVisual;let rejected=false;
     try{await game.preparePlayerEquipment({...next,off:items.fromBase('shield_t13')});}catch(error){rejected=/two-handed/.test(error.message);}
     ok(rejected&&p._playerVisual===before,id+': invalid two-handed/shield transaction changed appearance');
-    const candidateA={...next,main:items.fromBase('wand_t12')},candidateB={...next,main:items.fromBase('crossbow2h_t13')};
+    const unique=key=>items.makeUnique(win.eval('DATA').UNIQUES.find(def=>def.id===key));
+    const candidateA={...next,main:unique('u_gen_5_11')},candidateB={...next,main:unique('u_gen_16_12')};
     const [a,b]=await Promise.all([game.preparePlayerEquipment(candidateA),game.preparePlayerEquipment(candidateB)]);
     ok(a===null&&!!b,id+': stale prepare was not discarded');p.equip=candidateB;ok(game.commitPlayerEquipment(b),id+': newest prepared loadout did not commit');
+    ok(p._playerVisual.equipment.main.modelId==='u_gen_16_12',id+': newest unique identity ignored');
+    const missing={...win.eval('DATA').UNIQUES[0],id:'u_known_missing_model'};win.eval('DATA').UNIQUES.push(missing);
+    const committed=p._playerVisual;let missingRejected=false;
+    try{await game.preparePlayerEquipment({main:items.makeUnique(missing)});}catch(error){missingRejected=/Missing or invalid unique 3D model/.test(error.message);}finally{win.eval('DATA').UNIQUES.pop();}
+    ok(missingRejected&&p._playerVisual===committed,id+': missing known unique changed committed appearance');
+    for(const recipe of Object.values(UNIQUE_MODELS3D)){
+      const item=unique(recipe.id);item.identified=false;item.ilvl=99;item.icon='stale-icon';item.playerVisualFamily='stale-family';
+      const equipment={[recipe.slot]:item},ready=await game.preparePlayerEquipment(equipment);p.equip=equipment;
+      ok(game.commitPlayerEquipment(ready)&&p._playerVisual.equipment[recipe.slot].modelId===recipe.id,id+'/'+recipe.id+': production preparation lost canonical model');
+    }
+    const main={vanguard:'u_gen_12_12',emberwitch:'u_gen_5_11',gravebinder:'u_gen_5_5',wildkeeper:'u_gen_4_12',veilranger:'u_gen_3_11'}[id];
+    const outfit={...next,main:unique(main),head:unique('u_gen_7_9'),chest:unique('u_gen_6_12'),gloves:unique('u_gen_18_12'),boots:unique('u_gen_8_12')};
+    if(!outfit.main.twoHand)outfit.off=unique('u_gen_17_7');
+    const outfitReady=await game.preparePlayerEquipment(outfit);p.equip=outfit;ok(game.commitPlayerEquipment(outfitReady),id+': full unique outfit failed');p.computeStats();
+    const remote=game.coop.makeHero('Remote '+id,id);remote.heroId='unique_'+id;remote.equip=JSON.parse(JSON.stringify(outfit));
+    await game.coop.prepareHero(remote);ok(remote._playerVisual.equipment.main.modelId===main,id+': remote hero lost canonical model');
+    const codec=win.eval('CoopCodec'),wire=JSON.stringify(codec.hero(remote));ok(!wire.includes('modelId'),id+': derived 3D model leaked into co-op persistence');
+    const remoteRound=codec.restoreHero(JSON.parse(wire));await game.coop.prepareHero(remoteRound);
+    ok(remoteRound._playerVisual.equipment.main.modelId===main&&remoteRound._playerVisual.equipment.chest.modelId==='u_gen_6_12',id+': restored co-op hero lost unique outfit');
     game.saveGame();
     const saved=JSON.parse(store.get(game.listSaves()[0].slot));ok(saved.playerRenderer==='three',id+': save lost renderer preference');
     await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
@@ -66,30 +87,38 @@ try{
         p.buffs=[{id:form,until:Infinity,infinite:true,stats:{}}];
         await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
         ok(!win.document.getElementById('appFatal')&&p._formVisual?.kind==='player3d'&&p._formVisual.form===form,'3D Wildkeeper transformation failed: '+form);
-        const equipment={...p.equip,main:items.fromBase('staff2h_t7')},ready=await game.preparePlayerEquipment(equipment);p.equip=equipment;ok(game.commitPlayerEquipment(ready),'equipment transaction failed during '+form);
+        const equipment={...p.equip,main:unique('u_gen_4_10')},ready=await game.preparePlayerEquipment(equipment);p.equip=equipment;ok(game.commitPlayerEquipment(ready),'equipment transaction failed during '+form);
         p.buffs=[];await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
-        ok(!win.document.getElementById('appFatal')&&!p._formVisual&&p._playerVisual.equipment.main.baseId==='staff2h_t7','equipped model did not return after '+form);
+        ok(!win.document.getElementById('appFatal')&&!p._formVisual&&p._playerVisual.equipment.main.modelId==='u_gen_4_10','equipped model did not return after '+form);
       }
     }
     if(id==='veilranger'){
-      const skill=Object.values(win.eval('DATA').SKILLS).find(s=>s.type==='afterimage');p.skills[skill.id]=1;p.mp=p.stats.maxMp;
+      // After-Image is a retained legacy effect, no longer a learnable talent.
+      // Exercise its production dispatcher without changing the live skill list.
+      const definitions=win.eval('DATA'),skill={...definitions.SKILLS.veilranger_2_0,id:'legacy_afterimage_fixture',name:'Legacy After-Image',type:'afterimage',range:()=>1,hp:()=>30,taunt:()=>5,lifetime:()=>10,mana:()=>0};
+      definitions.SKILLS[skill.id]=skill;p.skills[skill.id]=1;p.mana=p.stats.maxMana;
       const actorDraw=sprites.drawActor;sprites.drawActor=(ctx,opts,pose)=>{if(opts.summonArt==='decoy')throw Error('After-Image fell back to a 2D avatar');return actorDraw(ctx,opts,pose);};
       ok(p.performSkill(skill.id,null,{x:p.x+.25,y:p.y}),'After-Image cast failed');
       const echo=game.state.minions.find(m=>m.playerEcho);ok(echo?.playerEcho._playerVisual.kind==='player3d','After-Image used a 2D avatar');
+      ok(echo.playerEcho._playerVisual.equipment.main.modelId===p._playerVisual.equipment.main.modelId,'After-Image lost unique weapon identity');
       await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));ok(!win.document.getElementById('appFatal'),'3D After-Image failed to render');sprites.drawActor=actorDraw;
+      delete definitions.SKILLS[skill.id];delete p.skills[skill.id];
     }
     // All weapon families can use the actual equipment transaction, including shields.
     for(const base of ['sword_t0','axe_t0','mace_t0','dagger_t0','sword2h_t0','axe2h_t0','mace2h_t0','spear2h_t0','bow2h_t0','crossbow2h_t0','wand_t0','staff2h_t0']){
       const equipment={...next,main:items.fromBase(base)};if(!equipment.main.twoHand)equipment.off=items.fromBase('shield_t0');
       const ready=await game.preparePlayerEquipment(equipment);p.equip=equipment;ok(game.commitPlayerEquipment(ready),id+'/'+base+': weapon commit failed');
     }
-    game.saveGame();out.textContent=`Checked ${id}…`;
+    const restored=await game.preparePlayerEquipment(outfit);p.equip=outfit;ok(game.commitPlayerEquipment(restored),id+': unique outfit restore failed');game.saveGame();
+    const roundSlot=game.listSaves().find(save=>save.name==='3D integration '+id).slot;await game.loadGame(roundSlot);
+    ok(game.state.player._playerVisual.equipment.main.modelId===main&&game.state.player._playerVisual.equipment.chest.modelId==='u_gen_6_12',id+': save/reload lost unique models');
+    out.textContent=`Checked ${id}…`;
   }
   const slot=game.listSaves()[0].slot;({win,game,items,sprites}=await frame());
   ok(win.Player3D.only3D,'reload did not begin in default 3D mode');
   await game.loadGame(slot);
   ok(win.Player3D.only3D&&game.state.player._playerVisual.kind==='player3d','loading a 3D save did not restore 3D rendering');
-  ok(game.state.player.equip.main.baseId==='staff2h_t0'&&game.state.player.equip.gloves.baseId==='gloves_t13','equipment did not survive save/reload');
+  ok(game.state.player._playerVisual.equipment.main.modelId==='u_gen_3_11'&&game.state.player._playerVisual.equipment.gloves.modelId==='u_gen_18_12','unique equipment did not survive save/reload');
   await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
   ok(!win.document.getElementById('appFatal'),'restored game failed to render');
   ok(!win.document.querySelector('#player3dControls,#playerRendererNote'),'sprite switch is still available');
@@ -100,7 +129,7 @@ try{
   ok(!game.state&&!win.performance.getEntriesByType('resource').some(r=>/\/players\/|\/forms\//.test(r.name)),'WebGL failure fell back to player sprites');
   ({win,game,items,sprites}=await frame());await game.loadGame(slot);
   document.getElementById('classes').disabled=false;document.getElementById('classes').onclick=()=>{game.saveAndQuit();[...win.document.querySelectorAll('#titleMenu button')].find(b=>b.textContent==='SINGLE PLAYER').click();};
-  out.textContent=`PASS: ${checks} checks: mandatory 3D, class selection, older saves and URLs, five classes, equipment transactions, all four transformations, save/reload, and zero legacy player sprite calls or downloads, and WebGL failure handling.\nAll saves were isolated in memory.`;
+  out.textContent=`PASS: ${checks} checks: mandatory 3D, class selection, older saves and URLs, 118 uniques × five classes, equipment transactions and missing-model rollback, all four transformations, After-Image identity, unique save/reload, zero legacy player sprite calls or downloads, and WebGL failure handling.\nAll saves were isolated in memory.`;
   document.body.dataset.testStatus='passed';
 }catch(error){out.textContent='FAIL: '+error.stack;document.body.dataset.testStatus='failed';}
 </script></html>

@@ -1,9 +1,11 @@
 import * as THREE from './vendor/three/three.module.min.js';
 import {equipmentMaterials} from './character_materials3d.mjs?v=2';
 export {equipmentMaterials} from './character_materials3d.mjs?v=2';
-import {disposeObject,mesh,box,orb,rod,curved,plate,edge,rivet,band,wrap,combineStatic,formedPlate} from './character_mesh3d.mjs';
-export {disposeObject,mesh,box,orb,rod} from './character_mesh3d.mjs';
-import {createClassArmorDetails,createClassWearable} from './character_armor3d.mjs?v=4';
+import {disposeObject,mesh,box,orb,rod,curved,plate,edge,rivet,band,wrap,combineStatic,formedPlate} from './character_mesh3d.mjs?v=body-armor-1';
+export {disposeObject,mesh,box,orb,rod} from './character_mesh3d.mjs?v=body-armor-1';
+import {createClassArmorDetails,createClassWearable} from './character_armor3d.mjs?v=body-armor-1';
+import {attachArmorLimbDetails} from './character_body_armor3d.mjs?v=body-armor-1';
+import {createUniqueWeapon,createUniqueWearable,createUniqueArmorDetails} from './character_unique_equipment3d.mjs?v=body-armor-1';
 
 function blade(parent,m,start,length,width){
   // Parallel cutting edges taper into a point around a raised central ridge.
@@ -15,6 +17,7 @@ function blade(parent,m,start,length,width){
   for(const s of [-1,1])rod(parent,m.dark,[s*width*.25,start+.07,width*.22],[s*width*.18,start+length*.65,width*.17],.002);
 }
 export function createWeapon(item){
+  if(item.modelId)return createUniqueWeapon(item);
   const root=new THREE.Group();root.name=item.name;root.userData.itemKey=item.key;
   const m=equipmentMaterials(item),two=item.twoHand,category=item.family.split('_')[0],ornate=item.tier>=6||!!item.namedId;
   let support=null,string=null,arrow=null;const bowLimbs=[],gripLength=two?.32:.18;
@@ -91,7 +94,15 @@ export function createWeapon(item){
 // Convex formed plates replace the inflated sphere silhouettes of the study.
 function armorBand(parent,mat,y,rx,rz,height){return mesh(parent,new THREE.CylinderGeometry(1,1.03,height,16,1,true),mat,[0,y,0],[rx,1,rz]);}
 
-export function createArmorDetails(item,classId='vanguard'){
+export function createArmorDetails(item,classId='vanguard',limbs){
+  const parts=createTorsoDetails(item,classId);
+  // Only the existing pauldrons receive the shoulder hinge correction.
+  if(limbs)return attachArmorLimbDetails(parts,limbs);
+  for(const [bone,part] of Object.entries(parts))if(bone.startsWith('UpperArm'))part.userData.armorPauldron=true;
+  return parts;
+}
+function createTorsoDetails(item,classId){
+  if(item.modelId)return createUniqueArmorDetails(item,classId);
   if(classId!=='vanguard')return createClassArmorDetails(item,classId);
   const m=equipmentMaterials(item),f=item.family,heavy=f==='plate'||f==='mythic',ornate=f==='mythic';
   const parts={};for(const key of ['Chest','Spine','Hips','UpperArmL','UpperArmR','ThighL','ThighR']){parts[key]=new THREE.Group();parts[key].name=`${item.name} / ${key}`;}
@@ -140,7 +151,8 @@ export function createArmorDetails(item,classId='vanguard'){
   Object.values(parts).forEach(p=>combineStatic(p));return parts;
 }
 
-export function createWearable(item,classId='vanguard'){
+export function createWearable(item,classId='vanguard',side='L'){
+  if(item.modelId)return createUniqueWearable(item,classId,side);
   if(classId!=='vanguard')return createClassWearable(item,classId);
   const root=new THREE.Group();root.name=item.name;root.userData.itemKey=item.key;
   const m=equipmentMaterials(item),f=item.family,heavy=f==='plate'||f==='mythic',ornate=f==='mythic';

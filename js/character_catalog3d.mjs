@@ -1,4 +1,5 @@
 // Shared by the game, wardrobe and coverage tests. No dependency on sprite atlases.
+import {uniqueEquipmentModel} from './character_unique_catalog3d.mjs?v=body-armor-1';
 export const WEAPON_FAMILIES = ['sword_1h','sword_2h','axe_1h','axe_2h','mace_1h','mace_2h','dagger_1h','spear_2h','bow_2h','crossbow_2h','wand_1h','staff_2h'];
 export const ARMOR_FAMILIES = ['light','mail','plate','mythic'];
 export const EQUIPMENT_SLOTS = ['main','off','head','chest','gloves','boots','belt','ring1','ring2','amulet'];
@@ -27,21 +28,24 @@ export function resolveEquipmentItem(data,item,slot) {
   const base=data.BASES[item.baseId];if(!base)throw new Error(`Unknown equipped item: ${item.baseId}`);
   const expected=slot.startsWith('ring')?'ring':slot;
   if(base.slot!==expected)throw new Error(`${base.name} belongs in ${base.slot}, not ${slot}`);
-  const tier=item.materialTier??base.materialTier??tierFor(base);
+  const model=uniqueEquipmentModel(data,item,base,slot);
+  const tier=model?(base.materialTier??tierFor(base)):(item.materialTier??base.materialTier??tierFor(base));
   if(!Number.isInteger(tier)||tier<0||tier>13)throw new Error(`Invalid material tier for ${base.id}`);
-  const family=slot==='main'?(item.playerVisualFamily||base.playerVisualFamily):slot==='off'?'shield':
-    ['head','chest'].includes(slot)?(item.playerVisualFamily||base.playerVisualFamily||armorFamily(tier)):
+  const family=slot==='main'?((!model&&item.playerVisualFamily)||base.playerVisualFamily):slot==='off'?'shield':
+    ['head','chest'].includes(slot)?((!model&&item.playerVisualFamily)||base.playerVisualFamily||armorFamily(tier)):
     ['gloves','boots','belt'].includes(slot)?armorFamily(tier):expected;
   if(slot==='main'&&!WEAPON_FAMILIES.includes(family))throw new Error(`No 3D weapon family: ${family}`);
   if(['head','chest','gloves','boots','belt'].includes(slot)&&!ARMOR_FAMILIES.includes(family))throw new Error(`No 3D armor family: ${family}`);
   if(slot==='off'&&base.cat!=='shield')throw new Error(`No 3D off-hand model: ${base.cat}`);
   const named=item.uniqueId?(data.UNIQUES||[]).find(u=>u.id===item.uniqueId):item.setItemId?(data.SET_ITEMS||[]).find(s=>s.id===item.setItemId):null;
-  const art=named?.art||{},[metal,wood]=TIER_MATERIALS[tier];
+  const art=model?.material||named?.art||{},[metal,wood]=TIER_MATERIALS[tier];
   const result={baseId:base.id,name:item.name||base.name,slot,family,tier,twoHand:!!base.twoHand,
     namedId:item.uniqueId||item.setItemId||null,rarity:item.rarity||'common',
     material:{metal:art.metal||metal,wood:art.wood||wood,cloth:art.cloth||'#493e34',
       leather:art.leather||art.wood||wood,trim:art.trim||(tier>=4?'#947a4e':'#75716a'),
       glow:art.glow||(item.rarity==='set'?'#4d8869':null)}};
+  if(model){result.modelId=model.id;result.modelRevision=model.revision;}
+  if(slot==='chest')result.bodyArmorRevision=1;
   result.key=JSON.stringify(result);return Object.freeze(result);
 }
 export function resolveCharacterVisual(data,classId,equip={}) {

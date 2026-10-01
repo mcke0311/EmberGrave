@@ -1,0 +1,66 @@
+{
+  "errors": [],
+  "missing": [],
+  "gallery": [],
+  "armory": {},
+  "render": {
+    "models": 118,
+    "classes": 5,
+    "frames": 8970,
+    "checks": 17235,
+    "memory": {
+      "vanguard": {
+        "warm": {
+          "geometries": 110,
+          "textures": 43
+        },
+        "settled": {
+          "geometries": 110,
+          "textures": 43
+        }
+      },
+      "emberwitch": {
+        "warm": {
+          "geometries": 206,
+          "textures": 83
+        },
+        "settled": {
+          "geometries": 206,
+          "textures": 83
+        }
+      },
+      "gravebinder": {
+        "warm": {
+          "geometries": 308,
+          "textures": 123
+        },
+        "settled": {
+          "geometries": 308,
+          "textures": 123
+        }
+      },
+      "wildkeeper": {
+        "warm": {
+          "geometries": 413,
+          "textures": 163
+        },
+        "settled": {
+          "geometries": 413,
+          "textures": 163
+        }
+      },
+      "veilranger": {
+        "warm": {
+          "geometries": 515,
+          "textures": 203
+        },
+        "settled": {
+          "geometries": 515,
+          "textures": 203
+        }
+      }
+    },
+    "maxCalls": 73
+  },
+  "ordinaryRender": "PASS: 57620 rendered checks; five classes × 12 weapon families × eight states × eight directions × six timeline samples, with full mythic armor.\nCompleted in 85494 ms. The sheet also shows light armor and attacks."
+}

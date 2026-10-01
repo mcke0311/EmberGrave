@@ -42,8 +42,12 @@ export function combineStatic(root,skip=new Set()){
   for(const [material,meshes] of groups){
     const geometries=meshes.map(m=>{const g=m.geometry.clone().applyMatrix4(inverse.clone().multiply(m.matrixWorld));if(!g.index)return g;const expanded=g.toNonIndexed();g.dispose();return expanded;});
     const count=geometries.reduce((n,g)=>n+g.attributes.position.count,0),result=new THREE.BufferGeometry();
-    for(const [name,size] of [['position',3],['normal',3],['uv',2]]){
-      const array=new Float32Array(count*size);let offset=0;for(const g of geometries){if(g.attributes[name])array.set(g.attributes[name].array,offset);offset+=g.attributes.position.count*size;}result.setAttribute(name,new THREE.BufferAttribute(array,size));
+    const attributes=[['position',3],['normal',3],['uv',2]];
+    if(geometries.some(g=>g.attributes.color))attributes.push(['color',3]);
+    if(geometries.some(g=>g.attributes.skinIndex))attributes.push(['skinIndex',4],['skinWeight',4]);
+    for(const [name,size] of attributes){
+      const array=name==='skinIndex'?new Uint16Array(count*size):new Float32Array(count*size);if(name==='color')array.fill(1);
+      let offset=0;for(const g of geometries){if(g.attributes[name])array.set(g.attributes[name].array,offset);offset+=g.attributes.position.count*size;}result.setAttribute(name,new THREE.BufferAttribute(array,size));
     }
     for(const old of meshes){old.geometry.dispose();old.removeFromParent();}geometries.forEach(g=>g.dispose());mesh(root,result,material);
   }
