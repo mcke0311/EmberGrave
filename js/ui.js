@@ -1960,6 +1960,7 @@ const UI = (() => {
     mk("Resume", () => closeEsc());
     mk("Controls", () => openSettings({ tab: "controls", origin: "pause" }));
     mk("Settings", () => openSettings({ origin: "pause" }));
+    if(typeof Cinematics!=='undefined'&&!(typeof Coop!=='undefined'&&Coop.active))mk('Cinematics',()=>Cinematics.openLibrary());
     if(typeof MobileShell!=='undefined'&&MobileShell.enabled){
       const loot=mk('Loot labels: '+(Game.options.alwaysLabels?'On':'Off'),()=>{Game.options.alwaysLabels=!Game.options.alwaysLabels;Game.saveOptions();loot.textContent='Loot labels: '+(Game.options.alwaysLabels?'On':'Off');loot.setAttribute('aria-pressed',String(Game.options.alwaysLabels));});loot.setAttribute('aria-pressed',String(Game.options.alwaysLabels));
       if(typeof Coop!=='undefined'&&Coop.active)mk('Party',()=>{closeEsc();CoopUI.party();});
@@ -2043,7 +2044,7 @@ const UI = (() => {
       }
       return;
     }
-    const toggles = tab === "gameplay" ? [["directCast", "F1–F4: cast directly", "Cast toward the cursor. A press in the final 150 ms of an attack queues one skill; off retains classic skill selection."],["leftClickMove", "Left-click: move only", "Move and interact without attacking. Hold Shift and left-click to attack in place."]] : [
+    const toggles = tab === "gameplay" ? [["cinematics","Automatic cinematics","Play new story scenes once per hero. Every scene can be skipped and replayed from Cinematics."],["directCast", "F1–F4: cast directly", "Cast toward the cursor. A press in the final 150 ms of an attack queues one skill; off retains classic skill selection."],["leftClickMove", "Left-click: move only", "Move and interact without attacking. Hold Shift and left-click to attack in place."]] : [
       ["dmgNumbers", "Player damage numbers", "Show floating damage numbers from your attacks."],
       ["minionDamage", "Minion damage numbers", "Show your minions’ damage independently of player damage numbers."],
       ["monResist", "Monster resistances", "Show resistances when you point at a monster."],
@@ -2223,7 +2224,7 @@ const UI = (() => {
 
   /* ================================================== in-game video cinematic */
   let videoOn = false;
-  function cinematicActive() { return (typeof UpgradeUI!=="undefined"&&UpgradeUI.active) || videoOn || !els.cinematic.classList.contains("hidden"); }
+  function cinematicActive() { return (typeof Cinematics!=='undefined'&&Cinematics.active) || (typeof UpgradeUI!=="undefined"&&UpgradeUI.active) || videoOn || !els.cinematic.classList.contains("hidden"); }
   /* play a full-screen video, pausing the game; fade in, then fade back and call onDone */
   function playVideo(src, onDone, coopLocal=false) {
     if(typeof Coop!=="undefined"&&Coop.active&&!coopLocal)return Coop.cinematic(src,onDone);
@@ -2287,6 +2288,7 @@ const UI = (() => {
   };
   function openFinalChoice() {
     const el = els.cinematic;
+    el.onclick=null;clearCin();Game.cancelMenuInput();
     el.classList.remove("hidden");
     el.innerHTML = `<div class="cinwrap">
       <div class="cintext"><span class="ln show em">Vethriss is dead. The gathered shards collapse into a single, humming core at your feet.</span>
@@ -2295,14 +2297,26 @@ const UI = (() => {
     const list = el.querySelector("#choiceList");
     for (const key of ["give", "seal", "destroy"]) {
       const e = ENDINGS[key];
-      const b = document.createElement(typeof MobileShell!=='undefined'&&MobileShell.enabled?'button':'div'); b.className = "choicebtn";
+      const b = document.createElement('button'); b.className = "choicebtn";
       if(b.tagName==='BUTTON')b.type='button';
       b.innerHTML = `<b>${e.name}</b>${e.sub}`;
       b.addEventListener("click", () => {  showEnding(key); });
       list.appendChild(b);
     }
+    list.querySelector('button')?.focus();
   }
   function showEnding(key,afterScene=false) {
+    if(!afterScene&&typeof Cinematics!=='undefined'&&!(typeof Coop!=='undefined'&&Coop.active)){
+      Game.recordEnding(key);const world=Game.state;
+      if(world?.flags.ending!==key)return;
+      els.cinematic.classList.add('hidden');els.cinematic.onclick=null;clearCin();
+      Cinematics.request('ending_'+key).then(result=>{
+        if(result==='cancelled'||Game.state!==world)return;
+        const el=els.cinematic;el.replaceChildren();el.classList.remove('hidden');
+        const box=textNode('div','cinwrap');box.append(textNode('h2','',ENDINGS[key].name),textNode('p','',ENDINGS[key].sub),textNode('p','','The Waking World endures. For now.'));
+        const back=actionButton('Return to title',()=>{el.classList.add('hidden');el.replaceChildren();Game.saveAndQuit();},'cine-button');box.append(back);el.append(box);back.focus();
+      });return;
+    }
     if(key==='give'&&!afterScene&&typeof UpgradeUI!=='undefined'){Game.recordEnding(key);els.cinematic.classList.add('hidden');UpgradeUI.story('warden',()=>showEnding(key,true));return;}
     const e = ENDINGS[key];
     const el = els.cinematic;el.classList.remove("hidden");

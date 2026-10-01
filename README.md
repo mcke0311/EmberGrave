@@ -69,10 +69,20 @@ each with its own biome, camp hub, NPCs, quests and boss:
 > optional lower-level area, reachable from the start via its travel-shrine waystone,
 > with its own self-contained six-quest line and bosses.
 
-Completing the saga (defeating Vethriss) unlocks the next **difficulty tier**.
+Completing the saga and choosing the core's fate unlocks the next **difficulty tier**.
 
 Each act boss lights a **waystone** to the next act's camp. The finale ends in a
 **three-way choice** over the last Sunderstone core, each with its own ending.
+
+The main saga has **20 live cinematics**: story discoveries, six boss introductions,
+act arrivals and all three endings. A first journey includes 17 campaign scenes
+and its chosen ending, totaling about five minutes. They use your equipped hero
+and the existing world art. **Skip scene** or **Escape** resumes play immediately.
+Turn off **Automatic cinematics** in Gameplay settings; reached scenes remain
+available in **Pause → Cinematics**, with transcripts and isolated replays.
+Viewing history carries across difficulties. Existing co-op Act I presentations
+continue unchanged. See [the cinematic guide](docs/CINEMATICS.md) and the isolated
+20-scene review at `tests/cinematics_review.html`.
 
 Quests are handed out by the people and postings of each camp (look for the
 bobbing **!** / **?**). Bosses fight in **phases** — shedding armor, changing shape,

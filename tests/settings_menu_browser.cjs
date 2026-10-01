@@ -75,6 +75,8 @@ const equal = (a, b, message) => { assert.deepEqual(a, b, message); checks++; };
       equal(await slider.getAttribute('aria-valuetext'), value + '%', key + ' accessible value stale');
     }
     await tab(page, 'Gameplay');
+    ok(await page.locator('#setting-cinematics').isChecked(), 'automatic cinematics default is on');
+    await page.locator('#setting-cinematics').uncheck();
     ok(await page.locator('#setting-leftClickMove').isChecked(), 'stored movement option not loaded');
     await page.locator('#setting-leftClickMove').uncheck();
     await capture(page, 'desktop-gameplay');
@@ -117,7 +119,7 @@ const equal = (a, b, message) => { assert.deepEqual(a, b, message); checks++; };
     ok(await page.locator('#escmenu').isHidden(), 'Escape did not return to title');
     ok(await titleSettings(page).evaluate(el => el === document.activeElement && !el.closest('[inert]')), 'title focus/inert state not restored');
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('embergrave_options')));
-    equal(stored, { leftClickMove: false, dmgNumbers: true, minionDamage: false, monResist: false, screenShake: true, minionBars: 'never', alwaysLabels: true, lootFilter: 2, vol: { master: .61, sfx: .37, music: .12 } }, 'options changed or lost during save');
+    equal(stored, { cinematics:false, directCast:false, leftClickMove: false, dmgNumbers: true, minionDamage: false, monResist: false, screenShake: true, minionBars: 'never', alwaysLabels: true, lootFilter: 2, vol: { master: .61, sfx: .37, music: .12 } }, 'options changed or lost during save');
     await page.reload({ waitUntil: 'load' }); await titleSettings(page).click();
     equal(await page.locator('.setting-value').allTextContents(), ['61%', '37%', '12%'], 'audio did not survive reload');
     equal(await page.evaluate(() => ({ ...Game.options, vol: { ...Sfx.vol } })), stored, 'options did not survive reload');

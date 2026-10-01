@@ -1,4 +1,5 @@
 import {gaitProfile,footPath} from './character_motion3d.mjs';
+import {applyCinematicBody} from './character_cinematic3d.mjs';
 // Class-authored body poses. The authored contact pose is mapped to the game's
 // common melee, ranged and casting delays without changing gameplay duration.
 export const CLASS_ANIMATIONS={
@@ -302,5 +303,5 @@ export function sampleHumanoid(id,pose,equipment={},depth=0){
     for(const key of ['socket','draw','handDraw','reload','power','spell','cloth'])motion[key]=lerp(old.motion[key],motion[key],w);
     if(motion.rootSpace)motion.rootWeight=lerp(old.motion.rootWeight,motion.rootWeight,w);
   }
-  return result;
+  return applyCinematicBody(result,pose.ex?.cinematic);
 }
