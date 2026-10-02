@@ -37,7 +37,7 @@ s=world('tomb_sanctum');s.quests.q14={state:'done'};start(s,'opt_desert_2');
 G.__bossTest.questKillEvent({defId:'chained_sovereign'});
 ok(s.quests.opt_desert_2.state==='reward','Sovereign objective cannot complete');
 // Exercise the production travel path, including return keys, shrine arrivals,
-// cached maps and the shifting tomb exception with isolated in-memory saves.
+// cached maps, including Shifting Tombs, with isolated in-memory saves.
 s=world('khalcamp');
 for(const zone of ['desert_wastes','underground_market','sand_tombs','khal_palace','shard_flats','tomb_sanctum']){
  const key=zone==='desert_wastes'?'from_camp':'from_wild';
@@ -48,7 +48,7 @@ for(const zone of ['desert_wastes','underground_market','sand_tombs','khal_palac
 }
 ok(await G.enterMap('sand_tombs','from_wild'),'tomb first visit');const first=G.state.map;
 ok(await G.enterMap('desert_wastes','from_tombs'),'leave tomb');ok(await G.enterMap('sand_tombs','from_wild'),'tomb second visit');
-ok(first!==G.state.map,'shifting tomb reused its map');
+ok(first===G.state.map,'Shifting Tombs changed during the session');
 ok(D.ACTS.find(a=>a.id===3).next==='cathedral1','Act IV progression changed');
 const report={status:'PASS',checks,coverage:'Relays and guards, partial saves, scholar rescue and regeneration, boss/map prerequisite, saved recovery, production travel and shrine/portal arrivals.'};
 fs.mkdirSync('tests/qa/act3',{recursive:true});fs.writeFileSync('tests/qa/act3/quests.json',JSON.stringify(report,null,2)+'\n');console.log(report);

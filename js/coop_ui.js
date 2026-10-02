@@ -42,15 +42,17 @@ const CoopUI=(()=>{
     for(const c of campaigns.filter(c=>c.ownerHeroId===hero.id)){const o=el('option',c.name);o.value=c.id;saved.append(o);}
     saved.value=draft[hero.id]||'';saved.onchange=()=>draft[hero.id]=saved.value;field(d,'Host campaign',saved);
     const name=field(d,'Party name (hosting)',el('input'));name.id='coopName';name.maxLength=40;name.value=hero.name+"'s party";
+    const seed=field(d,'World seed (hosting, optional)',el('input'));seed.id='coopSeed';seed.type='number';seed.min='0';seed.max='4294967295';seed.step='1';seed.placeholder='Random each session';
     const password=field(d,'Password (optional)',el('input'));password.id='coopPassword';password.type='password';password.maxLength=128;password.autocomplete='off';
     d.append(el('p','A password hides your party from the browser. Share its invitation and password with friends.','coop-note'));
     const code=field(d,'Room code',el('input'));code.id='coopRoom';code.maxLength=10;code.autocomplete='off';code.value=draft.room??new URLSearchParams(location.hash.slice(1)).get('coop')??Coop.resumeInfo()?.room??'';code.oninput=()=>draft.room=code.value;
     const advanced=el('details'),summary=el('summary','Connection settings');advanced.append(summary);d.append(advanced);
     const relay=field(advanced,'Relay address',el('input'));relay.id='coopRelay';relay.value=draft.relay||window.COOP_CONFIG.relayUrl;relay.oninput=()=>draft.relay=relay.value;
     async function start(mode){
+      if(mode==='host'&&seed.value!==''&&!seed.checkValidity()){seed.reportValidity();return;}
       window.COOP_CONFIG.relayUrl=relay.value.trim();status('Connecting to the party… The server may take up to a minute to wake up.');d.setAttribute('aria-busy','true');
       const controls=[...d.querySelectorAll('button,input,select')];controls.forEach(b=>b.disabled=true);
-      try{await Coop.connect(mode,hero.id,code.value.trim().toUpperCase(),saved.value||null,{name:name.value.trim(),password:password.value});if(dialog===d)status('Loading your hero…');}
+      try{await Coop.connect(mode,hero.id,code.value.trim().toUpperCase(),saved.value||null,{name:name.value.trim(),password:password.value,...(mode==='host'&&seed.value!==''?{seed:Number(seed.value)}:{})});if(dialog===d)status('Loading your hero…');}
       catch(e){status(e.message);}finally{d.removeAttribute('aria-busy');controls.forEach(b=>b.disabled=false);}
     }
     const actions=el('div',null,'coop-actions');actions.append(button('Host party',()=>start('host'),'coop-primary'),button('Join by code',()=>start('join')));d.append(actions);

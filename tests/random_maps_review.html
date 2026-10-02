@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Session map review · Embergrave</title>
+<style>body{margin:0;background:#11191d;color:#ddd7c8;font:14px system-ui}header{padding:16px}h1{font:26px Georgia;margin:0 0 10px}label{margin-right:12px}select,input,button{padding:7px;background:#253038;color:inherit;border:1px solid #69716d}input{width:130px}#status{color:#a8c6b1}iframe{border:0;display:block;transform-origin:top left}#host{overflow:hidden}#overview{margin:12px;max-width:90vw;image-rendering:pixelated}p{max-width:900px}</style>
+<header><h1>Session map review</h1><p>Seeded geography with the existing game artwork. This review uses an isolated hero and temporary memory storage.</p>
+<label>Area <select id="zone"></select></label><label>Session seed <input id="seed" type="number" value="12345" min="0" max="4294967295"></label><label>Size <select id="size"><option value="1920">Desktop</option><option value="844">Phone</option></select></label><button id="load">Load</button><p id="status">Preparing…</p></header>
+<div id="host"></div><canvas id="overview"></canvas>
+<script type="module">
+const root=new URL('../',location.href),el=id=>document.getElementById(id);
+window.randomMapStore=new Map();let frame,api,originalGenerate,baselineGenerate;
+async function init(){
+ const [html,source]=await Promise.all(['index.html','js/game.js'].map(p=>fetch(new URL(p,root)).then(r=>r.text())));
+ const game=source.replace('Game.init().catch','Game.init().then(()=>window.__ready=true).catch').replace('    init, newGame, loadGame,',
+ `    __mapQA:{render,update,updateCamera,place(x,y){state.player.x=x;state.player.y=y;state.player.path=null;state.player.command=null;state.player.jumping=null;state.player.jumpZ=0;state.player._animationController?.reset();camPos={x:U.isoX(x,y)-canvas.width/2,y:U.isoY(x,y)-surfaceLift(x,y)-canvas.height/2-20};shakeOx=shakeOy=0;}},\n    init, newGame, loadGame,`);
+ if(!game.includes('__mapQA:'))throw Error('Game review hooks missing');
+ const injection=`<base href="${root}"><script>const store=parent.randomMapStore;Object.defineProperty(window,'localStorage',{value:{get length(){return store.size},key:i=>[...store.keys()][i]??null,getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(String(k),String(v)),removeItem:k=>store.delete(k),clear:()=>store.clear()}});window.requestAnimationFrame=()=>0;<\/script>`;
+ frame=document.createElement('iframe');frame.title='Isolated session map';frame.srcdoc=html.replace('<head>','<head>'+injection).replace(/<script src="js\/game.js[^\"]*"><\/script>/,()=>'<script>'+game+'<\/script>');el('host').append(frame);
+ await new Promise(r=>frame.onload=r);const win=frame.contentWindow;
+ for(let i=0;i<900&&!win.__ready;i++){if(win.document.querySelector('#appFatal'))throw Error(win.document.querySelector('#appFatalDetail').textContent);await new Promise(r=>setTimeout(r,25));}
+ if(!win.__ready)throw Error('Game startup timed out');
+ api=win.eval('({Game,UI,Sfx,MapGen,U,DATA,TerrainNavigation,LevelTerrain,MobileShell})');originalGenerate=api.MapGen.generate;
+ api.Sfx.setVol('master',0);await api.Game.newGame('Map review','vanguard',false);await (await import('./completed_hero_fixture.mjs')).loadCompletedHero(api.Game);
+ api.UI.hideTitle();api.UI.closeAll();api.Game.debugFlags.god=true;api.Game.options.screenShake=false;api.Game.options.cinematics=false;
+ for(const z of Object.values(api.DATA.ZONES).filter(z=>!z.arena&&!z.opening&&!['town','camp'].includes(z.kind)))el('zone').add(new Option(z.name,z.id));
+ window.randomMapsQA={load,view,profile,get state(){return api.Game.state;},get api(){return api;}};
+ await load('north_wild',12345,1920);window.__reviewReady=true;
+}
+async function load(zone,seed,width=1920,mode='current'){
+ el('status').textContent='Generating '+zone+'…';el('zone').value=zone;el('seed').value=seed;el('size').value=width;
+ if(mode==='before'&&!baselineGenerate){const response=await fetch(new URL('tmp/random_maps/before/js/mapgen.js',root));if(!response.ok)throw Error('Missing pre-change mapgen snapshot');frame.contentWindow.eval((await response.text()).replace('const MapGen =','window.__baselineMapGen ='));baselineGenerate=frame.contentWindow.__baselineMapGen.generate;}
+ api.MapGen.generate=mode==='before'?baselineGenerate:originalGenerate;
+ const height=width===844?390:1080,scale=Math.min(1,innerWidth/width);frame.style.width=width+'px';frame.style.height=height+'px';frame.style.transform=`scale(${scale})`;el('host').style.height=height*scale+'px';api.MobileShell.refresh();frame.contentWindow.dispatchEvent(new Event('resize'));
+ const s=api.Game.state;s.sessionSeed=seed>>>0;s.seed=seed>>>0;s.mapsCache={};s.monstersByMap={};s.groundByMap={};s.map=null;s.portal=null;s.arenaParents={};s.flags.fn_temple_open=true;
+ frame.contentWindow.Math.random=api.U.rng(seed^7331);await api.Game.enterMap(zone,'default');s.map.explored.fill(1);api.UI.closeAll();view('arrival');overview();
+ el('status').textContent=`${s.map.zone.name} · session ${seed} · area ${s.map.layoutSeed??api.U.areaSeed(seed,zone)} · ${s.monsters.length} enemies · ${s.map.layoutAttempts||1} generation attempts`;
+ return {zone,seed,width,mode,layoutSeed:s.map.layoutSeed,layoutVersion:s.map.layoutVersion,attempts:s.map.layoutAttempts,enemies:s.monsters.length,ramps:s.map.ramps?.length||0};
+}
+function feature(){const m=api.Game.state.map;return m.frontier||m.act2||m.act3||m.cathedral||m.composition;}
+function view(which='arrival'){
+ const m=api.Game.state.map,f=feature(),places=f?.landmarks||f?.rooms||[],p=which==='arrival'?m.spawns.default:typeof which==='number'?places[which%places.length]:places.find(n=>n.id===which);
+ const point=api.MapGen.recoveryPoint?api.MapGen.recoveryPoint(m,p||m.spawns.default,.36):p||m.spawns.default;
+ api.Game.__mapQA.place(point.x,point.y);api.Game.__mapQA.render();api.UI.refreshHUD();return point;
+}
+function overview(){
+ const m=api.Game.state.map,c=el('overview'),g=c.getContext('2d');c.width=m.w*3;c.height=m.h*3;g.drawImage(m.minimapBase,0,0,c.width,c.height);
+ for(const ro of feature()?.routes||feature()?.connections||[]){g.strokeStyle=ro.optional?'#e0b975':'#a4c7c5';g.lineWidth=1.5;g.beginPath();ro.points.forEach((p,i)=>i?g.lineTo(p.x*3,p.y*3):g.moveTo(p.x*3,p.y*3));g.stroke();}
+ for(const n of feature()?.landmarks||feature()?.rooms||[]){g.fillStyle='#f6d69a';g.beginPath();g.arc(n.x*3,n.y*3,3,0,Math.PI*2);g.fill();}
+}
+async function profile(mode='moving',frames=90){
+ const s=api.Game.state,p=s.player,N=api.TerrainNavigation;view('arrival');p.hp=p.stats.maxHp;s.time=10;
+ let destination=null;
+ for(let y=3;y<s.map.h-3&&!destination;y+=3)for(let x=3;x<s.map.w-3&&!destination;x+=3){if(Math.hypot(x+.5-p.x,y+.5-p.y)<10)continue;const path=N.findPath(s.map,p,{x:x+.5,y:y+.5},{radius:p.radius,speed:4.5});if(path)destination={x:x+.5,y:y+.5,path};}
+ if(!destination)throw Error('No movement profile destination');
+ if(mode==='moving'){p.path=destination.path;p.command={type:'move'};}
+ if(mode==='combat'){
+  const nearby=s.monsters.filter(m=>!m.isBoss&&!m.beacon&&!m.questTag).slice(0,8);
+  const occupied=[{x:p.x,y:p.y,radius:p.radius}];
+  for(const [i,m]of nearby.entries()){
+   const a=i*Math.PI/4,r=i===0?1.5:3,point=api.MapGen.recoveryPoint(s.map,{x:p.x+Math.cos(a)*r,y:p.y+Math.sin(a)*r},m.radius,occupied);
+   Object.assign(m,point);occupied.push({...point,radius:m.radius});m.aggro=true;m.hp=m.maxHp=100000;
+  }
+  if(nearby[0])p.command={type:'attack',target:nearby[0],skill:'basic',hold:true};
+ }
+ const tick=()=>{api.Game.__mapQA.update(1/60);api.Game.__mapQA.updateCamera(1/60);api.Game.__mapQA.render();};
+ for(let i=0;i<30;i++)tick();await new Promise(r=>requestAnimationFrame(r));
+ const times=[],start={x:p.x,y:p.y};for(let i=0;i<frames;i++){const t=performance.now();tick();times.push(performance.now()-t);if(i%15===0)await new Promise(r=>requestAnimationFrame(r));}
+ times.sort((a,b)=>a-b);return{mode,frames,medianMs:+times[Math.floor(times.length*.5)].toFixed(2),p95Ms:+times[Math.floor(times.length*.95)].toFixed(2),distance:Math.hypot(p.x-start.x,p.y-start.y),terrain:api.LevelTerrain.getDiagnostics()};
+}
+el('load').onclick=()=>load(el('zone').value,+el('seed').value,+el('size').value).catch(error);
+function error(e){el('status').textContent=e.stack||e.message;window.__reviewError=e.message;}
+init().catch(error);
+</script></html>

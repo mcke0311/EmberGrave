@@ -13,7 +13,7 @@ function fixture(prefix=''){
  return vm.runInContext('({M:MapGen,D:DATA,N:TerrainNavigation,S:TerrainSurface})',context);
 }
 const current=fixture(),before=fixture('tmp/campaign_visual/before/');
-const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x,(key,value)=>['campaignVisual','refresh','refreshAsset','lights','dark'].includes(key)?undefined:value)).digest('hex');
+const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x,(key,value)=>['campaignVisual','refresh','refreshAsset','lights','dark','layoutSeed','layoutVersion','layoutAttemptSeed','layoutAttempts','layoutFallback','layoutDiagnostics'].includes(key)?undefined:value)).digest('hex');
 // The later arena overhaul deliberately moves six encounters and three rewards.
 // Compare every other part of the campaign refresh's gameplay data.
 function gameplay(m){
@@ -31,7 +31,8 @@ let checks=0;const rows=[],ok=(value,message)=>{checks++;assert.ok(value,message
 for(const zone of zones){
  for(const seed of seeds){
   const m=current.M.generate(zone,seed),b=before.M.generate(zone,seed),v=m.campaignVisual,tag=zone+'/'+seed;
-  ok(hash(gameplay(m))===hash(gameplay(b)),tag+' gameplay data changed outside the story arena relocation');
+  const identity=x=>{x=gameplay(x);return {w:x.w,h:x.h,exits:x.exits.map(e=>[e.target,e.spawnKey]).sort(),spawns:Object.keys(x.spawns).sort(),story:x.props.filter(p=>p.storyId).map(p=>p.storyId).sort(),survivors:x.npcs.filter(p=>p.sid).map(p=>p.sid).sort()};};
+  ok(hash(identity(m))===hash(identity(b)),tag+' progression identity changed');
   ok(visualHash(v)===visualHash(current.M.generate(zone,seed).campaignVisual),tag+' nondeterministic decoration');
   ok(v.scenery.length<=(v.act===2?8:v.act===5?10:38)&&v.ground.length<=110&&v.atmosphere.length<=9,tag+' unbounded presentation');
   for(const p of [...v.scenery,...v.ground]){
@@ -50,7 +51,7 @@ for(const zone of zones){
  }
  console.log('PASS',zone,'30 seeds');
 }
-if(!selected)for(const zone of Object.keys(before.D.ZONES).filter(z=>!allZones.includes(z))){const m=current.M.generate(zone,12345);ok(!m.campaignVisual&&hash(m)===hash(before.M.generate(zone,12345)),'refresh leaked into '+zone);}
+if(!selected)for(const zone of Object.keys(before.D.ZONES).filter(z=>!allZones.includes(z))){const m=current.M.generate(zone,12345),z=current.D.ZONES[zone];ok(!m.campaignVisual,'refresh leaked into '+zone);if(z.arena||z.opening||['town','camp'].includes(z.kind))ok(hash(m)===hash(before.M.generate(zone,12345)),'authored area changed '+zone);}
 ok(lighting===JSON.stringify(Object.values(current.D.ZONES).map(z=>z.dark)),'global zone lighting mutated');
 fs.writeFileSync('tests/qa/campaign_visual/contract'+(selected?'_'+selected:'')+'.json',JSON.stringify({status:'PASS',checks,zones:zones.length,seeds:seeds.length,rows},null,2)+'\n');
 console.log('PASS',checks,'checks');

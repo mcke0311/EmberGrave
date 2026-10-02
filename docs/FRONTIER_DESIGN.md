@@ -2,8 +2,9 @@
 
 The five northern adventures now start from an authored composition in `MapGen`.
 The watch road, mine refuges, temple courts, pilgrimage terraces, and frozen spring
-have stable identities. Seeds change their offsets, connecting doglegs, branch
-attachments, encounter choices, and secondary dressing.
+have stable identities. The [shared session planner](RANDOM_MAPS.md) varies their
+positions, proportions, connections, loops, and optional routes. Their existing
+art, encounter choices, and secondary dressing follow the generated geography.
 
 ## Composition
 

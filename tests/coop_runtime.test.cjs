@@ -293,7 +293,7 @@ test('shared quest commits stage rewards while other areas keep combat and progr
   assert.ok(guest.gold>gold);assert.equal(guest.hp,hurt,'committing rewards does not restore old health');assert.ok(wild.flags.secondDiscovery);assert.equal(wild.quests.q7.state,'done');
 });
 
-test('broken prop collision replicates as a cell patch and survives campaign recovery',async()=>{
+test('broken prop collision replicates within the session and a new host uses fresh terrain',async()=>{
   const f=await session();await travel(f,'guest','north_wild');const w=f.runtime.worlds.get('north_wild'),p=w.players[0],vm=require('node:vm'),R=vm.runInContext('CoopReplication',f.context),props=vm.runInContext('PropInteractions',f.context);
   const prop=w.map.props.find(pr=>pr.blocks&&(pr.surfaceId||0)===0&&!pr.footprint);assert.ok(prop);const index=(prop.x|0)+(prop.y|0)*w.map.w;w.map.walls[index]=0;w.map.blocked[index]=1;
   const before=f.Game.coop.withWorld(w,()=>f.CoopCodec.snapshot(w,1,1,true,p._coopId));
@@ -304,5 +304,7 @@ test('broken prop collision replicates as a cell patch and survives campaign rec
   assert.equal(Object.keys(delta.terrainEdits).length,1);assert.equal(delta.terrain,undefined);
   f.CoopCodec.apply(display,R.merge(before,delta),p._coopId,delta);assert.equal(display.map.blocked[index],0);
   await f.runtime.checkpoint();const restored=fixture();await restored.runtime.start({hostId:'resumed',hero:f.hero('Host'),campaign:structuredClone(f.saves.at(-1).campaign)});
-  assert.equal(restored.runtime.worlds.get('north_wild').map.blocked[index],0);
+  const next=restored.runtime.worlds.get('north_wild').map,api=vm.runInContext('MapGen',restored.context),generated=api.generate('north_wild',next.layoutSeed);
+  assert.notEqual(next.layoutSeed,w.map.layoutSeed);
+  assert.deepEqual([...next.blocked],[...generated.blocked]);
 });

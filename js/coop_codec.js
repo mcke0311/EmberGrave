@@ -113,7 +113,7 @@ const CoopCodec=(()=>{
 
     let cache=publication==null?null:publicationCache.get(s);
     if(!cache||cache.publication!==publication){register(s);cache={publication,actors:new Map()};if(publication!=null)publicationCache.set(s,cache);}
-    const out={kind:'snapshot',epoch,seq,full,time:s.time,zone:s.map.id,seed:s.seed,groups:{}};
+    const out={kind:'snapshot',epoch,seq,full,time:s.time,zone:s.map.id,seed:s.seed,sessionSeed:s.sessionSeed,layoutSeed:s.map.layoutSeed,layoutVersion:s.map.layoutVersion,groups:{}};
     // Items are inlined in their owner; refs are reserved for world actors.
     for(const key of groups)out.groups[key]=(s[key]||[]).filter(o=>relevant(o,key)).map(o=>{
       if(cache.actors.has(o))return cache.actors.get(o);
@@ -148,6 +148,16 @@ const CoopCodec=(()=>{
     for(const [key,cell]of Object.entries(edits||{})){const [surfaceId,index]=key.split(':').map(Number),surface=TerrainLayers.view(map,surfaceId);if(!cell||!surface||!Number.isInteger(index)||index<0||index>=map.w*map.h)continue;
       surface.blocked[index]=cell[0];surface.walls[index]=cell[1];if(surface.hazard)surface.hazard[index]=cell[2];
     }
+  }
+  function recoverGround(s,rows=[],relocate=false){
+    return rows.map((g,i)=>{
+      const row={...decode(g,new Map()),item:g.item?Object.assign(Game.reviveItem(g.item),{_coopId:g.item.netId}):null};
+      if(relocate){
+        const entry=s.map.spawns.default,point=MapGen.recoveryPoint(s.map,{x:entry.x+(i%5)*.7,y:entry.y+Math.floor(i/5)%5*.7},.36);
+        Object.assign(row,point,{surfaceId:point.surfaceId??0});
+      }
+      return row;
+    });
   }
   function restoreProps(map,rows=[]){
     const saved=new Map(rows.map(p=>[p.propId||MapGen.propIdentity(map,p),p]));
@@ -219,5 +229,5 @@ const CoopCodec=(()=>{
     if(!changes||changes.vendorStock)s.vendorStock=decode(snap.vendorStock,refs);s.time=snap.time;s.partyTime=snap.partyTime??snap.time;s._snapshotAt=performance.now();
     return refs;
   }
-  return {id,encode,decode,register,hero,restoreHero,snapshot,apply,applyTerrain,restoreProps,propMonsters,restorePropMonsters,groups};
+  return {id,encode,decode,register,hero,restoreHero,snapshot,apply,applyTerrain,recoverGround,restoreProps,propMonsters,restorePropMonsters,groups};
 })();

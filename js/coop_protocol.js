@@ -1,7 +1,7 @@
 /* Shared, dependency-free wire contract. Also loaded by the Node relay. */
 (function(root){
   'use strict';
-  const VERSION=2, BUILD='embergrave-coop-8', MAX_PLAYERS=4;
+  const VERSION=2, BUILD='embergrave-coop-9', MAX_PLAYERS=4;
   const ZONES=['frosthaven','north_wild','mines','shattered_temple','shardpeak_shrine','deepfreeze_cavern','arena_korvath','echo_north','echo_marsh','echo_cathedral'];
   const MAX_FRAME=64*1024, MAX_TRANSFER=8*1024*1024, CHUNK=12000;
   const safeId=v=>typeof v==='string'&&/^[a-zA-Z0-9_-]{1,80}$/.test(v);

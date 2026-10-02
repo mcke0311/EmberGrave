@@ -98,7 +98,7 @@ for(const seed of [0,1,123,4294967295])for(const zone of Object.keys(D.STORY_OBJ
   if(zone==='cathedral2')ok(m.monsterSpawns.filter(m=>m.id==='choir_priest').length>=3,'not enough priests to finish');
 }
 for(const zone of ['sand_tombs','cathedral1','cathedral2']){
-  ok(D.ZONES[zone].shifting,zone+' does not regenerate');
+  ok(M.generate(zone,1).layoutSeed===1&&M.generate(zone,1).layoutVersion===M.layoutVersion,zone+' lacks generation metadata');
   ok(String(M.generate(zone,1).walls)!==String(M.generate(zone,2).walls),zone+' layout never changes');
 }
 const waste=M.generate('desert_wastes',123),market=M.generate('underground_market',123);
@@ -135,7 +135,7 @@ for(const ending of ['destroy','seal','give']){
   G.recordEnding('destroy');ok(s.flags.ending===ending,'ending rewritten after choice');
 }
 // Quest chests show an opened lid from the saved discovery ledger, including
-// when the shifting cathedral regenerates its prop objects.
+// when a new session regenerates the cathedral's prop objects.
 s=fresh('cathedral2');G.__test.syncStoryObjects();
 let questChest=s.map.props.find(p=>p.storyId==='sword_piece_0');
 ok(questChest&&!questChest.opened&&questChest.interact==='story','unclaimed quest chest is already open');

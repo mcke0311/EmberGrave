@@ -2,7 +2,7 @@
 const CoopRuntime=(()=>{
   const inFlight=new Map(),queuedActions=new Set(),acknowledgments=new Map(),resyncAt=new Map(),resyncRequested=new Set();
   const P=CoopProtocol,C=CoopCodec,worlds=new Map(),players=new Map(),baselines=new Map(),transfers=new Map(),channels=new Map(),sequences=new Map();
-  let campaign,hostId='',active=false,committing=false,hidden=false,offline=false,saveError='',clock=0,publish=0,saveClock=0,sequence=0,publication=0,saveChain=Promise.resolve(),savePending=false;
+  let campaign,sessionSeed,hostId='',active=false,committing=false,hidden=false,offline=false,saveError='',clock=0,publish=0,saveClock=0,sequence=0,publication=0,saveChain=Promise.resolve(),savePending=false;
   let economyChain=Promise.resolve(),transactionActive=false,stagedEvents=[],stagingRewards=null;
   const metrics={ticks:0,simulationMs:0,snapshotMs:0,snapshots:0,bytes:0,saveMs:0,simulationSamples:[],snapshotSamples:[],saveSamples:[],saveCaptureSamples:[],maxPendingCommands:0};
   const sample=(key,value)=>{const samples=metrics[key];samples.push(value);if(samples.length>1800)samples.shift();};
@@ -26,28 +26,24 @@ const CoopRuntime=(()=>{
   function capture(w){return scope(w,()=>{
     if(typeof CursedEvents!=='undefined')CursedEvents.capture(w);
     C.register(w);
-    return {echoRun:w._echoRun,props:w.map.props.map(p=>C.encode(p,true)),terrainEdits:structuredClone(w.map._coopTerrain||{}),terrain:C.encode(Object.fromEntries(['blocked','walls','hazard'].map(k=>[k,w.map[k]]))),
-      dead:[...new Set([...(campaign.areas[w.worldId]?.dead||[]),...w.monsters.filter(m=>m.dead).map(m=>m._coopId)])],
+    return {echoRun:w._echoRun,sessionSeed,layoutSeed:w.map.layoutSeed,layoutVersion:w.map.layoutVersion,props:w.map.props.map(p=>C.encode(p,true)),terrainEdits:structuredClone(w.map._coopTerrain||{}),terrain:C.encode(Object.fromEntries(['blocked','walls','hazard'].map(k=>[k,w.map[k]]))),
+      dead:w.monsters.filter(m=>m.dead).map(m=>m._coopId),
       monsters:w.monsters.filter(m=>!m.bossOwner&&!m.sourcePropId).map(m=>({id:m._coopId,hp:m.hp,maxHp:m.maxHp,dead:m.dead})),propMonsters:C.propMonsters(w),
       ground:w.ground.map(g=>({...C.encode(g,true),item:g.item?{...Game.serializeItem(g.item),netId:g.item._coopId}:null})),partySize:w.map._coopSize||1};
   });}
   function getWorld(zone,p){
     if(!P.ZONES.includes(zone))fail('This destination is outside Act I.');
     if(worlds.has(zone))return worlds.get(zone);
-    const w=Game.coop.createWorld(p,campaign.seed,campaign,zone);w._visuals=[];w._busy=false;w._queue=Promise.resolve();if(w.map.zone.echo)w._echoRun=campaign.flags.echoRun?.id;
+    const w=Game.coop.createWorld(p,campaign.seed,campaign,zone,sessionSeed);w._visuals=[];w._busy=false;w._queue=Promise.resolve();if(w.map.zone.echo)w._echoRun=campaign.flags.echoRun?.id;
     worlds.set(zone,w);
     scope(w,()=>{
-      C.register(w);const saved=campaign.areas[zone],old=w.map.zone.echo&&saved?.echoRun!==w._echoRun?null:saved;w.map._coopSize=old?.partySize||Math.max(1,players.size);
-      if(old){
-        if(old.terrain)Object.assign(w.map,C.decode(old.terrain,new Map()));
-        if(old.terrainEdits){w.map._coopTerrain=structuredClone(old.terrainEdits);C.applyTerrain(w.map,old.terrainEdits);}
-        C.restoreProps(w.map,old.props);
-        for(const m of w.monsters){if(old.dead?.includes(m._coopId)){m.dead=true;m.hp=0;m.corpseT=0;}else{const row=old.monsters?.find(r=>r.id===m._coopId);if(row&&!m.isBoss){m.hp=row.hp;m.maxHp=row.maxHp;m._coopScaled=true;}}}
-        w.ground=(old.ground||[]).map(g=>({...C.decode(g,new Map()),item:g.item?Object.assign(Game.reviveItem(g.item),{_coopId:g.item.netId}):null}));
-        C.restorePropMonsters(w,old.propMonsters);
-      }
+      C.register(w);const saved=campaign.areas[zone],old=w.map.zone.echo&&saved?.echoRun!==w._echoRun?null:saved;
+      w.map._coopSize=Math.max(1,players.size);
+      // New host sessions never overlay old grids, deaths or containers. Floor
+      // loot remains durable and is recovered beside the new area's arrival.
+      w.ground=C.recoverGround(w,old?.ground||[],true);
       if(w.map.bossArena?.dedicated)for(const boss of w.monsters)if(boss.encounter&&!boss.dead)boss.encounter.reset();
-      w._activated=!!old;if(w._activated)scale(w);C.register(w);
+      w._activated=!!w.ground.length;if(w._activated)scale(w);C.register(w);
     });return w;
   }
   function scale(w){const multiplier=1+.6*(w.map._coopSize-1);for(const m of w.monsters)if(!m._coopScaled){m.hp*=multiplier;m.maxHp*=multiplier;m._coopScaled=true;}}
@@ -82,10 +78,13 @@ const CoopRuntime=(()=>{
     metrics.snapshots++;metrics.snapshotMs+=performance.now()-start;sample('snapshotSamples',performance.now()-start);metrics.bytes+=JSON.stringify(payload).length;
   }
   async function start(args){
+    sessionSeed=args.seed??U.newWorldSeed();
     hostId=args.hostId;campaign=args.campaign||{id:P.randomId(),ownerHeroId:args.hero.id,name:args.hero.name+"'s Act I",seed:args.seed??crypto.getRandomValues(new Uint32Array(1))[0],heroes:{},areas:{},quests:{},flags:{},shrines:['frosthaven']};
     if(campaign.ownerHeroId!==args.hero.id)fail('Select the hero that owns this campaign.');
     if(campaign.schemaVersion>2)fail('This campaign needs a newer game version.');
     campaign.schemaVersion=2;campaign.areas||={};campaign.heroes||={};campaign.quests||={};campaign.flags||={};campaign.shrines||=['frosthaven'];
+    delete campaign.flags.brokenWards;
+    if(typeof CursedEvents!=='undefined')CursedEvents.beginSession(campaign.flags);
     if(args.echoesUnlocked)campaign.flags.echoesUnlocked=true;
     if(!Object.keys(campaign.quests).length)campaign.quests.q7={state:'active',count:0};
     campaign.shrines=campaign.shrines.filter(z=>P.ZONES.includes(z));

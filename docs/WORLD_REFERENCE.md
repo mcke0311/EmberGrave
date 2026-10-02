@@ -47,7 +47,9 @@ substitute for their live randomness, and skipping treasure-creature creation
 can change later event draws. Actual gameplay retains its original random-call
 order and actor creation. Quest conditions are described rather than simulated;
 conditional story objects remain available as editing references. The cathedral
-sample represents the selected generation seed, not a hero's later visit seed.
+sample represents the selected area generation seed. Gameplay derives that
+seed from the runtime session seed, difficulty, and area ID, and caches it for
+all revisits during that session.
 NPCs, monsters, transient effects, and direct editing are outside this page.
 
 ## Implementation references

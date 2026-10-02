@@ -2,8 +2,14 @@
 'use strict';
 const CursedEvents=(()=>{
   const eligible=p=>p?.ev&&['curse','ambush'].includes(p.ev.kind);
-  const key=(s,p)=>s.map.id+':'+(p.propId||MapGen.propIdentity(s.map,p));
+  const key=(s,p)=>s.map.id+':'+(s.map.layoutSeed??s.seed)+':'+(p.propId||MapGen.propIdentity(s.map,p));
   const records=s=>s.flags.cursedEvents||(s.flags.cursedEvents={});
+  function beginSession(flags){
+    for(const [id,r]of Object.entries(flags.cursedEvents||{})){
+      if(r.status==='claimed')delete flags.cursedEvents[id];
+      else delete r.layoutVersion; // Recover unfinished encounters even with a repeated explicit seed.
+    }
+  }
   function syncProp(p,r){
     p.event=false;p.spent=true;p.lootable=false;p.breakable=false;
     p.interact=r.status==='claimed'?null:'sealed_cache';p.cursedKey=r.key;
@@ -15,7 +21,7 @@ const CursedEvents=(()=>{
     if(!TerrainLayers.same(actor,p)||U.dist(actor.x,actor.y,p.x,p.y)>2.5)return false;
     const ev=p.ev,ids=(s.map.zone.spawns||[]).filter(id=>DATA.ENEMIES[id]&&!DATA.ENEMIES[id].boss);
     if(!ids.length)return false;
-    const r={v:1,key:key(s,p),zone:s.map.id,status:'active',prop:{...p},guards:[],reward:null};
+    const r={v:2,key:key(s,p),zone:s.map.id,layoutSeed:s.map.layoutSeed,layoutVersion:s.map.layoutVersion,anchorId:p.eventAnchorId||p.landmarkId||null,status:'active',prop:{...p},guards:[],reward:null};
     for(let i=0;i<(ev.count||4);i++){
       const mon=Game.spawnPropMonster(p,ids[i%ids.length]);if(!mon)continue;
       mon.cursedKey=r.key;mon.cursedIndex=r.guards.length;mon._coopId='curse_'+U.hash(r.key)+'_'+mon.cursedIndex;
@@ -51,7 +57,24 @@ const CursedEvents=(()=>{
   function restore(s){
     for(const r of Object.values(s.flags.cursedEvents||{})){
       if(r.zone!==s.map.id)continue;
+      const relocated=r.layoutSeed!==s.map.layoutSeed||r.layoutVersion!==s.map.layoutVersion;
+      if(relocated&&r.status==='claimed')continue;
       let p=s.map.props.find(p=>p.cursedKey===r.key||key(s,p)===r.key);
+      if(relocated){
+        const f=s.map.frontier||s.map.act2||s.map.composition||s.map.cathedral;
+        const anchors=f?.anchors.events||f?.landmarks||f?.rooms||[];
+        const anchor=anchors.find(a=>a.id===r.anchorId)||anchors[U.hash(r.key)%Math.max(1,anchors.length)]||s.map.spawns.default;
+        const point=MapGen.recoveryPoint(s.map,anchor,.4,s.map.props.filter(p=>p.interact||p.cursedKey));
+        r.prop={...r.prop,...point};r.anchorId=anchor.id||null;
+        if(p)Object.assign(p,point);
+        r.layoutSeed=s.map.layoutSeed;r.layoutVersion=s.map.layoutVersion;r.v=2;
+        const occupied=[];
+        for(const g of r.guards){
+          if(g.dead)continue;
+          const radius=.34*(DATA.ENEMIES[g.id]?.big||1),q=MapGen.recoveryPoint(s.map,point,radius,[...occupied,{...point,radius:.4}]);
+          Object.assign(g,q);occupied.push({...q,radius});
+        }
+      }
       if(!p){p={...r.prop};s.map.props.push(p);}syncProp(p,r);
       if(r.status!=='active')continue;
       r.guards.forEach((g,i)=>{
@@ -62,7 +85,7 @@ const CursedEvents=(()=>{
       });
     }
   }
-  return {eligible,key,start,capture,killed,claim,restore};
+  return {eligible,key,start,capture,killed,claim,restore,beginSession};
 })();
 
 const TacticalElites=(()=>{

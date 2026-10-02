@@ -41,6 +41,11 @@ for(const zone of zones){
       }
     }
     for(const exit of m.exits){
+      if(exit.bossEntrance){
+        ok(m.arenaEntrance?.bossId===exit.bossEntrance,label+' missing dedicated arena entrance');
+        ok(N.clear(m,m.spawns.from_arena.x,m.spawns.from_arena.y,.36),label+' unsafe arena return');
+        ok(M.generate(exit.target,seed).spawns[exit.spawnKey],label+' unresolved arena spawn');continue;
+      }
       const th=m.thresholds.find(t=>t.id===exit.thresholdId);ok(th,label+' missing passage geometry');
       const gx=Math.floor(th.opening.x),gy=Math.floor(th.opening.y);
       for(let dy=-2;dy<=4;dy++)for(let dx=-1;dx<=1;dx++)ok(!m.blocked[gx+dx+(gy+dy)*m.w],label+' blocked passage');
@@ -61,7 +66,7 @@ for(const zone of zones){
     }
     if(m.bossArena){const a=m.bossArena;ok(a.x1-a.x0===21&&a.y1-a.y0===21,label+' boss size');
       for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++)ok(!m.blocked[x+y*m.w]&&!m.void[x+y*m.w]&&!m.elev[x+y*m.w]&&!m.hazard[x+y*m.w],label+' obstructed arena');
-    }else{ok(m.monsterSpawns.length===20,label+' staged encounter population');ok(m.monsterSpawns.filter(p=>p.cathedralEncounter==='memory_guard').length===5,label+' cache guardians');}
+    }else if(D.ZONES[zone].memoryParent){ok(m.monsterSpawns.length===20,label+' staged encounter population');ok(m.monsterSpawns.filter(p=>p.cathedralEncounter==='memory_guard').length===5,label+' cache guardians');}
     for(const p of m.buildings||[]){const a=p.footprint;for(let y=a.y0;y<a.y1;y++)for(let x=a.x0;x<a.x1;x++)ok(m.blocked[x+y*m.w],label+' architectural footprint hole');}
     for(const obj of D.STORY_OBJECTS[zone]||[])ok(c.anchors[obj.id],label+' missing authored objective '+obj.id);
     const hash=signature(m);ok(hash===signature(M.generate(zone,seed)),label+' non-deterministic');variants.add(c.variant);hashes.add(hash);

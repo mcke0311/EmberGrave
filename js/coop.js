@@ -153,10 +153,12 @@ const Coop=(()=>{
         campaign=campaignId?await CoopStore.read('campaigns',campaignId):null;
         if(campaign&&campaign.ownerHeroId!==heroId)throw Error('Select the hero that owns this campaign.');
         campaign ||= {id:P.randomId(),ownerHeroId:heroId,name:heroRecord.name+"'s Act I",seed:crypto.getRandomValues(new Uint32Array(1))[0],heroes:{},areas:{},quests:null,flags:null,shrines:['frosthaven']};
-        Object.assign(areas,campaign.areas||{});
+        for(const [zone,old] of Object.entries(campaign.areas||{}))areas[zone]={ground:old.ground||[]};
         heroRecord=campaign.heroes[heroRecord.id]||heroRecord;
         const p=C.restoreHero(heroRecord);p._coopId=localId;p.connected=true;
-        await Game.coop.start(p,campaign.seed,campaign);restoreArea();await CoopCommands.settle(p);
+        delete campaign.flags?.brokenWards;
+        if(typeof CursedEvents!=='undefined'&&campaign.flags)CursedEvents.beginSession(campaign.flags);
+        await Game.coop.start(p,campaign.seed,campaign,'frosthaven',connectOptions.seed??U.newWorldSeed());restoreArea();await CoopCommands.settle(p);
         accepted.set(localId,p.heroId);roster=roster.map(r=>({...r,ready:false}));
         loading=false;paused='';await checkpoint();wireAdmission();sendSnapshot(true);
       }else{
@@ -293,13 +295,14 @@ const Coop=(()=>{
   function captureArea(){
     if(!s()?.map)return;
     C.register(s());
-    areas[s().map.id]={props:s().map.props.map(p=>C.encode(p,true)),terrain:C.encode(Object.fromEntries(['blocked','walls','hazard'].filter(k=>s().map[k]).map(k=>[k,s().map[k]]))),dead:[...new Set([...(areas[s().map.id]?.dead||[]),...s().monsters.filter(m=>m.dead).map(m=>m._coopId)])],
+    areas[s().map.id]={sessionSeed:s().sessionSeed,layoutVersion:s().map.layoutVersion,props:s().map.props.map(p=>C.encode(p,true)),terrain:C.encode(Object.fromEntries(['blocked','walls','hazard'].filter(k=>s().map[k]).map(k=>[k,s().map[k]]))),dead:[...new Set([...(areas[s().map.id]?.dead||[]),...s().monsters.filter(m=>m.dead).map(m=>m._coopId)])],
       monsters:s().monsters.filter(m=>!m.bossOwner&&!m.sourcePropId).map(m=>({id:m._coopId,defId:m.defId,x:m.x,y:m.y,dead:m.dead,hp:m.hp,maxHp:m.maxHp,elite:m.elite,beacon:m.beacon,questTag:m.questTag})),propMonsters:C.propMonsters(s()),
       ground:s().ground.map(g=>({...C.encode(g,true),item:g.item?{...Game.serializeItem(g.item),netId:g.item._coopId}:null})),partySize:s().map._coopSize||s().players.length};
   }
   function restoreArea(){
     const old=areas[s().map.id];
-    if(old){
+    const sameSession=old?.sessionSeed===s().sessionSeed&&old?.layoutVersion===s().map.layoutVersion;
+    if(old&&sameSession){
       if(old.terrain)Object.assign(s().map,C.decode(old.terrain,new Map()));
       C.restoreProps(s().map,old.props);
       for(const mon of s().monsters){
@@ -307,11 +310,12 @@ const Coop=(()=>{
         if(old.dead?.includes(mon._coopId)){mon.dead=true;mon.hp=0;mon.corpseT=0;}
         else if(saved&&!mon.isBoss){mon.maxHp=saved.maxHp;if(!mon._coopScaled)mon.hp=mon.maxHp;mon._coopScaled=true;}
       }
-      s().ground=old.ground.map(g=>({...C.decode(g,new Map()),item:g.item?Object.assign(Game.reviveItem(g.item),{_coopId:g.item.netId}):null}));
+      s().ground=C.recoverGround(s(),old.ground||[]);
       C.restorePropMonsters(s(),old.propMonsters);
     }
+    else if(old)s().ground=C.recoverGround(s(),old.ground||[],true);
     if(!s().map._coopSize){
-      s().map._coopSize=old?.partySize||s().players.length;const mul=1+.6*(s().map._coopSize-1);
+      s().map._coopSize=(sameSession?old?.partySize:0)||s().players.length;const mul=1+.6*(s().map._coopSize-1);
       for(const m of s().monsters)if(!m._coopScaled){m.maxHp*=mul;m.hp*=mul;m._coopScaled=true;if(m.encounter)m.encounter.coopHp=m.maxHp;}
     }
     C.register(s());
@@ -377,10 +381,11 @@ const Coop=(()=>{
       if(!received||received.seq!==m.base||received.epoch!==m.epoch||received.zone!==m.zone){sendHost({kind:'resync'});return;}
       const next=CoopReplication.merge(received,m);if(!next){sendHost({kind:'resync'});return;}m=next;
     }
-    if(!s()?.map||s().map.id!==m.zone||epoch!==m.epoch){
+    if(m.layoutVersion!==MapGen.layoutVersion)throw Error('World layout version changed. Reload the game.');
+    if(!s()?.map||s().map.id!==m.zone||epoch!==m.epoch||s().sessionSeed!==m.sessionSeed||s().map.layoutSeed!==m.layoutSeed){
       loading=true;changedMap=true;
       const p=C.restoreHero(heroRecord);p._coopId=localId;
-      await Game.coop.start(p,m.seed,null,m.zone);epoch=m.epoch;
+      await Game.coop.start(p,m.seed,null,m.zone,m.sessionSeed);epoch=m.epoch;
     }
     const discontinuity=changedMap||!patch||m.generation!==received?.generation||m.groups.players.find(p=>p._coopId===localId)?.dead!==s().player.dead;
     // A resync resets prediction, not ordered command promises. Their host

@@ -7,7 +7,7 @@ const c=vm.createContext({console,Math,Date,performance,Uint8Array,Uint16Array,I
  document:{createElement:node,body:{appendChild:noop},getElementById:node},window:{addEventListener:noop,matchMedia:()=>({matches:true})},
  localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v)},Sfx:new Proxy({vol:{},play:id=>sounds.push(id)},{get:(t,k)=>t[k]||noop}),
  Player3D:{assets:{},projectileOrigin:()=>null},SpriteAssets:{loadBundle:(...a)=>load(...a)},UI:new Proxy({},{get:()=>noop})});
-for(const f of ['utils','data','unique_powers','data_overrides','skill_perks','sprite_manifest','mapgen','navigation','items','lootfilter','entities'])vm.runInContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'),c,{filename:f});
+for(const f of ['utils','data','unique_powers','data_overrides','boss_encounters','skill_perks','sprite_manifest','mapgen','navigation','items','lootfilter','entities'])vm.runInContext(fs.readFileSync(new URL('../js/'+f+'.js',import.meta.url),'utf8'),c,{filename:f});
 let source=fs.readFileSync(new URL('../js/game.js',import.meta.url),'utf8');
 source=source.replace('    init, newGame, loadGame,',`    __test:{freshState,safeArrival,portalPositions,campaignEvent,setState:s=>{state=s;running=true;delayed=[];saveSlotKey='improvements-test';},flush:()=>{let n=0;while(delayed.length&&n++<100){const jobs=delayed;delayed=[];for(const j of jobs)j.fn();}}},
     init, newGame, loadGame,`);
@@ -98,11 +98,11 @@ for(const id of ['veilranger_0_1','veilranger_0_2','veilranger_0_4']){
  await G.enterMap('north_wild','default');p.x+=1;G.castPortal();ok(s.portal!==portal,'new portal replaces previous');
 }
 {
- const {p,s}=fresh();const shifting=Object.values(D.ZONES).find(z=>z.shifting);
- await G.enterMap(shifting.id,'default');const instance=s.map,visits=s.cathedralVisits;G.castPortal();await G.usePortal();await G.usePortal();
- ok(s.map===instance&&s.cathedralVisits===visits,'cathedral portal preserves layout');
- await G.enterMap('frosthaven','default');await G.enterMap(shifting.id,'default');ok(s.map!==instance,'ordinary cathedral entry regenerates');
- await G.enterMap('frosthaven','default');await G.usePortal();ok(s.map===instance,'portal retains original instance after another cathedral was generated');
+ const {p,s}=fresh();const cathedral=D.ZONES.cathedral1;
+ await G.enterMap(cathedral.id,'default');const instance=s.map,seed=s.sessionSeed;G.castPortal();await G.usePortal();await G.usePortal();
+ ok(s.map===instance&&s.sessionSeed===seed,'cathedral portal preserves layout');
+ await G.enterMap('frosthaven','default');await G.enterMap(cathedral.id,'default');ok(s.map===instance,'ordinary cathedral entry preserves its session map');
+ await G.enterMap('frosthaven','default');await G.usePortal();ok(s.map===instance,'portal retains the same cathedral instance after another visit');
  s.shrines.push('north_wild');sounds.length=0;ok(await G.travelToShrine('north_wild'),'attuned waypoint travels');
  ok(!await G.travelToShrine('north_wild'),'current waypoint rejected');ok(!await G.travelToShrine('drowned_crypt'),'locked waypoint rejected');
  ok(sounds.filter(x=>x==='teleportTravel').length===1,'waypoint has one cue');

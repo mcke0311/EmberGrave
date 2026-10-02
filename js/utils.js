@@ -7,6 +7,13 @@
 
 const U = {
 
+  newWorldSeed() {
+    return typeof crypto!=='undefined'&&crypto.getRandomValues?crypto.getRandomValues(new Uint32Array(1))[0]:(Math.random()*4294967296)>>>0;
+  },
+  areaSeed(sessionSeed,zoneId,difficulty=0) {
+    return (sessionSeed^U.hash('area:'+zoneId)^Math.imul(difficulty,0x9e3779b1))>>>0;
+  },
+
   /* ---- seeded RNG (mulberry32). Returns a function in [0,1). ---- */
   rng(seed) {
     let a = seed >>> 0;

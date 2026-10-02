@@ -24,7 +24,7 @@ for(const zone of zones){
  for(const seed of seeds){
   const m=M.generate(zone,seed),f=m.act2,label=zone+'/'+seed,{distances,reachable,furthest}=reach(m),b=before.M.generate(zone,seed),br=reach(b,b.spawns.default,before);
   ok(m.w===b.w&&m.h===b.h,label+' dimensions');
-  ok(JSON.stringify(m.exits.map(e=>[e.target,e.spawnKey]).sort())===JSON.stringify(b.exits.map(e=>[e.target,e.spawnKey]).sort()),label+' travel links');
+  ok(JSON.stringify(m.exits.filter(e=>!e.bossEntrance).map(e=>[e.target,e.spawnKey]).sort())===JSON.stringify(b.exits.map(e=>[e.target,e.spawnKey]).sort()),label+' travel links');
   for(const key of Object.keys(b.spawns))ok(m.spawns[key],label+' missing old spawn key '+key);
   const targets=[...Object.values(m.spawns),...m.exits.map(e=>({x:(e.x0+e.x1)/2,y:(e.y0+e.y1)/2})),...f.landmarks,
     ...m.props.filter(p=>p.interact||p.lootable),...m.monsterSpawns,...f.anchors.events,...Object.values(f.anchors.story),...(f.anchors.ritual?[f.anchors.ritual]:[])];
@@ -45,7 +45,7 @@ for(const zone of zones){
  }
  ok(hashes.size===seeds.length,zone+' no seed variation');
  const median=a=>a.toSorted((a,b)=>a-b)[Math.floor(a.length/2)],metrics={};
- for(const key of ['furthest','enemies']){const old=median(rows.map(r=>r.before[key])),now=median(rows.map(r=>r[key]));metrics[key]={before:old,after:now,ratio:now/old};ok(now>=old*.8&&now<=old*1.2,zone+' pacing budget '+key);}
+ for(const key of ['furthest','enemies']){const old=median(rows.map(r=>r.before[key])),now=median(rows.map(r=>r[key]));metrics[key]={before:old,after:now,ratio:now/old};ok(now>=old*.8&&now<=old*1.2,zone+' pacing budget '+key+' ('+now+' vs '+old+')');}
  reports.push({zone,metrics,seeds:rows});
 }
 for(const zone of ['frosthaven','marshcamp','north_wild','mines','shattered_temple','khalcamp','sand_tombs'])ok(!M.generate(zone,123).act2,'Act 2 leaked into '+zone);

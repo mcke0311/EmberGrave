@@ -5,15 +5,15 @@ original wall, foundation, floor and entrance presentation. It adds 72 coordinat
 assets, classified boundary assemblies and integrated clickable passages across
 all four locations; the campaign and memory-instance behavior below is preserved.
 
-The [painted environment overhaul](ACT4_ENVIRONMENT.md) supersedes this document's
-original wall, foundation, floor and entrance presentation. It adds 72 coordinated
-assets, classified boundary assemblies and integrated clickable passages across
-all four locations; the campaign and memory-instance behavior below is preserved.
+The [session layout planner](RANDOM_MAPS.md) now randomizes island positions,
+room proportions, connections, and optional routes in all four cathedral areas.
+Revisits and portal returns keep the same map during a session; loading a hero
+starts a new layout. The existing objectives and artwork remain in place.
 
-The two main cathedral levels now use authored memory islands and seeded
-connections instead of the shared crypt halls. Each 112×112 map has three
-arrangements; room dimensions, memory placement, routes and dressing vary by
-seed. Traversable islands sit above an authored dimensional backdrop with
+The two main cathedral levels use themed memory islands and seeded
+connections instead of the shared crypt halls. Each 112×112 map has generated
+room positions, dimensions, memory placements, routes, and dressing. Traversable
+islands sit above an authored dimensional backdrop with
 blocked void between them. Five- and seven-tile bridges connect the islands.
 
 The Shattered Cathedral has an arrival bridge, a nave, Cinderwatch, Last Bastion

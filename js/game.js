@@ -260,11 +260,11 @@ const Game = (() => {
     if (!DATA.ZONES[progress.home]) progress.home = "frosthaven";
     Object.assign(s, progress);
   }
-  function freshState(player, seed) {
+  function freshState(player, seed, sessionSeed = seed) {
     return {
-      player, players: [player], seed,
+      player, players: [player], seed, sessionSeed,
       time: 0,
-      map: null, mapsCache: {}, monstersByMap: {}, groundByMap: {},
+      map: null, mapsCache: {}, monstersByMap: {}, groundByMap: {}, areaCachesByDifficulty: {},
       monsters: [], npcs: [], ground: [], projectiles: [], minions: [], traps: [],
       fx: [],   // transient world effects: fields, walls, banners, totems, weather (never saved)
       ...freshCampaign(),
@@ -615,7 +615,7 @@ const Game = (() => {
       if (lifecycleSeq === playerLoadoutSeq) fatalRuntime(err, "3D player loading");
       return;
     }
-    state = freshState(player, (Math.random() * 0xffffffff) >>> 0);
+    state = freshState(player, U.newWorldSeed(), U.newWorldSeed());
     saveSlotKey = SAVE_PREFIX + Date.now();
     opening.begin();
     UI.hideTitle();
@@ -718,11 +718,16 @@ const Game = (() => {
     if (difficultyChange) {
       opening.reset();
       state.campaignsByDifficulty[state.difficulty] = campaignSnapshot();
+      if(state.map){
+        state.monstersByMap[state.map.id]=state.monsters;
+        state.groundByMap[state.map.id]=state.ground;
+      }
+      state.areaCachesByDifficulty[state.difficulty]={mapsCache:state.mapsCache,monstersByMap:state.monstersByMap,groundByMap:state.groundByMap,arenaParents:state.arenaParents||{}};
       state.difficulty = difficultyChange.difficulty;
       restoreCampaign(state, difficultyChange.campaign);
-      state.mapsCache = {}; state.monstersByMap = {}; state.groundByMap = {};
+      const areas=state.areaCachesByDifficulty[state.difficulty]||={mapsCache:{},monstersByMap:{},groundByMap:{},arenaParents:{}};
+      Object.assign(state,areas);
       state.portal = null; state.actGate = null; state.vendorStock = {};
-      state.cathedralVisits = 0;
     } else if (state.map) {
       /* Ordinary travel remembers the departing area's entities for this session. */
       state.monstersByMap[state.map.id] = state.monsters;
@@ -731,8 +736,7 @@ const Game = (() => {
         (state.arenaParents||={})[zoneId]={map:state.map,monsters:state.monsters,ground:state.ground};
       if (state.portal?.instance?.map === state.map) Object.assign(state.portal.instance,{monsters:state.monsters,ground:state.ground});
     }
-    // A portal owns its original session instance, even if another entrance has
-    // since generated a different cathedral with the same zone ID.
+    // Portals and arena returns keep the original session instance and entities.
     const remembered = typeof reuseCachedMap === "object" ? reuseCachedMap : null;
     if (remembered?.map?.id === zoneId) {
       state.mapsCache[zoneId] = remembered.map;
@@ -740,19 +744,10 @@ const Game = (() => {
       state.groundByMap[zoneId] = remembered.ground;
     }
     let map = state.mapsCache[zoneId];
-    const shifting = DATA.ZONES[zoneId] && DATA.ZONES[zoneId].shifting && !reuseCachedMap;
-    if (!map || shifting) {
-      /* the cathedral reassembles itself from memory every time you enter */
-      const parentSeed=state.mapsCache[DATA.ZONES[zoneId]?.memoryParent]?.cathedral?.seed;
-      const seed = shifting ? ((state.seed ^ (state.cathedralVisits = (state.cathedralVisits || 0) + 1) * 0x9e3779b1) >>> 0) : (parentSeed ?? state.seed);
+    if (!map) {
+      const seed = U.areaSeed(state.sessionSeed,zoneId,state.difficulty);
       map = MapGen.generate(zoneId, seed);
-      if (map.cathedral && !map.zone.memoryParent) {
-        for (const child of Object.values(DATA.ZONES).filter(z=>z.memoryParent===zoneId)) {
-          delete state.mapsCache[child.id]; delete state.monstersByMap[child.id]; delete state.groundByMap[child.id];
-        }
-      }
       state.mapsCache[zoneId] = map;
-      if (shifting) { state.monstersByMap[zoneId] = null; state.groundByMap[zoneId] = null; }
     }
     for(const mon of state.monsters)mon.imperialCombat?.cancel();
     state.player.clearVeilState();
@@ -760,7 +755,8 @@ const Game = (() => {
     state.bossCheckpoint=map.zone.arena&&!map.zone.echo?{zone:map.id,spawn:'retry'}:null;
     /* monsters: restore session set or spawn fresh */
     if (state.monstersByMap[zoneId]) {
-      state.monsters = state.monstersByMap[zoneId].filter(m => !m.dead || m.corpseT > 0);
+      state.monsters = state.monstersByMap[zoneId].filter(m => (!m.dead || m.corpseT > 0) &&
+        (!m.isBoss || map.zone.echo || m.dead || !(state.flags['dead_'+m.defId+'@'+state.difficulty] || state.difficulty===0&&state.flags['dead_'+m.defId])));
     } else {
       state.monsters = [];
       const diff = DATA.DIFFICULTIES[state.difficulty];
@@ -1004,7 +1000,7 @@ const Game = (() => {
       if (lifecycleSeq === playerLoadoutSeq) fatalRuntime(err, "3D player loading");
       return;
     }
-    state = freshState(p, d.seed);
+    state = freshState(p, d.seed, U.newWorldSeed());
     const validTier = value => Number.isInteger(value) && !!DATA.DIFFICULTIES[value];
     state.unlockedDiff = validTier(d.unlockedDiff) ? d.unlockedDiff : 0;
     state.difficulty = validTier(d.difficulty) ? Math.min(d.difficulty, state.unlockedDiff) : 0;
@@ -1024,6 +1020,10 @@ const Game = (() => {
       normal.flags = flags;
       state.campaignsByDifficulty[0] = normal;
     } else state.campaignsByDifficulty = d.campaignsByDifficulty;
+    for(const campaign of Object.values(state.campaignsByDifficulty)){
+      delete campaign.flags?.brokenWards;
+      if(typeof CursedEvents!=='undefined'&&campaign.flags)CursedEvents.beginSession(campaign.flags);
+    }
     restoreCampaign(state, state.campaignsByDifficulty[state.difficulty] || freshCampaign());
     if(typeof Cinematics!=='undefined')Cinematics.initialize(state,true);
     opening.reset();
@@ -1284,7 +1284,7 @@ const Game = (() => {
     saveGame();
     if(qid==='q9')campaignScene('ledger');
   }
-  /* switch difficulty tier: the whole world re-knits itself */
+  /* Difficulty tiers own separate campaign progress and session area caches. */
   async function setDifficulty(d) {
     if(typeof Coop!=="undefined"&&Coop.active)return false;
     if (!state || state.player.dead || state.difficultyTransition || !Number.isInteger(d) ||
@@ -1759,7 +1759,7 @@ const Game = (() => {
     return (pools[family]||map.zone.spawns||[]).filter(id=>!DATA.ENEMIES[id].boss);
   }
   function placeEvents(map) {
-    MapGen.placeEvents(map, {seed:state.seed, difficulty:state.difficulty,
+    MapGen.placeEvents(map, {seed:map.layoutSeed??state.seed, difficulty:state.difficulty,
       onTreasure:({event:ev,x,y,level:lvl,random})=>{
         const ids = enemiesByFamily("beast", lvl,{x,y});
         const m = map.act2?Act2EnemyCombat.eventSpawn(ids,x,y,{},[],random):new Monster(U.pickR(random,ids), x, y, {});
@@ -4801,8 +4801,8 @@ const Game = (() => {
     const boss=DATA.ZONES[zone]?.boss;
     if(boss&&DATA.BOSS_ENCOUNTERS[boss])await SpriteAssets.loadBundle('boss:'+boss);
   }
-  async function startCoop(p,seed,record=null,zone='frosthaven'){
-    running=false;opening.reset();state=freshState(p,seed);state.players=[p];saveSlotKey=null;
+  async function startCoop(p,seed,record=null,zone='frosthaven',sessionSeed=seed){
+    running=false;opening.reset();state=freshState(p,seed,sessionSeed);state.players=[p];saveSlotKey=null;
     if(record?.quests)state.quests=structuredClone(record.quests);
     if(record?.flags)state.flags=structuredClone(record.flags);
     state.flags.opening={v:2,stage:'complete',rescued:true,defeated:[]};
@@ -4818,11 +4818,11 @@ const Game = (() => {
     const previous=state,previousDelayed=delayed;state=world;delayed=world._delayed||(world._delayed=[]);
     try{return fn();}finally{world._delayed=delayed;state=previous;delayed=previousDelayed;}
   }
-  function createCoopWorld(player,seed,shared,zone){
-    const world=freshState(player,seed);world.players=[];
+  function createCoopWorld(player,seed,shared,zone,sessionSeed=seed){
+    const world=freshState(player,seed,sessionSeed);world.players=[];
     Object.assign(world,{quests:shared.quests,flags:shared.flags,shrines:shared.shrines,home:'frosthaven',worldId:zone});
     return withCoopWorld(world,()=>{
-      world.map=MapGen.generate(zone,seed);world.mapsCache[zone]=world.map;
+      world.map=MapGen.generate(zone,U.areaSeed(sessionSeed,zone));world.mapsCache[zone]=world.map;
       const arrival=safeArrival(world.map,world.map.spawns.default),reach=computeReach(world.map,arrival.x,arrival.y);
       for(const [index,sp]of world.map.monsterSpawns.entries()){
         if(!world.map.zone.echo&&sp.boss&&(world.flags['dead_'+sp.id+'@0']||world.flags['dead_'+sp.id]))continue;

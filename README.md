@@ -11,6 +11,11 @@ See [Adventure upgrades](docs/ADVENTURE_UPGRADES.md) for optional desktop direct
 casting, sealed event caches, tactical elites, precision reforging, and the
 Sunderstone Echoes endgame unlocked at Frosthaven's waystone after the saga.
 
+All 30 wilderness and dungeon areas get new geography each solo or hosted
+session. Revisits, portals, and reconnects preserve the active world. Progress
+and earned rewards survive the reroll. Hosts can enter an optional world seed.
+See [random map layouts](docs/RANDOM_MAPS.md) for generation and save behavior.
+
 On phones, play in landscape with a floating thumbstick, four direct-cast skills,
 and scrollable menus with item cards. Use **More → Full
 screen** where supported, or **Add to Home Screen** for an app-style launch.
@@ -62,7 +67,7 @@ each with its own biome, camp hub, NPCs, quests and boss:
 1. **The Fallen North** *(start)* — frozen Frosthaven, mines, shattered temple → *Korvath, the Oathbreaker*
 2. **The Weeping Marsh** — drowned crypts, the Silent Choir's ritual → *the Mire Mother*
 3. **The City Beneath the Sand** — buried Khal-Zahir, shifting tombs → *Azram the Gilded* (with Archivist Edran Vael)
-4. **The Shattered Cathedral** — a drifting fortress that **reassembles itself from memory each visit** → *the Empty Archangel*, then *Malthoron, the Hollow King*
+4. **The Shattered Cathedral** — a drifting fortress that **reassembles itself from memory each session** → *the Empty Archangel*, then *Malthoron, the Hollow King*
 5. **The Throne of Cinders** — Hell, where demons **fight each other** as well as you → *Vethriss, the Veiled Lord* (three-phase final fight)
 
 > **The Ashen Marches** (Cinderwatch — the original starting region) is now an
@@ -109,7 +114,7 @@ Act IV now uses authored gothic islands above a void: memory chapels, a broken
 arrival bridge, a procession ring and two reserved boss platforms. Optional
 **Cinderwatch Remembered** and **The Last Bastion’s Echo** add looped detours,
 elite encounters and guarded caches. Returning from a memory preserves the
-parent map; normal cathedral visits reshuffle it. Thirty dedicated raster assets
+parent map; a new session reshuffles the cathedral. Thirty dedicated raster assets
 cover gateways, architecture, materials and completed story-object states. A further
 72 painted modules now connect the walls, deepen the floating foundations, blend
 outdoor ash into rock, and integrate entrances with their approach paths. Inspect
