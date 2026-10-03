@@ -65,12 +65,16 @@ const {reveal}=require('./phone_page_helpers.cjs');
     ok(await page.evaluate(()=>!Game.state.player.command?.touch),'old gesture resumed after lifecycle reset');
     await page.evaluate(()=>{
       const s=Game.state,p=s.player;p.action=null;p.skillL='basic';p.stunT=0;
+      // Exercise actual attack damage without making an input check depend on random misses.
+      window.__touchTryHit=p.tryHit;p.tryHit=()=>true;
       const mon=new Monster('risen',p.x+.8,p.y);mon.hp=mon.maxHp=10000;mon.update=()=>{};
       s.monsters=[mon];window.__touchEnemy=mon;
     });
-    await touch('touchStart',2,attack.x,attack.y);await page.waitForTimeout(900);await touch('touchEnd',2);
+    await touch('touchStart',2,attack.x,attack.y);
+    await page.waitForFunction(()=>window.__touchEnemy.hp<10000,null,{timeout:5000});
+    await touch('touchEnd',2);
     ok(await page.evaluate(()=>window.__touchEnemy.hp<10000),'touch Attack did not deal real combat damage');
-    await page.evaluate(()=>{Game.state.monsters=[];});
+    await page.evaluate(()=>{Game.state.monsters=[];Game.state.player.tryHit=window.__touchTryHit;delete window.__touchTryHit;});
     await page.locator('#mobileQuick0').tap();
     ok(await page.locator('#skillPick').isVisible(),'Assign did not open skill picker');
     ok(await page.locator('#mobileMoveZone').isHidden(),'skill picker left movement enabled');

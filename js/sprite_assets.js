@@ -22,6 +22,8 @@ const SpriteAssets = (() => {
   const isolatedFrameCache = new Map();
   const act1AuthoredFrames = new Map();
   const bossFlashCache = new Map();
+  const itemRenderCache = new Map();
+  const ITEM_RENDER_CACHE_LIMIT = 256;
   const playerWalkParts = new Map();
   const playerLoadRequests = new Map();
   const discardedPlayerVisuals = new WeakSet();
@@ -416,12 +418,26 @@ const SpriteAssets = (() => {
     throw new SpriteAssetError(`No item artwork for ${item.baseId || icon || "unknown item"}`, "ui.items.variants");
   }
 
-  function itemIcon(item, size) {
-    const info = itemIconInfo(item), frame = getFrame(info.assetId, info.index);
+  function makeItemImage(info, size) {
+    const frame = getFrame(info.assetId, info.index);
     const c = document.createElement("canvas"); c.width = c.height = size || 64;
     const cx = c.getContext("2d"); cx.imageSmoothingEnabled = true; cx.imageSmoothingQuality = "high";
     if (info.tint) cx.drawImage(tinted(frame, info.tint), 0, 0, c.width, c.height);
     else cx.drawImage(frame.image, frame.sx, frame.sy, frame.sw, frame.sh, 0, 0, c.width, c.height);
+    return c;
+  }
+  /* Renderer-only shared pixels. DOM icons must remain independent nodes. */
+  function itemRenderImage(item) {
+    const info = itemIconInfo(item), key = JSON.stringify([info.assetId, info.index, info.tint || null]);
+    let image = itemRenderCache.get(key);
+    if (image) itemRenderCache.delete(key);
+    else image = makeItemImage(info, 64);
+    itemRenderCache.set(key, image);
+    if (itemRenderCache.size > ITEM_RENDER_CACHE_LIMIT) itemRenderCache.delete(itemRenderCache.keys().next().value);
+    return image;
+  }
+  function itemIcon(item, size) {
+    const c = makeItemImage(itemIconInfo(item), size);
     c.className = "item-icon"; c.setAttribute("role", "img");
     c.setAttribute("aria-label", (item.identified === false ? item.baseName : item.name) || item.baseName || DATA.CONSUMABLES[item.baseId]?.name || DATA.BASES[item.baseId]?.name || "Item");
     return c;
@@ -1171,7 +1187,7 @@ const SpriteAssets = (() => {
 
   return {
     STATES, WALL_H: manifest.wallHeight, WALL_VIEW_H: manifest.wallViewHeight,
-    loadBundle, getFrame, drawFrame, drawCliff, drawCliffPolygon, makeIcon, itemIconInfo, itemIcon, skillIcon, goldFrame,
+    loadBundle, getFrame, drawFrame, drawCliff, drawCliffPolygon, makeIcon, itemIconInfo, itemIcon, itemRenderImage, skillIcon, goldFrame,
     drawActor, actorGeometry, frameGeometry, hitTestGeometry,
     drawPlayer, drawPlayerPreview, resolvePlayerVisual, loadPlayerLoadout, discardPlayerLoadout,
     activatePlayerLoadout, deactivatePlayerLoadout, getPlayerDrawPlan,

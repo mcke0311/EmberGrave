@@ -25,6 +25,34 @@ test('guests travel independently, new guests join in town, and remote worlds ke
   assert.equal(guestUpdates.at(-1).payload.zone,'north_wild');
   assert.equal(guestUpdates.findLast(m=>m.payload.kind==='snapshot').payload.groups.players.length,1);
 });
+
+test('early survivor rescues commit once, roll back failed saves, and survive host acceptance',async()=>{
+  const f=await session();await travel(f,'guest','north_wild');await travel(f,'guest','mines');
+  const mines=f.runtime.worlds.get('mines'),town=f.runtime.worlds.get('frosthaven'),guest=f.runtime.players.get('guest'),host=f.runtime.players.get('host');
+  mines.monsters=[];const store=f.context.saveRecords;
+  const first=mines.npcs.find(n=>n.survivor);Object.assign(guest,{x:first.x,y:first.y});
+  f.context.saveRecords=async()=>{throw Error('Injected rescue save failure');};
+  await command(f,'guest',{type:'interact',targetId:first._coopId});
+  assert.equal(mines.quests.q8,undefined);assert.equal(mines.npcs.filter(n=>n.survivor).length,3);
+  f.context.saveRecords=store;await f.runtime.retrySave();
+  for(const npc of [...mines.npcs].filter(n=>n.survivor)){
+    Object.assign(guest,{x:npc.x,y:npc.y});await command(f,'guest',{type:'interact',targetId:npc._coopId});
+    const count=mines.quests.q8.count;await command(f,'guest',{type:'interact',targetId:npc._coopId});
+    assert.equal(mines.quests.q8.count,count);assert.equal(f.saves.at(-1).campaign.quests.q8.count,count);
+  }
+  assert.equal(mines.quests.q8.state,'offered');assert.equal(mines.quests.q8.count,3);
+  const bryn=town.npcs.find(n=>n.id==='bryn');Object.assign(host,{x:bryn.x,y:bryn.y});
+  await command(f,'host',{type:'acceptQuest',questId:'q8'});
+  assert.equal(town.quests.q8.state,'reward');assert.equal(mines.quests.q8.count,3);assert.equal(mines.npcs.filter(n=>n.survivor).length,0);
+  f.runtime.trackParticipants();await command(f,'host',{type:'completeQuest',questId:'q8'});
+  const gold=[host.gold,guest.gold];await command(f,'host',{type:'completeQuest',questId:'q8'});
+  assert.equal(town.quests.q8.state,'done');assert.deepEqual([host.gold,guest.gold],gold);
+  const restored=fixture();await restored.runtime.start({hostId:'restored',hero:f.hero('Host'),campaign:structuredClone(f.saves.at(-1).campaign)});
+  assert.equal(restored.runtime.worlds.get('mines').npcs.filter(n=>n.survivor).length,0);
+  const legacy=structuredClone(f.saves.at(-1).campaign);delete legacy.quests.q8.rescued;
+  const legacyWorld=restored.Game.coop.createWorld(restored.runtime.players.get('restored'),legacy.seed,legacy,'mines',12345);
+  assert.equal(legacyWorld.npcs.filter(n=>n.survivor).length,0,'completed legacy co-op rescue stays cleared without survivor IDs');
+});
 test('teleport channels, preserves resources, and rejects replay or combat',async()=>{
   const f=await session();await travel(f,'guest','north_wild');
   const p=f.runtime.players.get('guest'),host=f.runtime.players.get('host'),w=f.runtime.worlds.get('north_wild');w.monsters=[];p.hp=61;p.mana=17;

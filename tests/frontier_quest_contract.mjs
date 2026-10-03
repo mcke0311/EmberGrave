@@ -56,6 +56,41 @@ returnTo(s,'deepfreeze_cavern');G.acceptQuest('opt_north_2');T.questKillEvent({d
 ok(s.quests.opt_north_2.state==='reward','Hoarfang quest failed');
 returnTo(s,'shattered_temple');s.flags.fn_temple_open=true;s.quests.q9={state:'active'};T.questKillEvent({defId:'korvath'});
 ok(s.quests.q9.state==='reward','Korvath quest failed');G.completeQuest('q9');ok(s.shrines.includes('marshcamp'),'next act travel not unlocked');
+// Discoveries before accepting the rescue quest must be saved and kept by the quest chain.
+for(const offered of [false,true])for(const count of [1,2,3]){
+ const s=fresh('mines');s.flags.opening={v:2,stage:'done'};s.quests.q7={state:'reward',count:8};
+ if(offered)s.quests.q8={state:'offered'};
+ s.npcs=s.map.npcs.map(n=>new Npc(n.id,n.x,n.y,n));
+ for(const [i,npc]of s.npcs.slice(0,count).entries()){
+  G.interact(npc);G.interact(npc);
+  ok(s.quests.q8.count===i+1,'early rescue was lost or credited twice');
+  const saved=JSON.parse(f.store.get(null));
+  ok(saved.campaignsByDifficulty[0].quests.q8.rescued.length===i+1,'rescue was not saved immediately');
+ }
+ ok(s.quests.q8.state==='offered','early rescue bypassed acceptance');
+ G.completeQuest('q7');ok(s.quests.q8.count===count,'previous quest turn-in discarded early rescues');
+ s.quests=JSON.parse(JSON.stringify(s.quests));
+ G.acceptQuest('q8');ok(s.quests.q8.count===count,'accepting reset rescue credit');
+ ok(s.quests.q8.state===(count===3?'reward':'active'),'acceptance failed to recognize a completed rescue');
+ ok(s.npcs.filter(n=>n.survivor).length===3-count,'acceptance duplicated or restored credited survivors');
+ for(const npc of [...s.npcs].filter(n=>n.survivor))G.interact(npc);
+ ok(s.quests.q8.count===3&&s.quests.q8.state==='reward','early rescues could not finish');
+ G.completeQuest('q8');const reward=JSON.stringify({gold:s.player.gold,xp:s.player.xp,lvl:s.player.lvl,items:s.player.inv.items});
+ G.acceptQuest('q8');G.completeQuest('q8');
+ ok(s.quests.q8.state==='done'&&JSON.stringify({gold:s.player.gold,xp:s.player.xp,lvl:s.player.lvl,items:s.player.inv.items})===reward,'rescue reward was granted twice');
+ await G.enterMap('north_wild','from_mines');await G.enterMap('mines','from_wild');
+ ok(!s.npcs.some(n=>n.survivor),'completed early rescues reappeared');
+}
+// Old sessions could remove survivors without keeping any credit. Restore only the uncredited ones.
+for(const rescued of [[],['mines_surv_0']]){
+ const s=fresh('mines');s.quests.q8={state:'offered',count:rescued.length,rescued};s.npcs=[];
+ G.acceptQuest('q8');ok(s.npcs.filter(n=>n.survivor).length===3-rescued.length,'acceptance did not repair missing uncredited survivors');
+ G.coop.syncWorld();ok(s.npcs.filter(n=>n.survivor).length===3-rescued.length,'world synchronization duplicated survivors');
+}
+{
+ const s=fresh('mines');s.quests.q8={state:'done',count:3};s.npcs=s.map.npcs.map(n=>new Npc(n.id,n.x,n.y,n));
+ G.coop.syncWorld();ok(!s.npcs.some(n=>n.survivor),'completed legacy rescue restored survivors');
+}
 // Exercise the actual entry/death/revive flow with partially completed old saves.
 for(const rescued of [[],['mines_surv_0'],['mines_surv_0','mines_surv_2']]){
  const s=fresh();s.flags.opening={v:2,stage:'done'};s.quests.q8={state:'active',count:rescued.length,rescued:[...rescued]};
@@ -80,6 +115,6 @@ for(const zone of ['north_wild','mines','shattered_temple','shardpeak_shrine','d
  }
  const b=fresh(zone);T.placeEvents(b.map);ok(JSON.stringify(first)===JSON.stringify(b.map.props.filter(p=>p.event).map(p=>({type:p.type,x:p.x,y:p.y}))),'event placement not seeded');
 }
-const report={status:'PASS',checks,scenarios:['beacon orders and duplicate deaths','reload/re-entry','legacy counts and invalid trio coordinates','main quest chain','three survivor IDs','both optional quests','seeded reserved events']};
+const report={status:'PASS',checks,scenarios:['beacon orders and duplicate deaths','reload/re-entry','legacy counts and invalid trio coordinates','main quest chain','three survivor IDs','early rescue persistence and acceptance','missing survivor recovery and single rewards','both optional quests','seeded reserved events']};
 if(process.argv.includes('--record')){fs.mkdirSync('tests/qa/frontier',{recursive:true});fs.writeFileSync('tests/qa/frontier/quests.json',JSON.stringify(report,null,2)+'\n');}
 console.log(JSON.stringify(report,null,2));

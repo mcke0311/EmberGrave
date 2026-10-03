@@ -8,7 +8,10 @@ const {assert,fs,out,setup,touchDriver}=require('./mobile_fix_helpers.cjs');
   for(const {zone,id,seed,approach} of cases){
    await d.release();
    const target=await page.evaluate(async({zone,id,seed,approach})=>{
-    UI.closeAll();UI.closeEsc();Game.state.seed=seed;Game.state.mapsCache={};
+    UI.closeAll();UI.closeEsc();await Game.enterMap('frosthaven','default',{revive:true});
+    // Match the contract's area layout seed and discard earlier encounter fixtures.
+    Game.state.seed=seed;Game.state.sessionSeed=(seed^U.hash('area:'+zone))>>>0;
+    Game.state.mapsCache={};Game.state.monstersByMap={};Game.state.groundByMap={};
     if(['barb_axe','barb_pole','barb_sword'].includes(id))Game.state.quests.q8b={state:'active',beacons:3,trioSpawned:true,trioKilled:[]};
     if(id==='choirmaster')Game.state.quests.q11={state:'active',siteDestroyed:true,bossDead:false};
     // Prepare the fixture at an existing point on the arrival-to-boss route.

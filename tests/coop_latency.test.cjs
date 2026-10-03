@@ -9,7 +9,7 @@ async function session(){
   let socket,saveGate=null,assetGate=null,snapshots=0,updates=0,heartbeat;
   const groups=['players','monsters','minions','projectiles','ground','traps','fx','npcs'];
   const makeHero=h=>({heroId:h.id,_coopId:h.id,name:h.name||h.id,classId:'vanguard',x:10,y:10,hp:100,stats:{maxHp:100},inv:{items:[]},stash:{items:[]},equip:{},computeStats(){}});
-  const world={map:{id:'frosthaven',props:[],blocked:[],walls:[],hazard:[]},seed:1,time:0,quests:{},flags:{},shrines:[],vendorStock:{},...Object.fromEntries(groups.map(k=>[k,[]]))};
+  const world={map:{id:'frosthaven',zone:{},props:[],blocked:[],walls:[],hazard:[]},seed:1,time:0,quests:{},flags:{},shrines:[],vendorStock:{},...Object.fromEntries(groups.map(k=>[k,[]]))};
   const hero={id:'hostHero',name:'Host'},sent=[];
   class Socket{
     static OPEN=1;
@@ -17,14 +17,15 @@ async function session(){
     send(raw){const m=JSON.parse(raw);sent.push(m);if(m.type==='create')queueMicrotask(()=>this.onmessage({data:JSON.stringify(P.envelope('welcome',{room:'TEST',playerId:'host',hostId:'host',token:'token'}))}));}
     close(){this.readyState=3;}
   }
-  const C={groups,register(){},restoreHero:makeHero,hero:p=>({id:p.heroId,name:p.name}),encode:x=>x,decode:x=>x,
+  const C={groups,register(){},restoreHero:makeHero,hero:p=>({id:p.heroId,name:p.name}),encode:x=>x,decode:x=>x,propMonsters:()=>[],
     snapshot(s,epoch,seq,full){snapshots++;return {kind:'snapshot',epoch,seq,full,zone:s.map.id,time:s.time,groups:Object.fromEntries(groups.map(k=>[k,s[k].map(p=>({_coopId:p._coopId,x:p.x,y:p.y}))])),props:[],campaign:{},vendorStock:{}};}};
   const Game={state:world,options:{},msg(){},submitCommand:c=>ctx.CoopRef.submit(c),
     coop:{async start(p){world.player=p;world.players=[p];},async prepareHero(p){if(p.heroId==='guestHero'&&assetGate)await assetGate.promise;},arrival:p=>p,update(dt){world.time+=dt;updates++;},hostPresentation(){},refresh(){},stop(){}}};
   const ctx=vm.createContext({URL,console,structuredClone,performance,Date,Math,Map,Set,JSON,Promise,Uint32Array,crypto:require('node:crypto').webcrypto,WebSocket:Socket,CoopProtocol:P,CoopCodec:C,
     Game,CoopMotion:{capture(){}},CoopCommands:{economic:new Set(['quaff']),settle:async()=>{},execute:async(p,c)=>{p.command=c;}},
     CoopStore:{read:async()=>hero,commit:async()=>{if(saveGate)await saveGate.promise;}},
-    CoopUI:{refresh(){},tick(){},status(){},closeTravel(){},close(){}},UI:{anyOpen:()=>false},document:{hidden:false},window:{COOP_CONFIG:{relayUrl:'ws://test'}},location:{protocol:'http:'},sessionStorage:{getItem:()=>null,setItem(){},removeItem(){}},setTimeout,clearTimeout,setInterval:fn=>{heartbeat=fn;return 1;},clearInterval(){},U:{dist:(x,y,a,b)=>Math.hypot(x-a,y-b)}});
+    CoopUI:{refresh(){},tick(){},status(){},closeTravel(){},close(){}},UI:{anyOpen:()=>false},document:{hidden:false},window:{COOP_CONFIG:{relayUrl:'ws://test'}},location:{protocol:'http:'},sessionStorage:{getItem:()=>null,setItem(){},removeItem(){}},setTimeout,clearTimeout,setInterval:fn=>{heartbeat=fn;return 1;},clearInterval(){}});
+  vm.runInContext(fs.readFileSync('js/utils.js','utf8'),ctx);
   vm.runInContext(fs.readFileSync('js/coop.js','utf8'),ctx);ctx.CoopRef=vm.runInContext('Coop',ctx);
   vm.runInContext(fs.readFileSync('js/coop_input.js','utf8'),ctx);const input=vm.runInContext('CoopInput',ctx),coop=ctx.CoopRef;
   await coop.connect('host',hero.id);

@@ -6,6 +6,10 @@ A multiplayer party continues while its local player is behind that prompt.
 Tablets and desktop retain their existing layouts. `?touch=1` forces the phone
 presentation for browser review; `?touch=0` disables automatic touch layout.
 
+The experience bar sits below Life and Aether. Its progress survives the same
+HUD updates and rotations as the other vitals. Quest rescues in the mines count
+before accepting Those Who Hid; acceptance and save reloads retain that credit.
+
 Drag in the lower-left thumb area to move; the floating stick anchors under the
 finger and disappears on release. Attack uses the existing primary binding.
 The four skill buttons cast their saved quick-slot skills directly without changing
@@ -68,6 +72,15 @@ commands still validate gameplay. Inventory commands and save fields are unchang
 Basic Attack in a quick slot now also survives a solo save reload.
 
 ## Verification
+
+Run `npm run test:mobile-progress` for XP geometry and updates, trusted touch
+rescues before acceptance, immediate saves, bounded loot artwork caching and a
+100-kill combat soak. `npm run test:mobile-progress:webkit` repeats the browser
+checks in WebKit after installing it with `npx playwright install webkit`.
+Reports and screenshots are written to `tmp/mobile-progress-loot/`. Ground loot
+shares a 256-entry artwork cache on both ground and upper floors rather than
+allocating an icon canvas on every frame; inventory and vendor icons remain
+independent DOM nodes.
 
 Start `python serve.py`, then run `npm run test:phone`. The multiplayer UI suite
 also needs the local relay on port 8742: `node server/relay.cjs`, followed by

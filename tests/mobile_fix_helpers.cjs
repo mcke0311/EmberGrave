@@ -34,7 +34,8 @@ async function swipe(page,client,up=true){
 async function revealBySwipe(page,client,locator){
  for(let i=0;i<30;i++){
   const r=await locator.boundingBox(),h=await page.locator('#workspaceHeader').boundingBox();assert.ok(r,'control is hidden');
-  if(r.y>h.y+h.height+1&&r.y+r.height<page.viewportSize().height-2)return;
+  // Short panels can finish within a fractional pixel of their bottom border.
+  if(r.y>h.y+h.height+1&&r.y+r.height<=page.viewportSize().height-.5)return;
   await swipe(page,client,r.y>=h.y+h.height);
  }
  throw Error('Trusted swipes could not reach '+await locator.textContent());

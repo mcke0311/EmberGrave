@@ -785,6 +785,7 @@ const Game = (() => {
     state.npcs = map.npcs
       .filter(n => !(n.survivor && rescuedSurvivors().includes(n.sid)))   // already saved -> gone
       .map(n => new Npc(n.id, n.x, n.y, { survivor: n.survivor, sid: n.sid, npcArt: n.npcArt, displayName: n.displayName, storyId: n.storyId }));
+    syncRescueSurvivors();
     campaignEvent({kind:"enter",zone:zoneId,target:zoneId}, {silent:quietQuestAudio});
     syncStoryObjects();
     syncConditionalNpcs();   // story NPCs that come and go with quest state (Halvar, etc.)
@@ -1065,7 +1066,12 @@ const Game = (() => {
     if(typeof Coop!=="undefined"&&Coop.active&&!Coop.committing)return Coop.submit({type:'acceptQuest',questId:qid});
     const q = DATA.QUESTS.find(x => x.id === qid);
     if (!q || state.quests[qid]?.state !== "offered") return;
-    state.quests[qid] = { ...state.quests[qid], state: "active", count: 0 };
+    const st = state.quests[qid];
+    if (q.type === "rescue") {
+      const rescued = [...new Set(st.rescued || [])];
+      state.quests[qid] = { ...st, state: rescued.length >= q.target ? "reward" : "active", count: rescued.length, rescued };
+      syncRescueSurvivors();
+    } else state.quests[qid] = { ...st, state: "active", count: 0 };
     msg("Quest accepted: " + q.name, "#d8c79a");
     Sfx.play("questAccepted");
     syncConditionalNpcs();
@@ -1137,7 +1143,7 @@ const Game = (() => {
     const remaining=DATA.CAMPAIGN.remaining(state,q).filter(o=>o.target!==mon.defId);
     return remaining.length ? remaining[0].label : null;
   }
-  /* survivors rescued so far (any active/finished rescue quest) */
+  /* Rescue credit also survives discoveries before the quest is accepted. */
   function rescuedSurvivors() {
     const all = [];
     for (const q of DATA.QUESTS) {
@@ -1147,7 +1153,19 @@ const Game = (() => {
     }
     return all;
   }
+  function syncRescueSurvivors() {
+    const spawns = state.map.npcs.filter(n => n.survivor);
+    if (!spawns.length) return;
+    const rescued = new Set(rescuedSurvivors());
+    const complete = DATA.QUESTS.some(q => q.type === "rescue" && q.zone === state.map.id &&
+      ["reward", "done"].includes(state.quests[q.id]?.state));
+    state.npcs = state.npcs.filter(n => !n.survivor || (!complete && !rescued.has(n.sid)));
+    if (complete) return;
+    for (const n of spawns) if (!rescued.has(n.sid) && !state.npcs.some(npc => npc.sid === n.sid))
+      state.npcs.push(new Npc(n.id, n.x, n.y, n));
+  }
   function rescueSurvivor(npc) {
+    if (!npc.sid || !state.npcs.includes(npc)) return;
     const line = U.pick(npc.def.rescue || ["Thank you!"]);
     msg(`${npc.name}: “${line}”`, "#cfe0a0");
     if (npc.def.voice) Sfx.voice(npc.def.voice, line);
@@ -1157,15 +1175,15 @@ const Game = (() => {
     /* they flee up and out of the world */
     const i = state.npcs.indexOf(npc);
     if (i >= 0) state.npcs.splice(i, 1);
-    /* credit any active rescue quest for this zone */
+    /* Credit early rescues without requiring a visit to the quest giver first. */
     for (const q of DATA.QUESTS) {
       if (q.type !== "rescue" || q.zone !== state.map.id) continue;
-      const st = state.quests[q.id];
-      if (!st || st.state !== "active") continue;
+      const st = state.quests[q.id] ||= { state: "offered", count: 0 };
+      if (["reward", "done"].includes(st.state)) continue;
       st.rescued = st.rescued || [];
       if (npc.sid && !st.rescued.includes(npc.sid)) st.rescued.push(npc.sid);
       st.count = st.rescued.length;
-      if (st.count >= q.target) {
+      if (st.state === "active" && st.count >= q.target) {
         st.state = "reward";
         msg(`${q.name}: everyone's out. Return to ${DATA.NPCS[q.giver].name}.`, "#7fd87f");
       } else {
@@ -1173,6 +1191,7 @@ const Game = (() => {
       }
       UI.renderIfOpen("quest");
     }
+    saveGame();
   }
   function questKillEvent(mon) {
     for (const q of DATA.QUESTS) {
@@ -3456,7 +3475,7 @@ const Game = (() => {
       if (gi.gold) {
         SpriteAssets.drawFrame(ctx, SpriteAssets.goldFrame(), sx, sy - 5 - tossZ, { scale: .46 });
       } else {
-        const icon = SpriteAssets.itemIcon(gi.item), s = 0.62;
+        const icon = SpriteAssets.itemRenderImage(gi.item), s = 0.62;
         ctx.save(); ctx.translate(sx, sy - 6 - tossZ); ctx.scale(s, s);
         ctx.drawImage(icon, -icon.width / 2, -icon.height / 2); ctx.restore();
         if (gi.item.rarity !== "common") {   /* rarity gleam stays on the ground */
@@ -3599,7 +3618,7 @@ const Game = (() => {
         case 'imperialLoot': {
           const gi=d.gi,sx=U.isoX(gi.x,gi.y)-cam.x,sy=U.isoY(gi.x,gi.y)-cam.y-surfaceLift(gi.x,gi.y,1);
           if(gi.gold)SpriteAssets.drawFrame(ctx,SpriteAssets.goldFrame(),sx,sy-5,{scale:.46});
-          else{const icon=SpriteAssets.itemIcon(gi.item);ctx.drawImage(icon,sx-icon.width*.31,sy-icon.height*.31-6,icon.width*.62,icon.height*.62);}break;
+          else{const icon=SpriteAssets.itemRenderImage(gi.item);ctx.drawImage(icon,sx-icon.width*.31,sy-icon.height*.31-6,icon.width*.62,icon.height*.62);}break;
         }
         case 'imperialWall': case 'imperialCap': case 'imperialPlane': case 'imperialSupport': case 'imperialRail':
           ImperialArchitecture.draw(ctx,d,m,cam,p);break;
@@ -4831,7 +4850,7 @@ const Game = (() => {
         mon._coopId='spawn_'+zone+'_'+(zone==='mines'?U.hash(sp.id+':'+sp.x+':'+sp.y):index);world.monsters.push(mon);
       }
       world.npcs=world.map.npcs.filter(n=>!(n.survivor&&rescuedSurvivors().includes(n.sid))).map(n=>new Npc(n.id,n.x,n.y,{survivor:n.survivor,sid:n.sid,npcArt:n.npcArt,displayName:n.displayName,storyId:n.storyId}));
-      syncStoryObjects();syncConditionalNpcs();setupBeaconQuest(world.map);syncOptionalQuests();placeEvents(world.map);
+      syncRescueSurvivors();syncStoryObjects();syncConditionalNpcs();setupBeaconQuest(world.map);syncOptionalQuests();placeEvents(world.map);
       if(typeof CursedEvents!=="undefined")CursedEvents.restore(world);
       if(typeof TacticalElites!=="undefined")TacticalElites.setup(world);
       if(typeof Echoes!=="undefined")Echoes.prepare(world);
@@ -4917,7 +4936,7 @@ const Game = (() => {
   }
 
   return {
-    coop: {enterWorld:()=>campaignEvent({kind:'enter',zone:state.map.id,target:state.map.id},{silent:true}),withWorld:withCoopWorld,createWorld:createCoopWorld,resetActor:resetCoopActor,syncWorld:(beacons=false)=>{syncStoryObjects();syncConditionalNpcs();if(beacons)setupBeaconQuest(state.map);},makeHero:makeCoopHero,prepareHero:prepareCoopHero,start:startCoop,stop:stopCoop,preload:preloadCoop,update,presentation:coopPresentation,hostPresentation,refresh:coopRefresh,repeatSkill,arrival:safeCoopArrival,pickup:pickupGround,interact:(o,p)=>interactOnSurface(o,false,p),interactCommitted:(o,p)=>interactOnSurface(o,true,p),openInteraction:openCoopInteraction,drop:dropAtFeet,respec:doRespec,castPortal,acceptQuest,completeQuest,rewardQuest:rewardCoopQuest,planReward:planCoopReward,jump:coopJump,airAttack:coopAirAttack,visual:coopVisual},
+    coop: {enterWorld:()=>campaignEvent({kind:'enter',zone:state.map.id,target:state.map.id},{silent:true}),withWorld:withCoopWorld,createWorld:createCoopWorld,resetActor:resetCoopActor,syncWorld:(beacons=false)=>{syncStoryObjects();syncConditionalNpcs();syncRescueSurvivors();if(beacons)setupBeaconQuest(state.map);},makeHero:makeCoopHero,prepareHero:prepareCoopHero,start:startCoop,stop:stopCoop,preload:preloadCoop,update,presentation:coopPresentation,hostPresentation,refresh:coopRefresh,repeatSkill,arrival:safeCoopArrival,pickup:pickupGround,interact:(o,p)=>interactOnSurface(o,false,p),interactCommitted:(o,p)=>interactOnSurface(o,true,p),openInteraction:openCoopInteraction,drop:dropAtFeet,respec:doRespec,castPortal,acceptQuest,completeQuest,rewardQuest:rewardCoopQuest,planReward:planCoopReward,jump:coopJump,airAttack:coopAirAttack,visual:coopVisual},
     directCast,submitCommand,playerOwner,closestPlayer,renderPosition,
     bossCinematic,cinematicActor,cinematicWorld,cinematicSnapshot,resetCinematicCamera,
     init, newGame, loadGame, saveGame, listSaves, deleteSave, saveAndQuit,

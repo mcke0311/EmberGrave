@@ -19,6 +19,8 @@
     "test:coop:network": "node tests/coop_network_browser.cjs",
     "test:mobile-fixes": "node tests/mobile_fixes_browser.cjs && node tests/mobile_shop_trades_browser.cjs && node tests/mobile_opening_browser.cjs && node tests/mobile_captain_route_browser.cjs && node tests/boss_activation_contract.mjs && node tests/mobile_boss_activation_browser.cjs && node tests/mobile_scripted_boss_browser.cjs && python tests/app_icons_contract.py",
     "test:phone:webkit": "node tests/mobile_safari_browser.cjs",
+    "test:mobile-progress": "node tests/frontier_quest_contract.mjs && node tests/mobile_progress_loot_browser.cjs",
+    "test:mobile-progress:webkit": "node tests/mobile_progress_loot_browser.cjs --webkit",
     "test:coop:release": "node tools/verify_coop_release.cjs",
     "test:body-armor": "node --preserve-symlinks --preserve-symlinks-main tests/body_armor3d_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/body_armor3d_browser.cjs"
   },
