@@ -1,6 +1,6 @@
 # Sites deployment
 
-Current website (updated 2026-10-01): https://embergravegame.com
+Current website (updated 2026-10-03): https://embergravegame.com
 The original address https://embergravegame.mcke0311.chatgpt.site also remains live.
 The existing Site is now public. Preserve its current audience and project ID
 when updating; the private access and earlier URL recorded below are historical.
@@ -393,3 +393,44 @@ Publication metadata and the archive hash are retained in
 [the release record](qa/body_armor_site_publication.json). Publication was
 confirmed through Sites deployment status; the earlier equipment browser review
 was reused. The multiplayer relay was not part of this static equipment update.
+
+## Mobile XP, survivor progress, and combat rendering — 2026-10-03
+
+Version 19 publishes GitHub `main` at
+`8c0de64b319f90af530e30c0f2c020659bed5bdb`, including implementation commit
+`cfde527cfaf886697e137912fa934a83c84a8700`. The phone HUD now displays the XP bar;
+survivors rescued before accepting their quest retain credit across saves and
+co-op sessions. Ground loot reuses bounded cached artwork, avoiding repeated
+canvas allocation during combat as dropped items accumulate.
+
+Sites confirmed publication **succeeded** at 23:05:33 UTC (19:05:33 Toronto)
+and returned https://embergravegame.mcke0311.chatgpt.site. The existing custom
+domain https://embergravegame.com and public audience are preserved.
+
+Release source: `07a24fa02948fba110d37446bfc09e6fa54390ed`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_6e39eae1c0708191b514bfc81d7010f8`.
+Deployment: `appgdep_6ac189c2bf2c8191b91cd4613d03ea6f`.
+
+The compact release contains 1,394 runtime files (216.49 MiB). All 87 script
+syntax checks and 1,269 runtime reference checks passed with no missing files.
+Its validated archive is 217,524,541 bytes (207.45 MiB compressed). The native
+archive transfer failed, so Sites built the exact verified, pushed source through
+the established remote-build fallback. The source and archive are retained.
+
+The new mobile progression suite passed 43 checks in Chrome and 43 in WebKit,
+including XP placement, early rescue save/reload and quest completion, rendering
+identity, bounded cache eviction, and 100 kills with temporary effects expiring.
+Warm rendering of 100 ground items allocates zero canvases per frame in both
+loot paths. Frontier regression checks (230), item identity checks (4,094),
+and the full co-op suite (46 tests, 85 ownership and 25 inventory checks) passed.
+The existing phone, touch, menu, opening, boss activation, merchant, and icon
+checks also passed. These are desktop browser checks; a physical phone was not
+attached. Implementation notes are in [PHONE_EXPERIENCE.md](PHONE_EXPERIENCE.md).
+
+Frontend, worker, and committed relay source use `embergrave-coop-9`. The live
+Render relay still reports `embergrave-coop-3`. Updating the existing service is
+pending owner sign-in to Render; new co-op clients require the matching relay.
+This mismatch was already present before this publication.
+
+Publication IDs, archive hash, and validation counts are recorded in
+[the release record](qa/mobile_progress_site_publication.json).
