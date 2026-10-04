@@ -208,15 +208,15 @@ const CoopCommands=(()=>{
       }
       case 'equip':{
         if(name==='equip'||!it.identified||!Items.canEquip(p,it))fail('You cannot equip that item');
-        const allowed=Items.slotFor(it),slot=c.slot||allowed.find(k=>!p.equip[k])||allowed[0];if(!allowed.includes(slot))fail('Invalid equipment slot');
-        const displaced=[p.equip[slot]];
-        if(it.twoHand&&p.equip.off){displaced.push(p.equip.off);delete p.equip.off;}
-        if(slot==='off'&&p.equip.main?.twoHand){displaced.push(p.equip.main);delete p.equip.main;}
-        remove(p,entry);p.equip[slot]=it;
-        for(let i=0;i<displaced.length;i++){const old=displaced[i];if(!old)continue;
-          if(name==='carried'&&i===0){management(p).carried=old;management(p).origin={name:'equip',slot};}
-          else if(!Items.autoPlace(p.inv,old)){if(i===0)fail('Make room in your pack before swapping equipment');Game.coop.drop(old,p);}
+        if(c.expectedEquipment&&Items.EQUIP_SLOTS.some(slot=>(p.equip[slot]?._coopId||null)!==c.expectedEquipment[slot]))fail('Equipment changed. Review the comparison again.');
+        const plan=Items.planEquip(p,it,c.slot,entry.grid,name==='carried');if(plan.reason)fail(plan.reason);
+        remove(p,entry);
+        for(const slot of Items.EQUIP_SLOTS)delete p.equip[slot];Object.assign(p.equip,plan.nextEquip);
+        if(name==='carried'){
+          const old=plan.displaced.find(e=>e.slot===plan.slot)?.item;
+          if(old){management(p).carried=old;management(p).origin={name:'equip',slot:plan.slot};}
         }
+        for(const placement of plan.placements)Items.place(p.inv,placement.item,placement.x,placement.y);
         if(!globalThis.COOP_WORKER)await Game.coop.prepareHero(p);p.computeStats();return;
       }
       default:fail('Unknown gameplay command');

@@ -459,15 +459,13 @@ class Player extends Entity {
     }
     return sum;
   }
-  computeStats() {
-    if (typeof UniquePowers !== "undefined") UniquePowers.sync(this);
+  calculateStats(aura = this.summonAuraStatsFor(this)) {
     const g = this.gearStats();
     // Passive effective ranks must see the current loadout on the first recompute.
     this._computingGear=g;
     const p = this.passiveStats();
     this._computingGear=null;
-    const b = this.summonAuraStatsFor(this);
-    this._summonAuraKey = JSON.stringify(b);
+    const b = {...aura};
     for (const buff of this.buffs) for (const [k, v] of Object.entries(buff.stats)) b[k] = (b[k] || 0) + v;
     const S = k => (g[k] || 0) + (p[k] || 0) + (b[k] || 0);
     const attr = {
@@ -544,6 +542,26 @@ class Player extends Entity {
     st.attackRate = 1.35 * st.weaponSpeed * (1 + st.ias / 100);
     st.range = 1.05 + (wpn && wpn.reach ? wpn.reach : 0);
     st.ranged = !!(wpn && wpn.ranged);
+    return st;
+  }
+  // Private read model: caches, unique-power state and buffs belong to this
+  // reader. Aura ownership still uses the real hero; no gameplay hooks run.
+  previewEquipment(equip) {
+    const reader = Object.create(this);
+    reader.equip = {...equip};
+    reader.buffs = this.buffs.map(b => ({...b,stats:{...b.stats}}));
+    reader._perkCache = new Map();
+    reader._unique = {active:[],states:new Map([...(this._unique?.states || [])].map(([key,value]) => [key,{...value}])),depth:0};
+    reader._computingGear = null;
+    if (typeof UniquePowers !== 'undefined') UniquePowers.sync(reader);
+    reader.stats = reader.calculateStats(this.summonAuraStatsFor(this));
+    return reader;
+  }
+  computeStats() {
+    if (typeof UniquePowers !== 'undefined') UniquePowers.sync(this);
+    const aura = this.summonAuraStatsFor(this);
+    this._summonAuraKey = JSON.stringify(aura);
+    const st = this.calculateStats(aura);
     this.stats = st;
     this.hp = Math.min(this.hp ?? st.maxHp, st.maxHp);
     this.mana = Math.min(this.mana ?? st.maxMana, st.maxMana);

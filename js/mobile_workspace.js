@@ -35,7 +35,7 @@ const MobileWorkspace=(()=>{
       if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)back();return;}
       if(e.key==='Tab'){
         const roots=[header,document.getElementById('skillPick').classList.contains('hidden')?null:document.getElementById('skillPick'),UI.escOpen()?document.getElementById('escmenu'):document.getElementById('touchItemMenu')||current()].filter(Boolean);
-        const nodes=roots.flatMap(r=>[...r.querySelectorAll('button:not(:disabled),input,select,textarea,[tabindex="0"]')]).filter(n=>n.getClientRects().length&&!n.closest('[inert]')&&n.tabIndex>=0);
+        const nodes=roots.flatMap(r=>[...r.querySelectorAll('button:not(:disabled),input,select,textarea,summary,[tabindex="0"]')]).filter(n=>n.getClientRects().length&&!n.closest('[inert]')&&n.tabIndex>=0);
         const first=nodes[0],last=nodes.at(-1);
         if(!nodes.includes(document.activeElement)||(e.shiftKey&&document.activeElement===first)||(!e.shiftKey&&document.activeElement===last)){e.preventDefault();(e.shiftKey?last:first)?.focus();}
         e.stopImmediatePropagation();return;
@@ -109,18 +109,21 @@ const MobileWorkspace=(()=>{
       let heading=esc?(document.getElementById('menuHeading')?.textContent||'Loot Filter'):service?labels[service.el.dataset.kind]:labels[panel?.dataset.kind]||'Loadout';
       if(document.querySelector('#escmenu:not(.hidden) .pause-menu'))heading='More';
       if(picker)heading='Assign '+(document.getElementById('skillPick').dataset.which==='L'?'Attack':'skill '+(Number(document.getElementById('skillPick').dataset.which?.slice(1))+1));
-      if(detail)heading='Item details';
+      if(detail)heading=document.getElementById('touchItemMenu').dataset.title||'Item details';
       if(panel&&MobileViews.isDetail(panel)&&!esc&&!picker&&!detail)heading=panel.dataset.kind==='skills'?'Skill details':panel.dataset.kind==='quest'?'Quest details':'Item details';
       if(title.textContent!==heading)title.textContent=heading;
       backButton.hidden=!(picker||detail||(esc&&!document.querySelector('#escmenu .pause-menu'))||(!esc&&panel&&MobileViews.isDetail(panel)));
+      const nested=!backButton.hidden;
+      tabs.hidden=!!(nested||service||['shrine','dialog'].includes(panel?.dataset.kind));
+      header.dataset.mode=nested?'detail':service||tabs.hidden?'service':'root';
       for(const b of tabs.children){b.setAttribute('aria-selected',String(b.dataset.section===section));b.tabIndex=b.dataset.section===section?0:-1;}
-    }else {title.textContent=panel?.dataset.kind==='inv'?'Equipment & pack':labels[panel?.dataset.kind]||'Menu';backButton.hidden=true;}
+    }else {delete header.dataset.mode;title.textContent=panel?.dataset.kind==='inv'?'Equipment & pack':labels[panel?.dataset.kind]||'Menu';backButton.hidden=true;}
     const k=ps.map(p=>p.side+':'+p.el.dataset.kind).join('|');
     if(related.dataset.key!==k){related.dataset.key=k;related.replaceChildren();for(const p of ps){
       const name=p.side==='right'?(isPhone&&service?.el.dataset.kind==='vendor'?'Sell':'Pack'):isPhone&&p.el.dataset.kind==='vendor'?'Buy':labels[p.el.dataset.kind]||'Details';
       const b=button(name,()=>select(p.side));b.dataset.side=p.side;related.append(b);
     }}
-    related.hidden=ps.length<2||esc||picker||detail;
+    related.hidden=ps.length<2||esc||picker||detail||(isPhone&&panel&&MobileViews.isDetail(panel));
     for(const b of related.children)b.setAttribute('aria-pressed',String(b.dataset.side===active));
     const height=isPhone?Math.ceil(header.getBoundingClientRect().height)-parseFloat(getComputedStyle(header).paddingTop||0):56+(related.hidden?0:48);
     document.documentElement.style.setProperty('--phone-menu-head',height+'px');

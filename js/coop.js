@@ -24,7 +24,7 @@ const Coop=(()=>{
     stopped=true;clearInterval(pingTimer);clearTimeout(retry);wire('roomState',{open:false});wire('leave');ws?.close();ws=null;worker?.terminate();worker=null;active=false;loading=false;Game.coop.stop();ui()?.status('Host simulation stopped. Resume your saved campaign. '+message);
   }
   async function startWorker(record){
-    worker=new Worker(new URL('js/coop_worker.js?v='+P.BUILD+'&patch=mobile-fixes-1',document.baseURI));
+    worker=new Worker(new URL('js/coop_worker.js?v='+P.BUILD+'&patch=mobile-inventory-1',document.baseURI));
     worker.onerror=e=>workerFailed(e.message||'Worker failed.');worker.onmessageerror=()=>workerFailed('Worker communication failed.');
     worker.onmessage=({data:m})=>{
       if(m.type==='reply'){const p=workerPending.get(m.requestId);workerPending.delete(m.requestId);if(m.error)p?.reject(Error(m.error));else p?.resolve(m.value);return;}

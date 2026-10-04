@@ -347,5 +347,39 @@ const CharacterSheet = (() => {
   }
   const liveDefs=statDefs.filter(d=>["life","aether","hitChance"].includes(d.id));
   const liveValues=p=>Object.fromEntries(liveDefs.map(d=>[d.id,d.format(d.read(p))]));
-  return Object.freeze({elements,coreElements,number,formatRange,preview,sections,classification,statDefs,classDefs,liveValues});
+  function equipmentComparison(p,item,slot,sourceGrid) {
+    const plan=Items.planEquip(p,item,slot,sourceGrid), rows=[], notes=[];
+    if(!item.identified)return {plan,rows,notes};
+    const before=p.previewEquipment(p.equip),after=p.previewEquipment(plan.nextEquip);
+    const hit=reader=>{
+      if(!reader.canUseSkillWeapon(p.skillL||'basic'))return null;
+      const damage=preview(reader,p.skillL||'basic');
+      if(damage.status!=='damage')return null;
+      return damage.parts[0]?sum(Object.values(damage.parts[0].hit)):null;
+    };
+    const oldHit=hit(before),newHit=hit(after);
+    rows.push({label:'Attack hit',before:oldHit,after:newHit,range:true});
+    const attack=preview(before,p.skillL||'basic'),baseline=attack.parts[0];
+    notes.push('Assigned Attack: '+attack.name+(baseline?' · '+baseline.label+' ('+baseline.basis+').':' · no direct hit damage.'));
+    for(const [key,label,pct] of [['armor','Armor'],['maxHp','Maximum Life'],['maxMana','Maximum Aether'],['resFire','Fire resistance',true],['resCold','Cold resistance',true],['resLight','Lightning resistance',true],['resPoison','Poison resistance',true]])rows.push({label,before:before.stats[key],after:after.stats[key],percent:!!pct});
+    const counts=equip=>Object.values(equip).reduce((out,it)=>{if(it?.setId)out[it.setId]=(out[it.setId]||0)+1;return out;},{});
+    const oldSets=counts(p.equip),newSets=counts(plan.nextEquip);
+    for(const id of new Set([...Object.keys(oldSets),...Object.keys(newSets)]))for(const threshold of Object.keys(DATA.SETS[id]?.bonuses||{})){
+      const old=(oldSets[id]||0)>=+threshold,next=(newSets[id]||0)>=+threshold;
+      if(old!==next)notes.push((next?'Gain ':'Lose ')+DATA.SETS[id].name+' '+threshold+'-piece bonus.');
+    }
+    if(typeof UniquePowers!=='undefined'){
+      const old=UniquePowers.collect(before),next=UniquePowers.collect(after);
+      const powerLabel=entry=>entry.power.title+(entry.power.event==='equip'?' (unique power).':' (conditional power).');
+      for(const entry of old)if(!next.some(e=>e.key===entry.key))notes.push('Lose '+powerLabel(entry));
+      for(const entry of next)if(!old.some(e=>e.key===entry.key))notes.push('Gain '+powerLabel(entry));
+    }
+    for(const id of new Set([p.skillL,p.skillR,...(p.quickSlots||[])]))if(id){
+      const old=before.canUseSkillWeapon(id),next=after.canUseSkillWeapon(id);
+      if(old&&!next)notes.push(DATA.SKILLS[id]?.name+' will need a compatible weapon.');
+      else if(!old&&next)notes.push(DATA.SKILLS[id]?.name+' will become usable with this weapon.');
+    }
+    return {plan,rows,notes};
+  }
+  return Object.freeze({elements,coreElements,number,formatRange,preview,sections,classification,statDefs,classDefs,liveValues,equipmentComparison});
 })();

@@ -19,17 +19,38 @@ pointers. Empty skill buttons open assignment; Talents → Loadout assigns Attac
 and all four slots. Jump and the four belt slots remain directly reachable.
 
 Pack opens inventory. Menu opens More. The shared header has Pack, Character,
-Talents, Quests and More tabs. Content scrolls vertically; Back returns from details
+Talents, Quests and More tabs in one compact row. Detail screens show Back,
+their title and Close; service tabs share that same header row. Content scrolls vertically; Back returns from details
 and Close returns to play. All full-screen phone menus pause solo simulation.
 Co-op continues and shows “Party is live.” The minimap toggles the map overlay;
 loot labels and Party are in More, with a HUD badge for party errors.
 
 Inventory cards represent the existing items and grid capacity: presentation does
-not move, duplicate, or reorder inventory data. Pack, Equipment and Belt have
-explicit subtabs. Carrying an item exposes
+not move, duplicate, or reorder inventory data. Equipped gear always sits beside
+the bag, with independent scrolling and named occupied/empty slots. Main and off
+hand appear first. Bag and Belt share the other pane. Carrying an item exposes
 “Place carried item here” in the destination container; this finds a valid free
 position using the existing placement rules. Item cards still support swaps,
 socketing, equipping, using and selling through the production action handlers.
+
+Inspecting gear shows Current and Selected items beside each other, aligned
+before/after/change columns for the assigned Attack hit, Armor, maximum Life and
+Aether, and all four resistances. The damage row identifies its first hit/pulse
+basis; damage over time, secondary impacts and conditional triggers are separate.
+Full properties expand below, including sockets, affixes and unique powers.
+Changed set thresholds and powers are called out. Two occupied rings require
+choosing Ring I or Ring II. Equip names the destination and stays pinned while
+details scroll. Carry and Drop are under More actions. Back restores search,
+pane scroll and item focus. Arrival messages stay behind the menu, and action
+feedback appears inside the open menu.
+
+`Items.planEquip` projects every displaced item into a copy of the pack, using
+the incoming item's vacated cells. Inspection, solo equip and co-op authority
+share that projection. A two-hand swap cannot auto-drop an off hand: all replaced
+items must fit before any mutation. Co-op submissions include the reviewed
+equipment identities and reject a stale loadout. `Player.previewEquipment`
+uses the real stat calculation through a private reader without clamping
+resources, dismissing companions, changing trigger state or touching caches.
 
 Merchant categories show the full two-column stock list. Inspecting an item hides
 the category tabs; Back restores that category and its scroll position. Opening
@@ -68,7 +89,8 @@ views from production renderers and remembers presentation state. The old generi
 `MobilePages` flattening/pagination engine has been removed. Existing item controls,
 callbacks and IDs remain connected. `Game.touchQuickSlot(index, down)` and the
 matching co-op input method resolve the skill on press; existing host attack/cast
-commands still validate gameplay. Inventory commands and save fields are unchanged.
+commands still validate gameplay. Inventory save fields are unchanged; phone
+equip commands add the optional reviewed equipment identities for stale-loadout checks.
 Basic Attack in a quick slot now also survives a solo save reload.
 
 ## Verification
@@ -143,7 +165,7 @@ in Playwright WebKit. Install that browser with `npx playwright install webkit`.
 This environment used `PLAYWRIGHT_BROWSERS_PATH=tmp/playwright-browsers`; set the
 same variable when rerunning here. The Windows WebKit port lacks Web Audio, so
 this UI-only suite replaces audio functions in its isolated test page. It passed
-133 checks; it does not certify Safari on an iPhone.
+129 checks; it does not certify Safari on an iPhone.
 
 Physical Android installation, launch icon appearance, standalone reopening and
 saved-hero availability remain release checks. Record the device, OS/browser
@@ -154,9 +176,9 @@ iPhone was connected for this change. No website deployment was performed.
 
 | Coverage | Result |
 |---|---|
-| Chrome mobile fixes, all six merchants | 770 checks passed, plus 66 purchase/sale checks across all 22 nonempty merchant categories |
-| Existing phone suite | Passed, including 29 touch, 57 redesign and 88 settings checks |
-| WebKit presentation | 133 checks passed; audio stub described above |
+| Chrome mobile fixes, all six merchants | 770 checks passed, plus 57 purchase/sale checks across 19 nonempty merchant categories |
+| Existing phone suite | Passed, including 29 touch, 61 redesign and 89 settings checks |
+| WebKit presentation | 129 checks passed; audio stub described above |
 | Desktop title and saved heroes | 410 checks passed |
 | Mandatory opening and save compatibility | 1,110 checks passed |
 | Complete opening through touch | 9 checks passed through 14 observed stages |
@@ -164,6 +186,21 @@ iPhone was connected for this change. No website deployment was performed.
 | Other active bosses through touch | 18 engagements passed; 7 fresh scripted-spawn checks passed |
 | Boss navigation and encounter behavior | 473 activation and 85,616 existing encounter checks passed |
 | Act I environment and doorway regression | 239,443 checks passed across 31 seeds |
-| Co-op | 23 connection/input/relay tests, 85 ownership checks and 25 inventory checks passed |
+| Co-op | 22 runtime/replication tests, 85 ownership checks, 31 inventory checks and 67 shared UI browser checks passed |
 | Campaign, difficulty and character rendering | 214, 2,947 and 174 checks passed respectively |
 | Icons | 39 asset checks and all 9 served icon/manifest URLs passed |
+
+### Inventory and menu usability update
+
+`npm run test:inventory` covers 127 equipment/stat/read-only checks and the
+Chromium inventory flow. `npm run test:phone` includes this coverage with the
+existing menu, touch and settings suites. `npm run test:phone:webkit` also runs
+the inventory flow. Both engines exercise 568×240, 568×320, 667×375, 740×360 and
+844×390. Screenshots and reports are in `tmp/mobile-inventory/{chromium,webkit}`.
+Both inventory flows passed 120 checks. These isolated pages use the Windows
+WebKit audio workaround described above.
+The browser checks include ring choices, pinned actions, full-bag failures,
+live comparison refresh, pending/rejected commands and secondary Carry/Place.
+The command contract separately checks host-side stale equipment rejection and
+atomic swaps. Run it with `node --preserve-symlinks --preserve-symlinks-main
+tests/coop_inventory_contract.mjs`.

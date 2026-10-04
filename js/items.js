@@ -522,6 +522,34 @@ const Items = (() => {
     return it.kind === "gear" && it.identified && player.lvl >= effReqLvl(it);
   }
 
+  // Read-only projection shared by inspection, solo swaps and host commands.
+  // Packing uses the incoming item's vacated cells and never drops overflow.
+  function planEquip(player, it, requestedSlot, sourceGrid = null, carryReplacement = false) {
+    const slots = it?.kind === 'gear' ? slotFor(it) : [];
+    const slot = requestedSlot || slots.find(s => !player.equip[s]) || slots[0];
+    const nextEquip = {...player.equip}, displaced = [], placements = [];
+    let reason = !slots.includes(slot) ? 'Choose a compatible equipment slot.' :
+      !it.identified ? 'Identify this item before equipping it.' :
+      player.lvl < effReqLvl(it) ? 'Requires Level ' + effReqLvl(it) + '.' : '';
+    if (!slots.includes(slot)) return {slot,nextEquip,displaced,placements,reason};
+    const displace = key => {
+      if (nextEquip[key] && nextEquip[key] !== it) displaced.push({slot:key,item:nextEquip[key]});
+      delete nextEquip[key];
+    };
+    displace(slot);
+    if (it.twoHand) displace('off');
+    if (slot === 'off' && nextEquip.main?.twoHand) displace('main');
+    nextEquip[slot] = it;
+    const trial = {w:player.inv.w,h:player.inv.h,items:player.inv.items.filter(i => sourceGrid !== player.inv || i !== it).map(i => ({...i}))};
+    for (const entry of displaced) {
+      if (carryReplacement && entry.slot === slot) continue;
+      const copy = {...entry.item};
+      if (!autoPlace(trial,copy)) { reason ||= 'Make room in your pack for the replaced equipment.'; break; }
+      placements.push({item:entry.item,x:copy.gx,y:copy.gy});
+    }
+    return {slot,nextEquip,displaced,placements,reason};
+  }
+
   /* --------------------------------------------------------- vendors */
   function vendorStock(kind, plvl) {
     const items = [];
@@ -582,6 +610,6 @@ const Items = (() => {
     precisionCost, precisionPool, precisionReforge, rollAffixesOnto, socketGlyph,
     value, sellValue, statLines,
     makeGrid, fits, itemAt, place, remove, autoPlace, canAutoPlace, tidy,
-    EQUIP_SLOTS, slotFor, canEquip, effReqLvl, vendorStock,
+    EQUIP_SLOTS, slotFor, canEquip, effReqLvl, planEquip, vendorStock,
   };
 })();

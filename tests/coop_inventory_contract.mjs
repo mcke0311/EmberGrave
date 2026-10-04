@@ -72,4 +72,21 @@ const take=p.inv.items[0];await cmd({type:'carry',itemId:take._coopId});p.dead=t
 ok(!p.management.carried,'held items can be returned after death');p.dead=false;
 const remote=G.coop.makeHero('Other','vanguard');remote._coopId='other';s.players.push(remote);
 await assert.rejects(()=>Cmd.execute(remote,{type:'carry',itemId:take._coopId}),/no longer/);checks++;
+// Equipment changes retain every displaced item and validate the reviewed loadout.
+p.inv=I.makeGrid(10,4);p.equip={};p.management.carried=null;p.lvl=70;
+const ringBase=Object.keys(f.DATA.BASES).find(id=>f.DATA.BASES[id].slot==='ring');
+const r1=I.fromBase(ringBase),r2=I.fromBase(ringBase),incoming=add(I.fromBase(ringBase));p.equip={ring1:r1,ring2:r2};C.register(s);
+const expected=Object.fromEntries(I.EQUIP_SLOTS.map(slot=>[slot,p.equip[slot]?._coopId||null]));
+await assert.rejects(()=>cmd({type:'equip',itemId:incoming._coopId,slot:'ring2',expectedEquipment:{...expected,ring1:'stale'}}),/Equipment changed/);checks++;
+ok(p.inv.items.includes(incoming)&&p.equip.ring1===r1&&p.equip.ring2===r2,'stale comparison leaves equipment and bag untouched');
+await cmd({type:'equip',itemId:incoming._coopId,slot:'ring2',expectedEquipment:expected});
+ok(p.equip.ring1===r1&&p.equip.ring2===incoming&&p.inv.items.includes(r2),'host honors explicit Ring II replacement');
+const two=I.fromBase(Object.keys(f.DATA.BASES).find(id=>f.DATA.BASES[id].twoHand)),main=I.fromBase('shortsword'),off=I.fromBase(Object.keys(f.DATA.BASES).find(id=>f.DATA.BASES[id].slot==='off'));
+p.equip={main,off};p.inv=I.makeGrid(two.w,two.h);I.place(p.inv,two,0,0);C.register(s);
+const full=JSON.stringify([p.equip,p.inv,s.ground]);
+await assert.rejects(()=>cmd({type:'equip',itemId:two._coopId,slot:'main'}),/Make room/);checks++;
+ok(JSON.stringify([p.equip,p.inv,s.ground])===full,'host rejects full-bag two-hand swap without dropping gear');
+p.inv=I.makeGrid(10,4);I.place(p.inv,two,0,0);
+await cmd({type:'equip',itemId:two._coopId,slot:'main'});
+ok(p.equip.main===two&&!p.equip.off&&p.inv.items.includes(main)&&p.inv.items.includes(off),'host stores every displaced item in successful two-hand swap');
 console.log(`PASS ${checks} shared inventory ownership, placement, crafting and persistence checks`);

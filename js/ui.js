@@ -14,6 +14,8 @@ const UI = (() => {
   let openPanels = { left: null, right: null, center: null };
   let characterTip = null, characterRefreshAt = 0;
   let vendorCtx = null;             // active vendor {npcId, items}
+  let phoneInspection = null;
+  const slotName = slot => ({main:'Main hand',off:'Off hand',ring1:'Ring I',ring2:'Ring II',head:'Head',chest:'Chest',gloves:'Gloves',boots:'Boots',belt:'Belt',amulet:'Amulet'}[slot] || slot);
   let curTree = 0;
   let selectedSkill = null, skillsClass = null, hudBindingSignature = "", hudPlayer = null;
   const CELL = 34;
@@ -37,7 +39,7 @@ const UI = (() => {
     if(!coopItems() || !Game.state?.player)return;
     const p=Game.state.player;
     const signature=JSON.stringify([p.inv,p.stash,p.equip,p.management,p.gold,Game.state.vendorStock]);
-    if(!force && signature===managementSignature)return;
+    if(!force && signature===managementSignature){refreshItemInspection();return;}
     managementSignature=signature;
     const panels=[els.panelLeft,els.panelRight,els.panelCenter].filter(Boolean);
     const scrolls=panels.flatMap(panel=>[panel,...panel.querySelectorAll('.item-grid-scroll,.shop-list')].map(el=>({panel:panel.id,selector:el===panel?null:'.'+el.className.split(' ')[0],x:el.scrollLeft,y:el.scrollTop})));
@@ -52,6 +54,7 @@ const UI = (() => {
     const focus=focusId?$(focusId):focusItem?panels.flatMap(p=>[...p.querySelectorAll('[data-item-id]')]).find(n=>n.dataset.itemId===focusItem):null;
     if(focus && focused?.closest('#panelWorkspace')){focus.focus({preventScroll:true});if(selection&&focus.type==='search')focus.setSelectionRange(...selection);}
     managementStatus(managementMessage);syncWorkspace();
+    refreshItemInspection();
   }
   function syncWorkspace() {
     const host = document.getElementById("panelWorkspace"); if (!host) return;
@@ -416,6 +419,11 @@ const UI = (() => {
 
   /* ================================================== messages */
   function msg(text, color) {
+    if(typeof MobileShell!=='undefined'&&MobileShell.enabled&&document.body.classList.contains('mobile-menu-open')){
+      const status=document.querySelector('#touchItemMenu .item-status');
+      if(status){status.textContent=text;status.hidden=false;}
+      else managementStatus(text);
+    }
     const d = document.createElement("div");
     d.textContent = text; d.style.color = color || "#c8b78d";
     els.msglog.appendChild(d);
@@ -563,7 +571,8 @@ const UI = (() => {
   /* ================================================== panels */
   function panelEl(side) { return side === "left" ? els.panelLeft : side === "right" ? els.panelRight : els.panelCenter; }
   function closePanel(side) {
-    if(typeof MobileViews!=='undefined')MobileViews.release(panelEl(side));
+    phoneInspection=null;
+    if(typeof MobileViews!=='undefined')MobileViews.release(panelEl(side),true);
     document.getElementById('touchItemMenu')?.remove();document.getElementById('panelWorkspace')?.classList.remove('item-detail-open');
     if(!coopItems()&&side==='right'&&openPanels.right==='inv'&&cursorItem&&Game.state?.player){
       const it=cursorItem,grid=cursorFrom?.items?cursorFrom:null;
@@ -705,11 +714,12 @@ const UI = (() => {
           Items.place(grid,it,x,y);setCursorItem(null);refreshGrids();refreshHUD();return;
         }
         msg('No room here. Choose another container or item.');
-      }));
+      },'phone-place-carried'));
     }
     return g;
   }
   function openTouchItemMenu(grid, it, ctxName, event) {
+    if(typeof MobileShell!=='undefined'&&MobileShell.enabled)return openPhoneItemMenu(grid,it,ctxName,event);
     const opener=document.activeElement;
     document.getElementById('touchItemMenu')?.remove();
     const dialog=textNode('section','gframe workspace-detail'); dialog.id='touchItemMenu';dialog.setAttribute('role','region');
@@ -749,6 +759,119 @@ const UI = (() => {
     const back=actionButton('Back',close);back.dataset.itemBack='';actions.appendChild(back);
     dialog.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();}});
     const workspace=$('panelWorkspace');workspace.appendChild(dialog);workspace.classList.add('item-detail-open');if(typeof MobileWorkspace!=='undefined')MobileWorkspace.sync();actions.querySelector('button')?.focus();
+  }
+
+  function phoneItemProperties(it,ctx) {
+    const body=textNode('div','touch-item-details');body.innerHTML=itemTooltipHTML(it,ctx);addItemPreview(body,it);
+    for(const line of body.querySelectorAll('.tt-base,.tt-gold'))if(/right-click|pick up.*cursor/i.test(line.textContent)){
+      if(line.classList.contains('tt-gold'))line.textContent=line.textContent.replace(/ \(right-click\)/i,'');else line.remove();
+    }
+    return body;
+  }
+  function phoneComparison(item,selectedSlot,sourceGrid,onSlot) {
+    const p=Game.state.player,root=textNode('section','phone-comparison'),slots=Items.slotFor(item);
+    const needsChoice=slots.length>1&&slots.every(slot=>p.equip[slot]);
+    if(slots.length>1){
+      const choices=textNode('div','replacement-slots');choices.setAttribute('aria-label','Replacement ring');
+      for(const slot of slots){const current=p.equip[slot],b=actionButton(slotName(slot)+' · '+(current?itemName(current):'Empty'),()=>onSlot(slot),'manage-button');b.dataset.replaceSlot=slot;b.setAttribute('aria-pressed',String(selectedSlot===slot));choices.append(b);}root.append(choices);
+    }
+    const model=CharacterSheet.equipmentComparison(p,item,selectedSlot,sourceGrid),plan=model.plan;
+    const chosen=!needsChoice||!!selectedSlot,current=p.equip[plan.slot],profiles=textNode('div','comparison-profiles');
+    for(const [heading,it,ctx] of [['Currently equipped',chosen?current:null,'equip'],['Selected item',item,'inv']]){
+      const col=textNode('section','comparison-profile');col.append(textNode('h3','',heading));
+      if(it){const identity=textNode('div','comparison-identity'),copy=textNode('div','');identity.append(SpriteAssets.itemIcon(it,44));copy.append(textNode('strong','',itemName(it)),textNode('small','',ctx==='equip'?slotName(plan.slot):itemTypeLabel(it)));identity.append(copy);col.append(identity);}
+      else col.append(textNode('p','comparison-empty',chosen?'Empty '+slotName(plan.slot):'Choose Ring I or Ring II above.'));
+      profiles.append(col);
+    }root.append(profiles);
+    if(chosen){
+      if(plan.displaced.length)root.append(textNode('p','comparison-displaced','To pack: '+plan.displaced.map(e=>slotName(e.slot)+' · '+itemName(e.item)).join('; ')));
+      if(item.identified){
+        const table=document.createElement('table');table.className='comparison-stats';table.setAttribute('aria-label','Equipment stat changes');
+        const head=document.createElement('thead'),headRow=document.createElement('tr');for(const label of ['Stat','Current','After equip','Change'])headRow.append(textNode('th','',label));head.append(headRow);table.append(head);
+        const body=document.createElement('tbody'),fmt=(v,row)=>v==null?'Unavailable':row.range?CharacterSheet.formatRange(v):CharacterSheet.number(v)+(row.percent?'%':'');
+        for(const row of model.rows){
+          const tr=document.createElement('tr'),label=textNode('th','',row.label);label.scope='row';tr.append(label,textNode('td','',fmt(row.before,row)),textNode('td','',fmt(row.after,row)));
+          const changes=row.before==null||row.after==null?null:row.range?row.after.map((v,i)=>v-row.before[i]):[row.after-row.before];
+          const sign=v=>(v>0?'+':v<0?'−':'')+CharacterSheet.number(Math.abs(v));
+          const deltaText=changes&&changes.some(n=>Math.abs(n)>1e-8)?changes.map(sign).join(' / ')+(row.percent?' pp':''):'—';
+          const delta=textNode('td',!changes?'':changes.every(n=>n>=0)&&changes.some(n=>n>0)?'stat-gain':changes.every(n=>n<=0)&&changes.some(n=>n<0)?'stat-loss':'',deltaText);tr.append(delta);body.append(tr);
+        }table.append(body);root.append(table);
+        for(const note of model.notes)root.append(textNode('p','comparison-note',note));
+        root.append(textNode('p','comparison-note','Attack hit is before enemy mitigation. Damage over time and conditional triggers are excluded.'));
+      }
+    }
+    if(plan.reason)root.append(textNode('p','comparison-warning',plan.reason));
+    const properties=document.createElement('details');properties.className='comparison-properties';properties.append(textNode('summary','','Full item properties · affixes, sockets & powers'));
+    const full=textNode('div','comparison-full');if(chosen&&current)full.append(phoneItemProperties(current,'equip'));full.append(phoneItemProperties(item,'inv'));properties.append(full);root.append(properties);
+    root.model=model;root.chosen=chosen;return root;
+  }
+  function refreshItemInspection() {
+    const ctx=phoneInspection;if(!ctx||ctx.pending||!ctx.dialog.isConnected)return;
+    const p=Game.state.player;
+    const item=ctx.ctxName==='equip'?p.equip[ctx.grid]:ctx.grid.items?.find(it=>(it._coopId||it.uid)===ctx.id);
+    if(!item){ctx.close();return;}
+    ctx.item=item;
+    const signature=JSON.stringify([p.equip,p.inv,p.belt,p.skills,p.skillPerks,p.buffs,p.summonAuraStatsFor(p),p.lvl,p.attr,p.skillL,p.skillR,p.quickSlots,p.tempo,p.staticChg,p.stance,Math.round(Math.min(p.rootT||0,3)*10),p.siphon?.ramp,ctx.item,ctx.slot]);
+    if(signature===ctx.signature)return;ctx.signature=signature;ctx.render();
+  }
+  function openPhoneItemMenu(grid,item,ctxName,event) {
+    const p=Game.state.player,opener=event?.currentTarget||document.activeElement;
+    const inventory=els.panelRight;if(openPanels.right==='inv')MobileViews.remember(inventory);
+    document.getElementById('touchItemMenu')?.remove();
+    const dialog=textNode('section','gframe workspace-detail phone-item-detail');dialog.id='touchItemMenu';dialog.setAttribute('role','region');dialog.setAttribute('aria-label',itemName(item));
+    const slots=item.kind==='gear'?Items.slotFor(item):[];
+    const ctx={dialog,grid,item,ctxName,id:item._coopId||item.uid,pending:false,slot:slots.length>1&&slots.every(s=>p.equip[s])?null:slots.find(s=>!p.equip[s])||slots[0]};phoneInspection=ctx;
+    ctx.close=()=>{
+      dialog.remove();if(phoneInspection===ctx)phoneInspection=null;hideTooltip();$('panelWorkspace').classList.remove('item-detail-open');MobileWorkspace.sync();
+      MobileViews.restoreScroll(inventory);
+      const focus=opener?.isConnected?opener:inventory.querySelector('[data-item-id="'+ctx.id+'"]')||inventory.querySelector('[data-slot="'+ctx.slot+'"] .invitem');focus?.focus({preventScroll:true});
+    };
+    ctx.render=()=>{
+      const oldScroll=dialog.querySelector('.phone-item-scroll')?.scrollTop||0,propertiesOpen=dialog.querySelector('.comparison-properties')?.open,extraOpen=dialog.querySelector('.item-secondary')?.open;
+      const focused=document.activeElement,focusSelector=!dialog.contains(focused)?null:focused.dataset.replaceSlot?'[data-replace-slot="'+focused.dataset.replaceSlot+'"]':focused.hasAttribute('data-item-primary')?'[data-item-primary]':focused.matches('summary')?(focused.closest('.comparison-properties')?'.comparison-properties summary':'.item-secondary summary'):null;
+      dialog.replaceChildren();
+      dialog.setAttribute('aria-label',itemName(ctx.item));
+      const body=textNode('div','phone-item-scroll'),status=textNode('p','item-status');status.setAttribute('role','status');status.hidden=true;
+      const gear=ctx.item.kind==='gear'&&ctxName!=='equip';let comparison;
+      if(gear){comparison=phoneComparison(ctx.item,ctx.slot,grid,slot=>{ctx.slot=slot;MobileViews.highlightEquipment(slot);ctx.signature='';refreshItemInspection();dialog.querySelector('[data-replace-slot="'+slot+'"]')?.focus({preventScroll:true});});comparison.querySelector('.comparison-properties').open=!!propertiesOpen;body.append(comparison);MobileViews.highlightEquipment(ctx.slot);}
+      else body.append(phoneItemProperties(ctx.item,ctxName));
+      const actions=textNode('div','touch-item-actions'),c=DATA.CONSUMABLES[ctx.item.baseId],selling=vendorCtx&&grid===p.inv;
+      const label=ctxName==='equip'?'Unequip':selling?'Sell':gear?ctx.item.identified?comparison.chosen?(p.equip[ctx.slot]?'Replace ':'Equip to ')+slotName(ctx.slot):'Choose ring to replace':'Identify':c?.belt?'Move to belt':c&&(c.respec||ctx.item.baseId==='tp')?'Use':null;
+      if(label){
+        const primary=actionButton(label,async()=>{
+          if(ctx.pending)return;refreshItemInspection();if(!dialog.isConnected)return;
+          const primary=dialog.querySelector('[data-item-primary]'),status=dialog.querySelector('.item-status');
+          ctx.pending=true;dialog.classList.add('item-pending');primary.disabled=true;status.hidden=false;status.textContent='Applying item change…';
+          let ok=false;
+          try{
+            if(gear&&ctx.item.identified&&!selling){
+              if(Items.slotFor(ctx.item).length>1&&!ctx.slot){msg('Choose Ring I or Ring II to replace.');return;}
+              const plan=Items.planEquip(p,ctx.item,ctx.slot,grid);if(plan.reason){msg(plan.reason);return;}
+              ok=coopItems()?await InventoryActions.submit({type:'equip',itemId:ctx.item._coopId,slot:ctx.slot,expectedEquipment:Object.fromEntries(Items.EQUIP_SLOTS.map(s=>[s,p.equip[s]?._coopId||null]))}):await equipItem(grid,ctx.item,ctx.slot);
+            }else if(ctxName==='equip'){await unequipSlot(grid,ctx.item);ok=p.equip[grid]!==ctx.item;}
+            else{
+              const before=JSON.stringify([p.inv,p.belt,p.gold]);
+              if(coopItems()){const type=selling?'sell':gear?'identify':c?.belt?'belt':'use';ok=await InventoryActions.submit({type,itemId:ctx.item._coopId,...(selling?{npcId:vendorCtx.npcId}:{})});}
+              else {await gridItemRClick(grid,ctx.item,ctxName);ok=before!==JSON.stringify([p.inv,p.belt,p.gold]);}
+              if(gear&&!selling&&ctx.item.identified){ctx.signature='';ok=false;status.textContent='Identified. Review its equipment comparison.';}
+            }
+            if(ok){ctx.close();if(gear&&ctx.slot)queueMicrotask(()=>MobileViews.highlightEquipment(ctx.slot));managementStatus('Item change applied.');}
+            else if(status.textContent==='Applying item change…')status.textContent=managementMessage||'Item change could not be applied.';
+          }catch(error){status.textContent=error.message||'Item change could not be applied.';}
+          finally{ctx.pending=false;dialog.classList.remove('item-pending');primary.disabled=false;if(!ok){ctx.signature='';const message=status.textContent;refreshItemInspection();const next=dialog.querySelector('.item-status');if(next){next.textContent=message;next.hidden=false;}}}
+        },'manage-primary');primary.dataset.itemPrimary='';primary.disabled=gear&&ctx.item.identified&&!selling&&(!comparison.chosen||!!comparison.model.plan.reason);actions.append(primary);
+      }
+      const extra=document.createElement('details');extra.className='item-secondary';extra.append(textNode('summary','','More actions'));const extraButtons=textNode('div','');extra.append(extraButtons);
+      extra.open=!!extraOpen;
+      extraButtons.append(actionButton('Carry',()=>{if(ctx.pending)return;ctx.close();if(ctxName==='equip')carryEquipment(grid,ctx.item);else gridItemClick(grid,ctx.item,ctxName);}));
+      extraButtons.append(actionButton('Drop',async()=>{if(ctx.pending)return;if(coopItems()){if(!await InventoryActions.submit({type:'drop',itemId:ctx.item._coopId}))return;}else{if(ctxName==='equip'){await carryEquipment(grid,ctx.item);if(cursorItem!==ctx.item)return;setCursorItem(null);}else Items.remove(grid,ctx.item);Game.dropAtFeet(ctx.item);refreshGrids();refreshHUD();}ctx.close();}));
+      actions.append(extra);const back=actionButton('Back',ctx.close);back.dataset.itemBack='';actions.append(back);
+      dialog.append(body,status,actions);body.scrollTop=oldScroll;
+      dialog.dataset.title=gear?'Compare equipment':ctxName==='equip'?'Equipped · '+slotName(grid):'Item details';MobileWorkspace.sync();
+      if(focusSelector)dialog.querySelector(focusSelector)?.focus({preventScroll:true});
+    };
+    $('panelWorkspace').append(dialog);$('panelWorkspace').classList.add('item-detail-open');hideTooltip();refreshItemInspection();MobileWorkspace.sync();
+    (dialog.querySelector('.replacement-slots button')||dialog.querySelector('[data-item-primary]')||dialog.querySelector('summary'))?.focus({preventScroll:true});
   }
   function gridItemClick(grid, it, ctxName) {
     if(coopItems()){
@@ -856,7 +979,7 @@ const UI = (() => {
         } else msg("You need a Scroll of Insight.", "#c08080");
         return;
       }
-      equipItem(grid, it);
+      return equipItem(grid, it);
     }
   }
   async function prepareEquipmentChange(nextEquip) {
@@ -869,46 +992,26 @@ const UI = (() => {
     }
   }
 
-  async function equipItem(grid, it) {
+  async function equipItem(grid, it, requestedSlot) {
     const p = Game.state.player;
-    if (!Items.canEquip(p, it)) { msg("You cannot equip that yet.", "#c08080"); Sfx.play("error"); return; }
-    const slots = Items.slotFor(it);
-    let slot = slots.find(s => !p.equip[s]) || slots[0];
-    const oldEquip = Object.assign({}, p.equip);
-    const prev = p.equip[slot];
-    /* two-handed handling: clear off hand */
-    let displacedOff = null;
-    const nextEquip = Object.assign({}, p.equip);
-    if (it.twoHand && p.equip.off) { displacedOff = p.equip.off; delete nextEquip.off; }
-    if (it.slot === "off" && p.equip.main && p.equip.main.twoHand) { displacedOff = p.equip.main; delete nextEquip.main; }
-    nextEquip[slot] = it;
-    const prepared = await prepareEquipmentChange(nextEquip);
-    if (!prepared) return;
-    if (p.equip[slot] !== prev || !grid.items || !grid.items.some(x => x === it)) {
+    let plan=Items.planEquip(p,it,requestedSlot,grid);
+    if(plan.reason){msg(plan.reason,'#c08080');Sfx.play('error');return false;}
+    const oldEquip={...p.equip};
+    const prepared = await prepareEquipmentChange(plan.nextEquip);
+    if (!prepared) return false;
+    plan=Items.planEquip(p,it,requestedSlot,grid);
+    if (plan.reason || Game.state.player!==p || Items.EQUIP_SLOTS.some(slot=>p.equip[slot]!==oldEquip[slot]) || !grid.items?.includes(it)) {
       Game.discardPlayerEquipment(prepared);
-      return;
+      msg(plan.reason||'Equipment changed. Review the comparison again.');return false;
     }
-    const oldGX = it.gx, oldGY = it.gy;
     Items.remove(grid, it);
-    if (it.twoHand && p.equip.off) delete p.equip.off;
-    if (it.slot === "off" && p.equip.main && p.equip.main.twoHand) delete p.equip.main;
-    p.equip[slot] = it;
-    /* A replacement can always reuse the incoming item's former cells; this
-       preflight keeps the visual commit and inventory transaction atomic. */
-    if (prev && !Items.autoPlace(p.inv, prev)) {
-      for (const key of Object.keys(p.equip)) delete p.equip[key];
-      Object.assign(p.equip, oldEquip);
-      Items.place(grid, it, oldGX, oldGY);
-      Game.discardPlayerEquipment(prepared);
-      msg("No room to swap.", "#c08080"); return;
-    }
-    if (displacedOff && !Items.autoPlace(p.inv, displacedOff)) {
-      Game.dropAtFeet(displacedOff); msg("Your pack was full — item dropped.", "#c08080");
-    }
+    for(const slot of Items.EQUIP_SLOTS)delete p.equip[slot];Object.assign(p.equip,plan.nextEquip);
+    for(const placement of plan.placements)Items.place(p.inv,placement.item,placement.x,placement.y);
     Game.commitPlayerEquipment(prepared);
     p.computeStats();
     Sfx.play("chest");
     refreshGrids(); refreshHUD();
+    return true;
   }
   function setCursorItem(it, fromGrid) {
     cursorItem = it; cursorFrom = fromGrid || null;
@@ -926,6 +1029,7 @@ const UI = (() => {
     if (Game.state && Game.state.player) Game.state.player.computeStats();
     renderIfOpen("inv"); renderIfOpen("storage"); renderIfOpen("vendor"); renderIfOpen("char");
     renderIfOpen("skills");   // gear may carry "+to talents" — keep the tree in sync on equip/unequip
+    refreshItemInspection();
   }
 
   async function carryEquipment(slot,it){
@@ -960,7 +1064,7 @@ const UI = (() => {
     for (const [slot, L] of Object.entries(EQ_LAYOUT)) {
       const s = document.createElement("div"); s.className = "eqslot";
       const slotLabel = {main:"Main hand",off:"Off hand",ring1:"Ring I",ring2:"Ring II"}[slot] || slot;
-      s.dataset.label = slotLabel; s.setAttribute("aria-label",slotLabel);
+      s.dataset.label = slotLabel; s.dataset.slot=slot;s.setAttribute("aria-label",slotLabel);
       s.style.left = L[0] + "px"; s.style.top = L[1] + "px";
       s.style.width = L[2] * CELL + "px"; s.style.height = L[3] * CELL + "px";
       const it = p.equip[slot];
@@ -1562,8 +1666,13 @@ const UI = (() => {
     if(!items.length)list.appendChild(textNode("p","manage-empty","No items in this category."));el.appendChild(list);
     const selected=v.selected;
     if(selected){
-      const detail=textNode("div","shop-detail");detail.innerHTML=itemTooltipHTML(selected,"vendor");addItemPreview(detail,selected);el.appendChild(detail);
-      if(selected.kind === "gear"){
+      const detail=textNode("div","shop-detail");
+      if(typeof MobileShell!=='undefined'&&MobileShell.enabled&&selected.kind==='gear'){
+        const allowed=Items.slotFor(selected);if(v.compareItem!==selected){v.compareItem=selected;v.compareSlot=allowed.length>1&&allowed.every(slot=>p.equip[slot])?null:allowed.find(slot=>!p.equip[slot])||allowed[0];}
+        detail.append(phoneComparison(selected,v.compareSlot,null,slot=>{v.compareSlot=slot;renderVendor();}));
+      }else{detail.innerHTML=itemTooltipHTML(selected,"vendor");addItemPreview(detail,selected);}
+      el.appendChild(detail);
+      if(selected.kind === "gear"&&!(typeof MobileShell!=='undefined'&&MobileShell.enabled)){
         const slots=Items.slotFor(selected), equipped=slots.map(slot=>p.equip[slot]).filter(Boolean);
         for(const item of [...new Set(equipped)]){const compare=textNode("details","shop-compare");compare.appendChild(textNode("summary","","Compare equipped: "+itemName(item)));const body=textNode("div","");body.innerHTML=itemTooltipHTML(item,"equip");addItemPreview(body,item);compare.appendChild(body);el.appendChild(compare);}
         if(!Items.canEquip(p,selected))el.appendChild(textNode("p","manage-warning","You can buy this item, but cannot equip it yet."));

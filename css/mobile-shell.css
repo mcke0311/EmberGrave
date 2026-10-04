@@ -1,5 +1,5 @@
 /* Phone viewport, presentation and touch-friendly production views. */
-:root { --phone-menu-head:96px; }
+:root { --phone-menu-head:48px; }
 .phone-layout { overscroll-behavior:none; }
 .phone-layout #game { inset:auto!important;top:var(--visible-top);left:var(--visible-left);width:var(--visible-width);height:var(--visible-height);overflow:hidden; }
 .phone-layout #view { width:100%;height:100%; }
@@ -169,8 +169,6 @@
 .phone-layout .phone-equip-name { pointer-events:none;font:14px/1.4 var(--font-game);text-transform:capitalize;color:var(--phone-ink); }
 .phone-layout .phone-belt-card { display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #ffffff12; }
 .phone-layout .phone-belt-card button { padding:10px 12px;background:#26303a;color:var(--phone-ink);border:1px solid #806c4e; }
-.phone-layout [data-kind=inv]:not([data-mobile-tab=equipment]) #equipwrap,.phone-layout [data-kind=inv]:not([data-mobile-tab=belt]) .phone-belt-page { display:none!important; }
-.phone-layout [data-kind=inv]:not([data-mobile-tab=pack]) > :is(.pack-toolbar,.item-grid-scroll,.pack-help) { display:none!important; }
 .phone-layout #cursorItem { display:none; }
 .phone-layout #tooltip,.phone-layout #tooltipCmp { display:none!important; }
 /* Item, talent, quest and vendor details use the same Back navigation. */
@@ -309,4 +307,118 @@
   .phone-layout #title[data-screen=main] .title-brand { margin-bottom:4px!important; }
   .phone-layout .splash-actions { gap:4px; }
   .phone-layout .phone-loadout > p,.phone-layout .panel > .manage-eyebrow { display:none; }
+}
+
+/* Compact phone chrome. Root tabs and context headers each occupy one row. */
+.phone-layout #workspaceHeader:not([hidden]) { display:flex;align-items:center;box-sizing:border-box;min-height:48px;gap:4px;padding-bottom:0; }
+.phone-layout #workspaceHeader .workspace-heading { display:contents;height:auto; }
+.phone-layout #workspaceHeader #workspacePrimaryTabs { flex:1;order:1;height:48px;border:0;min-width:0; }
+.phone-layout #workspaceHeader #workspacePrimaryTabs button { min-width:0;padding:4px;font-size:14px; }
+.phone-layout #workspaceHeader #workspaceClose { order:4;flex:none;margin:2px 8px 2px 0; }
+.phone-layout #workspaceHeader #workspaceLive { order:3;flex:none;white-space:nowrap;font-size:11px;margin-right:4px; }
+.phone-layout #workspaceHeader #workspaceBack { order:0;margin-left:4px; }
+.phone-layout #workspaceHeader #workspaceTitle { order:1;padding:0 8px;font-size:18px; }
+.phone-layout #workspaceHeader[data-mode=root] #workspaceTitle { position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%); }
+.phone-layout #workspaceHeader #workspaceTabs { order:2;flex:none;height:44px;border:0;padding:0;gap:4px; }
+.phone-layout #workspaceHeader #workspaceTabs button { flex:none;padding:4px 8px; }
+.phone-layout.mobile-menu-open #centerMsg { visibility:hidden!important;pointer-events:none!important; }
+.phone-layout .panel > .manage-eyebrow { display:none; }
+.phone-layout :is(.manage-tabs,.qacts,#treeTabs) { flex-wrap:nowrap!important;overflow-x:auto;overscroll-behavior:contain; }
+.phone-layout :is(.manage-tabs,.qacts,#treeTabs) button { flex-shrink:0!important; }
+.phone-layout .panel :is(.statrow,.qdetail p,.dlgtext,.skill-description p,.recipe-requirements) { font-size:16px;line-height:1.45;letter-spacing:0; }
+.phone-layout #escmenu .settings-body > :is(h3,.settings-intro) { display:none; }
+.phone-layout #escmenu .setting-row { padding:8px 0;gap:12px; }
+.phone-layout #escmenu :is(.setting-label,.control-row dd) { font-size:16px;line-height:1.45;letter-spacing:0; }
+.phone-layout #escmenu .settings-tabs { flex:none;min-height:44px; }
+.phone-layout #escmenu .settings-tab { min-height:44px; }
+.phone-layout #escmenu .settings-body { padding:8px 16px; }
+.phone-layout #escmenu .controls-devices { margin-bottom:8px; }
+
+/* Gear stays alongside the bag; scrolling one pane never moves the other. */
+.phone-layout #panelWorkspace .panel[data-kind=inv]:not(.hidden):not(.workspace-inactive) { display:flex!important;flex-direction:column;padding:0!important;overflow:hidden!important; }
+.phone-layout .phone-inventory { flex:1;min-height:0;display:grid;grid-template-columns:clamp(200px,38%,280px) minmax(0,1fr);gap:8px;padding:8px calc(8px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left)); }
+.phone-layout .phone-gear-pane { min-width:0;min-height:0;display:grid;grid-template-rows:24px minmax(0,1fr);border-right:1px solid #806e4e55;padding-right:8px; }
+.phone-layout .phone-gear-pane > h3 { margin:0!important;font:16px/24px var(--font-game)!important;letter-spacing:0; }
+.phone-layout .phone-gear-scroll,.phone-layout .phone-bag-scroll { min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#806b49 #131c24; }
+.phone-layout .phone-gear-scroll { position:relative; }
+.phone-layout #panelWorkspace .phone-gear-scroll #equipwrap { display:grid!important;grid-template-columns:minmax(0,1fr);gap:6px;width:100%!important;height:auto!important;margin:0!important; }
+.phone-layout #panelWorkspace .phone-gear-scroll #equipwrap .eqslot { min-height:64px!important;box-sizing:border-box;padding:8px; }
+.phone-layout #panelWorkspace #equipwrap .invitem { min-height:0;padding:0;background:none;border:0;box-shadow:none; }
+.phone-layout #panelWorkspace #equipwrap :is(canvas,img) { width:32px!important;height:40px!important;object-fit:contain;flex:none; }
+.phone-layout .phone-equip-name { display:grid;gap:3px;min-width:0;font:14px/1.3 var(--font-game);text-transform:none; }
+.phone-layout .phone-equip-name strong { color:#cdb888;font-size:14px;font-weight:normal; }
+.phone-layout .phone-equip-name > span { display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
+.phone-layout #panelWorkspace #equipwrap .equipment-target { border:2px solid #f0c986;background:#b78b3429; }
+.phone-layout .phone-bag-pane { min-width:0;min-height:0;display:grid;grid-template-columns:104px minmax(0,1fr);grid-template-rows:44px 44px minmax(0,1fr);grid-template-areas:'tabs wallet' 'tools tools' 'content content';gap:4px; }
+.phone-layout .phone-bag-pane > .phone-subtabs { grid-area:tabs;margin:0;padding:0;border:0;gap:4px;min-width:0; }
+.phone-layout .phone-bag-pane > .phone-subtabs button { min-width:44px;padding:4px;font:14px var(--font-game); }
+.phone-layout #panelWorkspace .phone-bag-pane #goldrow { grid-area:wallet;display:flex;flex-direction:column;justify-content:center;gap:0;margin:0;padding:0;min-width:0;text-align:right;font:14px/1.3 var(--font-game); }
+.phone-layout .phone-bag-pane #goldrow strong { font-weight:normal;color:#e3bd77; }
+.phone-layout #panelWorkspace .phone-bag-pane .pack-toolbar { grid-area:tools;margin:0;gap:4px;min-width:0;height:44px; }
+.phone-layout .phone-bag-pane .pack-toolbar input { height:44px;padding:6px 8px;min-width:0;font-size:16px; }
+.phone-layout .phone-bag-pane .pack-toolbar button { min-width:72px;padding:4px;font-size:14px; }
+.phone-layout .phone-bag-scroll { grid-area:content; }
+.phone-layout #panelWorkspace .phone-bag-scroll .invgrid { gap:6px; }
+.phone-layout #panelWorkspace .phone-bag-scroll .invitem { min-height:64px;padding:8px;gap:8px;box-sizing:border-box; }
+.phone-layout .phone-bag-scroll .phone-item-copy { gap:2px; }
+.phone-layout .phone-bag-scroll .phone-item-copy strong { font:16px/1.25 var(--font-game);overflow:hidden;white-space:nowrap;text-overflow:ellipsis; }
+.phone-layout .phone-bag-scroll .phone-item-copy small { font:14px/1.3 var(--font-game);overflow:hidden;white-space:nowrap;text-overflow:ellipsis; }
+.phone-layout .phone-bag-scroll .pack-help { display:none; }
+.phone-layout [data-kind=inv]:not([data-mobile-tab=belt]) .phone-belt-page { display:none!important; }
+.phone-layout [data-kind=inv][data-mobile-tab=belt] .phone-bag-scroll .item-grid-scroll { display:none!important; }
+.phone-layout [data-kind=inv][data-mobile-tab=belt] .phone-bag-pane { grid-template-rows:44px minmax(0,1fr);grid-template-areas:'tabs wallet' 'content content'; }
+.phone-layout [data-kind=inv][data-mobile-tab=belt] .pack-toolbar { display:none!important; }
+.phone-layout .phone-belt-card { font-size:14px;gap:6px; }
+.phone-layout .phone-belt-card button { padding:4px;font-size:14px; }
+.phone-layout .inventory-status { flex:none;margin:0!important;padding:6px 12px;background:#242d31;color:#f1dab3;font:14px/1.4 var(--font-game); }
+.phone-layout .inventory-status:empty { display:none; }
+
+/* Comparison columns are deliberately retained at the narrowest landscape size. */
+.phone-layout #touchItemMenu.phone-item-detail { display:flex!important;flex-direction:column;overflow:hidden;padding:0;gap:0;box-sizing:border-box; }
+.phone-layout .phone-item-scroll { flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:8px calc(12px + env(safe-area-inset-right)) 8px calc(12px + env(safe-area-inset-left)); }
+.phone-layout .comparison-profiles,.phone-layout .comparison-full { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px; }
+.phone-layout .comparison-profile { min-width:0;padding:8px;background:#1b252e;border:1px solid #756b5255;border-radius:4px; }
+.phone-layout .comparison-profile h3 { font:14px/1.3 var(--font-game);letter-spacing:0;color:#dbbe83;margin:0 0 8px; }
+.phone-layout .comparison-identity { display:flex;align-items:center;gap:8px;min-height:44px; }
+.phone-layout .comparison-identity :is(canvas,img) { width:40px!important;height:44px!important;object-fit:contain;flex:none; }
+.phone-layout .comparison-identity > div { min-width:0; }
+.phone-layout .comparison-identity strong { display:block;font:16px/1.3 var(--font-game);overflow-wrap:anywhere; }
+.phone-layout .comparison-identity small { display:block;font:14px/1.3 var(--font-game);color:#adb8c0; }
+.phone-layout .comparison-empty { margin:0;min-height:44px;font-size:16px; }
+.phone-layout .replacement-slots { display:flex;gap:8px;margin-bottom:8px; }
+.phone-layout .replacement-slots button { flex:1;min-width:0;min-height:44px;padding:6px;font:14px/1.3 var(--font-game); }
+.phone-layout .replacement-slots [aria-pressed=true] { background:#665033;border-color:#f0c986;color:#fff0cf; }
+.phone-layout .comparison-stats { width:100%;border-collapse:collapse;margin:8px 0;font:16px/1.35 var(--font-game);letter-spacing:0; }
+.phone-layout .comparison-stats :is(th,td) { padding:7px 4px;border-bottom:1px solid #69778238;text-align:right; }
+.phone-layout .comparison-stats th { font-weight:normal; }
+.phone-layout .comparison-stats th:first-child { text-align:left; }
+.phone-layout .comparison-stats thead { color:#bfc7cb;font-size:14px; }
+.phone-layout .stat-gain { color:#a9dda9; }
+.phone-layout .stat-loss { color:#f3ac96; }
+.phone-layout :is(.comparison-note,.comparison-displaced,.comparison-warning) { font:14px/1.4 var(--font-game);margin:8px 0; }
+.phone-layout :is(.comparison-displaced,.comparison-warning) { color:#f1d29e;background:#c49a4620;padding:8px;border-left:2px solid #d9b471; }
+.phone-layout .comparison-properties summary { min-height:44px;cursor:pointer;font-size:14px;display:flex;align-items:center; }
+.phone-layout .item-status { flex:none;font:14px/1.4 var(--font-game);margin:0;padding:6px 12px;background:#352b23;color:#f7d4b3; }
+.phone-layout #touchItemMenu .touch-item-actions { flex:none;position:relative;bottom:auto;display:flex;align-items:center;gap:8px;margin:0;padding:4px calc(12px + env(safe-area-inset-right)) calc(4px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));border-top:1px solid #79664466; }
+.phone-layout #touchItemMenu .touch-item-actions .manage-primary { flex:1;min-width:0;width:auto;min-height:44px;padding:8px;font-size:16px; }
+.phone-layout .item-secondary { flex:none;position:relative; }
+.phone-layout .item-secondary > summary { box-sizing:border-box;display:flex;align-items:center;min-height:44px;padding:8px;border:1px solid #766447;border-radius:4px;cursor:pointer;font:14px var(--font-game); }
+.phone-layout .item-secondary > div { position:absolute;bottom:calc(100% + 8px);right:0;width:180px;display:grid;gap:8px;padding:8px;background:#1b252e;border:1px solid #b39561;box-shadow:0 -4px 12px #0009; }
+.phone-layout .item-secondary button { min-height:44px;font-size:16px; }
+.phone-layout .item-pending .touch-item-actions { pointer-events:none;opacity:.6; }
+.phone-layout [data-kind=vendor][data-mobile-detail=true] { display:flex!important;flex-direction:column;overflow:hidden!important; }
+.phone-layout [data-kind=vendor][data-mobile-detail=true] > :is(.shop-wallet,.pack-help) { display:none; }
+.phone-layout [data-kind=vendor][data-mobile-detail=true] .shop-detail { flex:1;min-height:0;overflow:auto;margin:0;padding:0;border:0;background:transparent; }
+.phone-layout [data-kind=vendor][data-mobile-detail=true] .shop-buy { position:static!important;flex:none;margin:4px 0 0;font-size:16px; }
+.phone-layout .skill-learn { position:sticky;bottom:0;z-index:3;min-height:44px;font-size:16px; }
+@media(max-width:740px) {
+  .phone-layout #panelWorkspace .phone-bag-scroll .invgrid { grid-template-columns:minmax(0,1fr); }
+}
+@media(max-height:280px) {
+  .phone-layout .replacement-slots { margin-bottom:4px; }
+  .phone-layout .replacement-slots button { min-height:44px!important;padding:4px; }
+  .phone-layout .comparison-profile { padding:4px 6px; }
+  .phone-layout .comparison-profile h3 { font-size:13px;line-height:1.2;margin-bottom:2px; }
+  .phone-layout .comparison-identity { min-height:40px; }
+  .phone-layout .comparison-identity :is(canvas,img) { height:40px!important; }
 }

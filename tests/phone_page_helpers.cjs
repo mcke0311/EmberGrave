@@ -6,7 +6,7 @@ async function reveal(locator){
     const panel=target.closest('#panelWorkspace > .panel');
     if(panel?.classList.contains('workspace-inactive'))document.querySelector('#workspaceTabs [data-side="'+(panel.id==='panelRight'?'right':panel.id==='panelLeft'?'left':'center')+'"]')?.click();
     if(panel?.dataset.kind==='inv'){
-      const tab=target.closest('#equipwrap')?'equipment':target.closest('.phone-belt-page')?'belt':'pack';
+      const tab=target.closest('.phone-belt-page')?'belt':'pack';
       if(!target.closest('.phone-subtabs'))panel.querySelector('.phone-subtabs [data-mobile-tab="'+tab+'"]')?.click();
     }
     if(panel?.dataset.kind==='skills'&&!target.getClientRects().length){

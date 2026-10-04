@@ -37,7 +37,7 @@ const base=process.env.GAME_REVIEW_URL||'http://127.0.0.1:8741';
     await page.locator('[data-action=pack]').tap();await settle();
     const time=await page.evaluate(()=>Game.state.time);await page.waitForTimeout(100);ok(await page.evaluate(t=>Game.state.time===t,time),'Pack pauses solo');
     await click(page.locator('#panelRight [data-mobile-tab=pack]'));await page.screenshot({path:out+'/pack-'+width+'x'+height+'.png'});
-    await click(page.locator('#panelRight [data-mobile-tab=equipment]'));await page.screenshot({path:out+'/equipment-'+width+'x'+height+'.png'});
+    ok(await page.locator('.phone-gear-scroll').isVisible()&&await page.locator('.phone-bag-scroll').isVisible(),'equipped gear stays beside the bag');
     await click(page.locator('#panelRight [data-mobile-tab=belt]'));ok(await page.locator('.phone-belt-card').count()===4,'four belt slots in management');
     await page.locator('#workspacePrimaryTabs [data-section=skills]').tap();await settle();
     await click(page.locator('#panelLeft .phone-loadout-tab'));ok(await page.locator('[data-loadout]').count()===5,'Attack plus four assignment slots');
@@ -62,14 +62,15 @@ const base=process.env.GAME_REVIEW_URL||'http://127.0.0.1:8741';
   await page.locator('[data-action=pack]').tap();await click(page.locator('#panelRight [data-mobile-tab=pack]'));
   // Natural touch scrolling must not open an item or move the hero.
   const client=await context.newCDPSession(page),before=await page.evaluate(()=>({x:Game.state.player.x,y:Game.state.player.y}));
-  await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:230,y:330,id:1}]});
-  for(const y of [310,280,245,205,165]){await client.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:230,y,id:1}]});await page.waitForTimeout(20);}
+  const bagBounds=await page.locator('.phone-bag-scroll').boundingBox(),swipeX=Math.round(bagBounds.x+bagBounds.width/2),swipeStart=Math.round(bagBounds.y+bagBounds.height-20);
+  await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:swipeX,y:swipeStart,id:1}]});
+  for(const dy of [20,50,85,125,165]){await client.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:swipeX,y:swipeStart-dy,id:1}]});await page.waitForTimeout(20);}
   await client.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForTimeout(250);
   ok(await page.locator('#touchItemMenu').count()===0,'scrolling cards does not inspect an item');
   ok(await page.evaluate(b=>Game.state.player.x===b.x&&Game.state.player.y===b.y,before),'menu scroll does not move hero');
-  const scroll=await page.locator('#panelRight').evaluate(n=>n.scrollTop);ok(scroll>0,'trusted swipe scrolls inventory');
+  const scroll=await page.locator('.phone-bag-scroll').evaluate(n=>n.scrollTop);ok(scroll>0,'trusted swipe scrolls bag');
   await page.locator('#workspacePrimaryTabs [data-section=char]').tap();await page.locator('#workspacePrimaryTabs [data-section=inv]').tap();await settle();
-  ok(await page.locator('#panelRight').evaluate((n,y)=>Math.abs(n.scrollTop-y)<2,scroll),'tab round trip restores scroll');
+  ok(await page.locator('.phone-bag-scroll').evaluate((n,y)=>Math.abs(n.scrollTop-y)<2,scroll),'tab round trip restores bag scroll');
   await click(page.locator('#panelRight .invitem').last());await settle();ok(await page.locator('#touchItemMenu').isVisible(),'item details open');
   ok(!/right-click/i.test(await page.locator('#touchItemMenu').innerText()),'touch comparisons use touch instructions');
   await page.screenshot({path:out+'/item-comparison.png'});await page.locator('#workspaceBack').tap();ok(await page.locator('#touchItemMenu').count()===0,'item Back restores list');
