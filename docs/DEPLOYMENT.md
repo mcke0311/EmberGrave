@@ -434,3 +434,37 @@ This mismatch was already present before this publication.
 
 Publication IDs, archive hash, and validation counts are recorded in
 [the release record](qa/mobile_progress_site_publication.json).
+
+## Mobile inventory and menu usability — 2026-10-04
+
+Version 20 publishes GitHub `main` at
+`c97db9fe27020d67e18b197385ef52c640b4bb3f`. Equipped gear stays visible beside
+the bag, with named slots and explicit ring choices. Item inspection compares
+current and projected stats before equipping; full-pack swaps cannot silently
+discard displaced gear. Compact menu headers, pinned actions, and restored
+scroll positions improve touch usability.
+
+Sites confirmed publication **succeeded** at 16:52:33 UTC (12:52:33 Toronto)
+and returned https://embergravegame.mcke0311.chatgpt.site. The existing public
+custom domain https://embergravegame.com serves the update.
+
+Release source: `0244a69308a90a4dccb45a75b36e7d6077ba791a`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_af4d938c53848191a13347230d7b2dda`.
+Deployment: `appgdep_6ac283ed4ae481918371a95a58a47797`.
+
+The compact release contains 1,394 runtime files (216.52 MiB). All 87 script
+syntax checks and 1,269 runtime reference checks passed with no missing files.
+All 112 runtime code, style and entrypoint files match the committed game and
+Sites sources after normalizing Windows line endings and retaining the existing
+editor-link exclusions. Its validated archive is 217,532,981 bytes; native archive
+transfer failed, so Sites built the exact verified, pushed release source.
+
+The equipment projection suite passed 127 checks. Both Chromium and WebKit
+inventory flows passed 120 checks across five phone sizes with no runtime errors.
+Existing menu, touch, settings, merchant, equipment and co-op regression suites
+also passed, including 31 inventory command checks, 85 ownership checks and
+67 shared UI browser checks. A physical phone was not attached. The previously
+documented Render relay update remains separate from this static UI release.
+
+Publication metadata, validation counts and the archive hash are recorded in
+[the release record](qa/mobile_inventory_site_publication.json).

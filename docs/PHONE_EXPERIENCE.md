@@ -204,3 +204,6 @@ live comparison refresh, pending/rejected commands and secondary Carry/Place.
 The command contract separately checks host-side stale equipment rejection and
 atomic swaps. Run it with `node --preserve-symlinks --preserve-symlinks-main
 tests/coop_inventory_contract.mjs`.
+
+Published October 4, 2026 as Sites version 20; see the
+[publication record](qa/mobile_inventory_site_publication.json).
