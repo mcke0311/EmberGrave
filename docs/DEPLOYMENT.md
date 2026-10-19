@@ -468,3 +468,42 @@ documented Render relay update remains separate from this static UI release.
 
 Publication metadata, validation counts and the archive hash are recorded in
 [the release record](qa/mobile_inventory_site_publication.json).
+
+## Item persistence fixes — 2026-10-19
+
+Version 21 publishes GitHub `main` at
+`2ab19a587c29017f4d0f6c2a02568eb1f54a3500`. Ashen Tonic consumes exactly one
+item after a successful talent reset, keeps the item when there is nothing to
+unlearn, and saves the consumption with the refund. Co-op applies the same rule
+through its existing durable transaction. All thirteen set items retain their
+canonical level requirements after loading. The terrain contract's mock player
+now supports the current movement API.
+
+Sites confirmed publication **succeeded** at 14:10:22 UTC (10:10:22 Toronto).
+The published URL is https://embergravegame.mcke0311.chatgpt.site; the existing
+public custom domain https://embergravegame.com serves the same update.
+
+Release source: `262bd5cf74a5b1f4ad70c941c568e356952107f2`.
+Saved version: `appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_e26603fb46888191bc3b53f739201f9a`.
+Deployment: `appgdep_6ad6245ff1a88191a75f735764f03f80`.
+
+All 112 runtime source files match the committed game and Sites release after
+normalizing line endings and retaining the existing editor-link exclusions.
+The compact release contains 1,394 runtime files (216.52 MiB); 87 JavaScript syntax
+checks and 1,269 runtime references passed with no missing files. The validated
+archive is 217,532,810 bytes. Its native transfer failed, so Sites built the exact
+verified, pushed release source through the established fallback.
+
+Regression coverage passed 172 item persistence checks, 127 equipment projection
+checks, 120 Chromium phone inventory checks, 47 co-op tests plus 85 ownership and
+31 inventory checks, and 10,787 terrain checks. Skill-perk, unique-equipment and
+management contracts also passed. Updated entrypoint and worker cache revisions
+load the fixes without changing the multiplayer build or save formats.
+
+The live entrypoint and all five changed JavaScript files returned HTTP 200 on
+the custom domain and matched the release. The entrypoint comparison removes
+only Cloudflare's observed hosting-injected security script. No relay source or
+protocol changes were included in this static release.
+
+Publication metadata and the archive hash are recorded in
+[the release record](qa/item_persistence_site_publication.json).
