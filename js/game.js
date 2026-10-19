@@ -892,8 +892,12 @@ const Game = (() => {
       it.rarity = s.r; it.ilvl = s.il; it.name = s.n;
       it.affixes = s.af || []; it.identified = s.id;
       if (s.u) { it.uniqueId = s.u; const u = DATA.UNIQUES.find(x => x.id === s.u); if (u) it.flavor = u.flavor; }
-      if (s.se) { it.setItemId = s.se; const sd = DATA.SET_ITEMS.find(x => x.id === s.se); if (sd) it.setId = sd.set; }
       it.reqLvl = Math.max(it.reqLvl, s.r === "common" ? it.reqLvl : Math.floor(s.il * 0.8));
+      if (s.se) {
+        it.setItemId = s.se;
+        const sd = DATA.SET_ITEMS.find(x => x.id === s.se);
+        if (sd) { it.setId = sd.set; it.reqLvl = Math.max(1, sd.ilvl - 1); }
+      }
       if (s.so) it.sockets = s.so;
       if (s.cb) it.combo = s.cb;
       if (s.pc) it.procs = s.pc;
@@ -1330,7 +1334,7 @@ const Game = (() => {
   function doRespec(p = state.player) {
     let refund = 0;
     for (const rk of Object.values(p.skills)) refund += rk;
-    if (!refund) { msg("You have nothing to unlearn.", "#9b8a60"); return; }
+    if (!refund) { msg("You have nothing to unlearn.", "#9b8a60"); return false; }
     p.skills = {};
     p.clearSkillState();
     const companions=state.minions.filter(m=>m.owner===p&&m.sourceSkill);
@@ -1352,7 +1356,9 @@ const Game = (() => {
     Sfx.play("shrine");
     centerMsg("MIND SCOURED CLEAN", `${refund} talent points returned`);
     UI.refreshHUD(); UI.renderIfOpen("skills");
-    UI.refreshBuffs(); saveGame();
+    UI.refreshBuffs();
+    // The caller consumes the tonic before saving the completed item change.
+    return true;
   }
 
   /* =====================================================================

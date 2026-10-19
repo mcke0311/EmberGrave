@@ -202,7 +202,7 @@ const CoopCommands=(()=>{
         if(it.count<=0)remove(p,entry);return;
       }
       case 'use':{
-        if(DATA.CONSUMABLES[it.baseId]?.respec){Game.coop.respec(p);consume(p,entry);return;}
+        if(DATA.CONSUMABLES[it.baseId]?.respec){if(!Game.coop.respec(p))fail('You have nothing to unlearn.');consume(p,entry);return;}
         if(it.baseId==='tp'){if(Coop.openPortal?Coop.openPortal(p):Game.coop.castPortal())consume(p,entry);return;}
         fail('Put draughts in your belt to drink them.');break;
       }

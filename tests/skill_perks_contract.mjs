@@ -221,7 +221,7 @@ for(const fps of [20,60,120]){
   const snapshot=p.resolveSkill(id);pick(p,id,10,0);ok(snapshot.dmg(10)[0]!==p.resolveSkill(id).dmg(10)[0],'resolved cast reads future perks');
   G.saveGame();const saved=JSON.parse(store.get('perk-test'));ok(saved.skillPerks[id][5]===p.skillPerks[id][5],'save omitted perk choices');
   p.buffs.push({id:'unrelated_shrine',stats:{hp:10},until:20});
-  G.doRespec();G.__test.flush(5);
+  ok(G.doRespec(),'reset reported failure');G.saveGame();G.__test.flush(5);
   ok(!Object.keys(p.skills).length&&!Object.keys(p.skillPerks).length,'reset did not clear both investments');
   ok(state.fx.length===0&&state.projectiles.length===0,'reset left casts running');
   ok(p.buffs.some(b=>b.id==='unrelated_shrine'),'reset cleared unrelated buff');

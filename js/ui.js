@@ -955,7 +955,13 @@ const UI = (() => {
         refreshBelt(); refreshGrids(); return;
       }
       if (c.respec) {
-        Game.doRespec(); Items.remove(grid, it); refreshGrids(); return;
+        if (Game.doRespec()) {
+          it.count--;
+          if (it.count <= 0) Items.remove(grid, it);
+          Game.saveGame();
+          refreshGrids();
+        }
+        return;
       }
       if (it.baseId === "tp") {
         if (Game.castPortal()) { it.count--; if (it.count <= 0) Items.remove(grid, it); refreshGrids(); }

@@ -100,6 +100,43 @@ test('rejected ownership and failed saves retain every item identity',async()=>{
   assert.deepEqual([host,guest].map(p=>JSON.stringify(f.CoopCodec.hero(p).inv)),before);
 });
 
+test('tonic use consumes one on a durable reset, preserves empty resets and rolls back failed saves',async()=>{
+  const f=await session(),I=require('node:vm').runInContext('Items',f.context);
+  const skillFor=p=>Object.values(f.DATA.SKILLS).find(sk=>sk.cls===p.classId&&sk.type!=='passive').id;
+  const count=p=>p.inv.items.filter(it=>it.baseId==='respec').reduce((n,it)=>n+it.count,0);
+  const ack=id=>f.messages.filter(m=>(m.to===id||id==='host'&&m.type==='local')&&m.payload?.kind==='ack').at(-1)?.payload;
+  const addTonic=(p,n)=>{const it=I.makeConsumable('respec',n);assert.ok(I.autoPlace(p.inv,it));f.CoopCodec.register(f.runtime.worlds.get(p.worldId));return it;};
+  for(const [id,n]of [['host',3],['guest',1]]){
+    const p=f.runtime.players.get(id),skill=skillFor(p);
+    p.inv=I.makeGrid(10,4);p.skills={[skill]:2};p.skillPts=3;
+    const tonic=addTonic(p,n),saves=f.saves.length;
+    await command(f,id,{type:'use',itemId:tonic._coopId});
+    assert.equal(ack(id).ok,true);assert.equal(count(p),n-1);
+    assert.equal(p.skillPts,5);assert.equal(Object.keys(p.skills).length,0);
+    assert.equal(f.saves.length,saves+1,'reset and consumption share one save');
+    const saved=f.saves.at(-1).campaign.heroes[p.heroId],restored=f.CoopCodec.restoreHero(saved);
+    assert.equal(count(restored),n-1,'consumed tonic does not return on loading');
+    assert.equal(restored.skillPts,5);assert.equal(Object.keys(restored.skills).length,0);
+    const remaining=p.inv.items.find(it=>it.baseId==='respec')||addTonic(p,1),before=count(p),savedCount=f.saves.length;
+    await command(f,id,{type:'use',itemId:remaining._coopId});
+    assert.equal(ack(id).ok,false);assert.match(ack(id).message,/nothing to unlearn/);
+    assert.equal(count(p),before);assert.equal(p.skillPts,5);
+    assert.equal(f.saves.length,savedCount,'empty reset does not commit an item change');
+  }
+  const p=f.runtime.players.get('host'),skill=skillFor(p);p.skills={[skill]:2};p.skillPts=3;
+  const tonic=p.inv.items.find(it=>it.baseId==='respec'),before=count(p),saveRecords=f.context.saveRecords;
+  f.context.saveRecords=async()=>{throw Error('Injected tonic save failure');};
+  await command(f,'host',{type:'use',itemId:tonic._coopId});
+  assert.equal(ack('host').ok,false);assert.match(ack('host').message,/tonic save failure/);
+  assert.equal(count(p),before,'failed save restores the consumed tonic');
+  assert.equal(p.skills[skill],2);assert.equal(p.skillPts,3,'failed save restores invested talents');
+  f.context.saveRecords=saveRecords;await f.runtime.retrySave();
+  await command(f,'host',{type:'use',itemId:tonic._coopId});
+  assert.equal(ack('host').ok,true);assert.equal(count(p),before-1);
+  const restored=f.CoopCodec.restoreHero(f.saves.at(-1).campaign.heroes[p.heroId]);
+  assert.equal(count(restored),before-1);assert.equal(restored.skillPts,5);
+});
+
 test('duplicate economic requests wait for the original durable acknowledgment',async()=>{
   const f=await session(),p=f.runtime.players.get('guest');p.attrPts=2;
   let release;f.context.saveRecords=()=>new Promise(resolve=>release=resolve);

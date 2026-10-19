@@ -11,7 +11,7 @@
     "test:cinematics:performance": "node tests/cinematics_performance.cjs",
     "test:upgrades": "node --test tests/upgrades_contract.test.cjs && node tests/upgrades_browser.cjs && node tests/upgrades_coop_browser.cjs",
     "test:world": "node tests/world_reference_contract.cjs && node tests/world_reference_browser.cjs",
-    "test:inventory": "node --preserve-symlinks --preserve-symlinks-main tests/equipment_comparison_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/mobile_inventory_browser.cjs",
+    "test:inventory": "node --preserve-symlinks --preserve-symlinks-main tests/item_persistence_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/equipment_comparison_contract.mjs && node --preserve-symlinks --preserve-symlinks-main tests/mobile_inventory_browser.cjs",
     "test:phone": "npm run test:inventory && node --preserve-symlinks --preserve-symlinks-main tests/phone_screens_browser.cjs && node --preserve-symlinks --preserve-symlinks-main tests/mobile_controls_browser.cjs && node --preserve-symlinks --preserve-symlinks-main tests/mobile_redesign_browser.cjs && node --preserve-symlinks --preserve-symlinks-main tests/settings_menu_browser.cjs",
     "test:coop": "node --test tests/coop_connection.test.cjs tests/coop_relay.test.cjs tests/coop_motion.test.cjs tests/coop_latency.test.cjs tests/mobile_coop_input.test.cjs tests/coop_runtime.test.cjs tests/coop_replication.test.cjs && node tests/coop_contract.mjs && node tests/coop_inventory_contract.mjs",
     "test:coop:performance": "node tests/coop_replication_performance.cjs && node tests/coop_scenarios_performance.cjs",
