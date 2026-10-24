@@ -6,6 +6,29 @@ players' browsers. The static Sites deployment does not run the Node relay.
 
 ## Render setup
 
+### Node.js security requirement
+
+CVE-2026-111497 affects the Brotli decoder bundled with older Node.js runtimes.
+Use Node.js **22.23.4**, **24.22.1**, **26.12.1**, or a later patched release in
+one of those supported major lines. The repository's `.node-version` and Docker
+image select 22.23.4. The relay refuses to start without the patched decoder's
+`BROTLI_DECODER_ERROR_FORMAT_BLOCK_SWITCH` constant. The security backport can
+still report Brotli 1.1.0, so that library version string alone is insufficient.
+
+Rebuild the Docker image and manually deploy the security commit on the existing
+Render service. Reusing the old image does not apply the runtime fix. Verify the
+deployment commit and `/healthz`'s `runtime.node` after it becomes Live. The game
+protocol is unchanged; this runtime-only update does not need a frontend release.
+The Python development server uses the standard library and does not decode
+Brotli. The relay currently does not decompress request bodies or fetch remote
+responses, and WebSocket compression is disabled, so the reviewed application
+has no identified attacker-controlled Brotli decoding path.
+
+Sources: [Node.js security advisory](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases)
+and [Node.js 22.23.4 release](https://nodejs.org/en/blog/release/v22.23.4/).
+
+### Existing service configuration
+
 [Deploy the prepared free relay](https://render.com/deploy?repo=https://github.com/mcke0311/EmberGrave/tree/codex/multiplayer-hosting).
 
 1. Create or sign into a Render account. Connect GitHub if Render needs access to

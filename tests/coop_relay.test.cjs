@@ -3,6 +3,13 @@ const assert=require('node:assert/strict');
 const {WebSocket}=require('../server/node_modules/ws');
 const {createRelay}=require('../server/relay.cjs');
 const P=require('../js/coop_protocol.js');
+test('relay refuses runtimes missing the CVE-2026-111497 Brotli fix',()=>{
+  const source=require('node:fs').readFileSync(require.resolve('../server/relay.cjs'),'utf8');
+  assert.throws(()=>require('node:vm').runInNewContext(source,{require(id){
+    if(id==='node:zlib')return {constants:{}};
+    throw Error('Relay loaded dependencies before checking its runtime');
+  }}),/CVE-2026-111497: upgrade Node\.js/);
+});
 async function setup(t){
   const relay=createRelay({origins:['http://test.local'],graceMs:150});
   await new Promise(r=>relay.server.listen(0,'127.0.0.1',r));t.after(()=>relay.close());
@@ -16,6 +23,15 @@ async function setup(t){
   }
   return {relay,port,peer};
 }
+
+test('health reports the running patched Node.js version',async t=>{
+  const {port}=await setup(t);
+  const response=await fetch('http://127.0.0.1:'+port+'/healthz');
+  const health=await response.json();
+  assert.equal(response.status,200);assert.equal(health.ok,true);
+  assert.equal(health.build,P.BUILD);assert.equal(health.runtime.node,process.versions.node);
+  assert.equal(typeof require('node:zlib').constants.BROTLI_DECODER_ERROR_FORMAT_BLOCK_SWITCH,'number');
+});
 test('version, chunk limits, duplicate chunks and out-of-order assembly',()=>{
   assert.throws(()=>P.parse(JSON.stringify({v:0,build:P.BUILD,type:'join'})),/Incompatible/);
   const data={kind:'snapshot',text:'🧙'.repeat(90000)},frames=P.frames(data,'transfer_1'),a=new P.Assembler();

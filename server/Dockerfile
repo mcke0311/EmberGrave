@@ -1,4 +1,5 @@
-FROM node:22-alpine
+# Includes the Brotli decoder fix for CVE-2026-111497.
+FROM node:22.23.4-alpine
 WORKDIR /app
 COPY server/package*.json ./server/
 RUN npm ci --omit=dev --prefix server

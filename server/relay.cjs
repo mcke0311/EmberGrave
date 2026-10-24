@@ -1,4 +1,10 @@
 'use strict';
+// The security backport keeps Brotli's version string at 1.1.0. Check the new
+// decoder error constant added with the fix instead of that version string.
+const {constants:zlibConstants}=require('node:zlib');
+if(typeof zlibConstants.BROTLI_DECODER_ERROR_FORMAT_BLOCK_SWITCH!=='number'){
+  throw Error('CVE-2026-111497: upgrade Node.js to 22.23.4, 24.22.1, 26.12.1 or a later patched release before starting the relay.');
+}
 const http=require('node:http');
 const crypto=require('node:crypto');
 const {WebSocketServer,WebSocket}=require('ws');
@@ -23,7 +29,7 @@ function createRelay(options={}){
     }
     if(req.method==='GET'&&req.url==='/healthz'){
       res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});
-      res.end(JSON.stringify({ok:true,rooms:rooms.size,connections:peers.size,build:P.BUILD}));
+      res.end(JSON.stringify({ok:true,rooms:rooms.size,connections:peers.size,build:P.BUILD,runtime:{node:process.versions.node}}));
     }else{res.writeHead(404);res.end();}
   });
   const wss=new WebSocketServer({noServer:true,maxPayload:P.MAX_FRAME,perMessageDeflate:false});
@@ -147,7 +153,7 @@ function createRelay(options={}){
 }
 if(require.main===module){
   const relay=createRelay({origins:(process.env.ALLOWED_ORIGINS||'http://localhost:8741,http://127.0.0.1:8741').split(',').map(s=>s.trim()),maxRooms:Number(process.env.MAX_ROOMS||100)});
-  relay.server.listen(Number(process.env.PORT||8742),process.env.BIND_ADDRESS||'127.0.0.1',()=>console.log('Embergrave relay listening on '+JSON.stringify(relay.server.address())));
+  relay.server.listen(Number(process.env.PORT||8742),process.env.BIND_ADDRESS||'127.0.0.1',()=>console.log('Embergrave relay listening on '+JSON.stringify(relay.server.address())+' (Node.js '+process.versions.node+')'));
   for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>relay.close().then(()=>process.exit(0)));
 }
 module.exports={createRelay};

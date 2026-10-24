@@ -1,6 +1,7 @@
 {
   "name": "embergrave-game",
   "private": true,
+  "engines": {"node": "^22.23.4 || ^24.22.1 || ^26.12.1"},
   "scripts": {
     "test:maps": "node --preserve-symlinks --preserve-symlinks-main tests/random_maps_contract.cjs && node --preserve-symlinks --preserve-symlinks-main --test tests/random_maps_session.test.cjs",
     "test:maps:browser": "node --preserve-symlinks --preserve-symlinks-main tests/random_maps_browser.cjs",
