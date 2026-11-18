@@ -1,7 +1,7 @@
-import {createCharacterRenderer,STATES} from '../js/character3d.mjs?v=body-armor-1';
+import {createCharacterRenderer,STATES} from '../js/character3d.mjs?v=finished-1';
 import {CLASS_ANIMATIONS} from '../js/character_animation3d.mjs?v=10';
 import {CLASS_STYLES,EQUIPMENT_SLOTS,resolveCharacterVisual,catalogEntries} from '../js/character_catalog3d.mjs?v=body-armor-1';
-import {ARMOR_THEMES,ARMOR_LEVELS,armorRank} from '../js/character_armor3d.mjs?v=4';
+import {ARMOR_THEMES,ARMOR_LEVELS,armorRank} from '../js/character_armor3d.mjs?v=finished-1';
 import {UNIQUE_MODELS3D} from '../js/character_unique_catalog3d.mjs?v=body-armor-1';
 const data=window.CharacterPreviewData;
 const ui=id=>document.getElementById(id),ctx=ui('stage').getContext('2d'),dx=ui('directions').getContext('2d');

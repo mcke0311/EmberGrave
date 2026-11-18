@@ -1,6 +1,8 @@
 /* Wildkeeper shapes share the live Three.js scene and world-space foot anchor. */
 import * as THREE from './vendor/three/three.module.min.js';
-import {surfaceMaterial,disposeMaterials} from './character_materials3d.mjs?v=2';
+import {surfaceMaterial,disposeMaterials} from './character_materials3d.mjs?v=painted-1';
+import {surface,tapered} from './character_painted3d.mjs?v=finished-1';
+import {formPanel} from './character_finish3d.mjs';
 import {smooth,animationPhase} from './character_animation3d.mjs?v=12';
 import {applyCinematicForm} from './character_cinematic3d.mjs';
 import {gaitProfile,footPath} from './character_motion3d.mjs';
@@ -13,16 +15,58 @@ export const FORM_STYLES=Object.freeze({
   form_apex:{name:'Wrath of the Wild',footprint:1.45,fur:'#434e43',mane:'#252f2c',glow:'#b7e98a',stride:.55}
 });
 
+// Horizontal sections give the face a single continuous painting between
+// the cheeks, eyes and nose. The lower jaw remains on its attack hinge.
+function beastHead(stone,bear) {
+  const width=stone?.232:bear?.292:.214;
+  const rings=stone?
+    [[-.171,.47,.12,-.09,.015],[-.115,.74,.21,-.15,.12],[-.048,.93,.234,-.19,.31],
+      [.037,1,.232,-.20,.51],[.099,.99,.238,-.197,.68],[.17,.94,.205,-.18,.83],[.226,.74,.14,-.155,.94],[.252,.45,.06,-.09,.985],[.255,.04,.007,-.008,1]]:
+    [[-.107,.34,.31,-.065,.015],[-.079,.44,.41,-.11,.056],[-.030,.60,bear?.431:.468,-.161,.125],
+      [.006,.78,bear?.37:.396,-.197,.28],[.059,.97,.287,-.213,.51],[.112,1,.218,-.22,.70],
+      [.179,.93,.165,-.196,.84],[.235,.71,.109,-.153,.94],[.273,.29,.045,-.066,.985],[.277,.015,.005,-.005,1]];
+  return surface(stone?16:40,rings.length-1,(u,v)=>{
+    const [y,w,front,back,t]=rings[Math.round(v*(rings.length-1))],a=(u-.5)*Math.PI*2;
+    const x=Math.sin(a),z=Math.cos(a);
+    const muzzle=z>0?front*Math.pow(z,stone?.66:1.65):(-back)*z;
+    return [width*w*x,y,muzzle,u,t];
+  });
+}
+
+function quadrupedBody(bear) {
+  // From the tail root across the tucked flank to the forechest. Fur strokes
+  // run toward the hock on both sides, with the UV seam under the belly.
+  const stations=bear?
+    [[-.66,.10,.14,.03],[-.52,.29,.31,.05],[-.31,.39,.355,.035],[-.05,.42,.39,.045],[.25,.46,.45,.085],[.43,.415,.40,.10],[.58,.26,.29,.14],[.62,.11,.17,.16]]:
+    [[-.59,.07,.10,.005],[-.49,.201,.225,.025],[-.34,.199,.202,.050],[-.16,.175,.183,.055],[.045,.228,.257,.045],[.27,.286,.32,.052],[.43,.246,.294,.086],[.55,.14,.19,.15]];
+  return surface(32,stations.length-1,(u,v)=>{
+    const [z,rx,ry,y]=stations[Math.round(v*(stations.length-1))],a=u*2*Math.PI;
+    return [rx*Math.sin(a),y-ry*Math.cos(a),z,v,.025+.95*(.5-.5*Math.cos(a))];
+  });
+}
+
+function lowerJaw(bear) {
+  const sections=[[-.085,.029,.066,.030],[-.024,.090,.100,.026],[.057,.113,.082,.024],
+    [.16,.105,.052,.022],[.244,.084,.043,.020],[.298,.066,.037,.023],[.326,.044,.025,.025],[.341,.006,.009,.030]];
+  return surface(20,sections.length-1,(u,v)=>{
+    const [z,w,h,lip]=sections[Math.round(v*(sections.length-1))],a=u*2*Math.PI,c=Math.cos(a);
+    return [Math.sin(a)*w*(bear?1.18:.88),lip-(1+c)*h*.5,z*(bear?.92:1),
+      .16+.63*v,.32+.31*(1-c)*.5];
+  });
+}
+
 export function createWildshape(formId){
   const style=FORM_STYLES[formId];if(!style)throw Error('Unknown 3D Wildkeeper form: '+formId);
   const root=new THREE.Group();root.name=style.name;
   const body=new THREE.Group();root.add(body);
   const stone=formId==='form_stone',apex=formId==='form_apex',bear=formId==='form_brute',biped=stone||apex;
-  const mats={fur:surfaceMaterial(style.fur,stone?'stone':'fur',{metalness:0,roughness:.97,flatShading:stone}),
-    mane:surfaceMaterial(style.mane,stone?'stone':'fur'),bone:surfaceMaterial('#c5bda0','wood'),
-    light:surfaceMaterial(stone?'#989b87':bear?'#b39565':apex?'#8a9880':'#b4bca7',stone?'stone':'fur'),
-    bark:surfaceMaterial('#504b36','wood'),moss:surfaceMaterial('#596b3d','cloth'),
-    dark:new THREE.MeshStandardMaterial({color:'#171b18',roughness:.75}),
+  const flank=(rect,extra)=>formPanel(formId,0,rect,{flatShading:stone,...extra});
+  const mats={fur:flank([0,0,1,1]),mane:flank([.08,.04,.72,.89],{color:'#e1d8cb'}),
+    face:formPanel(formId,3,undefined,{flatShading:stone}),paw:formPanel(formId,2),
+    bone:surfaceMaterial('#c5bda0','wood'),light:flank([.53,.34,.46,.64],{color:'#f6ead4'}),
+    bark:flank([.65,.09,.34,.90]),moss:flank([.02,.46,.34,.52],{color:'#98ac72'}),
+    claw:surfaceMaterial('#705d46','wood',{roughness:.74}),
+    dark:new THREE.MeshStandardMaterial({color:'#321e1c',roughness:.94}),
     glow:new THREE.MeshStandardMaterial({color:style.glow,emissive:style.glow,emissiveIntensity:.85})};
   const joints={},rest=new Map();
   function joint(name,parent,pos){const g=new THREE.Group();g.name=name;g.position.set(...pos);parent.add(g);joints[name]=g;rest.set(g,g.position.clone());return g;}
@@ -31,21 +75,28 @@ export function createWildshape(formId){
   function rod(parent,name,a,b,r1,r2,mat=mats.bone){const p=new THREE.Vector3(...a),q=new THREE.Vector3(...b),d=q.clone().sub(p);const m=mesh(parent,name,new THREE.CylinderGeometry(r2,r1,d.length(),7),mat,p.add(q).multiplyScalar(.5).toArray());m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());return m;}
   // Flattened, swept locks overlap the body instead of projecting like spikes.
   function tuft(parent,pos,length=.14,width=.06,material=mats.mane){
-    const geometry=new THREE.ConeGeometry(width,length,5);
-    const a=geometry.attributes.position;for(let i=0;i<a.count;i++){const y=a.getY(i);a.setXYZ(i,a.getX(i),y,a.getZ(i)*.36+Math.pow((y/length)+.5,2)*length*.23);}geometry.computeVertexNormals();
+    const geometry=surface(8,7,(u,v)=>{
+      const a=u*Math.PI*2,r=(1-v)*(.60+.50*Math.sin(v*Math.PI));
+      return [Math.sin(a)*width*r,(v-.5)*length,Math.cos(a)*width*.55*r+v*v*length*.36,.42+.18*Math.cos(a),.28+.49*(1-v)];
+    });
     const m=mesh(parent,'Fur lock',geometry,material,pos);m.rotation.x=-.65;return m;
   }
   const torso=joint('Torso',body,[0,biped?1.08:bear?.78:.68,0]);
-  mass(torso,'Ribcage',[0,.04,0],biped?[apex?.40:.38,.44,.26]:bear?[.46,.43,.68]:[.245,.28,.55]);
-  mass(torso,'Shoulder mantle',[0,biped?.27:.10,biped?0:.32],biped?[.51,.25,.29]:bear?[.49,.45,.43]:[.32,.34,.32],mats.mane);
-  if(!stone){
-    mass(torso,'Deep breast',[0,biped?.14:-.10,biped?.19:.32],biped?[.31,.32,.16]:bear?[.35,.32,.34]:[.23,.28,.29],mats.fur);
-    mass(torso,'Tucked waist',[0,biped?-.27:-.03,biped?0:-.31],biped?[.25,.28,.19]:bear?[.36,.32,.37]:[.20,.21,.33]);
+  if(biped){
+    mass(torso,'Ribcage',[0,.04,0],[apex?.40:.38,.44,.26]);
+    mass(torso,'Shoulder mantle',[0,.27,0],[.51,.25,.29],mats.mane);
+    if(apex){
+      mass(torso,'Deep breast',[0,.14,.19],[.31,.32,.16]);
+      mass(torso,'Tucked waist',[0,-.27,0],[.25,.28,.19]);
+    }
+  }else{
+    mesh(torso,'Flank and breast',quadrupedBody(bear),mats.fur,[0,0,0]);
+    if(bear)mass(torso,'Winter ruff',[0,.13,.35],[.47,.43,.34],mats.mane);
   }
   const head=joint('Head',torso,[0,biped?.61:.22,biped?.055:.54]);
+  mesh(head,'Painted head',beastHead(stone,bear),mats.face,[0,0,0]);
   if(stone){
-    mass(head,'Stone brow',[0,.04,0],[.23,.25,.20]);
-    mass(head,'Stone jaw',[0,-.11,.08],[.19,.13,.17],mats.mane);
+    mass(head,'Mandible shale',[0,-.14,.014],[.181,.096,.153],mats.mane);
     mass(torso,'Living heart',[0,.16,.27],[.085,.14,.04],mats.glow);
     for(const sign of [-1,1]){
       for(let n=0;n<3;n++){const slab=mass(torso,'Overlapping shoulder shale',[sign*(.31+n*.08),.36-n*.06,.015],[.22,.13,.28],n===0?mats.light:mats.fur);slab.rotation.z=sign*(.18+n*.18);}
@@ -54,33 +105,38 @@ export function createWildshape(formId){
       curved(torso,mats.glow,[[sign*.055,.21,.29],[sign*.13,.29,.276],[sign*.20,.24,.28],[sign*.27,.31,.255]],.009);
       curved(torso,mats.glow,[[sign*.045,.05,.285],[sign*.10,-.035,.29],[sign*.075,-.12,.29]],.008);
       mass(torso,'Shoulder moss',[sign*.43,.43,.01],[.16,.047,.18],mats.moss);
-      mass(head,'Heavy brow ridge',[sign*.12,.105,.15],[.14,.065,.10],mats.light);
-      rod(head,'Carved cheek',[sign*.17,.04,.18],[sign*.13,-.13,.20],.035,.028,mats.light);
+      const temple=mass(head,'Temple shale',[sign*.187,.065,-.03],[.091,.11,.148],mats.light);temple.rotation.z=-sign*.24;
     }
     for(let n=0;n<4;n++)mass(torso,'Spine stone',[0,.38-n*.21,-.24],[.19,.13,.10],mats.light);
   }else{
-    mass(head,'Skull',[0,.04,0],bear?[.29,.245,.25]:[.21,.245,.22]);
-    mass(head,'Muzzle bridge',[0,-.012,.20],bear?[.19,.125,.21]:[.12,.11,.27],mats.fur);
-    mass(head,'Muzzle tip',[0,-.065,bear?.32:.34],bear?[.16,.085,.12]:[.115,.074,.15],mats.light);
-    mass(head,'Nose',[0,-.015,bear?.415:.455],[bear?.095:.075,.047,.038],mats.dark);
-    const jaw=joint('Jaw',head,[0,-.115,.08]);mass(jaw,'Lower jaw',[0,-.005,.17],[bear?.15:.105,.046,bear?.21:.24],mats.light);
-    mass(jaw,'Mouth interior',[0,.028,.16],[bear?.14:.096,.017,.205],mats.dark);
+    const jaw=joint('Jaw',head,[0,-.115,.08]);mesh(jaw,'Lower jaw',lowerJaw(bear),mats.mane,[0,0,0]);
+    mass(jaw,'Gum line',[0,.026,.163],[bear?.101:.080,.009,.145],mats.dark);
+    mass(jaw,'Tongue',[0,.033,.162],[bear?.061:.051,.009,.117],mats.dark);
     for(const sign of [-1,1]){
       if(bear){mass(head,'Round ear',[sign*.225,.23,-.05],[.085,.10,.06],mats.mane);mass(head,'Ear lining',[sign*.23,.24,.001],[.05,.06,.013],mats.light);}
       else {const ear=mesh(head,'Pointed ear',new THREE.ConeGeometry(.09,.29,4),mats.mane,[sign*.16,.27,-.04]);ear.scale.z=.55;ear.rotation.z=-sign*.19;
         const lining=mesh(head,'Ear lining',new THREE.ConeGeometry(.056,.20,3),mats.light,[sign*.16,.29,.001]);lining.scale.z=.18;lining.rotation.z=-sign*.19;}
       // Upper canines remain attached to the skull while the jaw opens.
-      rod(head,'Upper canine',[sign*.105,-.074,.27],[sign*.095,-.16,.29],.022,0);
-      for(const z of [.20,.32])rod(jaw,'Lower tooth',[sign*.087,.018,z],[sign*.079,.064,z+.008],.014,0);
-      const brow=mass(head,'Predatory brow',[sign*(bear?.17:.135),.115,.14],[bear?.13:.11,.055,.095],mats.mane);brow.rotation.z=sign*.20;
-      for(let n=0;n<5;n++){const fur=tuft(head,[sign*(.17+n*.016),.04-n*.055,-.015],bear?.17:.23,.075,n%2?mats.fur:mats.light);fur.rotation.z=-sign*2.65;}
+      rod(head,'Upper canine',[sign*(bear?.104:.071),-.064,.277],[sign*(bear?.092:.064),-.132,.29],.013,.001);
+      for(const [x,z] of [[.073,.181],[.055,.257]])
+        rod(jaw,'Lower tooth',[sign*x,.027,z],[sign*(x-.006),.061,z+.008],.009,.001);
+      if(bear){
+        const eye=mass(head,'Amber eye',[sign*.180,.100,.161],[.016,.012,.013],mats.dark);
+        eye.rotation.y=sign*.60;
+        mass(head,'Eye gleam',[sign*.185,.104,.174],[.005,.0035,.003],mats.bone);
+      }
+      for(let n=0;n<5;n++){const fur=tuft(head,[sign*((bear?.22:.17)+n*.01),.08-n*.039,-.022],bear?.26:.16,bear?.10:.06,n%2?mats.fur:mats.light);fur.rotation.z=-sign*(2.54+n*.05);}
     }
     if(!biped){
       const tail=joint('Tail',torso,[0,.05,-.55]);
       if(bear)mass(tail,'Bear tail',[0,0,-.02],[.09,.10,.13],mats.mane);
       else {curved(tail,mats.fur,[[0,0,0],[0,-.09,-.24],[0,-.21,-.47],[0,-.17,-.65]],.09);for(let n=0;n<8;n++){const fur=tuft(tail,[0,-n*.027,-n*.079],.20,.09,n>5?mats.light:mats.mane);fur.rotation.x=-1.95;}}
     }
-    if(!biped)for(let n=0;n<9;n++){const fur=tuft(torso,[0,bear?.40:.285,-.4+n*.105],.20,.115);fur.rotation.x=-1.75;}
+    if(!biped)for(const s of [-1,1])for(let n=0;n<4;n++){
+      const z=.13+n*.087+(s>0?.018:0),y=(bear?.426:.318)+.023*Math.sin(n);
+      const lock=tuft(torso,[s*(.071+.009*n),y,z],bear?.145:.108,bear?.077:.053,mats.fur);
+      lock.rotation.x=-1.87;lock.rotation.z=s*.21;
+    }
     // Overlapping fur locks break the shoulder, belly and cheek silhouettes.
     for(const sign of [-1,1])for(let row=0;row<3;row++)for(let n=0;n<5;n++){
       const x=sign*(biped?.35:bear?.38:.25),y=biped?.28-row*.16:.10-row*.12,z=biped?-.16+n*.075:-.38+n*.18;
@@ -90,18 +146,25 @@ export function createWildshape(formId){
       const fur=tuft(torso,[sign*(.06+n*.031),biped?.15-n*.022:-.035-n*.026,biped?.29:bear?.61:.53],bear?.22:.26,.075,mats.light);fur.rotation.z=-sign*(2.7-n*.06);fur.rotation.x=-.28;
     }
   }
-  for(const sign of [-1,1]){
-    mass(head,'Eye socket',[sign*(stone?.12:bear?.18:.15),.061,stone?.20:.185],[.051,.034,.038],mats.dark);
-    const eye=mass(head,'Living eye',[sign*(stone?.12:bear?.18:.15),.065,stone?.23:.216],[.032,.013,.016],mats.glow);eye.rotation.z=sign*.16;
-  }
   if(apex){
     for(const sign of [-1,1]){
       const crown=joint('Antler'+sign,head,[sign*.14,.19,-.08]);
       const points=[[0,0,0],[sign*.19,.20,-.10],[sign*.30,.43,-.12],[sign*.28,.64,-.015]];
-      for(let n=0;n<points.length-1;n++)rod(crown,'Antler beam',points[n],points[n+1],.045-n*.01,.035-n*.013);
-      rod(crown,'Antler tine',points[1],[sign*.32,.38,.12],.025,0);rod(crown,'Antler tine',points[2],[sign*.44,.59,.01],.020,0);
-      rod(crown,'Lower crown tine',[sign*.11,.12,-.06],[sign*.35,.20,.12],.028,0);
+      mesh(crown,'Weathered antler beam',tapered(points,[.051,.039,.028,.002]),mats.bone,[0,0,0]);
+      for(const [branch,radii] of [
+        [[points[1],[sign*.24,.25,.08],[sign*.32,.38,.12]],[.029,.017,.001]],
+        [[points[2],[sign*.40,.45,-.08],[sign*.44,.59,.01]],[.023,.013,.001]],
+        [[[sign*.11,.12,-.06],[sign*.23,.15,.10],[sign*.35,.20,.12]],[.028,.017,.001]]])
+        mesh(crown,'Brow tine',tapered(branch,radii),mats.bone,[0,0,0]);
       curved(torso,mats.bark,[[sign*.10,-.25,.23],[sign*.24,.01,.30],[sign*.30,.28,.27],[sign*.43,.41,.15]],.035);
+      for(let n=0;n<3;n++){
+        const growth=surface(10,8,(u,v)=>{
+          const s=u*2-1,tip=(.035+.13*Math.sin(v*1.65)),drop=1-v;
+          return [sign*(.095+n*.081+s*tip+drop*.048),.39-n*.13-drop*(.33+.041*Math.cos(s*Math.PI)),
+            -.182-.093*(1-s*s)-.067*drop+n*.018,.06+n*.15+u*.28,.13+.77*v];
+        });
+        mesh(torso,'Overlapping elderwood',growth,mats.bark,[0,0,0]);
+      }
       for(let n=0;n<3;n++)rod(torso,'Mantle thorn',[sign*(.33+n*.09),.35-n*.05,0],[sign*(.42+n*.12),.52-n*.02,-.10],.055,.005);
     }
     mass(torso,'Grove sigil',[0,.23,.33],[.055,.11,.026],mats.glow);
@@ -116,12 +179,28 @@ export function createWildshape(formId){
       const length=biped?.38:bear?.31:.26;
       mass(upper,'Haunch',[0,-length*.35,0],biped?[.18,.29,.19]:[bear?.17:.10,length*.75,.14]);
       const lower=joint('Shin'+sign+':'+n,upper,[0,-length,-.035]);
-      rod(lower,'Lower leg',[0,0,0],[0,-length+.03,.075],biped?.12:bear?.11:.065,biped?.095:bear?.095:.052,mats.fur);
+      const calf=biped?.12:bear?.113:.067,ankle=biped?.095:bear?.091:.050;
+      mesh(lower,'Hock',tapered([[0,.025,-.006],[0,-length*.28,.010],[0,-length*.66,.033],[0,-length+.021,.077]],
+        [calf*.83,calf,ankle*.95,ankle],stone?7:12),mats.fur,[0,0,0]);
       const paw=joint('Paw'+sign+':'+n,lower,[0,-length+.025,.09]);
-      mass(paw,'Paw',[0,0,.04],biped?[.17,.10,.23]:bear?[.16,.095,.20]:[.10,.075,.15],mats.mane);
-      for(let c=-1;c<=1;c++){
-        mass(paw,stone?'Split stone toe':'Toe',[c*(bear||biped?.075:.048),-.007,.13],[bear||biped?.062:.039,.058,.085],mats.fur);
-        if(!stone)rod(paw,'Claw',[c*(bear||biped?.075:.048),-.015,.19],[c*(bear||biped?.08:.05),-.038,bear?.31:.26],bear?.025:.017,0);
+      const pawWidth=biped?.17:bear?.18:.10, pawLength=biped?.23:bear?.21:.15;
+      mass(paw,'Heel',[0,.038,-.021],[ankle*1.10,ankle*1.17,ankle*1.30],mats.fur);
+      mass(paw,'Paw',[0,0,.04],[pawWidth,biped?.10:bear?.095:.075,pawLength],mats.paw);
+      for(const digit of (stone?[-1,0,1]:[-1.5,-.5,.5,1.5])){
+        const x=digit*(stone?.075:bear||biped?.066:.041),z=.138-Math.abs(digit)*.010;
+        mass(paw,stone?'Split stone toe':'Toe',[x,-.007,z],[bear||biped?.056:.037,.058,.083],mats.paw);
+        if(!stone)mesh(paw,'Claw',tapered([[x,-.006,z+.061],[x*1.05,-.013,z+.093],[x*1.08,-.034,z+(bear?.148:.120)]],
+          [bear?.016:.012,.010,.0008],7),mats.claw,[0,0,0]);
+      }
+      // Unwrap one continuous painted paw across the pad and its digits.
+      for(const toe of paw.children.filter(o=>o.material===mats.paw)){
+        const pos=toe.geometry.attributes.position,uv=toe.geometry.attributes.uv;
+        for(let i=0;i<pos.count;i++){
+          const x=toe.position.x+pos.getX(i)*toe.scale.x,z=toe.position.z+pos.getZ(i)*toe.scale.z;
+          const y=toe.position.y+pos.getY(i)*toe.scale.y;
+          uv.setXY(i,THREE.MathUtils.clamp(.5+x/(pawWidth*2.1),.01,.99),
+            THREE.MathUtils.clamp(.47-(z-.04)/(pawLength*2.3)+y*2.55,.02,.98));
+        }
       }
       limbs.push({upper,lower,paw,id:(sign>0?'L':'R')+(biped?'':n),phase:((sign>0)==front)?0:Math.PI,sign,front});
     }

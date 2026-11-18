@@ -1,4 +1,4 @@
-import {createCharacterRenderer,STATES} from '../js/character3d.mjs?v=body-armor-1';
+import {createCharacterRenderer,STATES} from '../js/character3d.mjs?v=finished-1';
 import {resolveCharacterVisual,catalogEntries,CLASS_STYLES} from '../js/character_catalog3d.mjs?v=body-armor-1';
 import {Box3,Vector3} from '../js/vendor/three/three.module.min.js';
 
@@ -35,6 +35,10 @@ async function showPage(next=page,id=classId){
 }
 async function runContract(){
   let checks=0;const ok=(v,message)=>{checks++;if(!v)throw Error(message);},report={armors:entries.length,classes:classes.length,frames:0,maxCalls:0,memory:{}};
+  // Casting with a live bow, jewelry and moving cloth exercises the highest
+  // draw count. Include every chest in the same ceiling as the cuff swaps.
+  const fullOutfit={main:{baseId:'huntbow'},head:{baseId:'helm_t6'},gloves:{baseId:'gloves_t6'},
+    boots:{baseId:'boots_t6'},belt:{baseId:'sash'},ring1:{baseId:'ring'},ring2:{baseId:'ring'},amulet:{baseId:'amulet'}};
   const render=(entry,id,pose={state:'idle',t:0,ang:angles[0],ex:{}},extra={})=>{
     const canvas=view.render(pose,visual(entry,id,extra).equipment,id);report.frames++;
     const calls=view.renderer.info.render.calls;if(calls>report.maxCalls){report.maxCalls=calls;report.peak={classId:id,armorId:entry.id,state:pose.state,t:pose.t,extra,calls};}return canvas;
@@ -54,6 +58,7 @@ async function runContract(){
         ok(view.model.armorLimbs===limbs,entry.id+': cuff swap rebuilt underlayers');
         for(const object of view.model.attachments.get('chest').objects)if(object.userData.armorOverlapSlot===slot)ok(!object.visible,entry.id+': overlapping '+slot+' guard');
       }
+      render(entry,id,{state:'cast',t:.55,ang:angles[0],ex:{}},fullOutfit);
       render(entry,id);for(const object of view.model.attachments.get('chest').objects)ok(object.visible,entry.id+': guard did not restore');
       await new Promise(resolve=>setTimeout(resolve,0));
     }

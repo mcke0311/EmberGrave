@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Embergrave · Painted heroes</title>
+<style>
+  @font-face { font-family: Exocet; src: url('../../../assets/fonts/exocet.otf'); }
+  :root { color-scheme:dark; font:16px/1.5 system-ui,sans-serif; background:#191a1e; color:#eee8dd; }
+  body { max-width:1500px; margin:0 auto; padding:clamp(1rem,4vw,3rem); }
+  h1 { margin:0 0 1.5rem; font:normal clamp(1.7rem,4vw,3rem)/1.2 Exocet,Georgia,serif; }
+  form, nav { display:flex; flex-wrap:wrap; gap:1rem 1.5rem; }
+  label { display:grid; gap:.3rem; font-size:.87rem; color:#cfc4ad; }
+  select { font:inherit; font-size:1rem; padding:.45rem .8rem; color:#f2eee7; background:#28292e; border:1px solid #676058; border-radius:.2rem; }
+  main { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; margin:1.6rem 0; }
+  figure { margin:0; } figcaption { margin-bottom:.4rem; font:1.25rem Georgia,serif; }
+  img { width:100%; height:auto; display:block; }
+  nav { padding-top:1rem; border-top:1px solid #51493f; }
+  a { color:#ead09d; text-underline-offset:.2em; }
+  a:focus-visible,select:focus-visible { outline:2px solid #edc48a; outline-offset:3px; }
+  @media (max-width:680px) { main { grid-template-columns:1fr; } form { gap:.7rem; } }
+</style>
+<h1>Painted heroes</h1>
+<form id="filters">
+  <label>Hero <select id="hero">
+    <option value="vanguard">Vanguard</option><option value="emberwitch">Ember Witch</option>
+    <option value="gravebinder">Gravebinder</option><option value="wildkeeper">Wildkeeper</option>
+    <option value="veilranger">Veil Ranger</option>
+  </select></label>
+  <label>Scene <select id="scene">
+    <option value="frosthaven">Frosthaven</option><option value="mines">The Abandoned Mines</option><option value="armory">Armory</option>
+  </select></label>
+  <label id="viewportFilter">Viewport <select id="size">
+    <option value="844">Landscape phone · 844 × 390</option><option value="1920">Desktop · 1920 × 1080</option>
+  </select></label>
+</form>
+<main>
+  <figure><figcaption>Before</figcaption><a id="before"><img alt=""></a></figure>
+  <figure><figcaption>After</figcaption><a id="after"><img alt=""></a></figure>
+</main>
+<nav aria-label="All five heroes">
+  <a href="gameplay-1920.webp">Desktop comparison</a>
+  <a href="gameplay-844.webp">Phone comparison</a>
+  <a href="armory.webp">Armory comparison</a>
+  <a href="facings.webp">Eight directions</a>
+  <a href="verification.json">Test results</a>
+</nav>
+<script>
+  const control = id => document.getElementById(id);
+  function update() {
+    const hero = control('hero'), scene = control('scene'), size = control('size');
+    const armory = scene.value === 'armory';
+    control('viewportFilter').style.display = armory ? 'none' : '';
+    const file = (armory ? 'armory' : scene.value + '-' + size.value) + '-' + hero.value + '.webp';
+    for (const version of ['before','after']) {
+      const link = control(version), img = link.firstElementChild;
+      link.href = version + '/' + file;
+      img.alt = hero.selectedOptions[0].text + ' in ' + scene.selectedOptions[0].text + ', ' + version;
+      img.src = link.href;
+    }
+  }
+  control('filters').addEventListener('change', update);
+  update();
+</script>
+</html>

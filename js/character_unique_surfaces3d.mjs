@@ -1,4 +1,5 @@
 import * as THREE from './vendor/three/three.module.min.js';
+import {paintSurfaceShader} from './character_materials3d.mjs?v=painted-1';
 
 // Unique-only painted surfaces. Each material owns one small texture used for
 // both diffuse detail and bump, so disposal follows the existing equipment path.
@@ -39,9 +40,11 @@ function surfaceMap(kind){
 }
 export function uniqueSurface(color,kind,profile={},extra={}){
   const metal=kind==='metal'||kind==='edge'||kind==='mail',map=surfaceMap(kind),wear=profile.wear??.5;
-  return new THREE.MeshStandardMaterial({color,map,bumpMap:map,vertexColors:true,
+  const surface=new THREE.MeshStandardMaterial({color,map,bumpMap:map,vertexColors:true,
     bumpScale:kind==='mail'?.004:kind==='bone'?.0008:metal?.0007:.0012,
     metalness:metal?(kind==='edge'?.66:.45):0,roughness:kind==='edge'?.43:metal?.65+wear*.13:.91,...extra});
+  surface.onBeforeCompile=paintSurfaceShader;
+  return surface;
 }
 export function uniqueMaterials(item,recipe){
   const p=item.material,profile=recipe.refinement,solid=profile.solid;
@@ -98,9 +101,9 @@ export function packUniqueSurfaces(roots){
       roughness:1,metalness:1,roughnessMap:response,metalnessMap:response,vertexColors:true,emissive:'#ffffff',emissiveIntensity:1});
   // The response map's red channel holds restrained emission; the other two
   // channels remain Three.js's standard roughness and metalness inputs.
-  surface.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>',
+  surface.onBeforeCompile=shader=>{paintSurfaceShader(shader);shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>',
     'totalEmissiveRadiance *= vColor.rgb * texture2D(roughnessMap, vRoughnessMapUv).r;');};
-  surface.customProgramCacheKey=()=> 'unique-surfaces-v2';
+  surface.customProgramCacheKey=()=> 'unique-surfaces-painted-v3';
   surface.userData.uniqueSurfaceAtlas=true;
   for(const root of roots)root.traverse(o=>{
     const mat=o.material,region=regions.get(mat);if(!o.isMesh||!region)return;

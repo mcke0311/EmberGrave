@@ -1,6 +1,8 @@
 import * as THREE from './vendor/three/three.module.min.js';
-import {equipmentMaterials,surfaceMaterial} from './character_materials3d.mjs?v=2';
+import {equipmentMaterials,surfaceMaterial} from './character_materials3d.mjs?v=painted-1';
 import {mesh,box,orb,rod,curved,plate,edge,rivet,band,wrap,combineStatic,formedPlate} from './character_mesh3d.mjs?v=body-armor-1';
+import {surface,sculptHand,bootGeometry} from './character_painted3d.mjs?v=finished-1';
+import {heroPanel,hemRegion} from './character_finish3d.mjs';
 
 export const ARMOR_THEMES={
   vanguard:{name:'Legion plate',description:'Forged steel, layered defenses and heraldic shields.',cloth:'#263b52',leather:'#3a2b24',trim:'#947a4e'},
@@ -139,6 +141,31 @@ function tierArmor(parts,m,id,rank){
   if(id==='wildkeeper'&&rank>=2){skull(chest,m,[0,.054,.195],.93);for(const s of [-1,1])fang(chest,m.bone,[s*.029,.034,.208],[s*.047,-.13,.21],.017);}
 }
 
+function backMantle(chest,id,rank) {
+  const phoenix=id==='emberwitch', span=(phoenix?.188:.215)+rank*(phoenix?.032:.050);
+  const length=(phoenix?.21:.26)+rank*(phoenix?.115:.075);
+  const cloth=heroPanel(id,rank,hemRegion(rank));
+  const drape=surface(36,9,(u,v)=>{
+    const s=u*2-1, drop=1-v, center=1-s*s;
+    const scallop=(.5+.5*Math.cos(s*Math.PI*(phoenix?5:7)))*(.014+.009*rank);
+    const width=span*(.85+.15*Math.sin(v*Math.PI)-drop*(phoenix?.12:.05));
+    return [s*width,.087+.057*center-drop*(length*(.56+center*.44)+scallop),
+      -.032-.113*center-.064*drop-.016*Math.cos(6*Math.PI*u+drop*.9)*drop,1-u,v];
+  });
+  mesh(chest,drape,cloth);
+  if(rank>=2)for(const sign of [-1,1])for(let i=0;i<rank;i++){
+    // Swept flight feathers and long strips of bark overlap the central panel.
+    const plume=surface(8,8,(u,v)=>{
+      const drop=1-v, tip=.012+Math.sin(v*1.58)*(.045+i*.005);
+      const x=sign*((.11+i*.038)*v+(.10+i*.082)*drop+(u-.5)*2*tip);
+      return [x,.103+i*.017-drop*(length*(.83-i*.15)),
+        -.144-drop*.078+Math.abs(x)*.14-.012*Math.sin(u*Math.PI),
+        (sign>0?.1:.56)+i*.035+u*.21,.03+.90*v];
+    });
+    mesh(chest,plume,cloth);
+  }
+}
+
 export function createClassArmorDetails(item,id){
   if(!ARMOR_THEMES[id]||id==='vanguard')throw new Error(`Unknown themed armor: ${id}`);
   const rank=armorRank(item),m=classMaterials(item,id),parts={};
@@ -200,6 +227,7 @@ export function createClassArmorDetails(item,id){
     const clasp=mesh(chest,new THREE.TorusGeometry(.025,.004,5,16,Math.PI*1.5),m.trim,[0,.012,.177]);clasp.rotation.z=-.6;
     if(rank>=2)gem(chest,m.glow,[0,.003,.177],.015);
   }
+  if(id==='emberwitch'||id==='wildkeeper')backMantle(chest,id,rank);
   tierArmor(parts,m,id,rank);Object.values(parts).forEach(p=>combineStatic(p));return parts;
 }
 
@@ -285,9 +313,10 @@ function tierWearable(root,m,id,rank,slot){
   }
 }
 
-export function createClassWearable(item,id){
+export function createClassWearable(item,id,side='L'){
   if(!ARMOR_THEMES[id]||id==='vanguard')throw new Error(`Unknown themed armor: ${id}`);
   const root=group(item.name),rank=armorRank(item),m=classMaterials(item,id);
+  if(item.slot==='boots'||item.slot==='gloves')m.leather.userData.fittedLeather=true;
   root.userData.itemKey=item.key;root.userData.armorTheme=id;
   if(item.slot==='head'){
     if(id==='emberwitch'){
@@ -305,7 +334,8 @@ export function createClassWearable(item,id){
         if(rank===3)fang(root,m.bone,[s*.125,.15,-.026],[s*.192,.27,-.06],.019);
       }
     }else if(id==='wildkeeper'){
-      mesh(root,new THREE.SphereGeometry(.135,12,8,0,Math.PI*2,0,Math.PI*.55),m.leather,[0,.067,-.02],[1,1.1,1]);fur(root,m,[0,.086,-.027],.137,14);
+      mesh(root,new THREE.SphereGeometry(.135,16,10,0,Math.PI*2,0,Math.PI*.51),m.leather,[0,.096,-.02],[1,1.1,1]);
+      fur(root,m,[0,.144,-.033],.137,14);
       for(const s of [-1,1]){
         const top=.24+rank*.06;
         curved(root,m.bone,[[s*.1,.13,-.026],[s*.181,.22,-.07],[s*.204,top,-.105]],.012);
@@ -320,7 +350,8 @@ export function createClassWearable(item,id){
       if(rank>=2)mesh(root,new THREE.TorusGeometry(.024,.004,5,12,Math.PI*1.5),m.trim,[0,.167,.085]).rotation.z=.5;
     }
   }else if(item.slot==='gloves'){
-    orb(root,m.leather,[0,-.047,.005],[.044,.068,.042]);mesh(root,new THREE.CylinderGeometry(.052,.044,.17,12),id==='emberwitch'||id==='gravebinder'?m.cloth:m.leather,[0,.052,0]);
+    sculptHand(root,m.leather,side).scale.set(1.14,1.04,1.19);
+    mesh(root,new THREE.CylinderGeometry(.052,.044,.17,12),id==='emberwitch'||id==='gravebinder'?m.cloth:m.leather,[0,.052,0]);
     if(id==='emberwitch'){
       band(root,m.trim,.117,.055,.016);band(root,m.trim,-.014,.047,.009);flame(root,m,[0,.052,.054],.42+rank*.065);
       if(rank>=2)for(const s of [-1,1])plate(root,m.trim,[[s*.037,.027],[s*.044,.137],[s*.024,.092]],.006,[0,0,.037]);
@@ -335,7 +366,7 @@ export function createClassWearable(item,id){
       for(let i=0;i<4+rank;i++)rod(root,m.trim,[-.026,.018+i*.017,.06],[.027,.027+i*.017,.06],.002);
     }
   }else if(item.slot==='boots'){
-    plate(root,m.leather,[[-.053,-.057],[-.06,.114],[-.032,.162],[.032,.162],[.059,.114],[.051,-.057]],.07,[0,.005,.014]).rotation.x=Math.PI/2;
+    mesh(root,bootGeometry(),m.leather,[0,0,0],[1.10,1,1.08]);
     mesh(root,new THREE.CylinderGeometry(.07,.05,.29,12),id==='emberwitch'||id==='gravebinder'?m.cloth:m.leather,[0,.15,-.023]);
     if(id==='emberwitch'){
       band(root,m.trim,.265,.071,.011,.9);flame(root,m,[0,.164,.052],.58+rank*.07);

@@ -1,4 +1,4 @@
-import {createCharacterRenderer,STATES} from '../js/character3d.mjs?v=body-armor-1';
+import {createCharacterRenderer,STATES} from '../js/character3d.mjs?v=finished-1';
 import {resolveCharacterVisual,CLASS_STYLES} from '../js/character_catalog3d.mjs?v=body-armor-1';
 import {UNIQUE_MODELS3D} from '../js/character_unique_catalog3d.mjs?v=body-armor-1';
 import {Box3,Vector3} from '../js/vendor/three/three.module.min.js';

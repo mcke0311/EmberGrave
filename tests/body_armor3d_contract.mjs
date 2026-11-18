@@ -7,6 +7,8 @@ import {modelTestData,equipmentRoots,meshSignature} from './unique_models3d_help
 
 const {data,items}=modelTestData(),entries=catalogEntries(data,'chest'),classes=Object.keys(CLASS_STYLES);
 const baseline=JSON.parse(fs.readFileSync(new URL('fixtures/body_armor3d_before.json',import.meta.url),'utf8'));
+const painted=JSON.parse(fs.readFileSync(new URL('fixtures/painted_starters3d.json',import.meta.url),'utf8'));
+const finished=JSON.parse(fs.readFileSync(new URL('fixtures/finished_wardrobe3d.json',import.meta.url),'utf8'));
 const pose=(state='idle',t=0)=>({state,t,ang:.8,ex:{walkPh:t*Math.PI*2}}),report={armors:entries.length,classes:classes.length,combinations:0,pairings:0,models:{},maxTriangles:0};
 let checks=0;const ok=(value,message)=>{checks++;assert.ok(value,message);};
 assert.equal(entries.length,27);checks++;
@@ -22,8 +24,10 @@ for(const id of classes){
     ok(model.armorLimbs?.isSkinnedMesh&&model.armorLimbs.skeleton===model.skeleton,key+': armor not bound to shared rig');
     ok(body.every(o=>!o.visible),key+': default limbs show through armor');
     const legacy=equipmentRoots(model,'chest',chest,{legacyChest:true});
-    assert.deepEqual(meshSignature(legacy,false,{excludeBodyArmorLimbs:true}),baseline.models[key].geometry,key+': original torso/shoulder geometry changed');checks++;
-    assert.deepEqual(meshSignature(legacy,true,{excludeBodyArmorLimbs:true}),baseline.models[key].palette,key+': original torso/shoulder palette changed');checks++;
+    const wardrobeKey=id+'/chest/'+e.id;
+    const reference=finished[wardrobeKey]||painted[wardrobeKey]||baseline.models[key];
+    assert.deepEqual(meshSignature(legacy,false,{excludeBodyArmorLimbs:true}),reference.geometry,key+': torso/shoulder geometry changed');checks++;
+    assert.deepEqual(meshSignature(legacy,true,{excludeBodyArmorLimbs:true}),reference.palette,key+': torso/shoulder palette changed');checks++;
     const roots=equipmentRoots(model,'chest',chest),signature=meshSignature(roots),palette=meshSignature(roots,true),limbs=model.armorLimbs,parts=model.attachments.get('chest').objects.slice(),g=limbs.geometry;
     const regions=limbs.userData.limbRegions;
     assert.deepEqual(regions.map(r=>r.start).sort(),['UpperArmL','UpperArmR','ForearmL','ForearmR','ThighL','ThighR','ShinL','ShinR'].sort());checks++;

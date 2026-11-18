@@ -4222,6 +4222,19 @@ const Game = (() => {
   const actorCtx = actorCv.getContext("2d");
   const ACTOR_CENTER = 160;
   const ACTOR_ANCHOR = 252;       // feet line inside the actor scratch canvas
+  let heroShadow;
+  function drawHeroShadow(x,y,footprint,lift){
+    if(!heroShadow){
+      heroShadow=document.createElement('canvas');heroShadow.width=heroShadow.height=64;
+      const brush=heroShadow.getContext('2d'),shade=brush.createRadialGradient(32,32,0,32,32,32);
+      shade.addColorStop(0,'rgba(19,16,22,.54)');shade.addColorStop(.38,'rgba(23,20,27,.40)');
+      shade.addColorStop(.7,'rgba(27,24,32,.16)');shade.addColorStop(1,'rgba(27,24,32,0)');
+      brush.fillStyle=shade;brush.fillRect(0,0,64,64);
+    }
+    const airborne=Math.min(1,Math.max(0,lift)/60),w=45*footprint*(1+airborne*.18),h=w*.39;
+    ctx.globalAlpha*=1-airborne*.55;
+    ctx.drawImage(heroShadow,x-w*.46,y-h*.45,w,h);
+  }
   function drawActorVisual(target, opts, pose) {
     if (opts.threePlayer) Player3D.draw(target, opts.threePlayer, pose);
     else {if(opts.playerVisual)throw new Error('Player drawing requires the 3D renderer.');SpriteAssets.drawActor(target, opts, pose);}
@@ -4232,8 +4245,14 @@ const Game = (() => {
     const bodyScale = ACTOR_BODY_SCALE;
     const footprint = opts.scale == null ? 1 : opts.scale;
     /* Contact shadows share the same ground anchor for models and sprites. */
-    ctx.save(); ctx.globalAlpha = 0.3 * alpha; ctx.fillStyle = "#000";
-    ctx.beginPath(); ctx.ellipse(sx + 2, sy + 3 + (state.map.surfaceVersion?(ground?.jumpZ||0):0), 16 * footprint, 6.5 * footprint, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    ctx.save();
+    const lift=ground?.jumpZ||0,shadowY=sy+3+(opts.threePlayer||state.map.surfaceVersion?lift:0);
+    if(opts.threePlayer){ctx.globalAlpha=alpha;drawHeroShadow(sx,shadowY,footprint,lift);}
+    else{
+      ctx.globalAlpha=.3*alpha;ctx.fillStyle='#000';ctx.beginPath();
+      ctx.ellipse(sx+2,shadowY,16*footprint,6.5*footprint,0,0,Math.PI*2);ctx.fill();
+    }
+    ctx.restore();
     /* fast path (the common case): no flash/tint composite needed, so draw the actor
        straight onto the screen — skips a scratch-canvas clear and blit per actor.
        SpriteAssets draw calls save/restore their own state, so this is isolated. */

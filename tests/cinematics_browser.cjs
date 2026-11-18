@@ -15,6 +15,12 @@ const base=process.env.GAME_REVIEW_URL||'http://127.0.0.1:8741',out=path.join(__
   const baseline=await page.evaluate(()=>({saves:JSON.stringify({...localStorage}),flags:JSON.stringify(Game.state.flags),quests:JSON.stringify(Game.state.quests),map:Game.state.map.id,time:Game.state.time,hp:Game.state.player.hp,mana:Game.state.player.mana}));
   const scenes=await page.evaluate(()=>CinematicScenes.all.map(d=>({id:d.id,duration:d.duration})));
   assert.equal(scenes.length,20);checks++;
+  // This replay seed contains a two-point contour after floor simplification.
+  const cathedralGeometry=await page.evaluate(()=>{
+    const map=MapGen.generate('cathedral1',1992887243);
+    return CathedralEnvironment.describe(map,()=>({sw:128,sh:128})).length;
+  });
+  assert.ok(cathedralGeometry>0,'collapsed contour interrupted the cathedral replay');checks++;
   for(const d of scenes){
    await page.evaluate(id=>{window.sceneResult=null;Cinematics.request(id,{replay:true}).then(r=>sceneResult=r);},d.id);
    await page.waitForFunction(()=>Cinematics.state?.ready,{timeout:60000});

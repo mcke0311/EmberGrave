@@ -1,11 +1,13 @@
 import * as THREE from './vendor/three/three.module.min.js';
 import {UNIQUE_MODELS3D} from './character_unique_catalog3d.mjs?v=body-armor-1';
 import {CLASS_STYLES} from './character_catalog3d.mjs?v=body-armor-1';
-import {armorRank,classMaterials} from './character_armor3d.mjs?v=body-armor-1';
-import {equipmentMaterials,disposeMaterials} from './character_materials3d.mjs?v=2';
-import {mesh,plate,rod,rivet,combineStatic} from './character_mesh3d.mjs?v=body-armor-1';
+import {armorRank,classMaterials} from './character_armor3d.mjs?v=finished-1';
+import {equipmentMaterials,disposeMaterials} from './character_materials3d.mjs?v=painted-1';
+import {mesh,plate,rod,rivet,band,combineStatic} from './character_mesh3d.mjs?v=body-armor-1';
+import {isStarterVest,paintStarterLimbs} from './character_painted3d.mjs?v=finished-1';
+import {paintGarment} from './character_finish3d.mjs';
 import {box,domedPlate} from './character_unique_mesh3d.mjs?v=body-armor-1';
-import {uniqueMaterials,uniqueSurface,shadeUnique,packUniqueSurfaces} from './character_unique_surfaces3d.mjs?v=body-armor-1';
+import {uniqueMaterials,uniqueSurface,shadeUnique,packUniqueSurfaces} from './character_unique_surfaces3d.mjs?v=painted-1';
 
 const group=name=>{const g=new THREE.Group();g.name=name;return g;};
 function profile(item,id){
@@ -114,20 +116,31 @@ function decorate(parent,m,p,id,kind){
 
 export function createArmorLimbs(item,classId,bindPositions,boneNames){
   const p=profile(item,classId),m=materials(item,classId,p),shell=group(item.name+' / sleeves and trousers'),parts={},regions=[];
-  const cloth=p.surface==='mail'?(m.mail||m.metal):m[p.surface],legMat=p.surface==='mail'?cloth:m.cloth;
+  const starter=isStarterVest(item);
+  const cloth=starter?m.cloth:p.surface==='mail'?(m.mail||m.metal):m[p.surface],legMat=p.surface==='mail'?cloth:m.cloth;
   for(const side of ['L','R']){
     for(const [start,end,radii,mat] of [
-      ['UpperArm','Forearm',[.091*p.arms,.067],cloth],['Forearm','Hand',[.069,.044*p.cuff],cloth],
-      ['Thigh','Shin',[.096*p.legs,.071],legMat],['Shin','Foot',[.072,.048*p.cuff],legMat]
+      ['UpperArm','Forearm',[.091*p.arms,.067],cloth],['Forearm','Hand',[.069,.044*p.cuff],starter?m.leather:cloth],
+      ['Thigh','Shin',[.096*p.legs,.071],legMat],['Shin','Foot',[.072,.048*p.cuff],starter?m.leather:legMat]
     ]){
       const before=shell.children.reduce((n,o)=>n+(o.geometry.index?.count||o.geometry.attributes.position.count),0),region=garment(shell,mat,start+side,end+side,radii,bindPositions,boneNames,p);region.firstVertex=before;regions.push(region);
       const part=group(item.name+' / '+start+side);part.userData.bodyArmorLimb=true;part.userData.modelId=item.modelId||null;
       if(start==='Forearm')part.userData.armorOverlapSlot='gloves';if(start==='Shin')part.userData.armorOverlapSlot='boots';
-      decorate(part,m,p,classId,start);parts[start+side]=part;
+      if(starter){
+        const lower=start==='Forearm'||start==='Shin',length=bindPositions[start+side].distanceTo(bindPositions[end+side]);
+        for(const t of (lower?[.14,.47,.76]:[.80])){
+          const radius=THREE.MathUtils.lerp(radii[0],radii[1],t)+.004;
+          const cuff=band(part,lower?m.leather:m.cloth,-length*t,radius,lower?.026:.041,.94);
+          cuff.rotation.z=(side==='L'?1:-1)*.083;
+        }
+      }else decorate(part,m,p,classId,start);
+      parts[start+side]=part;
     }
   }
   const roots=[shell,...Object.values(parts)],finish=p.unique?.refinement||{wear:.35};
-  for(const r of roots)shadeUnique(r,finish);packUniqueSurfaces(roots);
+  for(const r of roots)shadeUnique(r,finish);
+  if(starter)paintStarterLimbs(roots,classId,m);
+  else packUniqueSurfaces(roots);
   for(const r of roots){combineStatic(r);r.traverse(o=>{if(o.isMesh)o.userData.bodyArmorLimb=true;});}
   disposeMaterials(Object.values(m).filter(mat=>mat?.isMaterial));
   // Rigid defenses use one bone at weight 1; flexible garments retain blended
@@ -143,6 +156,7 @@ export function createArmorLimbs(item,classId,bindPositions,boneNames){
   combineStatic(shell);
   const batch=shell.children.find(o=>o.isMesh);batch.removeFromParent();batch.name=item.name+' / sleeves and trousers';batch.userData.itemKey=item.key;batch.userData.modelId=item.modelId||null;batch.userData.limbRegions=regions;batch.userData.guardRanges=guardRanges;
   batch.geometry.setIndex(new THREE.BufferAttribute(new Uint16Array(Array.from({length:offset},(_,i)=>i)),1));
+  if(!item.modelId&&!starter)paintGarment(batch,classId,armorRank(item),'limbs');
   batch.userData.coverageMask=0;batch.userData.coverageIndices=new Map();
   return {shell:batch,parts};
 }

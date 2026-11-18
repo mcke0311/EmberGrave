@@ -8,6 +8,8 @@ import {createCharacter,STATES,weaponProjectileOrigin} from '../js/character3d.m
 import {modelTestData,equipmentRoots,meshSignature} from './unique_models3d_helpers.mjs';
 
 const {data,items,manifest}=modelTestData(),snapshot=JSON.parse(fs.readFileSync(new URL('fixtures/ordinary_models3d_before.json',import.meta.url),'utf8'));
+const painted=JSON.parse(fs.readFileSync(new URL('fixtures/painted_starters3d.json',import.meta.url),'utf8'));
+const finished=JSON.parse(fs.readFileSync(new URL('fixtures/finished_wardrobe3d.json',import.meta.url),'utf8'));
 const before=JSON.parse(fs.readFileSync(new URL('qa/unique_models3d/contract.json',import.meta.url),'utf8')),
   originalRecipes=JSON.parse(fs.readFileSync(new URL('fixtures/unique_models3d_v1_recipes.json',import.meta.url),'utf8'));
 const included=data.UNIQUES.filter(def=>UNIQUE_MODEL_SLOTS.includes(data.BASES[def.base].slot));
@@ -35,7 +37,7 @@ for(const classId of Object.keys(CLASS_STYLES)){
     const key=classId+'/'+slot+'/'+entry.id,visual=resolveCharacterVisual(data,classId,{[slot]:entry.item});
     model.equip(visual.equipment);model.animate({state:'idle',t:0,ex:{}});
     assert.deepEqual(model.skeleton.boneInverses.map(matrix=>matrix.elements),bindPose,key+': armor rebound the shared skeleton');checks++;
-    assert.deepEqual(meshSignature(equipmentRoots(model,slot,visual.equipment[slot],{legacyChest:slot==='chest'}),true,{excludeBodyArmorLimbs:slot==='chest'}),snapshot[key],key+': existing model changed');checks++;ordinary++;
+    assert.deepEqual(meshSignature(equipmentRoots(model,slot,visual.equipment[slot],{legacyChest:slot==='chest'}),true,{excludeBodyArmorLimbs:slot==='chest'}),finished[key]?.palette||painted[key]?.palette||snapshot[key],key+': existing model changed');checks++;ordinary++;
     ok(!visual.equipment[slot].modelId,key+': excluded model became bespoke');
   }
   for(const def of included){

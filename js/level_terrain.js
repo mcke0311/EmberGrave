@@ -1397,6 +1397,8 @@ const CathedralEnvironment=(()=>{
         const a=divided[(i+divided.length-1)%divided.length],z=divided[(i+1)%divided.length];
         return Math.abs((p.x-a.x)*(z.y-p.y)-(p.y-a.y)*(z.x-p.x))>.001||roomAt(a,p)!==roomAt(p,z);
       });
+      // A tiny island or hole can simplify to a line. It encloses no floor.
+      if(joined.length<3)continue;
       const points=joined.map(p=>({...p,sx:U.isoX(p.x,p.y),sy:U.isoY(p.x,p.y)}));
       floor.moveTo(points[0].sx,points[0].sy);
       for(const p of points.slice(1))floor.lineTo(p.sx,p.sy);floor.closePath();

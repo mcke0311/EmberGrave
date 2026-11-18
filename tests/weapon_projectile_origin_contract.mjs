@@ -38,7 +38,8 @@ const state={time:10,map,monsters:[],minions:[],projectiles:[]};Game.__setState(
 for(const id of Object.keys(CLASS_STYLES)){
   const model=createCharacter(id);models.set(id,model);
   const p=new Player('Projectile contract',id);p.x=p.y=20.5;state.player=p;
-  const cases=[...['bow','crossbow'].flatMap(family=>[0,13].map(tier=>({family,tier,item:{baseId:family+'2h_t'+tier}}))),
+  const cases=[{family:'bow',tier:0,item:{baseId:'huntbow'}},
+    ...['bow','crossbow'].flatMap(family=>[0,13].map(tier=>({family,tier,item:{baseId:family+'2h_t'+tier}}))),
     ...Object.values(UNIQUE_MODELS3D).filter(r=>['bow','crossbow'].includes(r.category)).map(r=>({family:r.category,tier:13,item:{baseId:r.baseId,uniqueId:r.id,rarity:'unique'}}))];
   for(const {family,tier,item} of cases){
     p._playerVisual=resolveCharacterVisual(DATA,id,{main:item,chest:{baseId:'chest_t'+tier}});

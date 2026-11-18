@@ -1,11 +1,13 @@
 import * as THREE from './vendor/three/three.module.min.js';
-import {equipmentMaterials} from './character_materials3d.mjs?v=2';
-export {equipmentMaterials} from './character_materials3d.mjs?v=2';
+import {equipmentMaterials} from './character_materials3d.mjs?v=painted-1';
+export {equipmentMaterials} from './character_materials3d.mjs?v=painted-1';
 import {disposeObject,mesh,box,orb,rod,curved,plate,edge,rivet,band,wrap,combineStatic,formedPlate} from './character_mesh3d.mjs?v=body-armor-1';
 export {disposeObject,mesh,box,orb,rod} from './character_mesh3d.mjs?v=body-armor-1';
-import {createClassArmorDetails,createClassWearable} from './character_armor3d.mjs?v=body-armor-1';
-import {attachArmorLimbDetails} from './character_body_armor3d.mjs?v=body-armor-1';
-import {createUniqueWeapon,createUniqueWearable,createUniqueArmorDetails} from './character_unique_equipment3d.mjs?v=body-armor-1';
+import {armorRank,createClassArmorDetails,createClassWearable} from './character_armor3d.mjs?v=finished-1';
+import {attachArmorLimbDetails} from './character_body_armor3d.mjs?v=finished-1';
+import {createUniqueWeapon,createUniqueWearable,createUniqueArmorDetails} from './character_unique_equipment3d.mjs?v=painted-1';
+import {isStarterVest,starterShoulders,tapered,sculptHand,bootGeometry} from './character_painted3d.mjs?v=finished-1';
+import {paintGarment} from './character_finish3d.mjs';
 
 function blade(parent,m,start,length,width){
   // Parallel cutting edges taper into a point around a raised central ridge.
@@ -15,6 +17,44 @@ function blade(parent,m,start,length,width){
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();mesh(parent,g,m.metal);
   for(const s of [-1,1])edge(parent,m.edge,rows.map(([y,w])=>[s*w,y,0]),.002,false);
   for(const s of [-1,1])rod(parent,m.dark,[s*width*.25,start+.07,width*.22],[s*width*.18,start+length*.65,width*.17],.002);
+}
+function fieldSword(root,m){
+  // The fuller and both bevels follow the blade profile, including at the tip.
+  const rows=[[.085,.034],[.135,.048],[.22,.046],[.58,.037],[.724,.027],[.82,.001]];
+  for(const face of [-1,1])for(const side of [-1,1]){
+    const cross=[[0,.006],[.36,.013],[.73,.010],[1,.001]];
+    for(let strip=0;strip<3;strip++){
+      const positions=[],uv=[],indices=[];
+      for(const [y,r] of rows)for(const [x,z] of cross.slice(strip,strip+2)){
+        positions.push(x*r*side,y,z*face*Math.min(1,r/.027));uv.push(x,y);
+      }
+      for(let i=0;i<rows.length-1;i++){
+        const a=i*2,tri=[a,a+1,a+2,a+2,a+1,a+3];
+        indices.push(...(side*face>0?tri:tri.reverse()));
+      }
+      const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+      g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();
+      mesh(root,g,strip===2?m.edge:m.metal);
+    }
+  }
+  for(const s of [-1,1])mesh(root,tapered([[0,.08,0],[s*.065,.086,0],[s*.13,.059,0],[s*.148,.037,0]],[.03,.021,.013,.006]),m.trim);
+  band(root,m.metal,.096,.040,.033,.55);
+}
+
+function huntingLimb(points) {
+  // A flat laminated belly twists with the existing bow joint.
+  const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p)));
+  const vertices=[],uv=[],indices=[],sections=16;
+  for(let i=0;i<=sections;i++){
+    const t=i/sections,p=curve.getPoint(t),w=.034*(1-t)+.006*t,h=.017*(1-t)+.006*t;
+    for(let j=0;j<=8;j++){
+      const a=j*Math.PI/4;vertices.push(p.x+w*Math.sin(a),p.y,p.z+h*Math.cos(a));uv.push(j/8,t);
+      if(i<sections&&j<8){const k=i*9+j;indices.push(k,k+1,k+9,k+9,k+1,k+10);}
+    }
+  }
+  if(points[points.length-1][1]<points[0][1])indices.reverse();
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+  g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();return g;
 }
 export function createWeapon(item){
   if(item.modelId)return createUniqueWeapon(item);
@@ -26,7 +66,10 @@ export function createWeapon(item){
     band(root,m.trim,-gripLength,.026,.025);band(root,m.trim,.035,.027,.025);
     mesh(root,new THREE.IcosahedronGeometry(.036,0),m.metal,[0,-gripLength-.036,0],[.9,1.15,.75]);
   }
-  if(category==='sword'||category==='dagger'){
+  const base=!item.namedId&&item.baseId;
+  if(category==='sword'&&base==='shortsword'){
+    fieldSword(root,m);
+  }else if(category==='sword'||category==='dagger'){
     const length=category==='dagger'?.35:two?1.02:.73,width=category==='dagger'?.033:two?.054:.042;
     blade(root,m,.09,length,width);const w=category==='dagger'?.086:two?.165:.126;
     plate(root,m.trim,[[-w,.045],[-w*.94,.09],[-.047,.125],[0,.105],[.047,.125],[w*.94,.09],[w,.045],[.042,.077],[-.042,.077]],.035,[0,0,-.018]);
@@ -47,6 +90,16 @@ export function createWeapon(item){
       for(let i=0;i<6;i++){const fin=plate(root,m.metal,[[.035,-.14],[.11,-.09],[.13,.03],[.10,.12],[.035,.15]],.018,[0,y,-.009]);fin.rotation.y=i*Math.PI/3;}
     }
     for(const h of [y-.14,y+.13])band(root,m.trim,h,.052,.025);
+  }else if(category==='staff'&&base==='ashstaff'){
+    mesh(root,tapered([[.012,-.55,0],[-.014,-.31,0],[0,.02,0],[0,.30,0],[-.023,.62,.012],[.021,.92,0],[.011,1.09,-.01]],
+      [.018,.025,.024,.025,.031,.029,.021],10),m.wood);
+    band(root,m.metal,-.515,.024,.065);wrap(root,m.leather,-.20,.07,.027);
+    for(const s of [-1,1]){
+      mesh(root,tapered([[.009,.88,0],[s*.057,1.00,-.005],[s*.075,1.11,.019],[s*.025,1.19,0]],
+        [.023,.029,.017,.002],9),m.wood);
+      curved(root,m.trim,[[s*.020,.38,0],[s*.022,.52,.016],[s*.008,.59,.028]],.0045);
+    }
+    mesh(root,new THREE.OctahedronGeometry(.046),m.edge,[.002,1.074,.012],[.68,1.4,.7]);support=[0,.30,0];
   }else if(category==='spear'||category==='staff'){
     const y=category==='spear'?1.19:1.04;rod(root,m.wood,[0,-.55,0],[0,y,0],.023);
     for(const h of [-.49,-.28,.10,y-.11])band(root,m.trim,h,.03,.038);wrap(root,m.leather,-.27,.08,.025);
@@ -55,6 +108,13 @@ export function createWeapon(item){
       for(const s of [-1,1])curved(root,m.trim,[[s*.021,y-.09,0],[s*.092,y+.015,0],[s*.083,y+.16,0],[s*.036,y+.225,0]],.015);
       mesh(root,new THREE.OctahedronGeometry(.067),m.glow,[0,y+.09,0],[.68,1.4,.68]);curved(root,m.leather,[[.025,y-.03,.01],[.075,y-.16,.01],[.052,y-.27,.02]],.009);
     }support=[0,category==='spear'?.26:.30,0];
+  }else if(category==='wand'&&base==='gnarlwand'){
+    mesh(root,tapered([[0,.018,0],[.023,.13,.007],[-.020,.24,.004],[.016,.34,-.014],[-.015,.414,0],[-.050,.476,.012]],
+      [.020,.019,.026,.023,.034,.003],10),m.wood);
+    mesh(root,tapered([[.004,.29,-.008],[.044,.364,.006],[.041,.412,.025],[.008,.451,.015]],
+      [.019,.022,.012,.002]),m.wood);
+    orb(root,m.wood,[-.012,.385,.004],[.031,.045,.031]);orb(root,m.trim,[-.011,.392,.028],[.016,.021,.006]);
+    wrap(root,m.leather,.075,.14,.022);
   }else if(category==='wand'){
     curved(root,m.wood,[[0,.03,0],[.012,.20,0],[-.014,.35,0],[0,.44,0]],.016);
     mesh(root,new THREE.OctahedronGeometry(.047),m.glow,[0,.43,0],[.58,1.5,.58]);
@@ -64,7 +124,12 @@ export function createWeapon(item){
     for(const s of [-1,1]){
       const limb=new THREE.Group();limb.name=s>0?'BowUpperLimb':'BowLowerLimb';limb.position.set(0,s*.10,.2);limb.userData.side=s;root.add(limb);
       const local=([x,y,z])=>[x,y-s*.10,z-.2],points=[[0,s*.10,.2],[0,s*.23,.18],[0,s*.50,.08],[0,s*.63,-.07]].map(local);
-      curved(limb,m.wood,points,.023);curved(limb,m.trim,points.map(([x,y,z])=>[x-.013,y,z+.012]),.005);
+      if(base==='huntbow'){
+        mesh(limb,huntingLimb(points),m.wood);
+        curved(limb,m.leather,points.map(([x,y,z],i)=>[x,y,z+.014-i*.002]),.005);
+      }else{
+        curved(limb,m.wood,points,.023);curved(limb,m.trim,points.map(([x,y,z])=>[x-.013,y,z+.012]),.005);
+      }
       rod(limb,m.metal,local([0,s*.56,.033]),local([0,s*.635,-.074]),.015);
       for(let i=0;i<3;i++)box(limb,m.leather,local([0,s*(.25+i*.031),.165-i*.008]),[.055,.013,.05]);
       combineStatic(limb);bowLimbs.push(limb);
@@ -96,6 +161,8 @@ function armorBand(parent,mat,y,rx,rz,height){return mesh(parent,new THREE.Cylin
 
 export function createArmorDetails(item,classId='vanguard',limbs){
   const parts=createTorsoDetails(item,classId);
+  if(!item.modelId && !isStarterVest(item))for(const [bone,part] of Object.entries(parts))
+    paintGarment(part,classId,armorRank(item),bone);
   // Only the existing pauldrons receive the shoulder hinge correction.
   if(limbs)return attachArmorLimbDetails(parts,limbs);
   for(const [bone,part] of Object.entries(parts))if(bone.startsWith('UpperArm'))part.userData.armorPauldron=true;
@@ -103,6 +170,7 @@ export function createArmorDetails(item,classId='vanguard',limbs){
 }
 function createTorsoDetails(item,classId){
   if(item.modelId)return createUniqueArmorDetails(item,classId);
+  if(isStarterVest(item))return starterShoulders(item,classId);
   if(classId!=='vanguard')return createClassArmorDetails(item,classId);
   const m=equipmentMaterials(item),f=item.family,heavy=f==='plate'||f==='mythic',ornate=f==='mythic';
   const parts={};for(const key of ['Chest','Spine','Hips','UpperArmL','UpperArmR','ThighL','ThighR']){parts[key]=new THREE.Group();parts[key].name=`${item.name} / ${key}`;}
@@ -114,6 +182,16 @@ function createTorsoDetails(item,classId){
       if(s>0)outline.reverse();formedPlate(chest,m.metal,outline,[s*.11,-.052,.198],trim);
       for(const y of [-.025,-.065])rod(chest,m.trim,[s*.044,y,.194],[s*.17,y+.04,.161],.003);
       rivet(chest,m.trim,s*.20,.015,.129);rivet(chest,m.trim,s*.14,-.161,.17);
+    }
+    if(ornate){
+      const seal=new THREE.Group();seal.position.set(0,-.059,.193);chest.add(seal);
+      orb(seal,m.trim,[0,0,0],[.032,.033,.009]);
+      mesh(seal,new THREE.TorusGeometry(.036,.0035,5,20),m.edge);
+      for(let i=0;i<12;i++){
+        const long=i%2===0?.065:.052;
+        const ray=plate(seal,m.trim,[[-.004,.037],[0,long],[.004,.037]],.002,[0,0,.002],.0006);
+        ray.rotation.z=i*Math.PI/6;
+      }
     }
     mesh(chest,new THREE.CylinderGeometry(.088,.142,.071,16,1,true),m.metal,[0,.087,0],[1,1,.82]);band(chest,trim,.119,.09,.009,.82);
     for(let i=0;i<3;i++){
@@ -153,9 +231,14 @@ function createTorsoDetails(item,classId){
 
 export function createWearable(item,classId='vanguard',side='L'){
   if(item.modelId)return createUniqueWearable(item,classId,side);
-  if(classId!=='vanguard')return createClassWearable(item,classId);
+  const root=classId==='vanguard'?vanguardWearable(item,side):createClassWearable(item,classId,side);
+  if(['head','gloves','boots','belt'].includes(item.slot))paintGarment(root,classId,armorRank(item),item.slot);
+  return root;
+}
+function vanguardWearable(item,side){
   const root=new THREE.Group();root.name=item.name;root.userData.itemKey=item.key;
   const m=equipmentMaterials(item),f=item.family,heavy=f==='plate'||f==='mythic',ornate=f==='mythic';
+  if(item.slot==='boots'||item.slot==='gloves')m.leather.userData.fittedLeather=true;
   if(item.slot==='off'){
     const round=item.baseId==='buckler'||(item.tier<2&&item.baseId!=='kiteshield');
     if(round){
@@ -173,8 +256,8 @@ export function createWearable(item,classId='vanguard',side='L'){
     }
     orb(root,m.metal,[0,0,.047],[.061,.061,.035]);
   }else if(item.slot==='head'){
-    mesh(root,new THREE.SphereGeometry(.139,16,10,0,Math.PI*2,0,Math.PI*.59),f==='light'?m.leather:m.metal,[0,.07,-.008],[1,1.16,1]);
-    const rim=mesh(root,new THREE.TorusGeometry(.136,.008,5,20),m.trim,[0,.062,-.008]);rim.rotation.x=Math.PI/2;
+    mesh(root,new THREE.SphereGeometry(.139,16,10,0,Math.PI*2,0,Math.PI*(heavy?.59:.51)),f==='light'?m.leather:m.metal,[0,heavy?.07:.089,-.008],[1,1.16,1]);
+    const rim=mesh(root,new THREE.TorusGeometry(.136,.008,5,20),m.trim,[0,heavy?.062:.081,-.008]);rim.rotation.x=Math.PI/2;
     curved(root,m.trim,[[0,.058,-.145],[0,.199,-.07],[0,.229,0],[0,.196,.093],[0,.074,.139]],.006);
     if(f!=='light')for(const s of [-1,1]){
       plate(root,m.metal,[[s*.115,.068],[s*.136,.01],[s*.119,-.093],[s*.054,-.118],[s*.06,-.025],[s*.086,.025]],.018,[0,0,.075]);rivet(root,m.trim,s*.115,.04,.107,.009);
@@ -189,12 +272,13 @@ export function createWearable(item,classId='vanguard',side='L'){
     }
     if(ornate){const crest=plate(root,m.metal,[[-.08,.15],[-.055,.247],[0,.29],[.065,.203],[.087,.13]],.014,[0,0,-.035]);crest.rotation.y=Math.PI/2;}
   }else if(item.slot==='gloves'){
-    orb(root,m.leather,[0,-.047,.005],[.047,.069,.043]);mesh(root,new THREE.CylinderGeometry(.057,.046,.16,12),m.leather,[0,.05,0]);
+    sculptHand(root,m.leather,side).scale.set(1.18,1.08,1.22);
+    mesh(root,new THREE.CylinderGeometry(.057,.046,.16,12),m.leather,[0,.05,0]);
     for(let i=0;i<(heavy?3:2);i++)plate(root,heavy?m.metal:m.leather,[[-.044,.023],[.044,.023],[.049,-.02],[0,-.031],[-.049,-.02]],.01,[0,.115-i*.048,.044]);
     for(let i=0;i<4;i++)box(root,heavy?m.metal:m.leather,[-.03+i*.02,-.045,.047],[.017,.041,.015]);
     band(root,m.trim,.104,.058,.009);for(const s of [-1,1])rivet(root,m.trim,s*.033,.04,.057,.005);
   }else if(item.slot==='boots'){
-    plate(root,m.leather,[[-.062,-.02],[-.067,.123],[-.041,.167],[.041,.167],[.067,.123],[.062,-.07],[-.053,-.075]],.075,[0,.012,.015]).rotation.x=Math.PI/2;
+    mesh(root,bootGeometry(),m.leather,[0,0,0],[1.16,1,1.10]);
     mesh(root,new THREE.CylinderGeometry(.077,.052,.28,12),m.leather,[0,.15,-.024]);
     if(heavy){
       formedPlate(root,m.metal,[[-.065,.275,.03],[0,.311,.045],[.065,.275,.03],[.049,.045,.046],[0,.012,.076],[-.049,.045,.046]].reverse(),[0,.169,.087],m.edge);

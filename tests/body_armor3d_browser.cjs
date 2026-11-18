@@ -1,6 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const {chromium}=require('playwright');
-const root=path.resolve(__dirname,'..'),before=process.argv.includes('--before'),contractsOnly=process.argv.includes('--contracts-only'),reviewOnly=process.argv.includes('--review-only'),out=path.join(root,'tests/qa/body_armor3d',before?'before':'after');fs.mkdirSync(out,{recursive:true});
+const root=path.resolve(__dirname,'..'),before=process.argv.includes('--before'),contractsOnly=process.argv.includes('--contracts-only'),reviewOnly=process.argv.includes('--review-only'),out=path.resolve(process.env.ARMOR_QA_DIR||path.join(root,'tests/qa/body_armor3d'),before?'before':'after');fs.mkdirSync(out,{recursive:true});
 const mime={'.html':'text/html','.mjs':'text/javascript','.js':'text/javascript','.css':'text/css','.json':'application/json','.webp':'image/webp','.png':'image/png','.mp3':'audio/mpeg','.ogg':'audio/ogg','.otf':'font/otf'};
 const server=http.createServer((req,res)=>{
   const file=path.resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));if(!file.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}

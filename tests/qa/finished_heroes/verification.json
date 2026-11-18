@@ -1,0 +1,518 @@
+{
+  "baseline": "The painted working build captured before applying the finished wardrobe and Wildkeeper artwork.",
+  "comparison": {
+    "locations": [
+      "Frosthaven",
+      "Abandoned Mines"
+    ],
+    "seed": 12345,
+    "worldTime": 2,
+    "viewports": [
+      "1920 × 1080 desktop",
+      "844 × 390 landscape phone emulation"
+    ],
+    "pairedGameplayFrames": 20,
+    "pairedStarterArmorySheets": 5,
+    "pairedTurnarounds": 24,
+    "directionsPerTurnaround": 8,
+    "armorRanks": [
+      "field",
+      "reinforced",
+      "veteran",
+      "mythic"
+    ],
+    "representativeItemTiers": [
+      0,
+      4,
+      7,
+      13
+    ],
+    "outfitAndFormDirections": 192,
+    "closeUpPanels": 56,
+    "nativeZoomMythicRearViews": 10,
+    "mythicGameplay": "mythic-in-play.webp",
+    "gallery": "index.html",
+    "frameDeltas": "matched-frames.json"
+  },
+  "equipment": {
+    "command": "npm run test:unique-models",
+    "result": "passed",
+    "drawCallLimit": 73,
+    "highestMeasuredDrawCalls": 73,
+    "completeOutfitsAndForms": {
+      "gear": 60,
+      "form": 34,
+      "accessorized": 73
+    },
+    "fullyAccessorizedFrames": 1080,
+    "catalogStressDrawCallsByClass": {
+      "vanguard": 69,
+      "emberwitch": 73,
+      "gravebinder": 70,
+      "wildkeeper": 72,
+      "veilranger": 69
+    },
+    "bespokeModels": 118,
+    "bespokeClassPairs": 590,
+    "ordinaryCombinations": 1785,
+    "armorClassPairs": 135,
+    "gloveAndBootPairings": 6345,
+    "modelChecks": 72136,
+    "armorChecks": 1775279,
+    "maxGripError": 1.1124758794073864e-15,
+    "uniqueWebGL": {
+      "classes": 5,
+      "frames": 8970,
+      "checks": 17236,
+      "maxCalls": 42,
+      "peak": {
+        "classId": "veilranger",
+        "models": [
+          "u_gen_3_1"
+        ],
+        "state": "cast",
+        "t": 0.55,
+        "calls": 42
+      },
+      "memory": {
+        "vanguard": {
+          "warm": {
+            "geometries": 61,
+            "textures": 29,
+            "programs": 14
+          },
+          "settled": {
+            "geometries": 61,
+            "textures": 29,
+            "programs": 14
+          }
+        },
+        "emberwitch": {
+          "warm": {
+            "geometries": 108,
+            "textures": 54,
+            "programs": 14
+          },
+          "settled": {
+            "geometries": 108,
+            "textures": 54,
+            "programs": 14
+          }
+        },
+        "gravebinder": {
+          "warm": {
+            "geometries": 155,
+            "textures": 80,
+            "programs": 14
+          },
+          "settled": {
+            "geometries": 155,
+            "textures": 80,
+            "programs": 14
+          }
+        },
+        "wildkeeper": {
+          "warm": {
+            "geometries": 201,
+            "textures": 106,
+            "programs": 14
+          },
+          "settled": {
+            "geometries": 201,
+            "textures": 106,
+            "programs": 14
+          }
+        },
+        "veilranger": {
+          "warm": {
+            "geometries": 253,
+            "textures": 132,
+            "programs": 14
+          },
+          "settled": {
+            "geometries": 253,
+            "textures": 132,
+            "programs": 14
+          }
+        }
+      }
+    },
+    "bodyArmorWebGL": {
+      "classes": 5,
+      "frames": 11315,
+      "checks": 21596,
+      "maxCalls": 71,
+      "peak": {
+        "classId": "emberwitch",
+        "armorId": "hauberk",
+        "state": "cast",
+        "t": 0.55,
+        "extra": {
+          "main": {
+            "baseId": "huntbow"
+          },
+          "head": {
+            "baseId": "helm_t6"
+          },
+          "gloves": {
+            "baseId": "gloves_t6"
+          },
+          "boots": {
+            "baseId": "boots_t6"
+          },
+          "belt": {
+            "baseId": "sash"
+          },
+          "ring1": {
+            "baseId": "ring"
+          },
+          "ring2": {
+            "baseId": "ring"
+          },
+          "amulet": {
+            "baseId": "amulet"
+          }
+        },
+        "calls": 71
+      },
+      "memory": {
+        "vanguard": {
+          "warm": {
+            "geometries": 214,
+            "textures": 101,
+            "programs": 18
+          },
+          "settled": {
+            "geometries": 214,
+            "textures": 101,
+            "programs": 18
+          }
+        },
+        "emberwitch": {
+          "warm": {
+            "geometries": 225,
+            "textures": 117,
+            "programs": 18
+          },
+          "settled": {
+            "geometries": 225,
+            "textures": 117,
+            "programs": 18
+          }
+        },
+        "gravebinder": {
+          "warm": {
+            "geometries": 234,
+            "textures": 129,
+            "programs": 18
+          },
+          "settled": {
+            "geometries": 234,
+            "textures": 129,
+            "programs": 18
+          }
+        },
+        "wildkeeper": {
+          "warm": {
+            "geometries": 242,
+            "textures": 141,
+            "programs": 18
+          },
+          "settled": {
+            "geometries": 242,
+            "textures": 141,
+            "programs": 18
+          }
+        },
+        "veilranger": {
+          "warm": {
+            "geometries": 245,
+            "textures": 152,
+            "programs": 17
+          },
+          "settled": {
+            "geometries": 245,
+            "textures": 152,
+            "programs": 17
+          }
+        }
+      }
+    },
+    "ordinaryRender": "PASS: 57620 rendered checks; five classes × 12 weapon families × 10 states × eight directions × six timeline samples, with full mythic armor.",
+    "productionIntegration": "PASS: 798 checks: mandatory 3D, class selection, older saves and URLs, 118 uniques × five classes, equipment transactions and missing-model rollback, all four transformations, After-Image identity, unique save/reload, zero legacy player sprite calls or downloads, and WebGL failure handling."
+  },
+  "wardrobe": {
+    "activeSlotPaintChecks": "class column, rank row, glove/boot detail and equipped item identity",
+    "resourceCounters": [
+      "geometries",
+      "textures",
+      "programs"
+    ],
+    "mixedOutfitAndFormLoops": {
+      "vanguard": {
+        "warm": {
+          "geometries": 70,
+          "textures": 38,
+          "programs": 13
+        },
+        "settled": {
+          "geometries": 70,
+          "textures": 38,
+          "programs": 13
+        },
+        "cycles": 20,
+        "pixelMatchedReturns": 0
+      },
+      "emberwitch": {
+        "warm": {
+          "geometries": 129,
+          "textures": 73,
+          "programs": 14
+        },
+        "settled": {
+          "geometries": 129,
+          "textures": 73,
+          "programs": 14
+        },
+        "cycles": 20,
+        "pixelMatchedReturns": 0
+      },
+      "gravebinder": {
+        "warm": {
+          "geometries": 187,
+          "textures": 118,
+          "programs": 15
+        },
+        "settled": {
+          "geometries": 187,
+          "textures": 118,
+          "programs": 15
+        },
+        "cycles": 20,
+        "pixelMatchedReturns": 0
+      },
+      "wildkeeper": {
+        "warm": {
+          "geometries": 375,
+          "textures": 171,
+          "programs": 16
+        },
+        "settled": {
+          "geometries": 375,
+          "textures": 171,
+          "programs": 16
+        },
+        "cycles": 20,
+        "pixelMatchedReturns": 80
+      },
+      "veilranger": {
+        "warm": {
+          "geometries": 432,
+          "textures": 205,
+          "programs": 17
+        },
+        "settled": {
+          "geometries": 432,
+          "textures": 205,
+          "programs": 17
+        },
+        "cycles": 20,
+        "pixelMatchedReturns": 0
+      }
+    },
+    "starterSwaps": {
+      "vanguard": {
+        "facings": 8,
+        "outfitCycles": 20,
+        "warm": {
+          "geometries": 42,
+          "textures": 16,
+          "programs": 11
+        },
+        "settled": {
+          "geometries": 42,
+          "textures": 16,
+          "programs": 11
+        },
+        "maxCalls": 52
+      },
+      "emberwitch": {
+        "facings": 8,
+        "outfitCycles": 20,
+        "warm": {
+          "geometries": 42,
+          "textures": 16,
+          "programs": 12
+        },
+        "settled": {
+          "geometries": 42,
+          "textures": 16,
+          "programs": 12
+        },
+        "maxCalls": 54
+      },
+      "gravebinder": {
+        "facings": 8,
+        "outfitCycles": 20,
+        "warm": {
+          "geometries": 41,
+          "textures": 16,
+          "programs": 11
+        },
+        "settled": {
+          "geometries": 41,
+          "textures": 16,
+          "programs": 11
+        },
+        "maxCalls": 51
+      },
+      "wildkeeper": {
+        "facings": 8,
+        "outfitCycles": 20,
+        "warm": {
+          "geometries": 43,
+          "textures": 18,
+          "programs": 11
+        },
+        "settled": {
+          "geometries": 43,
+          "textures": 18,
+          "programs": 11
+        },
+        "maxCalls": 54
+      },
+      "veilranger": {
+        "facings": 8,
+        "outfitCycles": 20,
+        "warm": {
+          "geometries": 52,
+          "textures": 18,
+          "programs": 12
+        },
+        "settled": {
+          "geometries": 52,
+          "textures": 18,
+          "programs": 12
+        },
+        "maxCalls": 58
+      }
+    },
+    "starterPoses": {
+      "vanguard": {
+        "main": "shortsword",
+        "facings": 8,
+        "poses": 56,
+        "maxGripError": 0,
+        "releaseTransitions": 0
+      },
+      "emberwitch": {
+        "main": "gnarlwand",
+        "facings": 8,
+        "poses": 56,
+        "maxGripError": 0,
+        "releaseTransitions": 0
+      },
+      "gravebinder": {
+        "main": "gnarlwand",
+        "facings": 8,
+        "poses": 56,
+        "maxGripError": 0,
+        "releaseTransitions": 0
+      },
+      "wildkeeper": {
+        "main": "ashstaff",
+        "facings": 8,
+        "poses": 56,
+        "maxGripError": 7.306625627361387e-16,
+        "releaseTransitions": 0
+      },
+      "veilranger": {
+        "main": "huntbow",
+        "facings": 8,
+        "poses": 56,
+        "maxGripError": 9.440211509900527e-16,
+        "releaseTransitions": 8
+      }
+    },
+    "mobileDevice": "Chrome landscape-phone emulation",
+    "olderSaveAndRemoteComparison": "Legacy starter and mixed ordinary/set co-op outfits matched production-rendered pixels.",
+    "headgearAndMovingCloth": {
+      "vanguard": {
+        "baseHair": [
+          "Hair"
+        ],
+        "mailHair": [
+          "HairAtNape"
+        ],
+        "mythicHair": [],
+        "clothTravelRadians": 0.26363909132603486
+      },
+      "emberwitch": {
+        "baseHair": [
+          "Hair"
+        ],
+        "mailHair": [
+          "Hair"
+        ],
+        "mythicHair": [
+          "Hair"
+        ],
+        "clothTravelRadians": 0.25272934993501883
+      },
+      "gravebinder": {
+        "baseHair": [],
+        "mailHair": [],
+        "mythicHair": [],
+        "clothTravelRadians": 0.25709324649142634
+      },
+      "wildkeeper": {
+        "baseHair": [
+          "Hair"
+        ],
+        "mailHair": [
+          "HairAtNape"
+        ],
+        "mythicHair": [
+          "HairAtNape"
+        ],
+        "clothTravelRadians": 0.26036616890873
+      },
+      "veilranger": {
+        "baseHair": [],
+        "mailHair": [],
+        "mythicHair": [],
+        "clothTravelRadians": 0.2560022723523234
+      }
+    },
+    "characterSelection": "PASS — 426 checks. Five distinct live 3D classes; five viewport sizes plus 4K background; keyboard navigation; rotation; animated background, 30 FPS/resolution caps, tab visibility and reduced motion; name and hardcore; new-game and saved-hero flows; starter gear isolation; disposed previews and backgrounds. Real saves untouched."
+  },
+  "cinematics": {
+    "command": "npm run test:cinematics",
+    "result": "passed",
+    "browserChecks": 192,
+    "progressionChecks": 60,
+    "directionChecks": 1101,
+    "reviewChecks": 22,
+    "scenes": 20,
+    "shots": 87,
+    "appearances": 54,
+    "cathedralContourRegression": {
+      "map": "cathedral1",
+      "seed": 1992887243,
+      "seededTerrainAssembliesChecked": 80
+    }
+  },
+  "art": {
+    "method": "Built-in ImageGen, compiled into shared sRGB WebP atlases for the live rigs",
+    "prompts": "../../../assets/sprites_src/painted_heroes/finish-prompts.json",
+    "losslessSourceGrids": [
+      "../../../assets/sprites_src/painted_heroes/wardrobe.webp",
+      "../../../assets/sprites_src/painted_heroes/details.webp",
+      "../../../assets/sprites_src/painted_heroes/forms.webp"
+    ],
+    "rebuild": "python tools/pack_finished_hero_art.py",
+    "runtimeAtlasesRebuiltByteForByte": true,
+    "heroAtlas": "../../../assets/characters/hero-wardrobe.webp",
+    "formAtlas": "../../../assets/characters/wildshape-surfaces.webp"
+  }
+}

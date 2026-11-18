@@ -1,7 +1,7 @@
 import * as THREE from './vendor/three/three.module.min.js';
 import {UNIQUE_MODELS3D} from './character_unique_catalog3d.mjs?v=body-armor-1';
-import {disposeMaterials} from './character_materials3d.mjs?v=2';
-import {uniqueMaterials,uniqueSurface,shadeUnique,shadeUniqueGeometry,packUniqueSurfaces} from './character_unique_surfaces3d.mjs?v=body-armor-1';
+import {disposeMaterials} from './character_materials3d.mjs?v=painted-1';
+import {uniqueMaterials,uniqueSurface,shadeUnique,shadeUniqueGeometry,packUniqueSurfaces} from './character_unique_surfaces3d.mjs?v=painted-1';
 import {box,wrap,shell,smoothOutline,domedPlate} from './character_unique_mesh3d.mjs?v=body-armor-1';
 import {mesh,orb,rod,curved,plate,edge,rivet,band,combineStatic} from './character_mesh3d.mjs?v=body-armor-1';
 

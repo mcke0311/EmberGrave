@@ -22,8 +22,12 @@ function surfaceTexture(kind){
       // Broad painted values survive the small gameplay silhouette. Fine grain
       // alone disappeared at that scale and left cloth looking uniformly smooth.
       const fold=Math.pow(.5+.5*Math.sin(x*.145+Math.sin(y*.035)*.6),3);
-      if(kind==='cloth'||kind==='leather')value=value*.79+fold*35+Math.sin(y*.043)*10;
-      if(kind==='metal')value=value*.87+Math.pow(.5+.5*Math.sin(x*.058+y*.017),12)*31;
+      if(kind==='cloth')value=value*.65+fold*51+Math.sin(y*.043)*13;
+      if(kind==='leather'){
+        const creases=Math.sin(x*tau/128*3+Math.sin(y*tau/128)*1.3);
+        value=value*.76+fold*26-26*Math.pow(Math.max(0,creases),10)+23*Math.pow(Math.max(0,-creases),7);
+      }
+      if(kind==='metal')value=value*.80+Math.pow(.5+.5*Math.sin(x*.058+y*.017),16)*51;
       if(kind==='skin')value=218+noise*9+Math.sin(y*.036)*15+Math.cos(x*.042)*9;
       const i=(y*size+x)*4;bytes[i]=bytes[i+1]=bytes[i+2]=Math.max(0,Math.min(255,value));bytes[i+3]=255;
     }
@@ -34,10 +38,26 @@ function surfaceTexture(kind){
   texture.magFilter=THREE.LinearFilter;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.generateMipmaps=true;texture.needsUpdate=true;
   return texture;
 }
+const tau=Math.PI*2;
+// Existing recipes provide the pigment, roughness and metal masks. Apply the
+// finish after unpacking them so a leather grip and its steel edge respond
+// independently, even when they are submitted in the same draw call.
+export function paintSurfaceShader(shader){
+  const marker='#include <metalnessmap_fragment>';
+  shader.fragmentShader=shader.fragmentShader.replace(marker,marker+`
+    #ifdef USE_MAP
+      float brushValue = dot(sampledDiffuseColor.rgb, vec3(0.299, 0.587, 0.114));
+      float burnished = smoothstep(0.62, 0.94, brushValue);
+      diffuseColor.rgb *= mix(0.79, 1.07, burnished);
+      roughnessFactor = clamp(roughnessFactor - metalnessFactor * (0.08 + 0.21 * burnished), 0.27, 1.0);
+    #endif`);
+}
 export function surfaceMaterial(color,kind='metal',extra={}){
   const map=surfaceTexture(kind),metal=kind==='metal'||kind==='mail';
-  return new THREE.MeshStandardMaterial({color,map,bumpMap:map,bumpScale:kind==='mail'?.006:metal?.0008:.0016,
+  const surface=new THREE.MeshStandardMaterial({color,map,bumpMap:map,bumpScale:kind==='mail'?.006:metal?.0008:.0016,
     metalness:metal?.58:0,roughness:metal?.68:.94,...extra});
+  surface.onBeforeCompile=paintSurfaceShader;
+  return surface;
 }
 export function equipmentMaterials(item){
   const p=item.material;

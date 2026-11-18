@@ -22,12 +22,21 @@ async function frame(renderer='',fail3D=false){
   for(let i=0;i<300;i++){if(win.document.querySelector('#titleMenu button'))break;if(fail3D&&win.document.getElementById('appFatal'))break;if(win.document.getElementById('appFatal'))throw new Error(win.document.getElementById('appFatalDetail').textContent);await new Promise(r=>setTimeout(r,30));}
   ok(win.__usingTestStore===true,'save-store isolation failed');return {win,game:win.eval('Game'),items:win.eval('Items'),sprites:win.eval('SpriteAssets')};
 }
+function wardrobeFrame(win,hero){
+  const canvas=win.document.createElement('canvas');canvas.width=160;canvas.height=144;
+  const ctx=canvas.getContext('2d');ctx.translate(80,119);
+  win.Player3D.draw(ctx,hero,{state:'idle',t:.17,ang:1.23,ex:{}});
+  const pixels=ctx.getImageData(0,0,160,144).data;
+  if(!pixels.some((value,i)=>i%4===3&&value>128))throw Error('No equipped hero pixels');
+  return canvas.toDataURL();
+}
 try{
   let {win,game,items,sprites}=await frame('0');
   await game.newGame('Legacy URL baseline','vanguard',false);
   ok(win.Player3D.only3D&&game.state.player._playerVisual.kind==='player3d','legacy player3d=0 URL switched away from 3D');
   await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
   ok(!win.document.getElementById('appFatal'),'3D game failed to render from legacy URL');
+  const legacyPortrait=wardrobeFrame(win,game.state.player);
   game.saveAndQuit();const legacySlot=game.listSaves()[0].slot,legacy=JSON.parse(store.get(legacySlot));
   ({win,game,items,sprites}=await frame());
   ok(win.Player3D.only3D,'ordinary game URL did not require 3D');
@@ -39,6 +48,7 @@ try{
     const older={...legacy};if(preference)older.playerRenderer=preference;else delete older.playerRenderer;store.set(legacySlot,JSON.stringify(older));
     await game.loadGame(legacySlot);ok(game.state.player._playerVisual.kind==='player3d','existing '+preference+' hero did not upgrade to 3D');
     ok(game.state.player.name===legacy.name&&game.state.player.lvl===legacy.lvl,'loading an existing hero changed character progress');
+    ok(wardrobeFrame(win,game.state.player)===legacyPortrait,'older save changed the rendered starter outfit');
   }
   game.saveAndQuit();
   ({win,game,items,sprites}=await frame('0'));await game.loadGame(legacySlot);
@@ -48,6 +58,16 @@ try{
   for(const id of classes){
     await game.newGame('3D integration '+id,id,false);const p=game.state.player;
     ok(p._playerVisual.kind==='player3d',id+': new hero did not use 3D');
+    const data=win.eval('DATA'),setChest=data.SET_ITEMS.find(def=>data.BASES[def.base].slot==='chest');
+    const mixed={...p.equip,head:items.fromBase('helm_t4'),chest:items.makeSetItem(setChest),
+      gloves:items.fromBase('gloves_t0'),boots:items.fromBase('boots_t13'),belt:items.fromBase('belt_t7')};
+    const mixedReady=await game.preparePlayerEquipment(mixed);p.equip=mixed;
+    ok(game.commitPlayerEquipment(mixedReady),id+': mixed outfit did not commit');
+    const peer=game.coop.makeHero('Wardrobe peer',id);peer.heroId='wardrobe_'+id;peer.equip=mixed;
+    const transport=win.eval('CoopCodec'),restoredPeer=transport.restoreHero(JSON.parse(JSON.stringify(transport.hero(peer))));
+    await game.coop.prepareHero(restoredPeer);
+    ok(restoredPeer._playerVisual.equipment.chest.namedId===setChest.id,id+': remote lost the set chest');
+    ok(wardrobeFrame(win,restoredPeer)===wardrobeFrame(win,p),id+': remote mixed outfit rendered different gear');
     const next=Object.fromEntries(Object.entries({main:'sword2h_t13',head:'helm_t13',chest:'chest_t13',gloves:'gloves_t13',boots:'boots_t13',belt:'belt_t13',ring1:'ring_t13',ring2:'ring_t12',amulet:'amulet_t13'}).map(([slot,base])=>[slot,items.fromBase(base)]));
     const prepared=await game.preparePlayerEquipment(next);ok(!!prepared,id+': full equipment preload failed');p.equip=next;ok(game.commitPlayerEquipment(prepared),id+': equipment commit failed');p.computeStats();
     ok(p._playerVisual.equipment.gloves.baseId==='gloves_t13',id+': glove update lost');
