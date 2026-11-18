@@ -507,3 +507,20 @@ protocol changes were included in this static release.
 
 Publication metadata and the archive hash are recorded in
 [the release record](qa/item_persistence_site_publication.json).
+
+## Painted heroes and Wildkeeper transformations — 2026-11-18
+
+Version 22 publishes the five playable heroes, their 20 class-and-rank
+outfits, and four Wildkeeper forms on the existing public domain. [Play Embergrave](https://embergravegame.com)
+
+GitHub game commit `3422dd6efe48fbfbe602246813725b6af01ab6ee` matches the runtime source in
+Sites commit `cbece73271d999429eb65d1ebbe16aa23bc48eda`. The live game loaded all three texture
+atlases and rendered the five starter kits, five mythic outfits, and four forms.
+Each transformation restored the equipped mythic outfit on the opening road.
+
+The equipment and cinematic suites passed. Equipped heroes peaked at
+73 draw calls. GPU resource counts returned to their warmed values after
+20 outfit cycles per hero. The release record includes deployment identifiers,
+runtime checks, and the hashes served by the public site.
+[Publication record](qa/finished_heroes_site_publication.json) ·
+[Character verification](../tests/qa/finished_heroes/verification.json)

@@ -1,0 +1,56 @@
+{
+  "project_id": "appgprj_6aa420e20bfc8191b59e30227bca8a09",
+  "github_commit": "3422dd6efe48fbfbe602246813725b6af01ab6ee",
+  "release_commit": "cbece73271d999429eb65d1ebbe16aa23bc48eda",
+  "version_id": "appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_551a9d57bf2081919d699d3afb1ce26f",
+  "version_number": 22,
+  "deployment_id": "appgdep_6afe15216c408191896f23547bdc06a0",
+  "status": "succeeded",
+  "published_at": "2026-11-18T21:14:47.648429+00:00",
+  "url": "https://embergravegame.mcke0311.chatgpt.site",
+  "custom_domain": "https://embergravegame.com",
+  "access_mode": "public",
+  "archive_bytes": 219769788,
+  "archive_sha256": "21a6c6e53dbf7a0ca46ae4df6d1ce91067b631626bea3b2a6a0555fcfdcfdb20",
+  "publication_source": "Uploaded and deployed the verified static archive",
+  "saved_archive": {
+    "archive_format": "tar",
+    "content_hash": "sha256:6f01fa143aa3976b09ba8a63a51999b6dcd24ec7bba7e38f24cc15e6a9219c62",
+    "file_count": 1400,
+    "size_bytes": 230277120
+  },
+  "runtime_files": 1399,
+  "runtime_MiB": 218.59,
+  "runtime_source_files_matched": 117,
+  "scripts_validated": 89,
+  "runtime_references_checked": 1274,
+  "missing_runtime_references": [],
+  "live_files_verified": 18,
+  "live_verification": {
+    "on_opening_road": {
+      "zone": "frosthaven_approach",
+      "kits": {
+        "vanguard": "shortsword",
+        "emberwitch": "gnarlwand",
+        "gravebinder": "gnarlwand",
+        "wildkeeper": "ashstaff",
+        "veilranger": "huntbow"
+      },
+      "distinctFrames": 14,
+      "returns": 4
+    },
+    "runtime_errors": [],
+    "missing_responses": [],
+    "atlas_sha256": {
+      "assets/characters/hero-surfaces.webp": "952293925137868e89a8214db88358ffd523d272a19df478ade0cd94f7fc646f",
+      "assets/characters/hero-wardrobe.webp": "b3feb17bf4ddef311b65323135bf3c1f9d09861337c1dd23fae02169fc256564",
+      "assets/characters/wildshape-surfaces.webp": "cfd7488189057b89600745d20623399fa0dfcfb40842d409dcdcd4900526c40a"
+    }
+  },
+  "equipment_test": "npm run test:unique-models",
+  "cinematic_test": "npm run test:cinematics",
+  "bespoke_models": 118,
+  "draw_call_peak": 73,
+  "pixel_matched_form_returns": 80,
+  "character_verification": "../../tests/qa/finished_heroes/verification.json"
+}
