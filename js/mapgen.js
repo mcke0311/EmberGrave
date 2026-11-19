@@ -8,7 +8,7 @@
 
 const MapGen = (() => {
 
-  const LAYOUT_VERSION = 1;
+  const LAYOUT_VERSION = 2;
   let planningLayout = true;
 
   function layoutBands(zoneId, c) {
@@ -32,6 +32,18 @@ const MapGen = (() => {
       if(!fixed){const min=source.cathedral?6:9;n[4]=Math.max(min,n[4]+U.riR(r,-1,1));n[5]=Math.max(min,n[5]+U.riR(r,-1,1));}
       return n;
     });
+    // Keep the guarded crossing direct and the sheltered fork around the ridge.
+    // Mirror the pass and move its courts each expedition without rewiring that choice.
+    if(zoneId==='shardpeak_shrine'){
+      const mirror=r()<.5,offset=U.riR(r,-6,6);
+      for(const node of rows){
+        node[2]+=U.riR(r,-3,3);
+        node[3]=U.clamp((mirror?size-node[3]:node[3])+offset+U.riR(r,-3,3),node[5]+7,size-node[5]-8);
+      }
+      const overlookLoop=r()<.33;
+      const edges=overlookLoop?[...source.edges,['lee','cache',true],['cache','summit',true]]:source.edges;
+      return {...source,nodes:rows,edges,branches:overlookLoop?[]:source.branches,layoutBands:bands,planned:true};
+    }
     const placed=[],positions=new Map();
     const ordered=rows.slice().sort((a,b)=>a[0]==='entry'?-1:b[0]==='entry'?1:a[0]===bossId?-1:b[0]===bossId?1:(b[4]*b[5]-a[4]*a[5]));
     for(const row of ordered){
@@ -890,6 +902,7 @@ const MapGen = (() => {
       px = U.clamp(px, 3, m.w - 4); py = U.clamp(py, 3, m.h - 4);
     }
     /* mark road tiles with a dirt floor variant */
+    m.watchBellSite=road[Math.floor(road.length*.32)]||entry;
     for (const p of road) { const i = idx(m, p.x | 0, p.y | 0); m.floor[i] = 4; }
 
     /* clear entry/crypt yards */
@@ -1230,6 +1243,7 @@ const MapGen = (() => {
     }
     /* the HEARTWOOD: one glade holds a ring of old trees around a buried shard */
     const heart = glades[2 + (r() * (glades.length - 2) | 0)];
+    m.heartwoodSite={x:heart.x,y:heart.y};
     for (let a = 0; a < 7; a++) addProp(m, "tree", heart.x + Math.cos(a / 7 * Math.PI * 2) * (heart.rad - 1.2), heart.y + Math.sin(a / 7 * Math.PI * 2) * (heart.rad - 1.2), { seed: (r() * 9999) | 0 });
     addProp(m, "embershard", heart.x, heart.y, { blocks: true });
     addLight(m, heart.x, heart.y, 5, "#7fd8c0", false);
@@ -1680,8 +1694,8 @@ const MapGen = (() => {
       edges:[['entry','procession'],['procession','court'],['court','vigil'],['vigil','sanctuary'],['court','sanctuary'],
         ['court','reliquary',true],['reliquary','procession',true]],branches:[],rewards:['reliquary'],returnKey:'from_temple',boss:'korvath',bossNode:'sanctuary'},
     shardpeak_shrine: {size:128,outdoor:true,dark:.34,packs:20,
-      nodes:[['entry','The pilgrim steps',17,64,9,10,'pilgrim_stones'],['shelter','The last pilgrim shelter',37,65,11,10,'shelter'],
-        ['windward','The windward ascent',66,32,11,10,'pilgrim_stones'],['lee','The sheltered ascent',66,91,11,10,'tollhouse'],
+      nodes:[['entry','The pilgrim steps',17,30,9,10,'pilgrim_stones'],['shelter','The last pilgrim shelter',32,60,11,10,'shelter'],
+        ['windward','The windward ascent',66,59,11,10,'pilgrim_stones'],['lee','The sheltered ascent',66,105,11,10,'tollhouse'],
         ['summit','The Shardpeak Vigil',105,61,14,13,'summit'],['cache','The votive overlook',106,100,8,9,'memorial']],
       edges:[['entry','shelter'],['shelter','windward'],['shelter','lee'],['windward','summit'],['lee','summit']],
       branches:[['cache',['summit','lee']]],rewards:['cache'],returnKey:'from_shardpeak'},
@@ -1878,7 +1892,8 @@ const MapGen = (() => {
     }
     const combat=f.landmarks.filter(n=>n.id!=='entry'&&n.id!==c.bossNode);
     for(let k=0;k<c.packs;k++){
-      const n=combat[k%combat.length],elite=c.rewards.includes(n.id)&&k<combat.length;
+      const court=combat[k%combat.length];
+      const n=zoneId==='shardpeak_shrine'&&court.id==='lee'&&k>=combat.length?nodes.windward:court,elite=c.rewards.includes(n.id)&&k<combat.length;
       if(zoneId==='mines'&&DATA.FAMILY_TERRITORIES.mines[n.id]==='shardbound'){
         const random=U.rng(seed^U.hash('mine-crystal:'+k));let point=null;
         for(let attempt=0;attempt<200&&!point;attempt++){
@@ -2167,7 +2182,7 @@ const MapGen = (() => {
       }
       f.encounters.push(encounter);
     }
-    if(c.herald){const n=nodes[c.herald];m.monsterSpawns.push({id:'choir_herald',x:n.x,y:n.y,landmarkId:n.id});}
+    if(c.herald){const n=nodes[c.herald];m.monsterSpawns.push({id:'choir_herald',x:n.x,y:n.y,landmarkId:n.id,journeyActor:'shrine_herald'});}
     bakeMinimap(m);TerrainSurface.rebuild(m);m.hasElev=false;
     return m;
   }
@@ -4326,6 +4341,85 @@ const MapGen = (() => {
       if(!TerrainNavigation.segment(m,ax,ay,bx,by,.36))throw Error('Obstructed layout ramp lane');
     }
   }
+  function placeQuestLandmarks(m,seen) {
+    const sites={
+      fields:[['watch_bell',m.watchBellSite,'Ring the watch bell',0]],
+      forest:[['heart_roots',m.heartwoodSite,'Cut the heartwood roots',1]],
+      shardpeak_shrine:[['shelter','shelter','Take a pilgrim ember'],['summit','summit','Light the summit waystone',2]],
+      hollow_reeds:[['reed_shrine','shrine','The singing shrine',3]],
+      shard_flats:[['quarry','quarry','The quarry command standard',4]],
+      spawn_pools:[['brood_nest','brood','The living spawn bed']],
+      tomb_sanctum:[['prison_ledger','sovereign','A coffer bound in chains']]
+    }[m.id];
+    if(!sites)return;
+    const landmarks=m.frontier?.landmarks||m.act2?.landmarks||m.act3?.landmarks||[];
+    function seat(anchor) {
+      // Keep paths and old map identities intact. A hero can stand on the contact tile.
+      let best, distance=Infinity;
+      for(let i=0;i<seen.length;i++)if(seen[i]&&!m.hazard[i]){
+        const x=i%m.w+.5,y=Math.floor(i/m.w)+.5,d=(x-anchor.x)**2+(y-anchor.y)**2;
+        if(d>=distance||!TerrainNavigation.clear(m,x,y,.5)||m.props.some(p=>Math.hypot(p.x-x,p.y-y)<1.25))continue;
+        if(Object.values(m.spawns).some(p=>Math.hypot(p.x-x,p.y-y)<3))continue;
+        best={x,y};distance=d;
+      }
+      if(!best)throw Error('Missing reachable quest site in '+m.id);
+      return best;
+    }
+    function trail(from,to){
+      const path=TerrainNavigation.findPath(m,from,to,{radius:.36});
+      if(!path?.length)throw Error('Missing quest trail in '+m.id);
+      const points=[from,...path.map(n=>({x:n.cx,y:n.cy}))];
+      const lengths=points.slice(1).map((p,i)=>Math.hypot(p.x-points[i].x,p.y-points[i].y));
+      return {length:lengths.reduce((a,b)=>a+b,0),at(distance){
+        for(let i=0;i<lengths.length;i++){
+          const segment=lengths[i];
+          if(segment&&distance<=segment)return {x:U.lerp(points[i].x,points[i+1].x,distance/segment),y:U.lerp(points[i].y,points[i+1].y,distance/segment)};
+          distance-=segment;
+        }
+        return points[points.length-1];
+      }};
+    }
+    for(const [id,where,label,art] of sites){
+      const anchor=typeof where==='string'?landmarks.find(n=>n.id===where):where;
+      if(!anchor)throw Error('Missing quest landmark '+id);
+      const p=seat(anchor);
+      if(id==='brood_nest'||id==='prison_ledger'){
+        const nest=id==='brood_nest';
+        addProp(m,nest?'nest':'strongbox',p.x,p.y,{blocks:false,label,propId:id,aftermath:nest?'brood_mother':'chained_sovereign'});
+        continue;
+      }
+      addProp(m,art!=null?'quest_landmark':'brazier',p.x,p.y,{blocks:false,label,journeySite:id,questArt:art,propId:'quest_'+id,
+        interact:['watch_bell','heart_roots','shelter','summit'].includes(id)?'journey':null});
+      if(id==='watch_bell'||id==='summit')m.lights.push({...p,r:6,color:'#ffc46f',flicker:false,questLamp:id==='summit'?'summit_lit':'bell_quiet'});
+      if(id==='shelter'){
+        const paths=['windward','lee'].map(branch=>trail(p,landmarks.find(n=>n.id===branch)));
+        let distance=5;
+        while(distance<Math.min(paths[0].length,paths[1].length)){
+          const a=paths[0].at(distance),b=paths[1].at(distance);
+          if(Math.hypot(a.x-b.x,a.y-b.y)>=7)break;
+          distance++;
+        }
+        for(const [i,path] of paths.entries()){
+          const at=seat(path.at(distance));
+          addProp(m,'signpost',at.x,at.y,{blocks:false,journeyClue:'ascent',label:i?'Lee path · sheltered ascent':'Windward path · guarded shortcut',propId:i?'lee_sign':'windward_sign'});
+        }
+      }
+      if(id==='heart_roots'){
+        const route=trail(m.spawns.default,p);
+        for(const [i,fraction] of [.12,.45,.76].entries()){
+          const at=seat(route.at(route.length*fraction));
+          addProp(m,'banner',at.x,at.y,{blocks:false,journeyClue:'cloth',label:'A scrap of red cloak',displayScale:.75,propId:'cloak_'+i});
+        }
+      }
+      if(id==='reed_shrine'){
+        for(const where of ['fork','boats','grove','island']){
+          const node=landmarks.find(n=>n.id===where),at=seat(node);
+          const strength=1-Math.min(1,Math.hypot(at.x-p.x,at.y-p.y)/90);
+          addProp(m,'reed_clump',at.x,at.y,{blocks:false,artZone:'act2',journeyClue:'water',reedStrength:strength,label:'Singing reeds',propId:'singing_'+where});
+        }
+      }
+    }
+  }
   function generateWorld(zoneId,seed=0){
     seed=seed>>>0;
     const zone=DATA.ZONES[zoneId],adventure=zone&&!zone.arena&&!zone.opening&&!['town','camp'].includes(zone.kind);
@@ -4336,7 +4430,11 @@ const MapGen = (() => {
         const attemptSeed=attempt===0||attempt===8?seed:(seed^U.hash(zoneId+':layout-attempt:'+attempt))>>>0;
         try{
           const m=construct(zoneId,attemptSeed);
-          if(adventure)validateLayout(m,repairEncounterFooting(m));
+          if(adventure){
+            const reachable=repairEncounterFooting(m);
+            validateLayout(m,reachable);
+            placeQuestLandmarks(m,reachable);
+          }
           Object.assign(m,{layoutSeed:seed,layoutVersion:LAYOUT_VERSION,layoutAttemptSeed:attemptSeed,layoutAttempts:attempt+1,layoutFallback:attempt===8});
           if(failures.length)m.layoutDiagnostics={failures};
           return m;

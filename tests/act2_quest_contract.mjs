@@ -26,8 +26,10 @@ const boss=s.monsters.find(m=>m.defId==='mire_mother');Object.assign(s.player,{x
 const shard=s.map.props.find(p=>p.storyId==='mire_shard');ok(shard.x===s.map.arenaStory.mire_shard.x,'shard ignores authored placement');
 T.interactOnSurface(shard,true);ok(s.quests.q12.state==='reward','boss and shard recovery '+JSON.stringify({q:s.quests.q12,dead:boss.dead,flags:s.flags}));G.completeQuest('q12');ok(s.shrines.includes('khalcamp'),'Act 3 travel unlock');
 ok(await G.enterMap('hollow_reeds','from_wild'),'reeds entry');G.acceptQuest('opt_marsh_1');
-for(const spawn of s.map.monsterSpawns.slice(0,15))T.questKillEvent({defId:spawn.id});
-ok(s.quests.opt_marsh_1.state==='reward','15 Songless kills');
+T.questKillEvent({defId:'choir_herald'});
+ok(s.quests.opt_marsh_1.state==='active','an unrelated Herald claimed the shrine');
+s.monsters.find(m=>m.journeyActor==='shrine_herald').die(s.player);
+ok(s.quests.opt_marsh_1.state==='reward','the shrine Herald freed the Songless');
 ok(await G.enterMap('spawn_pools','from_wild'),'pools entry');G.acceptQuest('opt_marsh_2');
 s.monsters.find(m=>m.defId==='brood_mother').die(s.player);ok(s.quests.opt_marsh_2.state==='reward','Brood Mother optional quest');
 

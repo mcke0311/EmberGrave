@@ -2990,6 +2990,7 @@ class Monster extends Entity {
     // snapshots opt out. Raw player item procs use this final damage boundary.
     const elemental = (source instanceof Player) && !detail?.elementScaled && !detail?.environment ? DATA.elementMultiplier(source, elem) : 1;
     let dmg = amount * elemental * (this.enemySkills?.physicalMult(source,elem,detail) ?? 1);
+    if(this.journeyActor==="quarry_captain"&&!DATA.CAMPAIGN.site(Game.state,"quarry_left")&&!DATA.CAMPAIGN.site(Game.state,"quarry_right"))dmg*=.55;
     if(typeof TacticalElites!=='undefined')dmg*=TacticalElites.multiplier(Game.state,this);
     const hpBefore = this.hp;
     if (typeof UniquePowers !== "undefined") dmg *= 1 + UniquePowers.exposed(this) / 100;
@@ -3069,15 +3070,16 @@ class Monster extends Entity {
   familyIdle(dt,map){
     const home=this.familyHome,family=DATA.MONSTER_FAMILIES[this.monsterFamily];
     if(!home||!family)return false;
+    const routine=home.routine||family.routine;
     this.wanderT-=dt;
     if(this.wanderT<=0){
       const phase=U.hash(this.packId||this.defId),time=Game.state.time+phase%17;
-      this.wanderT=family.routine==='guard'?5:2.5+phase%7*.2;
+      this.wanderT=routine==='guard'?5:2.5+phase%7*.2;
       const away=U.dist(this.x,this.y,home.x,home.y)>6;
       let tx=home.x,ty=home.y;
       if(!away){
-        const angle=phase%628/100,patrol=family.routine==='patrol';
-        const range=patrol?2.4:family.routine==='prowl'?2:family.routine==='nest'?1.1:family.routine==='ritual'?.45:.25;
+        const angle=phase%628/100,patrol=routine==='patrol';
+        const range=patrol?2.4:routine==='prowl'?2:routine==='nest'?1.1:routine==='ritual'?.45:.25;
         const a=patrol?angle:angle+Math.floor(time/4)*1.7,step=patrol?(Math.floor(time/8)%2?1:-1):1;
         tx+=Math.cos(a)*range*step;ty+=Math.sin(a)*range*step;
       }
@@ -3085,9 +3087,9 @@ class Monster extends Entity {
         if(away)Game.repath(this,tx,ty,this.surfaceId);
         else if(TerrainNavigation.segment(map,this.x,this.y,tx,ty,this.radius))this.path=[{cx:tx,cy:ty,x:tx|0,y:ty|0}];
       }
-      if(family.routine==='ritual'||family.routine==='nest')this.face(home.anchorX,home.anchorY);
+      if(routine==='ritual'||routine==='nest')this.face(home.anchorX,home.anchorY);
     }
-    this.moveAlong(dt,this.def.speed*(family.routine==='prowl'?.5:.32),map,TerrainLayers.targets(Game.state.monsters));
+    this.moveAlong(dt,this.def.speed*(routine==='prowl'?.5:.32),map,TerrainLayers.targets(Game.state.monsters));
     if(!this.path?.length)this.moving=false;
     return true;
   }
@@ -3303,7 +3305,7 @@ class Monster extends Entity {
     if(typeof Act2EnemyAnimation!=='undefined')Act2EnemyAnimation.tick(this);
     if(typeof Act5EnemyAnimation!=='undefined')Act5EnemyAnimation.tick(this);
     if(typeof Act1EnemyAnimation!=='undefined')Act1EnemyAnimation.tick(this);
-    if (this.dead) { this.act2Combat?.updateDead(dt); this.corpseT -= dt; return; }
+    if (this.dead) { this.act2Combat?.updateDead(dt); if(!this.questDormant)this.corpseT -= dt; return; }
     if (Game.bossWard?.(this)) { this.path=null; this.moving=false; return; }
     if (this.encounter && !this.encounter.prepare(player,map)) return;
     if (this.bossOwner) {

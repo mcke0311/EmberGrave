@@ -24,7 +24,7 @@ const Coop=(()=>{
     stopped=true;clearInterval(pingTimer);clearTimeout(retry);wire('roomState',{open:false});wire('leave');ws?.close();ws=null;worker?.terminate();worker=null;active=false;loading=false;Game.coop.stop();ui()?.status('Host simulation stopped. Resume your saved campaign. '+message);
   }
   async function startWorker(record){
-    worker=new Worker(new URL('js/coop_worker.js?v='+P.BUILD+'&patch=cinematics-3',document.baseURI));
+    worker=new Worker(new URL('js/coop_worker.js?v='+P.BUILD+'&patch=cinematics-3&quests=1',document.baseURI));
     worker.onerror=e=>workerFailed(e.message||'Worker failed.');worker.onmessageerror=()=>workerFailed('Worker communication failed.');
     worker.onmessage=({data:m})=>{
       if(m.type==='reply'){const p=workerPending.get(m.requestId);workerPending.delete(m.requestId);if(m.error)p?.reject(Error(m.error));else p?.resolve(m.value);return;}
@@ -62,6 +62,7 @@ const Coop=(()=>{
   function visual(effect,detail){if(host&&active&&visuals.length<256)visuals.push({effect,...detail});}
   function receiveEvent(e){
     if(e.type==='message')notify(e.message);
+    else if(e.type==='questReceipt')UI.questReceipt(e.title,e.response,e.receipt);
     else if(e.type==='panel'){const o=s()?.npcs.find(n=>n._coopId===e.id)||s()?.map.props.find(p=>p._coopId===e.id);if(o)Game.coop.openInteraction(o);}
     else if(e.type==='complete')UI.centerMsg('ACT I COMPLETE',e.message);
     else if(e.type==='visual')Game.coop.visual(e);
@@ -558,7 +559,7 @@ const Coop=(()=>{
       if(record.coopRewarded.includes(id))continue;
       const live=s().players.find(p=>p.heroId===id),p=live||(campaign.heroes[id]&&C.restoreHero(campaign.heroes[id]));if(!p)continue;
       if(!live){p.x=s().player.x;p.y=s().player.y;}
-      Game.coop.rewardQuest(q,p);record.coopRewarded.push(id);campaign.heroes[id]=C.hero(p);
+      const receipt=Game.coop.rewardQuest(q,p);if(live)event('questReceipt',{title:q.name,response:DATA.questText(q,record,true),receipt},p._coopId);record.coopRewarded.push(id);campaign.heroes[id]=C.hero(p);
     }
   }
   return {listRooms,teleportToPlayer:targetId=>submit({type:'teleportToPlayer',targetId}),sampleFrame,diagnostics:async()=>({...diagnostics,inputResponseMs:CoopInput.responseTimes?.slice()||[],worker:worker?await workerRequest('metrics'):null}),connect,newHero,submit,runLocal,frame,event,visual,save,retrySave,died,checkpoint,requestTravel,answerTravel,leave,cinematic,cinematicDone,trackParticipants,rewardParticipants,resumeInfo,

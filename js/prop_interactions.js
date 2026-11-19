@@ -50,6 +50,7 @@ const PropInteractions = (() => {
   }
   // Resolve identity without loading pixels, shared by gameplay and references.
   function resolveVisual(pr,state) {
+    if(pr.questArt!=null)return {id:'world.props.quest_landmarks',index:pr.questArt+(pr.completed?5:0),type:pr.type,family:pr.type};
     const animated=sample(pr,state);if(animated)return {...animated,type:visualType(pr)};
     const type=visualType(pr),props=DATA.SPRITE_MANIFEST.maps.props;
     return {id:props[(pr.artZone||state.map.id)+'_'+type]||props[type]||null,index:0,type,family:family(pr)};
@@ -105,6 +106,7 @@ const PropInteractions = (() => {
   }
   function profile(pr){
     if(pr.isNpc||pr.def||pr.survivor||pr.gate||pr.interact==='opening_supply')return null;
+    if(pr.journeySite==='heart_roots'&&pr.interact)return {state:'search',duration:.65,contact:.325};
     if(pr.searchable&&!pr.searched)return {state:'search',duration:.65,contact:.325};
     if(pr.breakable&&!pr.broken)return {state:'kick',duration:.56,contact:.28};
     if(['storage','forge','board','caravan'].includes(pr.interact))return {state:'reach',duration:.35,contact:.35};

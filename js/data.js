@@ -1759,9 +1759,9 @@ DATA.SET_ITEMS = [
 /* =====================  QUESTS  ===================== */
 DATA.QUESTS = [
   { id:"q1", name:"Ash on the Wind", giver:"vessa",
-    brief:"Thin the dead that wander the Ashen Fields. Slay 10 creatures beyond the gate.",
+    brief:"Ring the watch bell beside the Ashen Fields road. Vessa used to call the farmhands in that way. Now the dead answer it. Hold the bell until the last of them falls.",
     type:"kills", target:10, zone:"fields",
-    done:"The fields breathe a little easier. Take this — pulled it off a deserter who won't miss it.",
+    done:"I saw the lantern from the gate. A family can sleep on that road tonight. But I heard another bell answer yours, down beneath the burial ground.",
     reward:{ gold:200, item:{ rarity:"enhanced", ilvl:3 } } },
   { id:"q2", name:"Bells Below", giver:"vessa",
     brief:"A voice has been singing the dead out of their graves. Find the Sunken Crypt beneath the burial ground and silence Gravecaller Hesh.",
@@ -1779,9 +1779,9 @@ DATA.QUESTS = [
     done:"The nights are quieter. My ears thank you, dear, and so does whatever's still buried out there.",
     reward:{ gold:350, glyph:true } },
   { id:"q5", name:"Roots That Remember", giver:"board",
-    brief:"A parchment in a shaking hand: 'To any blade for hire — the Blackbough took my brother on the monastery road. Cut down 12 of whatever hunts beneath those trees and the reward pinned here is yours. —H.'",
+    brief:"A scrap nailed to the board reads, ‘My brother wore a red cloak the day the Blackbough took him. Look for it on the monastery road. If you find his brass clasp, bring it home. — H.’",
     type:"kills", target:12, zone:"forest",
-    done:"Beneath the notice, a heavy purse and a wrapped bundle have been nailed to the board, with one word added: 'PAID.'",
+    done:"A fresh note covers the old bounty. ‘When we were small I used to fasten that clasp for him. Thank you for bringing part of him home. — H.’",
     reward:{ gold:400, item:{ rarity:"rare", ilvl:7 } } },
   { id:"q6", name:"The Unshepherd", giver:"vessa",
     brief:"Every road of rot leads up the hill to the Greymonastery. Its abbot, Vellath, closed the gates from inside years ago. Open them. End him.",
@@ -1791,14 +1791,14 @@ DATA.QUESTS = [
 
   /* ===== ACT I — The Fallen North (opening) ===== */
   { id:"q7", name:"The Light That Lied", giver:"sera",
-    brief:"You came through the shattering light alive. Seraneth says it was no victory — it was an unlocking. Step beyond Frosthaven's wall into the Fallen North and learn what walks it now. Slay 8 of the risen.",
+    brief:"You came through the shattering light alive. Seraneth calls it an unlocking. Step beyond Frosthaven’s wall and drive back eight attackers on the road. Bring her word of what walks the Fallen North.",
     type:"kills", target:8, zone:"north_wild",
     done:"You feel it too, then. This is not the peace we were promised. Something is harvesting the shards — and carrying them south.",
     reward:{ gold:120, item:{ rarity:"enhanced", ilvl:3 } } },
   { id:"q8", name:"Those Who Hid", giver:"bryn",
     brief:"When the town fell, folk fled down into the Abandoned Mines — and the dark followed them. They're still down there, cowering in the deep cuts. Go below and bring them out alive. Rescue 3 trapped survivors.",
     type:"rescue", target:3, zone:"mines",
-    done:"You brought them home. After everything that's crawled out of that mountain — you brought them HOME. I'll not forget it. Take my brother's blade; it should be carried by someone who saves people, not just kills them.",
+    done:"You brought them home. After everything that's crawled out of that mountain, you brought them HOME. Picked this from our best stores myself. Take it.",
     reward:{ gold:200, item:{ rarity:"rare", ilvl:4 }, glyph:true } },
   { id:"q8b", name:"The Oathsworn Beacons", giver:"freed",
     brief:"One of the folk you pulled from the mines won't stop shaking: Korvath, the Oathbreaker, has risen in the Shattered Temple — and sealed it behind a barrier of light. Three corrupted beacons in the Fallen North feed that barrier. Shatter all three. Each will vomit out the dead until it falls. When the last goes dark, the Oathsworn that guard him will come for you — end the three of them and the temple will open.",
@@ -1863,32 +1863,32 @@ DATA.QUESTS = [
     brief:"The drifting cathedral rebuilds each level from the memories of everyone touched by the shards. Some halls remember Cinderwatch, others the Last Bastion or the depths beneath Mount Karrhal. Rescue three trapped souls before the walls absorb them. Then destroy the Empty Archangel: a soulless false angel made from Seraneth's discarded armor and corrupted Sunderstone energy, speaking with her voice.",
     type:"killBoss", target:"empty_archangel", zone:"cathedral1",
     done:"The three souls are free and the Empty Archangel is silent. It had Seraneth's voice and armor, but no soul. The Silent Choir's demonic priests maintain the Quieting deeper inside. Break their seals, recover Seraneth's shattered sword, and confront the Hollow King.",
-    objectives:[...[0,1,2].map(i => ({ kind:"interact", target:"trapped_soul_"+i, zone:"cathedral1", label:"Rescue trapped soul "+(i+1) }))],
+    objectives:[...[0,1,2].map(i => ({ kind:"interact", target:"trapped_soul_"+i, zone:"cathedral1", label:"Free the soul in the "+["Cinderwatch","Last Bastion","Mount Karrhal"][i]+" chapel" }))],
     reward:{ gold:1300, item:{ rarity:"rare", ilvl:18 }, glyph:true } },
   { id:"q17", name:"The Hollow King", giver:"edran",
-    brief:"Break the three seals maintaining the Quieting ritual in the Cathedral Heart and confront the Silent Choir's demonic priests. Recover all three pieces of Seraneth's shattered sword. Then face Malthoron, who begins as an armored human warlord and sheds his plate to reveal swirling darkness and fragments of screaming souls.",
+    brief:"Three chapels hold the Quieting seals and the pieces of Seraneth’s sword. Break the seals, take back the blade, and silence the priests who guard it. At the heart of the cathedral, Malthoron waits in the armor you remember.",
     type:"killBoss", target:"malthoron", zone:"cathedral2",
     done:"Malthoron is destroyed. His collected shards collapse into a portal leading directly into the Burning Hells. Someone else guided him: he was only gathering them for a hidden master. The Quieting seals are broken, and Seraneth's sword is yours. Follow the collapsing shards through the portal at the heart of his ruined fortress.",
     objectives:[
       { kind:"quest", target:"q16", label:"Complete The Empty Archangel for Edran" },
       ...[0,1,2].map(i => ({ kind:"interact", target:"quieting_seal_"+i, zone:"cathedral2", label:"Break Quieting seal "+(i+1) })),
-      ...[0,1,2].map(i => ({ kind:"interact", target:"sword_piece_"+i, zone:"cathedral2", label:"Recover Seraneth’s sword piece "+(i+1) })),
+      ...[0,1,2].map(i => ({ kind:"interact", target:"sword_piece_"+i, zone:"cathedral2", label:"Recover the "+["hilt","broken edge","point"][i]+" of Seraneth’s sword" })),
       { kind:"kill", target:"choir_priest", zone:"cathedral2", count:3, label:"Defeat the Silent Choir’s demonic priests" }
     ],
     reward:{ gold:1600, item:{ rarity:"unique", ilvl:19 }, skillPts:2 } },
 
   /* ===== ACT V — The Throne of Cinders ===== */
   { id:"q18", name:"The Veiled Lord", giver:"vael",
-    brief:"Enter a region of Hell built from the ruins of defeated demon kingdoms. Cross rivers of ash, fields of impaled demons, and ruined fortresses where rival broods fight each other. Prevent the gathered shards from becoming a permanent bridge into the Waking World. Vethriss, Lord of Lies, is the mastermind: it never intended Malthoron to succeed, only to gather every fragment. It wants a Sunderstone core it can control, then to manipulate our kingdoms from within. At the throne it wears a wounded Seraneth's face and asks you to surrender the shards. The lie will become a swift serpent surrounded by illusions, then a towering shadow copying the earlier act bosses.",
+    brief:"Cross the Cinderfields to the throne. Malthoron gathered the fragments for the Lord of Lies. Vethriss wants a core it can control, and a bridge into our kingdoms that will never close. Reach the throne before the fragments become one.",
     type:"killBoss", target:"vethriss", zone:"throne",
     done:"It is over. The shards are one core now — the Cinder-Core — and what becomes of it is yours to decide alone. Destroy it and gamble that nothing worse is holding the next lock. Seal it away and pray no patient hand ever digs it up. Or set it in Seraneth's keeping, and trust that what came back from the light is still her. The whole of the Waking World will turn on what you choose.",
     reward:{ gold:3000, item:{ rarity:"unique", ilvl:22 }, skillPts:2, finale:true } },
 
   /* ===== OPTIONAL SIDE QUESTS (Acts I–III) — offered once their act is underway; never block the main chain ===== */
   { id:"opt_north_1", name:"The Shardpeak Vigil", giver:"bryn", optional:true, pre:"q7",
-    brief:"A waystone's gone dark on the mountain pass — and Bryn's heard the dead that guard it sing in unison, like a choir of ice. Climb to the Shardpeak's frozen shrine and silence 15 of the corrupted sentries before the frost takes the last of the living beacons.",
+    brief:"Take an ember from the last pilgrim shelter up to the frozen summit waystone. The windward ascent is a guarded shortcut. The sheltered path winds behind the ridge. Carry the fire whichever way you choose.",
     type:"kills", target:15, zone:"shardpeak_shrine",
-    done:"The singing stops. The waystone glows again, warmer than before. Bryn slides a wrapped bundle across the counter — his grandmother's ring. 'Someone with a spine should carry it. Thank you.'",
+    done:"I could see the summit from Frosthaven tonight. So could every traveler still out there. Take this from the stores. You've earned it.",
     reward:{ gold:280, item:{ rarity:"rare", ilvl:4 }, glyph:true } },
   { id:"opt_north_2", name:"The Deepfreeze Caverns", giver:"bryn", optional:true, pre:"q8",
     brief:"There's an old hot spring sealed beneath the Abandoned Mines — a place the living could once warm their bones. Something's taken it over now, something that burns cold instead of hot. Descend into the ice caverns, find the great frozen spring, and kill the beast hunched over it — Hoarfang, they're calling it. Free the spring and it may run warm again.",
@@ -1896,9 +1896,9 @@ DATA.QUESTS = [
     done:"With Hoarfang dead, the ice over the spring groans and splits — and warmth, real warmth, wells up from the deep. Steam rises like old sighs. 'That was Frosthaven's gift to itself, once,' Bryn says. 'You gave it back. Here — better than coin.'",
     reward:{ gold:300, item:{ rarity:"rare", ilvl:4 }, skillPts:1 } },
   { id:"opt_marsh_1", name:"The Songless", giver:"oris", optional:true, pre:"q10",
-    brief:"North of the landing, the marshfolk who fled the Quieting have gone silent — not asleep like the Choir's victims, but worse. They stand in the reeds, mouths cut, becoming something else. Find what's turning them, in the Hollow Reeds, and put it down before it finishes the work. Cut down 15 of the half-changed.",
+    brief:"Follow the trembling water through the Hollow Reeds. Someone at the submerged shrine is singing through the throats of the marshfolk. Find the conductor and silence it.",
     type:"kills", target:15, zone:"hollow_reeds",
-    done:"You found the source — a Choir Herald conducting the half-changed from a submerged shrine. With it dead, the afflicted seem to wake; they weep, they remember their names. Oris says the Choir's reach is smaller now.",
+    done:"A reed-cutter came home this morning. First thing she told me was her name. I'd almost forgotten the sound of it.",
     reward:{ gold:500, item:{ rarity:"rare", ilvl:12 } } },
   { id:"opt_marsh_2", name:"The Choir's Hatchery", giver:"oris", optional:true, pre:"q11",
     brief:"Where the deep marsh meets the drowned stones, something breeds in the black water — the Quieted who wade in come back multiplied. Find the Spawn Pools and destroy whatever nests inside. End the Brood Mother.",
@@ -1906,9 +1906,9 @@ DATA.QUESTS = [
     done:"The breeding pit is silenced — the spawn-pools drained, the pale things burned away, the Brood Mother dissolved with her countless young. 'The Choir's strength was always numbers,' Oris says. 'Now those numbers dwindle.'",
     reward:{ gold:600, item:{ rarity:"rare", ilvl:13 }, glyph:true } },
   { id:"opt_desert_1", name:"The Shattered Sentries", giver:"edran", optional:true, pre:"q13",
-    brief:"Scouts report crystalline constructs moving in formation across the deep wastes — patterns too deliberate to be random. Edran fears the city wakes with intention. Cross to the Shard Flats and destroy 15 of these shard-touched guardians before they can march on the dig.",
+    brief:"Ambush the marching constructs at the crystal quarry in the Shard Flats. Two flank guards feed the captain's armor. Break a flank to sever the ward, or strike straight at the captain.",
     type:"kills", target:15, zone:"shard_flats",
-    done:"The patterns scattered; whatever ordered them has gone dormant — for now. 'The city learns,' Edran says, turning a resonance-carved fragment in his hand. 'We're running out of time before it remembers how to run.'",
+    done:"All those stone feet stopped in the same instant. Edran sets a shard on his desk. For the first time since the quakes, it lies perfectly still.",
     reward:{ gold:650, item:{ rarity:"rare", ilvl:15 } } },
   { id:"opt_desert_2", name:"Tomb of the Chained", giver:"edran", optional:true, pre:"q14",
     brief:"In the deep tombs, sealed gates still bear the King's sigil — and behind them, Edran heard singing older than the Choir, voices bound in stone and shard-light. Clear the Chained Sanctum, and face what sings in the dark: a Chained Sovereign that remembers being a god.",
@@ -1916,6 +1916,29 @@ DATA.QUESTS = [
     done:"The singing stopped. In the silence the Archivist found ledgers — proof Khal-Zahir was built as a prison, not for the shards but for what they were meant to keep sealed. 'Azram didn't resurrect the city,' Edran whispers. 'He unsealed it.'",
     reward:{ gold:750, item:{ rarity:"rare", ilvl:16 }, glyph:true } },
 ];
+
+// Old accepted bounties retain their original counters. New contracts use the named sites.
+DATA.QUEST_JOURNEYS = {
+  q1:{finish:"bell_quiet", legacy:"Thin the dead beyond Cinderwatch's gate.", legacyDone:"The fields breathe a little easier. Cinderwatch owes you this."},
+  q5:{finish:"keepsake", legacy:"Cut down the creatures hunting along the Blackbough road.", legacyDone:"Beneath the notice, a purse and a bundle are pinned beside one word. PAID."},
+  opt_north_1:{finish:"summit_lit", legacy:"Silence the corrupted sentries on Shardpeak.", legacyDone:"The pilgrims have a safer road. Bryn brings you a bundle from the stores."},
+  opt_marsh_1:{finish:"shrine_herald", legacy:"Cut down the half-changed in the Hollow Reeds.", legacyDone:"The boardwalks are quieter. Oris thanks you for giving the landing a little room to breathe."},
+  opt_desert_1:{finish:"quarry_captain", legacy:"Thin the shard-touched guardians in the Shard Flats.", legacyDone:"The dig is safe for now. Edran hands over the expedition's reward."}
+};
+DATA.legacyQuest = (q, record) => !!DATA.QUEST_JOURNEYS[q.id] && !!record && record.state!=="offered" && !record.journey;
+DATA.questText = (q,record,done=false) => DATA.legacyQuest(q,record) ? DATA.QUEST_JOURNEYS[q.id][done?"legacyDone":"legacy"] : q[done?"done":"brief"];
+DATA.questXP = (q,level) => q.reward.xp || Math.floor(DATA.xpForLevel(level) * ({killBoss:.7,ritual:.6,beacons:.55}[q.type] || .4));
+DATA.questRewardLines = function(reward){
+  const lines=[];
+  if(reward.xp)lines.push(reward.xp+" XP");
+  if(reward.gold)lines.push(reward.gold+" gold");
+  if(reward.skillPts)lines.push(reward.skillPts+" talent point"+(reward.skillPts>1?"s":""));
+  if(reward.attrPts)lines.push(reward.attrPts+" attribute point"+(reward.attrPts>1?"s":""));
+  if(reward.item)lines.push(reward.item.rarity+" equipment");
+  if(reward.glyph)lines.push("a glyph");
+  if(reward.consumable)lines.push(DATA.CONSUMABLES[reward.consumable].name);
+  return lines;
+};
 
 /* quest log grouping — the 5-act spine, then the optional Ashen Marches side region */
 DATA.QUEST_ACTS = [
@@ -4094,7 +4117,7 @@ DATA.applyOverrides = function (ov) {
 /* Campaign interactions reuse the installed actor/prop art. Stable identifiers,
    rather than coordinates, keep discoveries intact when a level shifts. */
 DATA.STORY_TOPICS = {
-  resident_marshcamp_3: [{ id:"voice", q:"What happened to your voice?", a:"Sella tries to answer, but no sound comes. She writes on a scrap of sail: ‘The shard woke the people under the mud. Each night another word disappears. The others went calmly into the swamp. I tied myself to the dock.’", silent:true }],
+  resident_marshcamp_3: [{ id:"voice", q:"What happened to your voice?", a:"Sella presses a scrap of sail into your hand. In charcoal, she has written, ‘The shard woke the people under the mud. Each night another word disappears. The others went calmly into the swamp. I tied myself to the dock.’", silent:true }],
   resident_marshcamp_5: [{ id:"dreams", q:"Do you still dream, Olli?", a:"No. I close my eyes and there is nothing until morning. Before the shining stone came, I dreamed of boats. Now I hear old people calling from beneath the monastery. They know my name." }],
   resident_marshcamp_6: [{ id:"fear", q:"Why are people walking into the water?", a:"My husband walked into the deep water without a cry. I should have been afraid. I felt nothing. None of us did. The Choir carried their shard beneath the abandoned monastery, and the buried spirits woke. Please find our fear before we follow him." }],
 };
@@ -4151,6 +4174,8 @@ DATA.CAMPAIGN = (() => {
   const objectives = q => [...(q.objectives || []), ...(q.type === "killBoss" ? [{kind:"kill", target:q.target, zone:q.zone, label:"Defeat "+DATA.ENEMIES[q.target].name}] : [])];
   const key = o => [o.kind,o.zone,o.target].join(":");
   const ledger = state => (state.flags.campaign ||= {});
+  const site = (state,id) => !!state.flags.campaign?.["site:"+id];
+  function markSite(state,id) { if(site(state,id))return false; ledger(state)["site:"+id]=1;return true; }
   function count(state, o) {
     if (o.kind === "quest") return state.quests[o.target]?.state === "done" ? 1 : 0;
     if (o.kind === "kill" && (state.flags["dead_"+o.target+"@"+state.difficulty] || (state.difficulty === 0 && state.flags["dead_"+o.target]))) return o.count || 1;
@@ -4160,8 +4185,11 @@ DATA.CAMPAIGN = (() => {
     const ready = [];
     for (const q of DATA.QUESTS) {
       const st = state.quests[q.id];
-      if (!q.objectives || st?.state !== "active") continue;
-      if (objectives(q).every(o => count(state,o) >= (o.count || 1))) { st.state = "reward"; ready.push(q); }
+      if (st?.state !== "active") continue;
+      const complete = st.journey && DATA.QUEST_JOURNEYS[q.id]
+        ? site(state,DATA.QUEST_JOURNEYS[q.id].finish)
+        : q.objectives && objectives(q).every(o => count(state,o) >= (o.count || 1));
+      if (complete) { st.state = "reward"; ready.push(q); }
     }
     return ready;
   }
@@ -4179,5 +4207,75 @@ DATA.CAMPAIGN = (() => {
   function found(state, zone, id) { return !!ledger(state)[key({kind:"interact",zone:DATA.campaignZone(zone),target:id})]; }
   function bossDead(state, id) { return !!(state.flags["dead_"+id+"@"+state.difficulty] || (state.difficulty === 0 && state.flags["dead_"+id])); }
   function remaining(state, q) { return objectives(q).filter(o => count(state,o) < (o.count || 1)); }
-  return { objectives, count, sync, record, found, bossDead, remaining };
+  return { objectives, count, sync, record, found, bossDead, remaining, site, markSite };
 })();
+
+// One description of the next playable action for offers, the journal, world pins and dialogue.
+DATA.questGuide = function(state,q) {
+  const st=state.quests[q.id], zone=DATA.ZONES[q.zone]?.name||"this region", giver=DATA.NPCS[q.giver].name;
+  const site=id=>DATA.CAMPAIGN.site(state,id);
+  const step=(next,target,details=[],zoneId=q.zone)=>({next,target,details,zone:zoneId});
+  if(st?.state==="done")return step("Completed",null);
+  if(st?.state==="reward"){
+    if(q.id==="q18")return step("Choose the fate of the Cinder-Core at the throne.","core");
+    if(q.id==="q17")return step("Step through the shard portal at the Hollow King’s throne into the Burning Hells.","story:hell_portal",[],"arena_malthoron");
+    const home=DATA.ACTS.find(a=>a.zones.includes(q.zone))?.camp||"town";
+    return step("Return to "+giver+" in "+DATA.ZONES[home].name+".","giver:"+q.giver,[],home);
+  }
+  if(DATA.QUEST_JOURNEYS[q.id]&&!DATA.legacyQuest(q,st)){
+    switch(q.id){
+      case "q1":{
+        if(!site("bell_rung"))return step("Ring the watch bell beside the Ashen Fields road.","site:watch_bell");
+        const killed=Array.from({length:6},(_,i)=>site("bell_risen_"+i)).filter(Boolean).length;
+        return step("Hold the bell against the risen · "+killed+"/6","actor:bell");
+      }
+      case "q5":return step("Follow the red cloth to the heartwood and cut out the brass clasp.","site:heart_roots");
+      case "opt_north_1":return site("shelter_ember")?step("Carry the ember up either ascent and light the summit waystone.","site:summit"):
+        step("Take a live ember from the last pilgrim shelter on Shardpeak.","site:shelter");
+      case "opt_marsh_1":return step("Follow the singing water to the Herald at the submerged shrine.","actor:shrine_herald");
+      case "opt_desert_1":return step(site("quarry_left")||site("quarry_right")?"Strike the exposed captain at the crystal quarry.":
+        "Ambush the quarry captain. Breaking either flank weakens its armor.","actor:quarry_captain");
+    }
+  }
+  if(q.type==="kills")return step((q.id==="q7"?"Drive back eight attackers beyond Frosthaven's wall":"Defeat enemies in "+zone)+" · "+(st?.count||0)+"/"+q.target,"zone:"+q.zone);
+  if(q.type==="rescue")return step("Free the three survivors in the mine refuges · "+(st?.count||0)+"/3","survivor");
+  if(q.type==="beacons")return st?.trioSpawned?step("Defeat the Oathsworn at the fallen beacon · "+(st.trioKilled||[]).length+"/3","trio"):
+    step("Shatter the beacons in the Fallen North · "+(st?.beacons||0)+"/3","beacon");
+  if(q.type==="ritual")return st?.siteDestroyed?step("Defeat Vorthel in the flooded nave.","boss:choirmaster"):step("Shatter the ritual heart in the flooded nave.","boss:drowned_ritual");
+  if(q.id==="q18"){
+    const foe=state.monsters?.find(m=>m.defId==="vethriss"&&m.encounter?.active&&!m.dead);
+    const form=foe?.encounter.phase;
+    const steps=["Face the wounded figure at the throne.","Strike the serpent as it emerges from its lunge.","Face the shadow as it calls back the dead."];
+    return step(steps[form]||"Reach the throne and confront the Veiled Lord.","boss:vethriss");
+  }
+  if(q.objectives){
+    const goals=DATA.CAMPAIGN.objectives(q), rows=[];
+    const arena=DATA.BOSS_ARENAS[q.target]?.zone;
+    const describe=o=>{
+      const n=DATA.CAMPAIGN.count(state,o);
+      const atArena=o.kind==="interact"&&arena&&DATA.STORY_OBJECTS[arena]?.some(prop=>prop.id===o.target);
+      return {label:o.label+(o.count>1?" · "+n+"/"+o.count:""),done:n>=(o.count||1),target:o.kind+":"+o.target,zone:atArena?arena:o.zone};
+    };
+    if(q.id==="q17"){
+      rows.push(describe(goals[0]));
+      for(const [i,room] of ["Choir of Silence","Sundered Armory","Chamber of Names"].entries()){
+        const seal=describe(goals.find(o=>o.target==="quieting_seal_"+i)),piece=describe(goals.find(o=>o.target==="sword_piece_"+i));
+        rows.push({label:room+" · "+(seal.done?"seal broken":"break the seal")+" · "+(piece.done?"recovered ":"recover the ")+["hilt","broken edge","point"][i],
+          done:seal.done&&piece.done,target:seal.done?piece.target:seal.target});
+      }
+      rows.push(...goals.filter(o=>o.kind==="kill").map(describe));
+    }else{
+      // A shard or map can be taken only after its guardian dies.
+      if(["q12","q15"].includes(q.id))goals.splice(1,0,goals.pop());
+      rows.push(...goals.map(describe));
+    }
+    const next=rows.find(r=>!r.done);
+    if(next?.target.startsWith("quest:")){
+      const prerequisite=DATA.QUESTS.find(p=>p.id===next.target.slice(6)),guide=DATA.questGuide(state,prerequisite);
+      return step(prerequisite.name+" · "+guide.next,guide.target,rows,guide.zone);
+    }
+    const dest=next?.zone||q.zone;
+    return step(next?next.label+" · "+DATA.ZONES[dest].name:"Report to "+giver+".",next?.target||"giver:"+q.giver,rows,dest);
+  }
+  return step("Defeat "+(DATA.ENEMIES[q.target]?.name||q.name)+" in "+zone+".","boss:"+q.target);
+};

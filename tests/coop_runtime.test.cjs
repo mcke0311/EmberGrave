@@ -14,6 +14,43 @@ async function session(){const f=fixture();await f.runtime.start({hostId:'host',
 async function command(f,id,command){const p=f.runtime.players.get(id);p.testSeq=(p.testSeq||0)+1;return f.runtime.receive(id,{kind:'command',seq:p.testSeq,worldId:p.worldId,generation:p.travelGeneration,command});}
 function prepared(f,id){return f.messages.filter(m=>(m.to===id||id==='host'&&m.type==='local')&&m.payload?.kind==='prepareWorld').at(-1)?.payload;}
 async function travel(f,id,zone){const p=f.runtime.players.get(id),w=f.runtime.worlds.get(p.worldId),exit=w.map.exits.find(e=>e.target===zone);assert.ok(exit,'exit exists');p.x=(exit.x0+exit.x1)/2;p.y=(exit.y0+exit.y1)/2;p.surfaceId=exit.surfaceId||0;await command(f,id,{type:'travel',zone});const m=prepared(f,id);assert.ok(m,'destination offered');await f.runtime.receive(id,{kind:'worldReady',id:m.id,ok:true});assert.equal(p.worldId,zone);}
+test('a party can relight Shardpeak after a reconnect and each hero receives one reward',async()=>{
+  const first=await session(),qid='opt_north_1';
+  const atBryn=f=>{
+    const town=f.runtime.worlds.get('frosthaven'),bryn=town.npcs.find(n=>n.id==='bryn'),host=f.runtime.players.get('host');
+    Object.assign(host,{x:bryn.x,y:bryn.y});return town;
+  };
+  async function visit(f){
+    await travel(f,'guest','north_wild');await travel(f,'guest','shardpeak_shrine');
+    const w=f.runtime.worlds.get('shardpeak_shrine');w.monsters=[];return w;
+  }
+  async function touch(f,w,site){
+    const hero=f.runtime.players.get('guest'),prop=w.map.props.find(p=>p.journeySite===site);
+    Object.assign(hero,{x:prop.x,y:prop.y,surfaceId:prop.surfaceId||0});
+    await command(f,'guest',{type:'interact',targetId:prop._coopId});
+    for(let i=0;i<16;i++){f.runtime.tick(.05);await w._queue;}
+  }
+  atBryn(first);await command(first,'host',{type:'acceptQuest',questId:qid});
+  const ridge=await visit(first);
+  assert.equal(ridge.quests[qid].journey,1);
+  await touch(first,ridge,'summit');assert.equal(ridge.quests[qid].state,'active');
+  await touch(first,ridge,'shelter');assert.ok(first.DATA.CAMPAIGN.site(ridge,'shelter_ember'));
+  await first.runtime.depart('guest');await first.runtime.checkpoint();
+  const f=fixture(),campaign=structuredClone(first.saves.at(-1).campaign);
+  await f.runtime.start({hostId:'host',hero:f.hero('Host'),campaign});
+  await f.runtime.receive('guest',{kind:'hero',hero:f.hero('Guest','veilranger')});
+  const next=await visit(f);
+  assert.equal(next.map.props.find(p=>p.journeySite==='shelter').completed,true);
+  await touch(f,next,'summit');assert.equal(next.quests[qid].state,'reward');
+  const town=atBryn(f);await command(f,'host',{type:'completeQuest',questId:qid});
+  const balances=[...f.runtime.players.values()].map(p=>p.gold);
+  await command(f,'host',{type:'completeQuest',questId:qid});
+  assert.deepEqual([...f.runtime.players.values()].map(p=>p.gold),balances);
+  assert.equal(town.quests[qid].state,'done');
+  for(const hero of ['Host','Guest'])assert.ok(town.quests[qid].receipts[hero].some(line=>line.endsWith(' XP')));
+  assert.equal(f.messages.filter(m=>m.payload?.type==='questReceipt').length,2);
+  assert.equal(f.saves.at(-1).campaign.quests[qid].coopRewarded.length,2);
+});
 test('guests travel independently, new guests join in town, and remote worlds keep ticking',async()=>{
   const f=await session();await travel(f,'guest','north_wild');
   const town=f.runtime.worlds.get('frosthaven'),wild=f.runtime.worlds.get('north_wild');

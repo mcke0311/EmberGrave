@@ -74,6 +74,7 @@ const UI = (() => {
   }
 
   function init() {
+    $("questTracker")?.addEventListener("click",openPinnedQuest);
     // Capture covers dynamic controls and handlers that stop propagation. Keep
     // click feedback here so individual actions cannot play the same click twice.
     const feedback = e => {
@@ -213,6 +214,7 @@ const UI = (() => {
   function refreshHUD() {
     const p = Game.state && Game.state.player;
     if (!p) return;
+    refreshQuestTracker();
     drawOrb(els.orbHp, U.clamp(p.hp / p.stats.maxHp, 0, 1), ["#c03030", "#5a0c0c"], "#1a0606");
     drawOrb(els.orbMp, U.clamp(p.mana / p.stats.maxMana, 0, 1), ["#3858c0", "#101c54"], "#060a1a");
     els.hpText.textContent = `${Math.ceil(p.hp)} / ${p.stats.maxHp}`;
@@ -1518,34 +1520,39 @@ const UI = (() => {
     return q.giver === "board" ? "the notice board" : "the one who set it";
   }
   function questState(q, st) {
-    if (!st) return { key: "locked", cls: "locked", glyph: "·", label: "Not yet undertaken" };
-    if (st.state === "done") return { key: "done", cls: "done", glyph: "✓", label: "Completed" };
-    if (st.state === "reward") return { key: "active", cls: "active", glyph: "◆", label: "Turn in — return to " + giverName(q) };
-    if (st.state === "active") {
-      let prog = "";
-      if (q.objectives) {
-        const goals=DATA.CAMPAIGN.objectives(q), done=goals.filter(o=>DATA.CAMPAIGN.count(Game.state,o)>=(o.count||1)).length;
-        prog=` (${done}/${goals.length} objectives)`;
-      } else if (q.type === "kills" || q.type === "rescue") prog = ` (${st.count || 0}/${q.target})`;
-      else if (q.type === "beacons") prog = st.trioSpawned ? ` (Oathsworn ${(st.trioKilled || []).length}/3)` : ` (beacons ${st.beacons || 0}/3)`;
-      else if (q.type === "ritual") prog = st.siteDestroyed ? (q.boss ? " (slay the Choirmaster)" : " (ritual destroyed)") : " (destroy the ritual site)";
-      return { key: "active", cls: "active", glyph: "◆", label: "Active" + prog };
-    }
-    if (st.state === "offered") return { key: "avail", cls: "avail", glyph: "•", label: "Available — seek " + giverName(q) };
-    return { key: "locked", cls: "locked", glyph: "·", label: "Not yet undertaken" };
+    if (!st) return { key:"locked", glyph:"·", label:"Sealed" };
+    if (st.state==="done") return { key:"done", glyph:"✓", label:"Completed" };
+    if (st.state==="reward") return { key:"ready", glyph:"?", label:q.id==="q18"?"Choice awaits":"Ready to claim" };
+    if (st.state==="active") return { key:"active", glyph:"◆", label:"Active" };
+    return { key:"avail", glyph:"!", label:"Available" };
   }
-  function questObjective(q, st) {
-    if (st?.state === "done") return "Completed";
-    if (q.objectives) return DATA.CAMPAIGN.objectives(q).map(o=>{
-      const n=DATA.CAMPAIGN.count(Game.state,o), total=o.count||1;
-      return `${n>=total?"✓":"○"} ${o.label}${total>1?` (${n}/${total})`:""}`;
-    }).join("\n");
-    if (q.type === "kills") return `Defeat enemies: ${st?.count || 0} / ${q.target}`;
-    if (q.type === "rescue") return `Rescue survivors: ${st?.count || 0} / ${q.target}`;
-    if (q.type === "beacons") return st?.trioSpawned ? `Defeat the Oathsworn: ${(st.trioKilled || []).length} / 3` : `Light the beacons: ${st?.beacons || 0} / 3`;
-    if (q.type === "ritual") return st?.siteDestroyed ? (q.boss ? "Defeat the Choirmaster" : "Ritual destroyed") : "Destroy the ritual site";
-    if (q.type === "killBoss") return "Defeat " + (DATA.MONSTERS?.[q.target]?.name || DATA.ENEMIES?.[q.target]?.name || q.name);
-    return "Follow the quest brief in " + (DATA.ZONES[q.zone]?.name || "this region") + ".";
+  function refreshQuestTracker() {
+    const tracker=$("questTracker"),s=Game.state;
+    if(!tracker)return;
+    const q=Game.pinnedQuest();
+    tracker.hidden=!q||!!s.bossBar||s.map?.zone?.opening||s.player.dead;
+    if(tracker.hidden)return;
+    const next=DATA.questGuide(s,q).next;
+    if(tracker.firstElementChild.textContent!==q.name)tracker.firstElementChild.textContent=q.name;
+    if(tracker.lastElementChild.textContent!==next)tracker.lastElementChild.textContent=next;
+    tracker.title=next;
+  }
+  function openPinnedQuest(){
+    const q=Game.pinnedQuest();if(!q)return;
+    resetManagementState();
+    questUiAct=DATA.QUEST_ACTS.find(a=>a.quests.includes(q.id)).rn;questUiSel=q.id;questFilter="all";
+    if(typeof MobileShell!=="undefined"&&MobileShell.enabled){
+      MobileWorkspace.open("quest");MobileViews.detail(els.panelLeft);
+    }else if(openPanels.left!=="quest")togglePanel("quest");
+    renderQuests();
+  }
+  let receiptTimer;
+  function clearQuestReceipt(){clearTimeout(receiptTimer);$("questReceipt")?.replaceChildren();}
+  function questReceipt(title,response,received){
+    const card=$("questReceipt");if(!card||!received)return;
+    clearTimeout(receiptTimer);
+    card.replaceChildren(textNode("strong","",title),textNode("p","",response),textNode("span","",received.join(" · ")));
+    receiptTimer=setTimeout(clearQuestReceipt,8500);
   }
   function renderQuests() {
     resetManagementState();
@@ -1587,7 +1594,7 @@ const UI = (() => {
     el.appendChild(ah);
 
     /* default selected quest: first active, else first seen, else first */
-    el.appendChild(filterButtons([["all","All"],["active","Active"],["avail","Available"],["done","Completed"]],questFilter,id=>{questFilter=id;renderQuests();}));
+    el.appendChild(filterButtons([["all","All"],["active","Active"],["ready","Ready"],["avail","Available"],["done","Completed"]],questFilter,id=>{questFilter=id;renderQuests();}));
     const list = act.quests.map(qid => qById[qid]).filter(Boolean).filter(q=>questFilter === "all" || questState(q,qs[q.id]).key === questFilter);
     if (!questUiSel || !list.some(q=>q.id === questUiSel)) {
       const pick = list.find(q => { const s = qs[q.id]; return s && (s.state === "active" || s.state === "reward"); })
@@ -1601,8 +1608,9 @@ const UI = (() => {
       const info = questState(q, qs[q.id]);
       const locked = info.key === "locked";
       const row = document.createElement("button"); row.type="button"; row.setAttribute("aria-pressed",String(q.id === questUiSel));
-      row.className = "qrow " + info.cls + (q.id === questUiSel ? " sel" : "");
+      row.className = "qrow " + info.key + (q.id === questUiSel ? " sel" : "");
       row.innerHTML = `<span class="qg">${info.glyph}</span><span class="qn">${locked ? "Sealed Trial" : q.name}</span>`;
+      if(!locked)row.appendChild(textNode("small","quest-row-state",Game.pinnedQuest()?.id===q.id?"Pinned":info.label));
       row.addEventListener("click", () => { if(typeof MobileViews!=='undefined')MobileViews.detail(el);questUiSel = q.id; renderQuests(); });
       ul.appendChild(row);
     }
@@ -1613,29 +1621,42 @@ const UI = (() => {
     const sel = qById[questUiSel];
     if (sel) {
       const st = qs[sel.id], info = questState(sel, st), locked = info.key === "locked";
-      const col = info.cls === "done" ? "#caa44a" : info.cls === "active" ? "#7fd87f" : info.cls === "avail" ? "#9bb6d0" : "#6a6050";
-      const det = document.createElement("div"); det.className = "qdetail";
-      det.innerHTML = `<h3>${locked ? "Sealed Trial" : sel.name}</h3>` +
-        `<p>${locked ? "This trial has not yet begun. Press on, and its tale will reveal itself." : ((st && st.state === "done") ? sel.done : sel.brief)}</p>` +
-        `<div class="qst" style="color:${col}">${info.glyph} ${info.label}</div>`;
-      if (!locked) {
-        const objective = st?.state === "reward" ? "Return to " + giverName(sel) : questObjective(sel, st);
-        det.appendChild(textNode("h4","manage-section","Objective"));
-        const objectiveText=textNode("p","quest-objective",objective); objectiveText.style.whiteSpace="pre-line"; det.appendChild(objectiveText);
-        const giver = sel.giver === "board" ? "Notice board" : giverName(sel);
-        det.appendChild(textNode("p","quest-location","Given by: " + giver));
-        det.appendChild(textNode("p","quest-location","Quest area: " + (DATA.ZONES[sel.zone]?.name || act.name)));
-        const reward=sel.reward||{}, lines=[];
-        if(reward.gold)lines.push(reward.gold+" gold"); if(reward.xp)lines.push(reward.xp+" experience");
-        if(reward.skillPts)lines.push(reward.skillPts+" talent point"+(reward.skillPts>1?"s":""));
-        if(reward.attrPts)lines.push(reward.attrPts+" attribute points"); if(reward.item)lines.push(reward.item.rarity+" equipment"); if(reward.glyph)lines.push("a glyph");
-        if(lines.length){det.appendChild(textNode("h4","manage-section","Rewards"));det.appendChild(textNode("p","quest-rewards",lines.join(" · ")));}
+      const det=textNode("div","qdetail");
+      det.appendChild(textNode("h3","",locked?"Sealed Trial":sel.name));
+      if(locked)det.appendChild(textNode("p","","Further travels will reveal this quest."));
+      else {
+        const guide=DATA.questGuide(Game.state,sel),done=st.state==="done";
+        det.dataset.state=info.key;
+        det.appendChild(textNode("div","qst",info.glyph+" "+info.label));
+        if(!done){
+          const instruction=textNode("div","quest-next");
+          instruction.append(textNode("h4","manage-section","Next step"),textNode("p","quest-objective",guide.next));
+          if(["active","reward"].includes(st.state)){
+            const pinned=Game.pinnedQuest()?.id===sel.id;
+            const pin=actionButton(pinned?"Unpin quest":"Pin quest",()=>Game.pinQuest(pinned?null:sel.id),"quest-pin");
+            pin.setAttribute("aria-pressed",String(pinned));instruction.append(pin);
+          }
+          det.appendChild(instruction);
+          if(guide.details.length){
+            const goals=textNode("ul","quest-steps");
+            for(const row of guide.details){
+              const item=textNode("li",row.done?"finished":"",row.label);
+              item.prepend(textNode("span","",row.done?"✓":"○"));goals.appendChild(item);
+            }
+            det.appendChild(goals);
+          }
+        }
+        det.appendChild(textNode("p","quest-brief",DATA.questText(sel,st,done)));
+        det.appendChild(textNode("p","quest-location",giverName(sel)+" · "+DATA.ZONES[sel.zone].name));
+        const receipt=st.receipts?.[Game.state.player.heroId]||st.receipt;
+        const rewardLines=receipt||DATA.questRewardLines({...sel.reward,...(!done?{xp:DATA.questXP(sel,Game.state.player.lvl)}:{})});
+        det.append(textNode("h4","manage-section",receipt?"Received":"Rewards"),textNode("p","quest-rewards",rewardLines.join(" · ")));
       }
       questBody.appendChild(det);
     }
 
     const lg = document.createElement("div"); lg.className = "qlegend";
-    lg.innerHTML = `<span style="color:#7fd87f">◆ Active</span><span style="color:#9bb6d0">• Available</span><span style="color:#caa44a">✓ Complete</span><span style="color:#5f574a">· Locked</span>`;
+    lg.innerHTML = `<span style="color:#7fd87f">◆ Active</span><span style="color:#9bb6d0">• Available</span><span style="color:#f1cb79">? Ready</span><span style="color:#caa44a">✓ Complete</span><span style="color:#5f574a">· Locked</span>`;
     el.appendChild(lg);
   }
 
@@ -1797,13 +1818,9 @@ const UI = (() => {
   function dialogQuestSummary(el, q) {
     const card = textNode("div", "dlgquest");
     card.append(textNode("div", "dlgkicker", "Quest"), textNode("h3", "", q.name));
-    card.appendChild(textNode("p", "dlgobjective", questObjective(q, Game.state.quests[q.id])));
-    const r = q.reward || {}, rewards = [];
-    if (r.xp) rewards.push(r.xp + " experience"); if (r.gold) rewards.push(r.gold + " gold");
-    if (r.skillPts) rewards.push(r.skillPts + " talent point" + (r.skillPts > 1 ? "s" : ""));
-    if (r.attrPts) rewards.push(r.attrPts + " attribute points");
-    if (r.item) rewards.push(r.item.rarity + " equipment"); if (r.glyph) rewards.push("a glyph");
-    if (rewards.length) card.appendChild(textNode("p", "dlgrewards", "Rewards: " + rewards.join(" · ")));
+    card.appendChild(textNode("p","dlgobjective",DATA.questGuide(Game.state,q).next));
+    const rewards=DATA.questRewardLines({...q.reward,xp:DATA.questXP(q,Game.state.player.lvl)});
+    card.appendChild(textNode("p","dlgrewards",rewards.join(" · ")));
     el.appendChild(card);
   }
   function dialogOptions(el, opts) {
@@ -1835,13 +1852,18 @@ const UI = (() => {
       opts.push({label:"I’ll find what walks the North",primary:true,fn:()=>closePanel("center")});
       opts.push({label:"Ask about the light",fn:()=>renderDialog(npc,{type:"greet",quiet:true})});
     } else if (view.type === "topic") {
+      if(view.topic.silent)text.classList.add("written-testimony");
       say(view.topic.a);
       Game.storyTopic(npc,view.topic);
       opts.push({ label: "Ask about something else", fn: () => renderDialog(npc, { type: "greet", quiet: true }) });
       opts.push({ label: "Farewell", fn: () => closePanel("center") });
+    } else if (view.type === "progress") {
+      name.textContent=def.name+" · "+view.quest.name;
+      say(DATA.questGuide(Game.state,view.quest).next);
+      opts.push({label:"Back",fn:()=>renderDialog(npc,{type:"greet",quiet:true})});
     } else if (view.type === "quest") {
       const q = view.quest;
-      say(q.brief);
+      say(DATA.questText(q,Game.state.quests[q.id]));
       dialogQuestSummary(el, q);
       opts.push({ label: "✦ Take the task", primary: true, fn: () => { Game.acceptQuest(q.id); closePanel("center"); } });
       opts.push({ label: "Not now", fn: () => renderDialog(npc, { type: "greet", quiet: true }) });
@@ -1853,13 +1875,16 @@ const UI = (() => {
         if (q.giver !== npc.id) continue;
         const st = Game.state.quests[q.id];
         if (st && st.state === "reward") {
+          if(q.id==="q18"){opts.push({label:"Choose the fate of the Cinder-Core",primary:true,fn:()=>{closePanel("center");openFinalChoice();}});continue;}
           opts.push({ label: `✦ ${q.name} — claim reward`, primary: true, fn: () => {
-            if (def.voice) Sfx.voice(def.voice, q.done);
+            if (def.voice) Sfx.voice(def.voice, DATA.questText(q,st,true));
             Game.completeQuest(q.id);
             closePanel("center");
           } });
         } else if (st && st.state === "offered") {
           opts.push({ label: `✦ ${q.name}`, primary: true, fn: () => renderDialog(npc, { type: "quest", quest: q }) });
+        } else if (st?.state==="active") {
+          opts.push({label:q.name+" — next step",fn:()=>renderDialog(npc,{type:"progress",quest:q})});
         }
       }
       /* conversation topics */
@@ -1890,10 +1915,13 @@ const UI = (() => {
         headline = "Something heavy has been nailed beneath your notice.";
         opts.push({ label: `✦ ${q.name} — take what's owed`, fn: () => { Game.completeQuest(q.id); closePanel("center"); } });
       } else if (st && st.state === "offered") {
-        headline = q.brief;
+        headline = DATA.questText(q,st);
+        dialogQuestSummary(el,q);
         opts.push({ label: `✦ Pull down the notice (accept: ${q.name})`, fn: () => { Game.acceptQuest(q.id); closePanel("center"); } });
       } else if (st && st.state === "active") {
-        headline = "Your accepted notice is gone from the board. The job isn't.";
+        headline = DATA.questGuide(Game.state,q).next;
+      } else if (st && st.state === "done") {
+        headline=DATA.questText(q,st,true);text.classList.add("written-testimony");
       }
     }
     text.textContent = headline;
@@ -2468,7 +2496,7 @@ const UI = (() => {
     openFinalChoice, playVideo, cinematicActive,
     showOpening, hideOpening, openingObjective, openingCaption, openingArrival, tickOpening, openOpeningDialog,
     init, refreshHUD, refreshBelt, refreshBuffs, refreshGrids, renderIfOpen,
-    msg, centerMsg, togglePanel, closePanel, closeAll, anyOpen, openPanels: () => openPanels,
+    msg, centerMsg, questReceipt, clearQuestReceipt, togglePanel, closePanel, closeAll, anyOpen, openPanels: () => openPanels,
     refreshManagement, managementStatus,
     openVendor, openStorage, openDialog, openBoard, openShrine, openSkillPick, openForge, quickCast,
     showItemTooltip, showSkillTooltip, hideTooltip,

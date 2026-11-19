@@ -206,6 +206,12 @@
 .phone-layout .skill-binding-row { display:flex;flex-wrap:wrap;gap:6px; }
 .phone-layout .skill-binding-row button { flex:1; }
 .phone-layout .quest-body { display:block; }
+.phone-layout #questTracker { top:calc(8px + env(safe-area-inset-top)); left:calc(186px + env(safe-area-inset-left)); right:calc(197px + env(safe-area-inset-right)); width:auto; min-height:44px; padding:4px 8px; }
+.phone-layout #questTracker strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; margin:0; }
+.phone-layout #questTracker span { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:13px; line-height:1.25; }
+.phone-layout #questReceipt { left:50%; top:calc(54px + env(safe-area-inset-top)); bottom:auto; width:min(400px,65vw); max-width:none; transform:translateX(-50%); padding:6px 10px; }
+.phone-layout #questReceipt p { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.phone-layout .quest-pin { min-height:44px; }.phone-layout .quest-row-state { display:none; }
 .phone-layout .qlist { max-height:none;overflow:visible;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px; }
 .phone-layout [data-kind=quest][data-mobile-detail=false] .qdetail,.phone-layout [data-kind=quest][data-mobile-detail=true] :is(.qacts,.qacthead,.manage-tabs,.qlist,.qlegend) { display:none; }
 .phone-layout [data-kind=vendor] .shop-list { max-height:none;overflow:visible;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px; }

@@ -27,7 +27,7 @@ for(const seed of [1,12345,4294967295]){
     const before=JSON.stringify(s.map.props);for(const p of s.instances.filter(p=>p.collection==='props'))R.referenceText(p,s);ok(JSON.stringify(s.map.props)===before,tag+' read-only inspection');
     if(zone==='north_wild'&&seed===12345)sample=s;
   }
-  console.log('PASS: 36 levels, seed '+seed);
+  console.log('PASS '+Object.keys(D.ZONES).length+' levels, seed '+seed);
 }
 ok(R.levels().flatMap(g=>g.zones).length===Object.keys(D.ZONES).length,'complete directory');
 ok(sample.instances.some(p=>p.familyId&&p.category==='habitats'),'habitats included');
@@ -39,7 +39,11 @@ ok(sample.instances.some(p=>p.prop.interact==='shrine'),'travel shrine');
 ok(sample.materials.length>0,'separate materials');
 const used=sample.instances.find(p=>p.familyId);ok(used.states[0].index!==used.states[1].index,'deserted art');
 const shrine=sample.instances.find(p=>p.prop.interact==='shrine');ok(shrine.states[0].index!==shrine.states[1].index,'attuned art');
-const story=R.inspect('ritual_site').instances.find(p=>p.storyId);ok(story.references.placement.some(r=>r.symbol.includes('STORY_OBJECTS')),'story edit reference');
+const story=R.inspect('arena_mire_mother').instances.find(p=>p.storyId==='mire_shard');ok(story.references.placement.some(r=>r.symbol.includes('STORY_OBJECTS')),'Mire Mother shard placement reference');
+for(const zone of ['fields','forest','shardpeak_shrine','hollow_reeds','shard_flats']){
+  const landmark=R.inspect(zone).instances.find(p=>p.assetId==='world.props.quest_landmarks');
+  ok(landmark&&landmark.states[1].index===landmark.states[0].index+5,zone+' authored before and after art');
+}
 ok(R.inspect('town').eligibleEvents.length===0,'town has no events');ok(R.inspect('cathedral1').eligibleEvents.length===0,'cathedral reserved encounters');
 assert.throws(()=>R.inspect('missing'),/Unknown level/);assert.throws(()=>R.inspect('town',{seed:-1}),/Seed/);
 
@@ -53,10 +57,11 @@ var Act2EnemyCombat={eventSpawn:(ids,x,y,opts,list,random)=>{random();return new
 for(const zone of ['fields','north_wild','weeping_marsh','cathedral1','frosthaven_approach','town'])for(const difficulty of [0,2])for(const seed of [1,12345,42]){
   const results=[];
   for(const source of [original,gameSource.slice(start,end)]){
-    ctx.state={seed,difficulty,map:M.generate(zone,seed),monsters:[]};ctx.Math.random=U.rng(seed^0x31238);vm.runInContext(source+'\nplaceEvents(state.map);placeEvents(state.map);',ctx);
+    const map=M.generate(zone,seed);
+    ctx.state={seed:map.layoutSeed??seed,difficulty,map,monsters:[]};ctx.Math.random=U.rng(seed^0x31238);vm.runInContext(source+'\nplaceEvents(state.map);placeEvents(state.map);',ctx);
     // Stable save IDs are additive. Act I's den/nest events intentionally changed;
     // compare every unaffected event and the RNG stream against the old function.
-    const props=ctx.state.map.props.filter(p=>!(D.ACT1_ZONES.includes(zone)&&['ev_amb1','ev_amb4'].includes(p.ev?.id))).map(({propId,...p})=>p);
+    const props=ctx.state.map.props.filter(p=>!(D.ACT1_ZONES.includes(zone)&&['ev_amb1','ev_amb4'].includes(p.ev?.id))).map(({propId,eventAnchorId,...p})=>p);
     results.push(JSON.stringify({props,monsters:ctx.state.monsters,placed:ctx.state.map.eventsPlaced,next:ctx.Math.random()}));
   }
   ok(results[0]===results[1],zone+' original event parity '+seed+'/'+difficulty);

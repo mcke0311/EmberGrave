@@ -31,8 +31,8 @@ const saved=JSON.parse(JSON.stringify({quests:s.quests,flags:s.flags}));s=world(
 ok(!s.map.props.find(p=>p.storyId==='fortress_map').interact,'map recovery repeatable after load');
 ok(s.flags['dead_azram@0'],'boss death lost');
 s=world('shard_flats');s.quests.q13={state:'done'};start(s,'opt_desert_1');
-for(const spawn of s.map.monsterSpawns.slice(0,15))G.__bossTest.questKillEvent({defId:spawn.id});
-ok(s.quests.opt_desert_1.state==='reward','fifteen-kill Shard Flats objective cannot complete');
+s.monsters.find(m=>m.journeyActor==='quarry_captain').die(s.player);
+ok(s.quests.opt_desert_1.state==='reward','quarry captain objective cannot complete');
 s=world('tomb_sanctum');s.quests.q14={state:'done'};start(s,'opt_desert_2');
 G.__bossTest.questKillEvent({defId:'chained_sovereign'});
 ok(s.quests.opt_desert_2.state==='reward','Sovereign objective cannot complete');

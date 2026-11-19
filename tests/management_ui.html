@@ -56,7 +56,8 @@ try {
  pack();
  game.state.quests.q7={state:'active',count:3};game.state.quests.q8={state:'reward',count:8};game.state.quests.q8b={state:'done'};
  ui.togglePanel('quest');ok(doc.querySelector('.quest-objective')&&doc.querySelector('.quest-rewards'),'quest objective/rewards missing');
- [...doc.querySelectorAll('#panelLeft .manage-tabs button')].find(b=>b.textContent==='Active').click();ok(doc.querySelectorAll('.qrow').length===2,'active filter omitted turn-in');
+ [...doc.querySelectorAll('#panelLeft .manage-tabs button')].find(b=>b.textContent==='Active').click();ok(doc.querySelectorAll('.qrow').length===1&&doc.querySelector('.qrow.active'),'active objective filter wrong');
+ [...doc.querySelectorAll('#panelLeft .manage-tabs button')].find(b=>b.textContent==='Ready').click();ok(doc.querySelectorAll('.qrow').length===1&&doc.querySelector('.qrow.ready')&&doc.querySelector('.quest-objective').textContent.includes('Return to'),'ready filter needs the return objective');
  [...doc.querySelectorAll('#panelLeft .manage-tabs button')].find(b=>b.textContent==='Completed').click();ok(doc.querySelectorAll('.qrow').length===1,'completed quest filter wrong');
  [...doc.querySelectorAll('#panelLeft .manage-tabs button')].find(b=>b.textContent==='All').click();doc.querySelector('.qrow.locked').click();ok(!doc.querySelector('.quest-rewards')&&doc.querySelector('.qdetail h3').textContent==='Sealed Trial','locked quest spoiled details');
 

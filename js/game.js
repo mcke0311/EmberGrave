@@ -7,6 +7,7 @@
 
 const Game = (() => {
   const headless=globalThis.COOP_WORKER===true;
+  const reducedMotion=globalThis.window?.matchMedia?.('(prefers-reduced-motion: reduce)');
   const playerAssets = Player3D.assets;
   /* ---------------- module state ---------------- */
   let canvas, ctx, lightCv, lightCtx, mmSmall, mmCtx;
@@ -770,6 +771,7 @@ const Game = (() => {
     for(const mon of state.monsters)mon.imperialCombat?.cancel();
     state.player.clearVeilState();
     state.map = map;
+    UI.clearQuestReceipt?.();
     state.bossCheckpoint=map.zone.arena&&!map.zone.echo?{zone:map.id,spawn:'retry'}:null;
     /* monsters: restore session set or spawn fresh */
     if (state.monstersByMap[zoneId]) {
@@ -792,6 +794,10 @@ const Game = (() => {
           packId:sp.packId,monsterFamily:sp.monsterFamily,familyHome:sp.familyHome&&{...sp.familyHome,x:pos.x,y:pos.y} });
         if(typeof Coop!=="undefined"&&Coop.active)mon._coopId='spawn_'+zoneId+'_'+map.monsterSpawns.indexOf(sp);
         if (sp.cathedralEncounter) mon.cathedralEncounter=sp.cathedralEncounter;
+        if (sp.journeyActor){
+          mon.journeyActor=sp.journeyActor;
+          if(sp.journeyActor==='shrine_herald')mon.name=mon.def.name='Choir Herald of the Hollow Reeds';
+        }
         state.monsters.push(mon);
       }
     }
@@ -805,6 +811,7 @@ const Game = (() => {
       .map(n => new Npc(n.id, n.x, n.y, { survivor: n.survivor, sid: n.sid, npcArt: n.npcArt, displayName: n.displayName, storyId: n.storyId }));
     syncRescueSurvivors();
     campaignEvent({kind:"enter",zone:zoneId,target:zoneId}, {silent:quietQuestAudio});
+    syncJourneyWorld();
     syncStoryObjects();
     syncConditionalNpcs();   // story NPCs that come and go with quest state (Halvar, etc.)
     setupBeaconQuest(map);   // beacons / Oathsworn trio for the Fallen North
@@ -1084,6 +1091,49 @@ const Game = (() => {
   /* =====================================================================
      QUESTS
      ===================================================================== */
+  const localQuestPins=new Map();
+  function pinKey(){return typeof Coop!=='undefined'&&Coop.active&&state.player.heroId?'embergrave_quest_pin_'+state.player.heroId+'_'+state.difficulty:null;}
+  function pinnedQuest(){
+    if(!state)return null;
+    const key=pinKey();
+    if(key&&!localQuestPins.has(key)){
+      try{localQuestPins.set(key,localStorage.getItem(key));}catch{localQuestPins.set(key,null);}
+    }
+    const id=key?localQuestPins.get(key):state.flags.pinnedQuest;
+    return id&&['active','reward'].includes(state.quests[id]?.state)?DATA.QUESTS.find(q=>q.id===id):null;
+  }
+  function pinQuest(id){
+    if(!state||id&&!['active','reward'].includes(state.quests[id]?.state))return;
+    const key=pinKey();
+    if(key){localQuestPins.set(key,id);try{if(id)localStorage.setItem(key,id);else localStorage.removeItem(key);}catch{}}
+    else {if(id)state.flags.pinnedQuest=id;else delete state.flags.pinnedQuest;saveGame();}
+    UI.refreshHUD();UI.renderIfOpen('quest');
+  }
+  function pinTargets(){
+    const q=pinnedQuest();if(!q)return [];
+    const guide=DATA.questGuide(state,q),target=guide.target;if(!target)return [];
+    const [kind,id]=target.split(':'),map=state.map;
+    const giver=id=>[...state.npcs.filter(n=>n.id===id),...map.props.filter(p=>id==='board'&&p.interact==='board')];
+    let targets=[];
+    if(kind==='giver')targets=giver(id);
+    else if(kind==='site')targets=map.props.filter(p=>p.journeySite===id);
+    else if(kind==='actor')targets=state.monsters.filter(m=>!m.dead&&(id==='bell'?m.journeyActor?.startsWith('bell_risen_'):m.journeyActor===id));
+    else if(kind==='interact'||kind==='story')targets=[...map.props,...state.npcs].filter(p=>p.storyId===id&&!p.hidden);
+    else if(kind==='talk')targets=state.npcs.filter(n=>DATA.STORY_TOPICS[n.spriteOpts?.npcArt]?.some(t=>t.id===id));
+    else if(kind==='survivor')targets=state.npcs.filter(n=>n.survivor);
+    else if(kind==='beacon'||kind==='trio')targets=state.monsters.filter(m=>!m.dead&&(kind==='beacon'?m.defId==='beacon':TRIO.includes(m.defId)));
+    else if(kind==='boss'||kind==='kill')targets=state.monsters.filter(m=>!m.dead&&m.defId===id);
+    if(!targets.length){
+      const arena=(kind==='kill'||kind==='boss')?DATA.BOSS_ARENAS?.[id]:null;
+      const dest=arena&&map.id===arena.parentZone?arena.zone:guide.zone;
+      targets=map.exits.filter(e=>e.target===dest).map(e=>({x:(e.x0+e.x1)/2,y:(e.y0+e.y1)/2}));
+    }
+    return targets.filter(p=>map.explored[(p.x|0)+(p.y|0)*map.w]);
+  }
+  function pinDiamond(c,x,y){
+    c.save();c.translate(x,y);c.beginPath();c.moveTo(0,-5);c.lineTo(4.5,0);c.lineTo(0,5);c.lineTo(-4.5,0);c.closePath();
+    c.fillStyle='#291e14';c.fill();c.lineWidth=1.8;c.strokeStyle='#ffda81';c.stroke();c.restore();
+  }
   function acceptQuest(qid) {
     if(typeof Coop!=="undefined"&&Coop.active&&!Coop.committing)return Coop.submit({type:'acceptQuest',questId:qid});
     const q = DATA.QUESTS.find(x => x.id === qid);
@@ -1093,11 +1143,12 @@ const Game = (() => {
       const rescued = [...new Set(st.rescued || [])];
       state.quests[qid] = { ...st, state: rescued.length >= q.target ? "reward" : "active", count: rescued.length, rescued };
       syncRescueSurvivors();
-    } else state.quests[qid] = { ...st, state: "active", count: 0 };
+    } else state.quests[qid] = { ...st, state: "active", count: 0, ...(DATA.QUEST_JOURNEYS[qid]?{journey:1}:{}) };
     msg("Quest accepted: " + q.name, "#d8c79a");
     Sfx.play("questAccepted");
     syncConditionalNpcs();
     campaignEvent();
+    syncJourneyWorld();
     if (q.type === "ritual") setupRitualQuest(state.map);
     saveGame();
   }
@@ -1105,7 +1156,7 @@ const Game = (() => {
     if(typeof Coop!=="undefined"&&Coop.active)Coop.trackParticipants?.();
     const ready = event ? DATA.CAMPAIGN.record(state,event) : DATA.CAMPAIGN.sync(state);
     for (const q of ready) {
-      msg(`${q.name}: objectives complete. Return to ${DATA.NPCS[q.giver].name}.`, "#7fd87f");
+      msg(q.name+" · "+DATA.questGuide(state,q).next, "#7fd87f");
       if(!silent) Sfx.play("questReady");
     }
     UI.renderIfOpen("quest");
@@ -1116,10 +1167,111 @@ const Game = (() => {
     campaignEvent({kind:"talk",zone:state.map.id,target:topic.id});
     saveGame();
   }
+  function syncJourneyWorld() {
+    const map=state.map;
+    if(!map)return;
+    const qid=({fields:'q1',forest:'q5',shardpeak_shrine:'opt_north_1',hollow_reeds:'opt_marsh_1',shard_flats:'opt_desert_1'})[map.id];
+    if(!qid)return;
+    const st=state.quests[qid], legacy=st&&st.state!=='offered'&&!st.journey;
+    const site=id=>DATA.CAMPAIGN.site(state,id);
+    const finished=site(DATA.QUEST_JOURNEYS[qid].finish);
+    const props=map.props.filter(p=>p.journeySite);
+    for(const p of props){
+      const ember=p.journeySite==='shelter';
+      p.completed=ember?site('shelter_ember'):finished;
+      p.interact=legacy||p.completed?null:({watch_bell:!site('bell_rung'),heart_roots:true,shelter:true,summit:true})[p.journeySite]?'journey':null;
+      if(p.completed)p.label=({watch_bell:'The farmstead lantern',heart_roots:'Opened heartwood',shelter:'The pilgrim hearth',summit:'The rekindled waystone',reed_shrine:'The quiet shrine',quarry:'The broken command standard'})[p.journeySite];
+      else if(p.journeySite==='watch_bell'&&site('bell_rung'))p.label='The watch bell is ringing';
+    }
+    // Only the shrine conductor counts. Random Heralds elsewhere remain ordinary encounters.
+    if(map.id==='hollow_reeds'){
+      if(finished)state.monsters=state.monsters.filter(m=>m.journeyActor!=='shrine_herald'||m.dead);
+      let cutter=state.npcs.find(n=>n.reedCutter);
+      if(!cutter&&props[0]){
+        const pos=MapGen.recoveryPoint(map,{x:props[0].x-2,y:props[0].y+1});
+        cutter=new Npc('surv_woman',pos.x,pos.y,{displayName:'A silent reed-cutter'});
+        cutter.reedCutter=true;state.npcs.push(cutter);
+      }
+      if(cutter){
+        cutter.name=cutter.def.name=finished?'Anwen, Reed-cutter':'A silent reed-cutter';
+        Object.assign(cutter.def,{role:'resident',wander:false,voice:finished?{pitch:150,formant:960,rate:5}:null,
+          greet:finished?['Anwen. My name is Anwen. I remember the way home.']:['The reed-cutter strains to speak. The bronze pipes answer in her place.'],talk:[]});
+      }
+    }
+    if(legacy)return;
+    function spawn(actor,id,anchor,dx,dy,name){
+      let m=state.monsters.find(mon=>mon.journeyActor===actor);
+      if(m||site(actor)||!anchor)return m;
+      const occupied=state.monsters.filter(mon=>!mon.dead);
+      const pos=MapGen.recoveryPoint(map,{x:anchor.x+dx,y:anchor.y+dy},.5,occupied);
+      const patrol=map.id==='shard_flats'?{packId:'quarry_patrol',familyHome:{...pos,anchorX:anchor.x,anchorY:anchor.y,routine:'patrol'}}:undefined;
+      m=new Monster(id,pos.x,pos.y,patrol);m.journeyActor=actor;m.name=name;m.def.name=name;
+      m.angT=Math.atan2(-dy,-dx);m.visAng=m.angT;
+      state.monsters.push(m);return m;
+    }
+    if(map.id==='fields'&&site('bell_rung')&&!finished){
+      const wave=[0,1,2].every(i=>site('bell_risen_'+i))?3:0;
+      for(let i=0;i<3;i++){
+        const m=spawn('bell_risen_'+(wave+i),'risen',props[0],(i-1)*2.4,wave?3:-3,'Bell-drawn Risen');
+        if(m&&!m.dead)m.aggro=true;
+      }
+    }
+    if(map.id==='shard_flats'){
+      const anchor=props[0];
+      for(const [actor,dx] of [['quarry_left',-2.8],['quarry_right',2.8],['quarry_captain',0]]){
+        if(actor==='quarry_captain'&&finished)continue;
+        const m=spawn(actor,actor==='quarry_captain'?'gilt_construct':'shard_construct',anchor,dx,dx?1.8:-1.2,dx?'Conduit Sentry':'Quarry Captain');
+        if(m&&finished&&!m.dead){
+          m.cancelAttacks?.();m.dead=true;m.hp=0;m.exploded=true;m.questDormant=true;m.corpseT=6;
+        }
+      }
+    }
+  }
+  function touchJourney(prop) {
+    if(prop.interact!=='journey')return false;
+    const C=DATA.CAMPAIGN;
+    const actions={
+      watch_bell:['bell_rung','The watch bell rings','Footsteps answer from the fields.','watchBell'],
+      heart_roots:['keepsake','The roots give way','A brass cloak clasp falls into your hand. Bring it to the Cinderwatch board.','questProgress'],
+      shelter:['shelter_ember','You take a pilgrim ember','The guarded windward shortcut and the sheltered ascent both lead to the summit.','questProgress'],
+      summit:['summit_lit','The waystone catches','Amber light spills down both paths. Bryn will see it from the wall.','questReady']
+    };
+    const action=actions[prop.journeySite];if(!action)return false;
+    if(prop.journeySite==='summit'&&!C.site(state,'shelter_ember')){msg('Bring a live ember from the last pilgrim shelter.','#e9c58b');return false;}
+    if(!C.markSite(state,action[0]))return false;
+    if(headless&&typeof Coop!=='undefined'&&Coop.active)Coop.visual('questBeat',{sound:action[3],title:action[1],line:action[2]});
+    else {Sfx.play(action[3]);centerMsg(action[1],action[2]);}
+    msg(action[2],'#d8c79a');
+    syncJourneyWorld();campaignEvent(undefined,{silent:true});saveGame();return true;
+  }
+  function journeyKill(mon) {
+    const id=mon.journeyActor;
+    if(!id||!DATA.CAMPAIGN.markSite(state,id))return false;
+    if(id.startsWith('bell_risen_')){
+      if(Array.from({length:6},(_,i)=>DATA.CAMPAIGN.site(state,'bell_risen_'+i)).every(Boolean)){
+        DATA.CAMPAIGN.markSite(state,'bell_quiet');Sfx.play('cryptBell');centerMsg('A lantern in the fields','From beneath the burial ground, another bell answers.');
+      }else if([0,1,2].every(i=>DATA.CAMPAIGN.site(state,'bell_risen_'+i))&&!state.monsters.some(m=>!m.dead&&m.journeyActor?.startsWith('bell_risen_')))Sfx.play('watchBell');
+    }else if(id==='shrine_herald'){
+      centerMsg('The reeds fall silent','A reed-cutter lifts her head. “Anwen. My name is Anwen.”');
+      Sfx.voice({pitch:150,formant:960,rate:5},'Anwen. My name is Anwen.');
+    }else if(id==='quarry_captain'){
+      Sfx.play('questProgress');centerMsg('The last command','The crystal links snap. The sentries fall still.');
+    }else if(id.startsWith('quarry_'))msg('A conduit breaks. The captain’s armor goes dark.','#d8c79a');
+    syncJourneyWorld();return true;
+  }
   function syncStoryObjects() {
     const zone = state.map.id;
     state.npcs = state.npcs.filter(n=>!n.storyId || !DATA.CAMPAIGN.found(state,zone,n.storyId));
     for (const prop of state.map.props) {
+      if(prop.aftermath){
+        prop.completed=DATA.CAMPAIGN.bossDead(state,prop.aftermath);
+        if(prop.completed){
+          const nest=prop.aftermath==='brood_mother';
+          prop.label=nest?'The empty spawn bed':'The prison ledgers';
+          prop.interact='hunt_lore';
+          prop.lore=nest?'The water has receded. Every pale sac in the brood bed has split and fallen still.':'A page bears the oldest royal seal. The city’s first accounts list cells, wardens and prisoners.';
+        }
+      }
       if (prop.soulBinding) prop.completed=DATA.CAMPAIGN.found(state,zone,prop.soulBinding);
       if (!prop.storyId) continue;
       const obj = DATA.STORY_OBJECTS[zone].find(o=>o.id===prop.storyId);
@@ -1216,6 +1368,7 @@ const Game = (() => {
     saveGame();
   }
   function questKillEvent(mon) {
+    const journeyChanged=journeyKill(mon);
     for (const q of DATA.QUESTS) {
       let st = state.quests[q.id];
       /* an act boss never respawns, so credit its kill even if the quest was never offered/accepted —
@@ -1228,25 +1381,26 @@ const Game = (() => {
         }
         if (st.state !== "done" && st.state !== "reward") {
           st.state = "reward";
-            msg(`${q.name}: done. Return to ${DATA.NPCS[q.giver].name}.`, "#7fd87f");
-            Sfx.play("questReady");
+          msg(q.name+" · "+DATA.questGuide(state,q).next, "#7fd87f");
+          Sfx.play("questReady");
           UI.renderIfOpen("quest");
         }
         continue;
       }
       if (!st) continue;
-      if (q.type === "kills" && st.state === "active" && state.map.id === q.zone) {
+      if (q.type === "kills" && !st.journey && st.state === "active" && state.map.id === q.zone) {
         st.count = (st.count || 0) + 1;
         if (st.count === q.target) {
           st.state = "reward";
-            msg(`${q.name}: done. Return to ${DATA.NPCS[q.giver].name}.`, "#7fd87f");
-            Sfx.play("questReady");
+          msg(q.name+" · "+DATA.questGuide(state,q).next, "#7fd87f");
+          Sfx.play("questReady");
         } else if (st.count % 3 === 0 || st.count === 1) {
           msg(`${q.name}: ${st.count}/${q.target}`, "#9b8a60");
         }
       }
     }
     campaignEvent({kind:"kill",zone:state.map.id,target:mon.defId});
+    if(journeyChanged)saveGame();
   }
   /* optional side quests are offered (appear at their giver) once their act is underway —
      i.e. their prerequisite main quest has been started/finished. They never block the main chain. */
@@ -1262,34 +1416,14 @@ const Game = (() => {
     if(typeof Coop!=="undefined"&&Coop.active&&!Coop.committing)return Coop.submit({type:'completeQuest',questId:qid});
     const q = DATA.QUESTS.find(x => x.id === qid);
     const st = state.quests[qid];
-    if (!st || st.state !== "reward") return;
+    if (!st || st.state !== "reward" || (qid==="q18"&&!state.flags.ending)) return;
     if(typeof Coop!=="undefined"&&Coop.active)Coop.rewardParticipants(q);
     st.state = "done";
     const p = state.player;
-    msg(`“${q.done}”`, "#d8c79a");
-    /* every quest grants experience — explicit reward.xp, else a level-scaled share (more for boss hunts) */
+    if(state.flags.pinnedQuest===qid)delete state.flags.pinnedQuest;
     if(!(typeof Coop!=="undefined"&&Coop.active)){
-    const xp = (q.reward && q.reward.xp) || Math.floor(DATA.xpForLevel(p.lvl) * (q.type === "killBoss" ? 0.7 : q.type === "ritual" ? 0.6 : q.type === "beacons" ? 0.55 : 0.4));
-    if (xp > 0) { msg(`+${xp} experience.`, "#a9c8ff"); p.gainXp(xp); }
-    if (q.reward.gold) { p.gold += q.reward.gold; msg(`Received ${q.reward.gold} gold.`, "#d8b860"); }
-    if (q.reward.skillPts) { p.skillPts += q.reward.skillPts; msg(`Gained ${q.reward.skillPts} talent point.`, "#7fd87f"); }
-    if (q.reward.item) {
-      const it = Items.rollGear(DATA.effectiveLevel(q.reward.item.ilvl, state.difficulty), q.reward.item.rarity);
-      it.identified = true;
-      if (!Items.autoPlace(p.inv, it)) dropAtFeet(it);
-      msg(`Received: ${it.name}`, Items.RARITY_COLOR[it.rarity]);
-    }
-    if (q.reward.consumable) {
-      const it = Items.makeConsumable(q.reward.consumable);
-      if (!Items.autoPlace(p.inv, it)) dropAtFeet(it);
-      msg(`Received: ${it.name}`, "#9fdf9f");
-    }
-    if (q.reward.glyph) {
-      const zone = DATA.ZONES[q.zone];
-      const it = Items.rollGlyph(zone ? DATA.effectiveLevel(zone.lvl, state.difficulty) : p.lvl, p.stats.mf);
-      if (!Items.autoPlace(p.inv, it)) dropAtFeet(it);
-      msg(`Received: ${it.name}`, "#7fd8c0");
-    }
+      st.receipt=grantQuestReward(q,p);
+      UI.questReceipt?.(q.name,DATA.questText(q,st,true),st.receipt);
     }
     Sfx.play("questCompleted");
     /* turning in an act-boss quest opens the caravan road to the next act's camp */
@@ -1510,9 +1644,9 @@ const Game = (() => {
   /* records the chosen ending, marks the saga complete, then saves */
   function recordEnding(key) {
     if (!state || !["destroy","seal","give"].includes(key) || state.flags.ending || !DATA.CAMPAIGN.bossDead(state,"vethriss")) return;
-    if (state.quests.q18?.state === "reward") completeQuest("q18");
     state.flags.ending = key;
     state.flags.sagaComplete = true;state.characterFlags.echoesUnlocked=true;
+    if (state.quests.q18?.state === "reward") completeQuest("q18");
     if(typeof Cinematics!=='undefined')Cinematics.initialize(state).unlocked['ending_'+key]=true;
     saveGame();
   }
@@ -1556,7 +1690,7 @@ const Game = (() => {
     }
     if (mon.isBoss) {
       state.flags["dead_" + mon.defId + "@" + state.difficulty] = true;
-      if (state.map.cathedral||state.map.zone.arena) syncStoryObjects();
+      if (state.map.cathedral||state.map.zone.arena||['brood_mother','chained_sovereign'].includes(mon.defId)) syncStoryObjects();
       const bossMsgs = {
         morthul: ["MORTHUL HAS FALLEN", "the Sunken Vigil is silent"],
         gravecaller: ["GRAVECALLER HESH IS SILENCED", ""],
@@ -2134,6 +2268,7 @@ const Game = (() => {
     if(!committed&&PropInteractions.profile(prop))return PropInteractions.begin(state,prop,()=>{if(typeof Coop!=="undefined"&&Coop.active)Coop.finishInteraction(prop,p);else interactOnSurface(prop,true,p);},p);
     if(typeof Coop!=="undefined"&&Coop.active&&Coop.openInteraction(prop,p))return;
     if(opening.interact(prop))return;
+    if(prop.journeySite)return touchJourney(prop);
     if (prop.storyId) return interactStory(prop);
     /* people get a conversation (the board is a special "NPC") */
     if (prop.isNpc || (prop.def && DATA.NPCS[prop.id])) {
@@ -2149,6 +2284,7 @@ const Game = (() => {
     if (prop.interact === "caravan") { Sfx.play("click"); UI.openShrine(true); return; }   // the war-caravan: fast travel between attuned places
     if (prop.interact === "event") { triggerEvent(prop,p); return; }   // random world event
     if (prop.interact === "memory_lore") { msg(prop.lore,"#d8c79a"); centerMsg(prop.label,"A fragment the cathedral could not erase"); return; }
+    if (prop.interact === "hunt_lore") { msg(prop.lore,"#d8c79a"); centerMsg(prop.label,prop.lore); return true; }
     if (prop.interact === "shrine") {
       const zid = state.map.id;
       if (!state.shrines.includes(zid)) {
@@ -3360,6 +3496,15 @@ const Game = (() => {
 
   function ambientFx(dt) {
     const m = state.map, p = state.player;
+    if(m.id==='hollow_reeds'&&!DATA.CAMPAIGN.site(state,'shrine_herald')&&state.time>=(m.nextReedCall||0)){
+      const shrine=m.act2?.landmarks.find(n=>n.id==='shrine');
+      if(shrine){const distance=Math.hypot(shrine.x-p.x,shrine.y-p.y);
+        m.nextReedCall=state.time+3+Math.min(8,distance/12);if(distance<85)Sfx.play('reedChorus');}
+    }
+    if(m.id==='deepfreeze_cavern'&&!reducedMotion?.matches&&DATA.CAMPAIGN.bossDead(state,'hoarfang')&&Math.random()<dt*8){
+      const spring=m.frontier?.landmarks.find(n=>n.id==='spring');
+      if(spring&&Math.hypot(p.x-spring.x,p.y-spring.y)<18)particles.push({surfaceId:0,x:spring.x+U.rf(-2,2),y:spring.y+U.rf(-2,2),vx:.2,vy:-.1,z:2,grav:-10,color:'#eee2cc',t:2});
+    }
     /* embers near braziers, fog motes in dungeons, rain in fields */
     if (Math.random() < dt * 8) {
       for (const l of m.lights) {
@@ -3493,6 +3638,28 @@ const Game = (() => {
     };
     if(typeof Cinematics!=='undefined'&&Cinematics.drawTerrain)Cinematics.drawTerrain(ctx,m,cam,drawSceneFloor);else drawSceneFloor();
     if(cinematicTerrain<1)ctx.restore();
+    if(m.id==='shard_flats'){
+      const captain=state.monsters.find(mon=>mon.journeyActor==='quarry_captain'&&!mon.dead);
+      if(captain&&!DATA.CAMPAIGN.site(state,'quarry_left')&&!DATA.CAMPAIGN.site(state,'quarry_right')){
+        ctx.save();ctx.strokeStyle='#8ddbd0';ctx.lineWidth=2;ctx.globalAlpha=.8;
+        const x=U.isoX(captain.x,captain.y)-cam.x,y=U.isoY(captain.x,captain.y)-cam.y-elevLift(captain.x,captain.y)-12;
+        for(const guard of state.monsters)if(!guard.dead&&['quarry_left','quarry_right'].includes(guard.journeyActor)){
+          ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(U.isoX(guard.x,guard.y)-cam.x,U.isoY(guard.x,guard.y)-cam.y-elevLift(guard.x,guard.y)-12);ctx.stroke();
+        }
+        ctx.restore();
+      }
+    }
+    if(m.id==='deepfreeze_cavern'&&DATA.CAMPAIGN.bossDead(state,'hoarfang')){
+      const spring=m.frontier.landmarks.find(n=>n.id==='spring');
+      const x=U.isoX(spring.x,spring.y)-cam.x,y=U.isoY(spring.x,spring.y)-cam.y-elevLift(spring.x,spring.y);
+      ctx.save();ctx.lineWidth=3;
+      for(let i=0;i<5;i++){
+        const phase=((reducedMotion?.matches?0:state.time*.35)+i*.21)%1,xx=x+(i-2)*15,yy=y-phase*35;
+        ctx.strokeStyle='rgba(241,230,203,'+(.40*(1-phase))+')';ctx.beginPath();ctx.moveTo(xx,yy);
+        ctx.bezierCurveTo(xx-12,yy-11,xx+12,yy-18,xx+3,yy-30);ctx.stroke();
+      }
+      ctx.restore();
+    }
     if(state.flags.opening&&!(typeof Cinematics!=='undefined'&&Cinematics.playing))opening.drawFocus(ctx,cam);
 
     /* ---- ground items: ICONS ONLY (flat). Their name labels are drawn later, on top of
@@ -3822,6 +3989,10 @@ const Game = (() => {
           const point=renderPosition(p);
           if(!p.cinematicView&&typeof Coop!=="undefined"&&Coop.active)nameplate(p.name+(p.dead?" — fallen":""),d.sx,d.sy-88,p===state.player?"#e4ce91":"#97cbd4");
           drawLiveActor(playerModelOpts(p), p.pose(), d.sx, d.sy - (point.jumpZ || 0) - elevLift(point.x,point.y,point.surfaceId), p.flashT > 0, p.cinematicAlpha??1, null, point);
+            if(m.id==='shardpeak_shrine'&&DATA.CAMPAIGN.site(state,'shelter_ember')&&!DATA.CAMPAIGN.site(state,'summit_lit')){
+              const y=d.sy-elevLift(point.x,point.y,point.surfaceId)-(point.jumpZ||0)-28;
+              ctx.save();ctx.shadowColor='#ff8429';ctx.shadowBlur=9;ctx.fillStyle='#ffd487';ctx.beginPath();ctx.ellipse(d.sx+8,y,2.5,4,0,0,Math.PI*2);ctx.fill();ctx.restore();
+            }
           if(typeof SkillVFX!=='undefined'){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,p.x,p.y,p.surfaceId);SkillVFX.drawActor(ctx,p,cam);ctx.restore();}
           break;
         }
@@ -4518,12 +4689,26 @@ const Game = (() => {
     const p=state.player, dx=U.isoX(p.x,p.y)-U.isoX(pr.x,pr.y), dy=U.isoY(p.x,p.y)-U.isoY(pr.x,pr.y)-24;
     const coversHero=pr.building && !pr.interact && p.x+p.y<pr.x+pr.y && Math.abs(dx)<propFrame.sw*.42 && dy>-propFrame.anchorY && dy<0 && (pr.artZone!=='act3'||architectureCovers(propFrame,dx,dy-24-elevLift(p.x,p.y,p.surfaceId)+elevLift(pr.x,pr.y,pr.surfaceId)));
     ctx.save();LevelTerrain.clipBehind(ctx,state.map,camera(),pr.x,pr.y,pr.surfaceId);
+    if((pr.journeyClue==='water'||pr.journeySite==='reed_shrine')&&!DATA.CAMPAIGN.site(state,'shrine_herald')){
+      ctx.save();ctx.lineWidth=1.4;
+      const strength=pr.reedStrength??1;
+      const clock=reducedMotion?.matches ? .25 : state.time*(.3+.25*strength);
+      for(let i=0;i<2;i++){const phase=(clock+i*.5)%1;ctx.strokeStyle='rgba(162,225,216,'+((.4+.4*strength)*(1-phase))+')';
+        ctx.beginPath();ctx.ellipse(d.sx,d.sy+1,12+(22+16*strength)*phase,4+(7+6*strength)*phase,-.1,0,Math.PI*2);ctx.stroke();}
+      ctx.restore();
+    }
     const marshScale=state.map.act2Visual&&pr.artZone==='act2'?(pr.type==='reed_clump'?.32:pr.type==='votives'?.64:1):1;
     const propOptions={scale:marshScale*PropInteractions.scale(pr),flip:mirror,alpha:coversHero?.4:pr.spent&&!PropInteractions.themed(pr)?.6:1};
     if(!PropInteractions.draw(ctx,pr,state,d.sx,d.sy,propOptions))SpriteAssets.drawFrame(ctx, propFrame, d.sx, d.sy, propOptions);
     PropInteractions.drawEffects(ctx,pr,state,d.sx,d.sy,propFrame,pr===hoverProp);
     ctx.restore();
     const drawH = d.sy-PropInteractions.bounds(propFrame,d.sx,d.sy,mirror,propOptions.scale).y;
+    if(pr.journeySite&&pr.interact&&pr!==hoverProp&&Math.hypot(pr.x-p.x,pr.y-p.y)<6&&!state.bossBar)
+      nameplate(pr.label,d.sx,d.sy-drawH-3,'#edd397');
+    if(pr.journeyClue&&!state.bossBar&&Math.hypot(pr.x-p.x,pr.y-p.y)<(pr.journeyClue==='ascent'?6:3)){
+      const ending={cloth:'keepsake',water:'shrine_herald',ascent:'summit_lit'}[pr.journeyClue];
+      if(!DATA.CAMPAIGN.site(state,ending))nameplate(pr.label,d.sx,d.sy-drawH-3,pr.journeyClue==='cloth'?'#e9afa0':'#d4d8bd');
+    }
     /* Ambient fire and shrine glows are transient effects layered over sprite art. */
     if (pr.type === "brazier" && !pr.extinguished) {
       const t = state.time * 7 + pr.x;
@@ -4607,7 +4792,7 @@ const Game = (() => {
     punch(p.x, p.y, 7.5 + (p.stats.lightRadius || 0), 1, false,10,p.surfaceId);
     // Keep the authored face and attack pose readable in the darkest boss rooms.
     for(const mon of state.monsters)if(mon.encounter?.active&&!mon.dead)punch(mon.x,mon.y,6.5,.9,false,55*mon.scale);
-    for (const l of m.lights) punch(l.x, l.y, l.r, 0.95, l.flicker);
+    for (const l of m.lights) if(!l.questLamp||DATA.CAMPAIGN.site(state,l.questLamp))punch(l.x, l.y, l.r, 0.95, l.flicker);
     for (const ps of portalPositions()) punch(ps.x, ps.y, 4, 0.9, true,10,ps.surfaceId);
     lightCtx.globalCompositeOperation = "source-over";
     /* warm glow pass over fires */
@@ -4615,11 +4800,12 @@ const Game = (() => {
     ctx.save();
     ctx.globalCompositeOperation = "overlay";
     for (const l of m.lights) {
-      if (l.color !== "#ff9c50"&&!m.cathedral&&!m.act1Environment&&!m.act2Visual&&!m.act3?.environment&&!m.act5Environment) continue;
+      if(l.questLamp&&!DATA.CAMPAIGN.site(state,l.questLamp))continue;
+      if (!l.questLamp&&l.color !== "#ff9c50"&&!m.cathedral&&!m.act1Environment&&!m.act2Visual&&!m.act3?.environment&&!m.act5Environment) continue;
       const sx = U.isoX(l.x, l.y) - cam.x, sy = U.isoY(l.x, l.y) - cam.y - surfaceLift(l.x,l.y);
       if (sx < -200 || sx > W + 200 || sy < -200 || sy > H + 200) continue;
       const rr = l.r * 26;
-      ctx.drawImage(m.cathedral||m.act1Environment||m.act2Visual||m.act3?.environment||m.act5Environment?cathedralLightMask(l.color):warmMask, sx - rr, sy - 20 - rr, rr * 2, rr * 2);
+      ctx.drawImage(l.questLamp||m.cathedral||m.act1Environment||m.act2Visual||m.act3?.environment||m.act5Environment?cathedralLightMask(l.color):warmMask, sx - rr, sy - 20 - rr, rr * 2, rr * 2);
     }
     ctx.restore();
   }
@@ -4686,6 +4872,7 @@ const Game = (() => {
       mmCtx.fillStyle='#0b0b0b';mmCtx.fillRect(4,3,111,18);mmCtx.font='12px Exocet, Georgia, serif';mmCtx.fillStyle='#ead5a0';mmCtx.fillText(p.surfaceId?'Upper gallery':'Lower passage',8,16);
     }
     dot(p.x, p.y, "#ffffff", 3);
+    for(const t of pinTargets())pinDiamond(mmCtx,110+(t.x-p.x)*sc,80+(t.y-p.y)*sc);
   }
   function renderMapOverlay() {
     const m = state.map, p = state.player;
@@ -4715,6 +4902,7 @@ const Game = (() => {
     for (const mon of state.monsters) if (!mon.dead && m.explored[(mon.x | 0) + (mon.y | 0) * m.w]) dot(mon.x, mon.y, !TerrainLayers.same(p,mon)?'#564747':mon.isBoss ? "#ff5030" : "#c03030", 3);
     for (const n of state.npcs) dot(n.x, n.y, "#50c050", 5);
     dot(p.x, p.y, "#ffffff", 6);
+    for(const t of pinTargets())pinDiamond(ctx,ox+t.x*sc,oy+t.y*sc);
     ctx.font = "16px Exocet, Georgia, serif";
     ctx.fillStyle = "#d8c79a"; ctx.textAlign = "center";
     ctx.fillText(m.zone.name + (m.layers?(p.surfaceId?' · Upper gallery':' · Lower passage'):'') + "  —  press M to close", W / 2, 30);
@@ -4903,7 +5091,7 @@ const Game = (() => {
         mon._coopId='spawn_'+zone+'_'+(zone==='mines'?U.hash(sp.id+':'+sp.x+':'+sp.y):index);world.monsters.push(mon);
       }
       world.npcs=world.map.npcs.filter(n=>!(n.survivor&&rescuedSurvivors().includes(n.sid))).map(n=>new Npc(n.id,n.x,n.y,{survivor:n.survivor,sid:n.sid,npcArt:n.npcArt,displayName:n.displayName,storyId:n.storyId}));
-      syncRescueSurvivors();syncStoryObjects();syncConditionalNpcs();setupBeaconQuest(world.map);syncOptionalQuests();placeEvents(world.map);
+      syncRescueSurvivors();syncStoryObjects();syncJourneyWorld();syncConditionalNpcs();setupBeaconQuest(world.map);syncOptionalQuests();placeEvents(world.map);
       if(typeof CursedEvents!=="undefined")CursedEvents.restore(world);
       if(typeof TacticalElites!=="undefined")TacticalElites.setup(world);
       if(typeof Echoes!=="undefined")Echoes.prepare(world);
@@ -4970,18 +5158,32 @@ const Game = (() => {
     if(o.isNpc||o.def&&DATA.NPCS[o.id]){if(o.def?.role==='board')UI.openBoard();else UI.openDialog(o);}
     else if(o.interact==='event'&&typeof UpgradeUI!=='undefined')UpgradeUI.event(o);else if(o.interact==='storage')UI.openStorage();else if(o.interact==='forge')UI.openForge();else if(o.interact==='board')UI.openBoard();else if(['shrine','caravan'].includes(o.interact))UI.openShrine(o.interact==='caravan');
   }
-  function planCoopReward(q,p){
+  function rollQuestItems(q,p,difficulty){
     const reward=q.reward||{},items=[];
-    if(reward.item){const it=Items.rollGear(reward.item.ilvl,reward.item.rarity);it.identified=true;items.push(it);}
+    if(reward.item){const it=Items.rollGear(DATA.effectiveLevel(reward.item.ilvl,difficulty),reward.item.rarity);it.identified=true;items.push(it);}
     if(reward.consumable)items.push(Items.makeConsumable(reward.consumable));
-    if(reward.glyph)items.push(Items.rollGlyph(DATA.ZONES[q.zone]?.lvl||p.lvl,p.stats.mf));
-    return {xp:reward.xp||Math.floor(DATA.xpForLevel(p.lvl)*(q.type==='killBoss'?.7:q.type==='beacons'?.55:.4)),gold:reward.gold||0,skillPts:reward.skillPts||0,attrPts:reward.attrPts||0,items};
+    if(reward.glyph)items.push(Items.rollGlyph(DATA.ZONES[q.zone]?DATA.effectiveLevel(DATA.ZONES[q.zone].lvl,difficulty):p.lvl,p.stats.mf));
+    return items;
   }
-  function rewardCoopQuest(q,p,grant=planCoopReward(q,p)){
+  function questAmounts(q,p){
+    return {xp:DATA.questXP(q,p.lvl),gold:q.reward.gold||0,skillPts:q.reward.skillPts||0,attrPts:q.reward.attrPts||0};
+  }
+  function planQuestReward(q,p){return {...questAmounts(q,p),items:rollQuestItems(q,p,state.difficulty)};}
+  function grantQuestReward(q,p,grant=questAmounts(q,p)){
     p.gainXp(grant.xp);p.gold+=grant.gold;p.skillPts+=grant.skillPts;p.attrPts+=grant.attrPts;
-    for(const it of grant.items)if(!Items.autoPlace(p.inv,it))dropAtFeet(it,p);
+    const received=DATA.questRewardLines(grant);
+    for(const it of grant.items||rollQuestItems(q,p,state.difficulty)){
+      const placed=Items.autoPlace(p.inv,it);
+      if(!placed)dropAtFeet(it,p);
+      received.push(it.name+(placed?"":" (at your feet)"));
+    }
+    if(typeof Coop!=="undefined"&&Coop.active&&p.heroId){
+      const record=state.quests[q.id];if(record)(record.receipts||={})[p.heroId]=received;
+    }
+    return received;
   }
   function coopVisual(e){
+    if(e.effect==='questBeat'){Sfx.play(e.sound);centerMsg(e.title,e.line);}
     if(e.effect==='float'&&(e.hurt||(e.minion?options.minionDamage:options.dmgNumbers||typeof e.text!=='number')))floats.push({...e,text:String(e.text),t:0});
     if(e.effect==='nova')novas.push({...e,t:0,dur:.35});
     if(e.effect==='bolt')bolts.push({...e,t:0,dur:.22,seed:(Math.random()*1000)|0});
@@ -4989,13 +5191,13 @@ const Game = (() => {
   }
 
   return {
-    coop: {enterWorld:()=>campaignEvent({kind:'enter',zone:state.map.id,target:state.map.id},{silent:true}),withWorld:withCoopWorld,createWorld:createCoopWorld,resetActor:resetCoopActor,syncWorld:(beacons=false)=>{syncStoryObjects();syncConditionalNpcs();syncRescueSurvivors();if(beacons)setupBeaconQuest(state.map);},makeHero:makeCoopHero,prepareHero:prepareCoopHero,start:startCoop,stop:stopCoop,preload:preloadCoop,update,presentation:coopPresentation,hostPresentation,refresh:coopRefresh,repeatSkill,arrival:safeCoopArrival,pickup:pickupGround,interact:(o,p)=>interactOnSurface(o,false,p),interactCommitted:(o,p)=>interactOnSurface(o,true,p),openInteraction:openCoopInteraction,drop:dropAtFeet,respec:doRespec,castPortal,acceptQuest,completeQuest,rewardQuest:rewardCoopQuest,planReward:planCoopReward,jump:coopJump,airAttack:coopAirAttack,visual:coopVisual},
+    coop: {enterWorld:()=>campaignEvent({kind:'enter',zone:state.map.id,target:state.map.id},{silent:true}),withWorld:withCoopWorld,createWorld:createCoopWorld,resetActor:resetCoopActor,syncWorld:(beacons=false)=>{syncStoryObjects();syncJourneyWorld();syncConditionalNpcs();syncRescueSurvivors();if(beacons)setupBeaconQuest(state.map);},makeHero:makeCoopHero,prepareHero:prepareCoopHero,start:startCoop,stop:stopCoop,preload:preloadCoop,update,presentation:coopPresentation,hostPresentation,refresh:coopRefresh,repeatSkill,arrival:safeCoopArrival,pickup:pickupGround,interact:(o,p)=>interactOnSurface(o,false,p),interactCommitted:(o,p)=>interactOnSurface(o,true,p),openInteraction:openCoopInteraction,drop:dropAtFeet,respec:doRespec,castPortal,acceptQuest,completeQuest,rewardQuest:grantQuestReward,planReward:planQuestReward,jump:coopJump,airAttack:coopAirAttack,visual:coopVisual},
     directCast,submitCommand,playerOwner,closestPlayer,renderPosition,
     bossCinematic,cinematicActor,cinematicWorld,cinematicSnapshot,resetCinematicCamera,
     init, newGame, loadGame, saveGame, listSaves, deleteSave, saveAndQuit,
     preparePlayerEquipment, commitPlayerEquipment, discardPlayerEquipment,
     enterMap, interact, castPortal, usePortal, travelToShrine, canTradeWith, setDifficulty, canRetryArena, retryBossArena,
-    acceptQuest, completeQuest, doRespec, storyTopic, bossWard,
+    acceptQuest, completeQuest, pinQuest, pinnedQuest, doRespec, storyTopic, bossWard,
     afterDelay, addFloat, minionFloat, playerHurtFloat, addParticle, bloodBurst, dustPuff, addNova, lightningBolt, beamFx,
     knockMonster, detonateMark, detonateDoom, spawnCorpse, corpseFromGrave, throwUndeadLand,
     breakProp, breakPropsNear, breakPropsSeg,

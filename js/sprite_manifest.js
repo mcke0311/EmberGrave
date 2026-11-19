@@ -45508,6 +45508,104 @@ DATA.SPRITE_MANIFEST = {
       "rows": 6,
       "src": "assets/sprites/packed/world/props/interactive_act5.webp"
     },
+    "world.props.quest_landmarks": {
+      "anchor": [
+        64,
+        117
+      ],
+      "bundle": "world",
+      "cell": [
+        128,
+        128
+      ],
+      "cols": 5,
+      "hitShapes": [
+        {
+          "bounds": [
+            21,
+            25,
+            107,
+            121
+          ]
+        },
+        {
+          "bounds": [
+            40,
+            62,
+            89,
+            121
+          ]
+        },
+        {
+          "bounds": [
+            29,
+            26,
+            100,
+            121
+          ]
+        },
+        {
+          "bounds": [
+            30,
+            34,
+            99,
+            121
+          ]
+        },
+        {
+          "bounds": [
+            23,
+            27,
+            105,
+            121
+          ]
+        },
+        {
+          "bounds": [
+            21,
+            21,
+            107,
+            121
+          ]
+        },
+        {
+          "bounds": [
+            40,
+            57,
+            89,
+            121
+          ]
+        },
+        {
+          "bounds": [
+            29,
+            13,
+            100,
+            121
+          ]
+        },
+        {
+          "bounds": [
+            30,
+            31,
+            99,
+            121
+          ]
+        },
+        {
+          "bounds": [
+            22,
+            23,
+            106,
+            121
+          ]
+        }
+      ],
+      "kind": "atlas",
+      "revision": "335c8d3edf2a",
+      "rows": 2,
+      "src": "assets/sprites/packed/world/props/quest_landmarks.webp"
+    },
     "world.props.remains_events": {
       "anchor": [
         80,
@@ -60056,6 +60154,7 @@ DATA.SPRITE_MANIFEST = {
       "mine_crystal_broken": "world.prop.mine_crystal_broken",
       "monasterygate": "world.prop.monasterygate",
       "pillar": "world.prop.pillar",
+      "quest_landmark": "world.props.quest_landmarks",
       "rock": "world.prop.rock",
       "roundhut": "world.prop.roundhut",
       "scaffold": "world.prop.scaffold",

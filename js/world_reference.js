@@ -10,6 +10,8 @@ const WorldReference = (() => {
     provenance=new Map();
     for(const d of Object.values(art.descriptors||{}))provenance.set(d.assetId,{path:d.path,source:d.provenance?.source,size:d.size,report:d.provenance?.parameters?.importReport,command:'python tools/build_sprite_assets.py'});
     for(const [id,s] of Object.entries(props.sources||{}))provenance.set(id,{path:s.source,source:s.source,report:metadataPaths.props,command:'python tools/import_prop_interactions.py'});
+    const landmarks='assets/sprites_src/gameplay_art_authored/quest_journeys/landmarks.png';
+    provenance.set('world.props.quest_landmarks',{path:landmarks,source:landmarks,command:'python tools/import_quest_landmarks.py'});
   }
   function load(){
     if(!loaded)loaded=Promise.all(Object.values(metadataPaths).map(async path=>{const r=await fetch(path);if(!r.ok)throw Error('Cannot load editing references: '+path);return r.json();})).then(([art,props])=>setProvenance(art,props)).catch(e=>{loaded=null;throw e;});
@@ -41,7 +43,7 @@ const WorldReference = (() => {
     return m.id==='fields'?'genFields':m.id==='forest'?'genForest':'genCrypt';
   }
   function category(p){
-    if(p.storyId||p.soulBinding)return 'story';
+    if(p.storyId||p.soulBinding||p.journeySite||p.journeyClue||p.aftermath)return 'story';
     if(['wolf_den','spider_nest'].includes(p.behavior))return 'habitats';
     if(p.familySite||p.ev?.kind==='ambush')return 'habitats';
     if(p.interact==='shrine'||['buff','curse','heal','xp','glyph'].includes(p.ev?.kind)||['shrine','altar','well'].includes(p.type))return 'shrines';
@@ -53,6 +55,7 @@ const WorldReference = (() => {
     return 'decorations';
   }
   function behavior(p,m){
+    if(p.journeySite||p.journeyClue||p.aftermath)return p.label;
     if(p.behavior==='crystal')return 'Break once: 10% chance of one level-scaled socketable jewel, otherwise empty. Leaves crystal fragments.';
     if(p.behavior==='wolf_den')return 'Boundary wolf den (1.75× size). Spawns an Icefang Wolf every 6 seconds while a living player is within 12 connected tiles; maximum 4 living den-spawned wolves. Break it to stop spawning.';
     if(p.behavior==='spider_nest')return 'Kick or attack once: 40% one spider, 40% one random common-quality item, 20% empty. Leaves a broken nest.';
@@ -70,6 +73,10 @@ const WorldReference = (() => {
     const placement=[ref('js/mapgen.js',owner?.includes(' / ')?owner.split(' / ').slice(1).join(' / '):owner&&owner!=='LevelTerrain.build'?owner:generator(m),'Placement and quantity for '+m.id)];
     if(owner&&/Environment|Boundaries|Architecture|LevelTerrain/.test(owner))placement.push(ref('js/level_terrain.js',owner.split(' / ')[0],'Environment assembly and artwork selection'));
     const actions=[];
+    if(p.journeySite||p.journeyClue||p.aftermath){
+      placement.push(ref('js/mapgen.js','placeQuestLandmarks','Reachable quest landmarks and clues'));
+      actions.push(ref('js/game.js',p.aftermath?'syncStoryObjects':'syncJourneyWorld','Campaign progress and world state'));
+    }
     if(p.behavior)actions.push(ref('js/game.js',p.behavior==='wolf_den'?'updatePropSpawners / breakProp':'breakProp / spawnPropMonster','Single-use outcomes and authoritative habitat simulation'));
     if(p.familySite){placement.push(ref('js/mapgen.js','settleFamilies','Territory-site placement'),ref('js/data.js','DATA.MONSTER_FAMILIES.'+p.familySite,'Habitat appearance and family membership'));if(!p.behavior)actions.push(ref('js/entities.js','Monster.die','Territory clearing'));}
     else if(p.ev){placement.splice(0,placement.length,ref('js/mapgen.js','placeEvents / eventProp','Eligibility, weights, count, placement and Act I behavior'),ref('js/data.js','DATA.EVENTS → '+p.ev.id,'Event definition'));if(!p.behavior)actions.push(ref('js/game.js','triggerEvent','Event outcome'));}
@@ -84,7 +91,7 @@ const WorldReference = (() => {
   function artReferences(assetId){
     const d=DATA.SPRITE_MANIFEST.entries[assetId],a=provenance.get(assetId),art=[ref('js/sprite_manifest.js','DATA.SPRITE_MANIFEST.entries['+JSON.stringify(assetId)+']','Generated runtime mapping; rebuild after changing source art')];
     if(d)art.push(ref(d.src,assetId,'Packed runtime artwork'));
-    if(a){for(const path of new Set([a.source,a.path].filter(Boolean)))art.push(ref(path,null,'Authored source artwork'));if(a.report)art.push(ref(a.report,null,'Import metadata'));art.push(ref(a.command.includes('import_prop')?'tools/import_prop_interactions.py':'tools/build_sprite_assets.py',null,a.command));}
+    if(a){for(const path of new Set([a.source,a.path].filter(Boolean)))art.push(ref(path,null,'Authored source artwork'));if(a.report)art.push(ref(a.report,null,'Import metadata'));art.push(ref(a.command.replace(/^python /,''),null,a.command));}
     else art.push({note:'Source provenance missing. Check '+metadataPaths.art+' and '+metadataPaths.props+'.',missing:true});
     return art;
   }
@@ -95,7 +102,7 @@ const WorldReference = (() => {
       const used=p.behavior?'Broken':family==='shrine'?(p.ev?'Spent':'Attuned'):['barrel','crate','urn'].includes(family)?'Broken':p.familySite?'Deserted':family.startsWith('frozen_')||family==='grave'?'Searched':'Used';
       states.push({label:used,prop:{...p,broken:!!p.behavior,spent:true,opened:true,searched:true,completed:true},shrines:[m.id]});
       if(family==='grave')states.push({label:'Corpse consumed',prop:{...p,corpseConsumed:true},shrines:[]});
-    }else if(p.visualDone||p.type==='chest')states.push({label:p.behavior?'Broken':'Completed / opened',prop:{...p,broken:!!p.behavior,completed:true,opened:true},shrines:[]});
+    }else if(p.visualDone||p.type==='chest'||p.questArt!=null)states.push({label:p.behavior?'Broken':'Completed / opened',prop:{...p,broken:!!p.behavior,completed:true,opened:true},shrines:[]});
     return states.map(s=>({label:s.label,...PropInteractions.resolveVisual(s.prop,{map:m,time:100,shrines:s.shrines})}));
   }
   function inspect(zoneId,{seed=12345,difficulty=0}={}){

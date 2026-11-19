@@ -2587,6 +2587,8 @@ def main() -> None:
     install_act1_animations(entries, maps)
     from import_prop_interactions import install as install_prop_interactions
     install_prop_interactions(entries, maps)
+    from import_quest_landmarks import install as install_quest_landmarks
+    install_quest_landmarks(entries, maps)
     emit_manifest(entries, maps, player_rig_report)
     print(f"Built {len(entries)} sprite assets and {len(maps)} lookup maps")
 

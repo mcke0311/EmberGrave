@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import {fixture} from './boss_fixture.mjs';
-const f=fixture({gameExports:['setupBeaconQuest','beaconQuestKill','placeEvents','rescuedSurvivors','spawnTrio','syncOptionalQuests']}),
+const f=fixture({gameExports:['setupBeaconQuest','beaconQuestKill','placeEvents','rescuedSurvivors','spawnTrio','syncOptionalQuests','interactOnSurface']}),
  {Game:G,MapGen:M,Player,Monster,TerrainNavigation:N,DATA:D}=f,T=G.__bossTest,Npc=vm.runInContext('Npc',f.ctx);
 let checks=0;const ok=(v,m)=>{checks++;assert.ok(v,m);};
 function fresh(zone='north_wild',seed=12345){
@@ -50,8 +50,8 @@ const rescued=T.rescuedSurvivors();returnTo(s,'mines');
 ok(s.map.npcs.every(n=>rescued.includes(n.sid)),'survivor IDs changed on regeneration');
 G.completeQuest('q8');T.syncOptionalQuests();ok(!!s.quests.opt_north_2,'Deepfreeze quest not offered');
 returnTo(s,'shardpeak_shrine');G.acceptQuest('opt_north_1');
-for(const spawn of s.map.monsterSpawns.slice(0,15))T.questKillEvent({defId:spawn.id});
-ok(s.quests.opt_north_1.state==='reward','15-kill shrine quest failed');
+for(const role of ['shelter','summit'])T.interactOnSurface(s.map.props.find(p=>p.journeySite===role),true);
+ok(s.quests.opt_north_1.state==='reward','carrying the ember to the summit failed');
 returnTo(s,'deepfreeze_cavern');G.acceptQuest('opt_north_2');T.questKillEvent({defId:'hoarfang'});
 ok(s.quests.opt_north_2.state==='reward','Hoarfang quest failed');
 returnTo(s,'shattered_temple');s.flags.fn_temple_open=true;s.quests.q9={state:'active'};T.questKillEvent({defId:'korvath'});

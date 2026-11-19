@@ -597,7 +597,10 @@ transformations; the basic attack reflects the equipped weapon. Add an emblem
 assignment when adding a new skill. `tests/class_skill_ui.html` reviews all five
 classes and checks the interactions with temporary heroes and isolated saves.
 
-### The campaign (six quests)
+### The six Cinderwatch quests
+
+The journal covers all 25 quests. Press **Q** or open **Quests** on the phone to see your next step, find a reward ready to claim, or pin one objective. A pinned quest marks its target once you have explored that part of the map. Completed entries show the reward your hero received.
+
 Quests come from the people (and postings) of Cinderwatch — look for the bobbing
 **!** over a giver's head, and a **?** when a reward is waiting. Most townsfolk
 will also just *talk*: everyone has conversation topics, a personality, and their
@@ -608,11 +611,11 @@ sprite layers is rejected atomically and the prior appearance stays active.
 Gloves, boots, belts, rings, and amulets remain inventory-only.
 
 1. Talk to **Captain Vessa Marn** by the east gate of **Cinderwatch** and take the quest.
-2. Head east into **The Ashen Fields**. Kill things. Take their belongings.
+2. Head east into **The Ashen Fields**, ring the farmstead watch bell, and hold the road against two waves of risen.
 3. Attune the **travel shrines** as you find them (free fast travel + autosave).
 4. Find the **Sunken Crypt** at the far end of the fields. Silence **Gravecaller Hesh**, then descend to **The Vigil** and destroy **Morthul, the Grave-Warden**.
 5. Maesa hears singing from the **Ruined Chapel** in the south of the fields — end **Vicar Thessaly** and his Hollow Choir.
-6. Take the north road into **The Blackbough**, a forest gone wrong, and cut your way to the **Greymonastery**.
+6. Read the missing-person notice in Cinderwatch. Follow the scraps of red cloak into **The Blackbough**, cut the clasp from the heartwood, and bring it to the board.
 7. Climb through the Cloister to the Sanctum and unmake **Vellath, the Unshepherd** to complete the Cinderwatch questline. Continue the saga through the remaining acts to the Throne of Cinders.
 
 Completing the full saga unlocks **Nightmare**, then completing it on Nightmare
@@ -739,7 +742,7 @@ damage-over-time totals. Values update while the sheet stays open. Read the
 [character sheet calculation notes](docs/CHARACTER_SHEET.md) for timing and
 conditional damage details. **Q** opens a
 journal with act and status filters and a side-by-side quest list and details.
-Turn-ins are included in Active; locked quests keep their details concealed.
+Select **Ready** to find turn-ins. Unexplored quests appear as sealed entries.
 
 ### Terrain traversal
 

@@ -31,14 +31,14 @@
 <link rel="stylesheet" href="css/upgrades.css?v=1">
 <link rel="stylesheet" href="css/combat-ui.css?v=4">
 <link rel="stylesheet" href="css/title-ui.css?v=7">
-<link rel="stylesheet" href="css/management-ui.css?v=6">
+<link rel="stylesheet" href="css/management-ui.css?v=6&quests=1">
 <link rel="stylesheet" href="css/loot-filter.css?v=2">
 <link rel="stylesheet" href="css/opening.css?v=4">
 <link rel="stylesheet" href="css/travel-ui.css?v=2">
 <link rel="stylesheet" href="css/mobile-controls.css?v=6">
 <link rel="stylesheet" href="css/settings-ui.css?v=2">
 <link rel="stylesheet" href="css/coop.css?v=3">
-<link rel="stylesheet" href="css/mobile-shell.css?v=7">
+<link rel="stylesheet" href="css/mobile-shell.css?v=7&quests=1">
 <link rel="icon" href="favicon.ico?v=1" sizes="16x16 32x32 48x48">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/ui/app/favicon-32.png?v=1">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/ui/app/favicon-16.png?v=1">
@@ -51,6 +51,7 @@
   <!-- Minimap -->
   <canvas id="minimap" width="220" height="160"></canvas>
   <div id="zonelabel"></div>
+  <button type="button" id="questTracker" hidden><strong></strong><span></span></button>
 
   <!-- Bottom HUD -->
   <div id="hud">
@@ -91,6 +92,7 @@
   <div id="cursorItem" class="hidden"></div>
 
   <div id="msglog"></div>
+  <div id="questReceipt" role="status" aria-live="polite"></div>
   <div id="centerMsg" class="hidden"></div>
 
   <dialog id="deathScreen" aria-labelledby="deathTitle" aria-describedby="deathMessage">
@@ -130,7 +132,7 @@
 <script src="js/bootstrap.js?v=embergrave-exocet-1"></script>
 <script src="js/mobile_shell.js?v=embergrave-coop-9"></script>
 <script src="js/utils.js?v=embergrave-coop-9"></script>
-<script src="js/data.js?v=embergrave-coop-9"></script>
+<script src="js/data.js?v=embergrave-coop-9&quests=1"></script>
 <script src="js/unique_powers.js?v=embergrave-coop-9"></script>
 <script src="js/data_overrides.js?v=embergrave-coop-9"></script>
 <script src="js/combat_refinements.js?v=upgrades-1"></script>
@@ -138,15 +140,15 @@
 <script src="js/boss_vfx.js?v=embergrave-coop-9"></script>
 <script src="js/boss_encounters.js?v=embergrave-coop-9"></script>
 <script src="js/skill_perks.js?v=embergrave-coop-9"></script>
-<script src="js/sprite_manifest.js?v=embergrave-unique-art-1"></script>
+<script src="js/sprite_manifest.js?v=embergrave-unique-art-1&quests=1"></script>
 <script src="js/act1_animation_catalog.js?v=embergrave-coop-9"></script>
 <script src="js/sprite_assets.js?v=embergrave-mobile-fixes-1"></script>
 <script src="js/player3d.js?v=finished-1"></script>
 <script src="js/skill_audio_catalog.js?v=embergrave-coop-9"></script>
 <script src="js/skill_audio.js?v=embergrave-coop-9"></script>
-<script src="js/audio.js?v=cinematics-3"></script>
-<script src="js/prop_interactions.js?v=embergrave-coop-9"></script>
-<script src="js/mapgen.js?v=embergrave-coop-9"></script>
+<script src="js/audio.js?v=cinematics-3&quests=1"></script>
+<script src="js/prop_interactions.js?v=embergrave-coop-9&quests=1"></script>
+<script src="js/mapgen.js?v=embergrave-coop-9&quests=1"></script>
 <script src="js/navigation.js?v=embergrave-coop-9"></script>
 <script src="js/town_terrain.js?v=embergrave-coop-9"></script>
 <script src="js/level_terrain.js?v=embergrave-coop-9&patch=cathedral-contours-1"></script>
@@ -161,7 +163,7 @@
 <script src="js/act1_enemy_animation.js?v=embergrave-coop-9"></script>
 <script src="js/act5_enemy_animation.js?v=embergrave-coop-9"></script>
 <script src="js/act4_enemy_animation.js?v=embergrave-coop-9"></script>
-<script src="js/entities.js?v=embergrave-coop-9&patch=mobile-inventory-1"></script>
+<script src="js/entities.js?v=embergrave-coop-9&patch=mobile-inventory-1&quests=1"></script>
 <script src="js/skill_icons.js?v=embergrave-coop-9"></script>
 <script src="js/title_screen.js?v=embergrave-title-4"></script>
 <script src="js/management.js?v=embergrave-coop-9"></script>
@@ -172,19 +174,19 @@
 <script src="js/cinematic_scenes.js?v=cinematics-3"></script>
 <script src="js/cinematic_presentation.js?v=cinematics-3"></script>
 <script src="js/cinematics.js?v=cinematics-3"></script>
-<script src="js/ui.js?v=embergrave-coop-9&patch=cinematics-3"></script>
+<script src="js/ui.js?v=embergrave-coop-9&patch=cinematics-3&quests=1"></script>
 <script src="js/upgrade_ui.js?v=cinematics-1"></script>
 <script src="js/mobile-controls.js?v=embergrave-coop-9"></script>
 <script src="js/coop_protocol.js?v=embergrave-coop-9"></script>
 <script src="js/coop_config.js?v=embergrave-coop-9"></script>
 <script src="js/coop_store.js?v=embergrave-coop-9"></script>
-<script src="js/coop_codec.js?v=embergrave-coop-9"></script>
+<script src="js/coop_codec.js?v=embergrave-coop-9&quests=1"></script>
 <script src="js/coop_replication.js?v=embergrave-coop-9"></script>
 <script src="js/coop_motion.js?v=embergrave-coop-9"></script>
 <script src="js/coop_commands.js?v=embergrave-coop-9&patch=item-persistence-1"></script>
 <script src="js/coop_input.js?v=embergrave-coop-9"></script>
 <script src="js/coop_ui.js?v=embergrave-coop-9&patch=cinematics-3"></script>
-<script src="js/coop.js?v=embergrave-coop-9&patch=cinematics-3"></script>
-<script src="js/game.js?v=cinematics-3"></script>
+<script src="js/coop.js?v=embergrave-coop-9&patch=cinematics-3&quests=1"></script>
+<script src="js/game.js?v=cinematics-3&quests=1"></script>
 </body>
 </html>

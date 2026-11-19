@@ -262,6 +262,9 @@ const Sfx = (() => {
   /* ---------- one-shot SFX ---------- */
   const S = {
     click: playClick,
+    watchBell() { const t=ac.currentTime;for(const [hz,v] of [[223,.12],[555,.045],[984,.025]])osc('sine',hz,t,1.6,v); },
+    cryptBell() { const t=ac.currentTime;osc('sine',139,t,2.2,.09);osc('sine',348,t+.06,1.7,.035); },
+    reedChorus() { const t=ac.currentTime;for(const [i,hz] of [147,174,221].entries())osc('sine',hz,t+i*.16,1.35,.028,sfxBus,hz+3); },
     swing()      { noise(ac.currentTime, 0.16, 0.18, "bandpass", 500, 2400, 1.5); },
     hit()        { const t = ac.currentTime; noise(t, 0.1, 0.3, "lowpass", 900, 200); osc("triangle", 160, t, 0.09, 0.25, sfxBus, 60); },
     crit()       { const t = ac.currentTime; noise(t, 0.14, 0.4, "lowpass", 1400, 200); osc("triangle", 220, t, 0.12, 0.3, sfxBus, 50); osc("square", 90, t, 0.12, 0.18, sfxBus, 40); },
