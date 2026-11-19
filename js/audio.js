@@ -160,7 +160,11 @@ const Sfx = (() => {
     return ()=>{if(released)return;released=true;bus.gain.setTargetAtTime(0,ac.currentTime,.01);for(const source of [...filmSources])if(source._filmBus===bus){try{source.stop(ac.currentTime+.04);}catch{}}if(filmBus===bus)filmBus=null;setTimeout(()=>bus.disconnect(),80);};
   }
   function cinematicEnvelope(visual,time){
-    cinematicGain=visual==='destroy'?(time>=9&&time<14?.28:time>=14&&time<16?.1:.65):visual==='quieting'&&time>=14?.2:.65;
+    let gain=.65;
+    if(visual==='quieting')gain*=1-Math.min(1,Math.max(0,(time-12)/6));
+    else if(visual==='destroy'&&time>=9&&time<16)gain=time<14?.28:.1;
+    if(gain===cinematicGain)return;
+    cinematicGain=gain;
     applyRecordedVolume();if(musBus)musBus.gain.setTargetAtTime(vol.music*cinematicGain,ac.currentTime,.12);
   }
   function cinematicCue(id){
@@ -178,6 +182,7 @@ const Sfx = (() => {
       case 'chains':for(let i=0;i<6;i++)noise(t+i*.08,.07,.08,'bandpass',1900-i*140,500,3,b);tone(175,.55,.025,145);break;
       case 'chainBreak':grain(.08,.22,2600,1400);tone(470,.4,.07,220);grain(.32,.09,1200,400);break;
       case 'water':grain(2.5,.085,730,300,'lowpass');grain(1.1,.03,3100,1600);break;
+      case 'lastRipple':grain(1.6,.065,920,290,'lowpass');noise(t+1,2.8,.025,'bandpass',520,145,1.1,b);break;
       case 'paper':grain(.35,.08,2300,1300,'highpass');break;
       case 'ward':for(const [i,f]of [220,330,440,660].entries())osc('sine',f,t+i*.08,2,.045,b,f*.94);grain(1.5,.045,650,1200);break;
       case 'mechanism':tone(93,2,.08,116);for(let i=0;i<5;i++)noise(t+i*.27,.12,.07,'bandpass',700,200,2,b);break;

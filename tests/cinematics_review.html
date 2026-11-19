@@ -20,6 +20,7 @@ section>h2{font:17px Georgia;margin:5px 0 8px}iframe{display:block;border:1px so
 <p>Isolated heroes and in-memory saves. Compare the original staging, inspect contacts, or watch a complete scene.</p>
 <fieldset id="controls" disabled><legend>Scene review</legend>
 <select id="scene" aria-label="Scene"></select><select id="hero" aria-label="Hero class"></select>
+<label>World seed <select id="seed"><option>7136411</option><option>1992887243</option></select></label>
 <select id="form" aria-label="Wildkeeper form"><option value="">Human form</option><option value="form_fang">Fang</option><option value="form_brute">Brute</option><option value="form_stone">Stone</option><option value="form_apex">Apex</option></select>
 <select id="equipment" aria-label="Equipment"><option value="starter">Starter gear</option><option value="veteran">Veteran gear</option><option value="mythic">Mythic gear</option></select><br>
 <button id="play">Play scene</button><button id="pause">Pause / resume</button><button id="advance">Advance 5 seconds</button><button id="step">Step one frame</button><button id="skip">Skip</button>
@@ -58,9 +59,10 @@ function selected(){return after.catalog.get($('scene').value);}
 function navigation(){
  const d=selected();$('timeline').max=d.duration;$('shotList').replaceChildren();
  for(const shot of d.shots){const b=document.createElement('button');b.textContent=shot.at+'s · '+shot.id;b.onclick=()=>seek(shot.at+.2);$('shotList').append(b);}
- const url=new URL(location.href);url.searchParams.set('scene',d.id);history.replaceState(null,'',url);
+ const url=new URL(location.href);url.searchParams.set('scene',d.id);url.searchParams.set('seed',$('seed').value);history.replaceState(null,'',url);
 }
 async function appearance(view){
+ view.game.state.seed=Number($('seed').value);
  let cls=$('hero').value;const form=$('form').value;if(form)cls='wildkeeper';
  if(view.game.state.player.classId!==cls){const p=view.game.coop.makeHero('Cinematic Review',cls);Object.assign(p,{x:view.game.state.player.x,y:view.game.state.player.y});view.game.state.player=p;view.game.state.players=[p];}
  const p=view.game.state.player;p.buffs=p.buffs.filter(b=>!b.id?.startsWith('form_'));if(form)p.buffs.push({id:form,t:999,stacks:1});
@@ -78,16 +80,19 @@ async function play(){
  $('timeline').value=0;captions();
 }
 async function seek(t){
- if(!after.cine.state)await play();
+ if(after.cine.state?.id!==selected().id)await play();
  for(const v of views()){for(let i=0;i<500&&!v.cine.state?.ready;i++)await wait(30);v.cine.setPaused(true);v.cine.seek(t);}paused=true;
  $('timeline').value=t;captions();
 }
 try{
+ const initialSeed=new URLSearchParams(location.search).get('seed');
+ if([...$('seed').options].some(o=>o.value===initialSeed))$('seed').value=initialSeed;
  after=await boot();
  for(const d of after.catalog.all){const o=document.createElement('option');o.value=d.id;o.textContent=(d.ending?'Ending':'Act '+d.act)+' · '+d.title+' · '+d.duration+'s';$('scene').append(o);}
  const initialScene=new URLSearchParams(location.search).get('scene');if(after.catalog.get(initialScene))$('scene').value=initialScene;
  for(const [id,name]of [['vanguard','Vanguard'],['emberwitch','Ember Witch'],['gravebinder','Gravebinder'],['veilranger','Veil Ranger'],['wildkeeper','Wildkeeper']]){const o=document.createElement('option');o.value=id;o.textContent=name;$('hero').append(o);}
  $('scene').onchange=navigation;$('play').onclick=play;
+ $('seed').onchange=async()=>{navigation();if(after.cine.state){const at=after.cine.state.time;await play();await seek(at);}};
  $('pause').onclick=()=>{paused=!paused;for(const v of views())v.cine.setPaused(paused);};
  $('advance').onclick=()=>seek((after.cine.state?.time||0)+5);
  $('step').onclick=()=>seek((after.cine.state?.time||0)+1/30);

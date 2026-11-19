@@ -2341,8 +2341,8 @@ const UI = (() => {
   let videoOn = false;
   function cinematicActive() { return (typeof Cinematics!=='undefined'&&Cinematics.active) || (typeof UpgradeUI!=="undefined"&&UpgradeUI.active) || videoOn || !els.cinematic.classList.contains("hidden"); }
   /* play a full-screen video, pausing the game; fade in, then fade back and call onDone */
-  function playVideo(src, onDone, coopLocal=false) {
-    if(typeof Coop!=="undefined"&&Coop.active&&!coopLocal)return Coop.cinematic(src,onDone);
+  function playVideo(src, onDone, coopLocal=false,anchor=null) {
+    if(typeof Coop!=="undefined"&&Coop.active&&!coopLocal)return Coop.cinematic(src,onDone,anchor);
     closeAll();closeEsc();Game.cancelMenuInput();
     const el = els.cinematic;
     videoOn = true;
@@ -2401,7 +2401,7 @@ const UI = (() => {
         "Then she nods, and is gone, and the sky knits shut behind her.",
         "She will guard it. You tell yourself that. You almost believe it."] },
   };
-  function openFinalChoice() {
+  function openFinalChoice(backdrop=null) {
     const el = els.cinematic;
     el.onclick=null;clearCin();Game.cancelMenuInput();
     el.classList.remove("hidden");
@@ -2409,6 +2409,14 @@ const UI = (() => {
       <div class="cintext"><span class="ln show em">Vethriss is dead. The gathered shards collapse into a single, humming core at your feet.</span>
       <span class="ln show">It is the last piece of the Sunderstone left whole — and the choice of what becomes of it is yours alone.</span></div>
       <div id="choiceList"></div></div>`;
+    if(backdrop?.image){
+      const {image,coreX}=backdrop;
+      image.className='cine-choice-still';image.setAttribute('aria-hidden','true');el.prepend(image);
+      const wrap=el.querySelector('.cinwrap');wrap.classList.add('cine-choice-panel');
+      if(coreX>.5)wrap.classList.add('cine-choice-left');
+      wrap.style.setProperty('--choice-room',100*(Math.max(coreX,1-coreX)-.09)+'%');
+      wrap.querySelector('.cintext').textContent='What will you do with the last core?';
+    }
     const list = el.querySelector("#choiceList");
     for (const key of ["give", "seal", "destroy"]) {
       const e = ENDINGS[key];
@@ -2424,7 +2432,7 @@ const UI = (() => {
     if(!afterScene&&typeof Cinematics!=='undefined'&&!(typeof Coop!=='undefined'&&Coop.active)){
       Game.recordEnding(key);const world=Game.state;
       if(world?.flags.ending!==key)return;
-      els.cinematic.classList.add('hidden');els.cinematic.onclick=null;clearCin();
+      els.cinematic.classList.add('hidden');els.cinematic.onclick=null;els.cinematic.replaceChildren();clearCin();
       Cinematics.request('ending_'+key).then(result=>{
         if(result==='cancelled'||Game.state!==world)return;
         const el=els.cinematic;el.replaceChildren();el.classList.remove('hidden');

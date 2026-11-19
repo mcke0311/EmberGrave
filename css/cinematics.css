@@ -10,6 +10,13 @@
 .cine-speaker:empty { display:none; }
 .cine-line { font:clamp(16px,1.65vw,22px)/1.45 Georgia,serif;letter-spacing:.15px;margin:0; }
 .cine-caption[hidden] { display:none; }
+.cine-playing #coopHUD { visibility:hidden;pointer-events:none; }
+#cinematic .cine-choice-still { position:absolute;inset:0;width:100%;height:100%;pointer-events:none; }
+#cinematic .cine-choice-panel { position:relative;box-sizing:border-box;margin-left:auto;width:min(57%,620px,var(--choice-room));max-height:100%;overflow:auto;padding:22px max(18px,env(safe-area-inset-right)) 22px 18px;background:linear-gradient(90deg,#0b1017df,#080c11f5); }
+#cinematic .cine-choice-left { margin-left:0;margin-right:auto;padding-left:max(18px,env(safe-area-inset-left)); }
+#cinematic .cine-choice-panel .cintext { min-height:0;font:22px/1.3 Georgia,serif;letter-spacing:0;margin:0 0 12px; }
+#cinematic .cine-choice-panel .choicebtn { width:100%;max-width:100%; }
+@media(max-height:500px){#cinematic .cine-choice-panel { width:min(59%,var(--choice-room));padding:8px max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left)); }#cinematic .cine-choice-panel .cintext { font-size:17px;margin:0; }#cinematic .cine-choice-panel .choicebtn { padding:4px 9px;margin:5px 0;font-size:12px;line-height:1.25; }#cinematic .cine-choice-panel .choicebtn b { font-size:14px;letter-spacing:0; }}
 .cine-heading { pointer-events:none; }
 .cine-button { pointer-events:auto;min-height:46px;padding:10px 20px;border:1px solid #9b8869;background:#141a20ed;color:#eee4ce;font:14px/1.5 var(--font-game);cursor:pointer; }
 .cine-button:hover { background:#29323c; }

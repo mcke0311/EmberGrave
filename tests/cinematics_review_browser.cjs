@@ -6,9 +6,10 @@ const base=process.env.GAME_REVIEW_URL||'http://127.0.0.1:8741',out=path.join(__
  const browser=await chromium.launch({channel:'chrome',headless:true}),page=await browser.newPage({viewport:{width:1366,height:1000}}),errors=[];let checks=0;
  page.on('pageerror',e=>errors.push(e.stack));
  try{
-  await page.goto(base+'/tests/cinematics_review.html?scene=ilyan');await page.waitForFunction(()=>window.cinematicReview,{},{timeout:120000});
+  await page.goto(base+'/tests/cinematics_review.html?scene=ilyan&seed=1992887243');await page.waitForFunction(()=>window.cinematicReview,{},{timeout:120000});
   assert.equal(await page.getByLabel('Scene',{exact:true}).inputValue(),'ilyan');assert.equal(await page.locator('#scene option').count(),20);checks+=2;
   await page.getByRole('button',{name:'Play scene',exact:true}).click();await page.waitForFunction(()=>cinematicReview.cine.state?.ready);
+  assert.equal(await page.evaluate(()=>cinematicReview.game.state.seed),1992887243);checks++;
   assert.equal(await page.evaluate(()=>cinematicReview.cine.state.fallback),false);checks++;
   await page.getByRole('button',{name:'Pause / resume',exact:true}).click();const time=await page.evaluate(()=>cinematicReview.cine.state.time);
   await page.waitForTimeout(150);assert.equal(await page.evaluate(()=>cinematicReview.cine.state.time),time);checks++;

@@ -19,7 +19,8 @@ const check=(condition,message)=>{assert.ok(condition,message);checks++;};
  });
  async function start(id,context={}){
   await page.evaluate(({id,context})=>{Cinematics.cancel();Cinematics.request(id,{replay:true,...context});}, {id,context});
-  await page.waitForFunction(()=>Cinematics.state?.ready,null,{timeout:60000});check(!(await page.evaluate(()=>Cinematics.state.fallback)),id+' asset preparation');
+  await page.waitForFunction(()=>Cinematics.state?.ready,null,{timeout:60000});
+  const state=await page.evaluate(()=>Cinematics.state);check(!state.fallback,id+' asset preparation '+(state.error||''));
   await page.evaluate(()=>Cinematics.setPaused(true));
  }
  async function seek(t){await page.evaluate(t=>Cinematics.seek(t),t);await settle();}
@@ -28,8 +29,11 @@ const check=(condition,message)=>{assert.ok(condition,message);checks++;};
   await page.evaluate(async()=>{Sfx.setVol('master',0);await Game.newGame('Direction QA','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);UI.closeAll();UI.openEsc();Game.debugFlags.god=true;await document.fonts.ready;});
   const origin=await campaign(),defs=await page.evaluate(()=>CinematicScenes.all);
   check(defs.length===20,'stable 20-scene catalog');
+  for(const ending of defs.filter(d=>d.ending))check(defs.filter(d=>!d.ending||d===ending).reduce((seconds,d)=>seconds+d.duration,0)===289,'first-play duration with '+ending.ending);
   for(const d of defs){
    await start(d.id);check(d.shots.length>=3,d.id+' distinct shots');
+   check(d.transcript.some(line=>!('to' in line))&&d.captions.every(c=>d.transcript.some(line=>line.text===c.text)),d.id+' transcript covers actions and speech');
+   check(d.captions.every(c=>c.text.length/(c.to-c.at)<=17),d.id+' captions within reading time');
    if(d.id==='core')check(await page.evaluate(()=>Cinematics.__session().stage.remains.spriteOpts.bossPhase===2),'Last Core follows the unveiled boss defeat');
    if(d.id==='vethriss')check(await page.evaluate(()=>Cinematics.__session().stage.wounded.cineFrame===7),'Wounded Warden begins with the dedicated wounded pose');
    if(d.object)check(await page.evaluate(()=>{const s=Cinematics.__session(),pr=s.world.map.props.find(p=>p.storyId===s.d.object);return !pr||CinematicPresentation.architectureAlpha(s,{kind:'prop',pr})===0;}),d.id+' staged object replaces the collected marker');
@@ -52,9 +56,46 @@ const check=(condition,message)=>{assert.ok(condition,message);checks++;};
     await page.evaluate(()=>document.querySelector('.cine-caption').style.visibility='hidden');
     const file=d.id+'-'+i+'.png';await page.screenshot({path:path.join(out,file)});shots.push({id:d.id,t,shot:shot.id,stage:before.stage,file,rasterError});
    }
+   if(d.boss)check(await page.evaluate(()=>{
+    const s=Cinematics.__session(),g=s.stage,boss=s.world.monsters.find(m=>m.defId===s.d.boss);
+    const side=(hero,opponent)=>Math.sign(U.isoX(hero.x-opponent.x,hero.y-opponent.y));
+    return side(g.hero,g.focus)===side(s.world.player,boss)&&s.shot.target==='pair';
+   }),d.id+' finishes with the hero on the gameplay approach side');
    await page.evaluate(()=>{Cinematics.cancel('direction QA');UI.openEsc();});const restored=await campaign();if(restored!==origin){fs.writeFileSync(path.join(out,'campaign-before.json'),origin);fs.writeFileSync(path.join(out,'campaign-after.json'),restored);}check(restored===origin,d.id+' replay cannot write campaign or map');
    check(await page.evaluate(()=>Cinematics.cameraFrame()===null),'camera cleanup '+d.id);
   }
+  const originalSeed=await page.evaluate(()=>Game.state.seed);
+  for(const seed of [7136411,1992887243]){
+   await page.evaluate(seed=>{Game.state.seed=seed;},seed);
+   for(const [width,height] of [[1280,720],[844,390],[568,320]]){
+    await page.setViewportSize({width,height});await start('hell_portal');
+    const samples=await page.evaluate(()=>[3,5,7,9,10,12].map(t=>{
+     Cinematics.seek(t);const g=Cinematics.__session().stage;
+     return {radius:g.core.fragmentRadius,portal:g.gateway.aperture,shards:g.core.alpha};
+    }));
+    check(samples[0].radius===68&&samples.slice(1,5).every((v,i)=>v.radius<samples[i].radius)&&samples[4].radius===0,'shards converge into one point '+seed+' '+width);
+    check(samples.slice(0,5).every(v=>v.portal===0)&&samples[5].portal===1&&samples[5].shards===0,'portal opens after contact '+width);
+    await seek(14);
+    const visibility=await page.evaluate(()=>{
+     const s=Cinematics.__session(),g=s.stage,c=Cinematics.cameraFrame(),gate=g.gateway;
+     const lit=Game.cinematicSnapshot(s.world),size=Math.max(10,Math.round(c.zoom*19));
+     const x=Math.round((U.isoX(gate.x,gate.y)-U.isoX(c.x,c.y))*c.zoom+lit.width*c.anchorX);
+     const y=Math.round((U.isoY(gate.x,gate.y)-U.isoY(c.x,c.y)-gate.height*.46+c.lift)*c.zoom+lit.height*c.anchorY);
+     const crop=image=>image.getContext('2d').getImageData(x-size,y-size,size*2,size*2).data;
+     const visible=crop(lit);let background;
+     try{gate.alpha=0;background=crop(Game.cinematicSnapshot(s.world));}finally{gate.alpha=1;}
+     let changed=0;
+     for(let i=0;i<visible.length;i+=4)if(Math.max(...[0,1,2].map(k=>Math.abs(visible[i+k]-background[i+k])))>12)changed++;
+     const body=g.remains,bounds=SpriteAssets.actorGeometry(body.spriteOpts,body.pose(),0,0,1.1);
+     const gap=U.isoX(gate.x-body.x,gate.y-body.y);
+     return {changed:changed/(visible.length/4),clear:gap-size/c.zoom>bounds.right||gap+size/c.zoom<bounds.left,
+      framed:x-size>=0&&x+size<=lit.width&&y-size>=0&&(y+size)/lit.height*innerHeight<document.querySelector('.cine-caption').getBoundingClientRect().top};
+    });
+    check(visibility.clear&&visibility.framed&&visibility.changed>.55,'unobstructed rendered Hell view '+seed+' '+width+' '+JSON.stringify(visibility));
+   }
+  }
+  await page.setViewportSize({width:1280,height:720});await page.evaluate(seed=>{Cinematics.cancel();Game.state.seed=seed;UI.openEsc();},originalSeed);
+  await start('vethriss');for(const t of [2,7,12,16,19]){await seek(t);check(await page.evaluate(()=>Cinematics.__session().stage.wounded.cineFrame===7),'wounded posture through plea and shadow '+t);}
   // Contacts occur twice, with the shard withdrawing between them; cues agree.
   await start('ending_destroy');await page.evaluate(()=>{window.cues=[];const cue=Sfx.cinematicCue;Sfx.cinematicCue=(id)=>{cues.push({id,t:Cinematics.state.time});return cue(id);};});
   for(const t of [10.38,12.92]){await seek(t);check((await snapshot()).props.find(p=>p.kind==='heldShard').contactWeight>.999,'purposeful shard contact '+t);}
@@ -102,7 +143,8 @@ const check=(condition,message)=>{assert.ok(condition,message);checks++;};
   // A genuinely missing atlas exercises the caption fallback and full cleanup.
   const failure=await browser.newPage();await failure.route('**/assets/cinematics/props.webp',r=>r.fulfill({status:404,body:''}));await failure.goto(base+'/index.html');await failure.waitForSelector('#titleMenu button',{timeout:120000});
   await failure.evaluate(async()=>{Sfx.setVol('master',0);await Game.newGame('Missing art QA','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);UI.closeAll();Cinematics.request('ending_destroy',{replay:true});});await failure.waitForFunction(()=>Cinematics.state?.fallback);
-  check((await failure.locator('.cine-caption').innerText()).includes('free'),'missing new artwork preserves transcript');await failure.getByRole('button',{name:'Continue',exact:true}).click();check(await failure.evaluate(()=>!Cinematics.playing&&Cinematics.cameraFrame()===null),'missing artwork cleanup');await failure.close();
+  const transcript=await failure.locator('.cine-caption').innerText();
+  check(transcript.includes('free')&&transcript.includes('strike the core twice'),'missing artwork preserves dialogue and silent actions');await failure.getByRole('button',{name:'Continue',exact:true}).click();check(await failure.evaluate(()=>!Cinematics.playing&&Cinematics.cameraFrame()===null),'missing artwork cleanup');await failure.close();
   fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({checks,shots,appearances,errors},null,2));console.log(`PASS ${checks} cinematic direction checks; ${shots.length} repeatable shots, 54 class/form/equipment/layout combinations, contacts, sound cues, reduced motion, all ending interruptions and real missing-art fallback`);
  }catch(e){await page.screenshot({path:path.join(out,'failure.png')});throw e;}finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

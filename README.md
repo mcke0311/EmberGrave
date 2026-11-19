@@ -79,15 +79,16 @@ Completing the saga and choosing the core's fate unlocks the next **difficulty t
 Each act boss lights a **waystone** to the next act's camp. The finale ends in a
 **three-way choice** over the last Sunderstone core, each with its own ending.
 
-The main saga has **20 live cinematics**: story discoveries, six boss introductions,
+The main saga has **20 live cinematics** covering story discoveries, six boss introductions,
 act arrivals and all three endings. A first journey includes 17 campaign scenes
-and its chosen ending, totaling about five minutes. They use your equipped hero
-and the existing world art. **Skip scene** or **Escape** resumes play immediately.
-Turn off **Automatic cinematics** in Gameplay settings; reached scenes remain
+and its chosen ending, totaling 4 minutes 49 seconds. They use your equipped hero
+and the existing world art. **Skip scene** or **Escape** resumes solo play immediately.
+Turning off **Automatic cinematics** in Gameplay settings keeps reached scenes
 available in **Pause → Cinematics**, with transcripts and isolated replays.
-Viewing history carries across difficulties. Existing co-op Act I presentations
-continue unchanged. See [the cinematic guide](docs/CINEMATICS.md) and the isolated
-20-scene review at `tests/cinematics_review.html`.
+Viewing history carries across difficulties. In Act I co-op, each player sees their
+own equipped hero and active form in the Oathsworn and Korvath introductions.
+The encounter resumes when its viewers finish or skip. The review player covers
+all 20 scenes. [Cinematic guide](docs/CINEMATICS.md) · [Review player](tests/cinematics_review.html)
 
 Quests are handed out by the people and postings of each camp (look for the
 bobbing **!** / **?**). Bosses fight in **phases** — shedding armor, changing shape,

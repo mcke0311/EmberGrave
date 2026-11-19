@@ -259,6 +259,40 @@ test('occupied disconnected worlds keep ticking, background pauses and dormant c
   await travel(f,'host','north_wild');f.runtime.tick(1/30);assert.ok(Math.abs(wild.time-time-1/30)<1e-8);
 });
 
+test('cinematic acknowledgements release only their own viewer, event and area',async()=>{
+  const f=await session();
+  await f.runtime.receive('third',{kind:'hero',hero:f.hero('Third','gravebinder')});
+  await travel(f,'host','north_wild');await travel(f,'guest','north_wild');
+  const wild=f.runtime.worlds.get('north_wild'),town=f.runtime.worlds.get('frosthaven');
+  const anchor=wild.map.frontier.anchors.beacons[0];
+  let resumed=0;
+  function begin(){
+    f.Game.coop.withWorld(wild,()=>f.runtime.cinematic('assets/cine_oathsworn.mp4',()=>resumed++,{x:anchor.x,y:anchor.y}));
+    return wild._cinematic.id;
+  }
+  const ack=(who,id)=>f.runtime.receive(who,{kind:'cinematicDone',id});
+  const id=begin(),events=f.messages.filter(m=>m.payload?.type==='cinematic'&&m.payload.id===id);
+  assert.deepEqual(events.map(m=>m.to||'host').sort(),['guest','host']);
+  assert.ok(events.every(m=>m.payload.worldId==='north_wild'&&m.payload.anchor.x===anchor.x&&m.payload.anchor.y===anchor.y));
+  await ack('guest',id);await ack('guest',id);await ack('third',id);await ack('host',id+'-stale');
+  const held=wild.time,running=town.time;
+  f.runtime.tick(1/30);assert.equal(wild.time,held);assert.ok(town.time>running);
+  assert.deepEqual([...wild._cinematic.pending],['host']);assert.equal(resumed,0);
+  await ack('host',id);await ack('host',id);f.runtime.tick(1/30);
+  assert.equal(resumed,1);assert.ok(wild.time>held);
+
+  const interrupted=begin();await ack('host',interrupted);
+  f.runtime.roster([{id:'host',connected:true},{id:'guest',connected:false},{id:'third',connected:true}]);
+  f.runtime.tick(1/30);await ack('guest',interrupted);assert.equal(resumed,2);
+  f.runtime.roster([{id:'host',connected:true},{id:'guest',connected:true},{id:'third',connected:true}]);
+  const timeout=begin();await ack('host',timeout);await ack('guest',interrupted);
+  f.runtime.tick(44);assert.equal(resumed,2);f.runtime.tick(1.1);
+  assert.equal(wild._cinematic,null);assert.equal(resumed,3);
+  const ends=f.messages.filter(m=>m.payload?.type==='cinematicEnd'&&m.payload.id===timeout);
+  assert.deepEqual(ends.map(m=>m.to||'host').sort(),['guest','host']);
+  await ack('guest',timeout);assert.equal(resumed,3);
+});
+
 test('four worlds share the full Act I campaign, area cinematics, reward ledger and migrated saves',async()=>{
   const f=await session();
   await f.runtime.receive('third',{kind:'hero',hero:f.hero('Third','gravebinder')});

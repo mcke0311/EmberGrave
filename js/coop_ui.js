@@ -112,13 +112,13 @@ const CoopUI=(()=>{
   }
   function refreshParty(){
     const list=document.getElementById('partyRoster');if(!list)return;
-    const players=partyPlayers(),key=JSON.stringify(players.map(p=>[p._coopId,p.name,p.dead,p.connected,p.zone,Math.ceil(Math.max(p.combatUntil||0,p.teleportUntil||0)-(Game.state?.partyTime||0))]));
-    if(list.dataset.key!==key){list.dataset.key=key;list.replaceChildren();for(const p of players){const row=el('div',null,'coop-row');row.append(el('strong',p.name+' · '+DATA.CLASSES[p.classId].name),el('span',DATA.ZONES[p.zone||Game.state.map.id]?.name||p.zone));
+    const currentZone=Game.state?.map?.id,players=partyPlayers(),key=JSON.stringify(players.map(p=>[p._coopId,p.name,p.dead,p.connected,p.zone||currentZone,Math.ceil(Math.max(p.combatUntil||0,p.teleportUntil||0)-(Game.state?.partyTime||0))]));
+    if(list.dataset.key!==key){list.dataset.key=key;list.replaceChildren();for(const p of players){const row=el('div',null,'coop-row');row.append(el('strong',p.name+' · '+DATA.CLASSES[p.classId].name),el('span',DATA.ZONES[p.zone||currentZone]?.name||p.zone));
       const health=el('span');health.dataset.player=p._coopId;row.append(health);
       if(!p.dead&&p.connected!==false&&p._coopId!==Coop.localId){const teleport=button('Teleport to player',()=>Coop.teleportToPlayer(p._coopId));teleport.disabled=Game.state.player.dead||Math.max(p.combatUntil||0,Game.state.player.combatUntil||0,Game.state.player.teleportUntil||0)>Game.state.partyTime;row.append(teleport);}
       if(p.dead&&p._coopId===Coop.localId)row.append(button('Return to Frosthaven',()=>Game.submitCommand({type:'respawn'})));
       if(p.dead&&p._coopId===Coop.localId&&Game.state.map.zone.arena&&Game.state.players.every(h=>h.dead||h.connected===false))row.append(button('Retry at arena entrance',()=>Game.submitCommand({type:'retryArena'})));
-      if(p.dead&&p._coopId!==Coop.localId&&(!p.zone||p.zone===Game.state.map.id))row.append(button('Revive',()=>Game.submitCommand({type:'revive',targetId:p._coopId})));list.append(row);
+      if(p.dead&&p._coopId!==Coop.localId&&(!p.zone||p.zone===currentZone))row.append(button('Revive',()=>Game.submitCommand({type:'revive',targetId:p._coopId})));list.append(row);
     }}
     for(const label of list.querySelectorAll('[data-player]')){const p=players.find(p=>p._coopId===label.dataset.player);const text=(p.connected===false?'Offline':p.dead?'Fallen':'Connected')+' · '+Math.ceil(p.hp)+' / '+Math.ceil(p.stats.maxHp)+' Life';if(label.textContent!==text)label.textContent=text;}
     const ready=document.getElementById('partyReady'),isReady=!!Coop.roster.find(p=>p.id===Coop.localId)?.ready;ready.textContent=isReady?'Ready ✓':'Ready';ready.setAttribute('aria-pressed',String(isReady));
@@ -129,6 +129,33 @@ const CoopUI=(()=>{
   function skillPick(which){UI.openSkillPick(which);}
   function travel(m){const d=shell('Travel together','travel');travelId=m.id;d.append(el('p','Journey to '+DATA.ZONES[m.zone].name+'?'));const row=el('div',null,'coop-actions');row.append(button('Ready to travel',()=>{Coop.answerTravel(true);status('Waiting for your party…');},'coop-primary'),button('Stay here',()=>{Coop.answerTravel(false);close();}));d.append(row);}
   function closeTravel(){travelId=null;if(screen==='travel')close();}
-  function cinematic(e){UI.playVideo(e.src,()=>Coop.cinematicDone(e.id),true);}
-  return {open,close,status,refresh,tick,party,management,skillPick,travel,closeTravel,cinematic,get isOpen(){return !!dialog?.open;},get travelId(){return travelId;}};
+  const partyScenes={'assets/cine_oathsworn.mp4':'oathsworn','assets/cine_korvath.mp4':'korvath'};
+  const receivedFilms=new Set();
+  let activeFilm=null,areaFilm=null;
+  function finishFilm(id){
+    if(activeFilm!==id)return;
+    activeFilm=null;Coop.cinematicDone(id);
+  }
+  function cinematicEnded(id){
+    receivedFilms.add(id);
+    if(areaFilm===id)areaFilm=null;
+    if(activeFilm!==id)return;
+    activeFilm=null;Cinematics.endPartyScene(id);
+  }
+  function resetCinematics(){
+    if(activeFilm)cinematicEnded(activeFilm);
+    areaFilm=null;receivedFilms.clear();
+  }
+  function interruptCinematic(){areaFilm=null;if(activeFilm)Cinematics.endPartyScene(activeFilm);}
+  function cinematic(e){
+    if(!e.id||receivedFilms.has(e.id))return;
+    if(activeFilm)cinematicEnded(activeFilm);
+    receivedFilms.add(e.id);activeFilm=e.id;
+    const scene=partyScenes[e.src];
+    if(!scene){UI.playVideo(e.src,()=>finishFilm(e.id),true);return;}
+    if(e.waitForParty&&e.worldId===Game.state?.map?.id)areaFilm=e.id;
+    if(dialog?.open)close();
+    Cinematics.playPartyScene(scene,e).then(()=>finishFilm(e.id));
+  }
+  return {open,close,status,refresh,tick,party,management,skillPick,travel,closeTravel,cinematic,cinematicEnded,resetCinematics,interruptCinematic,get waitingForFilm(){return !!areaFilm;},get isOpen(){return !!dialog?.open;},get travelId(){return travelId;}};
 })();

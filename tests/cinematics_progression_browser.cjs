@@ -21,6 +21,13 @@ fs.mkdirSync(out,{recursive:true});
  async function visit(zone){await page.evaluate(async zone=>{Cinematics.cancel('QA travel');if(Game.state.map.bossArena)Game.state.map.bossArena.sealed=false;Game.options.cinematics=false;await Game.enterMap(zone);Game.state.monsters=[];Game.state.fx=[];Game.state.projectiles=[];Game.options.cinematics=true;UI.closeAll();},zone);}
  async function scene(id){await page.waitForFunction(id=>Cinematics.state?.id===id&&Cinematics.state.ready,id,{timeout:60000});ok(await page.evaluate(()=>!Cinematics.state.fallback),id+' uses live artwork');}
  async function skip(){await page.getByRole('button',{name:'Skip scene',exact:true}).click();}
+ async function reachLastCore(){
+  await visit('arena_vethriss');await page.evaluate(()=>{
+   const s=Game.state,arena=s.map.bossArena,boss=Game.cinematicActor('vethriss',{x:arena.cx,y:arena.cy},s);
+   s.quests.q18={state:'active'};boss.dead=true;s.monsters.push(boss);
+   Game.onMonsterDeath(boss,s.player);Game.__cineQA.flush(4);
+  });await scene('core');
+ }
  try{
   page=await create();
   // Beacon destruction stages render-only warriors; real enemies appear once afterwards.
@@ -51,9 +58,27 @@ fs.mkdirSync(out,{recursive:true});
   await page.evaluate(()=>{Game.state.quests.q16={state:'done'};Game.state.quests.q17={state:'done'};});await visit('arena_malthoron');
   await page.evaluate(()=>{const s=Game.state;s.flags['dead_malthoron@0']=true;s.quests.q17={state:'done'};delete s.characterFlags.cinematics.seen.breach;Game.__cineQA.interactStory(s.map.props.find(p=>p.storyId==='hell_portal'));});await scene('hell_portal');
   ok(await page.evaluate(()=>Game.state.map.id==='arena_malthoron'),'portal travel is deferred until the scene ends');await skip();await scene('breach');ok(await page.evaluate(()=>Game.state.map.id==='hellgate'&&Game.state.quests.q17.state==='done'),'portal resumes normal committed travel');await skip();
+  await reachLastCore();
+  const lastPose=await page.evaluate(()=>{
+   const snapshot=Game.cinematicSnapshot;let clip;
+   Game.cinematicSnapshot=world=>{clip=Cinematics.actorView(world.player).cinematicClip;return snapshot(world);};
+   try{Cinematics.tick(10);}finally{Game.cinematicSnapshot=snapshot;}
+   return clip;
+  });await page.waitForSelector('.cine-choice-still');
+  ok(lastPose==='kneel'&&await page.evaluate(()=>document.querySelector('.cine-choice-still').width>0&&!Game.state.flags.ending&&document.querySelectorAll('.cine-choice-panel button').length===3),'natural Last Core completion carries its final kneeling frame into the three choices');
+  await page.screenshot({path:out+'/last-core-choice.png'});
   // An interrupted scene keeps its unlock; loading an unchosen finale restores the choice.
   await page.evaluate(()=>{Game.state.flags['dead_vethriss@0']=true;Game.state.quests.q18={state:'reward'};Game.saveGame();window.qaSlot=Game.listSaves().find(s=>s.name==='Campaign Cinematic QA').slot;Game.saveAndQuit();});
   await page.evaluate(async()=>{await Game.loadGame(qaSlot);});ok(await page.locator('.choicebtn').count()===3,'unchosen finale restored on load');
+  const unchosen=await page.evaluate(()=>({slot:qaSlot,record:localStorage.getItem(qaSlot)}));
+  for(const [key,title] of [['destroy','Destroy the Core'],['give','Give It to Seraneth']]){
+   const branch=await create();
+   await branch.evaluate(async({slot,record})=>{localStorage.setItem(slot,record);await Game.loadGame(slot);},unchosen);
+   await branch.getByRole('button',{name:new RegExp(title,'i')}).click();
+   await branch.waitForFunction(key=>Cinematics.state?.id==='ending_'+key&&Cinematics.state.ready,key);
+   ok(await branch.evaluate(key=>Game.state.flags.ending===key&&Game.state.characterFlags.cinematics.unlocked['ending_'+key],key),'choice commits '+key);
+   await branch.getByRole('button',{name:'Skip scene',exact:true}).click();await branch.context().close();
+  }
   await page.keyboard.press('Escape');ok(await page.evaluate(()=>!Game.state.flags.ending),'Escape cannot select an ending');await page.evaluate(()=>UI.closeEsc());
   await page.getByRole('button',{name:/Seal It Away/}).click();await scene('ending_seal');
   const committed=await page.evaluate(()=>{const d=JSON.parse(localStorage.getItem(qaSlot));return {ending:d.campaignsByDifficulty[0].flags.ending,unlock:d.characterFlags.cinematics.unlocked.ending_seal,difficulty:d.unlockedDiff};});
@@ -89,6 +114,16 @@ fs.mkdirSync(out,{recursive:true});
   for(const form of ['form_fang','form_brute','form_stone','form_apex']){
    await page.evaluate(form=>{Game.state.player.buffs=[{id:form,ttl:1000}];Cinematics.request('ending_seal',{replay:true});},form);await scene('ending_seal');
    await page.evaluate(()=>{Cinematics.tick(13);Cinematics.setPaused(true);});await page.waitForTimeout(80);ok(await page.locator('#appFatal').count()===0,'phone form '+form);await page.screenshot({path:out+'/phone-'+form+'.png'});await page.getByRole('button',{name:'Skip scene',exact:true}).tap();
+  }
+  await reachLastCore();await page.evaluate(()=>Cinematics.tick(10));await page.waitForSelector('.cine-choice-still');
+  for(const [width,height] of [[568,320],[844,390]]){
+   await page.setViewportSize({width,height});
+   ok(await page.evaluate(()=>{
+    const choices=document.querySelector('.cine-choice-panel'),panel=choices.getBoundingClientRect(),buttons=[...choices.querySelectorAll('button')];
+    const clear=choices.classList.contains('cine-choice-left')?panel.right<innerWidth*.65:panel.left>innerWidth*.35;
+    return clear&&buttons.length===3&&buttons.every(b=>{const r=b.getBoundingClientRect();return r.left>=panel.left&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight&&r.height>=44;});
+   }),'core and all three touch choices stay in frame at '+width);
+   await page.screenshot({path:out+'/last-core-choice-'+width+'.png'});
   }
   assert.deepEqual(errors,[]);checks++;
   fs.writeFileSync(out+'/progression.json',JSON.stringify({checks,errors},null,2));console.log(`PASS ${checks} cinematic progression/touch checks: beacons, rewards, separate objects, rescue, wards, portal, save/load, ending locks, transcripts and held touch cleanup`);

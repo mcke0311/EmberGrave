@@ -284,7 +284,7 @@ const CoopRuntime=(()=>{
       }
       w._busy=true;
       try{
-        if(hidden||offline||saveError||w._cinematic)fail('The party is paused.');
+        if(hidden||offline||saveError||(w._cinematic&&c.type!=='stop'))fail('The party is paused.');
         if(!p.connected||p.worldId!==m.worldId||p.travelGeneration!==m.generation)fail('Your area or connection changed.');
         if(economic)restore=backup(w);
         committing=economic;stagingRewards=campaignChange?grants:null;
@@ -365,14 +365,18 @@ const CoopRuntime=(()=>{
     else if(m.kind==='cinematicDone'){const w=worldOf(players.get(from));if(w?._cinematic?.id===m.id){w._cinematic.pending.delete(from);finishCinematic(w);}}
   }
   function roster(members){for(const p of players.values()){p.connected=!!members.find(m=>m.id===p._coopId)?.connected;if(!p.connected){p.command=p.path=p.drawing=null;cancelTransfer(p._coopId,'Connection lost.');}}}
-  function cinematic(src,done){
+  function cinematic(src,done,anchor){
     const w=Game.state;if(!w||w._cinematic)return;
     const id=P.randomId(),pending=new Set(w.players.filter(p=>p.connected).map(p=>p._coopId));
-    w._cinematic={id,pending,done,at:clock};for(const to of pending)event('cinematic',{src,id,worldId:w.worldId},to);finishCinematic(w);
+    w._cinematic={id,pending,done,at:clock};for(const to of pending)event('cinematic',{src,id,worldId:w.worldId,anchor,waitForParty:true},to);finishCinematic(w);
   }
   function finishCinematic(w){
     const c=w._cinematic;if(!c||w._busy||w._campaignBusy)return;for(const id of c.pending)if(!players.get(id)?.connected)c.pending.delete(id);
-    if(c.pending.size&&clock-c.at<45)return;w._cinematic=null;scope(w,()=>c.done?.());
+    if(c.pending.size&&clock-c.at<45)return;
+    w._cinematic=null;
+    // Early finishers release their input hold. A timed-out viewer also closes the film.
+    for(const p of w.players)if(p.connected)event('cinematicEnd',{id:c.id,worldId:w.worldId},p._coopId);
+    scope(w,()=>c.done?.());
   }
   async function depart(id){if(transactionActive)await economyChain;const p=players.get(id);if(!p)return;campaign.heroes[p.heroId]=scope(worldOf(p),()=>C.hero(p));const w=worldOf(p);w.players=w.players.filter(h=>h!==p);w.minions=w.minions.filter(h=>h.owner!==p);if(w.players.length)w.player=w.players[0];players.delete(id);acknowledgments.delete(id);sequences.delete(id);resyncAt.delete(id);resyncRequested.delete(id);baselines.delete(id);inFlight.delete(id);transfers.delete(id);channels.delete(id);await checkpoint();}
   function died(p){if(p.dead)return;p.dead=true;p.hp=0;p.deaths++;p.gold-=Math.floor(p.gold*.1);p.command=p.path=null;p.clearSkillState({respec:false});p.computeStats();p.startAction('death',.8);for(const mi of worldOf(p).minions)if(mi.owner===p)mi.die({silent:true});event('message',{message:p.name+' has fallen. Revive them or return to Frosthaven.'});}

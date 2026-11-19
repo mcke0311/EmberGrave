@@ -24,7 +24,7 @@ const Coop=(()=>{
     stopped=true;clearInterval(pingTimer);clearTimeout(retry);wire('roomState',{open:false});wire('leave');ws?.close();ws=null;worker?.terminate();worker=null;active=false;loading=false;Game.coop.stop();ui()?.status('Host simulation stopped. Resume your saved campaign. '+message);
   }
   async function startWorker(record){
-    worker=new Worker(new URL('js/coop_worker.js?v='+P.BUILD+'&patch=item-persistence-1',document.baseURI));
+    worker=new Worker(new URL('js/coop_worker.js?v='+P.BUILD+'&patch=cinematics-3',document.baseURI));
     worker.onerror=e=>workerFailed(e.message||'Worker failed.');worker.onmessageerror=()=>workerFailed('Worker communication failed.');
     worker.onmessage=({data:m})=>{
       if(m.type==='reply'){const p=workerPending.get(m.requestId);workerPending.delete(m.requestId);if(m.error)p?.reject(Error(m.error));else p?.resolve(m.value);return;}
@@ -66,6 +66,7 @@ const Coop=(()=>{
     else if(e.type==='complete')UI.centerMsg('ACT I COMPLETE',e.message);
     else if(e.type==='visual')Game.coop.visual(e);
     else if(e.type==='cinematic')ui()?.cinematic(e);
+    else if(e.type==='cinematicEnd')ui()?.cinematicEnded(e.id);
   }
   function openSocket(mode,code){
     return new Promise((resolve,reject)=>{
@@ -121,6 +122,7 @@ const Coop=(()=>{
         clearTimeout(timeout);if(socket!==ws)return;
         if(!welcomed){reject(Error('The multiplayer server closed the connection before the party was ready. Try again shortly.'));return;}
         if(stopped||!active)return;
+        ui()?.interruptCinematic?.();
         paused='Reconnecting…';if(worker)worker.postMessage({type:'status',hidden:document.hidden,offline:true});if(!reconnectAt)reconnectAt=Date.now();ui()?.refresh();
         retry=setTimeout(async function reconnect(){
           if(stopped||!active)return;
@@ -280,6 +282,7 @@ const Coop=(()=>{
   }
   function sendHost(payload){if(worker)worker.postMessage({type:'receive',from:localId,payload});else data(payload);}
   function submit(command){
+    if(ui()?.waitingForFilm&&command.type!=='stop')return Promise.resolve(false);
     if(!active||loading||paused&&paused!=='Saving party changes…'&&!host&&!['stop','returnManagement','cancelCarry'].includes(command.type))return Promise.resolve(false);
     if(pending.size>200)return Promise.resolve(false);
     const n=++inputSeq;CoopInput.rememberCommand?.(n,command);const m={kind:'command',seq:n,epoch,worldId:s()?.map.id,generation:s()?.player.travelGeneration||received?.generation||1,command};
@@ -404,6 +407,7 @@ const Coop=(()=>{
     if(document.hidden&&host)return 'The host has switched tabs. Waiting…';
     if(ws?.readyState!==WebSocket.OPEN)return 'Reconnecting…';
     if(!host&&performance.now()-lastHost>3500)return 'Waiting for the host…';
+    if(!ignoreBusy&&ui()?.waitingForFilm)return 'Waiting for party members to finish the scene…';
     if(!ignoreBusy&&busy)return 'Saving party changes…';
     return paused==='Save failed'?paused:host||paused==='Saving party changes…'?'':paused;
   }
@@ -412,8 +416,9 @@ const Coop=(()=>{
     flush();ui()?.tick();
     if(!host||worker){
       if(worker){const status=JSON.stringify([document.hidden,ws?.readyState!==WebSocket.OPEN]);if(status!==workerStatus){workerStatus=status;worker.postMessage({type:'status',hidden:document.hidden,offline:ws?.readyState!==WebSocket.OPEN});}}
-      if(!pauseReason())Game.coop.presentation(dt);return;
+      if(!pauseReason()&&!(typeof Cinematics!=='undefined'&&Cinematics.playing))Game.coop.presentation(dt);return;
     }
+    if(travel?.cinematic&&!document.hidden){travel.elapsed+=dt;if(travel.elapsed>=45)finishCinematic(true);}
     if(pauseReason()){accumulator=0;CoopMotion.capture(s());return;}
     accumulator=Math.min(accumulator+dt,.15);
     authority=true;
@@ -517,11 +522,18 @@ const Coop=(()=>{
     try{sessionStorage.removeItem('embergrave-coop-connection');}catch{}
     for(const fn of pending.values())fn(false);pending.clear();travel=null;loading=false;paused='';ui()?.closeTravel();ui()?.close();Game.coop.stop();ui()?.refresh();
   }
-  function cinematic(src,done){
+  function cinematic(src,done,anchor){
     if(!host){done?.();return;}
-    travel={id:P.randomId(),cinematic:true,answers:new Map(),done};event('cinematic',{src,id:travel.id});
+    travel={id:P.randomId(),cinematic:true,answers:new Map(),done,elapsed:0};event('cinematic',{src,id:travel.id,worldId:s().map.id,anchor,waitForParty:true});
   }
-  function finishCinematic(){if(travel?.cinematic&&s().players.filter(p=>p.connected!==false).every(p=>travel.answers.get(p._coopId))){const done=travel.done;travel=null;done?.();}}
+  function finishCinematic(expired=false){
+    if(!travel?.cinematic)return;
+    const pending=s().players.filter(p=>p.connected!==false&&!travel.answers.get(p._coopId));
+    if(!expired&&pending.length)return;
+    const {id,done}=travel;travel=null;
+    for(const p of s().players)if(p.connected!==false)event('cinematicEnd',{id},p._coopId);
+    done?.();
+  }
   function cinematicDone(id){if(worker)return sendHost({kind:'cinematicDone',id});if(host&&travel?.cinematic&&travel.id===id){travel.answers.set(localId,true);finishCinematic();}else if(!host)data({kind:'cinematicDone',id});}
   function enqueueAction(o,p,type,committed=false){
     if(!host)return;

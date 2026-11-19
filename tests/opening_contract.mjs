@@ -24,6 +24,12 @@ const controller=G.__openingTest.opening;
 const step=(seconds)=>{for(let t=0;t<seconds;t+=.05){G.state.time+=.05;controller.update(.05);}};
 const kill=id=>{const m=G.state.monsters.find(m=>m.openingId===id);ok(m&&!m.dead,'live '+id);m.die(G.state.player);};
 const stage=()=>G.state.flags.opening.stage;
+function checkPlayableFocus(subject){
+  step(.5);const p=G.state.player,frame=controller.cameraTarget();
+  ok(frame&&Math.hypot(frame.x-subject.x,frame.y-subject.y)<Math.hypot(p.x-subject.x,p.y-subject.y),stage()+' draws the eye toward the story actor');
+  const previous=p.command;p.command={type:'move'};
+  ok(controller.cameraTarget()===null,stage()+' immediately yields the camera to movement');p.command=previous;
+}
 async function reload(){G.saveGame();const slot=G.listSaves().find(s=>s.name===G.state.player.name).slot;await G.loadGame(slot);}
 
 for(const seed of [0,1,123,4294967295]) {
@@ -51,6 +57,7 @@ for(const cls of Object.keys(D.CLASSES)) {
   await reload();ok(stage()==='awakening','awakening checkpoint');
   ctx.window.matchMedia=()=>({matches:true});ok(!controller.cameraTarget(),'reduced motion keeps camera on player');
   ctx.window.matchMedia=()=>({matches:false});
+  checkPlayableFocus(controller.actor);
   step(3);ok(stage()==='guard'&&!controller.actor,'awakening releases real enemy');
   await reload();ok(G.state.monsters.length===1,'guard checkpoint creates one enemy');
   ok(!await G.enterMap('frosthaven','from_wild',{openingMode:'gate'}),'closed gate cannot skip fight');
@@ -76,6 +83,7 @@ for(const cls of Object.keys(D.CLASSES)) {
   G.interact(cache);ok(supplies()===supplyCount&&G.state.flags.opening.supply,'cache pays once');
   await reload();ok(supplies()===supplyCount,'uncollected cache survives reload');
   Object.assign(G.state.player,G.state.map.opening.bossTrigger);step(.1);ok(stage()==='bossIntro','captain entrance');
+  checkPlayableFocus(G.state.monsters.find(m=>m.openingId==='captain'));
   step(3.1);ok(stage()==='boss','boss combat');
   const boss=()=>G.state.monsters.find(m=>m.openingId==='captain'&&!m.dead);
   const retinue=()=>G.state.monsters.filter(m=>!m.dead&&m.openingId?.startsWith('retinue'));
@@ -94,6 +102,7 @@ for(const cls of Object.keys(D.CLASSES)) {
   await reload();ok(!G.state.monsters.length&&stage()==='gate','gate checkpoint');
   ok(await G.enterMap('frosthaven','from_wild',{openingMode:'gate'}),'enter town');
   ok(stage()==='hearth'&&G.state.home==='frosthaven','hearth handoff');
+  checkPlayableFocus(G.state.npcs.find(n=>n.id==='sera'));
   ok(G.state.npcs.filter(n=>n.id.startsWith('opening_')).length===2,'travelers visible at hearth');
   await reload();ok(stage()==='hearth','hearth resume');
   G.interact(G.state.npcs.find(n=>n.id==='sera'));

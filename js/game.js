@@ -573,14 +573,32 @@ const Game = (() => {
       state.ground=record().loot.map(g=>({...g,toss:0,...(g.item?{item:reviveItem(g.item)}:{})}));
       for(const g of state.ground)g.filt=LootFilter.evaluate(g,state.player);
     }
+    function featuredActor(){
+      if(!runtime||!active())return null;
+      const stage=record().stage;
+      if(stage==='awakening')return runtime.guard;
+      if(stage==='bossIntro')return captain();
+      if(stage==='hearth'&&runtime.stageTime<5)return state.npcs.find(n=>n.id==='sera');
+      return null;
+    }
     function cameraTarget() {
       if(!active()||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return null;
       const p=state.player;if(p.moving||p.command||p.path?.length)return null;
-      const g=record().stage==='awakening'?runtime?.guard:record().stage==='bossIntro'?captain():record().stage==='hearth'&&runtime?.stageTime<5?state.npcs.find(n=>n.id==='sera'):null;
-      const k=g?Math.min(.25,3/Math.max(1,U.dist(p.x,p.y,g.x,g.y))):0;
-      return g?{x:p.x+(g.x-p.x)*k,y:p.y+(g.y-p.y)*k}:null;
+      const actor=featuredActor();if(!actor)return null;
+      const k=Math.min(.55,4.5/Math.max(1,U.dist(p.x,p.y,actor.x,actor.y)))*Math.min(1,runtime.stageTime/.5);
+      return {x:p.x+(actor.x-p.x)*k,y:p.y+(actor.y-p.y)*k,openingLift:k*35};
     }
-    return {begin,reset,active,onRoad,checkpoint,allowsTravel,arrived,kill,update,interact,captureLoot,restoreLoot,cameraTarget,
+    function drawFocus(ctx,cam){
+      const actor=featuredActor();if(!actor)return;
+      const stage=record().stage,t=runtime.stageTime,end=stage==='hearth'?5:stage==='bossIntro'?3:2.8;
+      const k=Math.min(1,t/.45,Math.max(0,(end-t)/.75));
+      const x=U.isoX(actor.x,actor.y)-cam.x,y=U.isoY(actor.x,actor.y)-cam.y-elevLift(actor.x,actor.y,actor.surfaceId);
+      ctx.save();ctx.translate(x,y);ctx.scale(1,.5);ctx.globalAlpha=k;ctx.globalCompositeOperation='screen';
+      const light=ctx.createRadialGradient(0,0,2,0,0,57);
+      light.addColorStop(0,stage==='bossIntro'?'#8acaff88':stage==='hearth'?'#ffb66588':'#f7a08088');light.addColorStop(1,'#00000000');
+      ctx.fillStyle=light;ctx.fillRect(-57,-57,114,114);ctx.restore();
+    }
+    return {begin,reset,active,onRoad,checkpoint,allowsTravel,arrived,kill,update,interact,captureLoot,restoreLoot,cameraTarget,drawFocus,
       get actor(){return onRoad()?runtime?.guard:null;},get ready(){return record()?.stage==="gate";}};
   })();
 
@@ -1561,7 +1579,11 @@ const Game = (() => {
         afterDelay(3.0, () => msg(`Carry word back to ${campName} — there's a quest to finish before the road south opens.`, "#8fd8ff"));
       }
       /* the final boss triggers the ending choice */
-      if (mon.defId === "vethriss") afterDelay(3.5, () => {if(!state.flags.ending&&!campaignScene('core',{subject:mon},()=>UI.openFinalChoice()))UI.openFinalChoice();});
+      if (mon.defId === "vethriss") afterDelay(3.5, () => {
+        if(state.flags.ending)return;
+        let backdrop=null;
+        if(!campaignScene('core',{subject:mon,choiceFrame:frame=>{backdrop=frame;}},()=>UI.openFinalChoice(backdrop)))UI.openFinalChoice();
+      });
       saveGame();
     }
     updateBossEncounter();
@@ -1704,7 +1726,7 @@ const Game = (() => {
         msg("The last beacon shatters — the sky tears open.", "#9fe0ff");
         /* beat for the beacon's death-burst to read, then roll the cinematic;
            the trio rises when it ends (or immediately if the video can't load) */
-        afterDelay(0.6, () => {if(!campaignScene('oathsworn',{anchor:q.trioAnchor},spawnTrio))UI.playVideo("assets/cine_oathsworn.mp4", spawnTrio);});
+        afterDelay(0.6, () => {if(!campaignScene('oathsworn',{anchor:q.trioAnchor},spawnTrio))UI.playVideo("assets/cine_oathsworn.mp4",spawnTrio,false,q.trioAnchor);});
       } else msg(`A beacon goes dark. (${q.beacons}/3)`, "#7fffe0");
       UI.renderIfOpen("quest");
     } else if (TRIO.includes(mon.defId)) {
@@ -2011,7 +2033,8 @@ const Game = (() => {
     if (state.characterFlags[key]) return;
     state.characterFlags[key] = true;
     saveGame();
-    UI.playVideo(src, () => {});   // pauses the game; resumes when the clip ends/skips
+    const boss=state.monsters.find(m=>m.defId===id);
+    UI.playVideo(src,()=>{},false,boss&&{x:boss.x,y:boss.y,surfaceId:boss.surfaceId||0});
   }
   function onPlayerDeath(source, hero = state.player) {
     if(typeof CombatCast!=='undefined')CombatCast.clear(hero);
@@ -2286,6 +2309,7 @@ const Game = (() => {
   const replicaViews=new WeakMap();
   function renderPosition(actor) {
     if(typeof Cinematics!=='undefined'&&Cinematics.playing)actor=Cinematics.actorView(actor);
+    if(actor.cinematicView)return actor;
     if(typeof Coop!=='undefined'&&Coop.active&&actor===state.player&&actor._presentationCorrection){
       let view=replicaViews.get(actor);if(!view){view=Object.create(actor);replicaViews.set(actor,view);}
       view.x=actor.x+actor._presentationCorrection.x;view.y=actor.y+actor._presentationCorrection.y;return view;
@@ -2295,7 +2319,7 @@ const Game = (() => {
   }
   function updateCamera(dt) {
     if (!state) return;
-    const film=typeof Cinematics!=='undefined'&&Cinematics.cameraFrame?.();
+    const film=snapshotFrame||(typeof Cinematics!=='undefined'&&Cinematics.cameraFrame?.());
     if(film){
       camPos={x:U.isoX(film.x,film.y)-canvas.width/film.zoom*film.anchorX,
         y:U.isoY(film.x,film.y)-surfaceLift(film.x,film.y,film.surfaceId)-film.lift-canvas.height/film.zoom*film.anchorY};
@@ -2303,7 +2327,7 @@ const Game = (() => {
     }
     const p = (typeof Cinematics!=='undefined'&&Cinematics.cameraTarget()) || renderPosition(opening.cameraTarget() || state.player);
     const tx = U.isoX(p.x, p.y) - canvas.width / 2;
-    const ty = U.isoY(p.x, p.y) - canvas.height / 2 - 20 - surfaceLift(p.x,p.y,p.surfaceId);
+    const ty = U.isoY(p.x, p.y) - canvas.height / 2 - 20 - (p.openingLift||0) - surfaceLift(p.x,p.y,p.surfaceId);
     if (!camPos) camPos = { x: tx, y: ty };
     const k = 1 - Math.exp(-dt * 8);            // gentle ease toward the player
     camPos.x += (tx - camPos.x) * k;
@@ -2314,7 +2338,7 @@ const Game = (() => {
   }
   function camera() {
     if (!camPos) updateCamera(0.016);
-    return { x: camPos.x + shakeOx, y: camPos.y + shakeOy,zoom:(typeof Cinematics!=='undefined'&&Cinematics.cameraFrame?.()?.zoom)||1 };
+    return { x: camPos.x + shakeOx, y: camPos.y + shakeOy,zoom:snapshotFrame?.zoom||(typeof Cinematics!=='undefined'&&Cinematics.cameraFrame?.()?.zoom)||1 };
   }
   function screenToWorld(sx, sy) {
     const cam = camera();
@@ -3469,6 +3493,7 @@ const Game = (() => {
     };
     if(typeof Cinematics!=='undefined'&&Cinematics.drawTerrain)Cinematics.drawTerrain(ctx,m,cam,drawSceneFloor);else drawSceneFloor();
     if(cinematicTerrain<1)ctx.restore();
+    if(state.flags.opening&&!(typeof Cinematics!=='undefined'&&Cinematics.playing))opening.drawFocus(ctx,cam);
 
     /* ---- ground items: ICONS ONLY (flat). Their name labels are drawn later, on top of
        walls/props/actors, in drawLootLabels() so geometry never obscures them. ---- */
@@ -3795,7 +3820,7 @@ const Game = (() => {
           const p=renderPosition(d.hero||state.player);
           if(p.cinematicAlpha===0)break;
           const point=renderPosition(p);
-          if(typeof Coop!=="undefined"&&Coop.active)nameplate(p.name+(p.dead?" — fallen":""),d.sx,d.sy-88,p===state.player?"#e4ce91":"#97cbd4");
+          if(!p.cinematicView&&typeof Coop!=="undefined"&&Coop.active)nameplate(p.name+(p.dead?" — fallen":""),d.sx,d.sy-88,p===state.player?"#e4ce91":"#97cbd4");
           drawLiveActor(playerModelOpts(p), p.pose(), d.sx, d.sy - (point.jumpZ || 0) - elevLift(point.x,point.y,point.surfaceId), p.flashT > 0, p.cinematicAlpha??1, null, point);
           if(typeof SkillVFX!=='undefined'){ctx.save();LevelTerrain.clipBehind(ctx,m,cam,p.x,p.y,p.surfaceId);SkillVFX.drawActor(ctx,p,cam);ctx.restore();}
           break;
@@ -4765,30 +4790,33 @@ const Game = (() => {
   }
 
   /* Scoped rendering only: asynchronous loads never replace the real state. */
-  let cinematicCamera=null;
+  let cinematicCamera=null,snapshotFrame=null;
   function renderCinematicWorld(world,dt) {
     const origin=state,cam=camPos,oldParticles=particles,oldFloats=floats,oldNovas=novas,oldBolts=bolts,oldLabels=labelRects;
     try{state=world;camPos=cinematicCamera;particles=[];floats=[];novas=[];bolts=[];updateCamera(dt);cinematicCamera=camPos;render();}
     finally{state=origin;camPos=cam;particles=oldParticles;floats=oldFloats;novas=oldNovas;bolts=oldBolts;labelRects=oldLabels;}
   }
   function resetCinematicCamera(){camPos=null;cinematicCamera=null;mmRebuildT=0;hoverMon=hoverProp=hoverNpc=hoverLabel=hoverPortal=hoverExit=null;}
-  function cinematicSnapshot(world){
+  function cinematicSnapshot(world,view){
     if(headless)return null;const prior=cinematicCamera;
+    if(view)snapshotFrame={...view,zoom:canvas.height/view.height,anchorX:.5,anchorY:.5};
     try{renderCinematicWorld(world,0);const copy=document.createElement('canvas');copy.width=canvas.width;copy.height=canvas.height;copy.getContext('2d').drawImage(canvas,0,0);return copy;}
-    finally{cinematicCamera=prior;}
+    finally{cinematicCamera=prior;snapshotFrame=null;}
   }
   function cinematicActor(id,pos,world) {
     const origin=state;try{state=world;return new Monster(id,pos.x,pos.y);}finally{state=origin;}
   }
-  async function cinematicWorld(d) {
+  async function cinematicWorld(d,party=null) {
     const origin=state,p=Object.assign(Object.create(Object.getPrototypeOf(origin.player)),origin.player);
     p.equip={...p.equip};p.buffs=p.buffs.map(b=>({...b}));p.stats={...p.stats};p.action=p.command=p.path=p._animationController=p._formVisual=null;p.moving=false;p.flashT=0;
-    const world=freshState(p,(origin.seed^(d.act*0x9e3779b9))>>>0);
+    const seed=party?(origin.map.layoutSeed??U.areaSeed(origin.sessionSeed,d.zone,origin.difficulty)):(origin.seed^(d.act*0x9e3779b9))>>>0;
+    const world=freshState(p,seed);
     world.map=MapGen.generate(d.zone,world.seed);world.zoneMusic=DATA.ZONES[d.zone].music;world.map.explored.fill(1);
     const subject=d.object?[...world.map.props,...world.map.npcs].find(a=>a.storyId===d.object):d.visual==='ledger'?world.map.npcs.find(n=>n.id==='sera'):null;
     const pos=subject?nearWalkable(world.map,subject.x+1,subject.y+2):world.map.bossArena?{x:world.map.bossArena.cx+2,y:world.map.bossArena.cy+5,surfaceId:0}:world.map.spawns.default;
-    Object.assign(p,pos);world.npcs=(world.map.npcs||[]).map(n=>new Npc(n.id,n.x,n.y,{survivor:n.survivor,sid:n.sid,npcArt:n.npcArt,displayName:n.displayName,storyId:n.storyId}));
-    if(d.boss)world.monsters=[cinematicActor(d.boss,world.map.bossArena?{x:world.map.bossArena.cx,y:world.map.bossArena.cy}:pos,world)];
+    if(!party)Object.assign(p,pos);
+    world.npcs=(world.map.npcs||[]).map(n=>new Npc(n.id,n.x,n.y,{survivor:n.survivor,sid:n.sid,npcArt:n.npcArt,displayName:n.displayName,storyId:n.storyId}));
+    if(d.boss)world.monsters=[cinematicActor(d.boss,party?.anchor||(world.map.bossArena?{x:world.map.bossArena.cx,y:world.map.bossArena.cy}:pos),world)];
     return world;
   }
   /* messages passthrough */
@@ -4855,7 +4883,7 @@ const Game = (() => {
     if(!await enterMap(zone,'default',{recoverable:true}))throw Error('Could not enter '+zone);
     UI.closeAll();return state;
   }
-  function stopCoop(){running=false;state=null;opening.reset();Sfx.stopMusic();Sfx.stopSkills?.();UI.closeAll();UI.showTitle();}
+  function stopCoop(){if(typeof CoopUI!=='undefined')CoopUI.resetCinematics?.();running=false;state=null;opening.reset();Sfx.stopMusic();Sfx.stopSkills?.();UI.closeAll();UI.showTitle();}
   function safeCoopArrival(point){return safeArrival(state.map,point);}
   // Scopes are synchronous: each world owns its callbacks; no scope spans an await.
   function withCoopWorld(world,fn){

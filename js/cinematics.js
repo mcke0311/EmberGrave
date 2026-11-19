@@ -12,7 +12,7 @@ const Cinematics = (() => {
     const old=s.characterFlags.cinematics;
     if(old?.v===1){
       old.seen||={};old.unlocked||={};
-      // Act I co-op still writes the legacy video flags after this book exists.
+      // Older campaigns can acquire a first-sight flag after this book was created.
       for(const d of CinematicScenes.all)if(s.characterFlags['sawCine_'+d.id]||(d.legacyFlag&&s.characterFlags[d.legacyFlag]))old.seen[d.id]=old.unlocked[d.id]=true;
       return old;
     }
@@ -53,8 +53,19 @@ const Cinematics = (() => {
   function unbindKeys(){if(!session&&!library){document.removeEventListener('keydown',key,true);document.removeEventListener('keyup',key,true);}}
   function unlock(s,id,seen){const b=initialize(s);b.unlocked[id]=true;if(seen)b.seen[id]=true;}
   function request(id,context={}) {
+    if(!solo())return Promise.resolve('skipped');
+    return start(id,context);
+  }
+  function playPartyScene(id,event){
+    if(globalThis.COOP_WORKER||typeof Coop==='undefined'||!Coop.active||!event?.id||
+      !['oathsworn','korvath'].includes(id)||Game.options.cinematics===false||
+      (event.worldId&&event.worldId!==Game.state?.map?.id))return Promise.resolve('skipped');
+    return start(id,{replay:true,partyId:event.id,anchor:event.anchor});
+  }
+  function endPartyScene(id){if(session?.context.partyId===id&&id)finish('cancelled');}
+  function start(id,context) {
     const d=CinematicScenes.get(id),origin=Game.state;
-    if(!d||!origin||!solo())return Promise.resolve('skipped');
+    if(!d||!origin)return Promise.resolve('skipped');
     const replay=context.replay===true;
     if(session)return Promise.resolve('cancelled');
     if(!replay&&(!eligible(id,origin)||(d.ending&&origin.flags.ending!==d.ending)))return Promise.resolve('skipped');
@@ -74,7 +85,7 @@ const Cinematics = (() => {
     prepare(session).catch(err=>fallback(err,token));return promise;
   }
   async function prepare(s){
-    if(s.replay)s.world=await Game.cinematicWorld(s.d);
+    if(s.replay)s.world=await Game.cinematicWorld(s.d,s.context.partyId?s.context:null);
     if(session!==s)return;
     const bundles=new Set([s.world.map.id,s.world.map.zone.artZone||s.world.map.id,...s.d.bundles].map(z=>'zone:'+z));
     const arena=s.world.map.zone.arena||s.world.map.zone.arenaEntrance;
@@ -185,16 +196,27 @@ const Cinematics = (() => {
     }
   }
   function updateCaption(s){const c=s.d.captions.find(c=>c.at<=s.time&&(c.to===undefined||s.time<c.to));if(s.currentCaption!==c){s.currentCaption=c;s.speaker.textContent=c?.speaker||'';s.line.textContent=c?.text||'';s.caption.hidden=!c;}}
+  function appendTranscript(parent,scene,cls){
+    for(const line of scene.transcript||scene.captions)parent.append(node('p',cls,(line.speaker?line.speaker+': ':'')+line.text));
+  }
   function fallback(error,token=session?.token){
     const s=session;if(!s||s.token!==token)return;
     s.ready=true;s.fallback=true;s.caption.hidden=false;s.views.clear();s.extras=[];s.props=[];s.releaseMusic?.();s.releaseMusic=null;s.releaseAudio?.();s.releaseAudio=null;
     s.root.classList.add('cine-fallback');s.speaker.textContent='';s.line.textContent='';s.caption.removeAttribute('role');
     s.caption.replaceChildren(node('p','cine-fallback-note','Scene artwork is unavailable. The story continues below.'));
-    for(const c of s.d.captions)s.caption.append(node('p','cine-line',(c.speaker?c.speaker+': ':'')+c.text));
+    appendTranscript(s.caption,s.d,'cine-line');
     s.skip.textContent='Continue';s.error=String(error?.message||error);
   }
   function finish(result='completed'){
-    const s=session;if(!s)return;s.disposed=true;session=null;generation++;
+    const s=session;if(!s)return;
+    if(result==='completed'&&!s.fallback&&!s.replay&&s.d.id==='core'&&s.context.choiceFrame){
+      try{
+        const frame=cameraFrame(),core=s.stage.core,image=Game.cinematicSnapshot(s.world);
+        const coreX=frame.anchorX+(U.isoX(core.x,core.y)-U.isoX(frame.x,frame.y))*frame.zoom/image.width;
+        s.context.choiceFrame({image,coreX:clamp(coreX)});
+      }catch{/* The choice also works with its plain backdrop. */}
+    }
+    s.disposed=true;session=null;generation++;
     s.root.remove();s.releaseMusic?.();s.releaseAudio?.();Game.cancelMenuInput();Game.resetCinematicCamera?.();document.body.classList.remove('cine-playing');
     if(!s.replay&&Game.state===s.origin){if(result!=='cancelled'){unlock(s.origin,s.d.id,true);if(s.d.legacyFlag)s.origin.characterFlags[s.d.legacyFlag]=true;}Game.saveGame();}
     if(library){library.hidden=false;library.querySelector('[data-scene="'+s.d.id+'"]')?.focus();}
@@ -306,14 +328,14 @@ const Cinematics = (() => {
         row.append(node('h3','',d.title),node('p','cine-duration',d.duration+' seconds'));
         const play=button('Replay',()=>request(d.id,{replay:true}));play.dataset.scene=d.id;play.setAttribute('aria-label','Replay '+d.title);row.append(play);
         const transcript=node('details','cine-transcript');transcript.append(node('summary','','Read transcript'));
-        for(const c of d.captions)transcript.append(node('p','',(c.speaker?c.speaker+': ':'')+c.text));row.append(transcript);
+        appendTranscript(transcript,d,'');row.append(transcript);
       }
       list.append(row);
     }
     box.append(list,button('Back',()=>closeLibrary()));root.append(box);document.getElementById('game').append(root);bindKeys();box.querySelector('button')?.focus();
   }
   function setPaused(value){if(!session)return;session.paused=!!value;if(value){session.releaseAudio?.();session.releaseAudio=null;}}
-  return {request,tick,cancel,initialize,eligible,openLibrary,closeLibrary,actorView,append,drawProp,drawActor,drawTerrain,hideEntity,ground,atmosphere,terrainAlpha,architectureAlpha,cameraTarget,cameraFrame,seek,fallback,setPaused,
+  return {request,tick,cancel,playPartyScene,endPartyScene,initialize,eligible,openLibrary,closeLibrary,actorView,append,drawProp,drawActor,drawTerrain,hideEntity,ground,atmosphere,terrainAlpha,architectureAlpha,cameraTarget,cameraFrame,seek,fallback,setPaused,
     get active(){return !!session||!!library;},get playing(){return !!session;},get presentationWorld(){return session?.ready&&!session.fallback&&(session.replay||session.world!==session.origin)?session.world:null;},
     get renderClock(){return session?.ready&&!session.fallback?session.origin.time+(session.reduced?0:session.time):null;},
     get state(){return session?{id:session.d.id,time:session.time,duration:session.d.duration,ready:session.ready,replay:session.replay,fallback:session.fallback,error:session.error,shot:session.shot?.id,stage:session.stage?.id,revision:session.d.revision}:null;}};

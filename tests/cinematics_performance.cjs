@@ -17,7 +17,7 @@ const base=process.env.GAME_REVIEW_URL||'http://127.0.0.1:8741',out=path.join(__
   });
   await page.route(/\/js\/cinematics\.js(?:\?|$)/,async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text()).replace('return {request,tick,cancel','return {__session:()=>session,request,tick,cancel')});});
   await page.goto(base+'/index.html');await page.waitForSelector('#titleMenu button',{timeout:120000});
-  await page.evaluate(async()=>{Sfx.setVol('master',0);await Game.newGame('Cinematic performance QA','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);UI.closeAll();});
+  await page.evaluate(async()=>{Sfx.setVol('master',0);await Game.newGame('Cinematic performance QA','vanguard',false);await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);Game.state.seed=7136411;UI.closeAll();});
   const cases=[{id:'ending_destroy',at:9.5,span:3,label:'contact close shot'},{id:'ending_destroy',at:14.1,span:3,label:'shatter peak'},{id:'cathedral',at:4.2,span:3,label:'island assembly'},{id:'breach',at:9.2,span:3,label:'distant conflict'}];
   for(const viewport of [{width:844,height:390},{width:1920,height:1080},{width:3840,height:2160}])for(const scenario of cases){
    await page.setViewportSize(viewport);
@@ -46,7 +46,7 @@ const base=process.env.GAME_REVIEW_URL||'http://127.0.0.1:8741',out=path.join(__
    const mean=(mode,stat)=>{const rows=runs.filter(r=>r.viewport.width===width&&r.scenario===scenario.label&&r.mode===mode);return rows.reduce((s,r)=>s+r[stat],0)/rows.length;};
    comparisons.push({width,scenario:scenario.label,...Object.fromEntries(['ordinary','ordinary-projection','cinematic'].map(mode=>[mode,{median:mean(mode,'median'),p95:mean(mode,'p95')}]))});
   }
-  fs.writeFileSync(out+'/performance.json',JSON.stringify({method:'Two alternating pairs at 844×390, 1080p and 4K. 45 warmup and 90 measured RAF-paced frames over each authored 3-second camera path. Same maps, equipped hero positions and camera points: ordinary renderer at zoom 1, ordinary renderer at the matching cinematic projection, and directed presentation. CPU submission milliseconds, including cinematic evaluation, excluding asset loading. Does not measure GPU completion/device FPS.',comparisons,runs,errors},null,2));
+  fs.writeFileSync(out+'/performance.json',JSON.stringify({seed:7136411,method:'Two alternating pairs at 844×390, 1080p and 4K. 45 warmup and 90 measured RAF-paced frames over each authored 3-second camera path. Same maps, equipped hero positions and camera points: ordinary renderer at zoom 1, ordinary renderer at the matching cinematic projection, and directed presentation. CPU submission milliseconds, including cinematic evaluation, excluding asset loading. Does not measure GPU completion/device FPS.',comparisons,runs,errors},null,2));
   if(errors.length)throw Error(errors.join('\n'));console.log('PASS 12 ordinary/projection/cinematic performance comparisons; tmp/cinematics/performance.json');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
