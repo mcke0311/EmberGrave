@@ -524,3 +524,17 @@ The equipment and cinematic suites passed. Equipped heroes peaked at
 runtime checks, and the hashes served by the public site.
 [Publication record](qa/finished_heroes_site_publication.json) ·
 [Character verification](../tests/qa/finished_heroes/verification.json)
+
+## Campaign cinematics and Act I co-op — 2026-11-19
+
+Version 23 publishes all 20 directed campaign scenes and the Oathsworn and
+Korvath co-op introductions. Each ending gives a first-play cinematic runtime
+of 4 minutes 49 seconds. [Play Embergrave](https://embergravegame.com)
+
+The public game rendered all 20 scenes and returned control after each skip.
+The 11 changed JavaScript and CSS files matched the release byte for byte.
+The entry page matched the committed game markup after accounting for the
+Cloudflare script added by the host.
+
+[Publication record](qa/cinematics_site_publication.json) ·
+[Scene direction and performance measurements](CINEMATICS.md)
