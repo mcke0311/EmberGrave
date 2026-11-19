@@ -538,3 +538,15 @@ Cloudflare script added by the host.
 
 [Publication record](qa/cinematics_site_publication.json) ·
 [Scene direction and performance measurements](CINEMATICS.md)
+
+## Quest journeys — 2026-11-19
+
+Version 24 gives five quests landmark encounters and adds next steps to all 25
+quest guides. Players can pin an objective and reopen its journal entry from
+the tracker. [Play Embergrave](https://embergravegame.com)
+
+Both public pages matched the release markup after accounting for the hosting
+script on the game page. All 17 changed scripts, stylesheets, and art files
+matched the release byte for byte. Desktop and emulated touch browsers accepted
+Ash on the Wind, pinned its watch bell objective, and reopened it from the tracker.
+[Publication record](qa/quest_journeys_site_publication.json)
