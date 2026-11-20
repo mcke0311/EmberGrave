@@ -1,10 +1,10 @@
-import {gaitProfile,footPath} from './character_motion3d.mjs';
+import {gaitProfile,footPath} from './character_motion3d.mjs?v=bow-draw-1';
 import {applyCinematicBody} from './character_cinematic3d.mjs';
 // Class-authored body poses. The authored contact pose is mapped to the game's
 // common melee, ranged and casting delays without changing gameplay duration.
 export const CLASS_ANIMATIONS={
   vanguard:{name:'Iron discipline',description:'Planted guard, marching steps, forceful cuts and a shield-braced recoil.',stride:.43,knee:.65,crouch:.10,sway:.015,breath:.007,cloth:.06,
-    stance:{Spine:[.025,0,0],Chest:[0,-.035,0],UpperArmL:[-.18,0,.18],UpperArmR:[-.18,.05,-.14],ForearmL:[-.34,0,0],ForearmR:[-.42,0,0]},
+    stance:{Spine:[.025,0,0],Chest:[0,-.09,0],UpperArmL:[-.39,.06,.23],UpperArmR:[-.23,.05,-.18],ForearmL:[-.74,0,-.08],ForearmR:[-.52,0,.05]},
     attack:[
       [.22,-.018,{Chest:[-.035,-.25,0],UpperArmR:[-1.02,-.35,-.08],ForearmR:[-.72,0,0],UpperArmL:[-.18,0,.12]}],
       [.4,-.045,{Spine:[.10,0,0],Chest:[.035,.26,-.025],UpperArmR:[-.73,.48,-.42],ForearmR:[.20,0,0],UpperArmL:[-.28,0,.12]}],
@@ -16,13 +16,13 @@ export const CLASS_ANIMATIONS={
     hit:[ [.14,-.06,{Spine:[-.17,0,0],Chest:[0,-.10,0],Head:[-.12,0,0],UpperArmL:[-.28,0,.14],ForearmL:[-.25,0,0]}], [.48,-.025,{Spine:[.09,0,0],UpperArmL:[-.18,0,.08]}] ],
     death:[ [.24,-.12,{Spine:[.22,0,0],Head:[.16,0,0],ThighL:[-.28,0,0],ShinL:[.52,0,0],ThighR:[-.22,0,0],ShinR:[.44,0,0]}], [.52,-.40,{Hips:[-.55,.05,.05],Spine:[.18,0,0],ThighL:[-.38,0,0],ShinL:[.85,0,0],ShinR:[.44,0,0],UpperArmL:[-.13,0,.16]}], [1,-.76,{Hips:[-1.53,0,.08],Spine:[.10,0,0],Head:[.19,.08,0],UpperArmL:[.12,0,.55],UpperArmR:[.20,0,-.55],ForearmL:[.20,0,0],ForearmR:[.18,0,0],ThighL:[.04,0,.10],ThighR:[-.16,0,-.08],ShinR:[.32,0,0]}] ]},
   emberwitch:{name:'Cinder dance',description:'Poised steps, flowing wrists, gathering flame and a sweeping release.',stride:.34,knee:.73,crouch:.035,sway:.025,breath:.014,cloth:.16,
-    stance:{Spine:[-.015,.025,.025],Chest:[0,-.07,-.025],Head:[.02,.04,0],UpperArmL:[-.22,-.10,.26],UpperArmR:[-.28,.06,-.18],ForearmL:[-.55,0,-.08],ForearmR:[-.58,0,.06],HandL:[0,0,.18]},
+    stance:{Spine:[-.015,.025,.025],Chest:[0,-.11,-.025],Head:[.02,.08,0],UpperArmL:[-.30,-.16,.47],UpperArmR:[-.30,.06,-.20],ForearmL:[-.93,.12,-.22],ForearmR:[-.63,0,.06],HandL:[.07,-.22,.33]},
     attack:[ [.22,.01,{Chest:[-.06,-.22,.07],UpperArmR:[-.40,-.32,-.16],ForearmR:[-.66,0,0],HandR:[0,.25,.12],UpperArmL:[-.18,0,.15]}], [.4,.015,{Spine:[.08,0,0],Chest:[0,.20,-.07],UpperArmR:[-1.12,.16,-.13],ForearmR:[.40,0,0],HandR:[-.16,0,-.12],UpperArmL:[-.38,0,.36]}], [.64,0,{Chest:[.03,.17,-.03],UpperArmR:[-.73,.28,-.22],ForearmR:[.18,0,0],UpperArmL:[-.27,0,.26]}] ],
     cast:[ [.22,-.025,{Chest:[-.06,-.18,.06],UpperArmL:[-.45,-.18,.26],ForearmL:[-.72,0,-.25],UpperArmR:[-.49,.22,-.26],ForearmR:[-.57,0,.20],Head:[.13,-.12,0]}], [.4,.045,{Spine:[-.08,0,-.02],Chest:[-.04,.19,-.05],UpperArmL:[-1.17,-.14,.52],ForearmL:[.20,0,-.15],HandL:[-.20,-.15,.23],UpperArmR:[-.90,.25,-.37],ForearmR:[.23,0,.10],Head:[-.09,.12,0]}], [.64,.02,{Chest:[-.03,.12,-.04],UpperArmL:[-.78,-.1,.60],UpperArmR:[-.52,.12,-.38],ForearmL:[-.1,0,-.2]}] ],
     hit:[ [.16,-.065,{Spine:[-.16,0,.16],Chest:[-.10,.17,0],Head:[-.11,-.16,-.12],UpperArmL:[-.46,0,.30],UpperArmR:[-.25,0,-.28]}], [.53,-.028,{Spine:[.05,0,-.04],UpperArmL:[-.18,0,.12]}] ],
     death:[ [.26,-.11,{Spine:[.10,0,.18],Chest:[-.10,.24,0],Head:[.16,-.2,.08],UpperArmL:[-.65,0,.30]}], [.57,-.44,{Hips:[-.24,.1,.75],Spine:[.13,.15,.14],UpperArmL:[-.38,0,.42],UpperArmR:[.22,0,-.15],ThighL:[-.42,0,.12],ShinL:[.9,0,0],ShinR:[.38,0,0]}], [1,-.76,{Hips:[-.32,.16,1.48],Spine:[.12,.12,.03],Head:[.24,-.14,.08],UpperArmL:[-.28,0,.26],UpperArmR:[.25,0,-.22],ForearmL:[-.28,0,0],ForearmR:[.30,0,0],ThighL:[-.52,0,.05],ShinL:[.95,0,0],ThighR:[-.2,0,-.04],ShinR:[.5,0,0]}] ]},
   gravebinder:{name:'Ossuary rites',description:'Stooped shuffling, crooked beckoning and deliberate soul-raising gestures.',stride:.25,knee:.42,crouch:.17,sway:.02,breath:.01,cloth:.12,
-    stance:{Spine:[.13,0,0],Chest:[.07,-.03,0],Head:[-.12,0,-.02],UpperArmL:[-.30,-.15,.28],UpperArmR:[-.20,.10,-.23],ForearmL:[-.72,0,-.18],ForearmR:[-.53,0,.08],HandL:[.16,-.12,.12]},
+    stance:{Spine:[.15,0,0],Chest:[.07,-.06,0],Head:[-.14,.04,-.04],UpperArmL:[-.38,-.16,.33],UpperArmR:[-.20,.10,-.23],ForearmL:[-1.03,.1,-.24],ForearmR:[-.56,0,.08],HandL:[.28,-.12,.18]},
     attack:[ [.22,-.025,{Spine:[.09,0,0],Chest:[.04,-.16,0],UpperArmR:[-.30,-.28,-.15],ForearmR:[-.65,0,0],Head:[.11,0,0]}], [.4,-.035,{Spine:[.13,0,0],Chest:[.03,.25,0],UpperArmR:[-.92,.25,-.27],ForearmR:[.25,0,0],UpperArmL:[-.52,0,.18],HandL:[.22,0,.12]}], [.64,-.03,{Chest:[.07,.18,0],UpperArmR:[-.61,.12,-.15],UpperArmL:[-.30,0,.21]}] ],
     cast:[ [.22,-.07,{Spine:[.16,0,0],Head:[.12,0,0],UpperArmL:[-.34,-.20,.22],UpperArmR:[-.36,.15,-.18],ForearmL:[.14,0,-.18],HandL:[.25,0,.24]}], [.4,.02,{Spine:[-.12,0,0],Chest:[-.09,0,0],Head:[-.12,0,0],UpperArmL:[-1.04,-.22,.34],UpperArmR:[-.86,.15,-.28],ForearmL:[-.18,0,-.3],ForearmR:[-.14,0,.20],HandL:[.36,0,.2]}], [.64,0,{UpperArmL:[-.92,-.2,.33],UpperArmR:[-.72,.12,-.26],HandL:[-.18,0,.26],Head:[.03,.08,0]}] ],
     hit:[ [.18,-.09,{Spine:[.24,0,-.08],Chest:[.12,-.12,0],Head:[.17,.08,0],UpperArmL:[.15,0,.3],UpperArmR:[.10,0,-.24]}], [.62,-.04,{Spine:[.10,0,.03],Head:[.05,0,0]}] ],
@@ -43,6 +43,14 @@ export const CLASS_ANIMATIONS={
 const TAU=Math.PI*2,clamp=v=>Math.max(0,Math.min(1,v));
 export const smooth=v=>{const x=clamp(v);return x*x*(3-2*x);};
 const lerp=(a,b,t)=>a+(b-a)*t;
+const pulse=(t,start,peak,end)=>smooth((t-start)/(peak-start))*(1-smooth((t-peak)/(end-peak)));
+const balance={
+  vanguard:   {step:.043, drive:1.00, castX:.029, castZ:.078},
+  emberwitch: {step:.032, drive:.67,  castX:-.077,castZ:.047},
+  gravebinder:{step:.027, drive:.56,  castX:.036, castZ:-.064},
+  wildkeeper: {step:.060, drive:1.15, castX:.058, castZ:.088},
+  veilranger: {step:.039, drive:.82,  castX:-.064,castZ:.058},
+};
 // Chamber the right knee, drive the sole forward at 50%, then plant it again.
 // Deltas layer over each class's guard; the left foot remains the support foot.
 const KICK_KEYS=[
@@ -90,16 +98,107 @@ function sampleKeys(keys,u,terminal=false){
   for(const name of new Set([...Object.keys(a[2]),...Object.keys(b[2])]))r[name]=[0,1,2].map(i=>curve(f=>f[2][name]?.[i]||0));
   return {rotations:r,height:curve(f=>f[1])};
 }
+
+// Hilt offsets are in the character's facing frame. The three angles are
+// inclination from vertical, heading, and roll about the weapon's long axis.
+// Both cuts cross forward at the existing .40 authored gameplay contact.
+const HEAVY_CUTS={
+  sword:[
+    [.16,-.016,{hilt:[-.09,.076,-.012],angles:[.12,-.64,-.19]}],
+    [.24,-.035,{hilt:[-.15,.151,-.031],angles:[.31,-1.09,-.31]}],
+    [.30,-.026,{hilt:[-.112,.137,.065],angles:[.46,-.86,-.22]}],
+    [.40,-.010,{hilt:[-.114,.031,.168],angles:[.80,.99,-.03]}],
+    [.53,-.049,{hilt:[.242,-.072,.042],angles:[1.17,2.31,.29]}],
+    [.64,-.045,{hilt:[.264,-.088,.003],angles:[1.28,2.55,.40]}],
+    [.80,-.022,{hilt:[.137,-.054,.024],angles:[.32,1.98,.42]}],
+    [.92,-.003,{hilt:[.042,.012,.028],angles:[-.28,.78,.17]}]
+  ],
+  axe:[
+    [.13,-.022,{hilt:[-.054,.080,-.013],angles:[-.25,-.11,-.07]}],
+    [.235,.016,{hilt:[-.114,.358,-.068],angles:[-1.06,1.42,-.18]}],
+    [.275,.030,{hilt:[-.105,.416,-.055],angles:[-1.30,1.78,-.24]}],
+    [.32,.012,{hilt:[-.065,.329,.032],angles:[-.77,1.66,-.26]}],
+    [.36,-.031,{hilt:[.012,.174,.104],angles:[.05,1.54,-.24]}],
+    [.40,-.068,{hilt:[-.062,.021,.170],angles:[.94,1.49,-.20]}],
+    [.50,-.095,{hilt:[.067,-.084,.117],angles:[1.63,1.72,-.10]}],
+    [.62,-.088,{hilt:[.093,-.103,.076],angles:[1.69,1.91,-.015]}],
+    [.77,-.057,{hilt:[.106,-.079,.015],angles:[1.27,2.02,.16]}],
+    [.91,-.010,{hilt:[.043,-.004,.043],angles:[.24,1.26,.08]}]
+  ]
+};
+
+function heavyWeaponMotion(motion,id,category,state,t){
+  const axe=category==='axe',attacking=state==='attack',falling=state==='death'||state==='dead';
+  const carry=falling?1-smooth((state==='dead'?1:t)/.36):1;
+  const hilt=axe?[-.12,-.18,.403]:[-.10,-.16,.375];
+  const angles=axe?[.65,-1.18,-1.15]:[.78,-.90,.12];
+  const load=attacking?pulse(t,0,.205,.40):0,turn=attacking?pulse(t,.21,.52,1):0;
+  let drop=0;
+  if(attacking){
+    const stroke=sampleKeys(HEAVY_CUTS[category],t);
+    for(let i=0;i<3;i++){
+      hilt[i]+=stroke.rotations.hilt[i];
+      angles[i]+=stroke.rotations.angles[i];
+    }
+    drop=stroke.height;
+  }else if(state==='walk'||state==='idle'){
+    const walking=state==='walk',sway=Math.sin(t*TAU),rise=1-Math.cos(t*TAU);
+    hilt[0]+=sway*(walking?.024:.006);hilt[1]+=rise*(walking?.009:.003);
+    angles[0]+=sway*(walking?.045:.013);angles[1]+=sway*(walking?.070:.015);
+  }else if(state==='cast'||state==='hit'){
+    const lift=state==='cast'?motion.power:.65*Math.sin(Math.PI*t);
+    hilt[1]+=.080*lift;angles[0]-=.24*lift;
+  }
+  motion.position=hilt;
+  motion.rotation=[angles[0],angles[1],0];
+  motion.edgeRoll=angles[2];
+  motion.heelTurn=attacking?pulse(t,.20,axe?.48:.54,.94):0;
+  motion.rootSpace=true;motion.rootWeight=carry;
+  // The palms face one another across the hilt. Rolling the axe head should
+  // leave enough rotation in each wrist for the raised and lowered poses.
+  motion.gripR=[-.21,(axe?.78:.12)-.20*angles[2],1.37];
+  motion.gripL=[-.30,(axe?.30:-.37)-.24*angles[2],-1.41];
+  motion.poleR=[-1,-.62+.60*load,-.16];
+  motion.poleL=[1,-.66+.45*load,-.12];
+  const force=.75+.25*balance[id].drive;
+  motion.weightShift=[force*(-.062*load+.066*turn),carry*(axe?-.054:-.040)+drop,
+    force*(-.055*load+.076*turn)];
+  if(attacking){
+    const hipsBack=pulse(t,0,.17,.365),hipsThrough=pulse(t,.27,.505,1);
+    const chestBack=pulse(t,0,.23,.419),chestThrough=pulse(t,.31,.56,1);
+    const stance=CLASS_ANIMATIONS[id].stance;
+    const fromStance=(bone,x,y,z)=>{
+      const [rx,ry,rz]=stance[bone]||[0,0,0];
+      return [rx+x,ry+y,rz+z];
+    };
+    motion.bodyWeight=1;
+    motion.body={
+      Hips:fromStance('Hips',-.035*hipsBack+.065*hipsThrough,-.10-.31*hipsBack+.46*hipsThrough,.048*hipsBack-.047*hipsThrough),
+      Spine:fromStance('Spine',(axe?-.070:-.035)*chestBack+.083*chestThrough,-.11*chestBack+.16*chestThrough,.025*chestBack),
+      Chest:fromStance('Chest',(axe?-.11:-.04)*chestBack+.072*chestThrough,-.11-.35*chestBack+.49*chestThrough,.061*chestBack-.069*chestThrough),
+      Head:fromStance('Head',.072*chestBack-.065*chestThrough,.12+.23*chestBack-.32*chestThrough,-.035*chestBack+.055*chestThrough)
+    };
+  }else{
+    motion.extra.Hips=[0,-.10*carry,0];
+    motion.extra.Chest=[0,-.11*carry,0];
+    motion.extra.Head=[0,.12*carry,0];
+  }
+}
 export function classPoseAt(id,state,u){
   const style=CLASS_ANIMATIONS[id];if(!style)throw new Error('Unknown animation class: '+id);
   u=clamp(u);const rotations=Object.fromEntries(Object.entries(style.stance).map(([k,v])=>[k,[...v]]));
   const add=(name,x=0,y=0,z=0)=>{const r=rotations[name]||(rotations[name]=[0,0,0]);r[0]+=x;r[1]+=y;r[2]+=z;};
-  const breath=Math.sin(u*TAU);let height=.94;
+  const breath=Math.sin(u*TAU),weight=balance[id];
+  let height=.94,offsetX=0,offsetZ=0;
   for(const side of ['L','R']){rotations['Thigh'+side]=[-style.crouch*.5,0,side==='L'?.035:-.035];rotations['Shin'+side]=[style.crouch,0,0];rotations['Foot'+side]=[-style.crouch*.5,0,0];}
   height-=.81*(1-Math.cos(style.crouch*.5));
   if(state==='idle'){
     add('Spine',breath*style.breath);add('Chest',0,Math.sin(u*TAU)*style.sway*.4);add('Head',-breath*style.breath*.5,0,breath*style.sway*.3);
     add('ForearmL',breath*style.breath*2);add('HandL',0,breath*style.sway,0);
+    const inhale=1-Math.cos(u*TAU);
+    offsetX=style.sway*.38*inhale;offsetZ=-style.breath*.58*inhale;
+    add('Neck',-.014*breath,style.sway*inhale);
+    add('UpperArmL',0,0,style.breath*inhale);add('UpperArmR',0,0,-style.breath*inhale);
   }else if(state==='walk'){
     for(const [side,offset] of [['L',0],['R',.5]]){
       const phase=(u+offset)%1,stance=phase<.5,swing=stance?0:Math.sin((phase-.5)*TAU),stride=style.stride;
@@ -110,6 +209,8 @@ export function classPoseAt(id,state,u){
     }
     add('Spine',.025,Math.sin(u*TAU)*style.sway,Math.sin(u*TAU)*style.sway*.7);add('Chest',0,-Math.sin(u*TAU)*style.sway*1.7);
     add('Head',-.015,Math.sin(u*TAU)*style.sway*.4);height-=Math.abs(Math.cos(u*TAU))*.026;
+    offsetX=weight.step*breath;offsetZ=.014*Math.sin(2*u*TAU);
+    add('Neck',.018*Math.sin(2*u*TAU),-.026*breath,-.021*breath);
   }else{
     const keys=state==='kick'?KICK_KEYS:style[state==='dead'?'death':state];
     if(keys){
@@ -121,7 +222,13 @@ export function classPoseAt(id,state,u){
     // Sequential weight transfer: hips wind first, chest follows, then the hand
     // cuts through the target. Recovery retains the cut's momentum.
     const wind=smooth(u/.22)*(1-smooth((u-.22)/.18)),drive=smooth((u-.22)/.18)*(1-smooth((u-.64)/.36));
-    const force={vanguard:1,emberwitch:.58,gravebinder:.52,wildkeeper:1.16,veilranger:.76}[id];
+    const force=weight.drive;
+    // Push off the rear leg while the arm is still chambered. The pelvis
+    // takes the weight just before the weapon reaches contact at .40.
+    const load=pulse(u,0,.15,.33),impact=pulse(u,.14,.37,.89),rebound=pulse(u,.48,.70,1);
+    offsetX=force*(-.047*load+.060*impact);
+    offsetZ=force*(-.058*load+.115*impact-.025*rebound);
+    add('Neck',.037*wind-.054*impact,.085*wind-.068*impact);
     add('Hips',.025*drive,(-.13*wind+.15*drive)*force,-.025*drive);
     add('Chest',-.02*wind,(-.16*wind+.20*drive)*force,-.035*drive);
     add('Head',-.03*drive,(.09*wind-.11*drive)*force);
@@ -131,9 +238,17 @@ export function classPoseAt(id,state,u){
   }
   if(state==='cast'){
     const gather=smooth(u/.22)*(1-smooth((u-.22)/.18)),release=smooth((u-.22)/.18)*(1-smooth((u-.64)/.36));
+    const extension=pulse(u,.22,.40,.95)-.58*gather;
+    offsetX=weight.castX*extension;offsetZ=weight.castZ*extension;
+    add('Neck',.056*gather-.074*release,-weight.castX*release);
     add('Hips',.035*gather,(-.07*gather+.08*release)*(id==='gravebinder'?.4:1));
     add('Head',.035*gather-.045*release);add('HandL',-.12*release,.06*release,.09*gather);
   }
+  if(state==='hit'){
+    const recoil=pulse(u,0,.16,.58);
+    offsetZ=-.085*weight.drive*recoil;offsetX=.026*recoil;
+  }
+  if(state==='kick')offsetX=.073*pulse(u,0,.35,.89);
   if(state==='reach'||state==='search'){
     const w=smooth(u/.38)*(1-smooth((u-.60)/.40)),search=state==='search';
     // The unencumbered hand approaches the prop; the equipped hand stays guarded.
@@ -153,18 +268,47 @@ export function classPoseAt(id,state,u){
     const impact=Math.sin(Math.PI*clamp((u-.76)/.24));
     if(state==='death'){add('Chest',.035*impact);add('Head',.07*impact);add('Hips',id==='vanguard'?-.025*impact:0,0,(id==='wildkeeper'||id==='veilranger'?-.025:.025)*impact);}
   }
-  return {rotations,height};
+  return {rotations,height,offsetX,offsetZ};
+}
+
+// Absolute pose samples also drive the cloth in paused previews and replays.
+// The collar stays pinned. The hem catches up after the planted foot or hand.
+function mantlePose(name,t,phase,run,context) {
+  const angle=t*TAU;
+  const turn=context?.turn||0,lag=context?.secondary||0;
+  let trail=0,swing=0,ripple=0,fold=0;
+  if(name==='walk'||name==='charge'){
+    trail=.26+.47*run+.10*Math.cos(2*angle-.9);
+    swing=(.30+.34*run)*Math.sin(angle-.84);
+    ripple=(.29+.30*run)*Math.sin(2*angle-1.25);
+  }else if(name==='idle'){
+    trail=.035*(1-Math.cos(angle));swing=.06*Math.sin(angle);
+  }else if(['attack','cast','draw','channel','spin'].includes(name)){
+    const wind=pulse(phase,0,.30,.52),follow=pulse(phase,.32,.56,.98);
+    const direction=name==='cast'||name==='channel'?-1:1;
+    trail=.12*wind+.59*follow;
+    swing=direction*(-.32*wind+.82*follow);
+    ripple=.42*pulse(phase,.45,.67,1);
+  }else if(name==='death'||name==='dead'){
+    fold=name==='dead'?1:smooth((t-.26)/.74);
+    return [0,0,0,fold];
+  }else if(name==='hit'||name==='kick'||name==='airborne'){
+    const lift=pulse(t,.04,.54,1);
+    trail=.56*lift;swing=(name==='hit'?-.44:.20)*lift;
+  }
+  return [trail+Math.abs(lag)*.65,swing-turn*.060,ripple,fold];
 }
 
 // Weapon-aware corrections complement the class poses. Two-hand transforms are
 // targets for the existing arm IK, so neither grip is approximated by a clip.
-export function weaponMotionAt(id,state,t,family,twoHand,hasShield){
+export function weaponMotionAt(id,state,t,family,twoHand,hasShield,bowCharge=1){
   const style=CLASS_ANIMATIONS[id],category=family?.split('_')[0],attack=state==='attack',cast=state==='cast',fall=state==='death'||state==='dead';
   const power=attack||cast?actionWeight(t):0,release=smooth((t-.25)/.15),death=fall?smooth(state==='dead'?1:t):0;
   const melee=['sword','axe','mace','dagger'].includes(category),ranged=category==='bow'||category==='crossbow';
   const p=[0,-.16,.13],r=[0,0,0],extra={};
   const strength={vanguard:1,emberwitch:.74,gravebinder:.68,wildkeeper:1.17,veilranger:.84}[id];
-  if(twoHand){
+  const heavyEdge=twoHand&&(category==='sword'||category==='axe');
+  if(twoHand&&!heavyEdge){
     if(ranged){p[1]=-.12;p[2]=.1;r[2]=id==='veilranger'?-.08:.035;}
     else if(category==='staff'||category==='spear')r[0]=.9;
     else r[2]=.65;
@@ -177,35 +321,51 @@ export function weaponMotionAt(id,state,t,family,twoHand,hasShield){
     if(cast){p[1]+=.035*power;r[0]-=(id==='wildkeeper'?.32:.23)*power;r[2]+=(id==='gravebinder'?-.2:id==='emberwitch'?.14:0)*power;}
     // Weapons settle with the torso; do not hold an upright guard on the ground.
     p[1]-=.025*death;r[2]+=({vanguard:.12,emberwitch:.22,gravebinder:-.18,wildkeeper:-.16,veilranger:.16}[id])*death;
-  }else if(attack&&melee){
+  }else if(!twoHand&&attack&&melee){
     // Daggers thrust, long blades cut, axes and maces finish with a heavier drop.
     const heavy=category==='axe'||category==='mace';
     extra.UpperArmR=[(category==='dagger'?.24:heavy?-.16:0)*power,category==='dagger'?-.12*power:0,heavy?-.11*power:0];
     extra.ForearmR=[category==='dagger'?.18*power:heavy?-.12*(1-release)*power:0,0,0];
   }
   const shield=hasShield?{weight:1-death,upper:[-.32-(state==='hit'?.30*Math.sin(t*Math.PI):0)-power*.12,0,.20],fore:-.95-power*.08}:null;
-  const bowGather=smooth((t-.16)/.16);
-  let draw=category==='bow'?(attack?bowGather*(1-smooth((t-.4)/.045)):cast?bowGather*(1-smooth((t-.60)/.32)):0):0;
   const spell=(cast||attack&&['wand','staff'].includes(category))&&!fall?power:0;
-  const motion={position:p,rotation:r,extra,shield,draw,handDraw:draw,reload:0,arrow:!attack||t<.4||t>.86,socket:melee?lerp(2.7,.65+release*1.45,power):category==='wand'?1.1+release*1.6*power:1.1,spell,cloth:style.cloth*(state==='walk'?1:power*.8),power};
-  if(twoHand&&['bow','crossbow','staff','spear'].includes(category)){
+  const motion={position:p,rotation:r,extra,shield,draw:0,handDraw:0,reload:0,arrow:!attack||t<.4||t>.86,socket:melee?lerp(2.7,.65+release*1.45,power):category==='wand'?1.1+release*1.6*power:1.1,spell,cloth:style.cloth*(state==='walk'?1:power*.8),power};
+  const restingPalm=id==='emberwitch'?.45:id==='gravebinder'?.33:.18;
+  const open=cast?pulse(t,.18,.43,.96):state==='reach'||state==='search'?pulse(t,0,.31,.72):0;
+  motion.palmL=twoHand||hasShield?0:lerp(restingPalm,1,open);
+  motion.palmR=family?0:lerp(.18,.78,open);
+  if(heavyEdge){
+    heavyWeaponMotion(motion,id,category,state,t);
+  }else if(twoHand&&['bow','crossbow','staff','spear'].includes(category)){
     // Author these grips in the facing frame, not the rotating chest frame.
     // The support hand belongs ahead of the torso; the rear shaft stays outside it.
     motion.rootSpace=true;
     motion.rootWeight=fall?1-smooth((state==='dead'?1:t)/.28):1;
-    const aim=attack||cast?(category==='bow'?smooth(t/.16)*(1-smooth((t-.88)/.12)):smooth(t/.22)*(1-smooth((t-.64)/.36))):0;
-    const recoil=attack?smooth((t-.4)/.04)*(1-smooth((t-.44)/.20)):0;
     const advance=attack?smooth((t-.22)/.18)*(1-smooth((t-.46)/.38)):0;
     let hip,spine,chest;
     if(category==='bow'){
-      p.splice(0,3,-.08+.16*aim,-.17+.41*aim,.33+.05*aim);r.splice(0,3,.08*(1-aim),.60*(1-aim),-.26+.20*aim);
-      motion.handDraw=attack?bowGather*(1-smooth((t-.60)/.32))+.08*recoil:draw;
-      motion.gripR=[-1.15,0,.12];motion.gripL=[0,0,-.12];
-      // Lead with the elbow in front while the hand is low, then lift it into
-      // the draw. A fixed rearward pole folds the forearm through the chest.
-      motion.poleR=[-1,.10+.9*aim,.9-1.4*motion.handDraw];motion.poleL=[1,-.35,-.1];
-      hip=-.12-.18*motion.handDraw;spine=-.10-.12*motion.handDraw;chest=-.16-.22*motion.handDraw;
+      // A tap can release during the lift. Sample the same height and tension
+      // on both sides of that frame, even before the draw transition finishes.
+      const aim=attack||cast?smooth(bowCharge/.30)*smooth(t/.22)*(1-smooth((t-.57)/.40)):0;
+      p.splice(0,3,-.08,-.17,.33);r.splice(0,3,0,0,-.30+.27*aim);
+      const gather=Math.min(smooth(bowCharge),smooth((t-.12)/.22));
+      motion.draw=attack?gather*(1-smooth((t-.4)/.045)):cast?gather*(1-smooth((t-.60)/.32)):0;
+      motion.bowAim=aim;
+      motion.bowFollow=attack?gather*pulse(t,.40,.50,.81):0;
+      motion.handDraw=attack?gather*(1-smooth((t-.46)/.31)):motion.draw;
+      motion.palmR=.68*motion.bowFollow;
+      motion.gripR=[-1.40-.55*aim+.18*motion.bowFollow,0,1.22-.80*aim];
+      motion.gripL=[-.93-1.36*aim+.30*motion.handDraw,0,-.56-.44*aim+.32*motion.handDraw];
+      // Facing-space guides keep both elbows on their own sides as the
+      // shoulders open. The drawing elbow stays below the cheek.
+      motion.poleR=[-1,-.34+.16*aim,.60-.90*motion.handDraw];
+      motion.poleL=[.90,-.64,.15];
+      hip=-.12-.195*aim-.035*motion.handDraw;
+      spine=-.10-.17*aim-.045*motion.handDraw;
+      chest=-.16-.325*aim-.10*motion.handDraw;
     }else if(category==='crossbow'){
+      const aim=attack||cast?smooth(t/.22)*(1-smooth((t-.64)/.36)):0;
+      const recoil=attack?smooth((t-.4)/.04)*(1-smooth((t-.44)/.20)):0;
       p.splice(0,3,-.13,-.10+.145*aim,.285+.035*aim-.023*recoil);r.splice(0,3,.25*(1-aim)-.055*recoil,0,-.055);
       motion.gripR=[-.9,0,0];motion.gripL=[-1.1,0,.12];
       motion.poleR=[-1,-.55,-.25];motion.poleL=[.65,-1,.05];
@@ -213,8 +373,10 @@ export function weaponMotionAt(id,state,t,family,twoHand,hasShield){
       motion.reload=attack?smooth((t-.50)/.10)*(1-smooth((t-.84)/.14)):0;
       hip=-.16-.08*aim;spine=-.13-.05*aim;chest=-.23-.07*aim;
     }else if(category==='staff'){
-      p.splice(0,3,-.20,-.16+.065*power,.34+.035*advance);r.splice(0,3,.18+.18*advance-.12*power,0,-.50-.06*power);
-      hip=-.10;spine=-.08;chest=-.15;
+      const gather=cast?pulse(t,0,.23,.42):0,raise=cast?pulse(t,.20,.43,.97):0;
+      p.splice(0,3,-.20-.034*gather+.072*raise,-.16-.074*gather+.21*raise,.34+.035*advance+.046*raise);
+      r.splice(0,3,.18+.28*gather-.25*raise+.18*advance,-.24*gather+.18*raise,-.50-.23*gather+.32*raise);
+      hip=-.10-.052*gather;spine=-.08+.07*raise;chest=-.15-.09*gather+.12*raise;
     }else{
       p.splice(0,3,-.22,-.15-.025*power,.25-.08*power+.065*advance);r.splice(0,3,.82+.68*power,0,-.50+.25*power);
       hip=-.16-.08*power;spine=-.12-.04*power;chest=-.22-.08*power;
@@ -233,29 +395,43 @@ export function sampleHumanoid(id,pose,equipment={},depth=0){
   const name=pose.ex?.airborne&&!['death','dead'].includes(requested)?'airborne':requested;
   const cycle=context?.phase??pose.ex?.walkPh??(pose.t||0)*TAU;
   const time=name==='walk'||name==='charge'?((cycle/TAU)%1+1)%1:name==='idle'?((pose.t||0)/3%1+1)%1:clamp(pose.t||0);
-  const family=equipment.main?.family,category=family?.split('_')[0],gait=gaitProfile(id,null,context?.speed??pose.ex?.speed??3);
+  const family=equipment.main?.family,category=family?.split('_')[0],gait=gaitProfile(id,null,context?.speed??pose.ex?.speed??3,family);
+  const charge=name==='draw'?time:name==='attack'?context?.drawCharge:undefined;
+  const heldPhase=charge===undefined?null:.22+.16*smooth(charge);
   let source=name,phase=time;
-  if(name==='draw'){source='attack';phase=.22+.16*smooth(time);}
+  if(name==='draw'){source='attack';phase=heldPhase;}
+  else if((category==='bow'||equipment.main?.modelId&&category==='crossbow')&&(name==='release'||name==='reload')){
+    source='attack';
+    phase=name==='release'?.395+.25*smooth(time):.53+.47*smooth(time);
+  }
   else if(name==='channel'){source='cast';phase=.42+Math.sin((pose.t||0)*2)*.018;}
   else if(name==='airborne'){source='idle';phase=0;}
   else if(name==='charge'){source='walk';}
   else if(name==='spin'){source='attack';phase=.49;}
   else phase=animationPhase(name,time,family,context?.releases);
-  const body=classPoseAt(id,source,phase),motion=weaponMotionAt(id,source,phase,family,!!equipment.main?.twoHand,!!equipment.off);
+  // The string can release immediately while the torso finishes the pose the player held.
+  const releaseFromHold=category==='bow'&&name==='attack'&&heldPhase!==null&&context?.releases?.[0]===0;
+  const bodyPhase=releaseFromHold?lerp(heldPhase,phase,smooth((phase-.4)/.18)):phase;
+  const body=classPoseAt(id,source,bodyPhase),motion=weaponMotionAt(id,source,phase,family,!!equipment.main?.twoHand,!!equipment.off,charge);
   const add=(joint,x=0,y=0,z=0)=>{const r=body.rotations[joint]||(body.rotations[joint]=[0,0,0]);r[0]+=x;r[1]+=y;r[2]+=z;};
   for(const [joint,r] of Object.entries(motion.extra))add(joint,...r);
+  if(motion.weightShift){
+    body.offsetX+=motion.weightShift[0];body.height+=motion.weightShift[1];body.offsetZ+=motion.weightShift[2];
+  }
   if(motion.body)for(const [joint,r] of Object.entries(motion.body)){
     const original=body.rotations[joint]||[0,0,0];body.rotations[joint]=r.map((v,i)=>lerp(original[i],v,motion.bodyWeight));
   }
   if(category==='bow'||category==='crossbow'){
     if(source==='attack'||source==='cast')body.height=classPoseAt(id,'idle',0).height-.022*motion.power;
+    // Draw into the rear foot and keep the bow arm steady through release.
+    if(source==='attack'){body.offsetX*=.48;body.offsetZ=-.045*motion.handDraw;}
   }
   let feet=null;
   if(!['death','dead','airborne'].includes(name)){
     feet=context?.feet?.map(f=>({...f}))||gait.feet.map(f=>source==='walk'?footPath(time,gait,f):{...f,y:0,pitch:0,contact:true});
     if(source==='walk'){
       const wave=Math.sin(time*TAU),bounce=Math.cos(time*TAU*2);
-      body.height=.845-CLASS_ANIMATIONS[id].crouch*.09+bounce*.013;
+      body.height=.845-CLASS_ANIMATIONS[id].crouch*.09+bounce*.013+(motion.weightShift?.[1]||0);
       add('Hips',.035,-wave*.045,wave*.035);add('Chest',-.015,wave*.07,-wave*.022);
       add('Head',-.02,-wave*.025,-wave*.014);
     }
@@ -263,7 +439,9 @@ export function sampleHumanoid(id,pose,equipment={},depth=0){
   if(name==='kick'){
     const wind=smooth(time/.24)*(1-smooth((time-.24)/.26));
     const drive=smooth((time-.24)/.26)*(1-smooth((time-.5)/.5));
-    const foot=feet.find(f=>f.id==='R');foot.z=.025+.69*drive;foot.y=.55*drive+.24*wind;foot.pitch=-.2*wind+.12*drive;foot.contact=wind+drive<.001;
+    const foot=feet.find(f=>f.id==='R'),extension=motion.edgeRoll===undefined?.76:.85;
+    if(motion.edgeRoll!==undefined)body.offsetZ+=.065*drive;
+    foot.z=lerp(foot.z,extension,drive);foot.y=.55*drive+.24*wind;foot.pitch=-.2*wind+.12*drive;foot.contact=wind+drive<.001;
   }
   if(name==='reach'||name==='search'){
     // Keep two-handed grips solved and show searching through torso and head.
@@ -271,7 +449,7 @@ export function sampleHumanoid(id,pose,equipment={},depth=0){
     if(equipment.main?.twoHand){add('Spine',(name==='search'?.27:.12)*w);add('Head',.18*w);}
     motion.spell=0;
   }
-  if(name==='draw'){if(category==='bow')motion.draw=motion.handDraw=.2+.8*smooth(time);motion.arrow=true;motion.power=1;motion.spell=0;}
+  if(name==='draw'){motion.arrow=true;motion.power=1;motion.spell=0;}
   if(name==='channel'){motion.spell=.88+Math.sin((pose.t||0)*4)*.08;motion.power=1;add('HandL',Math.sin((pose.t||0)*3)*.045);}
   if(name==='charge'){add('Spine',.21);add('Head',-.13);add('UpperArmL',-.2);add('UpperArmR',-.18);}
   if(name==='spin'){add('UpperArmL',-.35,0,.35);add('UpperArmR',-.25,0,-.28);body.height-=.05;}
@@ -289,18 +467,30 @@ export function sampleHumanoid(id,pose,equipment={},depth=0){
     const reaction=context.reaction;
     if(reaction){const w=reaction.weight,dir=reaction.direction||0;add('Spine',-.12*Math.cos(dir)*w,0,.09*Math.sin(dir)*w);add('Head',-.06*w);if(reaction.kind==='block'){add('UpperArmL',-.25*w);motion.shield&&(motion.shield.fore-=.12*w);}}
   }
-  const result={body,motion,feet,name,time,phase,gait};
+  const drape=mantlePose(name,time,phase,gait.run,context);
+  const result={body,motion,feet,name,time,phase,gait,drape};
   const blend=context?.blend;
   if(blend&&blend.weight<1&&depth<6){
     const old=sampleHumanoid(id,blend.from,equipment,depth+1),w=blend.weight;
     result.from=old;result.blendWeight=w;
-    const bowLift=category==='bow'&&!falling?Math.min(1,Math.abs(old.motion.position[1]-motion.position[1])/.41)*.18*Math.sin(Math.PI*w):0;
-    for(const key of ['position','rotation'])motion[key]=motion[key].map((v,i)=>lerp(old.motion[key][i],v,w));
-    if(category==='bow'){
-      motion.position[1]+=bowLift;
-      for(const key of ['poleR','poleL'])motion[key]=motion[key].map((v,i)=>lerp(old.motion[key][i],v,w));
+    // A live controller supplies ground contacts. When scrubbing standalone
+    // poses, carry the old foot targets into the new stance with the torso.
+    if(feet&&old.feet&&!context.feet)for(const foot of feet){
+      const from=old.feet.find(f=>f.id===foot.id);
+      if(from)for(const axis of ['x','y','z','pitch'])foot[axis]=lerp(from[axis]??0,foot[axis]??0,w);
     }
-    for(const key of ['socket','draw','handDraw','reload','power','spell','cloth'])motion[key]=lerp(old.motion[key],motion[key],w);
+    for(let i=0;i<drape.length;i++)drape[i]=lerp(old.drape[i],drape[i],w);
+    for(const key of ['position','rotation'])motion[key]=motion[key].map((v,i)=>lerp(old.motion[key][i],v,w));
+    if(motion.edgeRoll!==undefined){
+      motion.edgeRoll=lerp(old.motion.edgeRoll,motion.edgeRoll,w);
+      motion.heelTurn=lerp(old.motion.heelTurn,motion.heelTurn,w);
+    }
+    if(motion.bowAim!==undefined){
+      motion.bowAim=lerp(old.motion.bowAim,motion.bowAim,w);
+      motion.bowFollow=lerp(old.motion.bowFollow,motion.bowFollow,w);
+    }
+    if(motion.bowAim!==undefined||motion.edgeRoll!==undefined)for(const key of ['gripR','gripL','poleR','poleL'])motion[key]=motion[key].map((v,i)=>lerp(old.motion[key][i],v,w));
+    for(const key of ['socket','draw','handDraw','reload','power','spell','cloth','palmL','palmR'])motion[key]=lerp(old.motion[key],motion[key],w);
     if(motion.rootSpace)motion.rootWeight=lerp(old.motion.rootWeight,motion.rootWeight,w);
   }
   return applyCinematicBody(result,pose.ex?.cinematic);

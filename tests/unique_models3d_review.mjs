@@ -1,6 +1,6 @@
-import {createCharacterRenderer,STATES} from '../js/character3d.mjs?v=finished-1';
-import {resolveCharacterVisual,CLASS_STYLES} from '../js/character_catalog3d.mjs?v=body-armor-1';
-import {UNIQUE_MODELS3D} from '../js/character_unique_catalog3d.mjs?v=body-armor-1';
+import {createCharacterRenderer,loadUniquePainting,STATES} from '../js/character3d.mjs?v=bow-draw-1';
+import {resolveCharacterVisual,CLASS_STYLES} from '../js/character_catalog3d.mjs?v=forged-1';
+import {UNIQUE_MODELS3D} from '../js/character_unique_catalog3d.mjs?v=forged-1';
 import {Box3,Vector3} from '../js/vendor/three/three.module.min.js';
 
 const data=window.ModelReviewData,sprites=window.ModelReviewSprites,recipes=Object.values(UNIQUE_MODELS3D),ui=id=>document.getElementById(id);
@@ -86,7 +86,7 @@ async function runContract(){
   report.checks=checks;ui('result').textContent='PASS: '+report.frames+' rendered frames; all 118 models on all five classes, animations, attachment reuse and GPU cleanup.';window.uniqueModelsReport=report;return report;
 }
 try{
-  await sprites.loadBundle('core');view=createCharacterRenderer({size:512});
+  await Promise.all([sprites.loadBundle('core'),loadUniquePainting()]);view=createCharacterRenderer({size:512});
   for(const [id,profile] of Object.entries(CLASS_STYLES))ui('class').add(new Option(profile.name,id));
   ui('class').onchange=()=>showPage(page,ui('class').value);ui('previous').onclick=()=>showPage(page-1);ui('next').onclick=()=>showPage(page+1);
   await showPage();ui('result').textContent='Ready · front, side and back comparisons. Inventory art is shown at its actual 64 × 64 size.';

@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three/three.module.min.js';
 import {mesh, orb, combineStatic} from './character_mesh3d.mjs?v=body-armor-1';
-import {heroPanel} from './character_finish3d.mjs';
+import {heroPanel,heroColumn,heroPanelV} from './character_finish3d.mjs?v=mantles-1';
 
 // Rows hold faces, chest swatches, outer garments and wraparound vests. The image is
 // decoded before the first frame. CPU-only rig tools need only the geometry.
@@ -15,13 +15,13 @@ if (typeof Image !== 'undefined') {
 const classes = ['vanguard', 'emberwitch', 'gravebinder', 'wildkeeper', 'veilranger'];
 const atlasRows = 4;
 const cuts = {
-  vanguard:   {jaw:1.10, cheek:1.01, hair:.064, shoulder:.128, hem:.072, vest:.14},
-  emberwitch: {jaw:.84,  cheek:.93,  hair:.24,  shoulder:.104, hem:.090, vest:.19},
-  gravebinder:{jaw:.88,  cheek:.96,  hair:.12,  shoulder:.106, hem:.080, vest:.23},
-  wildkeeper: {jaw:1.06, cheek:1.04, hair:.17,  shoulder:.139, hem:.098, vest:.16},
-  veilranger: {jaw:.87,  cheek:.94,  hair:.14,  shoulder:.101, hem:.066, vest:.21}
+  vanguard:   {jaw:1.14, cheek:1.04, brow:1.34, nose:1.03, chin:1.13, hair:.064, shoulder:.128, hem:.072, vest:.14},
+  emberwitch: {jaw:.82,  cheek:.96,  brow:.78,  nose:.86,  chin:.92,  hair:.24,  shoulder:.104, hem:.090, vest:.19},
+  gravebinder:{jaw:.86,  cheek:1.04, brow:1.26, nose:1.38, chin:1.04, hair:.12,  shoulder:.106, hem:.080, vest:.23},
+  wildkeeper: {jaw:1.10, cheek:1.08, brow:1.12, nose:1.20, chin:1.12, hair:.17,  shoulder:.139, hem:.098, vest:.16},
+  veilranger: {jaw:.86,  cheek:1.00, brow:.94,  nose:.98,  chin:.96,  hair:.14,  shoulder:.101, hem:.066, vest:.21}
 };
-const tau = Math.PI * 2;
+const pi = Math.PI, tau = pi * 2;
 const clamp = THREE.MathUtils.clamp;
 
 export function isStarterVest(item) {
@@ -84,15 +84,16 @@ function faceGeometry(id) {
     const width = rx * THREE.MathUtils.lerp(cut.jaw, cut.cheek, clamp((y+.08)/.115,0,1));
     const x = width * side, mask = Math.max(0,front);
     const bump = (cx,cy,wx,wy) => Math.exp(-(((Math.abs(x)-cx)/wx)**2 + ((y-cy)/wy)**2));
-    const sculpt = .030*bump(0,.014,.025,.022) + .022*bump(0,.040,.017,.042)
-      + .010*bump(.050,.026,.032,.020) - .010*bump(.049,.060,.025,.012)
-      + .009*bump(.045,.078,.034,.015) + .010*bump(0,-.030,.041,.013);
+    const sculpt = cut.nose*(.033*bump(0,.014,.025,.022) + .023*bump(0,.040,.017,.042))
+      + .017*bump(.064,.026,.032,.020) - .013*bump(.049,.060,.025,.012)
+      + .014*cut.brow*bump(.045,.078,.034,.015) + .010*bump(0,-.030,.041,.013)
+      + .014*cut.chin*bump(0,-.078,.043,.019);
     // Match the front painting to the cheekbones, then unwrap past the ears
     // to the painted hairline at the center back.
     const projected = .5+Math.asin(clamp(x/.123,-1,1))/tau;
     const s = THREE.MathUtils.lerp(u,projected,clamp((front-.10)/.45,0,1));
     const t = .087 + (y+.104)/.305*.90;
-    return [x,y,offset + front*rz + sculpt*mask,s,t];
+    return [x,y,offset + front*rz + sculpt*mask,s,heroPanelV(9,t)];
   });
 }
 
@@ -112,13 +113,15 @@ export function tapered(points, radii, sides=8) {
 }
 
 export function sculptHead(head, id, materials, hairParts, headStyle) {
-  mesh(head,faceGeometry(id),heroPanel(id,9),[0,0,0],[1,1,1],'Face');
+  const face=new THREE.Group(),skin=heroColumn(id);
+  head.add(face);mesh(face,faceGeometry(id),skin);
   const cut = cuts[id], hair = new THREE.Group(), hairPaint=heroPanel(id,4);
   hair.name='Hair';head.add(hair);hairParts.push(hair);
+  const nape=new THREE.Group();nape.name='HairAtNape';head.add(nape);hairParts.push(nape);
   const cap = surface(32,10,(u,v) => {
     const a = (u-.5)*tau, front = (Math.cos(a)+1)/2;
     const sideburn=Math.exp(-((Math.abs(a)-1.56)**2)/.115);
-    const edge = -.064 + .208*front**2 + .092*sideburn - .017*Math.sin(3*a+.45)*front
+    const edge = -.064 + .208*front**2 + .092*sideburn + (id==='vanguard'?.043*(1-front):0) - .017*Math.sin(3*a+.45)*front
       +.006*Math.sin(a*9+.6)+.004*Math.cos(a*17);
     const y=edge+(.216-edge)*v;
     const ring = Math.sqrt(Math.max(.0001,1-(Math.max(0,y-.108)/.108)**2))*(1+.026*Math.cos(11*a+v*2));
@@ -130,43 +133,79 @@ export function sculptHead(head, id, materials, hairParts, headStyle) {
     const lock=surface(5,8,(u,v)=>{
       const width=.035+.28*Math.sin(v*1.48),a=center+(u-.5)*width+.14*(1-v)*Math.sin(i+1.2);
       const earCut=Math.exp(-((Math.abs(Math.cos(center))/.28)**2));
-      const tip=THREE.MathUtils.lerp(-cut.hair*(.70+.24*Math.cos(i*2.5))+.026,.085,earCut);
+      const tip=THREE.MathUtils.lerp(-cut.hair*(.70+.24*Math.cos(i*2.5))+.026,.085,earCut)+(id==='vanguard'?.035:0);
       const y=.113*v+tip*(1-v);
       const radius=.122+.009*Math.sin(u*Math.PI)+.013*Math.sin(v*Math.PI)-.016*(1-v)**3;
       return [Math.sin(a)*radius,y,Math.cos(a)*radius*.91-.021,.5-.43*Math.sin(a)+.035*(u-.5),.02+.64*v];
     });
     mesh(hair,lock,hairPaint);
   }
+  if(id==='emberwitch'){
+    // Wound coils lead into a tapered plait down the back of the head.
+    for(let strand=0;strand<3;strand++)mesh(hair,surface(10,30,(u,v)=>{
+      const drop=1-v,twist=drop*13+strand*tau/3,a=u*tau;
+      const r=.024*(.20+.80*v**.45);
+      return [.031*Math.cos(twist)*(.42+.58*v)+r*Math.cos(a)-.035*drop,
+        .149-.378*drop,-.117-.065*Math.sin(drop*2.3)+.022*Math.sin(twist)+r*Math.sin(a),
+        .22+.51*u,.13+.75*v];
+    }),hairPaint);
+  }
+  if(id==='wildkeeper'){
+    // The moustache and forked beard follow the jaw, leaving the mouth clear.
+    // Open helmets trim scalp hair to its nape. Both cuts keep the beard.
+    const beard=geometry=>{
+      mesh(hair,geometry,hairPaint);mesh(nape,geometry.clone(),hairPaint);
+    };
+    beard(surface(36,9,(u,v)=>{
+      const a=(u-.5)*pi*1.18,side=Math.abs(Math.sin(a));
+      const lip=-.043+.031*side,ends=.15+.082*Math.cos(a)-.052*Math.max(0,1-Math.abs(u-.5)/.14);
+      const y=lip-(1-v)*ends*(1-.76*side);
+      const radius=(.104+.009*Math.cos(a*9+v))* (.48+.52*v);
+      return [Math.sin(a)*radius,y,.034+Math.cos(a)*(.088+.012*v)+.011*(1-v),
+        .09+.82*u,.04+.55*v];
+    }));
+    for(const s of [-1,1])beard(surface(12,5,(u,v)=>{
+      const t=s>0?u:1-u;
+      return [s*(.004+.068*t),-.018-.035*t+.016*(v-.5)*Math.sin(pi*t),
+        .127-.022*t+.006*Math.sin(pi*v),.29+.40*t,.19+.26*v];
+    }));
+  }
   combineStatic(hair);
-  const nape=new THREE.Group();nape.name='HairAtNape';head.add(nape);hairParts.push(nape);
   mesh(nape,surface(24,5,(u,v)=>{
     const a=(.39+1.22*u)*Math.PI,edge=-.056-.25*cut.hair+.012*Math.cos(11*a);
     const r=.115+.004*Math.sin(v*Math.PI);
     return [r*Math.sin(a),edge+(.077-edge)*v,-.012+r*Math.cos(a),.5-.47*Math.sin(a),.02+.57*v];
   }),hairPaint);
-  const ears = new THREE.Group(); head.add(ears);
-  const earPaint=heroPanel(id,5);
+  if(id==='wildkeeper')combineStatic(nape);
   for (const s of [-1,1]) {
-    mesh(ears,surface(20,10,(u,v)=>{
+    mesh(face,surface(20,10,(u,v)=>{
       const a=(u-.5)*tau, h=Math.sin(v*Math.PI), earZ=Math.sin(a)*h;
       const rim=.006*Math.sin(2*Math.PI*v)*Math.cos(a)*h;
       return [s*(.111+.023*Math.cos(a)*h+rim),-.014+.086*v,-.002+earZ*.028-.009*v,
-        .52-.30*earZ,.09+.80*v];
-    }),earPaint);
+        .52-.30*earZ,heroPanelV(5,.09+.80*v)];
+    }),skin);
   }
-  combineStatic(ears);
+  combineStatic(face);face.children[0].name='Face';
 
   if (id==='gravebinder' || id==='veilranger') {
     const deep = id==='gravebinder';
-    const hood = surface(32,12,(u,v) => {
+    const hoodShape=(u,v) => {
       const a=(u-.5)*tau, front=Math.max(0,Math.cos(a));
-      const edge=-.146+.271*front**2.4,y=edge+(.242-edge)*v;
-      const swell=Math.sqrt(Math.max(.0001,1-(Math.max(0,y-.112)/.13)**2));
-      const fold=(1+.046*Math.cos(8*a+v))*swell;
-      return [Math.sin(a)*.148*fold,y,Math.cos(a)*.16*fold-.015-(deep?.073:.052)*v*v*(1-.75*front),.5+.46*Math.sin(a),v];
-    });
+      const edge=(deep?-.182:-.121)+ (deep?.316:.265)*front**2.4+.027*front*Math.abs(Math.sin(2*a));
+      const crown=deep?.247:.237,y=edge+(crown-edge)*v;
+      const swell=Math.sqrt(Math.max(.0001,1-(Math.max(0,y-.112)/(crown-.112))**2));
+      const fold=(1+.056*Math.cos((deep?8:6)*a+1.9*v))*swell;
+      return [Math.sin(a)*.148*fold,y,Math.cos(a)*.16*fold-.015-(deep?.079:.126)*v*v*(1-.75*front)
+        +(deep?0:.044*front**6*(1-v)**2),.5+.46*Math.sin(a),v];
+    };
     const fabric=swatch(id,2,.14,.56,.24,.38);
-    mesh(headStyle,hood,fabric);
+    mesh(headStyle,surface(40,12,hoodShape),fabric);
+    // A turned edge gives the hood opening thickness in profile.
+    mesh(headStyle,surface(40,4,(u,v)=>{
+      const a=(u-.5)*tau,[x,y,z]=hoodShape(u,.066*v);
+      const welt=.005+.005*Math.sin(v*pi);
+      return [x+welt*Math.sin(a),y-.003,z+welt*Math.cos(a),.05+.88*u,.08+.12*v];
+    }),fabric);
     if (!deep) {
       const mask=surface(16,4,(u,v)=>{
         const a=(u-.5)*Math.PI;
@@ -174,6 +213,7 @@ export function sculptHead(head, id, materials, hairParts, headStyle) {
       });
       mesh(headStyle,mask,fabric);
     }
+    combineStatic(headStyle);
   }
   if (id==='wildkeeper') {
     for (const s of [-1,1]) {
@@ -187,18 +227,33 @@ export function sculptHead(head, id, materials, hairParts, headStyle) {
   }
 }
 
-export function sculptHand(parent, mat, side) {
-  const s=side==='L'?1:-1, hand=new THREE.Group();
-  hand.name='HandMesh'+side; parent.add(hand);
-  orb(hand,mat,[0,-.035,.003],[.037,.044,.029]);
-  for(let i=0;i<4;i++) {
-    const x=s*(i-1.5)*.015, length=.083-Math.abs(i-1)*.006;
-    mesh(hand,tapered([[x,-.045,.007],[x,-.064,.019],[x,-length,.014],[x,-length-.004,.001]],
-      [.011,.011,.009,.002],6),mat);
+export function sculptHand(parent, mat, side,articulated=false) {
+  const s=side==='L'?1:-1;
+  function shape(open) {
+    const group=new THREE.Group();
+    orb(group,mat,[0,-.035,.003],[.037,.044,.029]);
+    for(let i=0;i<4;i++){
+      const x=s*(i-1.5)*.015,length=.083-Math.abs(i-1)*.006;
+      const fingers=open?[[x,-.045,.007],[x*1.20,-.067,.012],[x*1.55,-length-.022,.017],[x*1.75,-length-.038,.024]]
+        :[[x,-.045,.007],[x,-.064,.019],[x,-length,.014],[x,-length-.004,.001]];
+      mesh(group,tapered(fingers,[.011,.011,.009,.002],6),mat);
+    }
+    const thumb=open?[[-s*.023,-.024,.002],[-s*.045,-.038,.018],[-s*.057,-.048,.036]]
+      :[[-s*.023,-.024,.002],[-s*.041,-.043,.026],[-s*.033,-.064,.033]];
+    mesh(group,tapered(thumb,[.017,.013,.005]),mat);
+    return combineStatic(group);
   }
-  mesh(hand,tapered([[-s*.023,-.024,.002],[-s*.041,-.043,.026],[-s*.033,-.064,.033]], [.017,.013,.005]),mat);
-  combineStatic(hand);
-  const g=hand.children.find(o=>o.isMesh).geometry,pos=g.attributes.position,uv=g.attributes.uv;
+  const hand=shape(false);hand.name='HandMesh'+side;parent.add(hand);
+  const handMesh=hand.children[0],g=handMesh.geometry,pos=g.attributes.position,uv=g.attributes.uv;
+  if(articulated){
+    const open=shape(true).children[0].geometry;
+    for(const name of ['position','normal']){
+      const delta=open.attributes[name],rest=g.attributes[name].array;
+      for(let i=0;i<rest.length;i++)delta.array[i]-=rest[i];
+      delta.name='open';g.morphAttributes[name]=[delta];
+    }
+    g.morphTargetsRelative=true;handMesh.updateMorphTargets();open.dispose();
+  }
   for(let i=0;i<pos.count;i++)
     uv.setXY(i,clamp(.5+s*pos.getX(i)/.092,.025,.975),clamp((pos.getY(i)+.094)/.104,.02,.98));
   return hand;
@@ -282,18 +337,6 @@ export function createSplitCoat(hips,id) {
     g.index.needsUpdate=true;g.setDrawRange(0,count);
   }
   return {panels,material,tint,fit,skeleton:cloth.skeleton};
-}
-
-export function capeGeometry(id) {
-  const length=id==='gravebinder'?.96:id==='veilranger'?.61:.78;
-  return surface(30,12,(u,v)=>{
-    const a=(.40+u*1.20)*Math.PI, drop=1-v;
-    const pleat=Math.cos(u*tau*4.5+drop*.65)*(.004+drop*.016);
-    const hem=.037*Math.cos(u*tau*2.5)+.031*Math.sin(u*tau)
-      -(id==='veilranger'?.21*Math.max(0,1-Math.abs(u-.5)*7):0);
-    return [Math.sin(a)*(.205+drop*.052+pleat),.357-drop*(length+hem*drop),
-      Math.cos(a)*(.077+.104*drop+pleat)-drop*.064,1-u,v];
-  });
 }
 
 export function vestGeometry(id) {

@@ -4,7 +4,8 @@ export const UNIQUE_MODEL_SLOTS=Object.freeze(['main','off','head','chest','glov
 export const UNIQUE_MODELS3D=freeze({
   "u_gen_0_0": {
     "id": "u_gen_0_0",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 0,
     "name": "Dawnbreaker",
     "baseId": "sword2h_t1",
     "category": "sword",
@@ -57,7 +58,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_0_2": {
     "id": "u_gen_0_2",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 1,
     "name": "Sunder",
     "baseId": "sword2h_t3",
     "category": "sword",
@@ -110,7 +112,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_0_4": {
     "id": "u_gen_0_4",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 2,
     "name": "Kingsbane",
     "baseId": "sword2h_t4",
     "category": "sword",
@@ -163,7 +166,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_0_6": {
     "id": "u_gen_0_6",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 3,
     "name": "Worldcleaver",
     "baseId": "sword2h_t6",
     "category": "sword",
@@ -216,7 +220,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_0_8": {
     "id": "u_gen_0_8",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 4,
     "name": "Mornsplitter",
     "baseId": "sword2h_t8",
     "category": "sword",
@@ -269,7 +274,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_0_10": {
     "id": "u_gen_0_10",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 5,
     "name": "Heaven's Edge",
     "baseId": "sword2h_t10",
     "category": "sword",
@@ -322,7 +328,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_0_12": {
     "id": "u_gen_0_12",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 6,
     "name": "Aurora's Reckoning",
     "baseId": "sword2h_t12",
     "category": "sword",
@@ -375,7 +382,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_12_0": {
     "id": "u_gen_12_0",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 7,
     "name": "Edge of Vows",
     "baseId": "sword_t1",
     "category": "sword",
@@ -424,7 +432,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_12_2": {
     "id": "u_gen_12_2",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 8,
     "name": "Lightbrand",
     "baseId": "sword_t3",
     "category": "sword",
@@ -473,7 +482,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_12_4": {
     "id": "u_gen_12_4",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 9,
     "name": "Kingsblade",
     "baseId": "sword_t4",
     "category": "sword",
@@ -522,7 +532,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_12_6": {
     "id": "u_gen_12_6",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 10,
     "name": "Vowkeeper",
     "baseId": "sword_t6",
     "category": "sword",
@@ -571,7 +582,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_12_8": {
     "id": "u_gen_12_8",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 11,
     "name": "Dawnsworn",
     "baseId": "sword_t8",
     "category": "sword",
@@ -620,7 +632,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_12_10": {
     "id": "u_gen_12_10",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 12,
     "name": "The Gilded Promise",
     "baseId": "sword_t10",
     "category": "sword",
@@ -669,7 +682,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_12_12": {
     "id": "u_gen_12_12",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 13,
     "name": "Throneward",
     "baseId": "sword_t12",
     "category": "sword",
@@ -718,7 +732,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_widow": {
     "id": "u_widow",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 14,
     "name": "Widow's Lament",
     "baseId": "dirk",
     "category": "dagger",
@@ -767,7 +782,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_2_0": {
     "id": "u_gen_2_0",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 15,
     "name": "Whisperfang",
     "baseId": "dagger_t1",
     "category": "dagger",
@@ -816,7 +832,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_2_2": {
     "id": "u_gen_2_2",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 16,
     "name": "Nightkiss",
     "baseId": "dagger_t3",
     "category": "dagger",
@@ -865,7 +882,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_2_4": {
     "id": "u_gen_2_4",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 17,
     "name": "Quietus",
     "baseId": "dagger_t4",
     "category": "dagger",
@@ -914,7 +932,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_2_6": {
     "id": "u_gen_2_6",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 18,
     "name": "Severance",
     "baseId": "dagger_t6",
     "category": "dagger",
@@ -963,7 +982,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_2_8": {
     "id": "u_gen_2_8",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 19,
     "name": "Venomwhisper",
     "baseId": "dagger_t8",
     "category": "dagger",
@@ -1012,7 +1032,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_2_10": {
     "id": "u_gen_2_10",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 20,
     "name": "The Silent Thorn",
     "baseId": "dagger_t10",
     "category": "dagger",
@@ -1061,7 +1082,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_2_12": {
     "id": "u_gen_2_12",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 21,
     "name": "Last Breath",
     "baseId": "dagger_t12",
     "category": "dagger",
@@ -1110,7 +1132,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gravebite": {
     "id": "u_gravebite",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 22,
     "name": "Gravebite",
     "baseId": "handaxe",
     "category": "axe",
@@ -1159,7 +1182,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_kingsplit": {
     "id": "u_kingsplit",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 23,
     "name": "Kingsplitter",
     "baseId": "waraxe",
     "category": "axe",
@@ -1208,7 +1232,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_1_1": {
     "id": "u_gen_1_1",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 24,
     "name": "Gorewake",
     "baseId": "axe2h_t2",
     "category": "axe",
@@ -1261,7 +1286,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_1_3": {
     "id": "u_gen_1_3",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 25,
     "name": "Reaver's End",
     "baseId": "axe2h_t3",
     "category": "axe",
@@ -1314,7 +1340,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_1_5": {
     "id": "u_gen_1_5",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 26,
     "name": "Skullsplit",
     "baseId": "axe2h_t5",
     "category": "axe",
@@ -1367,7 +1394,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_1_7": {
     "id": "u_gen_1_7",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 27,
     "name": "Ruin",
     "baseId": "axe2h_t7",
     "category": "axe",
@@ -1420,7 +1448,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_1_9": {
     "id": "u_gen_1_9",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 28,
     "name": "Marrowhunger",
     "baseId": "axe2h_t9",
     "category": "axe",
@@ -1473,7 +1502,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_1_11": {
     "id": "u_gen_1_11",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 29,
     "name": "The Crimson Tithe",
     "baseId": "axe2h_t11",
     "category": "axe",
@@ -1526,7 +1556,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_13_1": {
     "id": "u_gen_13_1",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 30,
     "name": "Tusk",
     "baseId": "axe_t2",
     "category": "axe",
@@ -1575,7 +1606,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_13_3": {
     "id": "u_gen_13_3",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 31,
     "name": "Cleaver's Joy",
     "baseId": "axe_t3",
     "category": "axe",
@@ -1624,7 +1656,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_13_5": {
     "id": "u_gen_13_5",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 32,
     "name": "Bonereaver",
     "baseId": "axe_t5",
     "category": "axe",
@@ -1673,7 +1706,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_13_7": {
     "id": "u_gen_13_7",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 33,
     "name": "Wolfsplit",
     "baseId": "axe_t7",
     "category": "axe",
@@ -1722,7 +1756,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_13_9": {
     "id": "u_gen_13_9",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 34,
     "name": "Huntsmaw",
     "baseId": "axe_t9",
     "category": "axe",
@@ -1771,7 +1806,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_13_11": {
     "id": "u_gen_13_11",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 35,
     "name": "Antlershear",
     "baseId": "axe_t11",
     "category": "axe",
@@ -1820,7 +1856,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_11_1": {
     "id": "u_gen_11_1",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 36,
     "name": "Earthshaker",
     "baseId": "mace2h_t2",
     "category": "mace",
@@ -1873,7 +1910,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_11_3": {
     "id": "u_gen_11_3",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 37,
     "name": "Worldhammer",
     "baseId": "mace2h_t3",
     "category": "mace",
@@ -1926,7 +1964,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_11_5": {
     "id": "u_gen_11_5",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 38,
     "name": "Tollbringer",
     "baseId": "mace2h_t5",
     "category": "mace",
@@ -1979,7 +2018,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_11_7": {
     "id": "u_gen_11_7",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 39,
     "name": "Cataclysm",
     "baseId": "mace2h_t7",
     "category": "mace",
@@ -2032,7 +2072,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_11_9": {
     "id": "u_gen_11_9",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 40,
     "name": "Doomtoll",
     "baseId": "mace2h_t9",
     "category": "mace",
@@ -2085,7 +2126,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_11_11": {
     "id": "u_gen_11_11",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 41,
     "name": "The Sunken Peal",
     "baseId": "mace2h_t11",
     "category": "mace",
@@ -2138,7 +2180,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_14_0": {
     "id": "u_gen_14_0",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 42,
     "name": "Vesper",
     "baseId": "mace_t1",
     "category": "mace",
@@ -2187,7 +2230,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_14_2": {
     "id": "u_gen_14_2",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 43,
     "name": "Bellringer",
     "baseId": "mace_t3",
     "category": "mace",
@@ -2236,7 +2280,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_14_4": {
     "id": "u_gen_14_4",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 44,
     "name": "Knell",
     "baseId": "mace_t4",
     "category": "mace",
@@ -2285,7 +2330,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_14_6": {
     "id": "u_gen_14_6",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 45,
     "name": "Sanctus",
     "baseId": "mace_t6",
     "category": "mace",
@@ -2334,7 +2380,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_14_8": {
     "id": "u_gen_14_8",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 46,
     "name": "Matins",
     "baseId": "mace_t8",
     "category": "mace",
@@ -2383,7 +2430,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_14_10": {
     "id": "u_gen_14_10",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 47,
     "name": "Final Tithe",
     "baseId": "mace_t10",
     "category": "mace",
@@ -2432,7 +2480,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_14_12": {
     "id": "u_gen_14_12",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 48,
     "name": "Choir of Ash",
     "baseId": "mace_t12",
     "category": "mace",
@@ -2481,7 +2530,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_15_1": {
     "id": "u_gen_15_1",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 49,
     "name": "Skyfall Pike",
     "baseId": "spear2h_t2",
     "category": "spear",
@@ -2534,7 +2584,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_15_3": {
     "id": "u_gen_15_3",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 50,
     "name": "Stormlance",
     "baseId": "spear2h_t3",
     "category": "spear",
@@ -2587,7 +2638,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_15_5": {
     "id": "u_gen_15_5",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 51,
     "name": "Heaven's Reach",
     "baseId": "spear2h_t5",
     "category": "spear",
@@ -2640,7 +2692,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_15_7": {
     "id": "u_gen_15_7",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 52,
     "name": "Thunderpike",
     "baseId": "spear2h_t7",
     "category": "spear",
@@ -2693,7 +2746,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_15_9": {
     "id": "u_gen_15_9",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 53,
     "name": "Tempest's Descent",
     "baseId": "spear2h_t9",
     "category": "spear",
@@ -2746,7 +2800,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_15_11": {
     "id": "u_gen_15_11",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 54,
     "name": "Cloudpiercer",
     "baseId": "spear2h_t11",
     "category": "spear",
@@ -2799,7 +2854,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_4_0": {
     "id": "u_gen_4_0",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 55,
     "name": "Tempest",
     "baseId": "staff2h_t1",
     "category": "staff",
@@ -2852,7 +2908,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_4_2": {
     "id": "u_gen_4_2",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 56,
     "name": "Emberheart",
     "baseId": "staff2h_t3",
     "category": "staff",
@@ -2905,7 +2962,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_4_4": {
     "id": "u_gen_4_4",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 57,
     "name": "Frostward Rod",
     "baseId": "staff2h_t4",
     "category": "staff",
@@ -2958,7 +3016,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_4_6": {
     "id": "u_gen_4_6",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 58,
     "name": "Stormcrown",
     "baseId": "staff2h_t6",
     "category": "staff",
@@ -3011,7 +3070,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_4_8": {
     "id": "u_gen_4_8",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 59,
     "name": "Cinderveil",
     "baseId": "staff2h_t8",
     "category": "staff",
@@ -3064,7 +3124,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_4_10": {
     "id": "u_gen_4_10",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 60,
     "name": "The Glacial Maelstrom",
     "baseId": "staff2h_t10",
     "category": "staff",
@@ -3117,7 +3178,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_4_12": {
     "id": "u_gen_4_12",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 61,
     "name": "Thunderspire",
     "baseId": "staff2h_t12",
     "category": "staff",
@@ -3170,7 +3232,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_5_1": {
     "id": "u_gen_5_1",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 62,
     "name": "Hexfinger",
     "baseId": "wand_t2",
     "category": "wand",
@@ -3219,7 +3282,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_5_3": {
     "id": "u_gen_5_3",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 63,
     "name": "Soulwhisper",
     "baseId": "wand_t3",
     "category": "wand",
@@ -3268,7 +3332,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_5_5": {
     "id": "u_gen_5_5",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 64,
     "name": "Gravewand",
     "baseId": "wand_t5",
     "category": "wand",
@@ -3317,7 +3382,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_5_7": {
     "id": "u_gen_5_7",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 65,
     "name": "Rotcaller",
     "baseId": "wand_t7",
     "category": "wand",
@@ -3366,7 +3432,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_5_9": {
     "id": "u_gen_5_9",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 66,
     "name": "Tombquill",
     "baseId": "wand_t9",
     "category": "wand",
@@ -3415,7 +3482,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_5_11": {
     "id": "u_gen_5_11",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 67,
     "name": "Wraithsplinter",
     "baseId": "wand_t11",
     "category": "wand",
@@ -3464,7 +3532,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_3_1": {
     "id": "u_gen_3_1",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 68,
     "name": "Wintershot",
     "baseId": "bow2h_t2",
     "category": "bow",
@@ -3531,7 +3600,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_3_3": {
     "id": "u_gen_3_3",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 69,
     "name": "Stormstring",
     "baseId": "bow2h_t3",
     "category": "bow",
@@ -3598,7 +3668,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_3_5": {
     "id": "u_gen_3_5",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 70,
     "name": "Farsong",
     "baseId": "bow2h_t5",
     "category": "bow",
@@ -3665,7 +3736,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_3_7": {
     "id": "u_gen_3_7",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 71,
     "name": "Hawkeye",
     "baseId": "bow2h_t7",
     "category": "bow",
@@ -3732,7 +3804,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_3_9": {
     "id": "u_gen_3_9",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 72,
     "name": "Frostpierce",
     "baseId": "bow2h_t9",
     "category": "bow",
@@ -3799,7 +3872,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_3_11": {
     "id": "u_gen_3_11",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 73,
     "name": "The Distant Tempest",
     "baseId": "bow2h_t11",
     "category": "bow",
@@ -3866,7 +3940,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_16_0": {
     "id": "u_gen_16_0",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 74,
     "name": "Heartseeker",
     "baseId": "crossbow2h_t1",
     "category": "crossbow",
@@ -3936,7 +4011,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_16_2": {
     "id": "u_gen_16_2",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 75,
     "name": "Repeater",
     "baseId": "crossbow2h_t3",
     "category": "crossbow",
@@ -4006,7 +4082,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_16_4": {
     "id": "u_gen_16_4",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 76,
     "name": "Boltwidow",
     "baseId": "crossbow2h_t4",
     "category": "crossbow",
@@ -4076,7 +4153,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_16_6": {
     "id": "u_gen_16_6",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 77,
     "name": "Killshot",
     "baseId": "crossbow2h_t6",
     "category": "crossbow",
@@ -4146,7 +4224,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_16_8": {
     "id": "u_gen_16_8",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 78,
     "name": "Pulsebreaker",
     "baseId": "crossbow2h_t8",
     "category": "crossbow",
@@ -4216,7 +4295,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_16_10": {
     "id": "u_gen_16_10",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 79,
     "name": "The Quickening Quarrel",
     "baseId": "crossbow2h_t10",
     "category": "crossbow",
@@ -4286,7 +4366,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_16_12": {
     "id": "u_gen_16_12",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 80,
     "name": "Last Heartbeat",
     "baseId": "crossbow2h_t12",
     "category": "crossbow",
@@ -4356,7 +4437,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_oath": {
     "id": "u_oath",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 81,
     "name": "Oathkeeper's Wall",
     "baseId": "kiteshield",
     "category": "shield",
@@ -4410,7 +4492,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_17_1": {
     "id": "u_gen_17_1",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 82,
     "name": "Wardlight",
     "baseId": "shield_t2",
     "category": "shield",
@@ -4464,7 +4547,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_17_3": {
     "id": "u_gen_17_3",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 83,
     "name": "Bastion",
     "baseId": "shield_t3",
     "category": "shield",
@@ -4518,7 +4602,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_17_5": {
     "id": "u_gen_17_5",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 84,
     "name": "Sanctuary",
     "baseId": "shield_t5",
     "category": "shield",
@@ -4572,7 +4657,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_17_7": {
     "id": "u_gen_17_7",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 85,
     "name": "Aegis Eternal",
     "baseId": "shield_t7",
     "category": "shield",
@@ -4626,7 +4712,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_17_9": {
     "id": "u_gen_17_9",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 86,
     "name": "The Unbroken Vow",
     "baseId": "shield_t9",
     "category": "shield",
@@ -4680,7 +4767,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_17_11": {
     "id": "u_gen_17_11",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 87,
     "name": "Refuge of Ash",
     "baseId": "shield_t11",
     "category": "shield",
@@ -4734,7 +4822,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_crown": {
     "id": "u_crown",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 88,
     "name": "Hollow Crown",
     "baseId": "cap",
     "category": "helm",
@@ -4788,7 +4877,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_7_1": {
     "id": "u_gen_7_1",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 89,
     "name": "Crown of Cinders",
     "baseId": "helm_t2",
     "category": "helm",
@@ -4842,7 +4932,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_7_3": {
     "id": "u_gen_7_3",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 90,
     "name": "Skullhelm",
     "baseId": "helm_t3",
     "category": "helm",
@@ -4896,7 +4987,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_7_5": {
     "id": "u_gen_7_5",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 91,
     "name": "Visage",
     "baseId": "helm_t5",
     "category": "helm",
@@ -4950,7 +5042,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_7_7": {
     "id": "u_gen_7_7",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 92,
     "name": "Doomcap",
     "baseId": "helm_t7",
     "category": "helm",
@@ -5004,7 +5097,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_7_9": {
     "id": "u_gen_7_9",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 93,
     "name": "Diadem of the Drowned King",
     "baseId": "helm_t9",
     "category": "helm",
@@ -5058,7 +5152,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_7_11": {
     "id": "u_gen_7_11",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 94,
     "name": "Boneward Casque",
     "baseId": "helm_t11",
     "category": "helm",
@@ -5112,7 +5207,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_cinder": {
     "id": "u_cinder",
-    "revision": 3,
+    "revision": 4,
+    "paintIndex": 95,
     "name": "Cindershroud",
     "baseId": "quiltvest",
     "category": "chest",
@@ -5183,7 +5279,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_6_0": {
     "id": "u_gen_6_0",
-    "revision": 3,
+    "revision": 4,
+    "paintIndex": 96,
     "name": "Aegis of Ash",
     "baseId": "chest_t1",
     "category": "chest",
@@ -5254,7 +5351,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_6_2": {
     "id": "u_gen_6_2",
-    "revision": 3,
+    "revision": 4,
+    "paintIndex": 97,
     "name": "Dragonscale",
     "baseId": "chest_t3",
     "category": "chest",
@@ -5325,7 +5423,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_6_4": {
     "id": "u_gen_6_4",
-    "revision": 3,
+    "revision": 4,
+    "paintIndex": 98,
     "name": "Bulwark",
     "baseId": "chest_t4",
     "category": "chest",
@@ -5396,7 +5495,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_6_6": {
     "id": "u_gen_6_6",
-    "revision": 3,
+    "revision": 4,
+    "paintIndex": 99,
     "name": "Cindermail",
     "baseId": "chest_t6",
     "category": "chest",
@@ -5467,7 +5567,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_6_8": {
     "id": "u_gen_6_8",
-    "revision": 3,
+    "revision": 4,
+    "paintIndex": 100,
     "name": "Emberweave Carapace",
     "baseId": "chest_t8",
     "category": "chest",
@@ -5538,7 +5639,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_6_10": {
     "id": "u_gen_6_10",
-    "revision": 3,
+    "revision": 4,
+    "paintIndex": 101,
     "name": "Scaleforge Vest",
     "baseId": "chest_t10",
     "category": "chest",
@@ -5609,7 +5711,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_6_12": {
     "id": "u_gen_6_12",
-    "revision": 3,
+    "revision": 4,
+    "paintIndex": 102,
     "name": "Ashen Bastion",
     "baseId": "chest_t12",
     "category": "chest",
@@ -5680,7 +5783,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_18_0": {
     "id": "u_gen_18_0",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 103,
     "name": "Gravewrought Grips",
     "baseId": "gloves_t1",
     "category": "gloves",
@@ -5735,7 +5839,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_18_2": {
     "id": "u_gen_18_2",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 104,
     "name": "Throttle",
     "baseId": "gloves_t3",
     "category": "gloves",
@@ -5790,7 +5895,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_18_4": {
     "id": "u_gen_18_4",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 105,
     "name": "Vise",
     "baseId": "gloves_t4",
     "category": "gloves",
@@ -5845,7 +5951,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_18_6": {
     "id": "u_gen_18_6",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 106,
     "name": "Deadhand",
     "baseId": "gloves_t6",
     "category": "gloves",
@@ -5900,7 +6007,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_18_8": {
     "id": "u_gen_18_8",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 107,
     "name": "Sepulcher's Clutch",
     "baseId": "gloves_t8",
     "category": "gloves",
@@ -5955,7 +6063,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_18_10": {
     "id": "u_gen_18_10",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 108,
     "name": "Stranglemourn",
     "baseId": "gloves_t10",
     "category": "gloves",
@@ -6010,7 +6119,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_18_12": {
     "id": "u_gen_18_12",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 109,
     "name": "Palms of the Pit",
     "baseId": "gloves_t12",
     "category": "gloves",
@@ -6065,7 +6175,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_stride": {
     "id": "u_stride",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 110,
     "name": "Stridewraith",
     "baseId": "warboots",
     "category": "boots",
@@ -6120,7 +6231,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_8_0": {
     "id": "u_gen_8_0",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 111,
     "name": "Hauntpace",
     "baseId": "boots_t1",
     "category": "boots",
@@ -6175,7 +6287,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_8_2": {
     "id": "u_gen_8_2",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 112,
     "name": "Windsole",
     "baseId": "boots_t3",
     "category": "boots",
@@ -6230,7 +6343,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_8_4": {
     "id": "u_gen_8_4",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 113,
     "name": "Ghoststep",
     "baseId": "boots_t4",
     "category": "boots",
@@ -6285,7 +6399,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_8_6": {
     "id": "u_gen_8_6",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 114,
     "name": "Swiftmarch",
     "baseId": "boots_t6",
     "category": "boots",
@@ -6340,7 +6455,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_8_8": {
     "id": "u_gen_8_8",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 115,
     "name": "Galeheel",
     "baseId": "boots_t8",
     "category": "boots",
@@ -6395,7 +6511,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_8_10": {
     "id": "u_gen_8_10",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 116,
     "name": "Pallor Treads",
     "baseId": "boots_t10",
     "category": "boots",
@@ -6450,7 +6567,8 @@ export const UNIQUE_MODELS3D=freeze({
   },
   "u_gen_8_12": {
     "id": "u_gen_8_12",
-    "revision": 2,
+    "revision": 3,
+    "paintIndex": 117,
     "name": "Breath of the Hollow Road",
     "baseId": "boots_t12",
     "category": "boots",

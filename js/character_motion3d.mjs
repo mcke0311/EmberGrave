@@ -10,7 +10,15 @@ const angle=(a,b)=>Math.atan2(Math.sin(b-a),Math.cos(b-a));
 export const groundPosition=(x,y)=>({x:(x-y)*unit,z:(x+y)*unit});
 export const motionYaw=a=>Math.atan2(Math.cos(a),Math.sin(a)*2);
 
-export function gaitProfile(classId,form=null,speed=3){
+const steps={
+  vanguard:   {stride:1,   lift:.14, width:.151, lead:.084},
+  emberwitch: {stride:.96, lift:.16, width:.109, lead:.062},
+  gravebinder:{stride:.85, lift:.09, width:.121, lead:.095},
+  wildkeeper: {stride:1.02,lift:.17, width:.166, lead:.059},
+  veilranger: {stride:.98, lift:.15, width:.132, lead:.106},
+};
+
+export function gaitProfile(classId,form=null,speed=3,family=null){
   const run=ease((speed-1.7)/2.8),profile=CLASS_STYLES[classId]||CLASS_STYLES.vanguard;
   if(form){
     const bear=form==='form_brute',wolf=form==='form_fang',quad=bear||wolf;
@@ -20,9 +28,11 @@ export function gaitProfile(classId,form=null,speed=3){
         {id:'L1',x:bear?.28:.20,z:-.40,offset:bear?.25:.5},{id:'R1',x:bear?-.28:-.20,z:-.40,offset:bear?.75:0}]:
         [{id:'L',x:.23,z:0,offset:0},{id:'R',x:-.23,z:0,offset:.5}]};
   }
-  const character={vanguard:[1,.14],emberwitch:[.96,.16],gravebinder:[.85,.09],wildkeeper:[1.02,.17],veilranger:[.98,.15]}[classId]||[1,.14];
-  return {width:profile.width,height:profile.height,quad:false,stride:mix(1.22,1.9,run)*character[0]*profile.width,
-    stance:mix(.62,.43,run),lift:character[1],run,feet:[{id:'L',x:.112,z:.025,offset:0},{id:'R',x:-.112,z:.025,offset:.5}]};
+  const step=steps[classId]||steps.vanguard;
+  const heavy=family==='sword_2h'||family==='axe_2h',brace=heavy?1-.64*run:0;
+  const width=mix(step.width,.11,run)+.057*brace,lead=step.lead*(1-.75*run)+(family==='axe_2h'?.161:.148)*brace;
+  return {width:profile.width,height:profile.height,quad:false,heelRoll:true,stride:mix(1.22,1.9,run)*step.stride*profile.width,
+    stance:mix(.62,.43,run),lift:step.lift,run,feet:[{id:'L',x:width,z:.025+lead,offset:0},{id:'R',x:-width,z:.025-lead,offset:.5}]};
 }
 
 // Canonical local foot paths used by scrubbable previews and contact overlays.
@@ -30,9 +40,13 @@ export function footPath(phase,gait,foot){
   const p=((phase+foot.offset)%1+1)%1,stance=p<gait.stance;
   const travel=gait.stride/gait.width*gait.stance,half=travel*.5;
   const u=stance?p/gait.stance:(p-gait.stance)/(1-gait.stance);
+  // The heel touches first, the sole bears weight, then the toes push off.
+  const pitch=gait.heelRoll
+    ? (stance?-.14*(1-ease(u/.20))+.25*ease((u-.67)/.33):mix(.25,-.14,ease(u/.82)))
+    : (stance?mix(-.12,.18,ease(u)):mix(.18,-.12,ease(u)));
   return {id:foot.id,x:foot.x,z:foot.z+(stance?mix(half,-half,u):mix(-half,half,ease(u))),
     y:stance?0:Math.sin(Math.PI*u)**2*gait.lift,contact:stance,
-    pitch:stance?mix(-.12,.18,ease(u)):mix(.18,-.12,ease(u))};
+    pitch};
 }
 
 export function createAnimationController(){
@@ -52,7 +66,16 @@ export function createAnimationController(){
     turn=mix(turn,dt?Math.max(-6,Math.min(6,yawDelta/dt)):0,1-Math.exp(-dt*16));
     lean=mix(lean,Math.max(-.14,Math.min(.16,(smoothedSpeed-oldSpeed)*.045/Math.max(dt,.008))),1-Math.exp(-dt*10));
     secondary=mix(secondary,lean+turn*.018,1-Math.exp(-dt*7));
-    const gait=gaitProfile(player.classId,form,smoothedSpeed),moving=speed>.025;
+    const family=player._playerVisual?.equipment?.main?.family||player.equip?.main?.playerVisualFamily;
+    const gait=gaitProfile(player.classId,form,smoothedSpeed,family),moving=speed>.025;
+    // Place the next step along actual travel, including a strafe or reversal
+    // while the shoulders are still turning toward the target.
+    let stepX=0,stepZ=1;
+    if(moving&&!form){
+      const dx=(position.x-previous.x)/travel,dz=(position.z-previous.z)/travel;
+      stepX=dx*Math.cos(yaw)-dz*Math.sin(yaw);
+      stepZ=dx*Math.sin(yaw)+dz*Math.cos(yaw);
+    }
     const pivot=!moving&&!air&&!dead&&Math.abs(yawDelta)>.003;
     const previousPhase=phase;
     if(!air&&!dead)phase+=(travel+(pivot?Math.abs(yawDelta)*.24:0))/gait.stride;
@@ -75,16 +98,17 @@ export function createAnimationController(){
     for(const foot of gait.feet){
       const path=footPath(phase,gait,foot),old=feet.get(foot.id);
       const localToGround=(x,z)=>({x:position.x+gait.width*(Math.cos(yaw)*x+Math.sin(yaw)*z),z:position.z+gait.width*(-Math.sin(yaw)*x+Math.cos(yaw)*z)});
+      const alongStep=distance=>localToGround(foot.x+stepX*distance,foot.z+stepZ*distance);
       let contact=active?path.contact:!air;
       const previousP=((previousPhase+foot.offset)%1+1)%1,nowP=((phase+foot.offset)%1+1)%1;
       const touchdown=active&&contact&&(!old?.contact||nowP<previousP);
       let point;
       if(!old)point=localToGround(foot.x,foot.z);
       else if(contact&&!touchdown)point={x:old.x,z:old.z};
-      else if(contact)point=localToGround(path.x,path.z);
+      else if(contact)point=alongStep(path.z-foot.z);
       else {
         const start=old?.start||old||localToGround(foot.x,foot.z),u=(nowP-gait.stance)/(1-gait.stance);
-        const end=localToGround(foot.x,foot.z+gait.stride/gait.width*gait.stance*.5);
+        const end=alongStep(gait.stride/gait.width*gait.stance*.5);
         point={x:mix(start.x,end.x,ease(u)),z:mix(start.z,end.z,ease(u))};
       }
       // During a stop finish a lifted step over 100 ms, without sliding a support foot.
@@ -116,7 +140,7 @@ export function createAnimationController(){
     }else if(transition){transition.age+=dt;if(transition.age>=transition.duration)transition=null;}
     const releases=action?.visual?.releases?.slice()||null;
     const context={phase:phase*TAU,speed:smoothedSpeed,run:gait.run,locomotion:ease(smoothedSpeed/.7),turn,lean,secondary,
-      feet:contacts,landing:1-ease(landingAge/.18),releases,actionId:action?.visual?.id||0,style:action?.visual?.style||null,
+      feet:contacts,landing:1-ease(landingAge/.18),releases,drawCharge:action?.visual?.drawCharge,actionId:action?.visual?.id||0,style:action?.visual?.style||null,
       reaction:!dead&&reactionAge<.22&&lastReaction?{...lastReaction,weight:Math.sin(Math.PI*saturate(reactionAge/.22))*(1-reactionAge/.22)}:null,
       blend:transition?{from:transition.from,weight:ease(transition.age/transition.duration)}:null};
     frame={state,t,ang:player.visAng||0,ex:{airborne:air,walkPh:phase*TAU,speed:smoothedSpeed,castColor:action?.castColor,animation:context}};

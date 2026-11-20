@@ -1,13 +1,14 @@
 import * as THREE from './vendor/three/three.module.min.js';
-import {UNIQUE_MODELS3D} from './character_unique_catalog3d.mjs?v=body-armor-1';
-import {CLASS_STYLES} from './character_catalog3d.mjs?v=body-armor-1';
-import {armorRank,classMaterials} from './character_armor3d.mjs?v=finished-1';
+import {UNIQUE_MODELS3D} from './character_unique_catalog3d.mjs?v=forged-1';
+import {CLASS_STYLES} from './character_catalog3d.mjs?v=forged-1';
+import {paintArmorLimbs} from './character_unique_paint3d.mjs';
+import {armorRank,classMaterials} from './character_armor3d.mjs?v=mantles-1';
 import {equipmentMaterials,disposeMaterials} from './character_materials3d.mjs?v=painted-1';
 import {mesh,plate,rod,rivet,band,combineStatic} from './character_mesh3d.mjs?v=body-armor-1';
-import {isStarterVest,paintStarterLimbs} from './character_painted3d.mjs?v=finished-1';
-import {paintGarment} from './character_finish3d.mjs';
-import {box,domedPlate} from './character_unique_mesh3d.mjs?v=body-armor-1';
-import {uniqueMaterials,uniqueSurface,shadeUnique,packUniqueSurfaces} from './character_unique_surfaces3d.mjs?v=painted-1';
+import {isStarterVest,paintStarterLimbs} from './character_painted3d.mjs?v=mantles-1';
+import {paintGarment} from './character_finish3d.mjs?v=mantles-1';
+import {box,domedPlate} from './character_unique_mesh3d.mjs?v=forged-1';
+import {uniqueMaterials,uniqueSurface,shadeUnique,packUniqueSurfaces} from './character_unique_surfaces3d.mjs?v=forged-1';
 
 const group=name=>{const g=new THREE.Group();g.name=name;return g;};
 function profile(item,id){
@@ -156,7 +157,8 @@ export function createArmorLimbs(item,classId,bindPositions,boneNames){
   combineStatic(shell);
   const batch=shell.children.find(o=>o.isMesh);batch.removeFromParent();batch.name=item.name+' / sleeves and trousers';batch.userData.itemKey=item.key;batch.userData.modelId=item.modelId||null;batch.userData.limbRegions=regions;batch.userData.guardRanges=guardRanges;
   batch.geometry.setIndex(new THREE.BufferAttribute(new Uint16Array(Array.from({length:offset},(_,i)=>i)),1));
-  if(!item.modelId&&!starter)paintGarment(batch,classId,armorRank(item),'limbs');
+  if(p.unique)paintArmorLimbs(batch,p.unique);
+  else if(!starter)paintGarment(batch,classId,armorRank(item),'limbs');
   batch.userData.coverageMask=0;batch.userData.coverageIndices=new Map();
   return {shell:batch,parts};
 }

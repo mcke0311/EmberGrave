@@ -1,13 +1,13 @@
 /* Player bodies, equipment, previews and transformations use live 3D models. */
 'use strict';
 window.Player3D=(()=>{
-  let view=null,filmView=null,catalog=null,forms=null,pending=null,rendererFactory=null,controllerFactory=null,shiftFactory=null;
+  let view=null,filmView=null,catalog=null,forms=null,pending=null,rendererFactory=null,controllerFactory=null,shiftFactory=null,loadUniquePainting=null;
   const prepared=new WeakSet(),previews=new Map(),shifts=new WeakMap(),shiftFrames=new WeakMap();
   async function init(){
     if(!pending)pending=(async()=>{
       if(new URL(document.baseURI).protocol==='file:')throw new Error('3D characters need the local server. Run python serve.py, then open http://localhost:8741/index.html');
-      const [module,definitions,shapes]=await Promise.all([import('./character3d.mjs?v=finished-1'),import('./character_catalog3d.mjs?v=body-armor-1'),import('./character_forms3d.mjs?v=finished-1')]);
-      catalog=definitions;forms=shapes.FORM_STYLES;rendererFactory=module.createCharacterRenderer;controllerFactory=module.createAnimationController;shiftFactory=module.createWildshapeController;view=rendererFactory();
+      const [module,definitions,shapes]=await Promise.all([import('./character3d.mjs?v=bow-draw-1'),import('./character_catalog3d.mjs?v=forged-1'),import('./character_forms3d.mjs?v=bow-draw-1')]);
+      catalog=definitions;forms=shapes.FORM_STYLES;rendererFactory=module.createCharacterRenderer;controllerFactory=module.createAnimationController;shiftFactory=module.createWildshapeController;loadUniquePainting=module.loadUniquePainting;view=rendererFactory();
     })();
     return pending;
   }
@@ -20,7 +20,12 @@ window.Player3D=(()=>{
       if(form){if(classId!=='wildkeeper'||!forms[form])throw new Error('Unknown 3D transformation: '+form);visual.form=form;visual.footprint=forms[form].footprint;visual.key+='|'+form;}
       return visual;
     },
-    async loadPlayerLoadout(visual){require3D(visual);view.render({state:'idle',t:0,ang:0,ex:{}},visual.equipment,visual.classId,visual.form||null);prepared.add(visual);return visual;},
+    async loadPlayerLoadout(visual){
+      require3D(visual);
+      if(Object.values(visual.equipment).some(item=>item?.modelId))await loadUniquePainting();
+      view.render({state:'idle',t:0,ang:0,ex:{}},visual.equipment,visual.classId,visual.form||null);
+      prepared.add(visual);return visual;
+    },
     activatePlayerLoadout(visual){require3D(visual);if(!prepared.has(visual))throw new Error('Cannot activate an unprepared or discarded 3D loadout.');return visual;},
     discardPlayerLoadout(visual){if(visual)prepared.delete(visual);},
     deactivatePlayerLoadout(){}
@@ -58,7 +63,7 @@ window.Player3D=(()=>{
       const animation=frame.ex?.animation;
       const elapsed=Number.isFinite(action.visual?.startedAt)?Game.state.time-action.visual.startedAt:action.t;
       pose.state=action.state;pose.t=Math.max(0,Math.min(1,elapsed/action.dur));
-      pose.ex.animation={...animation,releases:action.visual?.releases,actionId:action.visual?.id,
+      pose.ex.animation={...animation,releases:action.visual?.releases,drawCharge:action.visual?.drawCharge,actionId:action.visual?.id,
         blend:animation?.actionId===action.visual?.id?animation?.blend:null};
     }
     return view.projectileOrigin(pose,visual.equipment,{classId:visual.classId,scale});
@@ -84,7 +89,7 @@ window.Player3D=(()=>{
     if(action){
       const animation=frame.ex?.animation,elapsed=Number.isFinite(action.visual?.startedAt)?Game.state.time-action.visual.startedAt:action.t;
       pose.state=action.state;pose.t=Math.max(0,Math.min(1,elapsed/action.dur));
-      pose.ex.animation={...animation,releases:action.visual?.releases,actionId:action.visual?.id,blend:animation?.actionId===action.visual?.id?animation?.blend:null};
+      pose.ex.animation={...animation,releases:action.visual?.releases,drawCharge:action.visual?.drawCharge,actionId:action.visual?.id,blend:animation?.actionId===action.visual?.id?animation?.blend:null};
     }
     return view.effectAnchors(pose,visual.equipment,{classId:visual.classId,form:visual.form||null,scale});
   }

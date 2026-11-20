@@ -2386,6 +2386,7 @@ class Player extends Entity {
     const chargeK = U.clamp(dr.t / dr.maxDraw, 0.15, 1);
     this.face(aim.x, aim.y);
     this.startAction("attack", 1 / this.stats.attackRate);
+    this.action.visual.drawCharge=U.clamp(dr.t/dr.maxDraw,0,1);
     this.markActionRelease(0);
     Sfx.playSkill?.(dr.sourceSkill||'veilranger_0_2','release',{owner:this,charge:chargeK});
     Game.spawnProjectile({ visualOwner:this, x: this.x, y: this.y, tx: aim.x, ty: aim.y, speed: 16, kind: "arrow", fromPlayer: true,

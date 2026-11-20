@@ -1,8 +1,8 @@
-import {createCharacterRenderer,STATES} from '../js/character3d.mjs?v=finished-1';
-import {CLASS_ANIMATIONS} from '../js/character_animation3d.mjs?v=10';
-import {CLASS_STYLES,EQUIPMENT_SLOTS,resolveCharacterVisual,catalogEntries} from '../js/character_catalog3d.mjs?v=body-armor-1';
-import {ARMOR_THEMES,ARMOR_LEVELS,armorRank} from '../js/character_armor3d.mjs?v=finished-1';
-import {UNIQUE_MODELS3D} from '../js/character_unique_catalog3d.mjs?v=body-armor-1';
+import {createCharacterRenderer,loadUniquePainting,STATES} from '../js/character3d.mjs?v=bow-draw-1';
+import {CLASS_ANIMATIONS} from '../js/character_animation3d.mjs?v=bow-draw-1';
+import {CLASS_STYLES,EQUIPMENT_SLOTS,resolveCharacterVisual,catalogEntries} from '../js/character_catalog3d.mjs?v=forged-1';
+import {ARMOR_THEMES,ARMOR_LEVELS,armorRank} from '../js/character_armor3d.mjs?v=mantles-1';
+import {UNIQUE_MODELS3D} from '../js/character_unique_catalog3d.mjs?v=forged-1';
 const data=window.CharacterPreviewData;
 const ui=id=>document.getElementById(id),ctx=ui('stage').getContext('2d'),dx=ui('directions').getContext('2d');
 const catalog=Object.fromEntries(EQUIPMENT_SLOTS.map(slot=>[slot,catalogEntries(data,slot)]));
@@ -123,10 +123,14 @@ function tick(ms){
   }catch(error){ui('status').className='error';ui('status').textContent=error.message;document.body.dataset.testStatus='failed';}
 }
 try{
-  await window.CharacterPreviewSprites.loadBundle('core');view=createCharacterRenderer({size:640});
+  await Promise.all([window.CharacterPreviewSprites.loadBundle('core'),loadUniquePainting()]);view=createCharacterRenderer({size:640});
   const query=new URLSearchParams(location.search);if(CLASS_STYLES[query.get('class')])classId=query.get('class');starter();
   document.querySelectorAll('#classes button').forEach(button=>button.setAttribute('aria-pressed',button.dataset.classId===classId));
   if(UNIQUE_MODELS3D[query.get('unique')])selectModel(query.get('unique'));
+  const requestedState=STATES.indexOf(query.get('animation'));
+  if(requestedState>=0)ui('animations').children[requestedState].click();
+  const facing=Number.parseFloat(query.get('facing'));
+  if(Number.isFinite(facing)){ui('facing').value=(facing%360+360)%360;turnAngle=+ui('facing').value;}
   ui('boneCount').textContent=view.model.bones.length;document.body.dataset.testStatus='ready';requestAnimationFrame(tick);
   window.armoryQA={models:models.map(entry=>entry.id),selectModel,
     setClass:id=>{ui('classes').querySelector('[data-class-id="'+id+'"]').click();},

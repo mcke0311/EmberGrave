@@ -7,8 +7,38 @@ const data=scope.DATA,ok=(v,m)=>{assert.ok(v,m);checks++;};let checks=0,maxGripE
 const clipSets=Object.fromEntries(STATES.map(s=>[s,new Set()]));
 const at=(m,state,t)=>{m.animate({state,t:state==='idle'?t*3:t,ex:{walkPh:t*Math.PI*2}});return m.bones.flatMap(b=>[...b.position.toArray(),...b.quaternion.toArray()]);};
 const difference=(a,b)=>Math.max(...a.map((x,i)=>Math.abs(x-b[i])));
+function checkGarmentAndHand(model,id){
+  const cape=model.root.getObjectByName('ClassCape'),hand=model.root.getObjectByName('HandMeshL').children[0];
+  const rest=cape.geometry.attributes.position,trail=cape.geometry.morphAttributes.position[cape.morphTargetDictionary.trail];
+  let seam=0,hem=0;
+  for(let i=1;i<rest.count;i++){
+    if(rest.getY(i)>rest.getY(seam))seam=i;
+    if(trail.getZ(i)<trail.getZ(hem))hem=i;
+  }
+  const displacement=i=>cape.getVertexPosition(i,new Vector3()).distanceTo(new Vector3().fromBufferAttribute(rest,i));
+  const walk={state:'walk',t:.26,ex:{walkPh:.26*Math.PI*2}};
+  model.animate(walk);
+  const walking=[...cape.morphTargetInfluences];
+  const planted=model.joints.FootL.getWorldPosition(new Vector3());
+  ok(displacement(hem)>.035&&displacement(seam)<1e-8,id+': cloth must move below its fastenings');
+  model.animate({state:'cast',t:.55,ex:{animation:{blend:{from:walk,weight:0}}}});
+  ok(difference(walking,cape.morphTargetInfluences)<1e-8,id+': cloth snaps at the start of a transition');
+  ok(model.joints.FootL.getWorldPosition(new Vector3()).distanceTo(planted)<1e-8,id+': preview foot jumps before the blend begins');
+  model.animate({state:'cast',t:.55});
+  ok(hand.morphTargetInfluences[0]>.9,id+': free casting fingers stay closed');
+  const cast=[...cape.morphTargetInfluences];
+  model.animate({state:'dead',t:1});model.animate({state:'cast',t:.55});
+  ok(difference(cast,cape.morphTargetInfluences)<1e-8,id+': cloth depends on render history');
+  const unique=data.UNIQUES.find(u=>data.BASES[u.base]?.slot==='chest');
+  model.equip(resolveCharacterVisual(data,id,{off:{baseId:'shield_t0'},chest:{baseId:unique.base,uniqueId:unique.id}}).equipment);
+  model.animate({state:'cast',t:.55});
+  ok(!cape.visible&&hand.morphTargetInfluences[0]===0,id+': unique armor or shield grip obscured');
+  model.equip({});model.animate(walk);
+  ok(cape.visible&&difference(walking,cape.morphTargetInfluences)<1e-8,id+': removing armor did not restore the moving mantle');
+}
 for(const id of Object.keys(CLASS_STYLES)){
   const model=createCharacter(id);
+  checkGarmentAndHand(model,id);
   for(const clip of model.clips)clipSets[clip.name].add(JSON.stringify(clip.tracks.map(t=>Array.from(t.values))));
   for(const family of [null,...WEAPON_FAMILIES]){
     const base=family?Object.values(data.BASES).find(b=>b.playerVisualFamily===family&&b.id.endsWith('_t13')):null;

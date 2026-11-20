@@ -40,6 +40,14 @@ function panel(atlas,column,row,rect,extra) {
   return material;
 }
 export const heroPanel = (id,row,rect=full,extra={}) => panel(wardrobe,heroes.indexOf(id),row,rect,extra);
+// A single draw can use several paintings from the same hero's column.
+export function heroColumn(id,extra={}) {
+  const material=heroPanel(id,0,full,extra);
+  material.map.offset.y=0;
+  material.map.repeat.y=1;
+  return material;
+}
+export const heroPanelV=(row,v)=>(wardrobe.rows-1-row+inset+v*(1-2*inset))/wardrobe.rows;
 export const formPanel = (id,row,rect=full,extra={}) => panel(wildshapes,forms.indexOf(id),row,rect,extra);
 // The mythic yoke and heraldry form a single long panel in the source art.
 export const hemRegion=rank=>[.01,.01,.98,rank===3?.815:rank===2?.49:.43];

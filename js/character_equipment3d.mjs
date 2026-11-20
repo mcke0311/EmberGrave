@@ -3,11 +3,11 @@ import {equipmentMaterials} from './character_materials3d.mjs?v=painted-1';
 export {equipmentMaterials} from './character_materials3d.mjs?v=painted-1';
 import {disposeObject,mesh,box,orb,rod,curved,plate,edge,rivet,band,wrap,combineStatic,formedPlate} from './character_mesh3d.mjs?v=body-armor-1';
 export {disposeObject,mesh,box,orb,rod} from './character_mesh3d.mjs?v=body-armor-1';
-import {armorRank,createClassArmorDetails,createClassWearable} from './character_armor3d.mjs?v=finished-1';
-import {attachArmorLimbDetails} from './character_body_armor3d.mjs?v=finished-1';
-import {createUniqueWeapon,createUniqueWearable,createUniqueArmorDetails} from './character_unique_equipment3d.mjs?v=painted-1';
-import {isStarterVest,starterShoulders,tapered,sculptHand,bootGeometry} from './character_painted3d.mjs?v=finished-1';
-import {paintGarment} from './character_finish3d.mjs';
+import {armorRank,createClassArmorDetails,createClassWearable} from './character_armor3d.mjs?v=mantles-1';
+import {attachArmorLimbDetails} from './character_body_armor3d.mjs?v=forged-1';
+import {createUniqueWeapon,createUniqueWearable,createUniqueArmorDetails} from './character_unique_equipment3d.mjs?v=forged-1';
+import {isStarterVest,starterShoulders,tapered,sculptHand,bootGeometry} from './character_painted3d.mjs?v=mantles-1';
+import {paintGarment} from './character_finish3d.mjs?v=mantles-1';
 
 function blade(parent,m,start,length,width){
   // Parallel cutting edges taper into a point around a raised central ridge.

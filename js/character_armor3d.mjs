@@ -1,8 +1,8 @@
 import * as THREE from './vendor/three/three.module.min.js';
 import {equipmentMaterials,surfaceMaterial} from './character_materials3d.mjs?v=painted-1';
 import {mesh,box,orb,rod,curved,plate,edge,rivet,band,wrap,combineStatic,formedPlate} from './character_mesh3d.mjs?v=body-armor-1';
-import {surface,sculptHand,bootGeometry} from './character_painted3d.mjs?v=finished-1';
-import {heroPanel,hemRegion} from './character_finish3d.mjs';
+import {surface,sculptHand,bootGeometry} from './character_painted3d.mjs?v=mantles-1';
+import {heroPanel,hemRegion} from './character_finish3d.mjs?v=mantles-1';
 
 export const ARMOR_THEMES={
   vanguard:{name:'Legion plate',description:'Forged steel, layered defenses and heraldic shields.',cloth:'#263b52',leather:'#3a2b24',trim:'#947a4e'},

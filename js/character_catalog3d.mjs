@@ -1,5 +1,5 @@
 // Shared by the game, wardrobe and coverage tests. No dependency on sprite atlases.
-import {uniqueEquipmentModel} from './character_unique_catalog3d.mjs?v=body-armor-1';
+import {uniqueEquipmentModel} from './character_unique_catalog3d.mjs?v=forged-1';
 export const WEAPON_FAMILIES = ['sword_1h','sword_2h','axe_1h','axe_2h','mace_1h','mace_2h','dagger_1h','spear_2h','bow_2h','crossbow_2h','wand_1h','staff_2h'];
 export const ARMOR_FAMILIES = ['light','mail','plate','mythic'];
 export const EQUIPMENT_SLOTS = ['main','off','head','chest','gloves','boots','belt','ring1','ring2','amulet'];

@@ -105,6 +105,8 @@ export function packUniqueSurfaces(roots){
     'totalEmissiveRadiance *= vColor.rgb * texture2D(roughnessMap, vRoughnessMapUv).r;');};
   surface.customProgramCacheKey=()=> 'unique-surfaces-painted-v3';
   surface.userData.uniqueSurfaceAtlas=true;
+  if(materials.some(mat=>mat.userData.paintWeight!==undefined))
+    surface.userData.paintRegions={columns,rows,weights:materials.map(mat=>mat.userData.paintWeight??1)};
   for(const root of roots)root.traverse(o=>{
     const mat=o.material,region=regions.get(mat);if(!o.isMesh||!region)return;
     const g=o.geometry,colors=g.attributes.color,uv=g.attributes.uv;

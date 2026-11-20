@@ -47,9 +47,10 @@ for(const id of Object.keys(CLASS_STYLES)){
     for(let direction=0;direction<directions;direction++)for(const release of [0,.4,.73])for(const elevation of [0,3]){
       map.elev.fill(elevation);p.jumpZ=elevation?11:0;p.visAng=direction*Math.PI*2/directions;
       p.startAction('attack',.5);p.markActionRelease(.5*release);
+      if(family==='bow'&&release===0)p.action.visual.drawCharge=.25;
       state.time=p.action.visual.startedAt+.5*release;
       // Deliberately leave the render snapshot on a different state/facing.
-      const stale={state:release===0?'draw':'idle',t:1,ang:p.visAng+1,ex:{animation:{actionId:-1,blend:{from:{state:'idle',t:0,ex:{}},weight:0}}}};
+      const stale={state:release===0?'draw':'idle',t:1,ang:p.visAng+1,ex:{animation:{actionId:-1,drawCharge:.8,blend:{from:{state:'idle',t:0,ex:{}},weight:0}}}};
       p._animationController={frame:stale};const before=JSON.stringify(stale);
       const [wx,wy]=U.screenVecToWorld(p.visAng),tx=p.x+wx*8,ty=p.y+wy*8;
       const input={x:p.x,y:p.y,tx,ty,speed:12,kind:'arrow',fromPlayer:true,mult:2,pierce:true};
@@ -62,6 +63,7 @@ for(const id of Object.keys(CLASS_STYLES)){
       maxPixelError=Math.max(maxPixelError,error);
       ok(error<1e-8,label+': shot is detached from the rendered firing point');
       ok(Math.abs(sampledPose.t-release)<1e-8&&sampledPose.state==='attack',label+': used stale draw/idle pose');
+      ok(sampledPose.ex.animation.drawCharge===p.action.visual.drawCharge,label+': sampled the previous draw length');
       ok(JSON.stringify(stale)===before,label+': firing advanced or mutated animation history');
       ok(Math.abs(Math.hypot(pr.vx,pr.vy)-12)<1e-9&&pr.mult===2&&pr.pierce,label+': shot properties changed');
       ok(Math.abs((tx-pr.x)*pr.vy-(ty-pr.y)*pr.vx)<1e-8,label+': missed intended aim point');

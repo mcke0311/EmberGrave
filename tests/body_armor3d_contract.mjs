@@ -45,7 +45,7 @@ for(const id of classes){
       const bone=model.bones.findIndex(b=>b.name===range.bone);
       for(let i=range.first;i<range.first+range.count;i++)ok(g.attributes.skinIndex.getX(i)===bone&&g.attributes.skinWeight.getX(i)===1,key+': rigid defense bends across a joint');
     }
-    if(e.item.uniqueId){ok(chest.modelRevision===3,key+': unique revision not bumped');ok(!uniqueShapes.has(signature.hash),key+': duplicate unique geometry');uniqueShapes.add(signature.hash);ok(signature.triangles<=10904,key+': triangle budget exceeded');}
+    if(e.item.uniqueId){ok(chest.modelRevision===4,key+': unique revision not bumped');ok(!uniqueShapes.has(signature.hash),key+': duplicate unique geometry');uniqueShapes.add(signature.hash);ok(signature.triangles<=10904,key+': triangle budget exceeded');}
     for(const state of STATES)for(const t of [0,.25,.55,1]){
       model.animate(pose(state,t));
       assert.deepEqual(model.skeleton.boneInverses.map(m=>m.elements),bindPose,key+': equipment rebound skeleton');checks++;

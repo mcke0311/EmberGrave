@@ -453,8 +453,15 @@ paginated front, side and back comparisons of every design. Identification and
 item level do not change a unique's appearance. `modelId` is derived at runtime;
 existing saves acquire the models without a schema migration. Known included
 uniques with missing models fail equipment preparation. Unknown saved identities
-retain their existing resolution. Rebuild the retained registry with
-`python tools/author_unique_models3d.py`; `--check` verifies it without rewriting.
+retain their existing resolution. Run `python tools/author_unique_models3d.py`
+to rebuild the registry, cutting profiles and equipment paint atlas. Pass
+`--check` to verify all three against the original inventory paintings.
+
+Revision 3 uses the painted contours for 42 sword, dagger, axe and spear heads.
+The 118 items share one paint atlas that loads on the first unique loadout.
+Shields have curved faces, helmet visors wrap around the temples, and sabatons
+overlap a closed shoe. Bow and crossbow limbs bend from the grip to the tips
+as the string draws, releases and settles.
 
 Unique recipe revision 2 adds forged blade sections, shaped guards, sculpted bone
 ornaments, layered shield rims, curved shoulder shells, collars and back plates,
@@ -472,7 +479,8 @@ measurements are in `tests/qa/unique_models3d_refined/`. See
 
 All **27 body armors** now dress the torso, upper/lower arms and upper/lower legs
 on all five classes. Ordinary and set pieces retain their class themes; the eight
-unique chest recipes use revision 3 with individually authored limb profiles.
+unique chest recipes use revision 4 with individually authored limb profiles
+and matching painted surfaces across the torso, shoulders and limb guards.
 Flexible sleeves and trousers blend across the existing joints, while rigid
 defenses use a single bone. They share one skinned surface batch. Gloves and boots
 retain their own models and suppress overlapping armor guards; removing body

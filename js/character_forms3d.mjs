@@ -1,11 +1,11 @@
 /* Wildkeeper shapes share the live Three.js scene and world-space foot anchor. */
 import * as THREE from './vendor/three/three.module.min.js';
 import {surfaceMaterial,disposeMaterials} from './character_materials3d.mjs?v=painted-1';
-import {surface,tapered} from './character_painted3d.mjs?v=finished-1';
-import {formPanel} from './character_finish3d.mjs';
-import {smooth,animationPhase} from './character_animation3d.mjs?v=12';
+import {surface,tapered} from './character_painted3d.mjs?v=mantles-1';
+import {formPanel} from './character_finish3d.mjs?v=mantles-1';
+import {smooth,animationPhase} from './character_animation3d.mjs?v=bow-draw-1';
 import {applyCinematicForm} from './character_cinematic3d.mjs';
-import {gaitProfile,footPath} from './character_motion3d.mjs';
+import {gaitProfile,footPath} from './character_motion3d.mjs?v=bow-draw-1';
 import {combineStatic,curved} from './character_mesh3d.mjs';
 
 export const FORM_STYLES=Object.freeze({

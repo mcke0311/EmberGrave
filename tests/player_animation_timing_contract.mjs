@@ -21,6 +21,9 @@ function harness(before){
   function fresh(classId='vanguard'){
     time=0;state.time=0;events.length=queue.length=0;state.fx=[];state.traps=[];target.dead=false;
     const p=new Player('Animation timing',classId);state.player=p;p.x=p.y=0;p.mana=1e6;p.tempo=8;p.stats.attackRate=2;p.stats.castRate=1.6;p.stats.range=3;
+    const baseId=DATA.PLAYER_STARTER_LOADOUTS[classId].main;
+    p.equip.main={...DATA.BASES[baseId],baseId};
+    p.stats.ranged=['bow','crossbow'].includes(p.equip.main.cat);
     p.effRank=()=>3;p.synergyMult=()=>1;p.strike=()=>{events.push(['damage',time]);return 10;};p.spellHit=()=>events.push(['spell',time]);return p;
   }
   function flush(p){while(queue.length){queue.sort((a,b)=>a.at-b.at);const e=queue.shift();if(e.at>5)break;time=e.at;state.time=time;e.callback();}}
@@ -32,13 +35,13 @@ const report=[];
 for(const type of types){
   const skill=type==='melee'?{id:'basic',type}:Object.values(next.DATA.SKILLS).find(s=>s.type===type);
   if(!skill)continue;
-  for(const ranged of type==='melee'?[false,true]:[false]){
-    const a=old.fresh(),b=next.fresh();a.stats.ranged=b.stats.ranged=ranged;
+  for(const classId of type==='melee'?['vanguard','veilranger']:[skill.cls]){
+    const a=old.fresh(classId),b=next.fresh(classId),ranged=b.stats.ranged;
     const ar=a.performSkill(skill.id,old.target,{x:1,y:0}),br=b.performSkill(skill.id,next.target,{x:1,y:0});
     ok(ar===br&&br===true,skill.id+' changed skill acceptance');
     ok(a.action?.dur===b.action?.dur,skill.id+' changed action duration');
     const markers=b.action?.visual?.releases||[];
-    for(const release of markers)ok(Math.abs(animationPhase(b.action.state,release,ranged?'bow_2h':null,markers)-.4)<1e-8,skill.id+' release does not reach contact');
+    for(const release of markers)ok(Math.abs(animationPhase(b.action.state,release,b.equip.main.playerVisualFamily,markers)-.4)<1e-8,skill.id+' release does not reach contact');
     old.flush(a);next.flush(b);
     ok(JSON.stringify(old.events)===JSON.stringify(next.events),skill.id+' changed event order or timestamps');
     report.push({skill:skill.id,ranged,markers,events:next.events.length});
@@ -47,6 +50,7 @@ for(const type of types){
 const a=old.fresh('veilranger'),b=next.fresh('veilranger');
 for(const p of [a,b])p.drawing={t:.8,maxDraw:1,dmgMin:1,dmgMax:3,aim:{x:4,y:0}};
 a.releaseDraw();b.releaseDraw();ok(JSON.stringify(old.events)===JSON.stringify(next.events),'charged shot gameplay changed');ok(b.action.visual.releases[0]===0,'charged shot has a second windup');
+ok(b.action.visual.drawCharge===.8,'charged release loses the held pose');
 const action=b.action;b.visualReaction('hurt',next.target);ok(b.action===action,'hurt reaction interrupts an attack');b.stats.block=100;b.tryBlock(next.target);ok(b.action===action&&b._visualReaction.kind==='block','block reaction interrupts an attack');
 ok(!Object.keys(b).includes('_visualReaction'),'reaction serialized as player data');
 console.log(JSON.stringify({status:'PASS',checks,skills:report},null,2));

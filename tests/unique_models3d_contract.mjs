@@ -17,10 +17,11 @@ let checks=0,maxGripError=0,ordinary=0,maxTriangles=0;
 const ok=(value,message)=>{checks++;assert.ok(value,message);};
 assert.deepEqual(Object.keys(UNIQUE_MODELS3D).sort(),Array.from(included,d=>d.id).sort());checks++;
 ok(included.length===118,'wrong unique model scope');
+assert.deepEqual(Object.values(UNIQUE_MODELS3D).map(r=>r.paintIndex).sort((a,b)=>a-b),Array.from({length:118},(_,i)=>i));checks++;
 const report={models:{},counts:{},ordinaryCombinations:0};
 for(const def of included){
   const r=UNIQUE_MODELS3D[def.id];ok(Object.isFrozen(r)&&Object.isFrozen(r.material)&&Object.isFrozen(r.attachment),def.id+': mutable recipe');
-  ok(r.revision===(r.slot==='chest'?3:2)&&Object.isFrozen(r.refinement)&&r.refinement.detail&&r.refinement.wear>=0&&r.refinement.wear<=1,def.id+': missing authored refinement');
+  ok(r.revision===(r.slot==='chest'?4:3)&&Object.isFrozen(r.refinement)&&r.refinement.detail&&r.refinement.wear>=0&&r.refinement.wear<=1,def.id+': missing authored refinement');
   const original=originalRecipes[def.id].attachment,retained={...r.attachment,parents:r.attachment.parents.filter(p=>original.parents.includes(p))};
   assert.deepEqual(retained,original,def.id+': refinement moved an attachment anchor');checks++;
   if(r.slot==='chest')ok(Object.isFrozen(r.limbs)&&r.limbs.style&&r.limbs.surface,def.id+': missing limb profile');
@@ -54,11 +55,23 @@ for(const classId of Object.keys(CLASS_STYLES)){
     ok(sig.triangles<=10904,def.id+': exceeded the retained geometry budget');
     ok(sig.hash!==before.models[classId+'/'+def.id].geometry,def.id+': geometry was not refined');
     ok(resolved.modelRevision===UNIQUE_MODELS3D[def.id].revision&&resolved.key.includes('"modelRevision":'+resolved.modelRevision),def.id+': recipe revision missing from appearance key');
+    let paintedVertices=0;
     for(const root of roots)root.traverse(o=>{
       if(o.geometry)for(const a of Object.values(o.geometry.attributes))ok(Array.from(a.array).every(Number.isFinite),def.id+': invalid geometry');
       if(o.isMesh){ok(o.geometry.attributes.color?.count===o.geometry.attributes.position.count,def.id+': vertex shading lost during batching');
         for(const mat of [].concat(o.material)){
           ok(mat.vertexColors,def.id+': material ignores vertex shading');
+          if(mat.userData.uniqueSurfaceAtlas||o===model.uniqueTorso){
+            const paint=o.geometry.attributes.uniquePaintUv,index=UNIQUE_MODELS3D[def.id].paintIndex;
+            ok(mat.userData.uniquePainting&&paint?.count===o.geometry.attributes.position.count,def.id+': missing equipped painting');
+            let withinTile=true;
+            for(let i=0;i<paint.count;i++)if(paint.getZ(i)>0){
+              paintedVertices++;
+              const u=paint.getX(i)*12-index%12,v=paint.getY(i)*10-(9-Math.floor(index/12));
+              if(u<=0||v<=0||u>=1||v>=1||paint.getZ(i)>1)withinTile=false;
+            }
+            ok(withinTile,def.id+': sampled neighboring item painting');
+          }
           for(const key of ['map','bumpMap','roughnessMap','metalnessMap'])if(mat[key])ok(mat[key].image.width===128&&mat[key].image.height===128,def.id+': texture budget changed');
           if(mat.userData.uniqueSurfaceAtlas){
             ok(mat.roughnessMap===mat.metalnessMap&&mat.bumpMap===mat.map,def.id+': redundant surface texture');
@@ -68,10 +81,33 @@ for(const classId of Object.keys(CLASS_STYLES)){
         }
       }
     });
+    ok(paintedVertices>25,def.id+': empty equipped painting');
     if(slot==='chest')ok(model.uniqueTorso&&Object.values(model.armor).every(o=>!o.visible),def.id+': generic torso hides unique armor');
     if(slot==='gloves'||slot==='boots'){
       const pair=model.attachments.get(slot).objects;ok(pair.length===2&&pair[0].parent!==pair[1].parent,def.id+': missing paired limb');
       ok(pair[1].scale.x===-1,def.id+': missing mirrored pair');
+    }
+    if(['bow','crossbow'].includes(UNIQUE_MODELS3D[def.id].category)){
+      const weapon=model.weapon,rig=weapon.userData.flexRig,string=weapon.userData.string.geometry.attributes.position;
+      const sample=(state,t)=>{
+        model.animate({state,t,ang:.8,ex:{}});
+        return Array.from(string.array);
+      };
+      const taut=sample('draw',1),loose=sample('release',.6);
+      ok(rig.meshes.every(m=>m.geometry.morphAttributes.position[0].count===m.geometry.attributes.position.count),def.id+': incomplete bending surface');
+      ok(Math.abs(taut[2]-loose[2])>.035&&Math.abs(taut[8]-loose[8])>.035,def.id+': rigid nocks at release');
+      assert.deepEqual(sample('draw',1),taut,def.id+': flex depends on the previous frame');checks++;
+      for(const nock of rig.nocks){
+        const endpoint=new Vector3().fromBufferAttribute(string,nock.side<0?0:2),vertex=new Vector3();
+        const object=rig.bow?nock.part.children.find(child=>child.isMesh):rig.meshes[0];
+        let nearest=Infinity;
+        for(let i=0;i<object.geometry.attributes.position.count;i++){
+          object.getVertexPosition(i,vertex);
+          if(rig.bow)vertex.applyEuler(nock.part.rotation).add(nock.part.position);
+          nearest=Math.min(nearest,vertex.distanceToSquared(endpoint));
+        }
+        ok(nearest<.042**2,def.id+': string detached from flexed limb');
+      }
     }
     const changed=resolveCharacterVisual(data,classId,{[slot]:{...JSON.parse(JSON.stringify(item)),identified:false,ilvl:99,materialTier:13,icon:'cache',modelId:'stale-model',playerVisualFamily:'invalid-stale-family'}});
     model.equip(changed.equipment);model.animate({state:'idle',t:0,ex:{}});

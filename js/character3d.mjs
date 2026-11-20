@@ -1,21 +1,24 @@
 /* Original five-class characters. Geometry, skeleton and clips are authored here;
    Three.js is pinned in vendor/three. Coordinates: Y up, character faces +Z. */
 import * as THREE from './vendor/three/three.module.min.js';
-import {CLASS_STYLES,ARMOR_FAMILIES} from './character_catalog3d.mjs?v=body-armor-1';
-import {createWeapon,createWearable,createArmorDetails,disposeObject,rod} from './character_equipment3d.mjs?v=finished-1';
-import {uniqueTorsoGeometry,uniqueTorsoMaterial} from './character_unique_equipment3d.mjs?v=painted-1';
+import {CLASS_STYLES,ARMOR_FAMILIES} from './character_catalog3d.mjs?v=forged-1';
+import {createWeapon,createWearable,createArmorDetails,disposeObject,rod} from './character_equipment3d.mjs?v=forged-1';
+import {uniqueTorsoGeometry,uniqueTorsoMaterial,poseUniqueFlex} from './character_unique_equipment3d.mjs?v=forged-1';
+import {disposeUniquePainting} from './character_unique_paint3d.mjs';
+export {loadUniquePainting} from './character_unique_paint3d.mjs';
 import {surfaceMaterial,disposeMaterials} from './character_materials3d.mjs?v=painted-1';
-import {isStarterVest,paintedMaterial,skinMaterial,bootMaterial,bootGeometry,sculptHead,sculptHand,createSplitCoat,capeGeometry,vestGeometry,tapered} from './character_painted3d.mjs?v=finished-1';
-import {heroPanel,setHemRank,paintGarment} from './character_finish3d.mjs';
+import {isStarterVest,paintedMaterial,skinMaterial,bootMaterial,bootGeometry,sculptHead,sculptHand,createSplitCoat,vestGeometry,tapered} from './character_painted3d.mjs?v=mantles-1';
+import {heroPanel,setHemRank,paintGarment} from './character_finish3d.mjs?v=mantles-1';
+import {createMantle} from './character_mantle3d.mjs';
 import {combineStatic} from './character_mesh3d.mjs?v=body-armor-1';
-import {armorPalette,armorRank} from './character_armor3d.mjs?v=finished-1';
-import {createArmorLimbs,updateArmorLimbCoverage} from './character_body_armor3d.mjs?v=finished-1';
-import {CLASS_ANIMATIONS,classPoseAt,sampleHumanoid,smooth} from './character_animation3d.mjs?v=12';
-import {createWildshape} from './character_forms3d.mjs?v=finished-1';
+import {armorPalette,armorRank} from './character_armor3d.mjs?v=mantles-1';
+import {createArmorLimbs,updateArmorLimbCoverage} from './character_body_armor3d.mjs?v=forged-1';
+import {CLASS_ANIMATIONS,classPoseAt,sampleHumanoid,smooth} from './character_animation3d.mjs?v=bow-draw-1';
+import {createWildshape} from './character_forms3d.mjs?v=bow-draw-1';
 import {shiftLayers,applyShiftPose,drawShiftEffect} from './character_wildshape3d.mjs';
 export {createWildshapeController} from './character_wildshape3d.mjs';
-export {createAnimationController} from './character_motion3d.mjs?props=1';
-export {CLASS_STYLES} from './character_catalog3d.mjs?v=body-armor-1';
+export {createAnimationController} from './character_motion3d.mjs?v=bow-draw-1';
+export {CLASS_STYLES} from './character_catalog3d.mjs?v=forged-1';
 
 const TAU = Math.PI * 2;
 const clamp = THREE.MathUtils.clamp;
@@ -109,13 +112,13 @@ export function createCharacter(classId='emberwitch') {
       const w=clamp((t-.72)/.28,0,1)*.55;return [[start,1-w],[end,w]];
     },mat,name);
   }
-  const bareHands=[],baseBoots=[],hairParts=[],shoulderPadding=[],classChestProps=[],baseArmorLimbs=[],baseCuffs=[];
+  const bareHands=[],baseBoots=[],hairParts=[],shoulderPadding=[],baseArmorLimbs=[],baseCuffs=[];
   const bootLeather=bootMaterial(classId),hands=heroPanel(classId,6);
   for(const side of ['L','R']) {
     const sign=side==='L'?1:-1;
     baseArmorLimbs.push(limb(`UpperArm${side}`,`Forearm${side}`,.086,.064,materials.cloth,`Sleeve${side}`));
     baseArmorLimbs.push(limb(`Forearm${side}`,`Hand${side}`,.066,.042,materials.leather,`Bracer${side}`));
-    bareHands.push(sculptHand(joints[`Hand${side}`],hands,side));
+    bareHands.push(sculptHand(joints[`Hand${side}`],hands,side,true));
     baseArmorLimbs.push(limb(`Thigh${side}`,`Shin${side}`,.086,.062,materials.dark,`Leg${side}`));
     baseArmorLimbs.push(limb(`Shin${side}`,`Foot${side}`,.068,.047,materials.leather,`BootShaft${side}`));
     baseBoots.push(mesh(joints[`Foot${side}`],bootGeometry(),bootLeather,[0,0,0],[1,1,1],`Boot${side}`));
@@ -136,10 +139,7 @@ export function createCharacter(classId='emberwitch') {
     const circlet=mesh(headStyle,new THREE.TorusGeometry(.115,.012,5,18),materials.gold,[0,.12,.013]);circlet.rotation.x=Math.PI/2;
     mesh(headStyle,new THREE.OctahedronGeometry(.025),materials.ember,[0,.125,.127],[.7,1,.5]);
   }
-  if(classId==='vanguard'||classId==='veilranger'||classId==='gravebinder'){
-    const cape=mesh(chest,capeGeometry(classId),heroPanel(classId,0),[0,-.29,-.072],[1,1,1],'ClassCape');
-    classChestProps.push(cape);
-  }
+  const mantle=createMantle(classId);chest.add(mantle.mesh);
   if(classId==='veilranger'){
     const quiver=new THREE.Group();quiver.name='Quiver';chest.add(quiver);
     quiver.position.set(-.121,-.095,-.233);quiver.rotation.z=-.40;
@@ -184,7 +184,7 @@ export function createCharacter(classId='emberwitch') {
       const quats=[];for(const sample of samples){const e=sample.rotations[bone.name]||[0,0,0];quats.push(...new THREE.Quaternion().setFromEuler(new THREE.Euler(...e)).toArray());}
       tracks.push(new THREE.QuaternionKeyframeTrack(`${bone.name}.quaternion`,times,quats));
     }
-    tracks.push(new THREE.VectorKeyframeTrack('Hips.position',times,samples.flatMap(p=>[0,p.height,0])));
+    tracks.push(new THREE.VectorKeyframeTrack('Hips.position',times,samples.flatMap(p=>[p.offsetX,p.height,p.offsetZ])));
     return new THREE.AnimationClip(state,1,tracks);
   });
   // Evaluate the authored curves directly. Scrubbing backwards, revisiting a
@@ -198,29 +198,45 @@ export function createCharacter(classId='emberwitch') {
     const sample=sampleHumanoid(classId,pose,equipment),{name,time:t,phase,body,motion,feet}=sample;
     const airborne=name==='airborne',twoHand=!!equipment.main?.twoHand,category=equipment.main?.family.split('_')[0];
     applyBody(sample);
-    function solveFeet(feet){
+    function solveFeet(contacts,motion){
+      const feet=motion.edgeRoll===undefined?contacts:contacts.map(foot=>{
+        const rear=foot.id==='R',restYaw=rear?-.23:.12;
+        const pivot=rear&&foot.contact?motion.heelTurn:0;
+        const yaw=restYaw+.49*pivot,pitch=.38*pivot;
+        // Turn the rear boot around its grounded toe while the hips rotate.
+        const toe=.14,flat=toe*Math.cos(pitch);
+        return {...foot,yaw,pitch:(foot.pitch||0)+pitch,
+          x:foot.x+toe*Math.sin(restYaw)-flat*Math.sin(yaw),
+          z:foot.z+toe*Math.cos(restYaw)-flat*Math.cos(yaw)};
+      });
       // Lower the pelvis within leg reach before IK, rather than stretching knees
       // or dragging a planted foot when a stride passes beneath the character.
-      for(const foot of feet){const side=foot.id,dx=foot.x-rest['Thigh'+side].x,dz=foot.z;
-        const reach=Math.sqrt(Math.max(.30,.807*.807-dx*dx-dz*dz))+.045+soleHeight(foot);
+      for(const foot of feet){
+        const pivot=thighOffset.copy(rest['Thigh'+foot.id]).applyQuaternion(hips.quaternion);
+        const dx=foot.x-hips.position.x-pivot.x,dz=foot.z-hips.position.z-pivot.z;
+        const reach=Math.sqrt(Math.max(0,.807*.807-dx*dx-dz*dz))-pivot.y+soleHeight(foot);
         hips.position.y=Math.min(hips.position.y,reach);
       }
       for(const foot of feet)solveLeg(foot.id,foot);
     }
     function applyBody(s){
-      for(const bone of bones){bone.position.copy(rest[bone.name]);bone.rotation.set(...(s.body.rotations[bone.name]||[0,0,0]));}hips.position.y=s.body.height;
-      if(s.feet)solveFeet(s.feet);
+      for(const bone of bones){bone.position.copy(rest[bone.name]);bone.rotation.set(...(s.body.rotations[bone.name]||[0,0,0]));}
+      hips.position.set(s.body.offsetX,s.body.height,s.body.offsetZ);
+      if(s.feet)solveFeet(s.feet,s.motion);
       if(s.from){
         const target=bones.map(b=>({position:b.position.clone(),quaternion:b.quaternion.clone()}));
         applyBody(s.from);
         bones.forEach((b,i)=>{b.position.lerp(target[i].position,s.blendWeight);b.quaternion.slerp(target[i].quaternion,s.blendWeight);});
         // Both grounded: retain today's world contacts after blending the torso.
         // Entering/leaving flight: blend the solved leg poses themselves.
-        if(s.feet&&s.from.feet)solveFeet(s.feet);
+        if(s.feet&&s.from.feet)solveFeet(s.feet,s.motion);
       }
     }
     if(motion.shield){const s=motion.shield,arm=joints.UpperArmL;arm.rotation.x=THREE.MathUtils.lerp(arm.rotation.x,s.upper[0],s.weight*.78);arm.rotation.z=THREE.MathUtils.lerp(arm.rotation.z,s.upper[2],s.weight*.78);joints.ForearmL.rotation.x=THREE.MathUtils.lerp(joints.ForearmL.rotation.x,s.fore,s.weight*.86);}
-    socket.rotation.x=motion.socket;twoHandRig.position.set(...motion.position);twoHandRig.rotation.set(...motion.rotation);
+    socket.rotation.x=motion.socket;twoHandRig.position.set(...motion.position);
+    const edged=motion.edgeRoll!==undefined;
+    twoHandRig.rotation.set(...motion.rotation,edged?'YXZ':'XYZ');
+    if(edged)twoHandRig.rotateY(motion.edgeRoll);
     for(let i=0;i<coatPanels.length;i++){
       const angle=i/8*TAU,leg=name==='walk'||name==='charge'?Math.sin(t*TAU+(Math.sin(angle)>0?0:Math.PI)):0;
       // Front and rear panels move away from the advancing knee. Long stoles
@@ -234,14 +250,27 @@ export function createCharacter(classId='emberwitch') {
     const color=pose.ex?.castColor||profile.magic;materials.ember.emissive.set(color);auraMaterial.color.set(color);focusMaterial.color.set(color);focusMaterial.opacity=motion.spell*.8;
     root.updateMatrixWorld(true);
     if(twoHand&&motion.rootSpace){
-      const location=new THREE.Vector3(...motion.position);location.y+=root.worldToLocal(chest.getWorldPosition(new THREE.Vector3())).y;
+      const location=new THREE.Vector3(...motion.position);
+      location.x+=hips.position.x;location.z+=hips.position.z;
+      location.y+=root.worldToLocal(chest.getWorldPosition(new THREE.Vector3())).y;
+      if(motion.bowAim>0){
+        // Register the drawn string to the near cheek on the posed head. Each
+        // bow supplies its own string travel and nocking point.
+        const ranged=weapon.userData.ranged,travel=ranged?.drawDistance??.30;
+        const nock=new THREE.Vector3(...(ranged?.handRest||[0,0,-.08]));
+        nock.z-=travel*(.55+.45*motion.handDraw);
+        const cheek=root.worldToLocal(head.localToWorld(new THREE.Vector3(-.171,-.077,.107)));
+        location.lerp(cheek.sub(nock.applyQuaternion(twoHandRig.quaternion)),motion.bowAim);
+      }
       twoHandRig.position.lerp(chest.worldToLocal(root.localToWorld(location)),motion.rootWeight);
-      twoHandRig.quaternion.slerp(relativeQuaternion(chest).invert().multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(...motion.rotation))),motion.rootWeight);
+      twoHandRig.quaternion.slerp(relativeQuaternion(chest).invert().multiply(twoHandRig.quaternion),motion.rootWeight);
       root.updateMatrixWorld(true);
     }
     const settling=name==='dead'?1:name==='death'?smooth((t-.28)/.72):0;
     const secondary=pose.ex?.animation?.secondary||0,falling=name==='death'||name==='dead';
-    const cape=root.getObjectByName('ClassCape');if(cape){cape.scale.z=1-settling*.85;cape.position.z=-.072*(1-settling*.65);cape.rotation.x=falling?0:-Math.abs(secondary)*.4-motion.cloth*.24*(1+Math.sin(t*TAU-.7));cape.rotation.z=falling?0:secondary*.24;}
+    for(let i=0;i<sample.drape.length;i++)mantle.mesh.morphTargetInfluences[i]=sample.drape[i];
+    bareHands[0].children[0].morphTargetInfluences[0]=motion.palmL;
+    bareHands[1].children[0].morphTargetInfluences[0]=motion.palmR;
     hairParts.forEach((part,i)=>{part.rotation.z=falling?0:secondary*.10+Math.sin(t*TAU-.6+i*.3)*motion.cloth*.035;});
     if(settling){
       const yaw={vanguard:.22,emberwitch:.65,gravebinder:-.12,wildkeeper:-.58,veilranger:.35}[classId];
@@ -264,9 +293,9 @@ export function createCharacter(classId='emberwitch') {
       let right=new THREE.Vector3(...weapon.userData.primary),left=new THREE.Vector3(...weapon.userData.support);
       if(category==='bow'){
         const ranged=weapon.userData.ranged,rest=ranged?.handRest||[0,0,-.08],travel=ranged?.drawDistance??.30;
-        right.set(rest[0],rest[1],rest[2]-motion.handDraw*travel);weapon.userData.primary=right.toArray();
+        right.set(rest[0]-.040*motion.bowFollow,rest[1]-.120*motion.bowFollow,rest[2]-motion.handDraw*travel);weapon.userData.primary=right.toArray();
         const line=weapon.userData.string;line.geometry.attributes.position.setZ(1,(ranged?.stringRest??-.08)-motion.draw*travel);line.geometry.attributes.position.needsUpdate=true;
-        for(const limb of weapon.userData.bowLimbs){const sign=limb.userData.side;limb.rotation.x=-sign*(limb.userData.flex??.11)*motion.draw;const tip=new THREE.Vector3(...(limb.userData.tip||[0,sign*.53,-.27])).applyEuler(limb.rotation).add(limb.position);line.geometry.attributes.position.setXYZ(sign<0?0:2,...tip.toArray());}
+        if(!weapon.userData.flexRig)for(const limb of weapon.userData.bowLimbs){const sign=limb.userData.side;limb.rotation.x=-sign*(limb.userData.flex??.11)*motion.draw;const tip=new THREE.Vector3(...(limb.userData.tip||[0,sign*.53,-.27])).applyEuler(limb.rotation).add(limb.position);line.geometry.attributes.position.setXYZ(sign<0?0:2,...tip.toArray());}
         weapon.userData.arrow.visible=motion.arrow;weapon.userData.arrow.position.z=-motion.draw*travel;
       }else if(category==='crossbow'){
         const ranged=weapon.userData.ranged,rest=ranged?.handRest||[0,-.07,-.065],travel=ranged?.drawDistance??.17;
@@ -275,21 +304,27 @@ export function createCharacter(classId='emberwitch') {
         right.set(rest[0]+(ranged?.reloadSide??.032)*motion.reload,rest[1]+(ranged?.reloadLift??.125)*motion.reload,rest[2]+((ranged?.reloadAdvance??.255)-motion.draw*travel)*motion.reload);
         weapon.userData.primary=right.toArray();
       }
+      if(weapon.userData.flexRig)poseUniqueFlex(weapon,motion.draw,name==='attack'||name==='release'?phase:0);
       const q=relativeQuaternion(weapon);
       const grip=(side)=>q.clone().multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(...(motion['grip'+side]||[0,0,0]))));
+      const rightGrip=grip('R'),leftGrip=grip('L');
+      if(edged){
+        alignHiltHand('R',right,rightGrip,q,motion.poleR);
+        alignHiltHand('L',left,leftGrip,q,motion.poleL);
+      }
       if(motion.rootSpace){
         // Keep both wrists inside the physical arm reach, including transitions
         // into a fall. Translate the shared weapon, never stretch either arm.
         const origin=root.worldToLocal(weapon.getWorldPosition(new THREE.Vector3())),start=origin.clone();
-        const limits=[['R',right],['L',left]].map(([side,point])=>({
-          center:root.worldToLocal(joints['UpperArm'+side].getWorldPosition(new THREE.Vector3())).add(palmOffset.clone().applyQuaternion(grip(side))).sub(point.clone().applyQuaternion(q)),
+        const limits=[['R',right,rightGrip],['L',left,leftGrip]].map(([side,point,orientation])=>({
+          center:root.worldToLocal(joints['UpperArm'+side].getWorldPosition(new THREE.Vector3())).add(palmOffset.clone().applyQuaternion(orientation)).sub(point.clone().applyQuaternion(q)),
           radius:rest['Forearm'+side].length()+rest['Hand'+side].length()-.004
         }));
         for(let i=0;i<8;i++){let changed=false;for(const {center,radius} of limits){const delta=origin.clone().sub(center),distance=delta.length();if(distance>radius){origin.addScaledVector(delta,(radius-distance)/distance);changed=true;}}if(!changed)break;}
         if(origin.distanceToSquared(start)>1e-14){twoHandRig.position.copy(chest.worldToLocal(root.localToWorld(origin)));twoHandRig.updateWorldMatrix(false,true);}
       }
-      solveArm('R',root.worldToLocal(weapon.localToWorld(right)),grip('R'),motion.poleR);
-      solveArm('L',root.worldToLocal(weapon.localToWorld(left)),grip('L'),motion.poleL);
+      solveArm('R',root.worldToLocal(weapon.localToWorld(right)),rightGrip,motion.poleR,category==='bow');
+      solveArm('L',root.worldToLocal(weapon.localToWorld(left)),leftGrip,motion.poleL,category==='bow');
       root.updateMatrixWorld(true);
     }
     const film=pose.ex?.cinematic;
@@ -311,8 +346,8 @@ export function createCharacter(classId='emberwitch') {
     if(!airborne)groundPose(name);
   }
   function soleHeight(foot){return .084+Math.abs(Math.sin(foot.pitch||0))*.12+(foot.y||0);}
-  const legTarget=new THREE.Vector3(),legDirection=new THREE.Vector3(),kneeBend=new THREE.Vector3(),kneePoint=new THREE.Vector3();
-  const legInverse=new THREE.Quaternion(),legChain=new THREE.Quaternion(),footRotation=new THREE.Quaternion();
+  const thighOffset=new THREE.Vector3(),legTarget=new THREE.Vector3(),legDirection=new THREE.Vector3(),kneeBend=new THREE.Vector3(),kneePoint=new THREE.Vector3();
+  const legInverse=new THREE.Quaternion(),legChain=new THREE.Quaternion(),footRotation=new THREE.Quaternion(),footEuler=new THREE.Euler();
   const down=new THREE.Vector3(0,-1,0);
   function solveLeg(side,foot){
     const thigh=joints['Thigh'+side],shin=joints['Shin'+side],ankle=joints['Foot'+side];
@@ -326,20 +361,66 @@ export function createCharacter(classId='emberwitch') {
     legInverse.copy(thigh.quaternion).invert();legDirection.copy(legTarget).sub(kneePoint).applyQuaternion(legInverse).normalize();
     shin.quaternion.setFromUnitVectors(rest['Foot'+side].clone().normalize(),legDirection);
     legChain.copy(hips.quaternion).multiply(thigh.quaternion).multiply(shin.quaternion).invert();
-    footRotation.setFromAxisAngle(new THREE.Vector3(1,0,0),foot.pitch||0);ankle.quaternion.copy(legChain).multiply(footRotation);
+    footRotation.setFromEuler(footEuler.set(foot.pitch||0,foot.yaw||0,0,'YXZ'));ankle.quaternion.copy(legChain).multiply(footRotation);
   }
-  const floorMatrix=new THREE.Matrix4(),inverseRoot=new THREE.Matrix4(),floorVertex=new THREE.Vector3(),neutralRotation=new THREE.Quaternion();
+  // Keep the sole on the foot and the tall cuff on the shin. Use the original
+  // bind pose even when the player equips boots in the middle of a stride.
+  const bootParts=new WeakMap();
+  function fitBoot(boot,side){
+    const foot=joints['Foot'+side],shin=joints['Shin'+side],footIndex=bones.indexOf(foot),shinIndex=bones.indexOf(shin);
+    const ankleBind=new THREE.Matrix4().setPosition(bindPositions[foot.name]),vertex=new THREE.Vector3(),pieces=[];
+    boot.updateMatrixWorld(true);boot.traverse(o=>{if(o.isMesh)pieces.push(o);});
+    for(const part of pieces){
+      const g=part.geometry,positions=g.attributes.position;
+      const indices=new Uint16Array(positions.count*4),weights=new Float32Array(positions.count*4);
+      let hasCuff=false;
+      for(let i=0;i<positions.count;i++){
+        vertex.fromBufferAttribute(positions,i).applyMatrix4(part.matrixWorld);
+        const bend=smooth((vertex.y-.035-.40*Math.max(0,vertex.z-.015))/.075);
+        indices[i*4]=footIndex;indices[i*4+1]=shinIndex;
+        weights[i*4]=1-bend;weights[i*4+1]=bend;if(bend>0)hasCuff=true;
+      }
+      if(!hasCuff)continue;
+      g.setAttribute('skinIndex',new THREE.BufferAttribute(indices,4));g.setAttribute('skinWeight',new THREE.BufferAttribute(weights,4));
+      const fitted=new THREE.SkinnedMesh(g,part.material);
+      fitted.name=part.name;fitted.userData=part.userData;fitted.frustumCulled=false;
+      fitted.position.copy(part.position);fitted.quaternion.copy(part.quaternion);fitted.scale.copy(part.scale);
+      const bind=ankleBind.clone().multiply(part.matrixWorld);
+      fitted.bind(skeleton,bind);bootParts.set(fitted,{shin,fromBind:skeleton.boneInverses[shinIndex].clone().multiply(bind)});
+      const parent=part.parent,index=parent.children.indexOf(part);
+      part.removeFromParent();parent.add(fitted);
+      // Retain the authored ordering of the boot's material batches.
+      parent.children.pop();parent.children.splice(index,0,fitted);
+    }
+  }
+  const floorMatrix=new THREE.Matrix4(),shinFloor=new THREE.Matrix4(),inverseRoot=new THREE.Matrix4(),floorVertex=new THREE.Vector3(),neutralRotation=new THREE.Quaternion();
+  function lowestBoxY(e,b){
+    return e[1]*(e[1]<0?b.max.x:b.min.x)+e[5]*(e[5]<0?b.max.y:b.min.y)+e[9]*(e[9]<0?b.max.z:b.min.z)+e[13];
+  }
   function groundPose(name){
     const falling=name==='death'||name==='dead';let low=Infinity;
     inverseRoot.copy(root.matrixWorld).invert();
     function measure(o){
       if(!o.isMesh||o===spell||o===aura||!o.geometry.attributes.position)return;
       floorMatrix.multiplyMatrices(inverseRoot,o.matrixWorld);const e=floorMatrix.elements,position=o.geometry.attributes.position;
-      if(!o.isSkinnedMesh){
-        // Reject meshes whose entire local box lies above the current minimum.
+      const boot=bootParts.get(o);
+      if(boot||!o.isSkinnedMesh&&!o.morphTargetInfluences){
         if(!o.geometry.boundingBox)o.geometry.computeBoundingBox();const b=o.geometry.boundingBox;
-        const bound=e[1]*(e[1]<0?b.max.x:b.min.x)+e[5]*(e[5]<0?b.max.y:b.min.y)+e[9]*(e[9]<0?b.max.z:b.min.z)+e[13];if(bound>=low)return;
-        for(let i=0;i<position.count;i++)low=Math.min(low,e[1]*position.getX(i)+e[5]*position.getY(i)+e[9]*position.getZ(i)+e[13]);
+        if(boot){
+          // A two-bone blend is bounded by its endpoint transforms. The same
+          // weights used by the GPU give exact floor contact, even in a fall.
+          const s=shinFloor.multiplyMatrices(inverseRoot,boot.shin.matrixWorld).multiply(boot.fromBind).elements;
+          if(Math.min(lowestBoxY(e,b),lowestBoxY(s,b))>=low)return;
+          const weights=o.geometry.attributes.skinWeight;
+          for(let i=0;i<position.count;i++){
+            const x=position.getX(i),y=position.getY(i),z=position.getZ(i);
+            const sole=e[1]*x+e[5]*y+e[9]*z+e[13],cuff=s[1]*x+s[5]*y+s[9]*z+s[13];
+            low=Math.min(low,sole+(cuff-sole)*weights.getY(i));
+          }
+        }else{
+          if(lowestBoxY(e,b)>=low)return;
+          for(let i=0;i<position.count;i++)low=Math.min(low,e[1]*position.getX(i)+e[5]*position.getY(i)+e[9]*position.getZ(i)+e[13]);
+        }
       }else{
         for(let i=0;i<position.count;i++){o.getVertexPosition(i,floorVertex);low=Math.min(low,floorVertex.applyMatrix4(floorMatrix).y);}
       }
@@ -352,16 +433,40 @@ export function createCharacter(classId='emberwitch') {
     if(Number.isFinite(low)){hips.position.y+=.006-low;root.updateMatrixWorld(true);}
   }
   function relativeQuaternion(object){return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().copy(root.matrixWorld).invert().multiply(object.matrixWorld));}
-  function solveArm(side,gripTarget,rotation,poleDirection){
+  function elbowPosition(side,shoulder,target,pole){
+    const l1=rest[`Forearm${side}`].length(),l2=rest[`Hand${side}`].length(),delta=target.clone().sub(shoulder);
+    const distance=clamp(delta.length(),.001,l1+l2-.00001),direction=delta.normalize();
+    const bend=pole.clone().addScaledVector(direction,-pole.dot(direction)).normalize();
+    const along=(l1*l1-l2*l2+distance*distance)/(2*distance),height=Math.sqrt(Math.max(0,l1*l1-along*along));
+    return shoulder.clone().addScaledVector(direction,along).addScaledVector(bend,height);
+  }
+  function alignHiltHand(side,localGrip,rotation,weaponRotation,poleDirection){
+    const palm=root.worldToLocal(weapon.localToWorld(localGrip.clone()));
+    const shoulder=root.worldToLocal(joints['UpperArm'+side].getWorldPosition(new THREE.Vector3()));
+    const pole=new THREE.Vector3(...poleDirection).applyQuaternion(relativeQuaternion(chest));
+    const shaft=new THREE.Vector3(0,side==='R'?1:-1,0).applyQuaternion(weaponRotation);
+    // Let each closed hand turn around the hilt with its forearm. Two short
+    // iterations also account for the offset from the wrist to the palm.
+    for(let i=0;i<2;i++){
+      const wrist=palm.clone().sub(palmOffset.clone().applyQuaternion(rotation));
+      const up=elbowPosition(side,shoulder,wrist,pole).sub(wrist).normalize();
+      up.addScaledVector(shaft,-.25*up.dot(shaft)).normalize();
+      const across=pole.clone().cross(wrist.clone().sub(shoulder)).projectOnPlane(up).normalize();
+      const normal=across.clone().cross(up);
+      // A nearly end-on handle has no reliable projected twist. The elbow
+      // plane supplies a continuous rest frame through that part of the cut.
+      const twist=1.45*Math.atan2(normal.dot(shaft),1.25+across.dot(shaft));
+      across.multiplyScalar(Math.cos(twist)).addScaledVector(normal,Math.sin(twist));
+      rotation.setFromRotationMatrix(new THREE.Matrix4().makeBasis(across,up,normal.crossVectors(across,up)));
+    }
+  }
+  function solveArm(side,gripTarget,rotation,poleDirection,facingSpace=false){
     const upper=joints[`UpperArm${side}`],fore=joints[`Forearm${side}`],hand=joints[`Hand${side}`];
     const target=gripTarget.clone().sub(palmOffset.clone().applyQuaternion(rotation));
     const shoulder=root.worldToLocal(upper.getWorldPosition(new THREE.Vector3()));
-    const l1=rest[`Forearm${side}`].length(),l2=rest[`Hand${side}`].length(),delta=target.clone().sub(shoulder);
-    const distance=clamp(delta.length(),.001,l1+l2-.00001),direction=delta.normalize();
-    const pole=new THREE.Vector3(...(poleDirection||[side==='L'?1:-1,-.35,-.25])).applyQuaternion(relativeQuaternion(chest));
-    const bend=pole.addScaledVector(direction,-pole.dot(direction)).normalize();
-    const along=(l1*l1-l2*l2+distance*distance)/(2*distance),height=Math.sqrt(Math.max(0,l1*l1-along*along));
-    const elbow=shoulder.clone().addScaledVector(direction,along).addScaledVector(bend,height);
+    const pole=new THREE.Vector3(...(poleDirection||[side==='L'?1:-1,-.35,-.25]));
+    if(!facingSpace)pole.applyQuaternion(relativeQuaternion(chest));
+    const elbow=elbowPosition(side,shoulder,target,pole);
     const localElbow=upper.parent.worldToLocal(root.localToWorld(elbow));
     upper.quaternion.setFromUnitVectors(rest[`Forearm${side}`].clone().normalize(),localElbow.sub(upper.position).normalize());upper.updateWorldMatrix(false,true);
     const localTarget=fore.parent.worldToLocal(root.localToWorld(target));
@@ -384,12 +489,7 @@ export function createCharacter(classId='emberwitch') {
     }
     for(const family of ARMOR_FAMILIES)armor[family].visible=!bespokeChest&&next.chest?.family===family;
     const rank=armorRank(next.chest);
-    classChestProps.forEach(cape=>{
-      cape.visible=!bespokeChest;
-      setHemRank(cape.material,classId,rank);
-      cape.scale.x=1+rank*(classId==='vanguard'?.065:.025);
-      cape.scale.y=1+rank*(classId==='veilranger'?.09:.03);
-    });
+    mantle.fit(rank,bespokeChest);
     if(next.chest&&!bespokeChest&&!starter){const chosen=armor[next.chest.family],p=next.chest.material;chosen.material.color.set(next.chest.family==='light'?p.cloth:p.metal);
       if(classId!=='vanguard')chosen.material.color.set(armorPalette(next.chest,classId).cloth);
       else if(next.chest.family==='light')chosen.material.color.lerp(new THREE.Color(profile.cloth),.55);
@@ -437,7 +537,12 @@ export function createCharacter(classId='emberwitch') {
       else {
         const parents=slot==='head'?[head]:slot==='off'?[joints.HandL]:slot==='gloves'?[joints.HandL,joints.HandR]:
           slot==='boots'?[joints.FootL,joints.FootR]:slot==='belt'?[hips]:slot==='amulet'?[chest]:[slot==='ring1'?joints.HandL:joints.HandR];
-        for(const parent of parents){const object=createWearable(item,classId,parent.name.endsWith('R')?'R':'L');parent.add(object);objects.push(object);if(slot==='off'){object.position.set(...(object.userData.attachment?.position||[.075,-.07,.03]));object.rotation.set(...(object.userData.attachment?.rotation||[1.05,0,0]));}}
+        for(const parent of parents){
+          const side=parent.name.endsWith('R')?'R':'L',object=createWearable(item,classId,side);
+          if(slot==='boots')fitBoot(object,side);
+          parent.add(object);objects.push(object);
+          if(slot==='off'){object.position.set(...(object.userData.attachment?.position||[.075,-.07,.03]));object.rotation.set(...(object.userData.attachment?.rotation||[1.05,0,0]));}
+        }
       }
       attachments.set(slot,{key:item.key,objects});
     }
@@ -609,6 +714,6 @@ export function createCharacterRenderer({size=384,classId='emberwitch',presentat
     const next=Math.max(192,Math.min(cinematic?768:384,Math.round(value)));if(presentation||next===size)return;
     size=next;renderer.setSize(size,size,false);anchor.x=(origin.x+1)*size/2;anchor.y=(1-origin.y)*size/2;
   }
-  function dispose(){renderer.domElement.removeEventListener('webglcontextlost',onLost);renderer.domElement.removeEventListener('webglcontextrestored',onRestored);models.forEach(m=>m.dispose());environment.dispose();pmrem.dispose();disposeObject(studio);if(pedestal)disposeObject(pedestal);renderer.dispose();renderer.forceContextLoss();}
+  function dispose(){renderer.domElement.removeEventListener('webglcontextlost',onLost);renderer.domElement.removeEventListener('webglcontextrestored',onRestored);models.forEach(m=>m.dispose());disposeUniquePainting(renderer);environment.dispose();pmrem.dispose();disposeObject(studio);if(pedestal)disposeObject(pedestal);renderer.dispose();renderer.forceContextLoss();}
   return {setRegion,setResolution,renderer,scene,camera,get model(){return model;},setClass,anchor,render,presentationBounds,draw,projectileOrigin,effectAnchors,dispose,get lost(){return lost;}};
 }

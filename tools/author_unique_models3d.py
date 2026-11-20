@@ -1,11 +1,12 @@
 """Compile explicitly authored equipment recipes and their inventory references.
 
 The Three.js builders interpret these shape names; no random or ID-derived
-geometry is used. This tool updates only the lightweight model catalogue.
+geometry is used. The inventory paintings also supply the equipped surfaces.
 """
 import json
 import argparse
 from pathlib import Path
+from paint_unique_models3d import build_item_paint
 
 ROOT=Path(__file__).resolve().parents[1]
 AUTH=ROOT/'assets/sprites_src/gameplay_art_authored/items/uniques'
@@ -333,7 +334,7 @@ def main():
         luminous=any(word in row['design'].lower() for word in ['ember','stormstone','storm pearl','ghost','luminous','venom bead','doomstone','crystal','coal','purple eye','glowing'])
         refinement['emission']=.14 if luminous else .035
         models[identity]={
-          'id':identity,'revision':3 if slot=='chest' else 2,'name':row['name'],'baseId':row['baseId'],'category':row['category'],
+          'id':identity,'revision':4 if slot=='chest' else 3,'paintIndex':len(models),'name':row['name'],'baseId':row['baseId'],'category':row['category'],
           'slot':slot,'shape':shape,'finish':finish,
           'length':float(length),'width':float(width),'motif':motif,'twoHand':row['twoHand'],
           'material':material,'refinement':refinement,
@@ -361,11 +362,20 @@ export function uniqueEquipmentModel(data,item,base,slot){
 }
 '''
     target=ROOT/'js/character_unique_catalog3d.mjs'
+    paint=ROOT/'assets/characters/unique-equipment.webp'
+    atlas,forgings=build_item_paint(ROOT,models)
+    contours=ROOT/'js/character_unique_forgings3d.mjs'
+    forged_source='// Cutting profiles traced from the original upright inventory paintings.\nexport const FORGINGS={\n'+',\n'.join(
+        '  '+json.dumps(key)+':'+json.dumps(shape,separators=(',',':')) for key,shape in forgings.items())+'\n};\n'
     if args.check:
         assert target.read_text(encoding='utf-8')==source,'Unique model registry needs rebuilding'
-        print('PASS: 118 retained unique recipes, palettes, attachments and inventory references.')
+        assert paint.read_bytes()==atlas,'Equipped item painting needs rebuilding'
+        assert contours.read_text(encoding='utf-8')==forged_source,'Cutting profiles need rebuilding'
+        print('PASS: 118 unique recipes and their equipped paintings match the authored sources.')
     else:
         target.write_text(source,encoding='utf-8',newline='\n')
-        print('Authored 118 unique 3D recipes with canonical art references.')
+        paint.write_bytes(atlas)
+        contours.write_text(forged_source,encoding='utf-8',newline='\n')
+        print('Authored 118 unique 3D recipes and equipped paintings.')
 
 if __name__=='__main__':main()
