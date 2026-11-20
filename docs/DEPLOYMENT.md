@@ -550,3 +550,15 @@ script on the game page. All 17 changed scripts, stylesheets, and art files
 matched the release byte for byte. Desktop and emulated touch browsers accepted
 Ash on the Wind, pinned its watch bell objective, and reopened it from the tracker.
 [Publication record](qa/quest_journeys_site_publication.json)
+
+## Equipped models and weapon animations — 2026-11-20
+
+Version 25 updates the 118 unique equipment models and the
+animations for bows, two-handed swords, and two-handed axes. At full draw the
+hand stays beside the cheek. Quick shots release from the current draw.
+[Play EmberGrave](https://embergravegame.com)
+
+On the public site, the Hunting Bow and The Distant Tempest fired at partial and
+full draw. Worldcleaver and Marrowhunger rendered their attack poses. All 21
+changed runtime files matched the release after accounting for hosting markup.
+[Publication record](qa/equipped_models_site_publication.json)

@@ -1,0 +1,102 @@
+{
+  "project_id": "appgprj_6aa420e20bfc8191b59e30227bca8a09",
+  "release_commit": "c704e2ca31f4ad18398746bd662f68d038c60800",
+  "version_id": "appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_dbd93e1b4e688191afee8199056158e9",
+  "version_number": 25,
+  "deployment_id": "appgdep_6b0057a1c62c819183cb3e3b142899c1",
+  "status": "succeeded",
+  "published_at": "2026-11-20T14:22:37.537039+00:00",
+  "url": "https://embergravegame.mcke0311.chatgpt.site",
+  "custom_domain": "https://embergravegame.com",
+  "access_mode": "public",
+  "archive_bytes": 224614972,
+  "archive_sha256": "c3b4a7f017af0459de03d7a550c5272036ef2ff4200c66633292fec9ca997b38",
+  "saved_archive": {
+    "archive_format": "tar",
+    "content_hash": "sha256:b110e5f24d0be107b91c02ba84ae94a4ea5ed1f2a58604dc87b6355bcb38469c",
+    "file_count": 1406,
+    "size_bytes": 235243520
+  },
+  "scripts_validated": 92,
+  "runtime_references_checked": 1280,
+  "missing_runtime_references": [],
+  "github_commit": "c76f443f2a6d8dc7a5df7978b0be7e3a962afd2a",
+  "runtime_source_files_matched": 112,
+  "runtime_files": 1405,
+  "live_files_verified": 21,
+  "live_verification": {
+    "rendered_weapons": [
+      {
+        "id": "huntbow",
+        "name": "Hunting Bow",
+        "family": "bow_2h",
+        "releases": [
+          {
+            "draw": 0.025,
+            "hand_movement": 0.005641889979553552
+          },
+          {
+            "draw": 1,
+            "hand_movement": 0
+          }
+        ],
+        "pixels": 4187
+      },
+      {
+        "id": "u_gen_3_11",
+        "name": "The Distant Tempest",
+        "family": "bow_2h",
+        "releases": [
+          {
+            "draw": 0.025,
+            "hand_movement": 0.006221684413812221
+          },
+          {
+            "draw": 1,
+            "hand_movement": 0
+          }
+        ],
+        "pixels": 4242
+      },
+      {
+        "id": "u_gen_0_6",
+        "name": "Worldcleaver",
+        "family": "sword_2h",
+        "pixels": 4142
+      },
+      {
+        "id": "u_gen_1_9",
+        "name": "Marrowhunger",
+        "family": "axe_2h",
+        "pixels": 4790
+      }
+    ],
+    "served_sha256": {
+      "assets/characters/unique-equipment.webp": "afd28071b7718874f77649109c7d2bafb947c416b2799dcefb8faa805f3f4002",
+      "index.html": "6d6b1bfa4d796134e1684e66f6b39979a05e5c63d4c26d5d9c23807f3791edf1",
+      "js/character3d.mjs": "185a823d5dd34dedc699b4ba2a82a03e807565fb68ffd45ad53905bea0e00e4b",
+      "js/character_animation3d.mjs": "e6780904fe842715341aea35d027c8d6262b56edf2cdb56575c6b4fb90b4373a",
+      "js/character_armor3d.mjs": "c48ec176296738f6ee6d74907b2263b771469b73b2509e14fa7d16722d33f4b2",
+      "js/character_body_armor3d.mjs": "fdbae4ebee6d76826fc733372c27955f0105b5420cd0481d2489dbfc0af60cfd",
+      "js/character_catalog3d.mjs": "ad98b5d1c116581ee0b8dea6971f4c0325a41700da2b6dbb35cfe7be348bcd7a",
+      "js/character_equipment3d.mjs": "c3e0da11cc4936c85708cc232d7050845f9fffab4de41800bffa5a8bdc764f97",
+      "js/character_finish3d.mjs": "ecc48ed59f995cd966762a8181055228f1dfa2809bc28a451673efeb4be08c10",
+      "js/character_forms3d.mjs": "78a92a2150cf9ea2a69a3c158262e6eb86775738965eb55370aba7c78636e5fe",
+      "js/character_mantle3d.mjs": "70065401519d6490ca65c2b577578e04663bea742e38c4206ea5510fdf320dc1",
+      "js/character_motion3d.mjs": "32e49e13f16719c67df33080608f698449023ea4c2233bd82ea4ac47cb6b4d50",
+      "js/character_painted3d.mjs": "bd9f25d0d40f29b660b9533a05736354f6706ce1789f5e7bbd7b90631678821b",
+      "js/character_unique_catalog3d.mjs": "27612c62f35220bbfeef39c4403609b1c60a53ffe9d3e907dc669d42a3faa9b1",
+      "js/character_unique_equipment3d.mjs": "63c808c368c82cdb81dd3e9247ed17815fc3c7b13823e08eac4c8c192bf101a6",
+      "js/character_unique_forgings3d.mjs": "211a2ce8ce5c98d8d9e7649110f0e163020100fa3fb59bc3409d9428f57f947f",
+      "js/character_unique_mesh3d.mjs": "62a556eac396d3067ddbe364d012dca550b9853ea70382eb9c6a4cd35925c7bd",
+      "js/character_unique_paint3d.mjs": "ab97b75cc6ac2cd2af0899c552e4a83707f4ea01d03a10f3bc704bdabaf877d6",
+      "js/character_unique_surfaces3d.mjs": "9c479fd114455ac348e600ef08ce7eef8d32d7d80141e249104826e9fe6efa2d",
+      "js/entities.js": "a8dc8d308925513a525d6701319c53e28f665c37a019ad7ab42fcd67c62d5bb3",
+      "js/player3d.js": "9f97f6b6664a7835d6904fcffc4e72ce3c7e261d48d146379f54293aad5fdcf7"
+    },
+    "entrypoint_game_markup_matched": true,
+    "hosting_script_on_index": true,
+    "runtime_errors": [],
+    "failed_site_responses": []
+  }
+}
