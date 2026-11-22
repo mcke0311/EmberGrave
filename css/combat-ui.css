@@ -74,12 +74,17 @@ body:has(.talent-panel:not(.hidden)) #player3dControls { display:none!important;
 .talent-panel .treetab.on { border-color:color-mix(in srgb,var(--branch-accent) 60%,#18202b); border-bottom-color:var(--branch-accent); color:var(--branch-accent); background:linear-gradient(0deg,color-mix(in srgb,var(--branch-accent) 14%,#11161c),#171e26); }
 .talent-panel .treetab:hover { color:#f7e4c0; border-color:var(--branch-accent); }
 .discipline-intro { font:11px/1.45 var(--font-game); color:#b0b7bd; padding:10px 1px 12px; flex:none; }
+@media (min-width:1000px) {
+  #panelLeft.talent-panel:has(.arms-paths) { width:min(1190px,calc(100vw - 36px)); }
+}
+.arms-paths { display:grid;grid-template-columns:repeat(auto-fit,minmax(min(255px,100%),1fr));gap:10px;align-content:start;overflow:auto; }
+.arms-path-name { margin:4px 0 8px 27px;color:var(--tree-accent);font:14px var(--font-game); }
 #talentBody { display:grid; grid-template-columns:minmax(360px,1.6fr) minmax(260px,1fr); gap:16px; flex:1; min-height:360px; }
 .talent-board { display:grid; grid-template-columns:26px 1fr; grid-template-rows:1fr 24px; min-height:0; background:radial-gradient(ellipse at 50% 40%,color-mix(in srgb,var(--tree-accent) 5%,transparent),transparent 70%); border-right:1px solid #58606a50; padding-right:12px; }
 .talent-tiers { display:grid; grid-template-rows:repeat(var(--tree-rows),1fr); }
 .talent-tier { display:flex; flex-direction:column; align-items:center; justify-content:center; color:#67707b; font:10px var(--font-game); gap:4px; }
 .talent-tier span { font:7px var(--font-game); letter-spacing:1px; }.talent-tier strong { font-weight:500; }.talent-tier.unlocked { color:#d6c49e; }
-.talent-panel #treeArea { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:repeat(var(--tree-rows),minmax(78px,1fr)); gap:0; align-items:center; justify-items:center; position:relative; height:auto; }
+.talent-panel .tree-area { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:repeat(var(--tree-rows),minmax(78px,1fr)); gap:0; align-items:center; justify-items:center; position:relative; height:auto; }
 .talent-wires { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
 .talent-wires path { stroke:#505860; stroke-width:1; fill:none; vector-effect:non-scaling-stroke; stroke-dasharray:3 4; opacity:.55; }
 .talent-wires path.lit { stroke:var(--tree-accent); stroke-dasharray:none; stroke-width:1.4; opacity:.6; }

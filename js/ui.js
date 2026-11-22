@@ -221,7 +221,12 @@ const UI = (() => {
     els.mpText.textContent = `${Math.ceil(p.mana)} / ${p.stats.maxMana}`;
     let upkeep=document.getElementById("companionUpkeep");
     if(!upkeep){upkeep=document.createElement("span");upkeep.id="companionUpkeep";els.mpText.parentElement.appendChild(upkeep);}
-    const drain=p.companionUpkeep();upkeep.hidden=!drain;upkeep.textContent=`−${drain}/s companions`;
+    const drain=p.companionUpkeep(), company=p.skills.recruit_shieldguard ? p.companySoldiers() : null;
+    upkeep.hidden=!drain && !company;
+    const counts=company ? ["shieldguard","bowman","standard_bearer"].map(role=>company.filter(m=>m.kindId===role).length) : null;
+    upkeep.textContent=company ? `${counts[0]} guards · ${counts[1]} bows · ${counts[2]} banner · −${Number(drain.toFixed(2))}/s` : `−${Number(drain.toFixed(2))}/s companions`;
+    const mobileCompany=document.getElementById("mobileCompany");
+    if (mobileCompany) { mobileCompany.hidden=!company; if(company) mobileCompany.textContent=upkeep.textContent; }
     upkeep.title="Companion upkeep before regeneration. Companions die when aether reaches zero.";
     const need = DATA.xpForLevel(p.lvl);
     const xpPct = p.lvl >= DATA.MAX_LEVEL ? 100 : U.clamp(p.xp / need * 100, 0, 100);
@@ -258,7 +263,7 @@ const UI = (() => {
   }
   function skillBtnIcon(el, skillId) {
     el.innerHTML = "";
-    const sk = skillId === "basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[skillId];
+    const sk = DATA.skillById(skillId);
     el.appendChild(SkillIcons.create(sk, 54, Game.state.player.equip.main?.cat));
     el.dataset.skill = skillId;
     el.setAttribute("aria-label", `${el.id === "skillL" ? "Left" : "Right"} mouse: ${sk.name}. Click to assign.`);
@@ -271,7 +276,7 @@ const UI = (() => {
     const p = Game.state.player;
     if (hudPlayer !== p) { hudPlayer = p; hudBindingSignature = ""; }
     if (!p.quickSlots) p.quickSlots = [null, null, null, null];
-    for (let i = 0; i < 4; i++) if (p.quickSlots[i] && p.quickSlots[i] !== "basic" && !p.skills[p.quickSlots[i]]) p.quickSlots[i] = null;
+    for (let i = 0; i < 4; i++) if (p.quickSlots[i] && !p.canBindSkill(p.quickSlots[i])) p.quickSlots[i] = null;
     const signature = [p.classId, p.equip.main?.cat, p.skillL, p.skillR, ...p.quickSlots].join("|");
     if (signature === hudBindingSignature) { refreshCooldowns(p); return; }
     hudBindingSignature = signature;
@@ -284,9 +289,9 @@ const UI = (() => {
     for (let i = 0; i < 4; i++) {
       const q = document.createElement("button"); q.type = "button"; q.className = "qslot";
       let id = p.quickSlots[i];
-      if (id && id !== "basic" && !(p.skills[id] > 0)) { id = p.quickSlots[i] = null; }  // forgot via respec
+      if (id && !p.canBindSkill(id)) { id = p.quickSlots[i] = null; }  // forgot via respec
       if (id) {
-        const sk = id === "basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[id];
+        const sk = DATA.skillById(id);
         const c = SkillIcons.create(sk, 44, p.equip.main?.cat);
         q.appendChild(c);
         q.dataset.skill = id;
@@ -328,6 +333,7 @@ const UI = (() => {
     const ids = ["basic"];
     for (const id of Object.keys(DATA.SKILLS))
       if ((p.skills[id] || 0) > 0 && DATA.SKILLS[id].type !== "passive") ids.push(id);
+    if (p.canBindSkill("field_orders")) ids.push("field_orders");
     return ids;
   }
   /* F1–F4: activate the assigned skill (as right-click), or open the picker if empty */
@@ -337,7 +343,7 @@ const UI = (() => {
     const id = p.quickSlots[i];
     if(id&&Game.options.directCast)return Game.directCast(i);
     if(typeof Coop!=="undefined"&&Coop.active){if(id)Coop.submit({type:"bind",slot:"R",skill:id});else CoopUI.skillPick("Q"+i);return;}
-    if (id && (id === "basic" || p.skills[id] > 0)) { p.skillR = id; refreshHUD(); Sfx.play("click"); }
+    if (id && p.canBindSkill(id)) { p.skillR = id; refreshHUD(); Sfx.play("click"); }
     else openSkillPick("Q" + i);
   }
   /* auto-fill the first empty F-slot when a new active skill is learned */
@@ -546,7 +552,8 @@ const UI = (() => {
     const rk = id === "basic" ? 1 : (p.skills[id] || 0);
     const eff = id === "basic" ? 1 : p.effRank(id);
     let html = `<div class="tt-name tt-rare">${sk.name}</div>`;
-    if (sk.tree !== undefined) {
+    if (sk.grantedBy) html += `<div class="tt-base">Granted by ${DATA.SKILLS[sk.grantedBy].name}</div>`;
+    else if (sk.tree !== undefined) {
       const trees = (DATA.CLASSES[sk.cls] && DATA.CLASSES[sk.cls].trees) || DATA.TREE_NAMES;
       html += `<div class="tt-base">${trees[sk.tree]} — Rank ${rk}/${sk.maxRank}${eff > rk ? ` <span style="color:#7fd87f">(+${eff - rk} from gear)</span>` : ""}</div>`;
     }
@@ -555,7 +562,7 @@ const UI = (() => {
     if (rk > 0 && rk < (sk.maxRank || 1) && id !== "basic")
       html += `<div class="tt-base">Next: ${sk.desc(eff + 1)}</div>`;
     if (sk.mana && id !== "basic") html += `<div class="tt-req">Aether cost: ${sk.mana(Math.max(1, eff))}</div>`;
-    if (["summon","summon_golem"].includes(sk.type)) html += `<div class="tt-req">Upkeep: ${sk.upkeep(eff)} aether/sec per companion. All companions die at zero aether.</div>`;
+    if (["summon","summon_golem"].includes(sk.type)) html += `<div class="tt-req">Upkeep: ${Number(p.unitUpkeep(sk,Math.max(1,eff)).toFixed(2))} aether/sec per companion. All companions die at zero aether.</div>`;
     if (sk.requiredWeapons) html += `<div class="tt-${p.canUseSkillWeapon(id)?"req":"reqbad"}">Requires a bow or crossbow</div>`;
     if (sk.reqLvl > 1) html += `<div class="tt-${p.lvl >= sk.reqLvl ? "req" : "reqbad"}">Requires character level ${sk.reqLvl}</div>`;
     if (sk.prereq && DATA.SKILLS[sk.prereq]) html += `<div class="tt-${(p.skills[sk.prereq] || 0) > 0 ? "req" : "reqbad"}">Requires ${DATA.SKILLS[sk.prereq].name}</div>`;
@@ -1357,9 +1364,27 @@ const UI = (() => {
       el.querySelector('.skill-perk-tier.available .perk-option[aria-pressed="true"]')?.focus();
     });el.appendChild(perkSummary);
     const body = document.createElement("div"); body.id = "talentBody"; body.setAttribute("role", "tabpanel"); body.setAttribute("aria-labelledby", "discipline-" + curTree);
-    const board = document.createElement("div"); board.className = "talent-board";
     const nodes = Object.values(DATA.SKILLS).filter(s => s.tree === curTree && s.cls === p.classId);
     if (!nodes.some(sk => sk.id === selectedSkill)) selectedSkill = nodes[0].id;
+    const details = document.createElement("section"); details.id = "skillDetail"; details.setAttribute("aria-label", "Selected skill");
+    if (nodes.some(sk => sk.armsPath)) {
+      const paths = document.createElement("div"); paths.className = "arms-paths";
+      for (const [second,label] of [[false,"Tempo"],[true,"Assault"]]) {
+        const group = document.createElement("section");
+        group.append(textNode("h3","arms-path-name",label),
+          buildTalentBoard(nodes.filter(sk => !!sk.armsPath === second),p,details,el,second));
+        paths.appendChild(group);
+      }
+      body.appendChild(paths);
+    } else body.appendChild(buildTalentBoard(nodes,p,details,el));
+    body.appendChild(details); el.appendChild(body);
+    renderSkillDetail(details, p, DATA.SKILLS[selectedSkill]);
+    const help = document.createElement("div"); help.className = "talent-footer";
+    help.innerHTML = '<span>Select a skill to inspect it. Upgrading costs 1 point.</span><span><kbd>T</kbd> or <kbd>Esc</kbd> close</span>'; el.appendChild(help);
+    const announcement = document.createElement("div"); announcement.id = "skillAnnouncement"; announcement.className = "sr-only"; announcement.setAttribute("role", "status"); el.appendChild(announcement);
+  }
+  function buildTalentBoard(nodes, p, details, el, secondPath = false) {
+    const board = document.createElement("div"); board.className = "talent-board";
     const maxRow = Math.max(...nodes.map(s => s.pos[1])), rows = maxRow + 1;
     board.style.setProperty("--tree-rows", rows);
     const levels = document.createElement("div"); levels.className = "talent-tiers";
@@ -1368,7 +1393,7 @@ const UI = (() => {
       const label = document.createElement("div"); label.className = "talent-tier" + (p.lvl >= req ? " unlocked" : "");
       label.innerHTML = `<span>LV</span><strong>${req}</strong>`; levels.appendChild(label);
     } board.appendChild(levels);
-    const area = document.createElement("div"); area.id = "treeArea";
+    const area = document.createElement("div"); area.id = secondPath ? "assaultTreeArea" : "treeArea"; area.className = "tree-area";
     const wires = document.createElementNS("http://www.w3.org/2000/svg", "svg"); wires.classList.add("talent-wires");
     wires.setAttribute("viewBox", `0 0 300 ${rows * 100}`); wires.setAttribute("preserveAspectRatio", "none"); wires.setAttribute("aria-hidden", "true");
     for (const sk of nodes) {
@@ -1378,7 +1403,6 @@ const UI = (() => {
       wire.setAttribute("d", `M${x1} ${y1}V${(y1 + y2) / 2}H${x2}V${y2}`);
       wire.setAttribute("class", p.skills[pre.id] > 0 ? "lit" : ""); wires.appendChild(wire);
     } area.appendChild(wires);
-    const details = document.createElement("section"); details.id = "skillDetail"; details.setAttribute("aria-label", "Selected skill");
     for (const sk of nodes) {
       const status = skillAvailability(p, sk), bonus = status.rank > 0 ? Math.max(0, p.effRank(sk.id) - status.rank) : 0;
       const n = document.createElement("button"); n.type = "button"; n.dataset.skill = sk.id;
@@ -1397,18 +1421,15 @@ const UI = (() => {
       if(pending){const badge=document.createElement("span");badge.className="perk-ready-badge";badge.textContent="◆";badge.title=`${pending} perk choice${pending===1?"":"s"} available`;n.appendChild(badge);n.classList.add("perk-ready");n.setAttribute("aria-label",n.getAttribute("aria-label")+`, ${pending} perk choices available`);}
       n.addEventListener("click", () => {
         selectedSkill = sk.id;
-        for (const node of area.querySelectorAll(".talent-node")) node.setAttribute("aria-pressed", String(node.dataset.skill === selectedSkill));
+        for (const node of el.querySelectorAll(".talent-node")) node.setAttribute("aria-pressed", String(node.dataset.skill === selectedSkill));
         renderSkillDetail(details, p, sk); hideTooltip();if(typeof MobileViews!=='undefined')MobileViews.detail(el);
       }); area.appendChild(n);
     }
     board.appendChild(area);
     const legend = document.createElement("div"); legend.className = "talent-legend";
     legend.innerHTML = '<span><i class="known"></i>Learned</span><span><i class="ready"></i>Can upgrade</span><span><i></i>Locked</span><span>P · Passive</span>';
-    board.appendChild(legend); body.append(board, details); el.appendChild(body);
-    renderSkillDetail(details, p, DATA.SKILLS[selectedSkill]);
-    const help = document.createElement("div"); help.className = "talent-footer";
-    help.innerHTML = '<span>Select a skill to inspect it. Upgrading costs 1 point.</span><span><kbd>T</kbd> or <kbd>Esc</kbd> close</span>'; el.appendChild(help);
-    const announcement = document.createElement("div"); announcement.id = "skillAnnouncement"; announcement.className = "sr-only"; announcement.setAttribute("role", "status"); el.appendChild(announcement);
+    if (!secondPath) board.appendChild(legend);
+    return board;
   }
   function renderSkillDetail(el, p, sk) {
     sk=p.resolveSkill(sk.id);
@@ -1420,7 +1441,8 @@ const UI = (() => {
     heading.appendChild(title); el.appendChild(heading);
     const stats = document.createElement("div"); stats.className = "skill-facts";
     if (sk.mana) stats.innerHTML += `<span><b>${Number(sk.mana(eff)).toFixed(1).replace(/\.0$/, "")}</b> aether</span>`;
-    if (["summon","summon_golem"].includes(sk.type)) stats.innerHTML += `<span><b>${sk.upkeep(eff)}/s</b> per companion · dies at zero aether</span>`;
+    if (["summon","summon_golem"].includes(sk.type)) stats.innerHTML += `<span><b>${Number(p.unitUpkeep(sk,Math.max(1,eff)).toFixed(2))}/s</b> per companion · dies at zero aether</span>`;
+    if (sk.companyRole) stats.innerHTML += `<span>Company limit <b>${p.companyLimit(sk)}</b></span>`;
     if (sk.requiredWeapons) stats.innerHTML += `<span class="${p.canUseSkillWeapon(sk.id)?"":"unmet"}">Bow or crossbow required</span>`;
     if (sk.cd) stats.innerHTML += `<span><b>${Number(sk.cd(eff)).toFixed(1).replace(/\.0$/, "")}s</b> cooldown</span>`;
     stats.innerHTML += `<span><b>${sk.reqLvl}</b> level required</span>`; el.appendChild(stats);
@@ -1443,7 +1465,7 @@ const UI = (() => {
       const fresh = skillAvailability(p, sk); if (!fresh.learnable) return;
       if(typeof Coop!=="undefined"&&Coop.active){Coop.submit({type:"learn",skill:sk.id}).then(()=>{renderSkills();refreshHUD();});return;}
       p.skills[sk.id] = fresh.rank + 1; p.skillPts--; p.computeStats();
-      if (sk.type !== "passive" && fresh.rank === 0) { if (p.skillR === "basic") p.skillR = sk.id; autoBindQuick(p, sk.id); }
+      if (sk.type !== "passive" && fresh.rank === 0) { if (p.skillR === "basic") p.skillR = sk.id; autoBindQuick(p, sk.id); if(sk.id===DATA.FIELD_ORDERS.grantedBy) autoBindQuick(p,"field_orders"); }
       Sfx.play("skillup"); renderSkills(); refreshHUD();
       $("skillAnnouncement").textContent = `${sk.name} upgraded to rank ${p.skills[sk.id]}. ${p.skillPts} talent points remain.`;
       if(SkillPerks.pending(p,sk.id))$("skillAnnouncement").textContent+=" A perk choice is available.";
@@ -1997,7 +2019,7 @@ const UI = (() => {
     const caption = document.createElement("div"); caption.className = "picker-heading";
     caption.innerHTML = `<span>ASSIGN ${typeof MobileControls!=="undefined"&&MobileControls.enabled?(which==="L"?"ATTACK":which==="R"?"SECONDARY SKILL":"QUICK SKILL "+(+which.slice(1)+1)):which === "L" ? "LEFT MOUSE" : which === "R" ? "RIGHT MOUSE" : "F" + (+which.slice(1) + 1)}</span><small>Select a learned skill</small>`; pick.appendChild(caption);
     for (const id of learnedActives(p)) {
-      const sk = id === "basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[id];
+      const sk = DATA.skillById(id);
       const d = document.createElement("button"); d.type = "button"; d.className = "pickopt";
       const ic = SkillIcons.create(sk, 40, p.equip.main?.cat);
       d.appendChild(ic);

@@ -1,6 +1,7 @@
 /* Translate mouse and touch intentions into ID-only host commands. */
 const CoopInput=(()=>{
   let press=null,last=0,stick=null,skillSide=null,heldSkill=null,once=false,sequence=0;
+  let orderStarted=0;
   let predictionFrames=[],intentions=[],responseTimes=[],responsePending=null;
   function rememberCommand(seq,command){const p=Game.state?.player;if(p&&(!Coop.host||Coop.workerHost)){if(['move','steer'].includes(command.type)){if(!p.moving&&!responsePending)responsePending={at:performance.now(),x:p.x,y:p.y};p._coopMotion=command;}else if(['stop','attack','cast','jump'].includes(command.type)){p._coopMotion=null;responsePending=null;}}sequence=seq;intentions.push({seq,command});if(intentions.length>128)intentions.shift();}
   function reconcile(row){
@@ -27,6 +28,9 @@ const CoopInput=(()=>{
     if(blocked()||Game.state.player.dead)return;
     const p=Game.state.player,skill=right?p.skillR:p.skillL;
     if(p.management?.carried){if(!right)InventoryActions.submit({type:'drop',itemId:p.management.carried._coopId});return;}
+    if(skill==='field_orders' && info.point && (right || info.mouse.shift || !(info.exit || info.portal || info.npc || info.prop || info.label))) {
+      send({type:'quickCast',skill,point:info.point,targetId:info.mon?._coopId});return;
+    }
     if(!right&&!info.mouse.shift){
       const fallen=Game.state.players.find(h=>h!==p&&h.dead&&info.point&&U.dist(h.x,h.y,info.point.x,info.point.y)<1.2);
       if(fallen){send({type:'revive',targetId:fallen._coopId});return;}
@@ -63,10 +67,15 @@ const CoopInput=(()=>{
     holdTouchSkill('Q'+index,Game.state?.player?.quickSlots?.[index],down);
   }
   function holdTouchSkill(side,skill,down){
-    if(!down){if(skillSide!==side)return;skillSide=null;heldSkill=null;send({type:'release'});if(stick)touchTick();return;}
+    if(!down){
+      if(skillSide!==side)return;
+      if(heldSkill==='field_orders'){if(!once)Game.touchFieldOrders(performance.now()-orderStarted>=350);}
+      else send({type:'release'});
+      skillSide=null;heldSkill=null;if(stick)touchTick();return;
+    }
     const p=Game.state?.player;
-    if(!Game.touchReady()||blocked()||skillSide||!skill||
-      (skill!=='basic'&&(!p.skills[skill]||DATA.SKILLS[skill]?.type==='passive')))return;
+    if(!Game.touchReady()||blocked()||skillSide||!p.canBindSkill(skill))return;
+    if(skill==='field_orders') orderStarted=performance.now();
     skillSide=side;heldSkill=skill;once=false;touchTick();
   }
   function touchTick(){
@@ -75,7 +84,17 @@ const CoopInput=(()=>{
     const point={x:U.clamp(p.x+dx*4.2,0,Game.state.map.w),y:U.clamp(p.y+dy*4.2,0,Game.state.map.h),surfaceId:p.surfaceId};
     if(stick)send({type:'steer',point});
     if(skillSide){const skill=heldSkill;if(once&&!Game.coop.repeatSkill(skill))return;
-      const monsters=Game.state.monsters.filter(m=>!m.dead&&TerrainLayers.same(p,m)&&U.dist(p.x,p.y,m.x,m.y)<9).sort((a,b)=>U.dist2(p.x,p.y,a.x,a.y)-U.dist2(p.x,p.y,b.x,b.y));
+      if(skill==='field_orders'){
+        if(!once && performance.now()-orderStarted>=350){once=true;Game.touchFieldOrders(true);}
+        return;
+      }
+      const sweep=DATA.SKILLS[skill]?.type==='combo';
+      const walk=(x,y)=>MapGen.walkable(Game.state.map,x,y,p.surfaceId);
+      const monsters=Game.state.monsters.filter(m=>{
+        if(m.dead||!TerrainLayers.same(p,m))return false;
+        const distance=U.dist(p.x,p.y,m.x,m.y);
+        return sweep ? distance<=p.skillTargetRange(skill,m)&&U.los(walk,p.x,p.y,m.x,m.y) : distance<9;
+      }).sort((a,b)=>U.dist2(p.x,p.y,a.x,a.y)-U.dist2(p.x,p.y,b.x,b.y));
       targetSkill(skill,{mon:monsters[0],point},false);once=true;
     }
   }

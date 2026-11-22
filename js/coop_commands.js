@@ -36,7 +36,7 @@ const CoopCommands=(()=>{
     const s=Game.state,o=npcId?s.npcs.find(n=>n.id===npcId):s.map.props.find(o=>o.interact===type&&nearby(p,o));
     if(!nearby(p,o)||(npcId&&!Game.canTradeWith(o)))fail('Move closer to '+(npcId?'the vendor':type)+'.');return o;
   }
-  function checkSkill(p,id){if(id!=='basic'&&(!DATA.SKILLS[id]||!p.skills[id]||DATA.SKILLS[id].type==='passive'))fail('Skill is not learned');}
+  function checkSkill(p,id){if(!p.canBindSkill(id))fail('Skill is not learned');}
   async function execute(p,c){
     const s=Game.state;
     if(!c||typeof c.type!=='string'||JSON.stringify(c).length>4096)fail('Invalid gameplay command');
@@ -58,10 +58,15 @@ const CoopCommands=(()=>{
       case 'release':p.releaseDraw();p.command=null;return;
       case 'attack':{
         checkSkill(p,c.skill);const t=s.monsters.find(m=>m._coopId===c.targetId&&!m.dead);
-        if(!t)fail('Target is gone');p.command={type:'attack',target:t,skill:c.skill,hold:!!c.hold&&Game.coop.repeatSkill(c.skill)};p.path=null;return;
+        if(!t)fail('Target is gone');if(c.skill==='field_orders')return p.performSkill(c.skill,t);p.command={type:'attack',target:t,skill:c.skill,hold:!!c.hold&&Game.coop.repeatSkill(c.skill)};p.path=null;return;
       }
-      case 'quickCast':checkSkill(p,c.skill);if(!pt)fail('Missing cast destination');return CombatCast.request(p,c.skill,pt,s.monsters.find(m=>m._coopId===c.targetId&&!m.dead));
-      case 'cast':checkSkill(p,c.skill);if(p.resolveSkill(c.skill).type==='melee')return Game.coop.airAttack(p,c.skill,pt);p.command={type:'skillPoint',skill:c.skill,point:pt||{x:p.x,y:p.y,surfaceId:p.surfaceId}};p.path=null;return;
+      case 'quickCast':{
+        checkSkill(p,c.skill);if(!pt)fail('Missing cast destination');
+        const target=c.targetId ? s.monsters.find(m=>m._coopId===c.targetId&&!m.dead) : null;
+        if(c.skill==='field_orders' && c.targetId && !target) return false;
+        return CombatCast.request(p,c.skill,pt,target);
+      }
+      case 'cast':checkSkill(p,c.skill);if(c.skill==='field_orders')return p.performSkill(c.skill,null,pt);if(p.resolveSkill(c.skill).type==='melee')return Game.coop.airAttack(p,c.skill,pt);p.command={type:'skillPoint',skill:c.skill,point:pt||{x:p.x,y:p.y,surfaceId:p.surfaceId}};p.path=null;return;
       case 'jump':return Game.coop.jump(p,pt);
       case 'quaff':if(!Number.isInteger(c.slot)||c.slot<0||c.slot>3)fail('Invalid belt slot');return p.quaff(c.slot);
       case 'revive':{
@@ -97,7 +102,9 @@ const CoopCommands=(()=>{
         if(!sk||sk.cls!==p.classId)fail('Skill is not available to this class');
         if(p.skillPts<1||p.lvl<sk.reqLvl||(p.skills[c.skill]||0)>=sk.maxRank||(sk.prereq&&!p.skills[sk.prereq]))fail('Skill requirements are not met');
         p.skills[c.skill]=(p.skills[c.skill]||0)+1;p.skillPts--;p.computeStats();
-        if(sk.type!=='passive'&&!p.quickSlots.includes(c.skill)){const i=p.quickSlots.indexOf(null);if(i>=0)p.quickSlots[i]=c.skill;}return;
+        if(sk.type!=='passive')for(const id of sk.id===DATA.FIELD_ORDERS.grantedBy?[sk.id,'field_orders']:[sk.id]) {
+          const i=p.quickSlots.indexOf(null);if(i>=0&&!p.quickSlots.includes(id))p.quickSlots[i]=id;
+        }return;
       }
       case 'perk':{
         const result=SkillPerks.choose(p,c.skill,c.tier,c.perk);if(result===false)fail('Perk is not available');p.computeStats();return;

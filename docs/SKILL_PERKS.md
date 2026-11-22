@@ -2,15 +2,15 @@
 
 Generated from the playable catalog with `node tools/export_skill_perks.mjs`.
 
-Each of the 107 class skills offers three free choices at invested rank 5 and three at rank 10. Choose one per tier; both selections stack. Choices can be postponed and are saved with the hero. Equipment bonuses do not unlock milestones. The existing talent reset clears skills, perk picks, and ongoing skill effects.
+Each of the 114 class skills offers three free choices at invested rank 5 and three at rank 10. Choose one per tier. Both selections stack and are saved with the hero. Milestones use invested ranks. A talent reset clears skills, perk picks, and ongoing skill effects.
 
-Active skill modifiers apply on the next use. Existing projectiles, fields, summons, buffs, and stances keep their cast values. Passive perks apply immediately. Temporary bonuses from using a skill last three seconds and refresh without stacking with themselves.
+Passive perks and Standard Bearer aura choices take effect immediately. Other active skill modifiers apply on the next use. Temporary bonuses from using a skill last three seconds. Repeated use refreshes their duration.
 
 Implementation: `js/skill_perks.js` owns the catalog, selection validation, save normalization, immutable skill resolution and displayed values. `Player.resolveSkill()` is shared by combat, targeting and tooltips. Selections are saved as `skillPerks[skillId][5 or 10] = perkId`. Existing saves receive their earned unselected choices.
 
 Review corrections: form descriptions now describe permanent toggles; Doom, chain counts, execution thresholds and wound multipliers show current scaling. Trap capacity and arming speed are consumed by traps. Bulwark armor updates while holding ground. Totem interval reduction has a 90% cap, so high ranks cannot create frame-dependent attacks and interval perks remain effective.
 
-Verification: `node tests/skill_perks_contract.mjs` checks all 642 definitions, all 963 two-tier combinations, 819 active-skill casts, concrete combat outcomes, save data and reset cancellation. Open `tests/class_skill_ui.html` for all-class interaction, saved-hero migration and responsive checks. The attack-timing and campaign contract suites also cover regression behavior. On restricted Windows environments, run Node with `--preserve-symlinks --preserve-symlinks-main`.
+Run `node tests/skill_perks_contract.mjs` to check every perk combination, combat outcomes, save data, and talent resets. Open `tests/class_skill_ui.html` for all-class interaction, saved-hero migration, and responsive layout checks. On restricted Windows environments, run Node with `--preserve-symlinks --preserve-symlinks-main`.
 
 ## Vanguard
 
@@ -65,52 +65,6 @@ Verification: `node tests/skill_perks_contract.mjs` checks all 642 definitions, 
 | 5 | **Honed Power** — +20% base weapon damage; +20% damage against wounded enemies. | **Measured Breath** — −25% aether cost. | **Short Reckoning** — −20% cooldown. |
 | 10 | **Unbound Power** — +35% base weapon damage; +35% damage against wounded enemies; +15% aether cost. | **Sever the Weak** — +5 percentage points to execution health threshold. | **Executioner's Rush** — +25% Movement Speed for 3s after using this skill. |
 
-### Warcries
-
-#### Rallying Cry
-
-| Rank | Choice 1 | Choice 2 | Choice 3 |
-| --- | --- | --- | --- |
-| 5 | **Healing Surge** — +20% healing (% of maximum life). | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
-| 10 | **Rally the Pack** — +15 companion healing (%). | **Lingering Presence** — +35% rally duration. | **Stand Together** — +60 Armor for 3s after using this skill. |
-
-#### Terrifying Bellow
-
-| Rank | Choice 1 | Choice 2 | Choice 3 |
-| --- | --- | --- | --- |
-| 5 | **Lingering Presence** — +35% duration. | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
-| 10 | **Crushing Dread** — +15 damage reduction on frightened enemies (%). | **Dread Without End** — +60% duration; +15% aether cost. | **Courage from Fear** — +25% Movement Speed for 3s after using this skill. |
-
-#### War Banner
-
-| Rank | Choice 1 | Choice 2 | Choice 3 |
-| --- | --- | --- | --- |
-| 5 | **Honed Power** — +20% allied damage bonus. | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
-| 10 | **Marching Standard** — +40% allied attack-speed bonus. | **Lingering Presence** — +35% duration. | **Merciful Standard** — +1 allied healing per second (%). |
-
-#### Iron Will
-
-| Rank | Choice 1 | Choice 2 | Choice 3 |
-| --- | --- | --- | --- |
-| 5 | **Steady Mind** — 10% Reduced Slow/Stun Duration. | **Stout Heart** — +8% Maximum Life. | **Resolve** — Replenish Life +1. |
-| 10 | **Battle Composure** — 15% Reduced Slow/Stun Duration. | **Iron Constitution** — +15% Maximum Life. | **Spellward** — Elemental Damage Reduced by 5. |
-
-#### Sundering Roar
-
-| Rank | Choice 1 | Choice 2 | Choice 3 |
-| --- | --- | --- | --- |
-| 5 | **Lingering Presence** — +35% roar duration. | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
-| 10 | **Demoralize** — +15 roar damage reduction (%). | **Crippling Word** — +20 roar slow (%). | **Thunderous Advance** — +25% Movement Speed for 3s after using this skill. |
-
-#### Standard of the Last Stand
-
-| Rank | Choice 1 | Choice 2 | Choice 3 |
-| --- | --- | --- | --- |
-| 5 | **Honed Power** — +20% companion healing (%). | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
-| 10 | **Last Defiance** — +40% allied damage bonus. | **Lingering Presence** — +35% duration. | **Quickened Courage** — +40% allied attack-speed bonus. |
-
-### Assault
-
 #### Bull Charge
 
 | Rank | Choice 1 | Choice 2 | Choice 3 |
@@ -159,6 +113,101 @@ Verification: `node tests/skill_perks_contract.mjs` checks all 642 definitions, 
 | --- | --- | --- | --- |
 | 5 | **Honed Power** — +20% weapon damage. | **Measured Breath** — −25% aether cost. | **Far Reach** — +25% leap reach. |
 | 10 | **Unbound Power** — +35% weapon damage; +15% aether cost. | **Widening Circle** — +25% radius. | **Skyfall Aegis** — +60 Armor for 3s after using this skill. |
+
+### Warcries
+
+#### Rallying Cry
+
+| Rank | Choice 1 | Choice 2 | Choice 3 |
+| --- | --- | --- | --- |
+| 5 | **Healing Surge** — +20% healing (% of maximum life). | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
+| 10 | **Rally the Pack** — +15 companion healing (%). | **Lingering Presence** — +35% rally duration. | **Stand Together** — +60 Armor for 3s after using this skill. |
+
+#### Terrifying Bellow
+
+| Rank | Choice 1 | Choice 2 | Choice 3 |
+| --- | --- | --- | --- |
+| 5 | **Lingering Presence** — +35% duration. | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
+| 10 | **Crushing Dread** — +15 damage reduction on frightened enemies (%). | **Dread Without End** — +60% duration; +15% aether cost. | **Courage from Fear** — +25% Movement Speed for 3s after using this skill. |
+
+#### War Banner
+
+| Rank | Choice 1 | Choice 2 | Choice 3 |
+| --- | --- | --- | --- |
+| 5 | **Honed Power** — +20% allied damage bonus. | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
+| 10 | **Marching Standard** — +40% allied attack-speed bonus. | **Lingering Presence** — +35% duration. | **Merciful Standard** — +1 allied healing per second (%). |
+
+#### Iron Will
+
+| Rank | Choice 1 | Choice 2 | Choice 3 |
+| --- | --- | --- | --- |
+| 5 | **Steady Mind** — 10% Reduced Slow/Stun Duration. | **Stout Heart** — +8% Maximum Life. | **Resolve** — Replenish Life +1. |
+| 10 | **Battle Composure** — 15% Reduced Slow/Stun Duration. | **Iron Constitution** — +15% Maximum Life. | **Spellward** — Elemental Damage Reduced by 5. |
+
+#### Sundering Roar
+
+| Rank | Choice 1 | Choice 2 | Choice 3 |
+| --- | --- | --- | --- |
+| 5 | **Lingering Presence** — +35% roar duration. | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
+| 10 | **Demoralize** — +15 roar damage reduction (%). | **Crippling Word** — +20 roar slow (%). | **Thunderous Advance** — +25% Movement Speed for 3s after using this skill. |
+
+#### Standard of the Last Stand
+
+| Rank | Choice 1 | Choice 2 | Choice 3 |
+| --- | --- | --- | --- |
+| 5 | **Honed Power** — +20% companion healing (%). | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
+| 10 | **Last Defiance** — +40% allied damage bonus. | **Lingering Presence** — +35% duration. | **Quickened Courage** — +40% allied attack-speed bonus. |
+
+### Command
+
+#### Recruit Shieldguard
+
+| Rank | Choice 1 | Choice 2 | Choice 3 |
+| --- | --- | --- | --- |
+| 5 | **Savage Bond** — +20% companion damage. | **Measured Breath** — −25% aether cost; −25% aether upkeep per companion per second. | **Stalwart Bond** — +25% companion life. |
+| 10 | **Veteran Soldier** — +30% companion damage. | **Frenzied Bond** — +25% companion attack speed. | **Hunting Bond** — +30% companion movement speed; +15% companion life. |
+
+#### Recruit Bowman
+
+| Rank | Choice 1 | Choice 2 | Choice 3 |
+| --- | --- | --- | --- |
+| 5 | **Savage Bond** — +20% companion damage. | **Measured Breath** — −25% aether cost; −25% aether upkeep per companion per second. | **Stalwart Bond** — +25% companion life. |
+| 10 | **Veteran Soldier** — +30% companion damage. | **Frenzied Bond** — +25% companion attack speed. | **Hunting Bond** — +30% companion movement speed; +15% companion life. |
+
+#### Recruit Standard Bearer
+
+| Rank | Choice 1 | Choice 2 | Choice 3 |
+| --- | --- | --- | --- |
+| 5 | **Might** — Aura: +10% Damage for allies within 6y of a living standard bearer; Aura: +10% Spell Power for allies within 6y of a living standard bearer. | **Mending** — Aura: Replenish Life +2 for allies within 6y of a living standard bearer. | **March** — Aura: +12% Movement Speed for allies within 6y of a living standard bearer. |
+| 10 | **Fervor** — Aura: +12% Attack Speed for allies within 6y of a living standard bearer. | **Retribution** — Aura: Attackers take 15 Damage for allies within 6y of a living standard bearer. | **Resolve** — Aura: 20% shorter slows and stuns for allies within 6y of a living standard bearer. |
+
+#### Volley Drill
+
+| Rank | Choice 1 | Choice 2 | Choice 3 |
+| --- | --- | --- | --- |
+| 5 | **Steady Aim** — +8% bowman damage. | **Light Packs** — +5% Movement Speed. | **Range Practice** — +10% Attack Rating. |
+| 10 | **Bodkin Arrows** — +15% bowman damage. | **Veteran Bowmen** — +18% Summon Life. | **Quick Draw** — +10% Attack Speed. |
+
+#### Shieldwall Drill
+
+| Rank | Choice 1 | Choice 2 | Choice 3 |
+| --- | --- | --- | --- |
+| 5 | **Shield Training** — +5% shieldguard frontal block. | **Sturdy Shields** — +12% Summon Life. | **Front Rank** — +8% Summon Damage. |
+| 10 | **Interlocking Shields** — +8% shieldguard frontal block. | **Veteran Guard** — +20% Summon Life. | **Shield Spikes** — Minion attackers take 8 Damage. |
+
+#### Field Logistics
+
+| Rank | Choice 1 | Choice 2 | Choice 3 |
+| --- | --- | --- | --- |
+| 5 | **Aether Stores** — +15 to Aether. | **Rest Rotation** — +20% Aether Regeneration. | **Field Rations** — Replenish Life +1. |
+| 10 | **Deep Reserves** — +30 to Aether. | **Supply Train** — +35% Aether Regeneration. | **Field Medicine** — +20% Summon Life. |
+
+#### Coordinated Assault
+
+| Rank | Choice 1 | Choice 2 | Choice 3 |
+| --- | --- | --- | --- |
+| 5 | **Honed Power** — +20% weapon damage. | **Measured Breath** — −25% aether cost. | **Widening Circle** — +25% radius. |
+| 10 | **Unbound Power** — +35% weapon damage; +15% aether cost. | **Lingering Presence** — +35% duration. | **Quick Signals** — −20% cooldown. |
 
 ## Ember Witch
 

@@ -2,7 +2,7 @@
 <style>body{margin:18px;background:#121720;color:#ded3bb;font:13px system-ui}h1{font:25px Georgia}p{color:#adb8c3}pre{white-space:pre-wrap;font:12px/1.5 system-ui}select,button{background:#26303a;color:#ead7b3;border:1px solid #766244;padding:7px 12px;margin:0 8px 12px 0}iframe{width:100%;height:800px;display:block;border:1px solid #766244;box-sizing:border-box}#gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin:16px 0}.icon-card{padding:12px;background:#1c242d;border:1px solid #4c5355;text-align:center}.icon-card svg{display:block;margin:0 auto 10px}.icon-card small{display:block;font:10px system-ui;color:#a2b1be;margin-top:5px}summary{cursor:pointer;padding:12px 0}</style>
 <h1>Class disciplines & combat console</h1><p>Review all five classes. This scene uses temporary heroes and an isolated save store.</p>
 <pre id="result">Running interaction checks…</pre><label>Class <select id="classSelect" disabled></select></label><label>Viewport <select id="sizeSelect"><option value="100%">Full width</option><option value="900px">900 px</option><option value="680px">680 px</option></select></label><div id="host"></div>
-<details><summary>Review all 107 skill emblems</summary><div id="gallery"></div></details>
+<details><summary>Review all talent emblems</summary><div id="gallery"></div></details>
 <script type="module">
 const out=document.getElementById('result');window.skillTestStore=new Map();let checks=0;
 const ok=(value,message)=>{checks++;if(!value)throw new Error(message);};
@@ -122,7 +122,7 @@ try{
   select.addEventListener('change',async()=>{select.disabled=true;await hero(select.value);select.disabled=false;});
   document.getElementById('sizeSelect').addEventListener('change',e=>{frame.style.width=e.target.value;});
   ok(!doc.querySelector('#appFatal'),'game raised a runtime error');
-  out.textContent=`PASS: ${checks} checks across all 5 classes, 15 disciplines and 107 skills. All 642 perk choices, inspection, free selection, rank gates, pending badges, save/load, old saves, talent reset, hotkeys, cooldowns, keyboard focus and responsive layouts verified. Saves isolated in memory.`;
+  out.textContent=`PASS: ${checks} checks across all 5 classes, 15 disciplines and 114 talents. All 684 perk choices, inspection, free selection, rank gates, pending badges, save/load, old saves, talent reset, hotkeys, cooldowns, keyboard focus and responsive layouts verified. Saves isolated in memory.`;
   document.body.dataset.testStatus='passed';
 }catch(error){out.textContent='FAIL: '+error.stack;document.body.dataset.testStatus='failed';}
 </script></html>

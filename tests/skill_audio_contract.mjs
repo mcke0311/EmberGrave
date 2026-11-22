@@ -52,8 +52,8 @@ function harness({fail=false,defer=false}={}){
 const h=harness(),{audio:a,ac,vol}=h;
 const owner={x:5,y:5,skills:{},stats:{ranged:false},form:null,dead:false};
 const ids=Object.keys(a.recipes);
-ok(ids.length===108,'all 107 skills and basic must be explicit');
-ok(ids.filter(id=>a.recipes[id].passive).length===18,'passive coverage includes Master of the Hunt and Exploit Weakness');
+ok(ids.length===116,'all 114 talents, Field Orders and basic must be explicit');
+ok(ids.filter(id=>a.recipes[id].passive).length===21,'passive coverage includes Master of the Hunt and Exploit Weakness');
 ok(a.play('basic','release',{owner})===null,'played before audio init');
 await h.init();await h.init();
 ok(h.counts().fetches===78&&h.counts().decodes===78,'textures not loaded once');
@@ -119,4 +119,4 @@ const failed=harness({fail:true});await failed.init();
 ok(failed.audio.snapshot().failed.length===78&&failed.errors.length===78,'missing files not diagnosed');
 ok(failed.audio.play('basic','release',{owner})===null,'missing asset used old synth fallback');
 ok(h.counts().rng===0,'variation changed gameplay randomness');
-console.log(`PASS ${checks} skill-audio checks: source hashes, 108 assignments, decode caching, phases, volume, lifetime, rejection, failure, source nesting, RNG and voice bounds.`);
+console.log(`PASS ${checks} skill-audio checks: source hashes, ${ids.length} assignments, decode caching, phases, volume, lifetime, rejection, failure, source nesting, RNG and voice bounds.`);

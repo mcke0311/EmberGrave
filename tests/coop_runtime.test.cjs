@@ -14,6 +14,77 @@ async function session(){const f=fixture();await f.runtime.start({hostId:'host',
 async function command(f,id,command){const p=f.runtime.players.get(id);p.testSeq=(p.testSeq||0)+1;return f.runtime.receive(id,{kind:'command',seq:p.testSeq,worldId:p.worldId,generation:p.travelGeneration,command});}
 function prepared(f,id){return f.messages.filter(m=>(m.to===id||id==='host'&&m.type==='local')&&m.payload?.kind==='prepareWorld').at(-1)?.payload;}
 async function travel(f,id,zone){const p=f.runtime.players.get(id),w=f.runtime.worlds.get(p.worldId),exit=w.map.exits.find(e=>e.target===zone);assert.ok(exit,'exit exists');p.x=(exit.x0+exit.x1)/2;p.y=(exit.y0+exit.y1)/2;p.surfaceId=exit.surfaceId||0;await command(f,id,{type:'travel',zone});const m=prepared(f,id);assert.ok(m,'destination offered');await f.runtime.receive(id,{kind:'worldReady',id:m.id,ok:true});assert.equal(p.worldId,zone);}
+test('a guest Vanguard learns one sweep and both clients receive the same arc',async()=>{
+  const f=fixture(),skill='vanguard_0_0';
+  await f.runtime.start({hostId:'host',hero:f.hero('Host'),seed:123});
+  await f.runtime.receive('guest',{kind:'hero',hero:f.hero('Guest')});
+  const p=f.runtime.players.get('guest'),w=f.runtime.worlds.get(p.worldId);
+  assert.equal(p.skillPts,1);
+  await command(f,'guest',{type:'learn',skill});
+  assert.equal(p.skillPts,0);
+  assert.equal(p.quickSlots[0],skill);
+  const Monster=require('node:vm').runInContext('Monster',f.context);
+  const targets=f.Game.coop.withWorld(w,()=>[.3,-.3].map(dy=>new Monster('frost_risen',p.x+1,p.y+dy)));
+  for(const mon of targets){mon.hp=mon.maxHp=200;mon.update=()=>{};}
+  w.monsters.push(...targets);
+  f.runtime.tick(1/30);
+  const mana=p.mana,attempts=[];
+  p.tryHit=mon=>{attempts.push(mon);return true;};
+  await command(f,'guest',{type:'quickCast',skill,point:{x:p.x+3,y:p.y,surfaceId:p.surfaceId}});
+  assert.equal(p.mana,mana-2);
+  for(let i=0;i<20;i++)f.runtime.tick(1/30);
+  assert.equal(p.tempo,1);
+  assert.deepEqual(attempts,targets);
+  for(const peer of ['host','guest']){
+    const sweeps=f.messages.filter(m=>(m.to===peer||peer==='host'&&m.type==='local')&&m.payload?.kind==='visuals')
+      .flatMap(m=>m.payload.effects).filter(e=>e.effect==='sweep');
+    assert.equal(sweeps.length,1);
+    const [e]=sweeps;
+    assert.equal(e.skill,skill);
+    assert.deepEqual([e.x,e.y,e.surfaceId,e.angle,e.arc,e.radius],[p.x,p.y,p.surfaceId,0,2*Math.PI/3,2]);
+  }
+});
+test('two Vanguard companies share auras, accept only their own orders, and travel with their owners',async()=>{
+  const f=fixture(), guard='recruit_shieldguard', banner='recruit_standard_bearer';
+  function commander(name){
+    const h=f.hero(name);h.lvl=24;h.skillPts=8;h.attr.wil=50;return h;
+  }
+  await f.runtime.start({hostId:'host',hero:commander('Host'),seed:123});
+  await f.runtime.receive('guest',{kind:'hero',hero:commander('Guest')});
+  const host=f.runtime.players.get('host'),guest=f.runtime.players.get('guest'),w=f.runtime.worlds.get(host.worldId);
+  for(const id of ['host','guest']){
+    await command(f,id,{type:'learn',skill:guard});
+    await command(f,id,{type:'learn',skill:banner});
+    const p=f.runtime.players.get(id);p.mana=p.stats.maxMana;
+    assert.deepEqual(Array.from(p.quickSlots).slice(0,2),[guard,'field_orders']);
+    for(const skill of [guard,banner]){
+      await command(f,id,{type:'quickCast',skill,point:{x:p.x,y:p.y,surfaceId:p.surfaceId}});
+      for(let t=0;t<32;t++)f.runtime.tick(1/30);
+    }
+  }
+  assert.equal(w.minions.filter(m=>m.companyRole&&!m.dead).length,4);
+  const Monster=require('node:vm').runInContext('Monster',f.context);
+  const target=f.Game.coop.withWorld(w,()=>new Monster('frost_risen',guest.x+1,guest.y));
+  target.hp=target.maxHp=10000;target.update=()=>{};w.monsters.push(target);
+  f.CoopCodec.snapshot(w,1,0,true,'guest');
+  assert.ok(target._coopId);
+  await command(f,'guest',{type:'quickCast',skill:'field_orders',targetId:target._coopId,point:{x:guest.x,y:guest.y}});
+  assert.equal(guest.companyFocus,target);assert.ok(!host.companyFocus);
+  for(const p of [host,guest]){
+    const snap=f.CoopCodec.snapshot(w,1,1,true,p._coopId);
+    assert.equal(snap.groups.players.find(r=>r._coopId==='guest').companyFocus.$ref,target._coopId);
+    assert.equal(snap.groups.minions.filter(r=>r.companyRole==='standard_bearer'&&r.auraStats.dmgReducePct===5).length,2);
+    assert.equal(p.stats.dmgReducePct,5);
+  }
+  await command(f,'host',{type:'quickCast',skill:'field_orders',point:{x:host.x,y:host.y}});
+  assert.equal(guest.companyFocus,target);
+  await travel(f,'guest','north_wild');
+  assert.equal(guest.companyFocus,null);
+  assert.ok(w.minions.every(m=>m.owner===host));
+  assert.equal(f.runtime.worlds.get(guest.worldId).minions.filter(m=>m.owner===guest).length,2);
+  f.Game.coop.withWorld(w,()=>host.spendAether(host.mana));
+  assert.ok(w.minions.every(m=>m.dead));assert.equal(host.stats.dmgReducePct,0);
+});
 test('a party can relight Shardpeak after a reconnect and each hero receives one reward',async()=>{
   const first=await session(),qid='opt_north_1';
   const atBryn=f=>{

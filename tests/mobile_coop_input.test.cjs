@@ -29,6 +29,7 @@ test('hiding active touch controls still cancels input exactly once',()=>{
 
 function directFixture(){
   const commands=[],p={x:5,y:5,visAng:0,surfaceId:0,skillL:'basic',skillR:'old',skills:{one:1,two:1,three:1,four:1},quickSlots:['one','two','three','four']};
+  p.canBindSkill=id=>id==='basic'||p.skills[id]>0;
   let ready=true;
   const Game={state:{player:p,map:{w:20,h:20},monsters:[]},touchReady:()=>ready,coop:{repeatSkill:id=>id!=='one'},submitCommand:c=>commands.push(c)};
   const ctx=vm.createContext({Game,Coop:{active:true,host:false,paused:'',loading:false},DATA:{SKILLS:{one:{type:'buff'},two:{type:'spell'},three:{type:'spell'},four:{type:'spell'}}},performance:{now:()=>100},U:{unisoX:x=>x,unisoY:(x,y)=>y,clamp:(x,a,b)=>Math.max(a,Math.min(b,x)),screenVecToWorld:()=>[1,0],dist:()=>0},TerrainLayers:{same:()=>true}});

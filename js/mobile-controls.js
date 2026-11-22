@@ -120,7 +120,7 @@ const MobileControls = (() => {
     </div>
     <div class="phone-tools"><button type="button" data-action="pack" aria-label="Open pack">Pack</button><button type="button" data-action="phone-menu" aria-label="Open game menu">Menu<span class="phone-menu-badge" hidden>!</span></button></div>
     <button type="button" id="mobileMap" class="phone-only" data-action="map" aria-label="Toggle map"></button>
-    <div id="mobileVitals" class="phone-only"><div class="phone-vital life"><span>Life</span><strong></strong><i></i></div><div class="phone-vital aether"><span>Aether</span><strong></strong><i></i></div></div>
+    <div id="mobileVitals" class="phone-only"><div class="phone-vital life"><span>Life</span><strong></strong><i></i></div><div class="phone-vital aether"><span>Aether</span><strong></strong><i></i></div><small id="mobileCompany" hidden></small></div>
     <div id="mobileMoveZone" aria-label="Movement thumbstick"><div id="mobileStick" aria-hidden="true"><span class="stick-guide">＋</span><span id="mobileKnob"></span><span class="stick-label">MOVE</span></div><span class="phone-move-hint phone-only">DRAG TO MOVE</span></div>
     <div class="mobile-actions">
       <button type="button" id="mobileAssign" aria-label="Assign secondary skill">Assign</button>
@@ -200,7 +200,7 @@ const MobileControls = (() => {
     if (!active) return;
     for(const gesture of pointers.values())if(gesture.kind[0]==='Q'&&gesture.skill!==p.quickSlots?.[Number(gesture.kind.slice(1))]){reset();break;}
     for (const [id,side] of [['mobileAttack','L'],['mobileSkill','R']]) {
-      const el=document.getElementById(id), skill=p['skill'+side], def=skill === 'basic' ? DATA.BASIC_ATTACK : DATA.SKILLS[skill];
+      const el=document.getElementById(id), skill=p['skill'+side], def=DATA.skillById(skill);
       const name=def?.name || 'Unassigned', cd=Math.max(0,(p.skillCd[skill] || 0)-Game.state.time);
       const small=el.querySelector('small'), label=el.querySelector('b'), value=cd ? (cd<10 ? cd.toFixed(1) : Math.ceil(cd)) : '';
       if (small.textContent !== name) { small.textContent=name; el.setAttribute('aria-label',`${side === 'L' ? 'Attack' : 'Skill'}: ${name}`); }
@@ -219,7 +219,7 @@ const MobileControls = (() => {
         bar.style.setProperty('--fill',Math.max(0,Math.min(100,value/max*100))+'%');
       }
       for(let i=0;i<4;i++){
-        const el=document.getElementById('mobileQuick'+i),id=p.quickSlots?.[i],def=id==='basic'?DATA.BASIC_ATTACK:DATA.SKILLS[id],sig=(id||'')+'|'+(p.equip.main?.cat||'');
+        const el=document.getElementById('mobileQuick'+i),id=p.quickSlots?.[i],def=DATA.skillById(id),sig=(id||'')+'|'+(p.equip.main?.cat||'');
         if(el.dataset.signature!==sig){
           el.dataset.signature=sig;const icon=el.querySelector('.phone-skill-icon');icon.replaceChildren();
           if(def)icon.append(SkillIcons.create(def,44,p.equip.main?.cat));else icon.textContent='+';

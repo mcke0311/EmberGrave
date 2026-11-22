@@ -28,14 +28,14 @@ DATA.PLAYER_STARTER_LOADOUTS = {
 DATA.CLASSES = {
   vanguard: {
     id: "vanguard", name: "Vanguard", playable: true,
-    desc: "A heavily armed line-breaker of the old border legions. Masters steel, war-shouts, and brutal assaults.",
+    desc: "A line-breaker of the old border legions. Masters steel, rallies allies with warcries, and commands a company of soldiers.",
     baseStats: { str: 25, dex: 18, vit: 24, wil: 10 },
     baseHp: 52, baseMana: 16,
     /* plated line-breaker: steel armor, gold trim, blue tabard + glowing crystal sigil, red cape */
     palette: { skin: "#caa183", armor: "#8f9ca5", trim: "#caa44a", cloth: "#1a2430", hair: "#2c2018", eye: "#9ee7ff" },
     spriteStyle: "vanguard",
     weapon: "sword",
-    trees: ["Arms", "Warcries", "Assault"],
+    trees: ["Arms", "Warcries", "Command"],
   },
   emberwitch: {
     id: "emberwitch", name: "Ember Witch", playable: true,
@@ -87,11 +87,19 @@ DATA.CLASSES = {
    type: melee | sweep | spin | dash | leap | nova | buff | passive
    Values are functions of rank (rk >= 1). Synergy: bonus per rank in another skill. */
 DATA.SKILLS = {};
-DATA.TREE_NAMES = ["Arms", "Warcries", "Assault"]; /* legacy fallback; classes carry their own tree names */
+DATA.TREE_NAMES = DATA.CLASSES.vanguard.trees;
+// The old numeric Assault affix remains an alias for Arms on saved items.
+DATA.treeStat = (cls, tree) => cls === "vanguard" && tree === 2 ? "skillTree_vanguard_command" : "skillTree_" + cls + "_" + tree;
 DATA.BASIC_ATTACK = { id: "basic", name: "Attack", type: "melee", icon: "basic", mana: () => 0, dmgMult: () => 1, desc: () => "A standard attack with your equipped weapon." };
 
+DATA.FIELD_ORDERS = { id: "field_orders", name: "Field Orders", type: "field_orders", cls: "vanguard", tree: 2,
+  grantedBy: "recruit_shieldguard", mana: () => 0, castRange: () => 9, icon: "@steel/horn",
+  desc: () => "Focus an enemy for 5 seconds or aim at open ground to recall your soldiers. On touch, tap to focus or hold for 0.35s to recall." };
+DATA.skillById = id => id === "basic" ? DATA.BASIC_ATTACK : id === "field_orders" ? DATA.FIELD_ORDERS : DATA.SKILLS[id];
+DATA.summonAuraRadius = (minion, time) => minion.auraPulseUntil > time ? DATA.SKILLS.coordinated_assault.pulseRadius : minion.auraRadius;
+
 /* =====================  FIVE CLASS SKILL KITS  =====================
-   The curated kits below contain 107 talents across 15 disciplines. Archetype
+   The curated kits below span 15 disciplines. Archetype
    makers provide the fields consumed by combat; later rows unlock at higher
    character levels and link to prerequisites. Every invested rank costs one
    talent point. skill_perks.js adds choices at invested ranks 5 and 10. */
@@ -104,6 +112,11 @@ DATA.BASIC_ATTACK = { id: "basic", name: "Attack", type: "melee", icon: "basic",
   const wM = s => rk => s.base + (s.grow || 0) * rk;
   const dR = s => rk => [s.lo + (s.loG || 0) * rk, s.hi + (s.hiG || 0) * rk];
   const gv = (b, g) => rk => b + (g || 0) * rk;
+  const recruitEffects = {
+    shieldguard: "Recruit a sword-and-shield guard who blocks frontal hits and cleaves nearby enemies. Learning this talent also grants Field Orders.",
+    bowman: "Recruit a bowman who keeps his distance and shoots enemies in sight.",
+    standard_bearer: "Recruit one standard bearer who follows you and buffs nearby heroes and companions. Overlapping auras use the strongest bonus for each stat."
+  };
 
   /* ---- archetype makers: each turns a compact spec into the fields its
      performSkill case reads, plus desc(rk). ---- */
@@ -149,7 +162,7 @@ DATA.BASIC_ATTACK = { id: "basic", name: "Attack", type: "melee", icon: "basic",
     corpse: s => ({ type: "corpse", mana: gv(s.mana || 8, 0), elem: s.el || "poison", castRange: gv(9, 0), radius: gv(s.rad || 2.3, 0.07), dmg: dR(s),
       desc: rk => `Detonate a nearby corpse for ${R(s.lo + (s.loG || 0) * rk, s.hi + (s.hiG || 0) * rk)} damage.` }),
     summon: s => ({ type: "summon", mana: gv(s.mana || 6, 0), upkeep: rk => Math.max(1, rk), minion: s.minion, needsCorpse: s.corpse, auraRadius: s.auraRadius, auraStats: s.auraRadius ? () => ({}) : undefined, castRange: gv(9, 0), cap: rk => (s.cap || 1) + Math.floor(rk / (s.capEvery || 5)),
-      minionStats: rk => ({ hp: s.mhp + (s.mhpG || 0) * rk, dmg: [s.mlo + (s.mloG != null ? s.mloG : 1) * rk, s.mhi + (s.mhiG != null ? s.mhiG : 2) * rk], speed: s.mspeed || 3.2, atkRate: s.matk || 1.0, range: s.ranged ? (s.mrange || 7) : 0.9, projectile: s.ranged ? (s.proj || "venom") : undefined, sprite: s.sprite, name: s.mname, taunt: s.taunt, slamStun: s.slamStun, pdot: s.mpdot, untargetable: s.untargetable, groundImmune: s.groundImmune }),
+      minionStats: rk => ({ hp: s.mhp + (s.mhpG || 0) * rk, dmg: [s.mlo + (s.mloG != null ? s.mloG : 1) * rk, s.mhi + (s.mhiG != null ? s.mhiG : 2) * rk], speed: s.mspeed || 3.2, atkRate: s.matk || 1.0, range: s.ranged ? (s.mrange || 7) : 0.9, projectile: s.ranged ? (s.proj || "venom") : undefined, sprite: s.sprite, name: s.mname, taunt: s.taunt, slamStun: s.slamStun, pdot: s.mpdot, untargetable: s.untargetable, groundImmune: s.groundImmune, noAttack: s.noAttack }),
       desc: rk => `Raise up to ${(s.cap || 1) + Math.floor(rk / (s.capEvery || 5))} ${s.label || "servants"} — ${s.mhp + (s.mhpG || 0) * rk} life, ${Math.round(s.mlo + (s.mloG != null ? s.mloG : 1) * rk)}–${Math.round(s.mhi + (s.mhiG != null ? s.mhiG : 2) * rk)} damage${s.corpse ? ", consuming a corpse" : ""}.` }),
     minionbuff: s => ({ type: "minionbuff", mana: gv(s.mana || 9, 0), dur: gv(s.dur || 10, 1), dmgBuff: gv(s.dmgBuff || 25, s.dmgBuffG || 5), heal: gv(s.heal || 100, s.healG || 0), cd: s.cd ? gv(s.cd, 0) : undefined,
       desc: rk => `Heal your servants ${(s.heal || 100) + (s.healG || 0) * rk}% and enrage them: +${(s.dmgBuff || 25) + (s.dmgBuffG || 5) * rk}% damage for ${(s.dur || 10) + rk}s.${s.cd ? ` (${s.cd}s cooldown)` : ""}` }),
@@ -164,7 +177,13 @@ DATA.BASIC_ATTACK = { id: "basic", name: "Attack", type: "melee", icon: "basic",
       desc: rk => `A rabid bite: ${pct(s.base + (s.grow || 0) * rk)}% weapon damage, then poison dealing HALF the bite's damage per second over ${s.dur || 8}s. A poisoned foe that dies bursts into a contagious cloud that infects the rest.` }),
 
     /* ===== Vanguard ===== */
-    combo: s => ({ type: "combo", mana: gv(s.mana || 2, 0), dmgMult: wM(s), desc: rk => `${pct(s.base + (s.grow || 0) * rk)}% weapon damage; builds +1 Tempo (cap 3).` }),
+    recruit: s => ({ ...A.summon(s), companyRole: s.minion, cap: () => 1, slotDrill: s.slotDrill,
+      auraStats: s.auraRadius ? () => ({dmgReducePct:5}) : undefined, desc: () => recruitEffects[s.minion] }),
+    company_assault: () => ({ type: "company_assault", mana: () => 8, cd: () => 12, castRange: () => 9,
+      mult: rk => 1.5 + .05 * (rk - 1), radius: () => 2.3, pulseRadius: 9, dur: () => 3,
+      desc: () => "Direct your company to sweep, volley and raise its standard at a chosen point." }),
+    combo: s => ({ type: "combo", mana: gv(s.mana, 0), dmgMult: wM(s), range: gv(s.range, 0), arc: gv(s.arc, 0), secondaryMult: s.secondaryMult,
+      desc: rk => `Sweep a ${Math.round(s.arc * 180 / Math.PI)}° arc within ${s.range} yards. Deal ${pct(s.base + s.grow * rk)}% weapon damage to your primary foe and ${pct(s.secondaryMult)}% of that to each other foe. Gain 1 Tempo per swing.` }),
     combo_finish: s => ({ type: "combo_finish", mana: gv(s.mana || 6, 0), dmgMult: wM(s), arc: gv(s.arc || 2.4, 0), range: gv(s.range || 2.3, 0), shredDur: gv(s.shredDur || 6, 0),
       desc: rk => `Spend all Tempo: a fan of cleaves (up to ${pct((s.base + (s.grow || 0) * rk) * 1.65)}% weapon damage) that shreds armor (+phys taken).` }),
     execute: s => ({ type: "execute", mana: gv(s.mana || 8, 0), base: wM(s), missingHpBonus: gv(s.miss || 2.5, 0), baseThresh: gv(s.thresh || 0.15, 0.01), cd: gv(s.cd || 6, 0),
@@ -280,13 +299,20 @@ DATA.BASIC_ATTACK = { id: "basic", name: "Attack", type: "melee", icon: "basic",
   const K = {
     vanguard: [
       [ /* Arms — Tempo combo */
-        { nm: "Tempo Strike", tag: "combo", row: 0, icon: "@steel/sword", base: 1.10, grow: 0.05, mana: 2, fl: "One clean blow, and the rhythm begins." },
+        { nm: "Tempo Strike", tag: "combo", row: 0, icon: "@steel/sword", base: 1.10, grow: 0.05, mana: 2, range: 2, arc: 2 * Math.PI / 3, secondaryMult: 0.75, fl: "One swing, and the rhythm begins." },
         { nm: "Sunder Combo", tag: "combo_finish", row: 1, pre: "Tempo Strike", icon: "@steel/cleave", base: 1.0, grow: 0.065, arc: 2.4, range: 2.3, shredDur: 6, mana: 6, fl: "Spend the rhythm all at once." },
         { nm: "Riposte Stance", tag: "parry_stance", row: 1, pre: "Tempo Strike", icon: "@steel/crescent", base: 1.8, grow: 0.1, stun: 0.8, drain: 3, fl: "Invite the blow. Answer it." },
         { nm: "Weapon Mastery", tag: "passive", row: 2, pre: "Sunder Combo", icon: "@steel/hand", stats: { arPct: 10 }, tempoCapBonus: 0, fl: "Steel remembers a steady hand." },
         { nm: "Berserker Stance", tag: "combat_stance", row: 2, pre: "Riposte Stance", icon: "@blood/fist", stanceId: "berserk", stats: { ias: 18, lifeSteal: 6, dmgTakenPct: 12 }, fl: "No guard. Only forward." },
         { nm: "Bulwark Stance", tag: "combat_stance", row: 2, pre: "Riposte Stance", icon: "@steel/shield", stanceId: "bulwark", stats: { dmgReducePct: 18, block: 12, immovable: 1 }, rootArmor: 0.3, fl: "Be the wall." },
         { nm: "Headtaker", tag: "execute", row: 3, pre: "Weapon Mastery", icon: "@blood/axe", base: 2.0, miss: 2.5, thresh: 0.15, cd: 6, mana: 8, fl: "Some necks are invitations." },
+        { armsPath: "Assault", id: "vanguard_2_0", nm: "Bull Charge", tag: "charge", row: 0, icon: "@phys/shield", base: 1.1, grow: 0.05, range: 7, rangeG: 0.3, width: 1.3, kb: 1.5, stun: 0.8, mana: 4, fl: "A door, and you are the ram." },
+        { armsPath: "Assault", id: "vanguard_2_1", nm: "Harpoon Chain", tag: "grapple", row: 1, pre: "Bull Charge", icon: "@steel/chainlink", base: 0.8, grow: 0.04, range: 8, rangeG: 0.3, stun: 1.0, stunG: 0.06, mana: 5, fl: "Come here." },
+        { armsPath: "Assault", id: "vanguard_2_2", nm: "Returning Axe", tag: "thrown", row: 1, pre: "Bull Charge", icon: "@steel/axe", base: 0.9, grow: 0.05, range: 8, rangeG: 0.3, count: 1, mana: 3, fl: "It always comes back. So does he." },
+        { armsPath: "Assault", id: "vanguard_2_3", nm: "Fleet of Foot", tag: "passive", row: 2, pre: "Harpoon Chain", icon: "@light/wing", stats: { frw: 3 }, fl: "March fast, strike faster." },
+        { armsPath: "Assault", id: "ground_slam", nm: "Seismic Slam", tag: "shockwave", row: 2, pre: "Returning Axe", icon: "@earth/spike", base: 0.9, grow: 0.06, range: 6, rangeG: 0.3, width: 1.6, stun: 1.0, stunG: 0.06, mana: 6, fl: "The ground forgives nothing." },
+        { armsPath: "Assault", id: "vanguard_2_5", nm: "Shield Breaker", tag: "bash", row: 2, pre: "Returning Axe", icon: "@steel/burst", base: 0.8, grow: 0.05, arc: 2.0, range: 2.3, kb: 3, mana: 5, fl: "Make space. Violently." },
+        { armsPath: "Assault", id: "vanguard_2_6", nm: "Skyfall Leap", tag: "leap", row: 3, pre: "Fleet of Foot", icon: "@earth/comet", base: 1.3, grow: 0.15, rad: 2.6, range: 8, mana: 8, fl: "Death from a modest height." },
       ],
       [ /* Warcries */
         { nm: "Rallying Cry", tag: "shout", row: 0, icon: "@holy/wing", healPct: 12, healG: 1.2, runPct: 20, rallyDur: 4, radius: 5, mana: 4, fl: "Up. We are not finished." },
@@ -296,14 +322,14 @@ DATA.BASIC_ATTACK = { id: "basic", name: "Attack", type: "melee", icon: "basic",
         { nm: "Sundering Roar", tag: "warshout_debuff", row: 2, pre: "War Banner", icon: "@phys/wave", radius: 5, radG: 0.2, mana: 7, fl: "A word that pries armor loose." },
         { nm: "Standard of the Last Stand", tag: "banner_ultimate", row: 3, pre: "Iron Will", icon: "@holy/cross", radius: 5, dur: 20, heal: 4, mana: 12, fl: "Where it stands, no one falls alone." },
       ],
-      [ /* Assault */
-        { nm: "Bull Charge", tag: "charge", row: 0, icon: "@phys/shield", base: 1.1, grow: 0.05, range: 7, rangeG: 0.3, width: 1.3, kb: 1.5, stun: 0.8, mana: 4, fl: "A door, and you are the ram." },
-        { nm: "Harpoon Chain", tag: "grapple", row: 1, pre: "Bull Charge", icon: "@steel/chainlink", base: 0.8, grow: 0.04, range: 8, rangeG: 0.3, stun: 1.0, stunG: 0.06, mana: 5, fl: "Come here." },
-        { nm: "Returning Axe", tag: "thrown", row: 1, pre: "Bull Charge", icon: "@steel/axe", base: 0.9, grow: 0.05, range: 8, rangeG: 0.3, count: 1, mana: 3, fl: "It always comes back. So does he." },
-        { nm: "Fleet of Foot", tag: "passive", row: 2, pre: "Harpoon Chain", icon: "@light/wing", stats: { frw: 3 }, fl: "March fast, strike faster." },
-        { id: "ground_slam", nm: "Seismic Slam", tag: "shockwave", row: 2, pre: "Returning Axe", icon: "@earth/spike", base: 0.9, grow: 0.06, range: 6, rangeG: 0.3, width: 1.6, stun: 1.0, stunG: 0.06, mana: 6, fl: "The ground forgives nothing." },
-        { nm: "Shield Breaker", tag: "bash", row: 2, pre: "Returning Axe", icon: "@steel/burst", base: 0.8, grow: 0.05, arc: 2.0, range: 2.3, kb: 3, mana: 5, fl: "Make space. Violently." },
-        { nm: "Skyfall Leap", tag: "leap", row: 3, pre: "Fleet of Foot", icon: "@earth/comet", base: 1.3, grow: 0.15, rad: 2.6, range: 8, mana: 8, fl: "Death from a modest height." },
+      [
+        { id: "recruit_shieldguard", nm: "Recruit Shieldguard", tag: "recruit", row: 0, minion: "shieldguard", slotDrill: "shieldwall_drill", sprite: "shieldguard", label: "shieldguards", mname: "Shieldguard", mana: 4, mhp: 72, mhpG: 14, mlo: 4, mhi: 8, mspeed: 3.8, icon: "@steel/shield" },
+        { id: "recruit_bowman", nm: "Recruit Bowman", tag: "recruit", row: 1, pre: "Recruit Shieldguard", minion: "bowman", slotDrill: "volley_drill", sprite: "bowman", label: "bowmen", mname: "Bowman", ranged: true, proj: "arrow", mana: 5, mhp: 38, mhpG: 9, mlo: 4, mhi: 7, mspeed: 3.8, icon: "@steel/bow" },
+        { id: "recruit_standard_bearer", nm: "Recruit Standard Bearer", tag: "recruit", row: 1, pre: "Recruit Shieldguard", minion: "standard_bearer", sprite: "standard_bearer", label: "standard bearers", mname: "Standard Bearer", noAttack: true, mana: 6, mhp: 60, mhpG: 12, mlo: 0, mhi: 0, mloG: 0, mhiG: 0, mspeed: 4.2, auraRadius: 6, icon: "@holy/banner" },
+        { id: "volley_drill", nm: "Volley Drill", tag: "passive", row: 2, pre: "Recruit Bowman", stats: { bowmanDamage: 4 }, icon: "@steel/volley" },
+        { id: "shieldwall_drill", nm: "Shieldwall Drill", tag: "passive", row: 2, pre: "Recruit Shieldguard", stats: { shieldguardBlock: 2 }, icon: "@steel/shield" },
+        { id: "field_logistics", nm: "Field Logistics", tag: "passive", row: 2, pre: "Recruit Standard Bearer", stats: { companyEconomy: 5 }, icon: "@holy/helm" },
+        { id: "coordinated_assault", nm: "Coordinated Assault", tag: "company_assault", row: 3, pre: "Shieldwall Drill", icon: "@steel/horn" },
       ],
     ],
     emberwitch: [
@@ -438,7 +464,7 @@ DATA.BASIC_ATTACK = { id: "basic", name: "Attack", type: "melee", icon: "basic",
     K[cls].forEach((specs, tree) => {
       /* bucket by row to assign columns */
       const byRow = {};
-      specs.forEach(s => { (byRow[s.row] = byRow[s.row] || []).push(s); });
+      specs.forEach(s => { const lane = (s.armsPath || "") + s.row; (byRow[lane] ||= []).push(s); });
       for (const row in byRow) { const arr = byRow[row], cols = COLS[arr.length] || [0, 1, 2]; arr.forEach((s, j) => { s._col = cols[j % cols.length]; }); }
       specs.forEach(s => {
         const made = A[s.tag](s);
@@ -447,6 +473,7 @@ DATA.BASIC_ATTACK = { id: "basic", name: "Attack", type: "melee", icon: "basic",
           reqLvl: s.reqLvl || REQ[s.row] || 1, prereq: s.pre ? nameToId[s.pre] : undefined,
           maxRank: 10, icon: s.icon, flavor: s.fl || "", synergy: s.synergy,
         }, made);
+        if (s.armsPath) sk.armsPath = s.armsPath;
         if (sk.type === "summon_golem") sk.upkeep = rank => Math.max(1,rank);
         // Rank one remains the balance anchor; perks modify this shared curve.
         if (sk.mana) {
@@ -687,7 +714,8 @@ DATA.AFFIXES = [
     DATA.AFFIXES.push({ stat: "skillClass_" + cId, kind: "p", slots: ["amulet", "head"], group: "skillClass_" + cId, weight: 0.18,
       tiers: [ { ilvl: 30, min: 1, max: 1, name: adj[0] }, { ilvl: 60, min: 2, max: 2, name: adj[1] } ] });
     (c.trees || []).forEach((tn, ti) => {
-      DATA.AFFIXES.push({ stat: "skillTree_" + cId + "_" + ti, kind: "p", slots: ["amulet", "head"], group: "skillTree_" + cId + "_" + ti, weight: 0.12,
+      const stat = DATA.treeStat(cId, ti);
+      DATA.AFFIXES.push({ stat, kind: "p", slots: ["amulet", "head"], group: stat, weight: 0.12,
         tiers: [ { ilvl: 20, min: 1, max: 1, name: tn }, { ilvl: 40, min: 2, max: 2, name: tn }, { ilvl: 60, min: 3, max: 3, name: tn } ] });
     });
   }
@@ -808,9 +836,15 @@ for (const cId in DATA.CLASSES) {
   const c = DATA.CLASSES[cId];
   DATA.STAT_TEXT["skillClass_" + cId] = v => `+${v} to ${c.name} Talents`;
   (c.trees || []).forEach((tn, ti) => {
-    DATA.STAT_TEXT["skillTree_" + cId + "_" + ti] = v => `+${v} to ${tn} Talents`;
+    DATA.STAT_TEXT[DATA.treeStat(cId, ti)] = v => `+${v} to ${tn} Talents`;
   });
 }
+
+DATA.STAT_TEXT.skillTree_vanguard_2 = DATA.STAT_TEXT.skillTree_vanguard_0;
+DATA.STAT_TEXT.shieldguardBlock = v => `+${v}% shieldguard frontal block`;
+DATA.STAT_TEXT.bowmanDamage = v => `+${v}% bowman damage`;
+DATA.STAT_TEXT.companyEconomy = v => `−${Math.min(v,50)}% company upkeep`;
+DATA.STAT_TEXT.companyResolve = v => `${v}% shorter slows and stuns`;
 
 /* =====================  GLYPHS (socketables)  =====================
    Effect depends on where the glyph sits: weapons (wpn) vs armor/shields (arm). */

@@ -28,11 +28,11 @@ function companion(p,s,id='call_wolf',kind='wolf'){
 for(const sk of Object.values(D.SKILLS).filter(s=>s.mana))for(const rank of [1,2,5,10,14])near(sk.mana(rank),sk.baseMana*rank,sk.id+' cost rank '+rank);
 {
  const {p,s}=fresh();const skills=Object.values(D.SKILLS).filter(sk=>['summon','summon_golem'].includes(sk.type));
- ok(skills.length===8,'eight maintained companion families, including the Ent');
+ ok(skills.length===11,'eleven maintained companion families including the Vanguard company');
  for(const sk of skills){p.skills[sk.id]=2;companion(p,s,sk.id);}
  const other=new P('Other owner','gravebinder');other.skills[skills[0].id]=10;companion(other,s,skills[0].id);
- near(p.companionUpkeep(),16,'all eight families add per-owner upkeep');p.stats.skillAll=12;near(p.companionUpkeep(),112,'effective ranks above ten update live');
- p.spendAether(200);ok(s.minions.filter(m=>m.owner===p).every(m=>m.dead),'all eight families die at zero');ok(!s.minions.find(m=>m.owner===other).dead,'other owner retains companions');
+ near(p.companionUpkeep(),2*skills.length,'all families add per-owner upkeep');p.stats.skillAll=12;near(p.companionUpkeep(),14*skills.length,'effective ranks above ten update live');
+ p.spendAether(200);ok(s.minions.filter(m=>m.owner===p).every(m=>m.dead),'all families die at zero');ok(!s.minions.find(m=>m.owner===other).dead,'other owner retains companions');
 }
 {
  fresh();const record=D.CAMPAIGN.record;let ready=[{name:'Sound test',giver:'sera'}];D.CAMPAIGN.record=()=>ready.splice(0);

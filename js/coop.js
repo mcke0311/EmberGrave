@@ -24,7 +24,7 @@ const Coop=(()=>{
     stopped=true;clearInterval(pingTimer);clearTimeout(retry);wire('roomState',{open:false});wire('leave');ws?.close();ws=null;worker?.terminate();worker=null;active=false;loading=false;Game.coop.stop();ui()?.status('Host simulation stopped. Resume your saved campaign. '+message);
   }
   async function startWorker(record){
-    worker=new Worker(new URL('js/coop_worker.js?v='+P.BUILD+'&patch=cinematics-3&quests=1&layout=3&art=passages-1',document.baseURI));
+    worker=new Worker(new URL('js/coop_worker.js?v='+P.BUILD+'&patch=cinematics-3&quests=1&layout=3&art=passages-1&tempo=1&command=1',document.baseURI));
     worker.onerror=e=>workerFailed(e.message||'Worker failed.');worker.onmessageerror=()=>workerFailed('Worker communication failed.');
     worker.onmessage=({data:m})=>{
       if(m.type==='reply'){const p=workerPending.get(m.requestId);workerPending.delete(m.requestId);if(m.error)p?.reject(Error(m.error));else p?.resolve(m.value);return;}
@@ -504,11 +504,11 @@ const Coop=(()=>{
       if(!await Game.enterMap(t.zone,t.spawn,{...t.options,recoverable:true}))throw Error('Destination could not load');
       for(let i=0;i<players.length;i++){
         const p=players[i],sp=Game.coop.arrival({x:s().player.x+(i%2)*.9,y:s().player.y+Math.floor(i/2)*.9});
-        p.x=sp.x;p.y=sp.y;p.command=null;p.path=null;p.drawing=null;p.action=null;p.clearVeilState();
+        p.x=sp.x;p.y=sp.y;p.command=null;p.path=null;p.drawing=null;p.action=null;p.clearVeilState();p.clearCompanyOrders();
         for(const key of ['dashing','leaping','spinning','jumping','charging','siphon','reviveTarget'])p[key]=null;
         if(t.zone==='frosthaven'&&p.dead){p.dead=false;p.hp=p.stats.maxHp;p.action=null;}
       }
-      s().players=players;for(const mi of s().minions){const p=mi.owner;mi.x=p.x;mi.y=p.y;mi.path=null;}
+      s().players=players;for(const mi of s().minions){const p=mi.owner;Game.coop.resetActor(mi,{x:p.x,y:p.y,surfaceId:p.surfaceId});}
       restoreArea();epoch++;CoopMotion.capture(s());loading=false;await checkpoint();travel=null;paused='';lastSnapshot=null;sendSnapshot(true);ui()?.closeTravel();wireAdmission();
     }catch(e){loading=false;cancelTravel(e.message);if(e.coopSaveFailure){paused='Save failed';sendSnapshot(true);}}
   }

@@ -23,8 +23,8 @@ const CharacterSheet = (() => {
   }
   const weaponTypes = new Set(["umbral_knife","dusk_cleave","shadow_flurry","deathblow","melee","sweep","spin","leap","wfan","wpierce","combo","combo_finish","execute","charge","grapple","thrown","bash","ricochet","rain","parry_stance"]);
   const spellTypes = new Set(["projectile","pierce","chain","fan","lightning","meteor","pyreblast","freezenova","arcblink","overloadnuke","corpse","reap"]);
-  const supportTypes = new Set(["passive","combat_stance","shout","fear","banner","banner_ultimate","warshout_debuff","minionbuff","curse","taunt_curse","devour","blink","form","decoy","afterimage"]);
-  const specialTypes = new Set(["shockwave","charge_shot","fireclaw","rabies","trap","firewall","groundfield","balllightning","roamaoe","totem","summon","summon_golem","ward","buff","sacrifice","siphon_beam","doom","plague_seed","corpse_launch","outbreak","dragnet","tripwire","weapon_coat","deathmark","detonate_dots"]);
+  const supportTypes = new Set(["field_orders","passive","combat_stance","shout","fear","banner","banner_ultimate","warshout_debuff","minionbuff","curse","taunt_curse","devour","blink","form","decoy","afterimage"]);
+  const specialTypes = new Set(["company_assault","shockwave","charge_shot","fireclaw","rabies","trap","firewall","groundfield","balllightning","roamaoe","totem","summon","summon_golem","ward","buff","sacrifice","siphon_beam","doom","plague_seed","corpse_launch","outbreak","dragnet","tripwire","weapon_coat","deathmark","detonate_dots"]);
   function classification(sk) {
     return weaponTypes.has(sk.type) ? "weapon" : spellTypes.has(sk.type) ? "spell" : supportTypes.has(sk.type) ? "support" : specialTypes.has(sk.type) ? "special" : null;
   }
@@ -158,9 +158,19 @@ const CharacterSheet = (() => {
         }else spell("Totem bolt",dm,"light","per "+number(v("zapCd",1.1)*Math.max(.1,1-(st.totemRate||0)/100))+"s bolt");
         note("Per totem. Lasts "+number(v("ttl")*(1+(st.totemTtl||0)))+"s; includes Totem Damage. Tempest ring and wisp intervals are independent of Totem Attack Speed.");break;
       }
+      case "company_assault": {
+        const troops=(state?.minions||[]).filter(m=>m.owner===p&&m.companyRole&&!m.dead&&TerrainLayers.same(m,p));
+        for(const m of troops.filter(m=>m.isArcher||m.kindId==="shieldguard")) {
+          const hit=part(m.name,m.isArcher?"per volley arrow":"per enemy swept");
+          hit.hit.phys=scale(m.dmg,p.companionDamageMultiplier(m,m.kindId,now)*v("mult"));
+        }
+        if(!result.parts.length)result.status=troops.length?"support":"conditional";
+        note(sk.desc(rk));break;
+      }
       case "summon":case "summon_golem": {
         const golem=sk.type==="summon_golem", ms=golem?null:v("minionStats");
-        if(ms?.noAttack){result.status="support";note("No direct damage. This companion supports you with its aura. "+sk.desc(rk));break;}
+        const upkeep="Each living companion uses "+number(p.unitUpkeep(sk,rk))+" aether/s and dies at zero aether.";
+        if(ms?.noAttack){result.status="support";note(sk.desc(rk));note(upkeep);break;}
         const existing=(state?.minions||[]).filter(m=>!m.dead&&m.owner===p&&m.sourceSkill===id);
         const samples=existing.length?existing:[null];
         // Identical companions share a readout; different stitches/buffs retain
@@ -168,10 +178,10 @@ const CharacterSheet = (() => {
         const seen=new Set();
         for(const m of samples){
           const base=m?.dmg||(golem?v("slamDmg").map(Math.round):ms.dmg);
-          const aura=p.summonAuraStatsFor(m||p), buff=m&&now<m.buffUntil?m.buffDmg:0;
-          const dm=scale(base,(1+(st.minionDmgPct||0)/100)*(1+(aura.dmgPct||0)/100)*(1+(buff||0)/100));
+          const aura=p.summonAuraStatsFor(m||p);
+          const dm=scale(base,p.companionDamageMultiplier(m,sk.minion,now));
           const beast=m?m.beast:["wolf","boar","hawk","bear","ent"].includes(ms?.sprite);
-          const poison=beast?0:(m?.pdot||ms?.pdot||0)+(st.minionPoison||0);
+          const poison=beast||sk.companyRole?0:(m?.pdot||ms?.pdot||0)+(st.minionPoison||0);
           const slamBase=m?.slamDmg||(golem?base:null);
           const slam=(m?m.slamRadius:golem||["bear","ent"].includes(ms?.sprite))?
             (slamBase?scale(slamBase,(1+(st.minionDmgPct||0)/100)*(1+(aura.dmgPct||0)/100)):scale(dm,1.5)):null;
@@ -179,9 +189,9 @@ const CharacterSheet = (() => {
           const a=part((m?"Living companion":"New companion")+(golem?" · "+(m?.stitches||1)+" stitches":""),"per companion attack");a.hit.phys=dm;dot(a,"poison",poison*dotBonus,3,"Companion poison",undefined,false);
           if(slam){const b=part("Companion slam","per enemy hit · 4.5s cooldown");b.hit.phys=slam;}
         }
-        note(existing.length?"Includes the living companions' current damage, auras and rally bonuses.":"Preview at your position, including nearby auras. Grave-empowered summons double base damage; golem preview uses one corpse.");
+        note(existing.length?"Includes the living companions' current damage, auras and rally bonuses.":sk.companyRole?"Preview at your position, including nearby auras.":"Preview at your position, including nearby auras. Grave-empowered summons double base damage; golem preview uses one corpse.");
         if(golem)note("Stitches increase base damage. Slams use the same base range and aura bonus, but do not receive temporary rally damage.");
-        note("Upkeep: "+number(v("upkeep"))+" aether/s per companion. Companions die when aether reaches zero.");break;
+        note(upkeep);break;
       }
       case "ward": {const a=part("Bone shield retaliation","per nearby melee hit absorbed");a.hit.phys=range(v("retal"));note("Shield absorbs "+number(v("shield"))+" damage for up to "+number(v("dur"))+"s.");break;}
       case "buff":
@@ -323,7 +333,7 @@ const CharacterSheet = (() => {
     for(const d of statDefs)add(d.group,{id:d.id,label:d.label,value:d.format(d.read(p)),help:d.help,attribute:d.group==="Attributes"?d.id:null});
     const minions=(state?.minions||[]).filter(m=>!m.dead&&m.owner===p);
     const maintained=minions.filter(m=>["summon","summon_golem"].includes(DATA.SKILLS[m.sourceSkill]?.type));
-    const upkeep=maintained.reduce((n,m)=>n+value(resolve(p,m.sourceSkill),"upkeep",p.effRank(m.sourceSkill)),0);
+    const upkeep=maintained.reduce((n,m)=>n+p.unitUpkeep(resolve(p,m.sourceSkill),p.effRank(m.sourceSkill)),0);
     const beasts=minions.filter(m=>m.beast&&(m.surfaceId??0)===(state?.map?.activeSurfaceId??state?.map?.activeLayer??p.surfaceId??0)).length;
     // TerrainLayers is the authoritative surface filter used by Player.update.
     const activeBeasts=typeof TerrainLayers!=="undefined"?TerrainLayers.targets(state?.minions||[]).filter(m=>!m.dead&&m.owner===p&&m.beast).length:beasts;
@@ -340,7 +350,7 @@ const CharacterSheet = (() => {
     if(types.has("trap"))for(const k of ["trapPct","trapCap","armSpeed"])always.add(k);
     if(types.has("totem"))for(const k of ["totemRate","totemPower","totemTtl","totemCapacity"])always.add(k);
     for(const [id,[label,help,fmt=number,read=x=>x.stats[id]||0]] of Object.entries(classDefs))if(always.has(id)||p.stats[id])add("Class Bonuses",{id,label,value:fmt(read(p)),help});
-    for(const [key,label] of [["skillClass_"+p.classId,p.cls.name+" Talent Ranks"],...p.cls.trees.map((t,i)=>["skillTree_"+p.classId+"_"+i,t+" Talent Ranks"])])add("Class Bonuses",{id:key,label,value:"+"+number(p.stats[key]||0),help:"Adds effective ranks to already learned talents in this class or discipline, on top of All Talent Ranks. Does not count as invested points for prerequisites or perks."});
+    for(const [key,label] of [["skillClass_"+p.classId,p.cls.name+" Talent Ranks"],...p.cls.trees.map((t,i)=>[DATA.treeStat(p.classId,i),t+" Talent Ranks"])])add("Class Bonuses",{id:key,label,value:"+"+number(p.stats[key]||0),help:"Adds effective ranks to already learned talents in this class or discipline, on top of All Talent Ranks. Does not count as invested points for prerequisites or perks."});
     for(const [i,proc] of (p.stats.procs||[]).entries())add("Class Bonuses",{id:"proc-"+i,label:"Chance to Cast · "+(proc.trigger==="struck"?"When Struck":"On Strike"),value:percent(proc.chance),help:"Chance to release "+(proc.label||"an elemental burst")+" for "+formatRange([proc.lo,proc.hi])+" "+(elements[proc.elem]||"elemental")+" damage within "+number(proc.radius)+" yards. Chance-based effects are excluded from baseline damage."});
     if(typeof UniquePowers!=="undefined")for(const {key,entry,power} of UniquePowers.collect(p))add("Class Bonuses",{id:"unique-"+key,label:power.title,value:"Equipped",help:UniquePowers.describe(entry,power)+" Conditional triggers and random procs are excluded from the baseline; already active buffs are included."});
     return [...groups].map(([title,rows])=>({title,rows}));

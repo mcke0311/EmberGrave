@@ -966,6 +966,78 @@ const SkillAudioCatalog = (() => {
     "passive": false,
     "trigger": null
   },
+  "recruit_shieldguard": {
+    "family": "shield",
+    "motif": "bulwark",
+    "weight": 1,
+    "rate": 0.98,
+    "accent": null,
+    "passive": false,
+    "trigger": null
+  },
+  "recruit_bowman": {
+    "family": "bow",
+    "motif": "volley",
+    "weight": 1,
+    "rate": 0.995,
+    "accent": "cloth",
+    "passive": false,
+    "trigger": null
+  },
+  "recruit_standard_bearer": {
+    "family": "banner",
+    "motif": "standard",
+    "weight": 1,
+    "rate": 1.01,
+    "accent": "cloth",
+    "passive": false,
+    "trigger": null
+  },
+  "volley_drill": {
+    "family": "steel",
+    "motif": "passive:weapon",
+    "weight": 0.82,
+    "rate": 1.025,
+    "accent": null,
+    "passive": true,
+    "trigger": null
+  },
+  "shieldwall_drill": {
+    "family": "steel",
+    "motif": "passive:defense",
+    "weight": 0.82,
+    "rate": 1.04,
+    "accent": null,
+    "passive": true,
+    "trigger": null
+  },
+  "field_logistics": {
+    "family": "steel",
+    "motif": "passive:movement",
+    "weight": 0.82,
+    "rate": 0.95,
+    "accent": null,
+    "passive": true,
+    "trigger": null
+  },
+  "coordinated_assault": {
+    "family": "warcry",
+    "motif": "muster",
+    "weight": 1.25,
+    "rate": 0.965,
+    "accent": "shield",
+    "passive": false,
+    "trigger": null
+  },
+  "field_orders": {
+    "family": "warcry",
+    "motif": "shout",
+    "weight": 1,
+    "rate": 0.98,
+    "accent": null,
+    "passive": false,
+    "trigger": null
+  },
   "basic": {
     "family": "steel",
     "motif": "slash",

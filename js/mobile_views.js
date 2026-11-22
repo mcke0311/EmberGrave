@@ -81,7 +81,7 @@ const MobileViews=(()=>{
       const loadout=document.createElement('section');loadout.className='phone-loadout';
       const hint=document.createElement('p');hint.textContent='Tap a slot to assign a learned skill. These four skills cast directly in combat.';loadout.append(hint);
       for(const [slot,label,id] of [['L','Attack',Game.state.player.skillL],...Array.from({length:4},(_,i)=>['Q'+i,'Skill '+(i+1),Game.state.player.quickSlots[i]])]){
-        const def=id==='basic'?DATA.BASIC_ATTACK:DATA.SKILLS[id],b=button('',e=>{e.stopPropagation();MobileWorkspace.pickSkill(slot);});b.dataset.loadout=slot;
+        const def=DATA.skillById(id),b=button('',e=>{e.stopPropagation();MobileWorkspace.pickSkill(slot);});b.dataset.loadout=slot;
         if(def)b.append(SkillIcons.create(def,44));const text=document.createElement('span');text.textContent=label+' · '+(def?.name||'Assign skill');b.append(text);loadout.append(b);
       }root.append(loadout);
     }

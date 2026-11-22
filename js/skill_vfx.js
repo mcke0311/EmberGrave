@@ -119,7 +119,15 @@ wildkeeper_2_2 earth stoneform
 primal_surge fire passive:primal
 rabies poison rabies
 fire_claw fire claw
-wildkeeper_2_6 fire apexform`;
+wildkeeper_2_6 fire apexform
+recruit_shieldguard steel bulwark
+recruit_bowman steel volley
+recruit_standard_bearer gold standard
+volley_drill steel passive:weapon
+shieldwall_drill steel passive:defense
+field_logistics gold passive:movement
+coordinated_assault gold muster
+field_orders gold shout`;
   const hash=s=>{let n=2166136261;for(const c of s)n=Math.imul(n^c.charCodeAt(0),16777619);return n>>>0;};
   const recipes=Object.fromEntries(assignments.trim().split('\n').map(line=>{
     const [id,material,motif]=line.split(' '),[shape,trigger]=motif.split(':');
@@ -219,9 +227,13 @@ wildkeeper_2_6 fire apexform`;
     const melee=['combo','combo_finish','execute','bash','rabies','fireclaw','sweep','dusk_cleave'].includes(sk?.type)||((id==='basic'||sk?.type==='melee')&&!p.stats.ranged);
     sampleAnchors(p);
     const a=actors.get(p)||{};a.released=true;a.trail=[];a.trailUntil=melee?now+.25:0;actors.set(p,a);
+    if(sk?.type==='combo')return; // The hit callback supplies the locked world-space arc.
     if(melee){
       push('slash',r,at(p,18),{owner:p,angle:p.visAng||0,radius:value(sk,'range',rk,p.stats.range||1.5),dur:sk?.type==='execute'?.36:.24,heavy:['combo_finish','execute','bash','dusk_cleave'].includes(sk?.type)});
     }else if(!['charge','leap','form'].includes(sk?.type))push('flash',r,anchor(p),{dur:.19,radius:r.motif==='draw'?1.2:.65});
+  }
+  function sweep({skill,x,y,surfaceId,angle,arc,radius}){
+    push('sweep',get(skill),{x,y,surfaceId,z:terrain(x,y,surfaceId)+18},{angle,arc,radius,dur:.24});
   }
   function hit(p,target,elem,critical=false){
     if(!enabled)return;
@@ -395,6 +407,14 @@ wildkeeper_2_6 fire apexform`;
     }else if(e.kind==='prepare'){
       const [hx,hy]=project(anchor(e.owner),cam);glow(c,r,hx,hy,24+36*k,24+36*k,.45);
       for(let i=0;i<5;i++){const a=i*TAU/5+e.t*3,rr=22*(1-k)+3;shard(c,hx+Math.cos(a)*rr,hy+Math.sin(a)*rr*.7,1.8,a,col,r.material==='bone');}
+    }else if(e.kind==='sweep'){
+      const points=[];
+      for(let i=0;i<=18;i++){
+        const progress=k+(1-k)*i/18, angle=e.angle+(progress-.5)*e.arc;
+        const dx=Math.cos(angle)*e.radius,dy=Math.sin(angle)*e.radius;
+        points.push([x+U.isoX(dx,dy),y+U.isoY(dx,dy)]);
+      }
+      ribbon(c,points,r,7,.95);
     }else if(e.kind==='slash'){
       const reach=Math.min(110,rad+12),angle=e.angle,span=e.heavy?2.4:1.65,start=angle-span*.65+k*span*.45;
       const points=[];for(let i=0;i<=18;i++){const a=start+i/18*span;points.push([x+Math.cos(a)*reach,y+Math.sin(a)*reach*.58]);}
@@ -594,10 +614,11 @@ wildkeeper_2_6 fire apexform`;
     if(!enabled||state.player?.dead)return;
     for(const mi of state.minions){
       if(mi.dead || (mi.surfaceId??0)!==surfaceId || !mi.auraRadius || !Object.keys(mi.auraStats||{}).length)continue;
-      const r=get(mi.sourceSkill); if(!r || !visible(mi,cam,c.canvas.width,c.canvas.height,mi.auraRadius*64))continue;
+      const radius=DATA.summonAuraRadius(mi,state.time);
+      const r=get(mi.sourceSkill); if(!r || !visible(mi,cam,c.canvas.width,c.canvas.height,radius*64))continue;
       const [x,y]=project(at(mi),cam);
       c.save();LevelTerrain.clipBehind(c,state.map,cam,mi.x,mi.y,mi.surfaceId);
-      rune(c,r,x,y,mi.auraRadius*32*Math.SQRT2,now,.3);c.restore();
+      rune(c,r,x,y,radius*32*Math.SQRT2,now,.3);c.restore();
     }
     for(const e of events)if((e.surfaceId??0)===surfaceId&&groundEvent(e)&&visible(e,cam,c.canvas.width,c.canvas.height,e.radius*64+150)){c.save();LevelTerrain.clipBehind(c,state.map,cam,e.x,e.y,e.surfaceId);drawEvent(c,e,cam);c.restore();}
     for(const f of state.fx){
@@ -636,6 +657,6 @@ wildkeeper_2_6 fire apexform`;
   }
   function diagnostics(){return {enabled,recipes:Object.keys(recipes).length-1,particles:particles.length,events:events.length,ghosts:ghosts.length,peakParticles,peakEvents,dropped,limits:LIMITS};}
   const hasStatus=m=>enabled&&!m.dead&&!!(m.veilExposedUntil>now||m.snarePull||m.snareRootUntil>now||m.killMark||m.doom||m.curseFrailty||m.curseWither||m.plague||m.rabies);
-  return Object.freeze({recipes,palettes,scope,context,activate,release,hit,area,beam,transfer,passive,registerProjectile,projectileContact,update,reset,drawGround,appendDraws,drawItem,drawProjectile,drawTrap,drawActor,drawStatus,drawLights,diagnostics,
+  return Object.freeze({recipes,palettes,scope,context,activate,release,sweep,hit,area,beam,transfer,passive,registerProjectile,projectileContact,update,reset,drawGround,appendDraws,drawItem,drawProjectile,drawTrap,drawActor,drawStatus,drawLights,diagnostics,
     hasStatus,get enabled(){return enabled;},setEnabled(v){enabled=!!v;reset();},isStyled:o=>enabled&&!!fieldRecipe(o)});
 })();

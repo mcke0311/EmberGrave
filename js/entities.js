@@ -148,15 +148,16 @@ class Entity {
       }
     }
   }
-  updateAnim(dt) {
+  updateAnim(dt, resolvePct = 0) {
     if(this.bossSlow&&(this.bossSlow.until<=Game.state.time||this.bossSlow.owner?.dead||!this.bossSlow.owner?.encounter?.active))delete this.bossSlow;
     if(this.bossPull&&(this.dead||this.bossPull.owner?.dead||!this.bossPull.owner?.encounter?.active))delete this.bossPull;
     this.animT += dt;
     /* smooth facing toward target (shortest arc) */
     this.visAng = U.angLerp(this.visAng, this.angT, Math.min(1, dt * 11));
     if (this.flashT > 0) this.flashT -= dt;
-    if (this.stunT > 0) this.stunT -= dt;
-    if (this.slowT > 0) this.slowT -= dt;
+    const controlTime = dt / (1 - resolvePct / 100);
+    if (this.stunT > 0) this.stunT -= controlTime;
+    if (this.slowT > 0) this.slowT -= controlTime;
     if (this.action) {
       this.action.t += dt;
       if (this.action.t >= this.action.dur) {
@@ -295,7 +296,7 @@ class Player extends Entity {
     }
   }
   resolveSkill(id) {
-    const skill = typeof SkillPerks!=="undefined" ? SkillPerks.resolve(this,id) : id==="basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[id];
+    const skill = typeof SkillPerks!=="undefined" ? SkillPerks.resolve(this,id) : DATA.skillById(id);
     return typeof UniquePowers !== "undefined" ? UniquePowers.modifySkill(this,skill) : skill;
   }
   canUseSkillWeapon(id) {
@@ -315,15 +316,29 @@ class Player extends Entity {
     return (typeof Game !== "undefined" && Game.state?.minions || []).filter(m =>
       !m.dead && m.owner === this && ["summon", "summon_golem"].includes(DATA.SKILLS[m.sourceSkill]?.type));
   }
+  companyLimit(sk) { return 1 + (sk.slotDrill && this.skills[sk.slotDrill] > 0 ? 1 : 0); }
+  unitUpkeep(sk, rank) {
+    const discount = sk.companyRole ? Math.min(50,this.stats?.companyEconomy || 0) : 0;
+    return sk.upkeep(rank) * (1 - discount / 100);
+  }
+  companionDamageMultiplier(unit, role, now=Game.state.time) {
+    const gear = this.stats?.minionDmgPct ?? unit?.dmgPctOwner ?? 0;
+    const aura = this.summonAuraStatsFor(unit || this).dmgPct || 0;
+    const buff = unit && now < unit.buffUntil ? unit.buffDmg : 0;
+    const drill = role === "bowman" ? this.stats.bowmanDamage || 0 : 0;
+    return (1+gear/100)*(1+aura/100)*(1+buff/100)*(1+drill/100);
+  }
   companionUpkeep() {
-    return this.maintainedCompanions().reduce((sum,m) => sum + this.resolveSkill(m.sourceSkill).upkeep(this.effRank(m.sourceSkill)),0);
+    return this.maintainedCompanions().reduce((sum,m) => sum + this.unitUpkeep(this.resolveSkill(m.sourceSkill),this.effRank(m.sourceSkill)),0);
   }
   summonAuraStatsFor(target) {
     const stats = {};
     if (this.dead || target.dead) return stats;
     for (const m of (typeof Game !== "undefined" && Game.state?.minions || [])) {
-      if (m.dead || m.owner !== this || !m.auraRadius || !TerrainLayers.same(m,target) || U.dist2(m.x,m.y,target.x,target.y) > m.auraRadius ** 2) continue;
-      // Multiple Ents extend coverage; the same aura never multiplies itself.
+      if (m.dead || !m.auraRadius || (m.owner !== this && m.kindId !== "standard_bearer") || m.owner?.dead || !TerrainLayers.same(m,target)) continue;
+      const radius = DATA.summonAuraRadius(m,Game.state.time);
+      if (U.dist2(m.x,m.y,target.x,target.y) > radius ** 2) continue;
+      // Overlapping auras contribute the strongest value for each stat.
       for (const [key,value] of Object.entries(m.auraStats || {})) stats[key] = Math.max(stats[key] || 0,value);
     }
     return stats;
@@ -331,6 +346,32 @@ class Player extends Entity {
   syncSummonAuras() {
     const key = JSON.stringify(this.summonAuraStatsFor(this));
     if (key !== this._summonAuraKey) { this._summonAuraKey = key; this.computeStats(); }
+  }
+  syncPartyAuras() {
+    for (const hero of Game.state.players || [this]) hero.syncSummonAuras();
+  }
+  companySoldiers() {
+    return Game.state.minions.filter(m => m.owner === this && m.companyRole && !m.dead);
+  }
+  clearCompanyOrders() {
+    this.companyFocus = null;
+    this.companyOrderUntil = 0;
+  }
+  issueFieldOrders(target) {
+    const soldiers=this.companySoldiers();
+    if (this.dead || this.stunT>0 || !soldiers.length) return false;
+    if (target && (target.dead || target.husk || !Game.state.monsters.includes(target) || !TerrainLayers.same(this,target) ||
+        U.dist(this.x,this.y,target.x,target.y) > DATA.FIELD_ORDERS.castRange() ||
+        !U.los((x,y)=>MapGen.walkable(Game.state.map,x,y,this.surfaceId),this.x,this.y,target.x,target.y))) return false;
+    this.companyFocus = target || null;
+    this.companyOrderUntil = Game.state.time + 5;
+    this.companyOrderRevision = (this.companyOrderRevision || 0) + 1;
+    for (const soldier of soldiers) {
+      soldier.assaultOrder = null;
+      soldier.path = null;
+      soldier.repathT = 0;
+    }
+    return true;
   }
   checkAetherDepletion() {
     if (this.mana > 0) return;
@@ -348,6 +389,7 @@ class Player extends Entity {
   }
   skillTargetRange(id,target) {
     const sk=this.resolveSkill(id),rk=id==="basic"?1:Math.max(1,this.effRank(id));
+    if(sk?.type==="combo")return sk.range(rk)+(target?.radius||0);
     for(const field of ["castRange","grappleRange","blinkRange","leapRange","chargeRange","throwRange"])if(sk?.[field])return sk[field](rk);
     if(["combo_finish","bash","shockwave","afterimage","dusk_cleave"].includes(sk?.type)&&sk.range)return sk.range(rk);
     if(["spellnova","freezenova","fear","shout","warshout_debuff","overloadnuke"].includes(sk?.type)&&sk.radius)return Math.max(1.2,sk.radius(rk)-.3);
@@ -371,6 +413,7 @@ class Player extends Entity {
       if(typeof SkillVFX!=='undefined')SkillVFX.reset();
     }
     this._skillEpoch++; this._perkCache=null;if(respec)this.skillPerks={};
+    this.clearCompanyOrders();
     this.buffs=this.buffs.filter(b=>!b.sourceSkill && !/^(stance_|form_|perk_)/.test(b.id||"") && !["soul_charge","banner_aura","smoke_evasion"].includes(b.id));
     this.form=null; this.stance=null; this.riposteData=null; this.rootT=0;
     this.boneWard=null; this.coat=null; this.retalCold=null;
@@ -389,7 +432,10 @@ class Player extends Entity {
   /* ---------------- stats ---------------- */
   gearStats() {
     const sum = {};
-    const add = (k, v) => { sum[k] = (sum[k] || 0) + v; };
+    const add = (k, v) => {
+      if (k === "skillTree_vanguard_2") k = "skillTree_vanguard_0";
+      sum[k] = (sum[k] || 0) + v;
+    };
     for (const slot of Items.EQUIP_SLOTS) {
       const it = this.equip[slot];
       if (!it) continue;
@@ -481,7 +527,7 @@ class Player extends Entity {
     for (const cId in DATA.CLASSES) {
       const sc = S("skillClass_" + cId); if (sc) st["skillClass_" + cId] = sc;
       (DATA.CLASSES[cId].trees || []).forEach((tn, ti) => {
-        const stb = S("skillTree_" + cId + "_" + ti); if (stb) st["skillTree_" + cId + "_" + ti] = stb;
+        const key = DATA.treeStat(cId,ti), stb = S(key); if (stb) st[key] = stb;
       });
     }
     st.maxHp = Math.floor((this.cls.baseHp + attr.vit * 4 + (this.lvl - 1) * 6 + S("hp")) * (1 + S("hpPct") / 100));
@@ -517,6 +563,9 @@ class Player extends Entity {
     st.monsterFlee = S("monsterFlee");
     st.preventHeal = S("preventHeal") > 0;
     st.manaRegen = 1.0 + st.maxMana * 0.01 * (1 + S("manaRegen") / 100);
+    for (const key of ["companyEconomy","bowmanDamage","shieldguardBlock","companyResolve"]) {
+      if (S(key)) st[key] = S(key);
+    }
     st.mf = S("mf"); st.goldFind = S("goldFind");
     st.lightRadius = S("lightRadius");      // Thunderstorm widens the hero's light
     st.dmgUndead = S("dmgUndead");
@@ -559,6 +608,12 @@ class Player extends Entity {
   }
   computeStats() {
     if (typeof UniquePowers !== 'undefined') UniquePowers.sync(this);
+    if (this.skills.recruit_standard_bearer) {
+      const sk = this.resolveSkill("recruit_standard_bearer");
+      for (const m of (typeof Game !== "undefined" && Game.state?.minions || [])) {
+        if (m.owner === this && m.kindId === "standard_bearer" && !m.dead) m.auraStats = sk.auraStats(this.effRank(sk.id));
+      }
+    }
     const aura = this.summonAuraStatsFor(this);
     this._summonAuraKey = JSON.stringify(aura);
     const st = this.calculateStats(aura);
@@ -576,6 +631,7 @@ class Player extends Entity {
     this._hadArrowWeapon=weaponAllowed;
   }
   effRank(id) {
+    if (id === "field_orders") return this.skills[DATA.FIELD_ORDERS.grantedBy] > 0 ? 1 : 0;
     const rk = this.skills[id] || 0;
     if (rk <= 0) return 0;
     const st = this._computingGear || this.stats; if (!st) return rk;
@@ -583,10 +639,14 @@ class Player extends Entity {
     const sk = DATA.SKILLS[id];
     if (sk) {                                   // +to class / +to tree skills (only learned skills benefit)
       bonus += st["skillClass_" + sk.cls] || 0;
-      bonus += st["skillTree_" + sk.cls + "_" + sk.tree] || 0;
+      bonus += st[DATA.treeStat(sk.cls,sk.tree)] || 0;
     }
     if (typeof UniquePowers !== "undefined") bonus += UniquePowers.rankBonus(this, id);
     return rk + bonus;
+  }
+  canBindSkill(id) {
+    const sk = DATA.skillById(id);
+    return id === "basic" || !!(sk && sk.cls === this.classId && sk.type !== "passive" && this.skills[sk.grantedBy || id] > 0);
   }
   weaponDamage() {
     const wpn = this.equip.main;
@@ -936,6 +996,55 @@ class Player extends Entity {
   }
 
   /* ---------------- skills ---------------- */
+  performTempoStrike(sk, rk, target, point, dur, syn) {
+    const world = Game.state, map = world.map, surface = this.surfaceId;
+    const aim = target || point;
+    if (!aim || !Number.isFinite(aim.x) || !Number.isFinite(aim.y) || (aim.surfaceId ?? surface) !== surface) return false;
+    let dx = aim.x - this.x, dy = aim.y - this.y;
+    if (!dx && !dy) [dx, dy] = U.screenVecToWorld(this.visAng);
+    const angle = Math.atan2(dy, dx), arc = sk.arc(rk), range = sk.range(rk);
+    const forwardX = Math.cos(angle), forwardY = Math.sin(angle), cosHalfArc = Math.cos(arc / 2);
+    const walk = (x, y) => MapGen.walkable(map, x, y, surface);
+    const inSweep = mon => {
+      if (mon.dead || !TerrainLayers.same(this, mon)) return false;
+      const x = mon.x - this.x, y = mon.y - this.y, distance = Math.hypot(x, y);
+      return distance <= range + mon.radius && x * forwardX + y * forwardY >= distance * cosHalfArc - 1e-9 &&
+        U.los(walk, this.x, this.y, mon.x, mon.y);
+    };
+
+    let primary = target;
+    if (primary) {
+      if (!world.monsters.includes(primary) || !inSweep(primary)) return false;
+    } else {
+      let nearest = Infinity;
+      for (const mon of world.monsters) {
+        const distance = U.dist2(this.x, this.y, mon.x, mon.y);
+        if (distance < nearest && inSweep(mon)) { primary = mon; nearest = distance; }
+      }
+      if (!primary) return false;
+    }
+
+    this.face(this.x + dx, this.y + dy);
+    this.pay(sk, rk);
+    this.startAction("attack", dur);
+    Sfx.play("swing");
+    const mult = sk.dmgMult(rk) * syn;
+    this.afterActionDelay(dur * 0.5, () => {
+      if (this.dead || Game.state !== world || world.map !== map || this.surfaceId !== surface) return;
+      Game.addWeaponSweep(sk.id, this, angle, arc, range);
+      const victims = world.monsters.filter(inSweep);
+      if (victims.includes(primary)) this.strike(primary, mult);
+      for (const mon of victims) {
+        if (this.dead) break;
+        if (mon !== primary) this.strike(mon, mult, { directMult: sk.secondaryMult });
+      }
+    });
+    const cap = 3 + (this.stats.tempoCapBonus || 0);
+    this.tempo = Math.min(cap, this.tempo + (sk.tempoGain?.(rk) ?? 1) + (this.stance === "berserk" ? 1 : 0));
+    this.tempoUntil = world.time + (sk.tempoDuration?.(rk) ?? 4) + (this.stats.tempoWindowBonus || 0);
+    return true;
+  }
+
   canPay(sk, rk) { return this.mana >= sk.mana(rk); }
   pay(sk, rk) {
     const amount = sk.mana(rk); this.spendAether(amount);
@@ -967,7 +1076,7 @@ class Player extends Entity {
         if(result) {
           this.checkAetherDepletion();
           this.applySkillPerkBuff(sk,this.effRank(skillId));
-          if(skillId !== "basic" && typeof UniquePowers !== "undefined") UniquePowers.emit(this,"cast",{ skill: sk, target, elem: sk?.elem });
+          if(skillId !== "basic" && skillId !== "field_orders" && typeof UniquePowers !== "undefined") UniquePowers.emit(this,"cast",{ skill: sk, target, elem: sk?.elem });
         }
         return result;
       });
@@ -990,6 +1099,27 @@ class Player extends Entity {
     const syn = isBasic ? 1 : this.synergyMult(sk);
 
     switch (sk.type) {
+      case "field_orders": return (!point || TerrainLayers.same(this,point)) && this.issueFieldOrders(target);
+      case "company_assault": {
+        const aim = target || point, world = Game.state;
+        if (!aim || !TerrainLayers.same(this,aim) || world.time < (this.skillCd[sk.id] || 0) ||
+            U.dist(this.x,this.y,aim.x,aim.y) > sk.castRange(rk) || !MapGen.walkable(world.map,aim.x,aim.y,this.surfaceId)) return false;
+        const soldiers = this.companySoldiers().filter(m => TerrainLayers.same(m,this));
+        if (!soldiers.length) return false;
+        this.pay(sk,rk);
+        this.skillCd[sk.id] = world.time + sk.cd(rk);
+        this.companyOrderRevision = (this.companyOrderRevision || 0) + 1;
+        this.beginCast(sk,aim);
+        for (const m of soldiers) {
+          if (m.dead) continue;
+          if (m.kindId === "standard_bearer") m.auraPulseUntil = world.time + sk.dur(rk);
+          else m.assaultOrder = {x:aim.x,y:aim.y,surfaceId:this.surfaceId,until:world.time+5,radius:sk.radius(rk),mult:sk.mult(rk)};
+          m.repathT = 0;
+        }
+        this.syncPartyAuras();
+        Game.addNova(aim.x,aim.y,sk.radius(rk),"#dfbd77",{breakProps:false});
+        return true;
+      }
       case "umbral_knife": case "dusk_cleave": case "shadow_flurry": case "deathblow":
         return this.performVeilAttack(sk,rk,target,point);
       case "melee": {
@@ -1296,8 +1426,9 @@ class Player extends Entity {
           const stats = sk.minionStats(rk);
           stats.hp = Math.floor(stats.hp * (1 + this.stats.minionHpPct / 100));
           if (empowered) { stats.hp *= 2; stats.dmg = [stats.dmg[0] * 2, stats.dmg[1] * 2]; }   // gravestone-raised: doubled stats
-          const cap = sk.cap(rk);
-          const mine = TerrainLayers.targets(Game.state.minions).filter(m => !m.dead && m.owner===this && m.kindId === sk.minion);
+          const cap = sk.companyRole ? this.companyLimit(sk) : sk.cap(rk);
+          const candidates = sk.companyRole ? Game.state.minions : TerrainLayers.targets(Game.state.minions);
+          const mine = candidates.filter(m => !m.dead && m.owner===this && m.kindId === sk.minion);
           if (mine.length >= cap) mine.reduce((lo, m) => m.hp < lo.hp ? m : lo, mine[0]).die();   // the most wounded returns to the wild
           const mi = new Minion(sk.minion, stats, this);
           mi.sourceSkill=skillId;
@@ -1312,12 +1443,14 @@ class Player extends Entity {
             mi.name = "Empowered " + (mi.name || "Minion");
           }
           Game.state.minions.push(mi);
-          if (mi.auraRadius) this.syncSummonAuras();
+          if (mi.auraRadius) mi.companyRole ? this.syncPartyAuras() : this.syncSummonAuras();
           if (corpse) {
             if(typeof SkillVFX!=='undefined')SkillVFX.transfer(this,skillId,corpse,mi);
             Sfx.play("vox_bone");
             Game.bloodBurst(mi.x, mi.y, 6);
             for (let i = 0; i < 8; i++) Game.addParticle(mi.x, mi.y, "#cfd8c0");
+          } else if (mi.companyRole) {
+            Game.dustPuff(mi.x,mi.y);
           } else {
             Sfx.play("vox_beast");
             Game.dustPuff(mi.x, mi.y);
@@ -1573,16 +1706,7 @@ class Player extends Entity {
         return true;
       }
       /* ===================== VANGUARD ===================== */
-      case "combo": {   // Tempo Strike — a weapon hit that builds Tempo
-        if (!target) return false;
-        this.face(target.x, target.y); this.pay(sk, rk); this.startAction("attack", dur); Sfx.play("swing");
-        const mult = sk.dmgMult(rk) * syn;
-        this.afterActionDelay(dur * 0.5, () => { if (this.dead || target.dead) return; if (U.dist(this.x, this.y, target.x, target.y) <= this.stats.range + target.radius + 0.4) this.strike(target, mult); });
-        const cap = 3 + (this.stats.tempoCapBonus || 0);
-        this.tempo = Math.min(cap, (this.tempo || 0) + (sk.tempoGain?.(rk)??1) + (this.stance === "berserk" ? 1 : 0));
-        this.tempoUntil = Game.state.time + (sk.tempoDuration?.(rk)??4) + (this.stats.tempoWindowBonus || 0);
-        return true;
-      }
+      case "combo": return this.performTempoStrike(sk, rk, target, point, dur, syn);
       case "combo_finish": {   // Sunder Combo — spend Tempo for a shredding fan
         const t = this.tempo || 0;
         if (t < 1) { Game.msg("Build Tempo first.", "#c0a060"); Sfx.play("error"); return false; }
@@ -2128,7 +2252,9 @@ class Player extends Entity {
   }
   updatePlayer(dt) {
     if(this.stunT>0&&this.action?.veilPending)this.action.interrupted=true;
-    this.updateAnim(dt);
+    this.updateAnim(dt,this.stats.companyResolve || 0);
+    if (this.companyOrderUntil && (this.companyOrderUntil <= Game.state.time || this.companyFocus?.dead ||
+        (this.companyFocus && !TerrainLayers.same(this,this.companyFocus)))) this.clearCompanyOrders();
     if(typeof CombatCast!=='undefined')CombatCast.tick(this);
     /* the dead do not walk, drink, or whirl — they wait to rise */
     if (this.dead) { this.moving = false; return; }
@@ -2329,7 +2455,7 @@ class Player extends Entity {
       reach=this.skillTargetRange(cmd.skill,t)??reach;
       const d = U.dist(this.x, this.y, t.x, t.y);
       const walk = (x, y) => MapGen.walkable(Game.state.map, x, y);
-      const hasLos = !(this.stats.ranged || isSpell) || U.los(walk, this.x, this.y, t.x, t.y);
+      const hasLos = !(this.stats.ranged || isSpell || skDef?.type === "combo") || U.los(walk, this.x, this.y, t.x, t.y);
       if (TerrainLayers.same(this,t) && d <= reach && hasLos) {
         this.path = null; this.moving = false;
         this.performSkill(cmd.skill, t, null);
@@ -2405,7 +2531,7 @@ class Minion extends Entity {
     super(owner.x + U.rf(-1.2, 1.2), owner.y + U.rf(-1.2, 1.2));
     this.surfaceId=owner.surfaceId??0;
     if (!MapGen.walkable(Game.state.map, this.x, this.y,this.surfaceId)) { this.x = owner.x; this.y = owner.y; }
-    this.autoHop = !stats.noAttack;
+    this.autoHop = !stats.noAttack || kindId === "standard_bearer";
     this.kindId = kindId;
     this.owner = owner;
     this.maxHp = stats.hp; this.hp = stats.hp;
@@ -2422,7 +2548,12 @@ class Minion extends Entity {
     this.untargetable = !!stats.untargetable;   // Spirit Hawk: foes can't single-target it (AoE still hits)
     this.groundImmune = !!stats.groundImmune;    // ...and it floats above ground hazards/fields
     /* beast companions vs raised bone */
-    if (stats.sprite === "wolf") {
+    if (["shieldguard","bowman","standard_bearer"].includes(kindId)) {
+      this.companyRole = kindId;
+      this.name = stats.name;
+      this.spriteOpts = { kind:"human", companyRole:kindId, scale:.9 };
+      this.auraPulseUntil = 0;
+    } else if (stats.sprite === "wolf") {
       this.beast = true;
       this.name = stats.name || "Grey Companion";
       this.spriteOpts = { kind: "wolf", pal: { fur: "#8a8478", eye: "#ffd040" }, scale: 0.95 };
@@ -2459,12 +2590,12 @@ class Minion extends Entity {
       this.spriteOpts = { kind: "skeleton", pal: Minion.PAL_BASE,
         weapon: this.isArcher ? "wand" : "sword", scale: 0.92 };
     }
-    if (stats.sprite !== "ent") this.spriteOpts.summonArt = kindId;
+    if (!this.companyRole && stats.sprite !== "ent") this.spriteOpts.summonArt = kindId;
     if (this.noAttack) { this.visAng = owner.visAng; this.angT = owner.visAng; }
     this.deathT = 0;
   }
   /* Poison Mastery turns the whole boneyard green (skeletons only) */
-  totalPdot() { return this.beast ? 0 : this.pdot + ((this.owner.stats && this.owner.stats.minionPoison) || 0); }
+  totalPdot() { return this.beast || this.companyRole ? 0 : this.pdot + ((this.owner.stats && this.owner.stats.minionPoison) || 0); }
   refreshPalette() {
     if (this.spriteOpts.kind !== "skeleton") return;   // only raised bone recolors; golems/decoys/beasts keep theirs
     const mastered = (this.owner.skills && this.owner.skills.poison_mastery > 0);
@@ -2483,25 +2614,65 @@ class Minion extends Entity {
     if (Math.random() < 0.3) this.startAction("hit", 0.16);
     if (this.hp <= 0) this.die();
   }
-  tryBlock() { return false; }
+  tryBlock(source) {
+    if (this.kindId !== "shieldguard" || !source || this.stunT > 0) return false;
+    const [fx,fy] = U.screenVecToWorld(this.visAng);
+    return (source.x-this.x)*fx + (source.y-this.y)*fy > 0 &&
+      Math.random()*100 < Math.min(60,20+(this.owner.stats.shieldguardBlock || 0));
+  }
   die({ silent = false } = {}) {
     if (this.dead) return;
     this.dead = true;
-    if (this.auraRadius) this.owner.syncSummonAuras();
+    if (this.auraRadius) this.companyRole ? this.owner.syncPartyAuras() : this.owner.syncSummonAuras();
+    if (this.companyRole && !this.owner.companySoldiers().length) this.owner.clearCompanyOrders();
     this.deathT = 0.72;
     this.startAction("death", 0.68);
-    if (!silent) this.playSound('end',this.beast ? "die_flesh" : "die_bone");
-    for (let i = 0; i < 7; i++) Game.addParticle(this.x, this.y, this.beast ? "#8a1414" : "#cfd8c0");
+    if (!silent) this.playSound('end',this.beast || this.companyRole ? "die_flesh" : "die_bone");
+    for (let i = 0; i < 7; i++) Game.addParticle(this.x, this.y, this.beast || this.companyRole ? "#8a1414" : "#cfd8c0");
   }
   dmgRoll() {
-    let d = U.rf(this.dmg[0], this.dmg[1]) * (1 + (this.owner.stats?.minionDmgPct ?? this.dmgPctOwner) / 100);
-    d *= 1 + (this.owner.summonAuraStatsFor(this).dmgPct || 0) / 100;
-    if (Game.state.time < this.buffUntil) d *= 1 + this.buffDmg / 100;
-    return d;
+    return U.rf(this.dmg[0],this.dmg[1]) * this.owner.companionDamageMultiplier(this,this.kindId);
   }
   playSound(phase,fallback,context={}) {
     if(this.sourceSkill&&typeof SkillAudio!=='undefined')return Sfx.playSkill(this.sourceSkill,phase,{owner:this.owner,emitter:this,...context});
     Sfx.play(fallback);
+  }
+  sweep(aim, radius, mult, skillId=this.sourceSkill) {
+    const angle = Math.atan2(aim.y-this.y,aim.x-this.x);
+    Game.addWeaponSweep(skillId,this,angle,2*Math.PI/3,radius);
+    const walk = (x,y) => MapGen.walkable(Game.state.map,x,y,this.surfaceId);
+    for (const foe of Game.state.monsters) {
+      if (foe.dead || !TerrainLayers.same(this,foe)) continue;
+      const dx=foe.x-this.x, dy=foe.y-this.y;
+      if (Math.hypot(dx,dy) > radius+foe.radius || Math.cos(Math.atan2(dy,dx)-angle) < .5 ||
+          !U.los(walk,this.x,this.y,foe.x,foe.y) || foe.imperialCombat?.block(this)) continue;
+      const damage = this.dmgRoll()*mult;
+      foe.takeDamage(damage,this);
+      Game.minionFloat(foe.x,foe.y,damage);
+    }
+    this.playSound("impact","hit");
+  }
+  executeAssault(dt, map, speed) {
+    const aim = this.assaultOrder;
+    if (!aim) return false;
+    if (Game.state.time >= aim.until || !TerrainLayers.same(this,aim)) { this.assaultOrder=null; return false; }
+    const bow = this.kindId === "bowman", reach = bow ? this.range : aim.radius * .7;
+    const clear = U.los((x,y)=>MapGen.walkable(map,x,y,this.surfaceId),this.x,this.y,aim.x,aim.y);
+    if (!clear || U.dist(this.x,this.y,aim.x,aim.y) > reach) {
+      this.repathT -= dt;
+      if (this.repathT <= 0) { this.repathT=.3; Game.repath(this,aim.x,aim.y,aim.surfaceId); }
+      this.moveAlong(dt,speed*1.3,map,TerrainLayers.targets(Game.state.minions));
+      return true;
+    }
+    this.assaultOrder=null; this.path=null; this.moving=false;
+    this.face(aim.x,aim.y); this.startAction("attack",.45);
+    if (bow) {
+      const angle=Math.atan2(aim.y-this.y,aim.x-this.x);
+      for (const spread of [-.16,0,.16]) Game.spawnProjectile({x:this.x,y:this.y,tx:this.x+Math.cos(angle+spread),ty:this.y+Math.sin(angle+spread),
+        speed:12,kind:"arrow",minionDmg:this.dmgRoll()*aim.mult,minionSource:this,visualOwner:this.owner,sourceSkill:"coordinated_assault"});
+      this.playSound("release","bow");
+    } else this.sweep(aim,aim.radius,aim.mult,"coordinated_assault");
+    return true;
   }
   updateHawk(dt, player, aura) {
     const center = this.orbitCenter, radius = this.orbitRadius;
@@ -2531,9 +2702,9 @@ class Minion extends Entity {
     this.moving=speed>0; this.curSpeed=speed; this.stride+=speed*dt;
   }
   update(dt, player, map) {
-    this.updateAnim(dt);
-    if (this.dead) { this.jumping = null; this.jumpZ = 0; this.deathT -= dt; return; }
     const aura = this.owner.summonAuraStatsFor(this);
+    this.updateAnim(dt,aura.companyResolve || 0);
+    if (this.dead) { this.jumping = null; this.jumpZ = 0; this.deathT -= dt; return; }
     if (aura.lifeRegen) this.hp=Math.min(this.maxHp,this.hp+aura.lifeRegen*dt);
     if (this.orbitRadius) { this.updateHawk(dt,player,aura); return; }
     const moveSpeed=this.speed*(1+(aura.frw||0)/100), atkRate=this.atkRate*(1+(aura.ias||0)/100);
@@ -2545,7 +2716,7 @@ class Minion extends Entity {
     if (this.ttl !== undefined) { this.ttl -= dt; if (this.ttl <= 0) { this.die(); return; } }
     if (this.noAttack) { this.moving = false; return; }
     /* old bone knits itself back together */
-    if (!this.beast && this.hp < this.maxHp) this.hp = Math.min(this.maxHp, this.hp + 1 * dt);
+    if (!this.beast && !this.companyRole && this.hp < this.maxHp) this.hp = Math.min(this.maxHp, this.hp + 1 * dt);
     /* lost too far behind: claw back out of the ground beside the master */
     if (!map.layers && U.dist(this.x, this.y, player.x, player.y) > 16) {
       this.x = player.x + U.rf(-1, 1); this.y = player.y + U.rf(-1, 1);
@@ -2561,10 +2732,15 @@ class Minion extends Entity {
       this.moveAlong(dt,moveSpeed*1.2,map,TerrainLayers.targets(Game.state.minions));
       return;
     }
-    const walk = (x, y) => MapGen.walkable(map, x, y);
+    const walk = (x, y) => MapGen.walkable(map, x, y, this.surfaceId);
+    if (this.assaultOrder && this.executeAssault(dt,map,moveSpeed)) return;
+    const ordered = this.companyRole && player.companyOrderUntil > Game.state.time;
+    const regroup = ordered && !player.companyFocus;
     /* nearest living monster within leash range */
     let target = null, bd = 8 * 8;
-    for (const mon of TerrainLayers.targets(Game.state.monsters)) {
+    if (this.kindId !== "standard_bearer" && !regroup && ordered && !player.companyFocus?.dead &&
+        TerrainLayers.same(this,player.companyFocus)) target = player.companyFocus;
+    if (!target && this.kindId !== "standard_bearer" && !regroup) for (const mon of TerrainLayers.targets(Game.state.monsters)) {
       if (mon.dead) continue;
       const dd = U.dist2(this.x, this.y, mon.x, mon.y);
       if (dd < bd) { bd = dd; target = mon; }
@@ -2573,6 +2749,12 @@ class Minion extends Entity {
     if (this.slamRadius) this.slamCd -= dt;
     if (target) {
       const d = U.dist(this.x, this.y, target.x, target.y);
+      if (this.kindId === "bowman" && d > .01 && d < 2.5) {
+        const x=this.x+(this.x-target.x)/d, y=this.y+(this.y-target.y)/d;
+        if (walk(x,y) && U.dist(x,y,player.x,player.y)<7) {
+          this.moveToward(dt,moveSpeed,x,y,map,TerrainLayers.targets(Game.state.minions)); return;
+        }
+      }
       /* bear / golem ground-slam */
       if (this.slamRadius && this.slamCd <= 0 && d < this.slamRadius + target.radius + 0.6) {
         this.slamCd = 4.5; this.startAction("attack", 0.6);
@@ -2589,13 +2771,16 @@ class Minion extends Entity {
           this.attackCd = 1 / atkRate;
           const dur = Math.min(0.55, 0.9 / atkRate);
           this.startAction("attack", dur);
-          const tref = target;
+          const tref = target, revision = player.companyOrderRevision;
           Game.afterDelay(dur * 0.55, () => {
             if (this.dead || tref.dead || !TerrainLayers.same(this,tref)) return;
+            if (this.companyRole && (revision !== player.companyOrderRevision || !U.los(walk,this.x,this.y,tref.x,tref.y))) return;
             const pdot = this.totalPdot();
             if (this.isArcher) {
               this.playSound('release',this.projKind === 'venom' ? 'firebolt' : 'bow');
               Game.spawnProjectile({ x: this.x, y: this.y, tx: tref.x, ty: tref.y, speed: 9, kind: this.projKind, minionDmg: this.dmgRoll(), minionPdot: pdot, minionSource:this, sourceSkill:this.sourceSkill,visualOwner:this.owner });
+            } else if (this.kindId === "shieldguard") {
+              this.sweep(tref,1.6,1);
             } else if (U.dist(this.x, this.y, tref.x, tref.y) <= reach + 0.4) {
               if(tref.imperialCombat?.block(this))return;
               this.playSound('impact','hit',{target:tref,elem:pdot?'poison':'phys'});
@@ -4176,6 +4361,7 @@ class Projectile {
           if (mi.dead || mi.untargetable) continue;
           if (U.dist(this.x, this.y, mi.x, mi.y) < mi.radius + 0.25 &&
               (!this.bossLane||BossEncounters.contains(this.bossLane,mi.x,mi.y))) {
+            if (mon && mi.tryBlock?.(mon)) { Sfx.play("block"); Game.addFloat(mi.x,mi.y,"block","#80a0ff"); this.dead=true; return; }
             if (mon) mon.dealAttack(mi,hitDmg*(this.bossOwner?.14:1),elem||'phys','projectile');
             if(this.enemySlow)Act2EnemyCombat.slow(mi,this.enemySlow);
             this.dead = true; return;

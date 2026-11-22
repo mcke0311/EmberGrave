@@ -5,9 +5,10 @@ const CombatCast=(()=>{
   const busy=p=>!!(p.action||p.jumping||p.leaping||p.charging||p.spinning||p.dashing||p.drawing||p.stunT>0);
   function clear(p){if(p)delete p.bufferedCast;}
   function request(p,skill,point,target=null){
-    const s=Game.state,sk=skill==='basic'?DATA.BASIC_ATTACK:DATA.SKILLS[skill];
-    if(!p||p.dead||!sk||sk.type==='passive'||(skill!=='basic'&&!p.skills[skill])||!point||!TerrainLayers.same(p,point))return false;
+    const s=Game.state,sk=DATA.skillById(skill);
+    if(!p||p.dead||!sk||!p.canBindSkill(skill)||!point||!TerrainLayers.same(p,point))return false;
     if(p.rejectSkillWeapon(skill))return false;
+    if(sk.type==='field_orders')return p.performSkill(skill,target,point);
     // A single last press wins; a long windup cannot turn into a delayed surprise.
     clear(p);
     if(busy(p)){

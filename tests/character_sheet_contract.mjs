@@ -110,5 +110,5 @@ for(const cls of Object.keys(D.CLASSES)){
     delete p.skillPerks[sk.id];p._perkCache=null;
   }
 }
-ok(talents===107,'all current talents covered');
+ok(talents===114,'all current talents covered');
 console.log(`PASS ${checks} character-sheet checks: ${talents} talents, ${variants} perk variants, combat ranges, totals, recovery and read-only previews.`);

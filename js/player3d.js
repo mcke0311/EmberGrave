@@ -51,6 +51,41 @@ window.Player3D=(()=>{
     const shift=!player.dead&&shiftFrames.get(player);
     view.draw(ctx,shift?{...pose,ex:{...pose.ex,wildshape:shift}}:pose,visual.equipment,{classId:visual.classId,form:visual.form||null});
   }
+  // Share a small set of frames per role, including across co-op companies.
+  const soldierLooks=new Map(), soldierFrames=new Map();
+  let soldierTheme;
+  function drawSoldier(ctx,role,pose) {
+    const zone=Game.state.map.zone;
+    if (soldierTheme!==zone?.theme) { soldierFrames.clear(); soldierTheme=zone?.theme; }
+    if (!soldierLooks.has(role)) {
+      const loadout=role==="shieldguard" ? {main:"shortsword",off:"buckler",head:"warhelm",chest:"hauberk"} :
+        role==="bowman" ? {main:"huntbow",head:"cap",chest:"quiltvest"} : {head:"warhelm",chest:"quiltvest"};
+      const equip=Object.fromEntries(Object.entries(loadout).map(([slot,baseId])=>[slot,{baseId}]));
+      soldierLooks.set(role,assets.resolvePlayerVisual("vanguard",equip).equipment);
+    }
+    const turn=Math.PI*2, facing=(Math.round(pose.ang/turn*8)+8)%8;
+    const phase=pose.state==="walk" ? (pose.ex.walkPh/turn)%1 : pose.state==="idle" ? (pose.t%2)/2 : Math.min(.999,pose.t);
+    const step=Math.floor(phase*6), key=[role,pose.state,facing,step].join("|");
+    let frame=soldierFrames.get(key);
+    if (!frame) {
+      frame=document.createElement("canvas");frame.width=144;frame.height=144;
+      const c=frame.getContext("2d"), equip=soldierLooks.get(role), scale=.84;
+      const sample={state:pose.state,ang:facing*turn/8,t:step/6,ex:{walkPh:step*turn/6,speed:3.8}};
+      c.translate(72,118);view.setRegion(zone);
+      view.draw(c,sample,equip,{classId:"vanguard",scale});
+      if (role==="standard_bearer") {
+        const hand=view.effectAnchors(sample,equip,{classId:"vanguard",scale}).hand;
+        c.translate(U.isoX(hand.x,hand.y),U.isoY(hand.x,hand.y)-hand.lift);
+        c.rotate(pose.state==="death" ? step*.22 : -.06);
+        c.fillStyle="#a9824d";c.fillRect(-1,-53,2.5,68);
+        c.fillStyle="#244b67";c.strokeStyle="#deb975";c.lineWidth=1.5;
+        c.beginPath();c.moveTo(1,-50);c.lineTo(20,-48);c.lineTo(19,-24);c.lineTo(10,-29);c.lineTo(1,-25);c.closePath();c.fill();c.stroke();
+        c.fillStyle="#edc981";c.beginPath();c.moveTo(10,-44);c.lineTo(14,-39);c.lineTo(10,-34);c.lineTo(6,-39);c.closePath();c.fill();
+      }
+      soldierFrames.set(key,frame);
+    }
+    ctx.drawImage(frame,-72,-118);
+  }
   function projectileOrigin(player,scale=1){
     if(!view||!player?._playerVisual)return null;
     const visual=drawOptions(player).playerVisual;
@@ -131,5 +166,5 @@ window.Player3D=(()=>{
   }
   function cinematicRenderer(){if(!filmView)filmView=rendererFactory({size:768,cinematic:true});return filmView;}
   function cinematicAnchors(player,pose,scale=1.1){const visual=drawOptions(player).playerVisual;return cinematicRenderer().effectAnchors(pose,visual.equipment,{classId:visual.classId,form:visual.form||null,scale});}
-  return Object.freeze({init,assets,drawOptions,draw,projectileOrigin,effectAnchors,effectImage,drawPreview,createShowcase,update,cinematicAnchors,only3D:true});
+  return Object.freeze({init,assets,drawOptions,draw,drawSoldier,projectileOrigin,effectAnchors,effectImage,drawPreview,createShowcase,update,cinematicAnchors,only3D:true});
 })();

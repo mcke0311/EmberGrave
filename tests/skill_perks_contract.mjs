@@ -38,11 +38,15 @@ function pick(p,id,tier,index){ok(p.chooseSkillPerk(id,tier,K.catalog[id][tier][
 function cast(p,sk,target){
   if(sk.type==='passive'){p.computeStats();return;}
   if(sk.type==='fireclaw'){p.form='fang';p.buffs.push({id:'form_fang',stats:{},until:Infinity});}
+  if(sk.type==='company_assault') {
+    const guard=new Minion('shieldguard',p.resolveSkill('recruit_shieldguard').minionStats(1),p);
+    guard.sourceSkill='recruit_shieldguard';G.state.minions.push(guard);
+  }
   ok(p.performSkill(sk.id,target,{x:11,y:11}),`${sk.id}: rejected cast`);casts++;
   G.__test.flush(3);
 }
 const skills=Object.values(D.SKILLS),ids=new Set();
-ok(skills.length===107,'expected current 107 skills');
+ok(skills.length===114,'expected current 114 talents');
 for(const sk of skills){
   ok(new Set(Object.values(K.catalog[sk.id]).flat().map(o=>o.title)).size===6,`${sk.id}: distinct perk names`);
   for(const tier of [5,10]){
@@ -77,7 +81,7 @@ for(const sk of skills){
   const after=Object.fromEntries(Object.entries(sk).map(([k,v])=>[k,typeof v==='function'?k==='desc'?v(10):v(10):v]));
   ok(JSON.stringify(original)===JSON.stringify(after),`${sk.id} base values mutated`);
 }
-ok(ids.size===642,'642 options');
+ok(ids.size===skills.length*6,'six options per talent');
 // Arrowfall replaces its previous field immediately, even on another surface.
 {
   const {p,state,target}=fresh('veilranger'),id='veilranger_0_6';
@@ -237,7 +241,7 @@ for(const [id,hp,growth] of [['call_wolf',26,8],['thornback_boar',60,16],['wildk
 }
 // Measured Breath updates upkeep even for an already living companion, including
 // the Gravebinder's two raised servants and stitched golem.
-for(const sk of skills.filter(s=>['summon','summon_golem'].includes(s.type)&&s.minion!=='ent')) {
+for(const sk of skills.filter(s=>['summon','summon_golem'].includes(s.type)&&K.catalog[s.id][5].some(o=>o.title==='Measured Breath'))) {
   const {p,state}=fresh(sk.cls);state.minions=[];p.skills={[sk.id]:5};p.computeStats();
   p.performSkill(sk.id);G.__test.flush(1);
   const minion=state.minions[0];ok(minion&&!minion.dead,sk.id+' upkeep companion spawned');
@@ -294,4 +298,4 @@ for(let a=0;a<3;a++)for(let b=0;b<3;b++) {
   ent2.die();ok(!Object.keys(p.summonAuraStatsFor(p)).length,'last Ent death removes aura');
   approx(p.stats.dmgPct,before.dmgPct,'Ent death immediately recomputes keeper stats');
 }
-console.log(`PASS ${checks} perk checks: 107 skills, 642 choices, 963 combinations, ${casts} combat casts, Wildkeeper life, orbit contact, upkeep, auras and saves.`);
+console.log(`PASS ${checks} perk checks: ${skills.length} talents, ${ids.size} choices, ${skills.length*9} combinations, ${casts} combat casts, Wildkeeper life, orbit contact, upkeep, auras and saves.`);

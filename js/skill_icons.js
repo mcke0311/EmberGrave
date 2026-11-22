@@ -6,7 +6,7 @@ const SkillIcons = (() => {
   const palette = { steel: "#bad5dd", gold: "#edc575", fire: "#ff9865", cold: "#8cddf4",
     storm: "#cbc2ff", bone: "#e5dbc0", hex: "#c9a2ec", poison: "#acdd76", blood: "#f18483", nature: "#9ccc91", earth: "#d7b48a" };
   const themes = {
-    vanguard: [["steel", "Build Tempo. Break their guard. Finish the fight."], ["gold", "Rally your allies and shatter enemy resolve."], ["earth", "Close the distance. Control the front line."]],
+    vanguard: [["steel", "Build Tempo in melee or break the enemy line with a charge."], ["gold", "Rally your allies and shatter enemy resolve."], ["gold", "Recruit soldiers, direct their attacks, and carry a standard into battle."]],
     emberwitch: [["fire", "Stack Scorch and turn the battlefield to cinders."], ["cold", "Chill, freeze, and shatter your enemies."], ["storm", "Build Static. Chain the storm. Unleash it."]],
     gravebinder: [["bone", "Raise an army. Strengthen it with the fallen."], ["hex", "Weaken the living and claim their souls."], ["poison", "Spread contagion. Make every corpse a weapon."]],
     veilranger: [["gold", "Mark your quarry and make every arrow count."], ["steel", "Set the killing ground before the fight begins."], ["hex", "Expose an opening. Strike from shadow."]],
@@ -116,6 +116,9 @@ const SkillIcons = (() => {
     emberwitch_1_4: "chain cold frost", rimeguard: "shield cold frost", emberwitch_1_6: "glacier cold ring",
     spark: "sparks storm", stormshell: "shield storm burst", emberwitch_2_2: "chain storm", emberwitch_2_3: "orb storm", emberwitch_2_4: "portal storm",
     emberwitch_2_5: "field storm", emberwitch_2_6: "bolt storm burst",
+    recruit_shieldguard: "shield steel summon", recruit_bowman: "bow steel summon", recruit_standard_bearer: "banner gold summon",
+    shieldwall_drill: "shield gold mastery", volley_drill: "volley steel mastery", field_logistics: "helm gold mastery",
+    coordinated_assault: "volley gold burst", field_orders: "horn steel target",
     raise_dead: "skull bone summon", raise_plaguemage: "skull poison summon", gravebinder_0_2: "golem bone summon", gravebinder_0_3: "heart bone mastery",
     gravebinder_0_4: "ribs bone", gravebinder_0_5: "lance bone", dread_muster: "skull bone heal", gravebinder_0_7: "skull fire burst",
     mark_of_frailty: "eye hex crack", withering_hex: "leaf hex crack", gravebinder_1_2: "hourglass hex", gravebinder_1_3: "vortex hex target",

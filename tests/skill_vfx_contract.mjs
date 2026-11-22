@@ -41,6 +41,10 @@ function harness({before=false,enabled=true}={}){
     const target=s.monsters[0];target.quarry={stacks:3,until:20};target.scorch={stacks:3,dps:4,until:20};target.curseFrailty={pct:10,until:20};target.poisonDot={dps:5,t:5};
     for(const [x,y] of [[11,11],[12,11],[13,11],[14,11]]){const m=new api.Monster(enemyId,x,y);m.dead=true;m.hp=0;m.corpseT=20;s.monsters.push(m);}
     const mi=new api.Minion('wolf',{hp:200,dmg:[5,10],speed:3,atkRate:1,range:1,sprite:'wolf',name:'Review wolf'},p);mi.sourceSkill='call_wolf';mi.hp=50;mi.x=10;mi.y=11;s.minions.push(mi);
+    if(sk.type==='company_assault'){
+      const guard=new api.Minion('shieldguard',p.resolveSkill('recruit_shieldguard').minionStats(1),p);
+      guard.sourceSkill='recruit_shieldguard';s.minions.push(guard);
+    }
     if(sk.type==='fireclaw'){p.form='fang';p.buffs.push({id:'form_fang',stats:{},until:100});}
     if(layered){
       for(const m of s.monsters)m.surfaceId=1;
@@ -95,7 +99,7 @@ function harness({before=false,enabled=true}={}){
   return {...api,fresh,step,run,lifecycle,snapshot,rngCalls:()=>rngCalls};
 }
 const active=harness(),disabled=harness({enabled:false}),skills=Object.values(active.DATA.SKILLS);
-ok(skills.length===107,'skill catalog size');
+ok(skills.length===114,'skill catalog size');
 for(const sk of skills){const recipe=active.SkillVFX.recipes[sk.id];ok(recipe&&active.SkillVFX.palettes[recipe.material],sk.id+' recipe');ok((recipe.motif==='passive')===(sk.type==='passive'),sk.id+' active/passive mapping');}
 const capture=process.argv.includes('--capture-baseline'),baselinePath=new URL('fixtures/skill_vfx_combat_baseline.json',import.meta.url);
 const baseline=capture?{}:JSON.parse(fs.readFileSync(baselinePath,'utf8')),old=capture?harness({before:true}):null;

@@ -101,6 +101,7 @@
 .phone-layout #mobileVitals { position:absolute;left:calc(12px + env(safe-area-inset-left));top:calc(8px + env(safe-area-inset-top));width:170px;display:grid;gap:5px; }
 .phone-layout .phone-vital { position:relative;display:flex;justify-content:space-between;align-items:center;height:21px;padding:0 7px;border:1px solid #987b505c;border-radius:4px;background:#10151bdd;overflow:hidden;isolation:isolate;font:10px var(--font-game);text-shadow:0 1px 2px #000; }
 .phone-layout .phone-vital i { position:absolute;left:0;top:0;bottom:0;width:var(--fill);z-index:-1;background:linear-gradient(90deg,#62252b,#993c3b); }
+.phone-layout #mobileCompany { color:#e6d9b4;font:11px/1.2 var(--font-game);text-shadow:0 1px 3px #000; }
 .phone-layout .phone-vital.aether i { background:linear-gradient(90deg,#273c66,#496aaa); }
 .phone-layout .phone-vital span { color:#f7e7d1;font-size:9px;letter-spacing:.5px; }
 .phone-layout .phone-vital strong { color:#fff3dd;font-weight:500; }
@@ -183,8 +184,11 @@
 .phone-layout #treeTabs button { padding:10px 6px;min-width:0;font:14px/1.3 var(--font-game);background:#1b252e;color:#b8b9b3;border:1px solid #66573d55;border-radius:6px; }
 .phone-layout #treeTabs [aria-selected=true] { background:#5b482d;color:#f8e4c1;border-color:#b59260; }
 .phone-layout #talentBody { display:block;min-height:0; }
+.phone-layout .arms-paths { display:block;overflow:visible; }
+.phone-layout [data-mobile-detail=true] .arms-paths { display:none; }
+.phone-layout .arms-path-name { margin:12px 0 6px; }
 .phone-layout .talent-board { display:block;padding:0;min-height:0;border:0; }
-.phone-layout #treeArea { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;grid-auto-rows:auto;align-items:stretch;justify-items:stretch;height:auto;min-height:0;gap:8px;padding:0; }
+.phone-layout .talent-panel .tree-area { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;grid-auto-rows:auto;align-items:stretch;justify-items:stretch;height:auto;min-height:0;gap:8px;padding:0; }
 .phone-layout .talent-node { position:relative;inset:auto;transform:none!important;grid-column:auto!important;grid-row:auto!important;width:auto;max-width:none;height:auto;min-height:76px;display:flex;flex-direction:row;gap:10px;align-items:center;padding:10px;background:#1b252e;border:1px solid #66695280;border-radius:7px;text-align:left; }
 .phone-layout .talent-node canvas { flex:none;width:44px;height:44px; }
 .phone-layout .talent-node-name { position:static;font:14px/1.4 var(--font-game);flex:1; }

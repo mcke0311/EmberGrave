@@ -838,11 +838,13 @@ const Game = (() => {
     camPos = null;                 // snap camera to the new map
     /* raised servants follow their master between maps */
     for (const mi of state.minions) {
+      if (mi.companyRole) { mi.assaultOrder=null; mi.auraPulseUntil=0; }
       mi.surfaceId=p.surfaceId;
       mi.x = p.x + U.rf(-1.2, 1.2); mi.y = p.y + U.rf(-1.2, 1.2);
       if (!MapGen.walkable(map, mi.x, mi.y)||(map.surfaceVersion&&!TerrainSurface.supported(map,mi.x,mi.y,mi.radius))) { mi.x = p.x; mi.y = p.y; }
       mi.path = null; clearTraversal(mi);
     }
+    p.clearCompanyOrders();
     clearTraversal(p);
     if(typeof CombatCast!=='undefined')CombatCast.clear(p);
     p.path = null; p.command = null; p.dashing = null; p.leaping = null; p.spinning = null; p.jumping = null; p.lastTarget = null;
@@ -1007,9 +1009,9 @@ const Game = (() => {
     p.skillL = d.skillL || "basic"; p.skillR = d.skillR || "basic";
     p.quickSlots = (d.quickSlots && d.quickSlots.slice(0, 4)) || [null, null, null, null];
     while (p.quickSlots.length < 4) p.quickSlots.push(null);
-    p.quickSlots = p.quickSlots.map(s => s === 'basic' || (s && DATA.SKILLS[s] && DATA.SKILLS[s].type !== "passive") ? s : null);
-    if ((!DATA.SKILLS[p.skillL] && p.skillL !== "basic") || DATA.SKILLS[p.skillL]?.type === "passive") p.skillL = "basic";
-    if ((!DATA.SKILLS[p.skillR] && p.skillR !== "basic") || DATA.SKILLS[p.skillR]?.type === "passive") p.skillR = "basic";
+    p.quickSlots = p.quickSlots.map(s => p.canBindSkill(s) ? s : null);
+    if (!p.canBindSkill(p.skillL)) p.skillL = "basic";
+    if (!p.canBindSkill(p.skillR)) p.skillR = "basic";
     p.belt = d.belt || [null, null, null, null];
     for (const s of d.inv || []) { const it = reviveItem(s); Items.place(p.inv, it, s.gx, s.gy); }
     for (const s of d.stash || []) { const it = reviveItem(s); Items.place(p.stash, it, s.gx, s.gy); }
@@ -1551,12 +1553,17 @@ const Game = (() => {
     if(headless)return;
     if (Math.random() < 0.5) particles.push({ surfaceId:TerrainLayers.current(state.map), x, y, vx: U.rf(-0.6, 0.6), vy: U.rf(-0.6, 0.6), z: 4, color: "#6a6055", t: 0.4, grav: -4 });
   }
+  function addWeaponSweep(skill, owner, angle, arc, radius) {
+    const sweep = {skill, x:owner.x, y:owner.y, surfaceId:owner.surfaceId, angle, arc, radius};
+    if (typeof Coop !== "undefined" && Coop.active) Coop.visual?.('sweep', sweep);
+    if (!headless && typeof SkillVFX !== "undefined") SkillVFX.sweep(sweep);
+  }
   function addNova(x, y, radius, color, presentation) {
     if(typeof Coop!=="undefined"&&Coop.active)Coop.visual?.('nova',{surfaceId:TerrainLayers.current(state.map),x,y,radius,color,hideRadius:!!presentation?.hideRadius});
     if(!headless)novas.push({ surfaceId:TerrainLayers.current(state.map), x, y, radius, color, t: 0, dur: 0.35, hideRadius:!!presentation?.hideRadius,
       styled:typeof SkillVFX!=='undefined'&&SkillVFX.area(x,y,radius,state.player,presentation) });
     // Radius visibility is cosmetic; retain prop destruction and its rewards.
-    if (radius >= 1.2) breakPropsNear(x, y, radius * 0.9);
+    if (radius >= 1.2 && presentation?.breakProps !== false) breakPropsNear(x, y, radius * 0.9);
   }
   /* a jagged lightning arc between two world points (Arc Lattice, Thunderstorm) */
   function lightningBolt(x0, y0, x1, y1, color) {
@@ -2522,9 +2529,9 @@ const Game = (() => {
   const NO_REPEAT_SKILL = new Set(["summon", "summon_golem", "form", "minionbuff", "buff", "totem", "ward",
     "banner", "banner_ultimate", "sacrifice", "fireclaw", "combat_stance", "parry_stance", "warshout_debuff",
     /* deploy-once skills: holding the cast on a target must NOT re-deploy every frame (drains all aether) */
-    "roamaoe", "groundfield", "firewall", "trap", "dragnet", "decoy", "tripwire", "rain"]);
+    "roamaoe", "groundfield", "firewall", "trap", "dragnet", "decoy", "tripwire", "rain","field_orders","company_assault"]);
   function repeatSkill(skillId) {
-    const sk = skillId === "basic" ? DATA.BASIC_ATTACK : DATA.SKILLS[skillId];
+    const sk = DATA.skillById(skillId);
     return !(sk && NO_REPEAT_SKILL.has(sk.type));
   }
 
@@ -2567,8 +2574,29 @@ const Game = (() => {
     const [x,y] = moving ? [touch.x,touch.y] : U.screenVecToWorld(p.visAng);
     return {x:p.x + x * 4.2, y:p.y + y * 4.2, surfaceId:p.surfaceId};
   }
+  function touchFieldOrders(recall) {
+    if (!touchReady()) return;
+    const p=state.player, skill=DATA.FIELD_ORDERS.id;
+    let target=null, nearest=Infinity;
+    if (!recall) {
+      const walk=(x,y)=>MapGen.walkable(state.map,x,y,p.surfaceId);
+      for (const mon of state.monsters) {
+        if (mon.dead || mon.husk || !TerrainLayers.same(p,mon)) continue;
+        const d=U.dist(p.x,p.y,mon.x,mon.y);
+        if (d <= DATA.FIELD_ORDERS.castRange() && d < nearest && U.los(walk,p.x,p.y,mon.x,mon.y)) { target=mon; nearest=d; }
+      }
+      if (!target) return;
+    }
+    const point={x:p.x,y:p.y,surfaceId:p.surfaceId};
+    if (typeof Coop!=="undefined" && Coop.active) return Coop.submit({type:"quickCast",skill,point,targetId:target?._coopId});
+    return p.performSkill(skill,target,point);
+  }
   function castTouchSkill() {
     const p = state.player, id = touch.skill, sk = p.resolveSkill(id);
+    if (id === "field_orders") {
+      if (!touch.castOnce && performance.now()-touch.orderStarted >= 350) { touch.castOnce=true; touchFieldOrders(true); }
+      return;
+    }
     if (!sk || p.action || p.jumping || p.drawing || p.stunT > 0 || p.leaping || p.dashing || p.charging || p.spinning) return;
     if (touch.castOnce && !repeatSkill(id)) return;
     if (state.time < touch.nextCast || state.time < (p.skillCd[id] || 0)) return;
@@ -2612,12 +2640,15 @@ const Game = (() => {
   function holdTouchSkill(side, skill, down) {
     if (!down) {
       if (touch.side !== side) return;
+      if (touch.skill === "field_orders" && !touch.castOnce) touchFieldOrders(performance.now()-touch.orderStarted >= 350);
       touch.side = null; touch.skill = null;
       if (state?.player?.drawing?.touch) state.player.releaseDraw();
       return;
     }
-    if (!touchReady() || touch.side || !skill || (skill !== 'basic' &&
-      (!state.player.skills[skill] || DATA.SKILLS[skill]?.type === 'passive'))) return;
+    if (!touchReady() || touch.side || !state.player.canBindSkill(skill)) return;
+    if (skill === "field_orders") {
+      touch.side=side; touch.skill=skill; touch.castOnce=false; touch.orderStarted=performance.now(); return;
+    }
     cancelGroundHold(); mouse.l = mouse.r = false; heldTarget = null;
     state.player.command = null; state.player.path = null;
     state.player._pendingClick = null; state.player._navPendingGoal = null;
@@ -2683,6 +2714,10 @@ const Game = (() => {
       PropInteractions.cancel(state);
     }
     const skill = rightBtn ? p.skillR : p.skillL;
+    if (skill === "field_orders" && (rightBtn || mouse.shift || !(hoverPortal || hoverExit || hoverNpc || hoverLabel || hoverProp))) {
+      if (w) p.performSkill(skill,hoverMon,w);
+      return;
+    }
 
     // A ground press owns its hold even if picking a cliff supplies no route.
     // During jumps, only ground steering is immediate; targeted clicks queue.
@@ -3873,6 +3908,12 @@ const Game = (() => {
           d.sy-=surfaceLift(d.mon.x,d.mon.y,d.mon.surfaceId);
           /* hex rune above cursed monsters */
           const m2 = d.mon;
+          if (!m2.dead && state.player.companyFocus===m2 && state.player.companyOrderUntil>state.time) {
+            const y=d.sy-66*m2.scale;
+            ctx.save();ctx.strokeStyle="#342713";ctx.fillStyle="#f3cb78";ctx.lineWidth=2;
+            ctx.beginPath();ctx.moveTo(d.sx-6,y-4);ctx.lineTo(d.sx,y+3);ctx.lineTo(d.sx+6,y-4);
+            ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
+          }
           const cursed = (m2.curseFrailty && state.time < m2.curseFrailty.until) || (m2.curseWither && state.time < m2.curseWither.until);
           if (cursed && !m2.dead) {
             const bob2 = Math.sin(state.time * 3 + m2.x) * 2;
@@ -4438,6 +4479,7 @@ const Game = (() => {
   }
   function drawActorVisual(target, opts, pose) {
     if (opts.threePlayer) Player3D.draw(target, opts.threePlayer, pose);
+    else if (opts.companyRole) Player3D.drawSoldier(target,opts.companyRole,pose);
     else {if(opts.playerVisual)throw new Error('Player drawing requires the 3D renderer.');SpriteAssets.drawActor(target, opts, pose);}
   }
   function drawLiveActor(opts, pose, sx, sy, flash, alpha, tint, ground) {
@@ -5141,6 +5183,8 @@ const Game = (() => {
     });
   }
   function resetCoopActor(p,position){
+    p.clearCompanyOrders?.();
+    if (p.companyRole) { p.assaultOrder=null; p.auraPulseUntil=0; }
     Object.assign(p,position);p.command=p.path=p.drawing=p.action=null;p._skillEpoch=(p._skillEpoch||0)+1;p._veilEpoch=(p._veilEpoch||0)+1;
     for(const key of ['dashing','leaping','spinning','jumping','charging','siphon','reviveTarget','lastTarget','_coopMotion','_predictPath','_netTo'])p[key]=null;
     const jumpCooldown=p.jumpCdUntil;clearTraversal(p);p.jumpCdUntil=jumpCooldown;
@@ -5224,6 +5268,7 @@ const Game = (() => {
     return received;
   }
   function coopVisual(e){
+    if(e.effect==='sweep' && typeof SkillVFX!=='undefined')SkillVFX.sweep(e);
     if(e.effect==='questBeat'){Sfx.play(e.sound);centerMsg(e.title,e.line);}
     if(e.effect==='float'&&(e.hurt||(e.minion?options.minionDamage:options.dmgNumbers||typeof e.text!=='number')))floats.push({...e,text:String(e.text),t:0});
     if(e.effect==='nova')novas.push({...e,t:0,dur:.35});
@@ -5239,7 +5284,7 @@ const Game = (() => {
     preparePlayerEquipment, commitPlayerEquipment, discardPlayerEquipment,
     enterMap, interact, castPortal, usePortal, travelToShrine, canTradeWith, setDifficulty, canRetryArena, retryBossArena,
     acceptQuest, completeQuest, pinQuest, pinnedQuest, doRespec, storyTopic, bossWard,
-    afterDelay, addFloat, minionFloat, playerHurtFloat, addParticle, bloodBurst, dustPuff, addNova, lightningBolt, beamFx,
+    afterDelay, addFloat, minionFloat, playerHurtFloat, addParticle, bloodBurst, dustPuff, addNova, addWeaponSweep, lightningBolt, beamFx,
     knockMonster, detonateMark, detonateDoom, spawnCorpse, corpseFromGrave, throwUndeadLand,
     breakProp, breakPropsNear, breakPropsSeg,
     spawnPropMonster, spawnProjectile, repath, finishTraversal, onMonsterDeath, onPlayerDeath, returnToTown, firstSightCutscene,
@@ -5248,7 +5293,7 @@ const Game = (() => {
     debugDrop, debugSpawnElites, debugGotoBoss,
     recordEnding,
     msg, centerMsg, saveOptions,
-    touchReady, touchMove, touchSkill, touchQuickSlot, touchTap, touchAction, resetTouch, cancelMenuInput,
+    touchReady, touchMove, touchSkill, touchQuickSlot, touchTap, touchAction, touchFieldOrders, resetTouch, cancelMenuInput,
     fx, options, debugFlags,
     get state() { return state; },
   };
