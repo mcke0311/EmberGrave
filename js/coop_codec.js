@@ -169,7 +169,7 @@ const CoopCodec=(()=>{
       if(!row||row.behavior!==p.behavior||p.deviceId)continue;
       for(const field of fields)if(Object.hasOwn(row,field))p[field]=decode(row[field],new Map());
       if(!p.building&&!p.behavior&&(row.spent||row.completed)&&row.label)p.label=row.label;
-      if(p.broken)PropInteractions.freeTile(map,p);
+      if(p.broken||p.corpseConsumed)PropInteractions.freeTile(map,p);
     }
   }
   function propMonsters(s){

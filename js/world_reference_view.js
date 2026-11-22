@@ -48,7 +48,7 @@
   function card(record,kind){
     const button=el('button',null,'object-card');button.dataset.record=record.id;button.setAttribute('aria-label',record.name+(kind==='placed'?' · '+record.count+' placed':''));
     if(kind==='placed'&&selectedGroup?.id===record.id||kind!=='placed'&&selection?.id===record.id)button.classList.add('selected');
-    const art=el('canvas',null,'art');art.setAttribute('role','img');watchArt(art,record.assetId,record.index);button.append(art);
+    const art=el('canvas',null,'art');art.setAttribute('role','img');if(record.prop?.flipX||record.prop?.flip)art.style.transform='scaleX(-1)';watchArt(art,record.assetId,record.index);button.append(art);
     const body=el('span',null,'card-info');body.append(el('span',record.name,'card-name'),el('code',record.eventId||record.type));
     const meta=el('span',null,'card-meta');meta.append(el('span',R.categories[record.category]));
     if(kind==='placed'){button.append(el('span','× '+record.count,'badge'));meta.append(el('span','View instances'));}
@@ -79,7 +79,7 @@
     const pane=$('detail');pane.replaceChildren();
     const back=el('button','↑ Back to gallery','mobile-return');back.onclick=()=>$('catalogTitle').scrollIntoView({block:'start',behavior:'smooth'});pane.append(back);
     pane.append(el('span',R.categories[record.category]||'OBJECT REFERENCE','eyebrow'),el('h2',record.name),el('code',record.eventId||record.type));
-    const art=el('canvas',null,'art detail-art');art.setAttribute('role','img');pane.append(art);
+    const art=el('canvas',null,'art detail-art');art.setAttribute('role','img');if(record.prop?.flipX||record.prop?.flip)art.style.transform='scaleX(-1)';pane.append(art);
     const states=el('div',null,'state-picker');
     for(const [i,s] of record.states.entries()){
       const b=el('button',s.label);b.setAttribute('aria-pressed',String(i===0));b.onclick=()=>{preview=s;for(const e of states.children)e.setAttribute('aria-pressed',String(e===b));paintArt(art,s.id,s.index);$('currentFrame').textContent=s.id+' · frame '+s.index;renderReferences();};states.append(b);

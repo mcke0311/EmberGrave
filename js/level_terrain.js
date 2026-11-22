@@ -43,12 +43,13 @@ const LevelTerrain = (() => {
         campaignVisual:m.campaignVisual,act2Visual:m.act2Visual,boundaries:m.boundaries,act5Environment:m.act5Environment,imperialEnvironment:m.act3?.environment,grids:TERRAIN_GRIDS.map(k=>terrainGrid(m,k)?.slice())};
     }
     terrainSnapshot.act1Environment=m.act1Environment;
+    terrainSnapshot.landings=m.landings;
     visible.clear();surfacePolygons=[];surfaceIndex=null;frameOpen=true;frame++;
     tileDraws=cacheHits=chunkBuilds=buildMs=evictions=0;capacity=MIN_CAPACITY;
   }
   function sameTerrain(m){
     const s=terrainSnapshot;
-    if(s&&s.campaignVisual!==m.campaignVisual)return false;
+    if(s&&(s.campaignVisual!==m.campaignVisual||s.landings!==m.landings))return false;
     if(s&&(s.act1Environment!==m.act1Environment||s.act2Visual!==m.act2Visual))return false;
     if(s&&(s.cathedralEnvironment!==m.cathedral?.environment||s.cathedralRevision!==m.cathedral?.environment?.revision))return false;
     if(!s||s.boundaries!==m.boundaries||s.act5Environment!==m.act5Environment||s.imperialEnvironment!==m.act3?.environment||s.map!==m||s.id!==m.id||s.w!==m.w||s.h!==m.h||s.theme!==m.zone?.theme||s.art!==m.zone?.artZone||
@@ -135,6 +136,77 @@ const LevelTerrain = (() => {
     const soft=canvas(SIDE),p=soft.getContext('2d');p.filter='blur('+blur+'px)';p.drawImage(c,0,0);return soft;
   }
   const groundMaterialKey=m=>m.act3?.environment?ImperialEnvironment.materialKey(m):m.act2Visual&&(m.outdoor||m.id==='spawn_pools')?'a2visual_moss':m.act1Environment&&m.outdoor?'a1polish_snow':m.cathedral?m.cathedral.materials[m.cathedral.baseMaterial]:m.act3?.ground?'act3_ground_'+m.act3.ground:'level_ground_'+(m.zone.artZone||m.id);
+  const landingCache=new WeakMap();
+  function landingPaint(m,l){
+    if(landingCache.has(l))return landingCache.get(l);
+    // Work in world space so the ground grain continues through the doorway.
+    // Only this small feathered mask is in doorway-local coordinates.
+    const back=l.tail||1.1,pad=l.width+1.7,reach=l.length+1.1;
+    const x0=Math.floor(Math.min(l.x-l.dx*back,l.x+l.dx*reach)-pad);
+    const y0=Math.floor(Math.min(l.y-l.dy*back,l.y+l.dy*reach)-pad);
+    const w=Math.ceil((Math.abs(l.dx)*(back+reach)+2*pad+2)*TILE);
+    const h=Math.ceil((Math.abs(l.dy)*(back+reach)+2*pad+2)*TILE);
+    const image=canvas(w,h),g=image.getContext('2d');
+    g.save();g.translate((l.x-x0)*TILE,(l.y-y0)*TILE);
+    g.transform(l.dx,l.dy,-l.dy,l.dx,0,0);g.scale(TILE,TILE);
+    const opacity=g.createLinearGradient(-back,0,l.length,0);
+    opacity.addColorStop(0,'transparent');opacity.addColorStop(l.tail ? .28 : .12,'#fff');
+    opacity.addColorStop(.52,'#fff');opacity.addColorStop(1,'transparent');
+    g.fillStyle=opacity;g.filter='blur(8px)';
+    const width=l.width;
+    g.beginPath();g.moveTo(-back,-width*.72);g.lineTo(-.3,-width);
+    g.bezierCurveTo(1.1,-width*1.16,2.5,-width*.79,l.length,-width*.58);
+    g.lineTo(l.length,width*.71);g.bezierCurveTo(2.6,width*.83,1.2,width*1.12,-.4,width);
+    g.lineTo(-back,width*.7);g.closePath();g.fill();g.restore();
+    g.globalCompositeOperation='source-in';g.translate(-x0*TILE,-y0*TILE);
+    const key=m.settlement?m.id+'_street':m.act5Environment?'hellgate_street':
+      m.act3?.environment?(m.act3.environment.outdoor?'a3visual_sandstone':groundMaterialKey(m)):
+      m.act1Environment&&m.outdoor?'frosthaven_street':m._arch?'town_street':
+      l.tail?'town_soil':groundMaterialKey(m);
+    const texture=material(SpriteAssets.maps.props[key],0,false,true);
+    g.fillStyle=g.createPattern(texture,'repeat');g.fillRect(x0*TILE,y0*TILE,w,h);
+    g.globalCompositeOperation='source-over';
+    for(let y=y0;y<y0+h/TILE;y++)for(let x=x0;x<x0+w/TILE;x++){
+      if(x<0||y<0||x>=m.w||y>=m.h)continue;
+      const i=x+y*m.w;if(m.void?.[i]||m.walls[i]||m.hazard?.[i]||m.act2?.water[i])g.clearRect(x*TILE,y*TILE,TILE,TILE);
+    }
+    const paint={image,x:x0*TILE,y:y0*TILE};
+    if(l.tail){
+      // Continue the bank beneath the road beyond the navigation boundary.
+      // Its shoulders fade into the distant landscape before the trail ends.
+      const verge=canvas(w,h),v=verge.getContext('2d');
+      v.save();v.translate((l.x-x0)*TILE,(l.y-y0)*TILE);
+      v.transform(l.dx,l.dy,-l.dy,l.dx,0,0);v.scale((back+1)*TILE,(width+1.6)*TILE);
+      const bank=v.createRadialGradient(0,0,.12,0,0,1);
+      bank.addColorStop(0,'white');bank.addColorStop(.51,'rgba(255,255,255,.97)');bank.addColorStop(1,'transparent');
+      v.fillStyle=bank;v.fillRect(-1,-1,2,2);v.restore();
+      v.globalCompositeOperation='source-in';v.translate(-paint.x,-paint.y);
+      const soil=m.settlement?m.id+'_soil':groundMaterialKey(m);
+      v.fillStyle=v.createPattern(material(SpriteAssets.maps.props[soil],0,false,true),'repeat');
+      v.fillRect(paint.x,paint.y,w,h);v.globalCompositeOperation='source-over';
+      v.globalAlpha=.62;v.drawImage(image,paint.x,paint.y);paint.verge=verge;
+    }
+    landingCache.set(l,paint);return paint;
+  }
+  function drawLandings(g,m,ox,oy,w,h){
+    for(const l of m.landings||[]){
+      if(l.x*TILE<ox-9*TILE||l.y*TILE<oy-9*TILE||l.x*TILE>ox+w+9*TILE||l.y*TILE>oy+h+9*TILE)continue;
+      const p=landingPaint(m,l);
+      g.save();g.globalAlpha=m.act5Environment ? .78 : .54;
+      g.drawImage(p.image,p.x-ox,p.y-oy);g.restore();
+    }
+  }
+  function drawRoadTails(ctx,m,cam){
+    if(m.boardwalkTail){
+      const f=SpriteAssets.getFrame(SpriteAssets.maps.props.act2_boardwalk_y,0);
+      for(const d of m.boardwalkTail)SpriteAssets.drawFrame(ctx,f,U.isoX(d.x,d.y)-cam.x,U.isoY(d.x,d.y)-cam.y,{scale:d.scale});
+    }
+    for(const l of m.landings||[])if(l.tail){
+      const p=landingPaint(m,l);ctx.save();
+      ctx.transform(1,.5,-1,.5,-cam.x,-cam.y-TerrainSurface.heightAt(m,l.x,l.y)*14);
+      ctx.drawImage(p.verge,p.x,p.y);ctx.restore();
+    }
+  }
   function build(m,cx,cy){
     const surface=canvas(SIDE),g=surface.getContext('2d');
     const ox=(cx*CHUNK-PAD)*TILE,oy=(cy*CHUNK-PAD)*TILE,ground=SpriteAssets.maps.props[groundMaterialKey(m)];
@@ -228,9 +300,19 @@ const LevelTerrain = (() => {
       const id=SpriteAssets.maps.props[d.type];
       if(!decalFrames.has(id))decalFrames.set(id,SpriteAssets.getFrame(id,0));
       const f=decalFrames.get(id),s=d.scale||1;
-      g.save();g.setTransform(.5,-.5,1,1,x,y);g.scale(d.turn?-s:s,s);g.globalAlpha=d.alpha??1;
+      g.save();g.setTransform(1,0,0,1,x,y);
+      if(d.runLength){
+        // The rail ends in the 184×139 painting are 141px apart in x.
+        // Fit only the longitudinal axis to the segment, retaining the gauge.
+        const stretch=d.runLength/(141/32);
+        g.scale(d.turn?1:stretch,d.turn?stretch:1);
+      }
+      g.transform(.5,-.5,1,1,0,0);g.scale(d.turn?-s:s,s);
+      if(d.type==='frontier_tracks')g.transform(1,.5-113/141,0,1,0,0);
+      g.globalAlpha=d.alpha??1;
       g.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,-f.anchorX,-f.anchorY,f.sw,f.sh);g.restore();
     }
+    drawLandings(g,m,ox,oy,SIDE,SIDE);
     return surface;
   }
   function tileTexture(m,x,y){
@@ -585,7 +667,7 @@ const LevelTerrain = (() => {
     }
   }
   const imperialMaterial=key=>material(SpriteAssets.maps.props[key],0,false,true);
-  return Object.freeze({beginFrame,drawTile,drawSurfaceTile,drawEnvironmentBackdrop,drawSurface,drawFloor,clipBehind,endFrame,getDiagnostics,imperialMaterial,groundMaterialKey,resetView:releaseSurfaceView});
+  return Object.freeze({beginFrame,drawTile,drawSurfaceTile,drawEnvironmentBackdrop,drawSurface,drawFloor,drawLandings,drawRoadTails,clipBehind,endFrame,getDiagnostics,imperialMaterial,groundMaterialKey,resetView:releaseSurfaceView});
 })();
 
 /* Complete painted Act I sections follow collision contours. */
@@ -1023,6 +1105,26 @@ const ImperialEnvironment=(()=>{
     else{const mask=g.createLinearGradient(0,f.sh*.65,0,f.sh);mask.addColorStop(0,'white');mask.addColorStop(1,'transparent');g.fillStyle=mask;g.fillRect(0,0,f.sw,f.sh);}
     const result={...f,image,sx:0,sy:0};softFrames.set(key,result);return result;
   }
+  function passageFrame(f){
+    const key=f.id+':sill';if(softFrames.has(key))return softFrames.get(key);
+    const image=document.createElement('canvas');image.width=f.sw;image.height=f.sh;
+    const g=image.getContext('2d',{willReadFrequently:true});
+    g.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,0,0,f.sw,f.sh);
+    const pixels=g.getImageData(0,0,f.sw,f.sh),rgba=pixels.data;
+    // Each painting carries its own piece of sand or paving. Bury its outer
+    // lip following the painted silhouette, preserving the jambs above it.
+    const depth=Math.round(f.sh*.135);
+    for(let x=0;x<f.sw;x++){
+      let bottom=f.sh-1;
+      while(bottom>=0&&rgba[(bottom*f.sw+x)*4+3]<32)bottom--;
+      for(let y=Math.max(Math.floor(f.sh*.62),bottom-depth);y<=bottom;y++){
+        const t=Math.min(1,(bottom-y)/depth);
+        rgba[(y*f.sw+x)*4+3]*=t*t*(3-2*t);
+      }
+    }
+    g.putImageData(pixels,0,0);
+    const result={...f,image,sx:0,sy:0};softFrames.set(key,result);return result;
+  }
   function assembly(m,reference){
     const getFrame=reference||SpriteAssets.getFrame;
     const e=m.act3.environment;let result=cache.get(e);if(result&&!reference)return result;
@@ -1051,7 +1153,8 @@ const ImperialEnvironment=(()=>{
     for(const t of e.passages){
       for(const p of t.parts||[])add(parts,p.asset,p.x,p.y,{span:p.span,doorJoin:true});
       const o=t.opening,asset='a3passage_'+t.family+'_'+(t.interior?'in':'out')+'_'+(o.axis?'south':'east');
-      add(parts,asset,o.x,o.y,{span:o.halfWidth*2,passage:t});
+      const f=getFrame(SpriteAssets.maps.props[asset],0);
+      add(parts,asset,o.x,o.y,{span:o.halfWidth*2,passage:t,f:reference?f:passageFrame(f)});
     }
     for(const f of e.foundations)add(ground,f.asset,f.x,f.y,{scale:f.scale*.75});
     result={parts,ground};if(!reference)cache.set(e,result);return result;
@@ -1505,8 +1608,10 @@ const CathedralEnvironment=(()=>{
     for(const th of m.thresholds||[]){
       if(!th.environmentDoor)continue;
       const {x,y}=th.opening;ctx.save();ctx.transform(32,16,-32,16,U.isoX(x,y)-cam.x,U.isoY(x,y)-cam.y);
-      const shade=ctx.createLinearGradient(0,-3,0,2);shade.addColorStop(0,'rgba(7,8,14,.98)');shade.addColorStop(.5,'rgba(7,8,14,.72)');shade.addColorStop(1,'rgba(7,8,14,0)');
-      ctx.fillStyle=shade;ctx.fillRect(-1.6,-3,3.2,5);ctx.restore();
+      ctx.scale(2.5,1.55);
+      const shade=ctx.createRadialGradient(0,-.3,.12,0,-.3,1);
+      shade.addColorStop(0,'rgba(7,8,14,.69)');shade.addColorStop(1,'rgba(7,8,14,0)');
+      ctx.fillStyle=shade;ctx.fillRect(-1,-1.3,2,2);ctx.restore();
     }
   }
   function append(draws,m,cam,player,W,H){
@@ -1537,7 +1642,23 @@ const CathedralEnvironment=(()=>{
     const local=px-d.wx,baseY=d.wy+local*d.slope;
     if(p.x+p.y<d.d+.5&&local>-24&&local<d.span+24&&py>baseY-d.height-20&&py<baseY+20)ctx.globalAlpha*=.24;
     ctx.transform(1,d.slope,0,1,d.sx,d.sy);
-    if(d.door||d.pier){const f=d.f;ctx.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,0,-f.sh+(d.pier?16:0),f.sw,f.sh);}
+    if(d.door||d.pier){
+      const f=d.f;
+      if(d.door){
+        // What is visible through the pointed arch is an inset vault. Its
+        // second arch and worn steps sit behind the actual painted jambs.
+        ctx.save();ctx.beginPath();ctx.rect(f.sw*.36,-f.sh*.79,f.sw*.28,f.sh*.79);ctx.clip();
+        const shadow=ctx.createLinearGradient(0,-f.sh*.7,0,0);
+        shadow.addColorStop(0,'#0d1018');shadow.addColorStop(.72,d.kit==='ash'?'#29221f':'#1f2330');shadow.addColorStop(1,'#42434a');
+        ctx.fillStyle=shadow;ctx.fillRect(f.sw*.35,-f.sh*.8,f.sw*.3,f.sh*.8);
+        ctx.globalAlpha*=.38;ctx.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,f.sw*.16,-f.sh*.73,f.sw*.64,f.sh*.64);
+        ctx.fillStyle=ctx.createPattern(texture('floor_'+d.kit),'repeat');
+        ctx.beginPath();ctx.moveTo(f.sw*.4,-21);ctx.lineTo(f.sw*.58,-21);ctx.lineTo(f.sw*.65,0);ctx.lineTo(f.sw*.36,0);ctx.closePath();ctx.fill();
+        ctx.fillStyle='#a49e91';for(const depth of [3,11,18])ctx.fillRect(f.sw*.36,-depth,f.sw*.28,1);
+        ctx.restore();
+      }
+      ctx.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,0,-f.sh+(d.pier?16:0),f.sw,f.sh);
+    }
     else{
       const tex=texture('wall_'+d.kit),uv=((d.uv%tex.width)+tex.width)%tex.width;
       ctx.save();ctx.beginPath();ctx.rect(-.5,-d.height,d.span+1,d.height);ctx.clip();ctx.translate(-uv,-tex.height);

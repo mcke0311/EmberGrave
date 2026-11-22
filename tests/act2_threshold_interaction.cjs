@@ -30,7 +30,8 @@ const fs=require('node:fs');
       origin=candidates[0];
      }
      g.__act2.place(origin.x,origin.y);g.__act2.render();
-     const cam=g.__act2.camera(),x=r.api.U.isoX(o.x,o.y)-cam.x,y=r.api.U.isoY(o.x,o.y)-cam.y-(target==='label'?o.height+14:20);
+     const cam=g.__act2.camera(),x=r.api.U.isoX(o.x,o.y)-cam.x,baseY=r.api.U.isoY(o.x,o.y)-cam.y;
+     const y=target==='label'?Math.max(20,baseY-(t.labelHeight||o.height)-10):baseY-20;
      g.__act2.setMouse(x,y);g.__act2.render();
      if(g.__act2.hoveredExit()!==ex)throw Error('Hover missed '+id+'/'+target);
      const start={x:g.state.player.x,y:g.state.player.y};

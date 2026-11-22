@@ -39,6 +39,11 @@ ok(sample.instances.some(p=>p.prop.interact==='shrine'),'travel shrine');
 ok(sample.materials.length>0,'separate materials');
 const used=sample.instances.find(p=>p.familyId);ok(used.states[0].index!==used.states[1].index,'deserted art');
 const shrine=sample.instances.find(p=>p.prop.interact==='shrine');ok(shrine.states[0].index!==shrine.states[1].index,'attuned art');
+const expedition=R.inspect('deepfreeze_cavern').instances.filter(o=>o.prop.type==='grave');
+for(const source of expedition){
+  ok(source.states.some(s=>s.label==='Corpse consumed'),'frozen corpse preview');
+  ok(source.states.some(s=>s.label==='Searched')===!!source.prop.searchable,'frozen search preview');
+}
 const story=R.inspect('arena_mire_mother').instances.find(p=>p.storyId==='mire_shard');ok(story.references.placement.some(r=>r.symbol.includes('STORY_OBJECTS')),'Mire Mother shard placement reference');
 for(const zone of ['fields','forest','shardpeak_shrine','hollow_reeds','shard_flats']){
   const landmark=R.inspect(zone).instances.find(p=>p.assetId==='world.props.quest_landmarks');

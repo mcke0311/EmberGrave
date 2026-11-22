@@ -27,6 +27,18 @@ test('solo loading rerolls geometry, preserves progress, and keeps every session
  assert.ok(await G.setDifficulty(0));await G.enterMap('mines','from_wild');assert.equal(G.state.map,mine);assert.ok(container.opened);assert.ok(!G.state.monsters.includes(enemy));
  assert.ok(await G.setDifficulty(1));await G.enterMap('mines','from_wild');assert.equal(G.state.map,nightmare);assert.ok(nightmareContainer.opened);
  assert.ok(await G.setDifficulty(0));
+ await G.enterMap('deepfreeze_cavern','default');
+ const cave=G.state.map,traveler=G.state.player,body=cave.props.find(p=>p.dressingSite&&p.searchable);
+ const other=cave.props.find(p=>p!==body&&p.type==='grave');
+ assert.ok(body&&other,'the expedition has multiple corpse sources');
+ Object.assign(traveler,{x:body.x,y:body.y,surfaceId:body.surfaceId||0});
+ G.interact(body);assert.ok(traveler.action?.propInteraction);
+ G.state.time+=.4;vm.runInContext('PropInteractions',f.ctx).update(G.state);
+ assert.ok(body.searched);assert.ok(G.corpseFromGrave(traveler,body,.75));
+ await G.enterMap('north_wild','default');await G.enterMap('deepfreeze_cavern','default');
+ const revisited=G.state.map.props.find(p=>p.propId===body.propId);
+ assert.equal(revisited,body);assert.ok(revisited.searched&&revisited.corpseConsumed);
+ assert.ok(!other.searched&&!other.corpseConsumed);
  for(const zone of ['sand_tombs','cathedral1','cathedral2']){
   await G.enterMap(zone,'default');const map=G.state.map;
   await G.enterMap('frosthaven','default');await G.enterMap(zone,'default');assert.equal(G.state.map,map,zone+' changed on re-entry');
@@ -35,6 +47,78 @@ test('solo loading rerolls geometry, preserves progress, and keeps every session
  G.state.player.dead=true;assert.ok(await G.retryBossArena());assert.equal(G.state.map,arena);
  G.saveAndQuit();await G.loadGame(slot);assert.equal(G.state.sessionSeed,102);assert.equal(G.state.seed,77);
  await G.enterMap('mines','from_wild');assert.notEqual(hash(G.state.map),identity);assert.ok(G.state.flags.dead_korvath);
+});
+
+test('painted props meet their fixtures, aisles and approach tracks',()=>{
+ const {context}=fixture(),{M,U}=vm.runInContext('({M:MapGen,U})',context);
+ const camp=M.generate('marshcamp',12345);
+ const shop=camp.props.find(p=>p.type==='workshop'),forge=camp.props.find(p=>p.interact==='forge');
+ assert.ok(U.isoX(forge.x,forge.y)<U.isoX(shop.x,shop.y));
+ assert.equal(shop.flipX,true,'the workshop opening faces its forge on the left');
+ assert.ok(camp.lights.some(l=>l.x===shop.x+1.1&&l.y===shop.y-.4),'the window light follows the mirrored workshop');
+
+ const church=M.generate('cathedral1',12345),pews=church.props.filter(p=>p.type==='cathedral_pews');
+ assert.ok(pews.length);
+ for(const pew of pews){
+  const f=pew.footprint;
+  assert.equal(pew.flipX,f.x1-f.x0>f.y1-f.y0,'the bench runs along its occupied row');
+ }
+
+ const mine=M.generate('mines',12345),o=mine.thresholds.find(t=>t.kit==='mine').opening;
+ // End of the pair of rails painted into the entrance, measured from its anchor.
+ const tipX=U.isoX(o.x,o.y)+(o.axis?125:-125),tipY=U.isoY(o.x,o.y)+105;
+ assert.ok(mine.frontier.decals.some(d=>{
+  if(d.type!=='frontier_tracks'||d.turn===!!o.axis)return false;
+  const x=d.x-(d.turn?0:d.runLength/2),y=d.y-(d.turn?d.runLength/2:0);
+  return Math.hypot(U.isoX(x,y)-tipX,U.isoY(x,y)-tipY)<2;
+ }),'the working track starts at the painted rails');
+});
+
+test('expedition and Ashen Fields sites retain their seeded resources and legacy save identities',()=>{
+ const f=fixture(),{M,P}=vm.runInContext('({M:MapGen,P:PropInteractions})',f.context);
+ const cave=M.generate('deepfreeze_cavern',12345),graves=cave.props.filter(p=>p.type==='grave');
+ assert.equal(cave.layoutVersion,3);
+ assert.equal(graves.length,6);assert.equal(graves.filter(p=>p.searchable).length,3);
+ assert.deepEqual(new Set(graves.map(p=>p.dressingSite)),new Set(['gallery-graves','shelf-graves','cache-graves','forward-stores']));
+ const firstPack=cave.monsterSpawns.slice().sort((a,b)=>{
+  const spawn=cave.spawns.default;return Math.hypot(a.x-spawn.x,a.y-spawn.y)-Math.hypot(b.x-spawn.x,b.y-spawn.y);
+ })[0];
+ const stores=graves.filter(p=>p.dressingSite==='forward-stores');
+ assert.ok(stores.some(p=>Math.hypot(p.x-firstPack.x,p.y-firstPack.y)<=15));
+ for(const p of stores)for(const step of [1,2])assert.equal(cave.walls[(p.x|0)+step+((p.y|0)+step)*cave.w],0);
+ assert.ok(cave.props.some(p=>p.type==='cart'&&p.dressingSite==='forward-stores'));
+ assert.deepEqual(new Set(cave.props.filter(p=>p.remainsSite&&p.searchable).map(p=>p.remainsSite)),new Set(['gallery','shelf']));
+ for(const p of graves){
+  const state={map:cave,time:1},fresh=P.sample(p,state),used=P.sample({...p,corpseConsumed:true},state);
+  assert.match(fresh.family,/^frozen_(miner|traveler)$/);assert.notEqual(used.index,fresh.index);
+  assert.match(p.propId,/^deepfreeze_cavern:grave:/);
+ }
+ assert.ok(!cave.props.some(p=>p.type==='deadtree'));
+ assert.ok(!cave.frontier.decals.some(d=>d.type==='frontier_rubble'));
+ const marsh=M.generate('weeping_marsh',12345),reeds=marsh.props.filter(p=>p.type==='reed_clump'&&p.dressingSite);
+ assert.ok(reeds.length>0);
+ for(const p of reeds){
+  const i=(p.x|0)+(p.y|0)*marsh.w;
+  assert.ok([1,-1,2,-2,marsh.w,-marsh.w,2*marsh.w,-2*marsh.w].some(d=>marsh.act2.water[i+d]));
+ }
+ const votives=marsh.props.filter(p=>p.type==='votives');
+ assert.ok(votives.length>0);
+ for(const p of votives)assert.ok(marsh.props.some(shrine=>p.dressingSite==='votives-'+shrine.propId&&Math.hypot(p.x-shrine.x,p.y-shrine.y)<8));
+ const fields=M.generate('fields',12345),goods=fields.props.filter(p=>p.breakable&&!p.behavior);
+ assert.equal(goods.length,95);
+ for(const pattern of [/^farmstead-/,/^camp-/,/^trail-stop-/])assert.ok(goods.some(p=>pattern.test(p.dressingSite)));
+ const burials=fields.props.filter(p=>p.type==='grave');
+ for(const site of ['chapelruin','cryptdoor'])assert.ok(burials.some(p=>p.dressingSite===site));
+ assert.ok(burials.some(p=>p.dressingSite?.startsWith('battlefield-')));
+ const box=goods.find(p=>p.type==='crate'&&p.blocks&&p.dressingSite),grave=burials.find(p=>p.blocks&&p.dressingSite);
+ const untouched=goods.find(p=>p!==box&&p.dressingSite===box.dressingSite);
+ assert.ok(untouched);
+ // Older rows without a propId carry the original v2 coordinates.
+ const legacy=(p,changes)=>{const [x,y]=p.propId.split(':').slice(-2).map(Number);return {type:p.type,x,y,...changes};};
+ f.CoopCodec.restoreProps(fields,[legacy(grave,{corpseConsumed:true}),legacy(box,{broken:true,breakable:false})]);
+ assert.ok(grave.corpseConsumed&&box.broken);
+ for(const p of [grave,box]){assert.equal(p.blocks,false);assert.equal(fields.blocked[(p.x|0)+(p.y|0)*fields.w],0);}
+ assert.ok(untouched.breakable&&untouched.blocks&&!untouched.broken);
 });
 
 test('generation retries eight deterministic layouts before using the authored fallback',()=>{

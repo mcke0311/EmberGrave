@@ -63,7 +63,11 @@ const WorldReference = (() => {
     if(p.ev){const e=p.ev;return ({ambush:'Ambush site: triggers '+e.count+' enemies and a cache on clearing.',buff:'Blessing shrine: '+e.buff?.dur+' seconds. '+Object.entries(e.buff?.stats||{}).map(([k,v])=>k+' +'+v).join(', '),cache:'Event cache: '+e.drops+' loot rolls.',gold:'Gold cache.',heal:'Restores '+Math.round(e.frac*100)+'% health'+(e.mana?' and mana':'')+'.',xp:'Grants experience.',curse:'Cursed altar: elite encounter and reward.',glyph:'Grants glyph rewards.'})[e.kind]||title(e.kind);}
     if(p.interact==='shrine')return 'Travel shrine / waystone. Attunement unlocks travel to this level.';
     if(p.storyId){const o=DATA.STORY_OBJECTS[m.id]?.find(o=>o.id===p.storyId);return (o?.text||'Campaign story object.')+(o?.requireKill?' Requires defeating '+(DATA.ENEMIES[o.requireKill]?.name||o.requireKill)+'.':'');}
-    if(p.searchable)return 'Search once for loot. Corpse consumption and searching are tracked separately.';
+    if(p.type==='grave'&&!p.event){
+      const loot=p.searchable?' It can also be searched once for loot.':p.breakable?' It can also be broken for loot.':'';
+      return 'A Gravebinder can draw one corpse from these remains.'+loot;
+    }
+    if(p.searchable)return 'Search once for loot.';
     if(p.breakable)return 'Destructible container; broken state persists for this expedition.';
     if(p.lootable)return 'Loot container; opened state persists for this expedition.';
     if(p.interact)return 'Interaction: '+p.interact+'.';
@@ -73,6 +77,7 @@ const WorldReference = (() => {
     const placement=[ref('js/mapgen.js',owner?.includes(' / ')?owner.split(' / ').slice(1).join(' / '):owner&&owner!=='LevelTerrain.build'?owner:generator(m),'Placement and quantity for '+m.id)];
     if(owner&&/Environment|Boundaries|Architecture|LevelTerrain/.test(owner))placement.push(ref('js/level_terrain.js',owner.split(' / ')[0],'Environment assembly and artwork selection'));
     const actions=[];
+    if(p.dressingSite)placement.push(ref('js/mapgen.js','dressingSites / arrangeMapProps','Placed at '+p.dressingSite));
     if(p.journeySite||p.journeyClue||p.aftermath){
       placement.push(ref('js/mapgen.js','placeQuestLandmarks','Reachable quest landmarks and clues'));
       actions.push(ref('js/game.js',p.aftermath?'syncStoryObjects':'syncJourneyWorld','Campaign progress and world state'));
@@ -84,6 +89,7 @@ const WorldReference = (() => {
     else if(p.remainsSite||p.searchable){placement.push(ref('js/prop_interactions.js','prepare / BODY_SITES','Searchable remains and grave selection'));}
     if(p.storyId){placement.push(ref('js/data.js','DATA.STORY_OBJECTS.'+m.id+' → '+p.storyId,'Story definition'),ref('js/mapgen.js','generate','Story-object anchors'));actions.push(ref('js/game.js','syncStoryObjects / interactStory','Story progress and conditions'));}
     if(p.interact&&!p.ev&&!p.storyId)actions.push(ref('js/game.js','interact','Interaction entry point'));
+    if(p.type==='grave'&&!p.storyId&&!p.ev&&!p.event)actions.push(ref('js/game.js','corpseFromGrave','Gravebinder corpse source'));
     if(p.interact||p.lootable||p.breakable||p.familySite)actions.push(ref('js/prop_interactions.js','family / sample / profile','Art states and interaction timing'));
     if(!actions.length)actions.push(ref(owner&&owner.includes('Environment')||owner?.includes('Boundaries')?'js/level_terrain.js':'js/mapgen.js',owner||generator(m),'Rendering or placement rules; no interaction'));
     return {placement,art:artReferences(assetId),behavior:actions};
@@ -99,9 +105,10 @@ const WorldReference = (() => {
     const states=[{label:'Unused',prop:{...p},shrines:[]}];
     const family=PropInteractions.family(p);
     if(PropInteractions.themed(p)){
-      const used=p.behavior?'Broken':family==='shrine'?(p.ev?'Spent':'Attuned'):['barrel','crate','urn'].includes(family)?'Broken':p.familySite?'Deserted':family.startsWith('frozen_')||family==='grave'?'Searched':'Used';
-      states.push({label:used,prop:{...p,broken:!!p.behavior,spent:true,opened:true,searched:true,completed:true},shrines:[m.id]});
-      if(family==='grave')states.push({label:'Corpse consumed',prop:{...p,corpseConsumed:true},shrines:[]});
+      const corpse=p.type==='grave'&&!p.storyId&&!p.ev&&!p.event;
+      const used=p.behavior||p.breakable?'Broken':family==='shrine'?(p.ev?'Spent':'Attuned'):['barrel','crate','urn'].includes(family)?'Broken':p.familySite?'Deserted':p.searchable?'Searched':'Used';
+      if(!corpse||p.breakable||p.searchable)states.push({label:used,prop:{...p,broken:!!(p.behavior||p.breakable),spent:true,opened:true,searched:true,completed:true},shrines:[m.id]});
+      if(corpse)states.push({label:'Corpse consumed',prop:{...p,corpseConsumed:true},shrines:[]});
     }else if(p.visualDone||p.type==='chest'||p.questArt!=null)states.push({label:p.behavior?'Broken':'Completed / opened',prop:{...p,broken:!!p.behavior,completed:true,opened:true},shrines:[]});
     return states.map(s=>({label:s.label,...PropInteractions.resolveVisual(s.prop,{map:m,time:100,shrines:s.shrines})}));
   }

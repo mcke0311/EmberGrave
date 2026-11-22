@@ -63,6 +63,37 @@ test('guests travel independently, new guests join in town, and remote worlds ke
   assert.equal(guestUpdates.findLast(m=>m.payload.kind==='snapshot').payload.groups.players.length,1);
 });
 
+test('a returning Gravebinder sees the same searched and consumed expedition remains after reconnecting',async()=>{
+  const f=fixture(),hero=f.hero('Guest','gravebinder');
+  await f.runtime.start({hostId:'host',hero:f.hero('Host'),seed:123});
+  await f.runtime.receive('guest',{kind:'hero',hero});
+  async function visit(id){await travel(f,id,'north_wild');await travel(f,id,'deepfreeze_cavern');}
+  await visit('guest');
+  const cave=f.runtime.worlds.get('deepfreeze_cavern'),guest=f.runtime.players.get('guest');
+  cave.monsters=[];
+  const remains=cave.map.props.filter(p=>p.type==='grave'&&p.dressingSite);
+  const body=remains.find(p=>p.searchable&&remains.some(other=>other!==p&&other.dressingSite===p.dressingSite));
+  assert.ok(body,'searchable remains have a neighbor');
+  const neighbor=remains.find(p=>p!==body&&p.dressingSite===body.dressingSite);
+  Object.assign(guest,{x:body.x,y:body.y,surfaceId:body.surfaceId||0});
+  await command(f,'guest',{type:'interact',targetId:body._coopId});
+  for(let i=0;i<16;i++){f.runtime.tick(.05);await cave._queue;}
+  assert.equal(body.searched,true);assert.ok(!body.corpseConsumed);
+  assert.ok(f.Game.coop.withWorld(cave,()=>f.Game.corpseFromGrave(guest,body,.75)));
+  assert.equal(body.corpseConsumed,true);assert.ok(!neighbor.searched&&!neighbor.corpseConsumed);
+  await travel(f,'guest','north_wild');await travel(f,'guest','deepfreeze_cavern');
+  assert.equal(cave.map.props.find(p=>p.propId===body.propId),body);
+  await f.runtime.depart('guest');await f.runtime.receive('reconnected',{kind:'hero',hero});
+  await visit('reconnected');await f.runtime.receive('reconnected',{kind:'resync'});
+  const snap=f.messages.findLast(m=>m.to==='reconnected'&&m.payload?.kind==='snapshot').payload;
+  const used=snap.props.find(p=>p.propId===body.propId),fresh=snap.props.find(p=>p.propId===neighbor.propId);
+  assert.equal(snap.zone,cave.map.id);assert.equal(snap.layoutVersion,3);
+  assert.deepEqual([used._coopId,used.x,used.y],[body._coopId,body.x,body.y]);
+  assert.ok(used.searched&&used.corpseConsumed);assert.ok(!fresh.searched&&!fresh.corpseConsumed);
+  const back=f.runtime.players.get('reconnected');Object.assign(back,{x:used.x,y:used.y});
+  assert.equal(f.Game.coop.withWorld(cave,()=>f.Game.corpseFromGrave(back,body,.75)),null);
+});
+
 test('early survivor rescues commit once, roll back failed saves, and survive host acceptance',async()=>{
   const f=await session();await travel(f,'guest','north_wild');await travel(f,'guest','mines');
   const mines=f.runtime.worlds.get('mines'),town=f.runtime.worlds.get('frosthaven'),guest=f.runtime.players.get('guest'),host=f.runtime.players.get('host');

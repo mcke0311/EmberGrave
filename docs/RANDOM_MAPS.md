@@ -35,6 +35,19 @@ nearby supported reachable ground. Generation allows eight deterministic planner
 attempts, then uses the original authored composition as a checked fallback.
 Generation failures and retry counts are available in the map metadata.
 
+After encounters and objectives are in place, the layout seats loose supplies,
+remains, and scenery at local landmarks. Ashen Fields supplies gather at carts,
+farms, and camps. Deepfreeze uses frozen expedition remains in the gallery, on
+the shelf, and at the stores. When a seed provided resources near the first
+encounter, a patrol burial or a forward supply stop can serve that approach.
+Each usable object keeps its original identity and loot or corpse state when
+its position changes.
+
+Carts and mine rails follow the route through their site. Workshops face their
+forge, boats follow the bank, and cathedral furnishings follow their footprint.
+Each passage pairs its painted opening with a reachable approach. The wall axis
+also sets the direction of its landing and pointer target.
+
 ## Seeds and metadata
 
 `MapGen.generate(zoneId, worldSeed)` remains deterministic for an explicit unsigned
@@ -43,7 +56,7 @@ Generation failures and retry counts are available in the map metadata.
 | Field | Meaning |
 | --- | --- |
 | `layoutSeed` | Requested area generation seed |
-| `layoutVersion` | Generator compatibility version, currently 1 |
+| `layoutVersion` | Generator compatibility version, currently 3 |
 | `layoutAttemptSeed` | Seed used by the successful attempt |
 | `layoutAttempts` | Number of attempts, at most 9 including fallback |
 | `layoutFallback` | Whether the authored fallback was used |

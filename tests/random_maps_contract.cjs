@@ -6,7 +6,7 @@ const seedCount=Number(process.argv.find(a=>a.startsWith('--seeds='))?.split('='
 const selected=process.argv.find(a=>a.startsWith('--zone='))?.split('=')[1];
 const ctx=vm.createContext({console,Math,performance,document:{createElement:()=>({getContext:()=>({createImageData:(w,h)=>({data:new Uint8ClampedArray(w*h*4)}),putImageData(){}})})}});
 for(const name of ['utils','data','data_overrides','boss_encounters','sprite_manifest','prop_interactions','mapgen','navigation'])vm.runInContext(fs.readFileSync('js/'+name+'.js','utf8'),ctx);
-const {M,D,N,S}=vm.runInContext('({M:MapGen,D:DATA,N:TerrainNavigation,S:TerrainSurface})',ctx);
+const {M,D,N,S,P}=vm.runInContext('({M:MapGen,D:DATA,N:TerrainNavigation,S:TerrainSurface,P:PropInteractions})',ctx);
 const zones=Object.values(D.ZONES).filter(z=>!z.arena&&!z.opening&&!['town','camp'].includes(z.kind)).map(z=>z.id);
 const seeds=[0,1,123,12345,4294967295,...Array.from({length:Math.max(0,seedCount-5)},(_,i)=>Math.imul(i+37,2654435761)>>>0)].slice(0,seedCount);
 const geometry=m=>crypto.createHash('sha256').update(Buffer.from(m.act2?.water||m.walls)).update(Buffer.from(m.elev)).update(m.void?Buffer.from(m.void):'').update(JSON.stringify(m.ramps||[])).digest('hex');
@@ -30,6 +30,30 @@ function reachable(m){
   }
  }return seen;
 }
+function checkDressedProps(m,seen,ok,tag){
+ for(const ex of m.exits){
+  const t=m.thresholds?.find(t=>t.id===ex.thresholdId);
+  if(ex.doorId){ok(m.props.some(p=>p.doorId===ex.doorId&&p.building),tag+'missing painted arena doorway');continue;}
+  ok(t&&(t.opening.axis===0||t.opening.axis===1),tag+'travel opening has no wall axis');
+  const a=t.approach,o=t.opening,l=m.landings.find(l=>l.x===o.x&&l.y===o.y);
+  if(l)ok((o.axis?l.dy===0:l.dx===0)&&(a.x-o.x)*l.dx+(a.y-o.y)*l.dy>0,tag+'landing faces away from its approach');
+  if(t.act===0)ok(seen[(a.x|0)+(a.y|0)*m.w]&&N.clear(m,a.x,a.y,.36),tag+'Marches passage approach is blocked');
+ }
+ for(const p of m.props.filter(p=>p.dressingSite||p.arenaRemains)){
+  const tile=(p.x|0)+(p.y|0)*m.w;
+  ok(!m.walls[tile]&&!m.hazard[tile]&&!m.void?.[tile]&&!m.act2?.water[tile]&&!!m.blocked[tile]===p.blocks,tag+'invalid placement '+p.propId);
+  if(p.light)ok(m.lights.some(l=>l.x===p.x&&l.y===p.y),tag+'detached light '+p.propId);
+  if(m.act2Visual)ok(m.act2Visual.lamps.every(l=>Math.hypot(l.x-p.x,l.y-p.y)>=1.7),tag+'overlapping lantern '+p.propId);
+  if(p.type==='grave'||p.interact||p.lootable||p.breakable){
+   const approach=[[0,0],...S.directions].some(([dx,dy])=>{
+    const x=p.x+dx,y=p.y+dy;
+    return seen[(x|0)+(y|0)*m.w]&&N.clear(m,x,y,.36)&&(!m.surfaceVersion||S.supported(m,x,y,.36))&&
+      P.reachable({map:m},p,{x,y,surfaceId:p.surfaceId});
+   });
+   ok(approach,tag+'no interaction approach '+p.propId);
+  }
+ }
+}
 async function audit(zone){
  let checks=0,fallbacks=0,attempts=0;const hashes=new Set(),graphs=new Set(),positions=new Map(),times=[];
  const ok=(value,label)=>{checks++;assert.ok(value,zone+': '+label);};
@@ -40,6 +64,7 @@ async function audit(zone){
    ...m.props.filter(p=>(p.interact||p.lootable||p.storyId)&&!p.blocks),...m.exits.map(e=>({x:(e.x0+e.x1)/2,y:(e.y0+e.y1)/2})),
    ...(m.thresholds||[]).flatMap(t=>[t.approach,t.arrival].filter(Boolean))];
   for(const p of targets)ok(seen[(p.x|0)+(p.y|0)*m.w]&&N.clear(m,p.x,p.y,.36)&&(!m.surfaceVersion||S.supported(m,p.x,p.y,.36)),tag+'unreachable '+(p.id||p.type||'arrival')+' '+p.x+','+p.y);
+  checkDressedProps(m,seen,ok,tag);
   for(const p of Object.values(m.spawns))ok(!m.hazard[(p.x|0)+(p.y|0)*m.w],tag+'dangerous arrival');
   if(m.act2)for(let i=0;i<m.act2.water.length;i++)if(m.act2.water[i])ok(m.blocked[i]&&!m.hazard[i],tag+'scenic water must block walking');
   for(const p of m.monsterSpawns){const radius=.34*(D.ENEMIES[p.id].big||1)*(p.elite?1.18:1);ok(N.clear(m,p.x,p.y,radius)&&(!m.surfaceVersion||S.supported(m,p.x,p.y,radius)),tag+'unsupported enemy footprint '+p.id);}
@@ -72,6 +97,12 @@ async function audit(zone){
 }
 if(selected){audit(selected).catch(e=>{console.error(e.stack);process.exitCode=1;});}
 else{
+ const fixed=Object.keys(D.ZONES).filter(id=>!zones.includes(id));
+ for(const zone of fixed)for(const seed of seeds.slice(0,5)){
+  const m=M.generate(zone,seed);
+  checkDressedProps(m,reachable(m),assert.ok,zone+' '+seed+' ');
+ }
+ console.log('PASS '+fixed.length+' fixed areas: prop footprints and approaches');
  const pending=[...zones],rows=[];let failed=false;
  async function worker(){while(pending.length&&!failed){const zone=pending.shift();await new Promise((resolve,reject)=>{
    const child=spawn(process.execPath,['--preserve-symlinks','--preserve-symlinks-main',__filename,'--zone='+zone,'--seeds='+seedCount],{cwd:process.cwd(),stdio:['ignore','pipe','pipe']});

@@ -24,7 +24,7 @@ const passages=[['north_wild',1],['north_wild',2],['north_wild',3],['north_wild'
     g.__frontier.place(start.x,start.y);g.__frontier.render();
     const canvas=r.win.document.querySelector('#view'),frame=document.querySelector('iframe'),rect=frame.getBoundingClientRect(),scale=rect.width/frame.clientWidth;
     const x=U.isoX(t.x,t.y)-U.isoX(start.x,start.y)+canvas.width/2;
-    const y=U.isoY(t.x,t.y)-U.isoY(start.x,start.y)+(S.heightAt(m,start.x,start.y)-S.heightAt(m,t.x,t.y))*14+canvas.height/2+20-t.opening.height-14;
+    const y=Math.max(20,U.isoY(t.x,t.y)-U.isoY(start.x,start.y)+(S.heightAt(m,start.x,start.y)-S.heightAt(m,t.x,t.y))*14+canvas.height/2+20-(t.labelHeight||t.opening.height)-10);
     return {image:canvas.toDataURL('image/webp',.92),click:{x:rect.left+x*scale,y:rect.top+y*scale},target:m.exits[index].target,
       start,approach:t.approach,threshold:{x:t.x,y:t.y,axis:t.axis},returnKey:m.exits[index].spawnKey};
    },{width,zone,index});

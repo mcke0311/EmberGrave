@@ -2865,8 +2865,7 @@ const Game = (() => {
       const th=state.map.thresholds?.find(t=>t.id===ex.thresholdId);
       if(!th||th.act!==3)continue;
       const g=thresholdGeometry(th,ex,cam);
-      if((Math.abs(mouse.x-g.x)<g.width&&mouse.y>g.y-g.height&&mouse.y<g.y+18)||
-        (g.showLabel&&Math.abs(mouse.x-g.x)<g.labelWidth/2&&mouse.y>g.labelY-16&&mouse.y<g.labelY+7)){
+      if(thresholdHit(g,mouse.x,mouse.y)){
         hoverExit=ex;return;
       }
     }
@@ -2876,14 +2875,14 @@ const Game = (() => {
          clicking the VISIBLE sprite — not just its base — registers */
       if (pr.building) {
         const frame = propSpriteFrame(pr);
-        const anchorX=pr.flipX?frame.sw-frame.anchorX:frame.anchorX;
         const sx=U.isoX(pr.x,pr.y)-cam.x,sy=U.isoY(pr.x,pr.y)-cam.y-elevLift(pr.x,pr.y,pr.surfaceId);
-        if (mouse.x>=sx-anchorX && mouse.x<=sx-anchorX+frame.sw && mouse.y>=sy-frame.anchorY && mouse.y<=sy-frame.anchorY+frame.sh) { hoverProp=pr;return; }
+        const b=PropInteractions.bounds(frame,sx,sy,propFlip(pr),propScale(pr));
+        if (mouse.x>=b.x && mouse.x<=b.x+b.w && mouse.y>=b.y && mouse.y<=b.y+b.h) { hoverProp=pr;return; }
         continue;
       }
       if(PropInteractions.themed(pr)||pr.behavior){
         const frame=propSpriteFrame(pr),sx=U.isoX(pr.x,pr.y)-cam.x,sy=U.isoY(pr.x,pr.y)-cam.y-elevLift(pr.x,pr.y,pr.surfaceId);
-        const b=PropInteractions.bounds(frame,sx,sy,!!pr.flipX,PropInteractions.scale(pr));
+        const b=PropInteractions.bounds(frame,sx,sy,propFlip(pr),propScale(pr));
         if(!hidden(pr.x,pr.y)&&mouse.x>=b.x-5&&mouse.x<=b.x+b.w+5&&mouse.y>=b.y-5&&mouse.y<=b.y+b.h+5){hoverProp=pr;return;}
         continue;
       }
@@ -2896,8 +2895,7 @@ const Game = (() => {
       const th=state.map.thresholds?.find(t=>t.id===ex.thresholdId);
       if(!th||th.act===3)continue;
       const g=thresholdGeometry(th,ex,cam);
-      if((Math.abs(mouse.x-g.x)<g.width&&mouse.y>g.y-g.height&&mouse.y<g.y+18)||
-        (g.showLabel&&Math.abs(mouse.x-g.x)<g.labelWidth/2&&mouse.y>g.labelY-16&&mouse.y<g.labelY+7)){
+      if(thresholdHit(g,mouse.x,mouse.y)){
         hoverExit=ex;return;
       }
     }
@@ -2936,10 +2934,16 @@ const Game = (() => {
       showLabel:ex===hoverExit||U.dist(state.player.x,state.player.y,pr.x,pr.y)<7};
   }
   function thresholdGeometry(th,ex,cam){
-    const o=th.opening,x=U.isoX(o.x,o.y)-cam.x,y=U.isoY(o.x,o.y)-cam.y-((th.act===1||th.act===3||th.act===5)?surfaceLift(o.x,o.y,th.surfaceId??0):0);
+    const o=th.opening,x=U.isoX(o.x,o.y)-cam.x,y=U.isoY(o.x,o.y)-cam.y-surfaceLift(o.x,o.y,th.surfaceId??0);
     const showLabel=ex===hoverExit||U.dist(state.player.x,state.player.y,th.approach.x,th.approach.y)<7;
-    return{x,y,width:o.halfWidth*32+6,height:o.height,labelY:y-o.height-14,
+    const top=th.labelHeight||o.height;
+    return{x,y,width:o.halfWidth*32+6,height:o.height,slope:o.axis?-.5:.5,labelY:Math.max(20,y-top-10),
       labelWidth:Math.max(120,(ex.label||'Travel').length*8+30),showLabel};
+  }
+  function thresholdHit(g,x,y){
+    const dx=x-g.x,localY=y-g.y-dx*g.slope;
+    return Math.abs(dx)<g.width&&localY>-g.height&&localY<18||
+      g.showLabel&&Math.abs(dx)<g.labelWidth/2&&y>g.labelY-16&&y<g.labelY+7;
   }
 
   /* =====================================================================
@@ -3177,7 +3181,7 @@ const Game = (() => {
     if (!best) return null;
     best.corpseConsumed=true;
     PropInteractions.freeTile(m,best);PropInteractions.effect(best,state,'corpse');
-    Sfx.play('propStone');
+    Sfx.play(PropInteractions.sound(best));
     spawnCorpse(best.x, best.y, 12);
     const husk = state.monsters[state.monsters.length - 1];
     husk.surfaceId=best.surfaceId??self.surfaceId??0;
@@ -3611,6 +3615,7 @@ const Game = (() => {
     LevelTerrain.beginFrame(m);
     try {
     drawBackdrop(m.zone.theme, m, W, H, cam);
+    LevelTerrain.drawRoadTails(ctx,m,cam);
 
     /* visible tile bounds */
     const margin = 96;
@@ -3732,9 +3737,9 @@ const Game = (() => {
       const sx = U.isoX(pr.x, pr.y) - cam.x, sy = U.isoY(pr.x, pr.y) - cam.y;
       if (pr.building || PropInteractions.themed(pr)) {
         const f=propSpriteFrame(pr);
-        const anchorX=pr.flipX?f.sw-f.anchorX:f.anchorX;
         const seated=sy-elevLift(pr.x,pr.y,pr.surfaceId);
-        if(sx-anchorX>W || sx-anchorX+f.sw<0 || seated-f.anchorY>H || seated-f.anchorY+f.sh<0)continue;
+        const b=PropInteractions.bounds(f,sx,seated,propFlip(pr),propScale(pr));
+        if(b.x>W||b.x+b.w<0||b.y>H||b.y+b.h<0)continue;
       } else if (!inView(sx, sy)) continue;
       draws.push({ d: pr.x + pr.y, kind: "prop", sx, sy, pr });
     }
@@ -4262,7 +4267,7 @@ const Game = (() => {
       const desc = isShrine
         ? { label: state.shrines.includes(state.map.id)?"Attuned · Click to travel":"Click to attune this waypoint", color: "#8fb8d0" }
         : (pr.ev ? { label: eventDesc(pr.ev), color: "#c8b890" } : null);
-      const labelY=PropInteractions.themed(pr)?PropInteractions.bounds(propSpriteFrame(pr),sx,sy).y-9:sy-74;
+      const labelY=PropInteractions.themed(pr)?PropInteractions.bounds(propSpriteFrame(pr),sx,sy,propFlip(pr),propScale(pr)).y-9:sy-74;
       nameplate(isShrine ? "✦ Waypoint" : "✦ " + (pr.label || "Event"), sx, labelY,
         hl ? "#ffffff" : (isShrine ? "#9fd8ff" : (pr.ev && pr.ev.color) || "#ffd070"),
         undefined, hl ? desc : null);
@@ -4282,7 +4287,7 @@ const Game = (() => {
         if(g.x+g.width<0||g.x-g.width>W||g.y+24<0||g.y-g.height-40>H)continue;
         if(hl){
           ctx.save();ctx.strokeStyle='rgba(220,214,177,.8)';ctx.lineWidth=1.5;
-          const slope=th.opening.axis?-.5:.5;
+          const slope=g.slope;
           ctx.beginPath();ctx.moveTo(g.x-g.width,g.y-g.width*slope);ctx.lineTo(g.x+g.width,g.y+g.width*slope);ctx.stroke();ctx.restore();
         }
         if(g.showLabel)nameplate('→ '+(ex.label||'Travel'),g.x,g.labelY,hl?'#fff0c5':'#d5d2ba');
@@ -4654,21 +4659,53 @@ const Game = (() => {
     }
   }
 
+  function propFlip(pr){
+    return pr.flipX??(pr.type==='longhouse'&&!!((pr.seed||0)&1));
+  }
+  function propScale(pr){
+    const scale=PropInteractions.scale(pr);
+    if(state.map.act2Visual&&pr.artZone==='act2'){
+      if(pr.type==='reed_clump')return scale*.32;
+      if(pr.type==='votives')return scale*.64;
+    }
+    return scale;
+  }
   const architectureMasks = new Map();
-  function architectureCovers(frame,x,y) {
-    let alpha=architectureMasks.get(frame.id);
+  function architectureCovers(frame,x,y,scale) {
+    const key=frame.id+':'+(frame.index??0);
+    let alpha=architectureMasks.get(key);
     if(!alpha){
       const c=document.createElement('canvas');c.width=frame.sw;c.height=frame.sh;
       const g=c.getContext('2d',{willReadFrequently:true});
       g.drawImage(frame.image,frame.sx,frame.sy,frame.sw,frame.sh,0,0,frame.sw,frame.sh);
-      alpha=g.getImageData(0,0,c.width,c.height).data;architectureMasks.set(frame.id,alpha);
+      alpha=g.getImageData(0,0,c.width,c.height).data;architectureMasks.set(key,alpha);
     }
     // A gate's open passage must stay visible. Fade only painted pixels over
     // the hero's head and shoulders; the sprite bounds include empty air.
     return [[0,0],[-9,12],[9,12],[0,22]].some(([dx,dy])=>{
-      const px=Math.floor(x+dx+frame.anchorX),py=Math.floor(y+dy+frame.anchorY);
+      const px=Math.floor(x+dx/scale+frame.anchorX),py=Math.floor(y+dy/scale+frame.anchorY);
       return px>=0&&py>=0&&px<frame.sw&&py<frame.sh&&alpha[(px+py*frame.sw)*4+3]>64;
     });
+  }
+  let occlusionPatch,occlusionBrush;
+  function revealHero(frame,headX,headY,scale){
+    // Fade just the painted masonry in front of the hero. The surrounding
+    // gate and its two supports retain their weight and position in the wall.
+    if(!occlusionPatch)occlusionPatch=document.createElement('canvas');
+    if(occlusionPatch.width<frame.sw)occlusionPatch.width=frame.sw;
+    if(occlusionPatch.height<frame.sh)occlusionPatch.height=frame.sh;
+    if(!occlusionBrush){
+      occlusionBrush=document.createElement('canvas');occlusionBrush.width=occlusionBrush.height=96;
+      const b=occlusionBrush.getContext('2d'),fade=b.createRadialGradient(48,48,8,48,48,48);
+      fade.addColorStop(0,'rgba(0,0,0,.86)');fade.addColorStop(.54,'rgba(0,0,0,.7)');fade.addColorStop(1,'transparent');
+      b.fillStyle=fade;b.fillRect(0,0,96,96);
+    }
+    const g=occlusionPatch.getContext('2d');g.clearRect(0,0,frame.sw,frame.sh);
+    g.drawImage(frame.image,frame.sx,frame.sy,frame.sw,frame.sh,0,0,frame.sw,frame.sh);
+    g.globalCompositeOperation='destination-out';
+    g.drawImage(occlusionBrush,frame.anchorX+headX-40/scale,frame.anchorY+headY-36/scale,80/scale,98/scale);
+    g.globalCompositeOperation='source-over';
+    return {...frame,image:occlusionPatch,sx:0,sy:0};
   }
   function propVisualType(pr) { return PropInteractions.visualType(pr); }
   function propSpriteFrame(pr) {
@@ -4683,11 +4720,16 @@ const Game = (() => {
     const visualType = propVisualType(pr);
     const propId = SpriteAssets.maps.props[`${pr.artZone || state.map.id}_${visualType}`] || SpriteAssets.maps.props[visualType];
     if (!propId&&!PropInteractions.themed(pr)) throw new Error(`Missing required prop sprite: ${state.map.id}/${pr.type}`);
-    const propFrame = propSpriteFrame(pr);
-    const mirror = !!pr.flipX || pr.type === "longhouse" && (((pr.seed || (pr.x * 17 + pr.y * 31)) | 0) & 1);
+    let propFrame = propSpriteFrame(pr);
+    const mirror=propFlip(pr),scale=propScale(pr);
     // Fade tall architecture only while it covers the hero behind it.
-    const p=state.player, dx=U.isoX(p.x,p.y)-U.isoX(pr.x,pr.y), dy=U.isoY(p.x,p.y)-U.isoY(pr.x,pr.y)-24;
-    const coversHero=pr.building && !pr.interact && p.x+p.y<pr.x+pr.y && Math.abs(dx)<propFrame.sw*.42 && dy>-propFrame.anchorY && dy<0 && (pr.artZone!=='act3'||architectureCovers(propFrame,dx,dy-24-elevLift(p.x,p.y,p.surfaceId)+elevLift(pr.x,pr.y,pr.surfaceId)));
+    const p=state.player;
+    if(pr.building&&!pr.interact&&p.x+p.y<pr.x+pr.y){
+      const dx=(U.isoX(p.x,p.y)-U.isoX(pr.x,pr.y))*(mirror?-1:1)/scale;
+      const dy=(U.isoY(p.x,p.y)-U.isoY(pr.x,pr.y)-elevLift(p.x,p.y,p.surfaceId)+elevLift(pr.x,pr.y,pr.surfaceId)-48)/scale;
+      if(dx>=-propFrame.anchorX-9/scale&&dx<=propFrame.sw-propFrame.anchorX+9/scale&&dy>-propFrame.anchorY-22/scale&&dy<propFrame.sh-propFrame.anchorY&&architectureCovers(propFrame,dx,dy,scale))
+        propFrame=revealHero(propFrame,dx,dy,scale);
+    }
     ctx.save();LevelTerrain.clipBehind(ctx,state.map,camera(),pr.x,pr.y,pr.surfaceId);
     if((pr.journeyClue==='water'||pr.journeySite==='reed_shrine')&&!DATA.CAMPAIGN.site(state,'shrine_herald')){
       ctx.save();ctx.lineWidth=1.4;
@@ -4697,8 +4739,7 @@ const Game = (() => {
         ctx.beginPath();ctx.ellipse(d.sx,d.sy+1,12+(22+16*strength)*phase,4+(7+6*strength)*phase,-.1,0,Math.PI*2);ctx.stroke();}
       ctx.restore();
     }
-    const marshScale=state.map.act2Visual&&pr.artZone==='act2'?(pr.type==='reed_clump'?.32:pr.type==='votives'?.64:1):1;
-    const propOptions={scale:marshScale*PropInteractions.scale(pr),flip:mirror,alpha:coversHero?.4:pr.spent&&!PropInteractions.themed(pr)?.6:1};
+    const propOptions={scale,flip:mirror,alpha:pr.spent&&!PropInteractions.themed(pr) ? .6 : 1};
     if(!PropInteractions.draw(ctx,pr,state,d.sx,d.sy,propOptions))SpriteAssets.drawFrame(ctx, propFrame, d.sx, d.sy, propOptions);
     PropInteractions.drawEffects(ctx,pr,state,d.sx,d.sy,propFrame,pr===hoverProp);
     ctx.restore();

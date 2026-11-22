@@ -57,6 +57,7 @@ const TownTerrain = (() => {
       ctx.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,-f.anchorX,-f.anchorY,f.sw,f.sh);ctx.restore();
     }
     if(m.campaignVisual)CampaignEnvironment.decorateFloor(ctx,m,0,0,Math.max(w,h),SCALE);
+    LevelTerrain.drawLandings(ctx,m,0,0,w,h);
     // Project one continuous surface into the same 32x16 world coordinate system.
     const margin=m.act5Environment?192:0;
     const projected=canvas((m.w+m.h)*32+4+margin*2,(m.w+m.h)*16+4+margin*2),g=projected.getContext('2d');
