@@ -1084,7 +1084,21 @@ const SpriteAssets = (() => {
     return true;
   }
 
+  const COMPANY_POSES = {idle:0, walk:1, attack:2, hit:3, death:4, dead:4};
+  function drawCompanySoldier(ctx, role, pose) {
+    let phase = pose.t || 0;
+    if (pose.state === "walk") phase = ((pose.ex?.walkPh || 0) / TAU) % 1;
+    else if (pose.state === "idle") phase = (phase % 2) / 2;
+    else if (pose.state === "dead") phase = 1;
+    const step = Math.max(0, Math.min(5, Math.floor(phase * 6)));
+    const row = (COMPANY_POSES[pose.state] ?? 0) * 6 + step;
+    const frame = getFrame(manifest.maps.summons[role], row * 8 + direction(pose.ang));
+    drawFrame(ctx, frame, 0, 0);
+    return true;
+  }
+
   function drawActor(ctx, opts, pose) {
+    if (opts.companyRole) return drawCompanySoldier(ctx, opts.companyRole, pose);
     const animated=authoredFrame(pose);
     if(animated){
       const m=authoredTransform(pose,opts);ctx.save();ctx.transform(m.a,m.b,m.c,m.d,m.e,m.f);

@@ -2589,6 +2589,8 @@ def main() -> None:
     install_prop_interactions(entries, maps)
     from import_quest_landmarks import install as install_quest_landmarks
     install_quest_landmarks(entries, maps)
+    from import_vanguard_soldiers import install as install_vanguard_soldiers
+    install_vanguard_soldiers(entries, maps)
     emit_manifest(entries, maps, player_rig_report)
     print(f"Built {len(entries)} sprite assets and {len(maps)} lookup maps")
 

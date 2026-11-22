@@ -33286,6 +33286,22 @@ DATA.SPRITE_MANIFEST = {
       "rows": 7,
       "src": "assets/sprites/packed/actors/summons/bone_golem.webp"
     },
+    "actor.summon.bowman": {
+      "anchor": [
+        47,
+        78
+      ],
+      "bundle": "actors",
+      "cell": [
+        94,
+        98
+      ],
+      "cols": 16,
+      "kind": "atlas",
+      "revision": "b0220a5edb4e",
+      "rows": 15,
+      "src": "assets/sprites/packed/actors/summons/bowman.webp"
+    },
     "actor.summon.decoy": {
       "anchor": [
         96,
@@ -33319,6 +33335,22 @@ DATA.SPRITE_MANIFEST = {
       "revision": "267bcecea33c",
       "rows": 7,
       "src": "assets/sprites/packed/actors/summons/hawk.webp"
+    },
+    "actor.summon.shieldguard": {
+      "anchor": [
+        51,
+        84
+      ],
+      "bundle": "actors",
+      "cell": [
+        102,
+        104
+      ],
+      "cols": 16,
+      "kind": "atlas",
+      "revision": "e0e7c1c172ae",
+      "rows": 15,
+      "src": "assets/sprites/packed/actors/summons/shieldguard.webp"
     },
     "actor.summon.skel_mage": {
       "anchor": [
@@ -33355,6 +33387,22 @@ DATA.SPRITE_MANIFEST = {
       "rows": 7,
       "src": "assets/sprites/packed/actors/summons/skel_warrior.webp",
       "tintKey": "bone"
+    },
+    "actor.summon.standard_bearer": {
+      "anchor": [
+        42,
+        116
+      ],
+      "bundle": "actors",
+      "cell": [
+        122,
+        136
+      ],
+      "cols": 16,
+      "kind": "atlas",
+      "revision": "60f1a81385e8",
+      "rows": 15,
+      "src": "assets/sprites/packed/actors/summons/standard_bearer.webp"
     },
     "actor.summon.wolf": {
       "anchor": [
@@ -60295,10 +60343,13 @@ DATA.SPRITE_MANIFEST = {
       "bear": "actor.summon.bear",
       "boar": "actor.summon.boar",
       "bone_golem": "actor.summon.bone_golem",
+      "bowman": "actor.summon.bowman",
       "decoy": "actor.summon.decoy",
       "hawk": "actor.summon.hawk",
+      "shieldguard": "actor.summon.shieldguard",
       "skel_mage": "actor.summon.skel_mage",
       "skel_warrior": "actor.summon.skel_warrior",
+      "standard_bearer": "actor.summon.standard_bearer",
       "wolf": "actor.summon.wolf"
     },
     "traps": {

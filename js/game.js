@@ -4479,7 +4479,6 @@ const Game = (() => {
   }
   function drawActorVisual(target, opts, pose) {
     if (opts.threePlayer) Player3D.draw(target, opts.threePlayer, pose);
-    else if (opts.companyRole) Player3D.drawSoldier(target,opts.companyRole,pose);
     else {if(opts.playerVisual)throw new Error('Player drawing requires the 3D renderer.');SpriteAssets.drawActor(target, opts, pose);}
   }
   function drawLiveActor(opts, pose, sx, sy, flash, alpha, tint, ground) {

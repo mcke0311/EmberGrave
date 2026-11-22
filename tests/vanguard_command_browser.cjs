@@ -4,10 +4,10 @@ const path = require('node:path');
 const fs = require('node:fs/promises');
 const {chromium} = require('playwright');
 const root = process.env.GAME_REVIEW_URL || 'http://127.0.0.1:8741';
+const workspace = path.resolve(process.env.GAME_REVIEW_DIR || path.join(__dirname,'..'));
 
-async function openHero(context) {
+async function openHero(context, preparePage) {
   if (!process.env.GAME_REVIEW_URL) {
-    const workspace=path.resolve(__dirname,'..');
     await context.route(root+'/**',async route=>{
       const pathname=decodeURIComponent(new URL(route.request().url()).pathname);
       const file=path.resolve(workspace,'.'+pathname);
@@ -18,18 +18,22 @@ async function openHero(context) {
   }
   const page=await context.newPage();
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  const {loadCompletedHero}=await import('./completed_hero_fixture.mjs');
+  await page.addInitScript({content:'window.loadCompanyTestHero = '+loadCompletedHero.toString()});
+  if(preparePage) await preparePage(page);
   await page.goto(root+'/index.html');
   await page.waitForSelector('#titleMenu button',{timeout:120000});
   await page.evaluate(async()=>{
     Sfx.setVol('master',0);
     await Game.newGame('Company QA','vanguard',false);
-    await (await import('/tests/completed_hero_fixture.mjs')).loadCompletedHero(Game);
+    await window.loadCompanyTestHero(Game);
     UI.hideTitle();UI.closeAll();Game.debugFlags.god=true;
   });
   return {page,errors};
 }
 
-(async()=>{
+module.exports={openHero,workspace};
+if(require.main===module)(async()=>{
   const browser=await chromium.launch({channel:'chrome',headless:true});
   try {
     const desktop=await browser.newContext({viewport:{width:1366,height:900}});
@@ -94,11 +98,32 @@ async function openHero(context) {
     const looks=await tab.evaluate(()=>Game.state.player.companySoldiers().map(unit=>{
       const canvas=document.createElement('canvas');canvas.width=144;canvas.height=144;
       const ctx=canvas.getContext('2d');ctx.translate(72,118);
-      Player3D.drawSoldier(ctx,unit.companyRole,{ang:1,state:'idle',t:.1,ex:{}});
+      SpriteAssets.drawActor(ctx,unit.spriteOpts,{ang:1,state:'idle',t:.1,ex:{}});
       const pixels=ctx.getImageData(0,0,144,144).data;
       return {role:unit.companyRole,opaque:pixels.filter((v,i)=>i%4===3&&v>127).length,frame:canvas.toDataURL()};
     }));
     assert.ok(looks.every(l=>l.opaque>150));assert.equal(new Set(looks.map(l=>l.frame)).size,3);
+    const matched=await tab.evaluate(()=>{
+      const ctx=document.createElement('canvas').getContext('2d'), turn=2*Math.PI;
+      let drawn;
+      ctx.drawImage=(...args)=>{drawn=args;};
+      const states=['idle','walk','attack','hit','death'];
+      return Game.state.player.companySoldiers().every(unit=>{
+        const id=SpriteAssets.maps.summons[unit.companyRole];
+        let index=0;
+        for(const state of states)for(let step=0;step<6;step++)for(let dir=0;dir<8;dir++){
+          const phase=(step+.25)/6;
+          SpriteAssets.drawActor(ctx,unit.spriteOpts,{state,ang:(dir-8)*turn/8,
+            t:state==='idle'?(1+phase)*2:phase,ex:{walkPh:(1+phase)*turn}});
+          const frame=SpriteAssets.getFrame(id,index++);
+          if(drawn[0]!==frame.image || drawn[1]!==frame.sx || drawn[2]!==frame.sy) return false;
+        }
+        SpriteAssets.drawActor(ctx,unit.spriteOpts,{state:'death',ang:0,t:1,ex:{}});
+        const last=SpriteAssets.getFrame(id,232);
+        return drawn[1]===last.sx && drawn[2]===last.sy;
+      });
+    });
+    assert.ok(matched,'all headings and animation frames select the expected atlas cell');
     await tab.evaluate(()=>{
       const s=Game.state,p=s.player,m=new Monster('frost_risen',p.x+2,p.y);
       m.surfaceId=p.surfaceId;m.hp=m.maxHp=10000;m.update=()=>{};s.monsters.push(m);
@@ -116,6 +141,6 @@ async function openHero(context) {
     await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
     assert.equal(await tab.evaluate(()=>Game.state.player.companyFocus),null);
     assert.deepEqual(mobile.errors,[]);await phone.close();
-    console.log('PASS desktop and phone talent layouts, recruitment, 3D soldiers, mouse, F-key and touch orders, and legacy save loading.');
+    console.log('PASS desktop and phone talent layouts, recruitment, all three soldier sprites, mouse, F-key and touch orders, and legacy save loading.');
   } finally {await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
