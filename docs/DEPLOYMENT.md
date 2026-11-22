@@ -586,3 +586,16 @@ On the public site, a new Vanguard opened the 14-talent Arms tree and the
 seven-talent Command tree, recruited a Shieldguard, and issued Field Orders.
 All 22 changed game files matched the release after accounting for the host’s
 injected page markup. [Publication record](qa/vanguard_command_site_publication.json)
+
+## Vanguard summon performance — 2026-11-22
+
+Version 28 preloads the shieldguard, bowman and standard bearer animations.
+In local desktop Chrome, the 95th-percentile time to update and render a fight
+with five soldiers and six enemies fell from 156.5 ms to 4.7 ms.
+[Play EmberGrave](https://embergravegame.com)
+
+The public game showed all 720 soldier poses with zero canvas creations or
+WebGL draw calls during soldier drawing. Field Orders worked, and the squad
+reused its three sprite sheets after travelling from Frosthaven to the mines.
+All eight changed runtime files matched the release after accounting for the
+host’s injected markup. [Publication record](qa/vanguard_soldier_performance_site_publication.json)
