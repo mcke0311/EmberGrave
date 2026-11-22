@@ -562,3 +562,15 @@ On the public site, the Hunting Bow and The Distant Tempest fired at partial and
 full draw. Worldcleaver and Marrowhunger rendered their attack poses. All 21
 changed runtime files matched the release after accounting for hosting markup.
 [Publication record](qa/equipped_models_site_publication.json)
+
+## Map dressing and entrances — 2026-11-22
+
+Version 26 publishes layout version 3 across all 42 playable maps. Supplies and
+remains gather at landmarks, and doorways, mine rails and gate walls meet their
+approaches. [Play Embergrave](https://embergravegame.com)
+
+The live game loaded the opening road and Frosthaven. On seed 12345, the Ashen
+Fields retained 95 ordinary breakables, and Deepfreeze retained six grave sources,
+three searchable, plus its two authored bodies. The Level Objects page loaded
+the same cavern. All 11 changed runtime files matched the release after allowing
+for the host's injected page markup. [Publication record](qa/map_placement_site_publication.json)
