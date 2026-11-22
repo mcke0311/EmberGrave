@@ -574,3 +574,15 @@ Fields retained 95 ordinary breakables, and Deepfreeze retained six grave source
 three searchable, plus its two authored bodies. The Level Objects page loaded
 the same cavern. All 11 changed runtime files matched the release after allowing
 for the host's injected page markup. [Publication record](qa/map_placement_site_publication.json)
+
+## Vanguard Command — 2026-11-22
+
+Version 27 combines the Vanguard’s Tempo and Assault paths in Arms and adds
+Command. Shieldguards, bowmen, and a standard bearer answer Field Orders.
+Tempo Strike and the Shieldguard’s cleave are available at level 1.
+[Play EmberGrave](https://embergravegame.com)
+
+On the public site, a new Vanguard opened the 14-talent Arms tree and the
+seven-talent Command tree, recruited a Shieldguard, and issued Field Orders.
+All 22 changed game files matched the release after accounting for the host’s
+injected page markup. [Publication record](qa/vanguard_command_site_publication.json)
