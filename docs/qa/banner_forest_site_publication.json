@@ -1,0 +1,116 @@
+{
+  "project_id": "appgprj_6aa420e20bfc8191b59e30227bca8a09",
+  "version_number": 29,
+  "version_id": "appgprj_6aa420e20bfc8191b59e30227bca8a09~appgver_dab73ef013d081918b647660a7604767",
+  "release_commit": "aef28f5e1678b0ef5f40d0d3fbe28517a5c37fcc",
+  "deployment_id": "appgdep_6b0392d8926481919d3aed279bd4ecd3",
+  "status": "succeeded",
+  "published_at": "2026-11-23T01:12:01.040174+00:00",
+  "url": "https://embergravegame.mcke0311.chatgpt.site",
+  "custom_domain": "https://embergravegame.com",
+  "access_mode": "public",
+  "saved_archive": {
+    "content_hash": "sha256:a63d9997784dbb864c8e0fef55340e2182437e9669157ca81f8c30f45755e632",
+    "file_count": 1409,
+    "size_bytes": 237465600
+  },
+  "github_commit": "c300a267e2d4a4545df09f636d0e1f9c40c06555",
+  "archive_sha256": "068483c6d2e339e31c9f4b11ae898da17a52723ae83502b7a10b0320ab768eee",
+  "archive_files": 1409,
+  "archive_bytes": 226713902,
+  "changed_runtime_files_verified": 9,
+  "scripts_validated": 92,
+  "runtime_references_checked": 1283,
+  "missing_runtime_references": [],
+  "live_verification": {
+    "banner": {
+      "base": true,
+      "atEdge": true,
+      "outside": true,
+      "pulse": true,
+      "expired": true,
+      "deadExcluded": true,
+      "bearerDeath": true,
+      "ownerDeath": true,
+      "bearer": true,
+      "feet": 3
+    },
+    "woods": {
+      "maps": [
+        "frosthaven_approach",
+        "north_wild",
+        "shardpeak_shrine"
+      ],
+      "edges": 4197,
+      "passages": 21,
+      "walks": 9
+    }
+  },
+  "public_runtime_sha256": {
+    "index.html": "e884d6015ce83c4d5bcafe2a5d787f6204df2bce69320b32d058a750c5f474f9",
+    "world.html": "8d5b7af904dc2bc825867376a984e0eefdd0586163254c680990bec058d68e20",
+    "js/coop.js": "d3ba0ac73533b3ec1f746a33675d0f8224e11933b8b1784baaf86c6a18ca107f",
+    "js/coop_worker.js": "a0b6ce3dbb25dd163530d57fa119faeb2f80363e8ca24a8eb7d52fb8f595cb19",
+    "js/entities.js": "919aeb49507e7dfb2518e4b0661c0ff7fee09c4e4ceb326e2da816aa55e290d6",
+    "js/game.js": "a277d1d0bf9bfba8b4edb7decba7655c2f9aeb891fde9828d5c813038a1ce801",
+    "js/level_terrain.js": "b7efea3e8b9ae228427b781210f7029b83e0d8464794b6897228609d12e947df",
+    "js/mapgen.js": "506a6d0d38e7aceade7391cc22d1553ab79293f9030c5cb8fa2555e7f61eda12",
+    "js/skill_vfx.js": "63e35e5f32f59be9235b10069d8806dc77b1490a64a4a26f7b6dd388f733b448"
+  },
+  "act_1_layout_parity": {
+    "compared_to_version": 28,
+    "zones": 7,
+    "seeds": [
+      0,
+      1,
+      123,
+      12345,
+      4294967295,
+      320040388
+    ],
+    "matching_layouts": 42,
+    "compared": [
+      "walls",
+      "blocked",
+      "floor",
+      "elev",
+      "hazard",
+      "spawns",
+      "thresholds",
+      "exits"
+    ]
+  },
+  "known_existing_test_failure": {
+    "test": "tests/act1_environment_contract.mjs",
+    "zone": "north_wild",
+    "seed": 123,
+    "threshold": "act1_north_wild_1",
+    "minimum_connected_wall_tiles": 128,
+    "version_28_connected_tiles": 120,
+    "version_29_connected_tiles": 120,
+    "destination": "The Abandoned Mines",
+    "arrival_to_approach_walkable": true,
+    "arrival_to_entrance_walkable": true
+  },
+  "emulated_phone_benchmark": {
+    "units": 5,
+    "foesHit": 6,
+    "frames": {
+      "median": 2.6,
+      "p95": 5.6,
+      "total": 1108.1
+    },
+    "simulation": {
+      "median": 0.2,
+      "p95": 0.7,
+      "total": 24
+    },
+    "formationDraw": {
+      "median": 0.1,
+      "p95": 0.2,
+      "total": 83.9
+    },
+    "canvases": 0,
+    "webglCalls": 0
+  }
+}

@@ -599,3 +599,16 @@ WebGL draw calls during soldier drawing. Field Orders worked, and the squad
 reused its three sprite sheets after travelling from Frosthaven to the mines.
 All eight changed runtime files matched the release after accounting for the
 host’s injected markup. [Publication record](qa/vanguard_soldier_performance_site_publication.json)
+
+## Vanguard banner auras and Act 1 forest paths — 2026-11-22
+
+Version 29 shows a double gold ring at the standard bearer’s feet and a single
+ring under each hero or summon receiving the banner buff. Snow-covered rock
+banks close the blocked gaps between trees on the Road to Frosthaven, in the Fallen
+North and at Shardpeak Shrine. [Play EmberGrave](https://embergravegame.com)
+
+On the public game, the rings followed the banner’s range, including its
+temporary extension from Coordinated Assault. Checks across nine forest layouts
+covered 4,197 painted edges and 21 walkable passage approaches. All nine changed
+runtime files matched the release after accounting for the host’s injected
+markup. [Publication record](qa/banner_forest_site_publication.json)
