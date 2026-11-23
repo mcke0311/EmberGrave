@@ -3901,12 +3901,15 @@ const MapGen = (() => {
       };
       for(let t=0;t<(axis?m.h:m.w);t++){
         const x=axis?line:t,y=axis?t:line,i=idx(m,x,y),j=axis?i-1:i-m.w;
-        const a=m.walls[i]&&!m.blocked[j],b=m.walls[j]&&!m.blocked[i];
+        // The forest bank follows permanent terrain even behind a movable or
+        // breakable prop. Moving the prop must not leave a hole in the bank.
+        const next=material(x,y),solid=next==='north'?m.walls:m.blocked;
+        const a=m.walls[i]&&!solid[j],b=m.walls[j]&&!solid[i];
         const threshold=m.thresholds.some(th=>{
           const depth=th.backing?3.5:2.5,width=th.backing?6.5:4.5;
           return th.act===1&&Math.abs(x-th.x)<(th.axis?depth:width)&&Math.abs(y-th.y)<(th.axis?width:depth);
         });
-        const eligible=(a||b)&&!threshold,next=material(x,y),s=a?1:-1,z=Math.min(m.elev[i],m.elev[j]);
+        const eligible=(a||b)&&!threshold,s=a?1:-1,z=Math.min(m.elev[i],m.elev[j]);
         if(!eligible||next!==kit||s!==side||z!==height){flush(t);kit=next;side=s;height=z;}
         if(eligible&&start<0)start=t;
       }

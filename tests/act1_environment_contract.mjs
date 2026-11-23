@@ -42,7 +42,8 @@ for(const zone of zones)for(const seed of seeds){
   ok(s.length>0&&s.length<=(s.kit==='north'?4:6),tag+' invalid span');
   for(let t=0;t<s.length;t++){
    const x=s.x+(s.axis?0:t),y=s.y+(s.axis?t:0),i=x+y*m.w,j=s.axis?i-1:i-m.w;
-   ok(!!m.blocked[i]!==!!m.blocked[j],tag+' wall does not follow collision');
+   const solid=s.kit==='north'?m.walls:m.blocked;
+   ok(!!solid[i]!==!!solid[j],tag+' wall does not follow collision');
   }
  }
  if(m.frontier){ok(!m.props.some(p=>['stairs','cryptdoor','monasterygate'].includes(p.type)),tag+' detached legacy entrance');}

@@ -331,13 +331,17 @@ class Player extends Entity {
   companionUpkeep() {
     return this.maintainedCompanions().reduce((sum,m) => sum + this.unitUpkeep(this.resolveSkill(m.sourceSkill),this.effRank(m.sourceSkill)),0);
   }
+  receivesSummonAura(source, target, time) {
+    if (this.dead || target.dead || source.dead || source.owner?.dead || !source.auraRadius ||
+        (source.owner !== this && source.kindId !== "standard_bearer") || !TerrainLayers.same(source,target)) return false;
+    const radius = DATA.summonAuraRadius(source,time);
+    return U.dist2(source.x,source.y,target.x,target.y) <= radius * radius;
+  }
   summonAuraStatsFor(target) {
     const stats = {};
     if (this.dead || target.dead) return stats;
     for (const m of (typeof Game !== "undefined" && Game.state?.minions || [])) {
-      if (m.dead || !m.auraRadius || (m.owner !== this && m.kindId !== "standard_bearer") || m.owner?.dead || !TerrainLayers.same(m,target)) continue;
-      const radius = DATA.summonAuraRadius(m,Game.state.time);
-      if (U.dist2(m.x,m.y,target.x,target.y) > radius ** 2) continue;
+      if (!this.receivesSummonAura(m,target,Game.state.time)) continue;
       // Overlapping auras contribute the strongest value for each stat.
       for (const [key,value] of Object.entries(m.auraStats || {})) stats[key] = Math.max(stats[key] || 0,value);
     }

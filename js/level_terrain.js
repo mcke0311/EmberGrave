@@ -690,9 +690,18 @@ const Act1Environment=(()=>{
     const env=m.act1Environment;let saved=cache.get(env);if(saved&&!reference)return saved;
     const walls=[],ground=[];
     for(const s of [...env.segments,...(env.facades||[])]){
-      if(s.kit==='north')continue;
       const x=s.x+(s.axis?0:s.length/2),y=s.y+(s.axis?s.length/2:0),direction=s.axis?'south':'east';
-      const short=s.length<=3&&!['north','ice'].includes(s.kit),span=short?3:s.kit==='north'?4:6;
+      if(s.kit==='north'){
+        // Register a low painted bank on the solid side of each collision edge.
+        // The terrain cache draws it below the freestanding trees and actors.
+        const inset=(s.side||0)*.18, bx=x+(s.axis?inset:0), by=y+(s.axis?0:inset);
+        const f=frame('north',direction+(s.variant%2?'_alt':''));
+        // The extra width overlaps tapered ends at straight joins and corners.
+        const scale=(s.length*32+40)/f.sw;
+        ground.push({f,x:U.isoX(bx,by),y:U.isoY(bx,by)-s.height*14,refX:bx,refY:by,scale,alpha:.84});
+        continue;
+      }
+      const short=s.length<=3&&s.kit!=='ice',span=short?3:6;
       const part=short?'end_'+direction:direction+(s.variant===1?'_alt':'');
       const f=frame(s.kit,part),fx=s.x+(s.axis?0:span/2),fy=s.y+(s.axis?span/2:0);
       const cx=U.isoX(x,y),cy=U.isoY(x,y)-s.height*14;
@@ -728,8 +737,10 @@ const Act1Environment=(()=>{
       const x=d.x-cam.x,y=d.y-cam.y;
       if(!inView(x,y))continue;
       if(damage&&!damage.some(r=>x+130>r.x&&x-130<r.x+r.w&&y+100>r.y&&y-100<r.y+r.h))continue;
-      const f=d.f,s=d.scale;
+      const f=d.f,s=d.scale,alpha=ctx.globalAlpha;
+      if(d.alpha)ctx.globalAlpha=alpha*d.alpha;
       ctx.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,x-f.anchorX*s,y-f.anchorY*s,f.sw*s,f.sh*s);
+      if(d.alpha)ctx.globalAlpha=alpha;
     }
   }
   function append(draws,m,cam,player,W,H){

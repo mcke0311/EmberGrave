@@ -3646,6 +3646,7 @@ const Game = (() => {
     const m = state.map, p = state.player;
     const cam = camera();
     const zoom=cam.zoom||1,W = canvas.width/zoom, H = canvas.height/zoom;
+    const bannerAllies=typeof SkillVFX!=='undefined' ? SkillVFX.bannerRecipients(state) : null;
     ctx.save();if(zoom!==1)ctx.scale(zoom,zoom);
     LevelTerrain.beginFrame(m);
     try {
@@ -3968,7 +3969,7 @@ const Game = (() => {
         }
         case "minion": {
           const mi = d.mi;
-          drawEntity(mi, d.sx, d.sy);
+          drawEntity(mi, d.sx, d.sy, bannerAllies?.has(mi));
           if(typeof Cinematics!=='undefined'&&Cinematics.playing)break;
           d.sy-=surfaceLift(mi.x,mi.y,mi.surfaceId);
           /* minion life bars: always / when hurt (recent hit or missing life) / never */
@@ -4034,7 +4035,7 @@ const Game = (() => {
           if(p.cinematicAlpha===0)break;
           const point=renderPosition(p);
           if(!p.cinematicView&&typeof Coop!=="undefined"&&Coop.active)nameplate(p.name+(p.dead?" — fallen":""),d.sx,d.sy-88,p===state.player?"#e4ce91":"#97cbd4");
-          drawLiveActor(playerModelOpts(p), p.pose(), d.sx, d.sy - (point.jumpZ || 0) - elevLift(point.x,point.y,point.surfaceId), p.flashT > 0, p.cinematicAlpha??1, null, point);
+          drawLiveActor(playerModelOpts(p), p.pose(), d.sx, d.sy - (point.jumpZ || 0) - elevLift(point.x,point.y,point.surfaceId), p.flashT > 0, p.cinematicAlpha??1, null, point, bannerAllies?.has(d.hero||state.player));
             if(m.id==='shardpeak_shrine'&&DATA.CAMPAIGN.site(state,'shelter_ember')&&!DATA.CAMPAIGN.site(state,'summit_lit')){
               const y=d.sy-elevLift(point.x,point.y,point.surfaceId)-(point.jumpZ||0)-28;
               ctx.save();ctx.shadowColor='#ff8429';ctx.shadowBlur=9;ctx.fillStyle='#ffd487';ctx.beginPath();ctx.ellipse(d.sx+8,y,2.5,4,0,0,Math.PI*2);ctx.fill();ctx.restore();
@@ -4481,7 +4482,7 @@ const Game = (() => {
     if (opts.threePlayer) Player3D.draw(target, opts.threePlayer, pose);
     else {if(opts.playerVisual)throw new Error('Player drawing requires the 3D renderer.');SpriteAssets.drawActor(target, opts, pose);}
   }
-  function drawLiveActor(opts, pose, sx, sy, flash, alpha, tint, ground) {
+  function drawLiveActor(opts, pose, sx, sy, flash, alpha, tint, ground, bannerAura=false) {
     ctx.save();
     if(ground&&!ground.cinematicView)LevelTerrain.clipBehind(ctx,state.map,camera(),ground.x,ground.y,ground.surfaceId);
     const bodyScale = ACTOR_BODY_SCALE;
@@ -4495,6 +4496,7 @@ const Game = (() => {
       ctx.ellipse(sx+2,shadowY,16*footprint,6.5*footprint,0,0,Math.PI*2);ctx.fill();
     }
     ctx.restore();
+    if(bannerAura&&!ground.cinematicView)SkillVFX.drawBannerAura(ctx,sx,sy+lift+2,footprint,ground.kindId==='standard_bearer',reducedMotion?.matches?0:state.time);
     /* fast path (the common case): no flash/tint composite needed, so draw the actor
        straight onto the screen — skips a scratch-canvas clear and blit per actor.
        SpriteAssets draw calls save/restore their own state, so this is isolated. */
@@ -4531,7 +4533,7 @@ const Game = (() => {
     ctx.globalAlpha = 1;
     ctx.restore();
   }
-  function drawEntity(e, sx, sy) {
+  function drawEntity(e, sx, sy, bannerAura=false) {
     if(typeof Cinematics!=='undefined'&&Cinematics.hideEntity?.(e)&&!e.cinematicView)return;
     e=renderPosition(e);
     if (e.husk) return;         // bodiless corpse husk: a logical corpse source, not a drawable figure
@@ -4561,7 +4563,7 @@ const Game = (() => {
       ctx.beginPath(); ctx.ellipse(sx, sy, 20 * e.scale, 9 * e.scale, 0, 0, Math.PI * 2); ctx.fill();
     }
     const opts = e.playerEcho ? { threePlayer: e.playerEcho, scale: 1 } : e.spriteOpts;
-    drawLiveActor(opts, e.pose(), sx, sy - (point.jumpZ || 0), e.flashT > 0, alpha * (e.playerEcho ? .55 : 1), e.playerEcho ? '#9185c2' : !e.dead && e.tint ? e.tint : null, point);
+    drawLiveActor(opts, e.pose(), sx, sy - (point.jumpZ || 0), e.flashT > 0, alpha * (e.playerEcho ? .55 : 1), e.playerEcho ? '#9185c2' : !e.dead && e.tint ? e.tint : null, point, bannerAura);
     if(typeof SkillVFX!=='undefined'&&SkillVFX.hasStatus(e)){ctx.save();LevelTerrain.clipBehind(ctx,state.map,camera(),e.x,e.y,e.surfaceId);SkillVFX.drawStatus(ctx,e,camera());ctx.restore();}
   }
   /* "!" over quest givers, "?" when a reward waits */

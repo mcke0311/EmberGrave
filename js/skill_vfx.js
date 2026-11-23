@@ -139,10 +139,11 @@ field_orders gold shout`;
   let events=[],particles=[],ghosts=[],tracked=new WeakMap(),actors=new WeakMap(),projectiles=new WeakMap();
   let dropped=0,peakParticles=0,peakEvents=0,externalParticles=0;
   const stamps=new Map();
+  const markedAllies=new Set();
   const random=()=>{randomState^=randomState<<13;randomState^=randomState>>>17;randomState^=randomState<<5;return (randomState>>>0)/4294967296;};
   const noise=(seed,i=0)=>{const v=Math.sin(seed*.013+i*127.1)*43758.5453;return v-Math.floor(v);};
   const get=id=>recipes[id]||null;
-  function reset(){events=[];particles=[];ghosts=[];tracked=new WeakMap();actors=new WeakMap();projectiles=new WeakMap();world=null;source=null;now=0;sequence=0;randomState=0x5a17c9;dropped=peakParticles=peakEvents=0;}
+  function reset(){events=[];particles=[];ghosts=[];tracked=new WeakMap();actors=new WeakMap();projectiles=new WeakMap();markedAllies.clear();world=null;source=null;now=0;sequence=0;randomState=0x5a17c9;dropped=peakParticles=peakEvents=0;}
   function scope(owner,id,fn){
     const state=typeof Game!=='undefined'?Game.state:null;
     if(!world&&state?.map){world={map:state.map,player:state.player,minions:state.minions};now=state.time;}
@@ -609,11 +610,46 @@ field_orders gold shout`;
     }
   }
   const groundEvent=e=>['wave','fissure','sigil'].includes(e.kind);
+  function grantsAura(source){
+    for(const stat in source.auraStats)if(source.auraStats[stat]>0)return true;
+    return false;
+  }
+  function bannerRecipients(state){
+    markedAllies.clear();
+    if(!enabled)return markedAllies;
+    for(const standard of state.minions){
+      if(standard.kindId!=='standard_bearer'||standard.dead||standard.owner?.dead||!standard.auraRadius||!grantsAura(standard))continue;
+      for(const hero of state.players||[state.player]){
+        if(hero.receivesSummonAura(standard,hero,state.time))markedAllies.add(hero);
+      }
+      for(const unit of state.minions){
+        if(unit.owner?.receivesSummonAura(standard,unit,state.time))markedAllies.add(unit);
+      }
+    }
+    return markedAllies;
+  }
+  function drawBannerAura(c,x,y,footprint,carrier,time){
+    const radius=(carrier?26:20)*clamp(footprint,.8,1.4), pulse=.5+.5*Math.sin(time*2.5);
+    c.save();c.translate(x,y);c.scale(1,.48);
+    c.beginPath();c.arc(0,0,radius,0,TAU);
+    c.fillStyle='rgba(207,155,60,.12)';c.fill();
+    c.strokeStyle='rgba(63,45,21,.84)';c.lineWidth=4.5;c.stroke();
+    c.strokeStyle=carrier?'#ffdd90':'#edd08a';c.lineWidth=1.6+pulse*.6;c.stroke();
+    if(carrier){
+      c.beginPath();c.arc(0,0,radius-5,0,TAU);c.lineWidth=1.5;c.stroke();
+      c.fillStyle='#fff0bc';
+      for(let i=0;i<4;i++){
+        c.beginPath();c.moveTo(radius-4,0);c.lineTo(radius,3);c.lineTo(radius+4,0);c.lineTo(radius,-3);c.closePath();c.fill();
+        c.rotate(Math.PI/2);
+      }
+    }
+    c.restore();
+  }
   const visible=(p,cam,w,h,margin=120)=>{const [x,y]=project(p,cam);return x>-margin&&y>-margin&&x<w+margin&&y<h+margin;};
   function drawGround(c,state,cam,surfaceId=0){
     if(!enabled||state.player?.dead)return;
     for(const mi of state.minions){
-      if(mi.dead || (mi.surfaceId??0)!==surfaceId || !mi.auraRadius || !Object.keys(mi.auraStats||{}).length)continue;
+      if(mi.kindId==='standard_bearer' || mi.dead || (mi.surfaceId??0)!==surfaceId || !mi.auraRadius || !grantsAura(mi))continue;
       const radius=DATA.summonAuraRadius(mi,state.time);
       const r=get(mi.sourceSkill); if(!r || !visible(mi,cam,c.canvas.width,c.canvas.height,radius*64))continue;
       const [x,y]=project(at(mi),cam);
@@ -658,5 +694,5 @@ field_orders gold shout`;
   function diagnostics(){return {enabled,recipes:Object.keys(recipes).length-1,particles:particles.length,events:events.length,ghosts:ghosts.length,peakParticles,peakEvents,dropped,limits:LIMITS};}
   const hasStatus=m=>enabled&&!m.dead&&!!(m.veilExposedUntil>now||m.snarePull||m.snareRootUntil>now||m.killMark||m.doom||m.curseFrailty||m.curseWither||m.plague||m.rabies);
   return Object.freeze({recipes,palettes,scope,context,activate,release,sweep,hit,area,beam,transfer,passive,registerProjectile,projectileContact,update,reset,drawGround,appendDraws,drawItem,drawProjectile,drawTrap,drawActor,drawStatus,drawLights,diagnostics,
-    hasStatus,get enabled(){return enabled;},setEnabled(v){enabled=!!v;reset();},isStyled:o=>enabled&&!!fieldRecipe(o)});
+    bannerRecipients,drawBannerAura,hasStatus,get enabled(){return enabled;},setEnabled(v){enabled=!!v;reset();},isStyled:o=>enabled&&!!fieldRecipe(o)});
 })();
